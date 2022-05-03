@@ -59,3 +59,27 @@ PASS: Should return null for an element not associated with any view.
 PASS: Should return null for non-element.
 PASS: Should return null for null element.
 
+-- Running test case: View.DirtyDescendantsCount
+- Adding parent view to root view.
+PASS: Root view should have 1 dirty descendant.
+PASS: Root view should not be dirty.
+PASS: Parent attached to root view should be dirty.
+- Adding child view to parent view.
+PASS: Root view should have 2 dirty descendants.
+PASS: Parent attached to root view should have 1 dirty descendant.
+PASS: Root view should not be dirty.
+PASS: Parent attached to root view should be dirty.
+PASS: Child attached to parent view should be dirty.
+- Removing parent view from root view.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent detached from root view should have 0 dirty descendants.
+PASS: Root view should not be dirty.
+PASS: Parent detached from root view should not be dirty.
+PASS: Child attached to detached parent view should not be dirty.
+- Adding parent view to root view.
+PASS: Root view should have 1 dirty descendant.
+PASS: Parent detached from root view should have 0 dirty descendants.
+PASS: Root view should not be dirty.
+PASS: Parent attached to root view should be dirty.
+PASS: Child attached to parent view should not be dirty.
+

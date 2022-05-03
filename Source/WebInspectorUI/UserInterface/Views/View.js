@@ -95,6 +95,8 @@ WI.View = class View extends WI.Object
         console.assert(!referenceView || referenceView instanceof WI.View);
         console.assert(view !== WI.View._rootView, "Root view cannot be a subview.");
 
+        console.assert(!view.parentView, view);
+
         if (this._subviews.includes(view)) {
             console.assert(false, "Cannot add view that is already a subview.", view);
             return;
@@ -153,8 +155,6 @@ WI.View = class View extends WI.Object
 
     updateLayout(layoutReason)
     {
-        this.cancelLayout();
-
         this._setLayoutReason(layoutReason);
         this._layoutSubtree();
     }
@@ -175,11 +175,6 @@ WI.View = class View extends WI.Object
             return;
 
         WI.View._scheduleLayoutForView(this);
-    }
-
-    cancelLayout()
-    {
-        WI.View._cancelScheduledLayoutForView(this);
     }
 
     // Protected
@@ -230,50 +225,65 @@ WI.View = class View extends WI.Object
 
     // Private
 
-    _didMoveToParent(parentView)
+    _setDirty(dirty)
     {
-        this._parentView = parentView;
-
-        let isAttachedToRoot = this.isDescendantOf(WI.View._rootView);
-        this._didMoveToWindow(isAttachedToRoot);
-
-        if (!this._parentView)
+        if (this._dirty === dirty)
             return;
 
-        let pendingLayoutsCount = this._dirtyDescendantsCount;
-        if (this._dirty)
-            pendingLayoutsCount++;
+        this._dirty = dirty;
 
-        let view = this._parentView;
-        while (view) {
-            view._dirtyDescendantsCount += pendingLayoutsCount;
-            view = view.parentView;
+        for (let parentView = this.parentView; parentView; parentView = parentView.parentView) {
+            parentView._dirtyDescendantsCount += this._dirty ? 1 : -1;
+            console.assert(parentView._dirtyDescendantsCount >= 0);
         }
     }
 
-    _didMoveToWindow(isAttachedToRoot)
+    _didMoveToParent(parentView)
     {
-        if (this._isAttachedToRoot === isAttachedToRoot)
+        if (this._parentView === parentView)
             return;
 
-        this._isAttachedToRoot = isAttachedToRoot;
-        if (this._isAttachedToRoot) {
-            WI.View._scheduleLayoutForView(this);
-            this.attached();
-        } else {
-            if (this._dirty)
-                this.cancelLayout();
-            this.detached();
+        console.assert(this._parentView || !(this._isDirty || this._dirtyDescendantsCount));
+
+        let dirtyDescendantsCount = this._dirtyDescendantsCount;
+        if (this._dirty)
+            ++dirtyDescendantsCount;
+
+        if (dirtyDescendantsCount) {
+            for (let view = this.parentView; view; view = view.parentView) {
+                view._dirtyDescendantsCount -= dirtyDescendantsCount;
+                console.assert(view._dirtyDescendantsCount >= 0);
+            }
         }
 
-        for (let view of this._subviews)
-            view._didMoveToWindow(isAttachedToRoot);
+        this._parentView = parentView;
+        let isAttachedToRoot = this.isDescendantOf(WI.View._rootView);
+
+        let views = [this];
+        for (let i = 0; i < views.length; ++i) {
+            let view = views[i];
+            views.pushAll(view.subviews);
+
+            view._dirty = false;
+            view._dirtyDescendantsCount = 0;
+
+            if (view._isAttachedToRoot === isAttachedToRoot)
+                continue;
+
+            view._isAttachedToRoot = isAttachedToRoot;
+            if (view._isAttachedToRoot)
+                view.attached();
+            else
+                view.detached();
+        }
+
+        if (isAttachedToRoot)
+            WI.View._scheduleLayoutForView(this);
     }
 
     _layoutSubtree()
     {
-        this._dirty = false;
-        this._dirtyDescendantsCount = 0;
+        this._setDirty(false);
         let isInitialLayout = !this._didInitialLayout;
 
         if (isInitialLayout) {
@@ -344,47 +354,15 @@ WI.View = class View extends WI.Object
 
     static _scheduleLayoutForView(view)
     {
-        view._dirty = true;
-
-        let parentView = view.parentView;
-        while (parentView) {
-            parentView._dirtyDescendantsCount++;
-            parentView = parentView.parentView;
-        }
-
         if (!view._isAttachedToRoot)
             return;
+
+        view._setDirty(true);
 
         if (WI.View._scheduledLayoutUpdateIdentifier)
             return;
 
         WI.View._scheduledLayoutUpdateIdentifier = requestAnimationFrame(WI.View._visitViewTreeForLayout);
-    }
-
-    static _cancelScheduledLayoutForView(view)
-    {
-        let cancelledLayoutsCount = view._dirtyDescendantsCount;
-        if (view.layoutPending)
-            cancelledLayoutsCount++;
-
-        let parentView = view.parentView;
-        while (parentView) {
-            parentView._dirtyDescendantsCount = Math.max(0, parentView._dirtyDescendantsCount - cancelledLayoutsCount);
-            parentView = parentView.parentView;
-        }
-
-        view._dirty = false;
-
-        if (!WI.View._scheduledLayoutUpdateIdentifier)
-            return;
-
-        let rootView = WI.View._rootView;
-        if (!rootView || rootView._dirtyDescendantsCount)
-            return;
-
-        // No views need layout, so cancel the pending requestAnimationFrame.
-        cancelAnimationFrame(WI.View._scheduledLayoutUpdateIdentifier);
-        WI.View._scheduledLayoutUpdateIdentifier = undefined;
     }
 
     static _visitViewTreeForLayout()
@@ -394,14 +372,12 @@ WI.View = class View extends WI.Object
         WI.View._scheduledLayoutUpdateIdentifier = undefined;
 
         let views = [WI.View._rootView];
-        while (views.length) {
-            let view = views.shift();
+        for (let i = 0; i < views.length; ++i) {
+            let view = views[i];
             if (view.layoutPending)
                 view._layoutSubtree();
-            else if (view._dirtyDescendantsCount) {
+            else if (view._dirtyDescendantsCount)
                 views.pushAll(view.subviews);
-                view._dirtyDescendantsCount = 0;
-            }
         }
     }
 };

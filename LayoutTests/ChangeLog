@@ -1,3 +1,20 @@
+2022-05-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Importing a timeline leaves timeline overview non-scrollable/non-zoomable until windows is resized
+        https://bugs.webkit.org/show_bug.cgi?id=239880
+
+        Reviewed by Devin Rousso.
+
+        * inspector/view/asynchronous-layout-expected.txt:
+        * inspector/view/asynchronous-layout.html:
+        - Added test case for calls to `updateLayout()` during asynchronous `layout()`.
+        - Remove test case for removed `View.prototype.cancelLayout`.
+
+        * inspector/view/basics-expected.txt:
+        * inspector/view/basics.html:
+        - Added test case to verify that `_dirtyDescendantsCount` is an expected value at various points of
+        attaching/detaching views.
+
 2022-05-03  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Endless recursion with revert-layer in other tree context

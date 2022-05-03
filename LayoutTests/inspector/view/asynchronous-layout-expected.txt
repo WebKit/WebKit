@@ -20,15 +20,33 @@ Layout complete.
 PASS: View should update its layout.
 PASS: View should not have a pending layout.
 
+-- Running test case: View.SyncronousLayoutDuringAsyncronousLayout
+PASS: Root view should have 2 dirty descendants.
+PASS: Parent view should have 1 dirty descendant.
+PASS: Child view should have 0 dirty descendants.
+PASS: View should have a pending layout.
+Child view completed a layout.
+PASS: Root view should have 1 dirty descendant.
+PASS: Parent view should have 0 dirty descendants.
+PASS: Child view should have 0 dirty descendants.
+PASS: Parent view should have started a layout.
+PASS: Child view should have completed 1 layout.
+Child view completed a layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent view should have 0 dirty descendants.
+PASS: Child view should have 0 dirty descendants.
+PASS: Parent view should have started a layout.
+PASS: Child view should have completed 2 layouts.
+Parent view completed a layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent view should have completed 1 layout.
+PASS: Parent view should not have a pending layout.
+
 -- Running test case: View.needsLayout.propogateToSubview
 Schedule parent view update.
 Layout complete.
 PASS: Chlid view should do an initial layout.
 PASS: Child view should update its layout.
-
--- Running test case: View.cancelLayout
-Cancel automatic layout.
-PASS: View should not have a pending layout.
-Cancel scheduled layout.
-PASS: View should not have a pending layout.
 

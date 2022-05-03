@@ -1,3 +1,79 @@
+2022-05-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Importing a timeline leaves timeline overview non-scrollable/non-zoomable until windows is resized
+        https://bugs.webkit.org/show_bug.cgi?id=239880
+
+        Reviewed by Devin Rousso.
+
+        Cancelling an in-progress layout (or the layout of a child of a view in middle of laying out) led to
+        `_dirtyDescendantsCount` being in an inconsistent state. Views had their `_dirtyDescendantsCount` cleared before
+        they are laid out, so every non-zero `_dirtyDescendantsCount` of a view in the process of being laid out meant
+        that during layout `needsLayout()` was called to dirty that view or one of its children. In this case, a
+        previous cancellation meant that the TimelineOverview ended up in an inconsistent state where its parent view
+        tree was not aware that it needed layout because it reached a zero `_dirtyDescendantsCount` while walking down
+        the view hierarchy, which meant that the TimelineOverview was perpetually stuck until the entire view hierarchy
+        needed re-laid out due to a window resize or similar event.
+
+        Our current accounting for `_dirtyDescendantsCount` in View makes assumptions that are not always true during
+        layout. Specifically that parents of views undergoing layout will have a non-zero `_dirtyDescendantsCount` still
+        from which to subtract in `_cancelScheduledLayoutForView`. This wasn't always true because as soon as we began
+        laying out a parent view, we cleared both the `_dirty` flag as well as zeroed out `_dirtyDescendantsCount`. In
+        the case of cancelling a layout from within a layout, the cancellation wouldn't actually take effect anyways,
+        and since `cancelLayout` was only ever invoked from `updateLayout`, the relevant layout flags should instead be
+        cleared as part of actually performing the layout. `cancelLayout` at most saved us a rAF callback only to
+        realize we no longer have any views in need of layout, but this benefit was negligible, and in general we should
+        prefer not to be calling `updateLayout` for performance reasons anyways.
+
+        This patch improves the accounting around `_dirtyDescendantsCount`, making sure to decrement it as we perform
+        layout, instead of all at once. This reduces our reliance on assumptions about who will modify the
+        `_dirtyDescendantsCount` and at what times relative to layout.
+
+        The only time in this patch that we do not do a +1/-1 adjustment to the layout count is in the special case of
+        attaching/detaching a view. In that case, the parent tree from which we are detaching the view will have the
+        `_dirtyDescendantsCount` of the detached parent adjusted by the `_dirtyDescendantsCount` of the former child
+        view. This is done by `_setSelfAndDescendantsNotDirty`, which allows us to avoid an exponential walking of the
+        tree for this otherwise self-contained operation (we don't call into any overridable functions that could modify
+        the `_dirty` flag or `_dirtyDescendantsCount`).
+
+        After we have cleaned up the former parent branch of the tree, we mark the newly attached view as needing
+        layout, which will then ensure the child view gets laid out again by marking it as `dirty` and incrementing its
+        new parent branch of the tree's `_dirtyDescendantsCount`.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype.insertSubviewBefore):
+        - Add assertion that the view is not currently a child of a different view in addition to the existing check
+        that a view is not already a child of the target view.
+
+        (WI.View.prototype._setDirty):
+        - New utility method through which (almost) all marking of dirty/not dirty should be done in order to ensure
+        that `_dirtyDescendantsCount` is correctly adjusted.
+
+        (WI.View.prototype._didMoveToParent):
+        - Mark the view and all subviews as not dirty before removing it from its previous parent in order to adjust
+        `_dirtyDescendantsCount` appropriately, and then mark the view as dirty once attached to its new parent.
+        - Inline the logic from WI.View.prototype._didMoveToWindow in order to also handle marking children as not dirty
+        and having a zeroed `_dirtyDescendantsCount`.
+        - This method contains the exception to the rule that _dirtyDescendantsCount is always incremented/decremented
+        by one. Here we are able to optimize away the need to walk the entire parent tree for each subview/subviews of
+        subviews/etc. because the operation takes place all at once with no overridable function being called where we
+        have to worry about mutations to `_dirty`/`_dirtyDescendantsCount`.
+
+        (WI.View.prototype._layoutSubtree):
+        (WI.View._visitViewTreeForLayout):
+        - Don't zero out the `_dirtyDescendantsCount`, and instead use the new `_setDirty` helper.
+
+        (WI.View._scheduleLayoutForView):
+        - Don't zero out the `_dirtyDescendantsCount`, and instead use the new `_setDirty` helper.
+        - Mark the view as dirty after checking if its attached a view so that detached views have no dirty state until
+        they are attached, at which point the root of the previous detached subtree will be marked as dirty.
+        - Drive-by change to use a for-loop instead of a while-loop to avoid `Array.prototype.shift()`.
+
+        (WI.View.prototype.updateLayout):
+        (WI.View.prototype.cancelLayout): Deleted.
+        (WI.View._cancelScheduledLayoutForView): Deleted.
+        - Remove the concept of "canceling" layout, since it is only used by `updateLayout`, and the call to
+        `_layoutSubtree` in `updateLayout` will cause the view, dirty or not, to be marked as not dirty.
+
 2022-05-03  Michael Saboff  <msaboff@apple.com>
 
         WebInspectorUI is missing a symlink to system content path

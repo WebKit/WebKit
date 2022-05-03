@@ -62,6 +62,65 @@ function test()
     });
 
     suite.addTestCase({
+        name: "View.SyncronousLayoutDuringAsyncronousLayout",
+        test(resolve, reject) {
+            let UpdateLayoutTestView = class UpdateLayoutTestView extends WI.TestView {
+                layout() {
+                    super.layout();
+
+                    this.subviews[0].updateLayout();
+                }
+            }
+
+            let rootView = WI.View.rootView();
+            let parentView = new UpdateLayoutTestView;
+            let childView = new WI.TestView;
+
+            rootView.addSubview(parentView);
+            parentView.addSubview(childView);
+
+            InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 2, "Root view should have 2 dirty descendants.");
+            InspectorTest.expectEqual(parentView._dirtyDescendantsCount, 1, "Parent view should have 1 dirty descendant.");
+            InspectorTest.expectEqual(childView._dirtyDescendantsCount, 0, "Child view should have 0 dirty descendants.");
+            InspectorTest.expectThat(parentView.layoutPending, "View should have a pending layout.");
+
+            childView.evaluateAfterLayout(() => {
+                InspectorTest.log("Child view completed a layout.");
+
+                InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 0, "Root view should have 1 dirty descendant.");
+                InspectorTest.expectEqual(parentView._dirtyDescendantsCount, 0, "Parent view should have 0 dirty descendants.");
+                InspectorTest.expectEqual(childView._dirtyDescendantsCount, 0, "Child view should have 0 dirty descendants.");
+
+                InspectorTest.expectEqual(parentView.layoutCount, 1, "Parent view should have started a layout.");
+                InspectorTest.expectEqual(childView.layoutCount, 1, "Child view should have completed 1 layout.");
+
+                childView.evaluateAfterLayout(() => {
+                    InspectorTest.log("Child view completed a layout.");
+                    InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+                    InspectorTest.expectEqual(parentView._dirtyDescendantsCount, 0, "Parent view should have 0 dirty descendants.");
+                    InspectorTest.expectEqual(childView._dirtyDescendantsCount, 0, "Child view should have 0 dirty descendants.");
+
+                    InspectorTest.expectEqual(parentView.layoutCount, 1, "Parent view should have started a layout.");
+                    InspectorTest.expectEqual(childView.layoutCount, 2, "Child view should have completed 2 layouts.");
+                });
+            });
+
+            parentView.evaluateAfterLayout(() => {
+                InspectorTest.log("Parent view completed a layout.");
+
+                InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+                InspectorTest.expectEqual(parentView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+                InspectorTest.expectEqual(childView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+
+                InspectorTest.expectEqual(parentView.layoutCount, 1, "Parent view should have completed 1 layout.");
+                InspectorTest.expectFalse(parentView.layoutPending, "Parent view should not have a pending layout.");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
         name: "View.needsLayout.propogateToSubview",
         test(resolve, reject) {
             let parent = new WI.TestView;
@@ -77,24 +136,6 @@ function test()
                 InspectorTest.expectEqual(child.layoutCount, 1, "Child view should update its layout.");
                 resolve();
             });
-        }
-    });
-
-    suite.addTestCase({
-        name: "View.cancelLayout",
-        test(resolve, reject) {
-            let view = new WI.TestView;
-            WI.View.rootView().addSubview(view);
-
-            InspectorTest.log("Cancel automatic layout.");
-            view.cancelLayout();
-            InspectorTest.expectFalse(view.layoutPending, "View should not have a pending layout.");
-
-            InspectorTest.log("Cancel scheduled layout.");
-            view.needsLayout();
-            view.cancelLayout();
-            InspectorTest.expectFalse(view.layoutPending, "View should not have a pending layout.");
-            resolve();
         }
     });
 

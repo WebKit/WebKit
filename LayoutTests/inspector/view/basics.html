@@ -179,6 +179,54 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "View.DirtyDescendantsCount",
+        test() {
+            let rootView = WI.View.rootView();
+            let parent = new WI.View;
+            let child = new WI.View;
+
+            // The root view may still be dirty from a previous test removing a subview.
+            rootView._dirty = false;
+            rootView._dirtyDescendantsCount = 0;
+
+            InspectorTest.log("- Adding parent view to root view.");
+            rootView.addSubview(parent);
+            InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 1, "Root view should have 1 dirty descendant.");
+            InspectorTest.expectFalse(rootView._dirty, "Root view should not be dirty.");
+            InspectorTest.expectTrue(parent._dirty, "Parent attached to root view should be dirty.");
+
+            InspectorTest.log("- Adding child view to parent view.");
+            parent.addSubview(child);
+            InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 2, "Root view should have 2 dirty descendants.");
+            InspectorTest.expectEqual(parent._dirtyDescendantsCount, 1, "Parent attached to root view should have 1 dirty descendant.");
+            InspectorTest.expectFalse(rootView._dirty, "Root view should not be dirty.");
+            InspectorTest.expectTrue(parent._dirty, "Parent attached to root view should be dirty.");
+            InspectorTest.expectTrue(child._dirty, "Child attached to parent view should be dirty.");
+
+            InspectorTest.log("- Removing parent view from root view.");
+            rootView.removeSubview(parent);
+            InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 0, "Root view should have 0 dirty descendants.");
+            InspectorTest.expectEqual(parent._dirtyDescendantsCount, 0, "Parent detached from root view should have 0 dirty descendants.");
+            InspectorTest.expectFalse(rootView._dirty, "Root view should not be dirty.");
+            InspectorTest.expectFalse(parent._dirty, "Parent detached from root view should not be dirty.");
+            InspectorTest.expectFalse(child._dirty, "Child attached to detached parent view should not be dirty.");
+
+            InspectorTest.log("- Adding parent view to root view.");
+            rootView.addSubview(parent);
+            InspectorTest.expectEqual(rootView._dirtyDescendantsCount, 1, "Root view should have 1 dirty descendant.");
+            InspectorTest.expectEqual(parent._dirtyDescendantsCount, 0, "Parent detached from root view should have 0 dirty descendants.");
+            InspectorTest.expectFalse(rootView._dirty, "Root view should not be dirty.");
+            InspectorTest.expectTrue(parent._dirty, "Parent attached to root view should be dirty.");
+            InspectorTest.expectFalse(child._dirty, "Child attached to parent view should not be dirty.");
+
+            // Clean up views for the next test.
+            rootView.removeSubview(parent);
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
