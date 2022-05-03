@@ -1,3 +1,16 @@
+2022-05-03  Michael Saboff  <msaboff@apple.com>
+
+        WebInspectorUI is missing a symlink to system content path
+        https://bugs.webkit.org/show_bug.cgi?id=239971
+
+        Reviewed by Alexey Proskuryakov.
+
+        Enabled script execution for install headers phase.
+        Added checks to run Copy User Interface Resources script only during the install phase.
+
+        * Configurations/WebInspectorUIFramework.xcconfig:
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+
 2022-04-21  Dan Glastonbury  <djg@apple.com>
 
         WebInspector: Improve rendering of GLbitfield in WebGL canvas recordings.

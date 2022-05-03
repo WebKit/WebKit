@@ -177,7 +177,7 @@
 			name = "Copy User Interface Resources";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
+			shellScript = "if [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit\nfi\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
 		};
 		6517571727C9AD6B00D9FE40 /* Copy Frameworks to Secondary Path */ = {
 			isa = PBXShellScriptBuildPhase;
