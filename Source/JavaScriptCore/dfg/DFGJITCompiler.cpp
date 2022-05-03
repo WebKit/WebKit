@@ -291,25 +291,32 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     if (!m_exceptionChecksWithCallFrameRollback.empty())
         linkBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
 
-    Vector<JumpReplacement> jumpReplacements;
-    MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
-    auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
-    for (unsigned i = 0; i < m_osrExit.size(); ++i) {
-        OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
-
-        if (!m_graph.m_plan.isUnlinked()) {
+    if (!m_graph.m_plan.isUnlinked()) {
+        MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
+        auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
+        Vector<JumpReplacement> jumpReplacements;
+        for (unsigned i = 0; i < m_osrExit.size(); ++i) {
+            OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
             linkBuffer.link(info.m_patchableJump.m_jump, target);
             OSRExit& exit = m_osrExit[i];
             exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
+            if (info.m_replacementSource.isSet()) {
+                jumpReplacements.append(JumpReplacement(
+                    linkBuffer.locationOf<JSInternalPtrTag>(info.m_replacementSource),
+                    linkBuffer.locationOf<OSRExitPtrTag>(info.m_replacementDestination)));
+            }
         }
-
-        if (info.m_replacementSource.isSet()) {
-            jumpReplacements.append(JumpReplacement(
-                linkBuffer.locationOf<JSInternalPtrTag>(info.m_replacementSource),
-                linkBuffer.locationOf<OSRExitPtrTag>(info.m_replacementDestination)));
-        }
+        m_jitCode->common.m_jumpReplacements = WTFMove(jumpReplacements);
     }
-    m_jitCode->common.m_jumpReplacements = WTFMove(jumpReplacements);
+
+#if ASSERT_ENABLED
+    for (auto& info : m_exitCompilationInfo) {
+        if (info.m_replacementSource.isSet())
+            ASSERT(!m_graph.m_plan.isUnlinked());
+    }
+    if (m_graph.m_plan.isUnlinked())
+        ASSERT(m_jitCode->common.m_jumpReplacements.isEmpty());
+#endif
     
     if (UNLIKELY(m_graph.compilation())) {
         ASSERT(m_exitSiteLabels.size() == m_osrExit.size());

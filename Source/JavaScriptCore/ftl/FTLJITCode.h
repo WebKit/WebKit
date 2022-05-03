@@ -69,6 +69,8 @@ public:
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     void shrinkToFit(const ConcurrentJSLocker&) override;
 
+    bool isUnlinked() const { return common.isUnlinked(); }
+
     PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
 
     const RegisterAtOffsetList* calleeSaveRegisters() const { return &m_calleeSaveRegisters; }

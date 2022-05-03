@@ -37,6 +37,7 @@ using namespace B3;
 
 JITCode::JITCode()
     : JSC::JITCode(JITType::FTLJIT)
+    , common(/* isUnlinked */ false)
 {
 }
 

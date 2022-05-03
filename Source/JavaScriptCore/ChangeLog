@@ -1,3 +1,79 @@
+2022-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce unlinked version of invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=239887
+
+        Reviewed by Saam Barati.
+
+        This patch makes invalidation mechanism unlinked for unlinked DFG.
+
+        1. We always use CheckTraps instead of InvalidationPoint with VMTraps so that we do not need
+           to repatch existing code.
+        2. We introduce load-and-branch based InvalidationPoint for unlinked DFG so that we do not need
+           to repatch it to jump to OSR exit when watchpoint fires. We store this condition in DFG::JITData
+           so that code can quickly access to that.
+        3. We make isStillValid conditions in DFG::CommonData always true for unlinked DFG code. Instead,
+           we check isJettisoned() condition of CodeBlock since it will become eventually per CodeBlock
+           information (while this CodeBlock gets invalidated, unlinked DFG code itself can be used for
+           the other CodeBlock).
+
+        After this change, now, jumpReplacements for unlinked DFG becomes empty. We no longer repatch these invalidation points.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::hasInstalledVMTrapsBreakpoints const):
+        (JSC::CodeBlock::canInstallVMTrapBreakpoints const):
+        (JSC::CodeBlock::installVMTrapBreakpoints):
+        (JSC::CodeBlock::hasInstalledVMTrapBreakpoints const): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isJettisoned const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidateLinkedCode):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::CommonData::invalidate): Deleted.
+        (JSC::DFG::CommonData::isVMTrapBreakpoint): Deleted.
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        (JSC::DFG::CommonData::hasInstalledVMTrapsBreakpoints const):
+        (JSC::DFG::CommonData::isUnlinked const):
+        (JSC::DFG::CommonData::isStillValid const):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::JITCode):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::isUnlinked const):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::isUnlinked const):
+        * jit/JITCode.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::handleTraps):
+
 2022-05-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce shifting Structure encoding

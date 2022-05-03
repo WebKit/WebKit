@@ -324,10 +324,20 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail, recovery);
 }
 
-void SpeculativeJIT::emitInvalidationPoint(Node* node)
+void SpeculativeJIT::compileInvalidationPoint(Node* node)
 {
     if (!m_compileOkay)
         return;
+
+#if USE(JSVALUE64)
+    if (m_graph.m_plan.isUnlinked()) {
+        auto exitJump = m_jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::constantsRegister, JITData::offsetOfIsInvalidated()));
+        speculationCheck(UncountableInvalidation, JSValueRegs(), nullptr, exitJump);
+        noResult(node);
+        return;
+    }
+#endif
+
     OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
     m_jit.appendOSRExit(OSRExit(
         UncountableInvalidation, JSValueSource(), MethodOfGettingAValueProfile(),
@@ -2497,7 +2507,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
     
 void SpeculativeJIT::compileCheckTraps(Node* node)
 {
-    ASSERT(Options::usePollingTraps());
+    ASSERT(Options::usePollingTraps() || m_graph.m_plan.isUnlinked());
     GPRTemporary unused(this);
     GPRReg unusedGPR = unused.gpr();
 

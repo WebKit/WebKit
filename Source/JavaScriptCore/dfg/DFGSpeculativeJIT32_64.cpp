@@ -4024,7 +4024,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case InvalidationPoint:
-        emitInvalidationPoint(node);
+        compileInvalidationPoint(node);
         break;
 
     case CheckTraps:

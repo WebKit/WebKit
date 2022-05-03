@@ -1,3 +1,13 @@
+2022-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce unlinked version of invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=239887
+
+        Reviewed by Saam Barati.
+
+        * stress/polling-based-trap-on-unlinked-dfg.js: Added.
+        (test):
+
 2022-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add ISO8601 based Temporal.PlainDate getters

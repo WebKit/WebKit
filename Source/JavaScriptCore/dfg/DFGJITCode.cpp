@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 
 JITCode::JITCode(bool isUnlinked)
     : DirectJITCode(JITType::DFGJIT)
-    , isUnlinked(isUnlinked)
+    , common(isUnlinked)
 {
 }
 

@@ -79,17 +79,20 @@ struct WeakReferenceTransition {
 class CommonData : public MathICHolder {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
-    CommonData()
+    CommonData(bool isUnlinked)
         : codeOrigins(CodeOriginPool::create())
+        , m_isUnlinked(isUnlinked)
     { }
     ~CommonData();
     
     void shrinkToFit();
     
-    bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
-    bool hasInstalledVMTrapsBreakpoints() const { return isStillValid && hasVMTrapsBreakpointsInstalled; }
+    bool invalidateLinkedCode(); // Returns true if we did invalidate, or false if the code block was already invalidated.
+    bool hasInstalledVMTrapsBreakpoints() const { return m_isStillValid && m_hasVMTrapsBreakpointsInstalled; }
     void installVMTrapBreakpoints(CodeBlock* owner);
-    bool isVMTrapBreakpoint(void* address);
+
+    bool isUnlinked() const { return m_isUnlinked; }
+    bool isStillValid() const { return m_isStillValid; }
 
     CatchEntrypointData* catchOSREntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)
     {
@@ -136,8 +139,6 @@ public:
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;
-    bool isStillValid { true };
-    bool hasVMTrapsBreakpointsInstalled { false };
     
 #if USE(JSVALUE32_64)
     Bag<double> doubleConstants;
@@ -145,6 +146,11 @@ public:
     
     unsigned frameRegisterCount { std::numeric_limits<unsigned>::max() };
     unsigned requiredRegisterCountForExit { std::numeric_limits<unsigned>::max() };
+
+private:
+    bool m_isUnlinked { false };
+    bool m_isStillValid { true };
+    bool m_hasVMTrapsBreakpointsInstalled { false };
 };
 
 CodeBlock* codeBlockForVMTrapPC(void* pc);

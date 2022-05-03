@@ -189,6 +189,8 @@ public:
     {
         return m_jitType;
     }
+
+    bool isUnlinked() const;
     
     template<typename PointerType>
     static JITType jitTypeFor(PointerType jitCode)

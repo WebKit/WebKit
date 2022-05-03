@@ -453,7 +453,7 @@ bool doesGC(Graph& graph, Node* node)
 
     case CheckTraps:
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194323
-        ASSERT(Options::usePollingTraps());
+        ASSERT(Options::usePollingTraps() || graph.m_plan.isUnlinked());
         return true;
 
     case CompareEq:

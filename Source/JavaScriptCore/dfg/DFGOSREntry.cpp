@@ -97,7 +97,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
-    ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
+    ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid());
+    ASSERT(!codeBlock->isJettisoned());
 
     if (!Options::useOSREntryToDFG())
         return nullptr;
@@ -346,7 +347,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
 MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex bytecodeIndex)
 {
     ASSERT(optimizedCodeBlock->jitType() == JITType::DFGJIT || optimizedCodeBlock->jitType() == JITType::FTLJIT);
-    ASSERT(optimizedCodeBlock->jitCode()->dfgCommon()->isStillValid);
+    ASSERT(optimizedCodeBlock->jitCode()->dfgCommon()->isStillValid());
+    ASSERT(!optimizedCodeBlock->isJettisoned());
 
     if (!Options::useOSREntryToDFG() && optimizedCodeBlock->jitCode()->jitType() == JITType::DFGJIT)
         return nullptr;

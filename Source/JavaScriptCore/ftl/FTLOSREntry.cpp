@@ -48,7 +48,7 @@ void* prepareOSREntry(
     DFG::JITCode* dfgCode = dfgCodeBlock->jitCode()->dfg();
     ForOSREntryJITCode* entryCode = entryCodeBlock->jitCode()->ftlForOSREntry();
 
-    if (!entryCode->dfgCommon()->isStillValid) {
+    if (!entryCode->dfgCommon()->isStillValid()) {
         dfgCode->clearOSREntryBlockAndResetThresholds(dfgCodeBlock);
         return nullptr;
     }

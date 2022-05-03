@@ -1674,7 +1674,7 @@ public:
     void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     
-    void emitInvalidationPoint(Node*);
+    void compileInvalidationPoint(Node*);
     
     void unreachable(Node*);
     

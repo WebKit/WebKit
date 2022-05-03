@@ -57,6 +57,7 @@ public:
     using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
 
     static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
+    static ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
 
     static std::unique_ptr<JITData> create(unsigned poolSize, ExitVector&& exits)
     {
@@ -69,6 +70,13 @@ public:
     }
     const MacroAssemblerCodeRef<OSRExitPtrTag>& exitCode(unsigned exitIndex) const { return m_exits[exitIndex]; }
 
+    bool isInvalidated() const { return !!m_isInvalidated; }
+
+    void invalidate()
+    {
+        m_isInvalidated = 1;
+    }
+
 private:
     explicit JITData(unsigned size, ExitVector&& exits)
         : Base(size)
@@ -77,6 +85,7 @@ private:
     }
 
     ExitVector m_exits;
+    uint8_t m_isInvalidated { 0 };
 };
 
 class JITCode final : public DirectJITCode {
@@ -86,6 +95,7 @@ public:
     
     CommonData* dfgCommon() final;
     JITCode* dfg() final;
+    bool isUnlinked() const { return common.isUnlinked(); }
     
     OSREntryData* osrEntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)
     {
@@ -180,7 +190,6 @@ public:
     unsigned osrEntryRetry { 0 };
     bool abandonOSREntry { false };
 #endif // ENABLE(FTL_JIT)
-    bool isUnlinked { false };
 };
 
 } } // namespace JSC::DFG

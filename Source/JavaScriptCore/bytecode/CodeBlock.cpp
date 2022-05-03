@@ -2250,10 +2250,20 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
             compilation->setJettisonReason(reason, detail);
         
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.
-        if (!jitCode()->dfgCommon()->invalidate()) {
-            // We've already been invalidated.
-            RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
-            return;
+        if (auto* jitData = dfgJITData()) {
+            if (jitData->isInvalidated()) {
+                // We've already been invalidated.
+                RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
+                return;
+            }
+            jitData->invalidate();
+        }
+        if (!jitCode()->isUnlinked()) {
+            if (!jitCode()->dfgCommon()->invalidateLinkedCode()) {
+                // We've already been invalidated.
+                RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
+                return;
+            }
         }
     }
     
@@ -3479,7 +3489,21 @@ void CodeBlock::jitNextInvocation()
     m_unlinkedCode->llintExecuteCounter().setNewThreshold(0, this);
 }
 
-bool CodeBlock::hasInstalledVMTrapBreakpoints() const
+bool CodeBlock::hasInstalledVMTrapsBreakpoints() const
+{
+#if ENABLE(SIGNAL_BASED_VM_TRAPS)
+    // This function may be called from a signal handler. We need to be
+    // careful to not call anything that is not signal handler safe, e.g.
+    // we should not perturb the refCount of m_jitCode.
+    if (!canInstallVMTrapBreakpoints())
+        return false;
+    return m_jitCode->dfgCommon()->hasInstalledVMTrapsBreakpoints();
+#else
+    return false;
+#endif
+}
+
+bool CodeBlock::canInstallVMTrapBreakpoints() const
 {
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     // This function may be called from a signal handler. We need to be
@@ -3487,7 +3511,9 @@ bool CodeBlock::hasInstalledVMTrapBreakpoints() const
     // we should not perturb the refCount of m_jitCode.
     if (!JITCode::isOptimizingJIT(jitType()))
         return false;
-    return m_jitCode->dfgCommon()->hasInstalledVMTrapsBreakpoints();
+    if (m_jitCode->isUnlinked())
+        return false;
+    return true;
 #else
     return false;
 #endif
@@ -3499,7 +3525,7 @@ bool CodeBlock::installVMTrapBreakpoints()
     // This function may be called from a signal handler. We need to be
     // careful to not call anything that is not signal handler safe, e.g.
     // we should not perturb the refCount of m_jitCode.
-    if (!JITCode::isOptimizingJIT(jitType()))
+    if (!canInstallVMTrapBreakpoints())
         return false;
     auto& commonData = *m_jitCode->dfgCommon();
     commonData.installVMTrapBreakpoints(this);

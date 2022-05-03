@@ -55,28 +55,36 @@ inline HashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBloc
     return pcCodeBlockMap;
 }
 
-bool CommonData::invalidate()
+bool CommonData::invalidateLinkedCode()
 {
-    if (!isStillValid)
+    if (m_isUnlinked) {
+        ASSERT(m_jumpReplacements.isEmpty());
+        return true;
+    }
+
+    if (!m_isStillValid)
         return false;
 
-    if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
+    if (UNLIKELY(m_hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
         auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
-        hasVMTrapsBreakpointsInstalled = false;
+        m_hasVMTrapsBreakpointsInstalled = false;
     }
 
     for (unsigned i = m_jumpReplacements.size(); i--;)
         m_jumpReplacements[i].fire();
-    isStillValid = false;
+
+    m_isStillValid = false;
     return true;
 }
 
 CommonData::~CommonData()
 {
-    if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
+    if (m_isUnlinked)
+        return;
+    if (UNLIKELY(m_hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
         auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
@@ -86,10 +94,11 @@ CommonData::~CommonData()
 
 void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
 {
+    ASSERT(!m_isUnlinked);
     Locker locker { pcCodeBlockMapLock };
-    if (!isStillValid || hasVMTrapsBreakpointsInstalled)
+    if (!m_isStillValid || m_hasVMTrapsBreakpointsInstalled)
         return;
-    hasVMTrapsBreakpointsInstalled = true;
+    m_hasVMTrapsBreakpointsInstalled = true;
 
     auto& map = pcCodeBlockMap();
 #if !defined(NDEBUG)
@@ -118,17 +127,6 @@ CodeBlock* codeBlockForVMTrapPC(void* pc)
     if (result == map.end())
         return nullptr;
     return result->value;
-}
-
-bool CommonData::isVMTrapBreakpoint(void* address)
-{
-    if (!isStillValid)
-        return false;
-    for (unsigned i = m_jumpReplacements.size(); i--;) {
-        if (address == m_jumpReplacements[i].dataLocation())
-            return true;
-    }
-    return false;
 }
 
 void CommonData::validateReferences(const TrackedReferences& trackedReferences)

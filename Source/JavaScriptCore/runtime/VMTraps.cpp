@@ -145,7 +145,7 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
         return;
     }
 
-    if (JITCode::isOptimizingJIT(foundCodeBlock->jitType())) {
+    if (foundCodeBlock->canInstallVMTrapBreakpoints()) {
         if (!m_lock->tryLock())
             return; // Let the SignalSender try again later.
 
@@ -155,7 +155,7 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
             return;
         }
 
-        if (!foundCodeBlock->hasInstalledVMTrapBreakpoints())
+        if (!foundCodeBlock->hasInstalledVMTrapsBreakpoints())
             foundCodeBlock->installVMTrapBreakpoints();
         return;
     }
@@ -222,7 +222,7 @@ public:
                     // Either we trapped for some other reason, e.g. Wasm OOB, or we didn't properly monitor the PC. Regardless, we can't do much now...
                     return SignalAction::NotHandled;
                 }
-                ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
+                ASSERT(currentCodeBlock->hasInstalledVMTrapsBreakpoints());
                 VM& vm = currentCodeBlock->vm();
 
                 // This signal handler is triggered by the mutator thread due to the installed halt instructions
@@ -242,7 +242,7 @@ public:
                 bool sawCurrentCodeBlock = false;
                 vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
                     // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
-                    if (codeBlock->hasInstalledVMTrapBreakpoints()) {
+                    if (codeBlock->hasInstalledVMTrapsBreakpoints()) {
                         if (currentCodeBlock == codeBlock)
                             sawCurrentCodeBlock = true;
 
@@ -379,7 +379,7 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
         Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
         vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
             // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
-            if (codeBlock->hasInstalledVMTrapBreakpoints())
+            if (codeBlock->hasInstalledVMTrapsBreakpoints())
                 codeBlock->jettison(Profiler::JettisonDueToVMTraps);
         });
     }
