@@ -1,3 +1,15 @@
+2022-05-03  Robert Jenner  <Jenner@apple.com>
+
+        [ Test Gardening ] Batch remove expectations no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=240021
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-05-03  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Importing a timeline leaves timeline overview non-scrollable/non-zoomable until windows is resized
