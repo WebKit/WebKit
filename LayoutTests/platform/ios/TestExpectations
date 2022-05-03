@@ -3582,6 +3582,9 @@ webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/239564 storage/indexeddb/modern/index-get-count-failures.html [ Failure ]
 webkit.org/b/239564 storage/indexeddb/modern/deleteobjectstore-1.html [ Failure ]
 webkit.org/b/239564 http/tests/app-privacy-report/user-attribution-cors-preflight-redirect.html [ Failure ]
+webkit.org/b/239564 fast/forms/select-list-box-with-height.html [ Failure ]
+webkit.org/b/239564 fast/forms/control-restrict-line-height.html [ Failure ]
+webkit.org/b/239564 tables/mozilla/bugs/bug2479-3.html [ Failure ]
 
 webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
 
