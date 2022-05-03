@@ -241,8 +241,6 @@ NetworkProcessProxy::NetworkProcessProxy()
     , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
     , m_cookieManager(makeUniqueRef<WebCookieManagerProxy>(*this))
 {
-    RELEASE_LOG(Process, "%p - NetworkProcessProxy::NetworkProcessProxy", this);
-
     connect();
     sendCreationParametersToNewProcess();
     updateProcessAssertion();
@@ -551,8 +549,6 @@ void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPage
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
-    RELEASE_LOG(Process, "%p - NetworkProcessProxy::didFinishLaunching", this);
-
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {

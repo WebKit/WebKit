@@ -49,10 +49,12 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 #if HAVE(LSDATABASECONTEXT)
         auto database = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey);
 
-        RELEASE_LOG(Loading, "Received Launch Services database %p", database);
-
-        if (database)
-            [LSDatabaseContext.sharedDatabaseContext observeDatabaseChange4WebKit:database];
+        if (database) {
+            auto context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
+            if (![context respondsToSelector:@selector(observeDatabaseChange4WebKit:)])
+                return;
+            [context observeDatabaseChange4WebKit:database];
+        }
 #endif
         m_semaphore.signal();
         m_hasReceivedLaunchServicesDatabase = true;

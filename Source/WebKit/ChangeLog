@@ -1,3 +1,16 @@
+2022-05-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r293743.
+        https://bugs.webkit.org/show_bug.cgi?id=240042
+
+        Introduced debug assert
+
+        Reverted changeset:
+
+        "Add logging related to Launch Services database"
+        https://bugs.webkit.org/show_bug.cgi?id=240032
+        https://commits.webkit.org/r293743
+
 2022-05-03  Per Arne Vollan  <pvollan@apple.com>
 
         Add logging related to Launch Services database
