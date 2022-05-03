@@ -1,3 +1,13 @@
+2022-05-03  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION(r293671): [ iOS ] 2X TestWebKitAPI.MediaLoading. RangeRequestSynthesis (API-Tests) are constant failures 
+        https://bugs.webkit.org/show_bug.cgi?id=240033
+
+        Unreviewed test gardening. Disabling API-tests for iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r293703): 358 JSC tests failing
