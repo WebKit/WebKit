@@ -60,7 +60,6 @@ struct GPUProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
-    Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
 #endif
 
     String applicationVisibleName;

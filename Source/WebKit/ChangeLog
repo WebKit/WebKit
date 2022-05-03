@@ -1,5 +1,26 @@
 2022-05-03  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS][GPUP] Remove Mach sandbox extensions for non browser clients
+        https://bugs.webkit.org/show_bug.cgi?id=240008
+
+        Reviewed by Geoffrey Garen.
+
+        Remove Mach sandbox extensions for clients that are not browsers in the GPU process on iOS. The same set of extensions
+        has recently been removed from the WebContent process. We also block these in the GPU process' sandbox, so there should
+        be no change in behavior.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::nonBrowserServices): Deleted.
+
+2022-05-03  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS][WP] Remove obsolete message filter
         https://bugs.webkit.org/show_bug.cgi?id=240012
 
