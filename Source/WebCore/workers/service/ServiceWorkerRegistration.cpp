@@ -155,6 +155,11 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
+    if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext()); serviceWorkerGlobalScope && serviceWorkerGlobalScope->serviceWorker().state() == ServiceWorkerState::Installing) {
+        promise->reject(Exception(InvalidStateError, "service worker is installing"_s));
+        return;
+    }
+
     m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), newestWorker->workerType(), WTFMove(promise));
 }
 

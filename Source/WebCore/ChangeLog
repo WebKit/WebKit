@@ -1,3 +1,16 @@
+2022-05-03  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerRegistration update should fail if called from an installing service worker context
+        https://bugs.webkit.org/show_bug.cgi?id=239962
+
+        Reviewed by Chris Dumez.
+
+        Implement step 4 of https://w3c.github.io/ServiceWorker/#service-worker-registration-update.
+        Covered by rebased test.
+
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::update):
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         URL.createObjectURL should not be exposed in service worker contexts
