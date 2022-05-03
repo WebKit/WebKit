@@ -1,5 +1,17 @@
 2022-05-03  Youenn Fablet  <youenn@apple.com>
 
+        Fix buggy assert in CoreAudioSharedUnit::configureSpeakerProc
+        https://bugs.webkit.org/show_bug.cgi?id=240001
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        Initialize the sampleRate field before using it.
+
+2022-05-03  Youenn Fablet  <youenn@apple.com>
+
         AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary can free memory
         https://bugs.webkit.org/show_bug.cgi?id=240002
 
