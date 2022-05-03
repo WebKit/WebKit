@@ -1,5 +1,15 @@
 2022-05-03  Truitt Savell  <tsavell@apple.com>
 
+        Rebase fast/forms/select-list-box-with-height.html and fast/forms/control-restrict-line-height.html
+        https://bugs.webkit.org/show_bug.cgi?id=240039
+
+        unreviewed test gardening.
+
+        * platform/ios/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/select-list-box-with-height-expected.txt:
+
+2022-05-03  Truitt Savell  <tsavell@apple.com>
+
         Fix rebase from 250225@main
         https://bugs.webkit.org/show_bug.cgi?id=239569
 
