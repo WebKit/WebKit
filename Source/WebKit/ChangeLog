@@ -1,3 +1,52 @@
+2022-05-03  Philippe Normand  <pnormand@igalia.com> and Yury Semikhatsky <yurys@chromium.org>
+
+        [WK2] Add API to allow embedder to set a timezone override
+        https://bugs.webkit.org/show_bug.cgi?id=213884
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds:
+
+        - new Cocoa API
+        - new Glib API (targetting both WPE and GTK ports)
+        - new C API (for the win port)
+
+        that allows the embedder to set a timezone override for the underlying PageConfiguration.
+        Since this API is not exposed in glib ports, a new contruct-time-only property was added to
+        the WebKitWebContext API. It would also allow fine-grained control over multiple pages, for
+        instance it's not possible currently to have two pages in different timezones.
+
+        No new layout tests, this change is covered by new API tests.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyTimeZoneOverride):
+        (WKContextConfigurationSetTimeZoneOverride):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration timeZoneOverride]):
+        (-[_WKProcessPoolConfiguration setTimeZoneOverride:]):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        (webkit_web_context_set_time_zone_override):
+        (webkit_web_context_get_time_zone_override):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Apply timezone override if any on process start.
+
 2022-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC stream connection sends should fail immediately when connection closes

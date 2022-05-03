@@ -3032,6 +3032,7 @@
 		EBA75C48275ED7BE00D6D31C /* PushMessageCrypto.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PushMessageCrypto.cpp; sourceTree = "<group>"; };
 		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		ECA680CD1E68CC0900731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
+		F3CEF6B82808F2D3001E23A5 /* TimeZoneOverride.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TimeZoneOverride.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4010B7F24DA24AC00A876E2 /* NavigationSwipeTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationSwipeTests.mm; sourceTree = "<group>"; };
 		F4010B8124DA267F00A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
@@ -3704,6 +3705,7 @@
 				9B02E0D5235FA47D004044B2 /* TextManipulation.mm */,
 				5C16F8FB230C942B0074C4A8 /* TextSize.mm */,
 				C22FA32A228F8708009D7988 /* TextWidth.mm */,
+				F3CEF6B82808F2D3001E23A5 /* TimeZoneOverride.mm */,
 				5C73A81A2323059800DEA85A /* TLSDeprecation.mm */,
 				CDE195B31CFE0ADE0053D256 /* TopContentInset.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,

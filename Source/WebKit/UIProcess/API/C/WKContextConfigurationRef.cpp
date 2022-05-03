@@ -222,3 +222,13 @@ void WKContextConfigurationSetShouldConfigureJSCForTesting(WKContextConfiguratio
 {
     toImpl(configuration)->setShouldConfigureJSCForTesting(value);
 }
+
+WKStringRef WKContextConfigurationCopyTimeZoneOverride(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->timeZoneOverride());
+}
+
+void WKContextConfigurationSetTimeZoneOverride(WKContextConfigurationRef configuration, WKStringRef timeZoneOverride)
+{
+    toImpl(configuration)->setTimeZoneOverride(toImpl(timeZoneOverride)->string());
+}

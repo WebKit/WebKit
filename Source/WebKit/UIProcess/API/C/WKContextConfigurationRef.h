@@ -95,6 +95,9 @@ WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigura
     
 WK_EXPORT void WKContextConfigurationSetShouldConfigureJSCForTesting(WKContextConfigurationRef configuration, bool value);
 
+WK_EXPORT WKStringRef WKContextConfigurationCopyTimeZoneOverride(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetTimeZoneOverride(WKContextConfigurationRef configuration, WKStringRef timeZoneOverride);
+
 #ifdef __cplusplus
 }
 #endif

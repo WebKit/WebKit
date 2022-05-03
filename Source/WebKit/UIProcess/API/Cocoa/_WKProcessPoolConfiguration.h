@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKBase.h>
 #import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -76,6 +77,8 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, nullable, copy, setter=setHSTSStorageDirectory:) NSURL *hstsStorageDirectory WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.hstsStorageDirectory", macos(10.15, 12.0), ios(13.0, 15.0));
 
 @property (nonatomic) BOOL configureJSCForTesting WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+
+@property (nonatomic, nullable, copy) NSString *timeZoneOverride WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

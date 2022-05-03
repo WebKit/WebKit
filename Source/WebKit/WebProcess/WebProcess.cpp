@@ -143,6 +143,7 @@
 #include <pal/Logging.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/DateMath.h>
 #include <wtf/Language.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -505,6 +506,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         supplement->initialize(parameters);
 
     setCacheModel(parameters.cacheModel);
+
+    if (!parameters.timeZoneOverride.isEmpty())
+        setTimeZoneOverride(parameters.timeZoneOverride);
 
     if (!parameters.overrideLanguages.isEmpty()) {
         LOG_WITH_STREAM(Language, stream << "Web Process initialization is setting overrideLanguages: " << parameters.overrideLanguages);

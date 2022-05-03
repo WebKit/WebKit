@@ -403,6 +403,16 @@
     _processPoolConfiguration->setShouldConfigureJSCForTesting(value);
 }
 
+- (NSString *)timeZoneOverride
+{
+    return _processPoolConfiguration->timeZoneOverride();
+}
+
+- (void)setTimeZoneOverride:(NSString *)timeZone
+{
+    _processPoolConfiguration->setTimeZoneOverride(timeZone);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

@@ -913,6 +913,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.presentingApplicationPID = m_configuration->presentingApplicationPID();
 
+    parameters.timeZoneOverride = m_configuration->timeZoneOverride();
+
     // Add any platform specific parameters
     platformInitializeWebProcess(process, parameters);
 

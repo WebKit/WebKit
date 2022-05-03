@@ -214,6 +214,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(ATSPI)
     encoder << accessibilityBusAddress;
 #endif
+
+    encoder << timeZoneOverride;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -570,6 +572,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.accessibilityBusAddress = WTFMove(*accessibilityBusAddress);
 #endif
+
+    std::optional<String> timeZoneOverride;
+    decoder >> timeZoneOverride;
+    if (!timeZoneOverride)
+        return false;
+    parameters.timeZoneOverride = WTFMove(*timeZoneOverride);
 
     return true;
 }

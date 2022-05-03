@@ -306,9 +306,9 @@ const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
     return m_resourceData.get();
 }
 
-static void runJavaScriptReadyCallback(GObject*, GAsyncResult* result, WebViewTest* test)
+static void runJavaScriptReadyCallback(GObject* object, GAsyncResult* result, WebViewTest* test)
 {
-    test->m_javascriptResult = webkit_web_view_run_javascript_finish(test->m_webView, result, test->m_javascriptError);
+    test->m_javascriptResult = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, test->m_javascriptError);
     g_main_loop_quit(test->m_mainLoop);
 }
 
@@ -324,13 +324,15 @@ static void runJavaScriptInWorldReadyCallback(GObject*, GAsyncResult* result, We
     g_main_loop_quit(test->m_mainLoop);
 }
 
-WebKitJavascriptResult* WebViewTest::runJavaScriptAndWaitUntilFinished(const char* javascript, GError** error)
+WebKitJavascriptResult* WebViewTest::runJavaScriptAndWaitUntilFinished(const char* javascript, GError** error, WebKitWebView* webView)
 {
     if (m_javascriptResult)
         webkit_javascript_result_unref(m_javascriptResult);
     m_javascriptResult = 0;
     m_javascriptError = error;
-    webkit_web_view_run_javascript(m_webView, javascript, 0, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptReadyCallback), this);
+    if (!webView)
+        webView = m_webView;
+    webkit_web_view_run_javascript(webView, javascript, 0, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptReadyCallback), this);
     g_main_loop_run(m_mainLoop);
 
     return m_javascriptResult;

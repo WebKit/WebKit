@@ -132,6 +132,7 @@ int main(int argc, char** argv)
     g_setenv("GSETTINGS_BACKEND", "memory", TRUE);
     // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
     g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
+    g_setenv("TZ", "America/Los_Angeles", TRUE);
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();

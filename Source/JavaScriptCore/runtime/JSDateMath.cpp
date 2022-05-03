@@ -433,12 +433,18 @@ Ref<DateInstanceData> DateCache::cachedDateInstanceData(double millisecondsFromE
 void DateCache::timeZoneCacheSlow()
 {
     ASSERT(!m_timeZoneCache);
+
+    Vector<UChar, 32> timeZoneID;
+    getTimeZoneOverride(timeZoneID);
 #if HAVE(ICU_C_TIMEZONE_API)
     auto* cache = new OpaqueICUTimeZone;
 
     String canonical;
-    Vector<UChar, 32> timeZoneID;
-    auto status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+    UErrorCode status = U_ZERO_ERROR;
+    if (timeZoneID.isEmpty()) {
+        status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+    }
     if (U_SUCCESS(status)) {
         Vector<UChar, 32> canonicalBuffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.data(), timeZoneID.size(), canonicalBuffer, nullptr);
@@ -455,6 +461,10 @@ void DateCache::timeZoneCacheSlow()
     ucal_setGregorianChange(cache->m_calendar.get(), minECMAScriptTime, &status); // Ignore "unsupported" error.
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(cache);
 #else
+    if (!timeZoneID.isEmpty()) {
+        m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(toOpaqueICUTimeZone(icu::TimeZone::createTimeZone(icu::UnicodeString(timeZoneID.data(), timeZoneID.size()))));
+        return;
+    }
     // Do not use icu::TimeZone::createDefault. ICU internally has a cache for timezone and createDefault returns this cached value.
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(toOpaqueICUTimeZone(icu::TimeZone::detectHostTimeZone()));
 #endif

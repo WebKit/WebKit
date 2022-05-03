@@ -393,31 +393,38 @@ inline double timeToMS(double hour, double min, double sec, double ms)
     return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
 }
 
+WTF_EXPORT_PRIVATE bool isTimeZoneValid(StringView);
+WTF_EXPORT_PRIVATE bool setTimeZoneOverride(StringView);
+WTF_EXPORT_PRIVATE void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID);
+
 // Returns combined offset in millisecond (UTC + DST).
 WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
 
 } // namespace WTF
 
-using WTF::isLeapYear;
+using WTF::calculateLocalTimeOffset;
 using WTF::dateToDaysFrom1970;
 using WTF::dayInMonthFromDayInYear;
 using WTF::dayInYear;
+using WTF::getTimeZoneOverride;
+using WTF::isLeapYear;
+using WTF::isTimeZoneValid;
+using WTF::jsCurrentTime;
+using WTF::LocalTimeOffset;
+using WTF::makeRFC2822DateString;
 using WTF::minutesPerHour;
 using WTF::monthFromDayInYear;
 using WTF::msPerDay;
 using WTF::msPerHour;
 using WTF::msPerMinute;
 using WTF::msPerSecond;
-using WTF::msToYear;
 using WTF::msToDays;
-using WTF::msToMinutes;
 using WTF::msToHours;
+using WTF::msToMinutes;
+using WTF::msToYear;
+using WTF::parseDateFromNullTerminatedCharacters;
 using WTF::secondsPerDay;
 using WTF::secondsPerMinute;
-using WTF::parseDateFromNullTerminatedCharacters;
-using WTF::timeToMS;
-using WTF::makeRFC2822DateString;
-using WTF::LocalTimeOffset;
-using WTF::calculateLocalTimeOffset;
+using WTF::setTimeZoneOverride;
 using WTF::timeClip;
-using WTF::jsCurrentTime;
+using WTF::timeToMS;

@@ -164,6 +164,9 @@ public:
     const std::optional<MemoryPressureHandler::Configuration>& memoryPressureHandlerConfiguration() const { return m_memoryPressureHandlerConfiguration; }
 #endif
 
+    void setTimeZoneOverride(const WTF::String& timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
+    const WTF::String& timeZoneOverride() const { return m_timeZoneOverride; }
+
 private:
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_customClassesForParameterCoder;
@@ -206,6 +209,7 @@ private:
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_presentingApplicationProcessToken;
 #endif
+    WTF::String m_timeZoneOverride;
 };
 
 } // namespace API

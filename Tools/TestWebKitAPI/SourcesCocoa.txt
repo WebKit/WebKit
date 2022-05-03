@@ -240,6 +240,7 @@ Tests/WebKitCocoa/TestURLSchemeHandler.mm
 Tests/WebKitCocoa/TextManipulation.mm
 Tests/WebKitCocoa/TextSize.mm
 Tests/WebKitCocoa/TextWidth.mm
+Tests/WebKitCocoa/TimeZoneOverride.mm
 Tests/WebKitCocoa/TopContentInset.mm
 Tests/WebKitCocoa/UIDelegate.mm
 Tests/WebKitCocoa/UploadDirectory.mm

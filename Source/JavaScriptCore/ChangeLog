@@ -1,3 +1,29 @@
+2022-05-03  Philippe Normand  <pnormand@igalia.com> and Pavel Feldman <pavel.feldman@gmail.com> and Yury Semikhatsky <yurys@chromium.org>
+
+        [WK2] Add API to allow embedder to set a timezone override
+        https://bugs.webkit.org/show_bug.cgi?id=213884
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime): Format the overridden timezone if it's enabled.
+        * runtime/DateConversion.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::formateDateInstance):
+        * runtime/JSDateMath.cpp:
+        (JSC::toICUTimeZone):
+        (JSC::toOpaqueICUTimeZone):
+        (JSC::OpaqueICUTimeZoneDeleter::operator()):
+        (JSC::DateCache::calculateLocalTimeOffset):
+        (JSC::DateCache::defaultTimeZone):
+        (JSC::DateCache::timeZoneDisplayNameOverride):
+        (JSC::DateCache::timeZoneCacheSlow): Apply timezone override if it is set.
+        (JSC::DateCache::resetIfNecessary):
+        * runtime/JSDateMath.h:
+
+
 2022-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce unlinked version of invalidation

@@ -857,7 +857,7 @@ class WebkitFlatpak:
             ])
 
             sandbox_environment.update({
-                "TZ": "PST8PDT",
+                "TZ": "America/Los_Angeles",
             })
 
         env_var_prefixes_to_keep = [

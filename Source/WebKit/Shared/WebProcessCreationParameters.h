@@ -255,6 +255,8 @@ struct WebProcessCreationParameters {
 #if USE(ATSPI)
     String accessibilityBusAddress;
 #endif
+
+    String timeZoneOverride;
 };
 
 } // namespace WebKit

@@ -76,9 +76,15 @@
 #include <limits>
 #include <stdint.h>
 #include <time.h>
+#include <unicode/ucal.h>
 #include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Language.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/UTF8Conversion.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -90,6 +96,13 @@ namespace WTF {
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[length])
 {
     return equalLettersIgnoringASCIICase(string, lowercaseLetters, length - 1);
+}
+
+static Lock innerTimeZoneOverrideLock;
+static Vector<UChar>& innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
+{
+    static NeverDestroyed<Vector<UChar>> timeZoneOverride;
+    return timeZoneOverride;
 }
 
 /* Constants */
@@ -1014,6 +1027,48 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     appendTwoDigitNumber(stringBuilder, absoluteUTCOffset % 60);
 
     return stringBuilder.toString();
+}
+
+static std::optional<Vector<UChar, 32>> validateTimeZone(StringView timeZone)
+{
+    Vector<UChar, 32> buffer(timeZone.length());
+    timeZone.getCharactersWithUpconvert(buffer.data());
+
+    Vector<UChar, 32> canonicalBuffer;
+    auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
+    if (!U_SUCCESS(status))
+        return std::nullopt;
+    return WTFMove(canonicalBuffer);
+}
+
+bool isTimeZoneValid(StringView timeZone)
+{
+    return validateTimeZone(timeZone).has_value();
+}
+
+bool setTimeZoneOverride(StringView timeZone)
+{
+    if (timeZone.isEmpty()) {
+        Locker locker { innerTimeZoneOverrideLock };
+        innerTimeZoneOverride().clear();
+        return true;
+    }
+
+    auto canonicalBuffer = validateTimeZone(timeZone);
+    if (!canonicalBuffer)
+        return false;
+
+    {
+        Locker locker { innerTimeZoneOverrideLock };
+        innerTimeZoneOverride() = WTFMove(*canonicalBuffer);
+    }
+    return true;
+}
+
+void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID)
+{
+    Locker locker { innerTimeZoneOverrideLock };
+    timeZoneID = innerTimeZoneOverride();
 }
 
 } // namespace WTF

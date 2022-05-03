@@ -1,3 +1,36 @@
+2022-05-03  Philippe Normand  <pnormand@igalia.com> and Yury Semikhatsky <yurys@chromium.org>
+
+        [WK2] Add API to allow embedder to set a timezone override
+        https://bugs.webkit.org/show_bug.cgi?id=213884
+
+        Reviewed by Yusuke Suzuki.
+
+        Add API tests for the timezone configuration API. The GTK and WPE MiniBrowsers also gained
+        new runtime options allowing to exercise this new API.
+
+        * MiniBrowser/gtk/main.c:
+        (activate):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/TimeZoneOverride.mm: Added.
+        (TimeZoneOverrideTest::runScriptAndExecuteCallback):
+        (TimeZoneOverrideTest::callAsyncFunctionBody):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextTimeZoneOverride):
+        (testWebContextTimeZoneOverrideInWorker):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (main):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (runJavaScriptReadyCallback):
+        (WebViewTest::runJavaScriptAndWaitUntilFinished):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] The "Markup Image" services menu item should be gated on image analysis results

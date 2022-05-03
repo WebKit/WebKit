@@ -84,6 +84,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #if HAVE(AUDIT_TOKEN)
     copy->m_presentingApplicationProcessToken = this->m_presentingApplicationProcessToken;
 #endif
+    copy->m_timeZoneOverride = this->m_timeZoneOverride;
     return copy;
 }
 
