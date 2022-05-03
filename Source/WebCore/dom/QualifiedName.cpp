@@ -20,6 +20,7 @@
 #include "config.h"
 #include "QualifiedName.h"
 
+#include "CommonAtomStrings.h"
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>

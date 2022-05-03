@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "CachePolicy.h"
 #include "CachedCSSStyleSheet.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"

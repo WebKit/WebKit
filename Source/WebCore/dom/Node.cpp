@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "ChildListMutationScope.h"
+#include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"

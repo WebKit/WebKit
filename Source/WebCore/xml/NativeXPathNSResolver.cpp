@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NativeXPathNSResolver.h"
 
+#include "CommonAtomStrings.h"
 #include "Node.h"
 #include "XMLNames.h"
 #include <wtf/text/WTFString.h>

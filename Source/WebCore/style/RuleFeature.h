@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSSelector.h"
+#include "CommonAtomStrings.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

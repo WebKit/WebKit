@@ -24,6 +24,7 @@
 #pragma once
 
 #include "CachedHTMLCollection.h"
+#include "CommonAtomStrings.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

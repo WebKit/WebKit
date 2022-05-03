@@ -289,17 +289,8 @@ inline AtomString::AtomString(NSString *string)
 extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> nullAtomData;
 extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
 
-// Define external global variables for the commonly used atom strings.
-// These are only usable from the main thread.
-extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> starAtomData;
-extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlAtomData;
-extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlnsAtomData;
-
 inline const AtomString& nullAtom() { return nullAtomData.get(); }
 inline const AtomString& emptyAtom() { return emptyAtomData.get(); }
-inline const AtomString& starAtom() { return starAtomData.get(); }
-inline const AtomString& xmlAtom() { return xmlAtomData.get(); }
-inline const AtomString& xmlnsAtom() { return xmlnsAtomData.get(); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
     : m_string(literal.length() ? AtomStringImpl::add(literal.characters(), literal.length()) : Ref { *emptyAtom().impl() })
@@ -383,8 +374,5 @@ template<> struct IntegerToStringConversionTrait<AtomString> {
 using WTF::AtomString;
 using WTF::nullAtom;
 using WTF::emptyAtom;
-using WTF::starAtom;
-using WTF::xmlAtom;
-using WTF::xmlnsAtom;
 
 #include <wtf/text/StringConcatenate.h>
