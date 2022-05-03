@@ -272,4 +272,20 @@ TEST(WTF_Ref, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) | slot=c deref(a) | deref(c) ", takeLogStr().c_str());
 }
 
+TEST(WTF_Ref, StaticReferenceCastFromConstReference)
+{
+    DerivedRefCheckingRefLogger a("a");
+    const Ref<DerivedRefCheckingRefLogger> ref(a);
+    auto ref2 = static_reference_cast<RefCheckingRefLogger>(ref);
+    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+}
+
+TEST(WTF_Ref, StaticReferenceCastFromRValueReference)
+{
+    DerivedRefCheckingRefLogger a("a");
+    Ref<DerivedRefCheckingRefLogger> ref(a);
+    auto ref2 = static_reference_cast<RefCheckingRefLogger>(WTFMove(ref));
+    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+}
+
 } // namespace TestWebKitAPI
