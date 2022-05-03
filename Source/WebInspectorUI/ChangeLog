@@ -1,3 +1,21 @@
+2022-04-21  Dan Glastonbury  <djg@apple.com>
+
+        WebInspector: Improve rendering of GLbitfield in WebGL canvas recordings.
+        https://bugs.webkit.org/show_bug.cgi?id=239589
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.bitfieldNamesForParameter.test_and_clear_bit):
+        (WI.RecordingAction.bitfieldNamesForParameter): Split known
+        bitfields into an array of valid named representation for each
+        bit. Unknown bits are returned as hexadecimal formatted string.
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+        (WI.RecordingActionTreeElement._generateDOM): If param has a
+        non-null, array of strings, render the array as
+        `context.FIELD1|context.FIELD2`
+
 2022-04-29  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r267038) Import a timeline does not render the timeline, only lists the events
