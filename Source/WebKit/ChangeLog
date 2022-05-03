@@ -1,3 +1,39 @@
+2022-05-02  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Crash in WebKit::ModelElementController::modelElementCreateRemotePreview
+        https://bugs.webkit.org/show_bug.cgi?id=239985
+
+        Reviewed by Dean Jackson.
+
+        Add a check before using m_modelElementController, as it's not guaranteed
+        to be initialized in the constructor, and can be invalidated in WebPageProxy::resetState.
+
+        Test: fast/html/model-element-controller-crash.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementGetCamera):
+        (WebKit::WebPageProxy::modelElementSetCamera):
+        (WebKit::WebPageProxy::modelElementIsPlayingAnimation):
+        (WebKit::WebPageProxy::modelElementSetAnimationIsPlaying):
+        (WebKit::WebPageProxy::modelElementIsLoopingAnimation):
+        (WebKit::WebPageProxy::modelElementSetIsLoopingAnimation):
+        (WebKit::WebPageProxy::modelElementAnimationDuration):
+        (WebKit::WebPageProxy::modelElementAnimationCurrentTime):
+        (WebKit::WebPageProxy::modelElementSetAnimationCurrentTime):
+        (WebKit::WebPageProxy::modelElementHasAudio):
+        (WebKit::WebPageProxy::modelElementIsMuted):
+        (WebKit::WebPageProxy::modelElementSetIsMuted):
+        (WebKit::WebPageProxy::takeModelElementFullscreen):
+        (WebKit::WebPageProxy::modelElementSetInteractionEnabled):
+        (WebKit::WebPageProxy::modelElementCreateRemotePreview):
+        (WebKit::WebPageProxy::modelElementLoadRemotePreview):
+        (WebKit::WebPageProxy::modelElementDestroyRemotePreview):
+        (WebKit::WebPageProxy::modelElementSizeDidChange):
+        (WebKit::WebPageProxy::handleMouseDownForModelElement):
+        (WebKit::WebPageProxy::handleMouseMoveForModelElement):
+        (WebKit::WebPageProxy::handleMouseUpForModelElement):
+        (WebKit::WebPageProxy::modelInlinePreviewUUIDs):
+
 2022-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Revert all use of _setPrivacyProxyFailClosedForUnreachableNonMainHosts
