@@ -126,3 +126,5 @@ model-element/model-element-ready.html [ Skip ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
 [ arm64 ] webaudio/OfflineAudioContext-bad-buffer-crash.html [ Failure ]
 [ arm64 ] webaudio/OfflineAudioContext/bad-buffer-length.html [ Failure ]
+
+webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
