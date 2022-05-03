@@ -1,5 +1,17 @@
 2022-05-03  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS][WP] Only block IOKit access if all GPUP features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=240010
+
+        Reviewed by Tim Horton.
+
+        Only block IOKit access in the WebContent process' sandbox on iOS if all GPUP features are enabled.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+
+2022-05-03  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS][GPUP] Remove Mach sandbox extensions for non browser clients
         https://bugs.webkit.org/show_bug.cgi?id=240008
 
