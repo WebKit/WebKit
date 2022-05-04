@@ -1,3 +1,40 @@
+2022-04-30  Philippe Normand  <philn@igalia.com>
+
+        Web Inspector: Update jsmin to 3.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=239924
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated jsmin from upstream version, applying a few style changes suggested by
+        check-webkit-style. This new version is Python3-only and also much faster. Old:
+
+        time python3 /app/webkit/Source/JavaScriptCore/Scripts/jsmin.py < /app/webkit/WebKitBuild/Release/WebInspectorUI/DerivedSources/Main.js > foo.js
+
+        real 1m21.234s
+        user 0m59.580s
+        sys  0m21.253s
+
+        New:
+
+        time python3 /app/webkit/Source/JavaScriptCore/Scripts/jsmin.py < /app/webkit/WebKitBuild/Release/WebInspectorUI/DerivedSources/Main.js > foo.js
+
+        real 0m3.933s
+        user 0m3.899s
+        sys  0m0.018s
+
+        * Scripts/jsmin.py:
+        (jsmin):
+        (JavascriptMinify.__init__):
+        (JavascriptMinify.minify.write):
+        (JavascriptMinify.minify):
+        (JavascriptMinify):
+        (JavascriptMinify.regex_literal):
+        (JavascriptMinify.regex_literal.cannot):
+        (JavascriptMinify.line_comment):
+        (JavascriptMinify.block_comment):
+        (JavascriptMinify.newline):
+        (JavascriptMinify.minify.read): Deleted.
+
 2022-05-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Implement MacroAssemblerRISCV64 move-conditionally methods
