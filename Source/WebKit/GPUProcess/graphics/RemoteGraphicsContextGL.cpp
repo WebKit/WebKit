@@ -255,7 +255,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
 
 void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifier mediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
 #if USE(AVFOUNDATION)
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
