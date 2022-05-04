@@ -1213,10 +1213,21 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
+#if ENABLE(WEB_ARCHIVE)
+bool DocumentLoader::isLoadingRemoteArchive() const
+{
+    bool isQuickLookPreview = false;
+#if USE(QUICK_LOOK)
+    isQuickLookPreview = isQuickLookPreviewURL(m_response.url());
+#endif
+    return m_archive && !m_frame->settings().webArchiveTestingModeEnabled() && !isQuickLookPreview;
+}
+#endif
+
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
 #if ENABLE(WEB_ARCHIVE)
-    URL documentOrEmptyURL = m_archive && !m_frame->settings().webArchiveTestingModeEnabled() ? URL() : documentURL();
+    URL documentOrEmptyURL = isLoadingRemoteArchive() ? URL() : documentURL();
 #else
     URL documentOrEmptyURL = documentURL();
 #endif
@@ -1245,7 +1256,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             return;
 
 #if ENABLE(WEB_ARCHIVE)
-        if (m_archive && !m_frame->settings().webArchiveTestingModeEnabled()) {
+        if (isLoadingRemoteArchive()) {
             document.setBaseURLOverride(m_archive->mainResource()->url());
             if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(documentURL().protocol().toStringWithoutCopying()))
                 document.securityOrigin().grantLoadLocalResources();
@@ -1801,7 +1812,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
         return false;
 
 #if ENABLE(WEB_ARCHIVE)
-    if (!m_frame->settings().webArchiveTestingModeEnabled()) {
+    if (isLoadingRemoteArchive()) {
         DOCUMENTLOADER_RELEASE_LOG("scheduleArchiveLoad: Failed to unarchive subresource");
         loader.didFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Failed to unarchive subresource"_s));
         return true;
