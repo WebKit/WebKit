@@ -67,8 +67,7 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
 
-        if (RenderObject* object = renderer())
-            object->setNeedsLayout();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -82,8 +81,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

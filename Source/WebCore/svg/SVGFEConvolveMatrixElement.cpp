@@ -164,14 +164,14 @@ void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
     m_orderX->setBaseValInternal(x);
     m_orderY->setBaseValInternal(y);
-    invalidate();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 {
     m_kernelUnitLengthX->setBaseValInternal(x);
     m_kernelUnitLengthY->setBaseValInternal(y);
-    invalidate();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -184,7 +184,7 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 
     if (attrName == SVGNames::inAttr || attrName == SVGNames::orderAttr || attrName == SVGNames::kernelMatrixAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

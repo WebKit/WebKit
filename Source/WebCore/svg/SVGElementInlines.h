@@ -38,7 +38,6 @@ inline void SVGElement::invalidateSVGAttributes()
 inline void SVGElement::invalidateSVGPresentationalHintStyle()
 {
     ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
-    // Trigger style recalculation for "elements as resource" (e.g. referenced by feImage).
     invalidateStyle();
 }
 

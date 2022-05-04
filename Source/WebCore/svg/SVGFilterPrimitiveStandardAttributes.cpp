@@ -78,7 +78,7 @@ void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedNa
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -91,7 +91,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
 
     if (change.source == ChildChange::Source::Parser)
         return;
-    invalidate();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -107,7 +107,7 @@ bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const RenderStyle& s
     return false;
 }
 
-void invalidateFilterPrimitiveParent(SVGElement* element)
+void SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(SVGElement* element)
 {
     if (!element)
         return;
@@ -120,7 +120,7 @@ void invalidateFilterPrimitiveParent(SVGElement* element)
     if (!renderer || !renderer->isSVGResourceFilterPrimitive())
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer, false);
+    downcast<SVGElement>(*parent).setSVGResourcesInAncestorChainAreDirty();
 }
 
 }

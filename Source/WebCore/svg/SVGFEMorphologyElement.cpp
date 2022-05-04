@@ -53,7 +53,7 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
 {
     m_radiusX->setBaseValInternal(x);
     m_radiusY->setBaseValInternal(y);
-    invalidate();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -107,7 +107,7 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

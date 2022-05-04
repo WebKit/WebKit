@@ -98,8 +98,9 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         updateRelativeLengthsInformation();
 
         if (auto* renderer = this->renderer()) {
-            if (downcast<RenderSVGImage>(*renderer).updateImageViewport())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
+                return;
+            setSVGResourcesInAncestorChainAreDirty();
         }
         return;
     }
@@ -112,8 +113,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::preserveAspectRatioAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (auto* renderer = this->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

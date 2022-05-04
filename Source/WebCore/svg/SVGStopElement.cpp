@@ -65,10 +65,8 @@ void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomString&
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (attrName == SVGNames::offsetAttr) {
-        if (auto renderer = this->renderer()) {
-            InstanceInvalidationGuard guard(*this);
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

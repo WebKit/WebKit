@@ -79,8 +79,7 @@ void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        if (RenderObject* object = renderer())
-            object->setNeedsLayout();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -94,8 +93,7 @@ void SVGGradientElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 GradientColorStops SVGGradientElement::buildStops()

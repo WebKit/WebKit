@@ -59,12 +59,10 @@ void SVGViewElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        if (m_targetElement) {
-            m_targetElement->inheritViewAttributes(*this);
-            if (auto* renderer = m_targetElement->renderer())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
-
+        if (!m_targetElement)
+            return;
+        m_targetElement->inheritViewAttributes(*this);
+        m_targetElement->setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
