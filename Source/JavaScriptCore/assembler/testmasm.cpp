@@ -3011,7 +3011,7 @@ void testCompareFloat(MacroAssembler::DoubleCondition condition)
 }
 #endif // CPU(X86) || CPU(X86_64) || CPU(ARM64)
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 template<typename T, typename SelectionType>
 void testMoveConditionallyFloatingPoint(MacroAssembler::DoubleCondition condition, const MacroAssemblerCodeRef<JSEntryPtrTag>& testCode, T& arg1, T& arg2, const Vector<T> operands, SelectionType selectionA, SelectionType selectionB)
@@ -3772,7 +3772,7 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
     testMoveConditionallyFloatingPointSameArg(condition, testCode, arg1, floatOperands(), selectionA, selectionB);
 }
 
-#endif // CPU(X86_64) || CPU(ARM64)
+#endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 #if CPU(ARM64E)
 
@@ -4754,7 +4754,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
     CPUState originalState;
     void* originalSP { nullptr };
     void* modifiedSP { nullptr };
-#if !(CPU(MIPS))
+#if !(CPU(MIPS) || CPU(RISCV64))
     uintptr_t modifiedFlags { 0 };
 #endif
     
@@ -4935,7 +4935,7 @@ void testProbeModifiesStackValues()
     CPUState originalState;
     void* originalSP { nullptr };
     void* newSP { nullptr };
-#if !CPU(MIPS)
+#if !(CPU(MIPS) || CPU(RISCV64))
     uintptr_t modifiedFlags { 0 };
 #endif
     size_t numberOfExtraEntriesToWrite { 10 }; // ARM64 requires that this be 2 word aligned.
@@ -5903,7 +5903,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareFloat);
 #endif
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     // Comparing 2 different registers.
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble2);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble3);

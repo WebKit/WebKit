@@ -1,3 +1,37 @@
+2022-05-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Implement MacroAssemblerRISCV64 move-conditionally methods
+        https://bugs.webkit.org/show_bug.cgi?id=239998
+
+        Reviewed by Yusuke Suzuki.
+
+        Provide implementations for the variants of the move-conditionally
+        operation in MacroAssemblerRISCV64. These are true macro operations,
+        often requiring scratch registers and branches to implement the
+        behavior since the RISC-V ISA doesn't provide appropriate instructions
+        out-of-the-box.
+
+        Test cases in testmasm are also enabled, including some additional
+        guards to avoid unused-variable warnings at build-time.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::moveConditionally32):
+        (JSC::MacroAssemblerRISCV64::moveConditionally64):
+        (JSC::MacroAssemblerRISCV64::moveConditionallyFloat):
+        (JSC::MacroAssemblerRISCV64::moveConditionallyDouble):
+        (JSC::MacroAssemblerRISCV64::moveConditionallyTest32):
+        (JSC::MacroAssemblerRISCV64::moveConditionallyTest64):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionally32):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionally64):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionallyFloat):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionallyDouble):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionallyTest32):
+        (JSC::MacroAssemblerRISCV64::moveDoubleConditionallyTest64):
+        (JSC::MacroAssemblerRISCV64::branchForMoveConditionally):
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesStackValues):
+
 2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Extend Structure heap size from 1GB to 4GB
