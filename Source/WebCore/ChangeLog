@@ -1,3 +1,15 @@
+2022-05-04  Michael Saboff  <msaboff@apple.com>
+
+        [Mac] WebCore should search system content path for nested Frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=240063
+
+        Reviewed by Alexey Proskuryakov.
+
+        Changed nested frameworks directory to be below where WebCore will be installed
+        when building with the system content path.
+
+        * Configurations/WebCore.xcconfig:
+
 2022-05-04  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r293427): [ iOS ] http/tests/quicklook/same-origin-xmlhttprequest-allowed.html is a constant crash and failure (240024)
