@@ -3014,6 +3014,7 @@ private:
     bool m_isShowingNavigationGestureSnapshot { false };
 
     bool m_mainFramePluginHandlesPageScaleGesture { false };
+    bool m_shouldReloadDueToCrashWhenVisible { false };
 
     unsigned m_pageCount { 0 };
 
