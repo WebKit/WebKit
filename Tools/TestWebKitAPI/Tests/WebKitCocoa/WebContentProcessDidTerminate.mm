@@ -179,9 +179,10 @@ TEST(WKNavigation, FailureToStartWebProcessAfterCrashRecovery)
     EXPECT_TRUE(receivedScriptMessage);
 }
 
-TEST(WKNavigation, AutomaticViewReloadAfterWebProcessCrash)
+TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
     auto delegate = adoptNS([[BasicNavigationDelegateWithoutCrashHandler alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -211,6 +212,43 @@ TEST(WKNavigation, AutomaticViewReloadAfterWebProcessCrash)
     EXPECT_FALSE(startedLoad);
     TestWebKitAPI::Util::sleep(0.5);
     EXPECT_FALSE(startedLoad);
+}
+
+TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+
+    auto delegate = adoptNS([[BasicNavigationDelegateWithoutCrashHandler alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Make sure the view is not visible.
+    [webView removeFromSuperview];
+
+    startedLoad = false;
+    finishedLoad = false;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rich-and-plain-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&finishedLoad);
+
+    startedLoad = false;
+    finishedLoad = false;
+
+    // Simulate crash.
+    [webView _killWebContentProcess];
+
+    TestWebKitAPI::Util::sleep(0.5);
+
+    // WebKit should not have attempted a reload since the view is not visible.
+    EXPECT_FALSE(startedLoad);
+    EXPECT_FALSE(finishedLoad);
+
+    // Make the view visible.
+    [webView addToTestWindow];
+    [webView focus];
+
+    // WebKit should have triggered a reload when the view became visible.
+    TestWebKitAPI::Util::run(&finishedLoad);
 }
 
 TEST(WKNavigation, ProcessCrashDuringCallback)
