@@ -46,6 +46,10 @@
 #include "MockAudioSharedUnit.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "MockRealtimeAudioSourceGStreamer.h"
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
@@ -188,6 +192,9 @@ void MockRealtimeAudioSource::setIsInterrupted(bool isInterrupted)
         MockAudioSharedUnit::singleton().suspend();
     else
         MockAudioSharedUnit::singleton().resume();
+#elif USE(GSTREAMER)
+    for (auto* source : MockRealtimeAudioSourceGStreamer::allMockRealtimeAudioSources())
+        source->setInterruptedForTesting(isInterrupted);
 #endif
 }
 
