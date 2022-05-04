@@ -42,6 +42,7 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
     clearNativeImageMap();
+    clearImageBufferBackends();
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
@@ -166,6 +167,17 @@ void RemoteResourceCacheProxy::clearFontMap()
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
 
+void RemoteResourceCacheProxy::clearImageBufferBackends()
+{
+    // Get a copy of m_imageBuffers.values() because clearBackend()
+    // may release some of the cached ImageBuffers.
+    for (auto& imageBuffer : copyToVector(m_imageBuffers.values())) {
+        if (!imageBuffer)
+            continue;
+        imageBuffer->clearBackend();
+    }
+}
+
 void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
 {
     static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
@@ -199,14 +211,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
 {
     clearNativeImageMap();
     clearFontMap();
-
-    // Get a copy of m_imageBuffers.values() because clearBackend()
-    // may release some of the cached ImageBuffers.
-    for (auto& imageBuffer : copyToVector(m_imageBuffers.values())) {
-        if (!imageBuffer)
-            continue;
-        imageBuffer->clearBackend();
-    }
+    clearImageBufferBackends();
 
     for (auto& imageBuffer : m_imageBuffers.values()) {
         if (!imageBuffer)
