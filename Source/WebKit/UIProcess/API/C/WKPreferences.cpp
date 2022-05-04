@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,26 +202,6 @@ void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool plugin
 bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->pluginsEnabled();
-}
-
-void WKPreferencesSetJavaEnabled(WKPreferencesRef preferencesRef, bool javaEnabled)
-{
-    toImpl(preferencesRef)->setJavaEnabled(javaEnabled);
-}
-
-bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->javaEnabled();
-}
-
-void WKPreferencesSetJavaEnabledForLocalFiles(WKPreferencesRef preferencesRef, bool javaEnabledForLocalFiles)
-{
-    toImpl(preferencesRef)->setJavaEnabledForLocalFiles(javaEnabledForLocalFiles);
-}
-
-bool WKPreferencesGetJavaEnabledForLocalFiles(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->javaEnabledForLocalFiles();
 }
 
 void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferencesRef, bool javaScriptCanOpenWindowsAutomatically)
@@ -2208,6 +2188,15 @@ void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef,
 }
 
 bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetJavaEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetJavaEnabled(WKPreferencesRef)
 {
     return false;
 }

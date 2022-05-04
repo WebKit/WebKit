@@ -37,7 +37,6 @@ TEST(Copying, WKPreferences)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
-    [a setJavaEnabled:YES];
     [a setPlugInsEnabled:YES];
     [a setTabFocusesLinks:YES];
 #endif
@@ -60,7 +59,6 @@ TEST(Copying, WKPreferences)
     [b setJavaScriptCanOpenWindowsAutomatically:NO];
 #else
     [b setJavaScriptCanOpenWindowsAutomatically:YES];
-    [b setJavaEnabled:NO];
     [b setPlugInsEnabled:NO];
     [b setTabFocusesLinks:NO];
 #endif
@@ -70,7 +68,6 @@ TEST(Copying, WKPreferences)
     EXPECT_NE([a javaScriptEnabled], [b javaScriptEnabled]);
     EXPECT_NE([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
 #if PLATFORM(MAC)
-    EXPECT_NE([a javaEnabled], [b javaEnabled]);
     EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
     EXPECT_NE([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif

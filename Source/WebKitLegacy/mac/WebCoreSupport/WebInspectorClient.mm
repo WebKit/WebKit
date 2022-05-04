@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -481,7 +481,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [preferences setAutosaves:NO];
     [preferences setDefaultFixedFontSize:11];
     [preferences setFixedFontFamily:@"Menlo"];
-    [preferences setJavaEnabled:NO];
     [preferences setJavaScriptEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setMinimumFontSize:0];

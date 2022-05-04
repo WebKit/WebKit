@@ -2,7 +2,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006 Apple Inc.
+ *  Copyright (C) 2003-2022 Apple Inc.
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  *  This library is free software; you can redistribute it and/or
@@ -318,23 +318,6 @@ bool Navigator::cookieEnabled() const
         return false;
 
     return page->cookieJar().cookiesEnabled(*document);
-}
-
-bool Navigator::javaEnabled() const
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return false;
-
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::JavaEnabled);
-
-    if (!frame->settings().isJavaEnabled())
-        return false;
-    if (frame->document()->securityOrigin().isLocal() && !frame->settings().isJavaEnabledForLocalFiles())
-        return false;
-
-    return true;
 }
 
 #if PLATFORM(IOS_FAMILY)

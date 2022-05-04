@@ -1,3 +1,33 @@
+2022-05-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove deprecated 'JavaEnabled' feature flag and related code
+        https://bugs.webkit.org/show_bug.cgi?id=240044
+
+        Reviewed by Darin Adler.
+
+        We removed support for Java Plug-Ins in macOS 10.15, but never removed the preference. To reduce code complexity
+        and build times we should remove this unused preference, leaving non-functional stubs to avoid breaking binaries
+        that expect to call their accessor methods.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaEnabled):
+        (WKPreferencesGetJavaEnabled):
+        (WKPreferencesSetJavaEnabledForLocalFiles):
+        (WKPreferencesGetJavaEnabledForLocalFiles):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences encodeWithCoder:]):
+        (-[WKPreferences initWithCoder:]):
+        (-[WKPreferences javaEnabled]):
+        (-[WKPreferences setJavaEnabled:]):
+        (-[WKPreferences _setJavaEnabledForLocalFiles:]):
+        (-[WKPreferences _javaEnabledForLocalFiles]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+
 2022-05-03  Ben Nham  <nham@apple.com>
 
         Add push service result logging

@@ -248,7 +248,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitUserStyleSheetLocationPreferenceKey), CFSTR(""));
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShouldPrintBackgroundsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitTextAreasAreResizablePreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptRuntimeFlagsPreferenceKey), CFSTR("0"));
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
@@ -928,13 +927,12 @@ HRESULT WebPreferences::isJavaEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitJavaEnabledPreferenceKey);
+    *enabled = FALSE;
     return S_OK;
 }
 
-HRESULT WebPreferences::setJavaEnabled(BOOL enabled)
+HRESULT WebPreferences::setJavaEnabled(BOOL)
 {
-    setBoolValue(WebKitJavaEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -124,17 +124,9 @@ bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const
     return shouldUsePlugin(completedURL, mimeType, false, useFallback);
 }
 
-bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
+bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
 {
     auto* document = m_frame.document();
-
-    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
-        if (!m_frame.settings().isJavaEnabled())
-            return false;
-        if (document && document->securityOrigin().isLocal() && !m_frame.settings().isJavaEnabledForLocalFiles())
-            return false;
-    }
-
     if (document) {
         if (document->isSandboxed(SandboxPlugins))
             return false;
@@ -189,7 +181,7 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerEle
     if (!(m_frame.arePluginsEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
         return false;
 
-    if (!pluginIsLoadable(url, explicitMIMEType))
+    if (!pluginIsLoadable(url))
         return false;
 
     ASSERT(ownerElement.hasTagName(objectTag) || ownerElement.hasTagName(embedTag));

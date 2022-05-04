@@ -877,7 +877,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setDefaultFixedFontSize(13);
     preferences->setMinimumFontSize(0);
     preferences->setDefaultTextEncodingName(_bstr_t(L"ISO-8859-1"));
-    preferences->setJavaEnabled(FALSE);
     preferences->setJavaScriptEnabled(TRUE);
     preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
     preferences->setDOMPasteAllowed(TRUE);

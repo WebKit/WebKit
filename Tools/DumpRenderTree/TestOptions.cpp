@@ -79,7 +79,6 @@ const TestFeatures& TestOptions::defaults()
             { "GamepadsEnabled", true },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },
             { "InlineMediaPlaybackRequiresPlaysInlineAttribute", false },
-            { "JavaEnabled", false },
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
             { "LargeImageAsyncDecodingEnabled", false },

@@ -53,7 +53,6 @@ TEST(Coding, WKPreferences)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
-    [a setJavaEnabled:YES];
     [a setPlugInsEnabled:YES];
     [a setTabFocusesLinks:YES];
 #endif
@@ -65,7 +64,6 @@ TEST(Coding, WKPreferences)
     EXPECT_EQ([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
 
 #if PLATFORM(MAC)
-    EXPECT_EQ([a javaEnabled], [b javaEnabled]);
     EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
     EXPECT_EQ([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -378,8 +378,6 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
 static ASCIILiteral navigatorAPIEnumToString(ResourceLoadStatistics::NavigatorAPI navigatorEnum)
 {
     switch (navigatorEnum) {
-    case ResourceLoadStatistics::NavigatorAPI::JavaEnabled:
-        return "javaEnabled"_s;
     case ResourceLoadStatistics::NavigatorAPI::MimeTypes:
         return "mimeTypes"_s;
     case ResourceLoadStatistics::NavigatorAPI::CookieEnabled:

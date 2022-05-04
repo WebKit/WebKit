@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,8 +50,6 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     auto preferences = WebPreferences::create(identifier, keyPrefix, globalDebugKeyPrefix);
     // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
     // We can just compute different defaults for modern and legacy APIs in WebPreferencesDefinitions.h macros.
-    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
-    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
     preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), static_cast<uint32_t>(WebCore::StorageBlockingPolicy::AllowAll));
     return preferences;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -858,16 +858,6 @@ public:
     [self _setBoolValue: flag forKey: WebKitShouldPrintBackgroundsPreferenceKey];
 }
 #endif
-
-- (BOOL)isJavaEnabled
-{
-    return [self _boolValueForKey: WebKitJavaEnabledPreferenceKey];
-}
-
-- (void)setJavaEnabled:(BOOL)flag
-{
-    [self _setBoolValue: flag forKey: WebKitJavaEnabledPreferenceKey];
-}
 
 - (BOOL)isJavaScriptEnabled
 {
@@ -3471,6 +3461,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setXSSAuditorEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)isJavaEnabled
+{
+    return NO;
+}
+
+- (void)setJavaEnabled:(BOOL)flag
 {
 }
 

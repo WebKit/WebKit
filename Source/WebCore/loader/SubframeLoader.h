@@ -66,7 +66,7 @@ private:
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
-    bool pluginIsLoadable(const URL&, const String& mimeType);
+    bool pluginIsLoadable(const URL&);
 
     URL completeURL(const String&) const;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, 2014, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,8 +130,6 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
         return 0;
     if (FAILED(preferences->setPlugInsEnabled(FALSE)))
-        return 0;
-    if (FAILED(preferences->setJavaEnabled(FALSE)))
         return 0;
     if (FAILED(preferences->setUserStyleSheetEnabled(FALSE)))
         return 0;

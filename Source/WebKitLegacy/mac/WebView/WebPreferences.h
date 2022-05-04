@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,8 +168,9 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
 
 /*!
     @property javaEnabled
+    @discussion Deprecated function that does nothing and always returns false.
 */
-@property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
+@property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled WEBKIT_DEPRECATED_MAC(10_3, 10_15);
 
 /*!
     @property javaScriptEnabled

@@ -48,7 +48,6 @@
 #define WebKitUserStyleSheetLocationPreferenceKey "WebKitUserStyleSheetLocationPreferenceKey"
 #define WebKitShouldPrintBackgroundsPreferenceKey "WebKitShouldPrintBackgroundsPreferenceKey"
 #define WebKitTextAreasAreResizablePreferenceKey "WebKitTextAreasAreResizable"
-#define WebKitJavaEnabledPreferenceKey "WebKitJavaEnabled"
 #define WebKitJavaScriptEnabledPreferenceKey "WebKitJavaScriptEnabled"
 #define WebKitJavaScriptRuntimeFlagsPreferenceKey "WebKitJavaScriptRuntimeFlags"
 #define WebKitWebSecurityEnabledPreferenceKey "WebKitWebSecurityEnabled"

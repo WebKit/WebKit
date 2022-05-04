@@ -44,7 +44,7 @@ public:
     DOMPluginArray& plugins();
     DOMMimeTypeArray& mimeTypes();
     bool cookieEnabled() const;
-    bool javaEnabled() const;
+    bool javaEnabled() const { return false; }
     const String& userAgent() const final;
     String platform() const final;
     void userAgentChanged();

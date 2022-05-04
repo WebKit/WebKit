@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,9 +103,9 @@ WK_EXPORT bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferenc
 WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool pluginsEnabled);
 WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
 
-// Defaults to true.
-WK_EXPORT void WKPreferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled);
-WK_EXPORT bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferences);
+// Deprecated; Does nothing, always returns false.
+WK_EXPORT void WKPreferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetJavaEnabled(WKPreferencesRef preferences) WK_C_API_DEPRECATED;
 
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef preferences, bool javaScriptCanOpenWindowsAutomatically);

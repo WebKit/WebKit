@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple, Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -4985,11 +4985,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setPictographFontFamily(toAtomString(str));
     str.clear();
-
-    hr = preferences->isJavaEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setJavaEnabled(!!enabled);
 
     hr = preferences->isJavaScriptEnabled(&enabled);
     if (FAILED(hr))

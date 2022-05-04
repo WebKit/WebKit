@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -183,7 +183,6 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setJavaEnabledForLocalFiles:) BOOL _javaEnabledForLocalFiles WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setCanvasUsesAcceleratedDrawing:) BOOL _canvasUsesAcceleratedDrawing WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setDefaultTextEncodingName:) NSString *_defaultTextEncodingName WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setAuthorAndUserStylesEnabled:) BOOL _authorAndUserStylesEnabled WK_API_AVAILABLE(macos(10.13.4));

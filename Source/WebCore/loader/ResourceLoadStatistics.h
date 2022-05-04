@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,6 @@ struct ResourceLoadStatistics {
         Plugins = 1 << 2,
         MimeTypes = 1 << 3,
         CookieEnabled = 1 << 4,
-        JavaEnabled = 1 << 5,
     };
     enum class ScreenAPI : uint64_t {
         Height = 1 << 0,
@@ -144,8 +143,7 @@ template<> struct EnumTraits<WebCore::ResourceLoadStatistics::NavigatorAPI> {
         WebCore::ResourceLoadStatistics::NavigatorAPI::UserAgent,
         WebCore::ResourceLoadStatistics::NavigatorAPI::Plugins,
         WebCore::ResourceLoadStatistics::NavigatorAPI::MimeTypes,
-        WebCore::ResourceLoadStatistics::NavigatorAPI::CookieEnabled,
-        WebCore::ResourceLoadStatistics::NavigatorAPI::JavaEnabled
+        WebCore::ResourceLoadStatistics::NavigatorAPI::CookieEnabled
     >;
 };
 

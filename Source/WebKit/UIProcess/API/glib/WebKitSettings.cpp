@@ -1916,13 +1916,13 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  *
  * Get the #WebKitSettings:enable-java property.
  *
- * Returns: %TRUE If Java is enabled or %FALSE otherwise.
+ * Returns: %FALSE always.
  */
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->javaEnabled();
+    return FALSE;
 }
 
 /**
@@ -1930,19 +1930,11 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * Set the #WebKitSettings:enable-java property.
+ * Set the #WebKitSettings:enable-java property. Deprecated function that does nothing.
  */
-void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
+void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
-
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->javaEnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setJavaEnabled(enabled);
-    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_JAVA]);
 }
 
 /**
