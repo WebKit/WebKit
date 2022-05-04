@@ -1,3 +1,27 @@
+2022-05-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Add logging related to Launch Services database
+        https://bugs.webkit.org/show_bug.cgi?id=240032
+
+        Reviewed by Geoffrey Garen.
+
+        We have reports indicating that it can sometime take unexpectedly long time for the Network process to provide
+        the Launch Services database to the WebContent and GPU process. Add some logging to help diagnose the issue.
+        There are also some related selector response checks that can be removed now.
+
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm:
+        (WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::startObserving):
+        (WebKit::LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver):
+        (WebKit::databaseContext): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::sendXPCEndpointToProcess):
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        (WebKit::LaunchServicesDatabaseManager::handleEvent):
+
 2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Initialize empty and null AtomString at compile time

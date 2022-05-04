@@ -33,25 +33,10 @@
 
 namespace WebKit {
 
-#if HAVE(LSDATABASECONTEXT)
-static LSDatabaseContext *databaseContext()
-{
-    static dispatch_once_t once;
-    static LSDatabaseContext *context = nullptr;
-    dispatch_once(&once, ^{
-        context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
-    });
-    return context;
-}
-#endif
-
 LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
 {
 #if HAVE(LSDATABASECONTEXT)
-    if (![databaseContext() respondsToSelector:@selector(addDatabaseChangeObserver4WebKit:)])
-        return;
-
-    m_observer = [databaseContext() addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
+    m_observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
         auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
@@ -78,14 +63,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
     }
 
 #if HAVE(LSDATABASECONTEXT)
-    if (![databaseContext() respondsToSelector:@selector(addDatabaseChangeObserver4WebKit:)]) {
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
-        xpc_connection_send_message(connection.get(), message.get());
-        return;
-    }
-
-    RetainPtr<id> observer = [databaseContext() addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
+    RetainPtr<id> observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
         auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
@@ -93,7 +71,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
         xpc_connection_send_message(connection.get(), message.get());
     }];
 
-    [databaseContext() removeDatabaseChangeObserver4WebKit:observer.get()];
+    [LSDatabaseContext.sharedDatabaseContext removeDatabaseChangeObserver4WebKit:observer.get()];
 #else
     auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
@@ -104,10 +82,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
 LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver()
 {
 #if HAVE(LSDATABASECONTEXT)
-    if (![databaseContext() respondsToSelector:@selector(removeDatabaseChangeObserver4WebKit:)])
-        return;
-
-    [databaseContext() removeDatabaseChangeObserver4WebKit:m_observer.get()];
+    [LSDatabaseContext.sharedDatabaseContext removeDatabaseChangeObserver4WebKit:m_observer.get()];
 #endif
 }
 
