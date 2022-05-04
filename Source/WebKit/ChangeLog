@@ -1,3 +1,16 @@
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        DisplayList::Recorder has redundant, unused flushContext
+        https://bugs.webkit.org/show_bug.cgi?id=239999
+
+        Reviewed by Simon Fraser.
+
+        Remove DisplayList::Recorder::flushContext(GraphicsContextFlushIdentifier)
+        It was unused.
+        It has wrong signature for proper operation for the concrete classes.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-05-04  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCCodecs does no longer need a pixel conformer

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -33,7 +33,6 @@
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextFlushIdentifier.h"
 #include "Image.h"
 #include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
@@ -441,7 +440,7 @@ public:
         , m_destinationRect(destinationRect)
     {
     }
-    
+
     RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
     FloatRect destinationRect() const { return m_destinationRect; }
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
@@ -1975,26 +1974,6 @@ private:
     float m_scaleFactor { 1 };
 };
 
-class FlushContext {
-public:
-    static constexpr ItemType itemType = ItemType::FlushContext;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = false;
-
-    explicit FlushContext(GraphicsContextFlushIdentifier identifier)
-        : m_identifier(identifier)
-    {
-    }
-
-    GraphicsContextFlushIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return m_identifier.isValid(); }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-private:
-    GraphicsContextFlushIdentifier m_identifier;
-};
-
 using DisplayListItem = std::variant
     < ApplyDeviceScaleFactor
     , BeginTransparencyLayer
@@ -2029,7 +2008,6 @@ using DisplayListItem = std::variant
     , FillRectWithGradient
     , FillRectWithRoundedHole
     , FillRoundedRect
-    , FlushContext
     , Restore
     , Rotate
     , Save
@@ -2130,7 +2108,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
 #endif
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
-    WebCore::DisplayList::ItemType::FlushContext,
 #if ENABLE(VIDEO)
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
 #endif

@@ -78,7 +78,6 @@ enum class ItemType : uint8_t {
 #endif
     FillPath,
     FillEllipse,
-    FlushContext,
 #if ENABLE(VIDEO)
     PaintFrameForMedia,
 #endif

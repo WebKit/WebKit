@@ -42,7 +42,6 @@ public:
 
     void convertToLuminanceMask() final { }
     void transformToColorSpace(const DestinationColorSpace&) final { }
-    void flushContext(GraphicsContextFlushIdentifier identifier) final { append<FlushContext>(identifier); }
 
 private:
     void recordSave() final;

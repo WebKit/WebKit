@@ -148,13 +148,13 @@ TEST(DisplayListTests, InlineItemValidationFailure)
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     GraphicsContextCG context { cgContext.get() };
 
-    auto runTestWithInvalidIdentifier = [&](GraphicsContextFlushIdentifier identifier) {
+    auto runTestWithInvalidIdentifier = [&](RenderingResourceIdentifier identifier) {
         EXPECT_FALSE(identifier.isValid());
 
         DisplayList list;
         ReadingClient reader;
         list.setItemBufferReadingClient(&reader);
-        list.append<FlushContext>(identifier);
+        list.append<ClipToImageBuffer>(identifier, FloatRect { });
 
         Replayer replayer { context, list };
         auto result = replayer.replay();
@@ -163,8 +163,8 @@ TEST(DisplayListTests, InlineItemValidationFailure)
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };
 
-    runTestWithInvalidIdentifier(GraphicsContextFlushIdentifier { });
-    runTestWithInvalidIdentifier(GraphicsContextFlushIdentifier { WTF::HashTableDeletedValue });
+    runTestWithInvalidIdentifier(RenderingResourceIdentifier { });
+    runTestWithInvalidIdentifier(RenderingResourceIdentifier { WTF::HashTableDeletedValue });
 }
 
 } // namespace TestWebKitAPI
