@@ -1,3 +1,20 @@
+2022-05-04  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCCodecs does no longer need a pixel conformer
+        https://bugs.webkit.org/show_bug.cgi?id=240004
+
+        Reviewed by Eric Carlson.
+
+        Removing no longer used code.
+        No change of behavior.
+        Unified build fix.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.mm: Removed.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+
 2022-05-04  Megan Gardner  <megan_gardner@apple.com>
 
         Enable TextCheckingType::Correction on MacCatalyst.

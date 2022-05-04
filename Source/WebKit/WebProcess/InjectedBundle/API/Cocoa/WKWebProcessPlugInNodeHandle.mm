@@ -32,6 +32,7 @@
 #import "WebImage.h"
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/NativeImage.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKWebProcessPlugInNodeHandle {
