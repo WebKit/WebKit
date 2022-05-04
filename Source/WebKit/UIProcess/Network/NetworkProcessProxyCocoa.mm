@@ -80,15 +80,18 @@ NetworkProcessProxy::XPCEventHandler::XPCEventHandler(const NetworkProcessProxy&
 
 bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& process)
 {
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::sendXPCEndpointToProcess(%p) state = %d has connection = %d XPC endpoint message = %p", this, &process, process.state(), process.hasConnection(), xpcEndpointMessage());
+
     if (process.state() != AuxiliaryProcessProxy::State::Running)
         return false;
-    auto* connection = process.connection();
-    if (!connection)
+    if (!process.hasConnection())
         return false;
     auto message = xpcEndpointMessage();
     if (!message)
         return false;
-    xpc_connection_send_message(connection->xpcConnection(), message);
+    auto xpcConnection = process.connection()->xpcConnection();
+    RELEASE_ASSERT(xpcConnection);
+    xpc_connection_send_message(xpcConnection, message);
     return true;
 }
 

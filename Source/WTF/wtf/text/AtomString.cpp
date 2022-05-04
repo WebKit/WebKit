@@ -32,6 +32,9 @@
 
 namespace WTF {
 
+WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData { nullptr };
+WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
+
 template<AtomString::CaseConvertType type>
 ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
 {
@@ -133,18 +136,6 @@ void AtomString::show() const
 }
 
 #endif
-
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> nullAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
-
-void AtomString::init()
-{
-    static std::once_flag initializeKey;
-    std::call_once(initializeKey, [] {
-        nullAtomData.construct();
-        emptyAtomData.construct(AtomString::fromLatin1(""));
-    });
-}
 
 static inline StringBuilder replaceUnpairedSurrogatesWithReplacementCharacterInternal(StringView view)
 {

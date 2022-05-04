@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/HTMLBodyElement.h>
 #include <WebCore/HTMLDivElement.h>
@@ -53,6 +54,8 @@ static Ref<Document> createDocument()
 {
     HTMLNames::init();
     WebKitFontFamilyNames::init();
+    initializeCommonAtomStrings();
+
     auto settings = Settings::create(nullptr);
     auto document = Document::create(settings.get(), aboutBlankURL());
     auto documentElement = HTMLHtmlElement::create(document);

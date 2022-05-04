@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -991,17 +991,6 @@ static TextStream& operator<<(TextStream& ts, const ApplyDeviceScaleFactor& item
     return ts;
 }
 
-void FlushContext::apply(GraphicsContext&) const
-{
-    // Handled by client.
-}
-
-static TextStream& operator<<(TextStream& ts, const FlushContext& item)
-{
-    ts.dumpProperty("identifier", item.identifier());
-    return ts;
-}
-
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1053,7 +1042,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
 #endif
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
-    case ItemType::FlushContext: ts << "flush-context"; break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
 #endif
@@ -1217,9 +1205,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::FillEllipse:
         ts << item.get<FillEllipse>();
-        break;
-    case ItemType::FlushContext:
-        ts << item.get<FlushContext>();
         break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:

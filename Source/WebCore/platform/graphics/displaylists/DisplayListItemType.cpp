@@ -130,8 +130,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(FillPath);
     case ItemType::FillEllipse:
         return sizeof(FillEllipse);
-    case ItemType::FlushContext:
-        return sizeof(FlushContext);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return sizeof(PaintFrameForMedia);
@@ -189,7 +187,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
     case ItemType::ConcatenateCTM:
-    case ItemType::FlushContext:
     case ItemType::Restore:
     case ItemType::Rotate:
     case ItemType::Save:
@@ -328,7 +325,6 @@ bool isInlineItem(ItemType type)
     case ItemType::FillBezierCurve:
 #endif
     case ItemType::FillRect:
-    case ItemType::FlushContext:
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
 #endif

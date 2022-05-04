@@ -37,7 +37,6 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
-#include <WebCore/PixelBufferConformerCV.h>
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
 #include <wtf/HashMap.h>
@@ -160,7 +159,6 @@ private:
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;
-    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };

@@ -78,27 +78,16 @@ UChar32 String::characterStartingAt(unsigned i) const
     return m_impl->characterStartingAt(i);
 }
 
-template<typename CharacterType> inline void String::removeInternal(const CharacterType* characters, unsigned position, unsigned lengthToRemove)
-{
-    CharacterType* data;
-    auto newImpl = StringImpl::createUninitialized(length() - lengthToRemove, data);
-    StringImpl::copyCharacters(data, characters, position);
-    StringImpl::copyCharacters(data + position, characters + position + lengthToRemove, length() - lengthToRemove - position);
-    m_impl = WTFMove(newImpl);
-}
-
-void String::remove(unsigned position, unsigned lengthToRemove)
+String makeStringByRemoving(const String& string, unsigned position, unsigned lengthToRemove)
 {
     if (!lengthToRemove)
-        return;
-    auto length = this->length();
+        return string;
+    auto length = string.length();
     if (position >= length)
-        return;
+        return string;
     lengthToRemove = std::min(lengthToRemove, length - position);
-    if (is8Bit())
-        removeInternal(characters8(), position, lengthToRemove);
-    else
-        removeInternal(characters16(), position, lengthToRemove);
+    StringView view { string };
+    return makeString(view.left(position), view.substring(position + lengthToRemove));
 }
 
 String String::substring(unsigned position, unsigned length) const
@@ -646,17 +635,8 @@ float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
     return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
 
-const String& emptyString()
-{
-    static NeverDestroyed<String> emptyString(StringImpl::empty());
-    return emptyString;
-}
-
-const String& nullString()
-{
-    static NeverDestroyed<String> nullString;
-    return nullString;
-}
+WTF_EXPORT_PRIVATE const StaticString nullStringData { nullptr };
+WTF_EXPORT_PRIVATE const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
 
 } // namespace WTF
 

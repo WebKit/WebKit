@@ -189,9 +189,6 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::FillEllipse:
         get<FillEllipse>().apply(context);
         return;
-    case ItemType::FlushContext:
-        get<FlushContext>().apply(context);
-        return;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         get<PaintFrameForMedia>().apply(context);
@@ -375,9 +372,6 @@ void ItemHandle::destroy()
 #endif
     case ItemType::FillRect:
         static_assert(std::is_trivially_destructible<FillRect>::value);
-        return;
-    case ItemType::FlushContext:
-        static_assert(std::is_trivially_destructible<FlushContext>::value);
         return;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
@@ -565,8 +559,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
 #endif
     case ItemType::FillRect:
         return copyInto<FillRect>(itemOffset, *this);
-    case ItemType::FlushContext:
-        return copyInto<FlushContext>(itemOffset, *this);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return copyInto<PaintFrameForMedia>(itemOffset, *this);

@@ -475,7 +475,6 @@ void initialize()
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
         SignalHandlers::initialize();
 #endif
-        AtomString::init();
     });
 }
 

@@ -192,8 +192,6 @@ public:
     bool endsWith(char character) const { return endsWith(static_cast<UChar>(character)); }
     bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
-    WTF_EXPORT_PRIVATE void remove(unsigned position, unsigned length = 1);
-
     WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = MaxLength) const;
     WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
     String left(unsigned length) const { return substring(0, length); }
@@ -323,8 +321,6 @@ public:
     static constexpr unsigned MaxLength = StringImpl::MaxLength;
 
 private:
-    template<typename CharacterType> void removeInternal(const CharacterType*, unsigned, unsigned);
-
     template<bool allowEmptyEntries> void splitInternal(UChar separator, const SplitFunctor&) const;
     template<bool allowEmptyEntries> Vector<String> splitInternal(UChar separator) const;
     template<bool allowEmptyEntries> Vector<String> splitInternal(StringView separator) const;
@@ -384,8 +380,20 @@ bool codePointCompareLessThan(const String&, const String&);
 template<typename CharacterType> void appendNumber(Vector<CharacterType>&, unsigned char number);
 
 // Shared global empty and null string.
-WTF_EXPORT_PRIVATE const String& emptyString();
-WTF_EXPORT_PRIVATE const String& nullString();
+struct StaticString {
+    constexpr StaticString(StringImpl::StaticStringImpl* pointer)
+        : m_pointer(pointer)
+    {
+    }
+
+    StringImpl::StaticStringImpl* m_pointer;
+};
+static_assert(sizeof(String) == sizeof(StaticString), "String and StaticString must be the same size!");
+extern WTF_EXPORT_PRIVATE const StaticString nullStringData;
+extern WTF_EXPORT_PRIVATE const StaticString emptyStringData;
+
+inline const String& nullString() { return *reinterpret_cast<const String*>(&nullStringData); }
+inline const String& emptyString() { return *reinterpret_cast<const String*>(&emptyStringData); }
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String>;
@@ -450,7 +458,7 @@ inline String::String(StaticStringImpl* string)
 }
 
 inline String::String(ASCIILiteral characters)
-    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::createFromLiteral(characters) })
+    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::create(characters) })
 {
 }
 
@@ -491,6 +499,8 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& s
 }
 
 String makeStringByReplacingAll(const String&, UChar target, const char*) = delete;
+
+WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByRemoving(const String&, unsigned position, unsigned lengthToRemove);
 
 template<size_t inlineCapacity> inline String String::make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>& buffer)
 {
@@ -627,6 +637,7 @@ using WTF::appendNumber;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;
 using WTF::emptyString;
+using WTF::makeStringByRemoving;
 using WTF::makeStringByReplacingAll;
 using WTF::nullString;
 using WTF::equal;

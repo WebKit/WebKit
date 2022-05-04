@@ -56,7 +56,6 @@ public:
 
     virtual void convertToLuminanceMask() = 0;
     virtual void transformToColorSpace(const DestinationColorSpace&) = 0;
-    virtual void flushContext(GraphicsContextFlushIdentifier) = 0;
 
 protected:
     virtual void recordSave() = 0;

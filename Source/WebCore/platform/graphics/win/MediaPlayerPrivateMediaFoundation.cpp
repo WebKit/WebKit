@@ -27,21 +27,22 @@
 #include "config.h"
 #include "MediaPlayerPrivateMediaFoundation.h"
 
+#if USE(MEDIA_FOUNDATION)
+
 #include "CachedResourceLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
+#include <shlwapi.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+
 #if USE(CAIRO)
 #include "CairoOperations.h"
 #include <cairo.h>
 #endif
-
-#if USE(MEDIA_FOUNDATION)
-
-#include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 
 // MFSamplePresenterSampleCounter
 // Data type: UINT32
@@ -55,6 +56,53 @@ static const GUID MFSamplePresenterSampleCounter =
 static const double tenMegahertz = 10000000;
 
 namespace WebCore {
+
+class MediaPlayerPrivateMediaFoundation::AsyncCallback : public IMFAsyncCallback {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    AsyncCallback(Function<void(IMFAsyncResult*)>&& callback)
+        : m_callback(WTFMove(callback))
+    {
+    }
+
+    HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override
+    {
+        static const QITAB qit[] = {
+            QITABENT(AsyncCallback, IMFAsyncCallback),
+            { }
+        };
+        return QISearch(this, qit, riid, ppvObject);
+    }
+
+    ULONG STDMETHODCALLTYPE AddRef() override
+    {
+        return InterlockedIncrement(&m_refCount);
+    }
+
+    ULONG STDMETHODCALLTYPE Release() override
+    {
+        long refCount = InterlockedDecrement(&m_refCount);
+        if (!refCount)
+            delete this;
+        return refCount;
+    }
+
+    HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override
+    {
+        // Implementation of this method is optional. Returning E_NOTIMPL gives default values.
+        return E_NOTIMPL;
+    }
+
+    HRESULT STDMETHODCALLTYPE Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult) override
+    {
+        m_callback(pAsyncResult);
+        return S_OK;
+    }
+
+private:
+    ULONG m_refCount { 1 };
+    Function<void(IMFAsyncResult*)> m_callback;
+};
 
 MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer* player) 
     : m_weakThis(this)
@@ -363,6 +411,105 @@ DestinationColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
     return DestinationColorSpace::SRGB();
 }
 
+HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation> weakThis, COMPtr<IMFMediaSession> mediaSession)
+{
+    auto callback = adoptCOM(new MediaPlayerPrivateMediaFoundation::AsyncCallback([weakThis, mediaSession](IMFAsyncResult* asyncResult) {
+        COMPtr<IMFMediaEvent> event;
+
+        // Get the event from the event queue.
+        HRESULT hr = mediaSession->EndGetEvent(asyncResult, &event);
+        if (FAILED(hr))
+            return;
+
+        // Get the event type.
+        MediaEventType mediaEventType;
+        hr = event->GetType(&mediaEventType);
+        if (FAILED(hr))
+            return;
+
+        HRESULT status;
+        hr = event->GetStatus(&status);
+        if (FAILED(hr))
+            return;
+
+        if (status == MF_E_TOPO_CODEC_NOT_FOUND) {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onNetworkStateChanged(MediaPlayer::NetworkState::FormatError);
+            });
+            return;
+        }
+
+        switch (mediaEventType) {
+        case MESessionTopologySet: {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onTopologySet();
+            });
+            break;
+        }
+
+        case MESessionStarted: {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onSessionStarted();
+            });
+            break;
+        }
+
+        case MEBufferingStarted: {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onBufferingStarted();
+            });
+            break;
+        }
+
+        case MEBufferingStopped: {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onBufferingStopped();
+            });
+            break;
+        }
+
+        case MESessionEnded: {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onSessionEnded();
+            });
+            break;
+        }
+
+        case MEMediaSample:
+            break;
+
+        case MEError:
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+                weakThis->onNetworkStateChanged(MediaPlayer::NetworkState::DecodeError);
+            });
+            return;
+        }
+
+        if (mediaEventType != MESessionClosed) {
+            // For all other events, ask the media session for the
+            // next event in the queue.
+            hr = beginGetEvent(weakThis, mediaSession.get());
+            if (FAILED(hr))
+                return;
+        }
+    }));
+    return mediaSession->BeginGetEvent(callback.get(), nullptr);
+}
+
 bool MediaPlayerPrivateMediaFoundation::createSession()
 {
     if (FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL)))
@@ -372,8 +519,7 @@ bool MediaPlayerPrivateMediaFoundation::createSession()
         return false;
 
     // Get next event.
-    AsyncCallback* callback = new AsyncCallback(this, true);
-    HRESULT hr = m_mediaSession->BeginGetEvent(callback, nullptr);
+    HRESULT hr = beginGetEvent(m_weakThis, m_mediaSession);
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
 
     return true;
@@ -417,150 +563,37 @@ bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url
     COMPtr<IUnknown> cancelCookie;
     Vector<wchar_t> urlSource = url.wideCharacters();
 
-    AsyncCallback* callback = new AsyncCallback(this, false);
+    auto callback = adoptCOM(new AsyncCallback([this, weakThis = m_weakThis, sourceResolver = m_sourceResolver](IMFAsyncResult* asyncResult) {
+        MF_OBJECT_TYPE objectType;
+        COMPtr<IUnknown> source;
 
-    if (FAILED(m_sourceResolver->BeginCreateObjectFromURL(urlSource.data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback, nullptr)))
-        return false;
-
-    return true;
-}
-
-bool MediaPlayerPrivateMediaFoundation::endCreatedMediaSource(IMFAsyncResult* asyncResult)
-{
-    MF_OBJECT_TYPE objectType;
-    COMPtr<IUnknown> source;
-
-    HRESULT hr = m_sourceResolver->EndCreateObjectFromURL(asyncResult, &objectType, &source);
-    if (FAILED(hr)) {
-        callOnMainThread([this, weakPtr = m_weakThis, hr] {
-            if (!weakPtr)
-                return;
-            if (hr == MF_E_UNSUPPORTED_BYTESTREAM_TYPE)
-                m_networkState = MediaPlayer::NetworkState::FormatError;
-            else
-                m_networkState = MediaPlayer::NetworkState::NetworkError;
-            m_player->networkStateChanged();
-        });
-        return false;
-    }
-
-    hr = source->QueryInterface(IID_PPV_ARGS(&m_mediaSource));
-    if (FAILED(hr))
-        return false;
-
-    hr = asyncResult->GetStatus();
-    m_loadingProgress = SUCCEEDED(hr);
-
-    callOnMainThread([weakPtr = m_weakThis] {
-        if (!weakPtr)
+        HRESULT hr = sourceResolver->EndCreateObjectFromURL(asyncResult, &objectType, &source);
+        if (FAILED(hr)) {
+            callOnMainThread([this, weakThis = weakThis, hr] {
+                if (!weakThis)
+                    return;
+                onNetworkStateChanged(hr == MF_E_UNSUPPORTED_BYTESTREAM_TYPE ? MediaPlayer::NetworkState::FormatError : MediaPlayer::NetworkState::NetworkError);
+            });
             return;
-        weakPtr->onCreatedMediaSource();
-    });
+        }
 
-    return true;
-}
-
-bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
-{
-    COMPtr<IMFMediaEvent> event;
-
-    if (!m_mediaSession)
-        return false;
-
-    // Get the event from the event queue.
-    HRESULT hr = m_mediaSession->EndGetEvent(asyncResult, &event);
-    if (FAILED(hr))
-        return false;
-
-    // Get the event type.
-    MediaEventType mediaEventType;
-    hr = event->GetType(&mediaEventType);
-    if (FAILED(hr))
-        return false;
-
-    HRESULT status;
-    hr = event->GetStatus(&status);
-    if (FAILED(hr))
-        return false;
-
-    if (status == MF_E_TOPO_CODEC_NOT_FOUND) {
-        callOnMainThread([this, weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            m_networkState = MediaPlayer::NetworkState::FormatError;
-            m_player->networkStateChanged();
-        });
-        return false;
-    }
-
-    switch (mediaEventType) {
-    case MESessionTopologySet: {
-        callOnMainThread([weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            weakPtr->onTopologySet();
-        });
-        break;
-    }
-
-    case MESessionStarted: {
-        callOnMainThread([weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            weakPtr->onSessionStarted();
-        });
-        break;
-    }
-
-    case MEBufferingStarted: {
-        callOnMainThread([weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            weakPtr->onBufferingStarted();
-        });
-        break;
-    }
-
-    case MEBufferingStopped: {
-        callOnMainThread([weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            weakPtr->onBufferingStopped();
-        });
-        break;
-    }
-
-    case MESessionEnded: {
-        callOnMainThread([weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            weakPtr->onSessionEnded();
-        });
-        break;
-    }
-
-    case MEMediaSample:
-        break;
-
-    case MEError:
-        callOnMainThread([this, weakPtr = m_weakThis] {
-            if (!weakPtr)
-                return;
-            m_networkState = MediaPlayer::NetworkState::DecodeError;
-            m_player->networkStateChanged();
-        });
-        return false;
-    }
-
-    if (mediaEventType != MESessionClosed) {
-        // For all other events, ask the media session for the
-        // next event in the queue.
-        AsyncCallback* callback = new AsyncCallback(this, true);
-
-        hr = m_mediaSession->BeginGetEvent(callback, nullptr);
+        COMPtr<IMFMediaSource> mediaSource;
+        hr = source->QueryInterface(IID_PPV_ARGS(&mediaSource));
         if (FAILED(hr))
-            return false;
-    }
+            return;
+
+        hr = asyncResult->GetStatus();
+        bool loadingProgress = SUCCEEDED(hr);
+
+        callOnMainThread([this, weakThis, mediaSource = WTFMove(mediaSource), loadingProgress]() mutable {
+            if (!weakThis)
+                return;
+            onCreatedMediaSource(WTFMove(mediaSource), loadingProgress);
+        });
+    }));
+
+    if (FAILED(m_sourceResolver->BeginCreateObjectFromURL(urlSource.data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback.get(), nullptr)))
+        return false;
 
     return true;
 }
@@ -795,14 +828,23 @@ COMPtr<IMFVideoDisplayControl> MediaPlayerPrivateMediaFoundation::videoDisplay()
     return m_videoDisplay;
 }
 
-void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource()
+void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource(COMPtr<IMFMediaSource>&& mediaSource, bool loadingProgress)
 {
+    m_loadingProgress = loadingProgress;
+    m_mediaSource = WTFMove(mediaSource);
+
     if (!createTopologyFromSource())
         return;
 
     // Set the topology on the media session.
     HRESULT hr = m_mediaSession->SetTopology(0, m_topology.get());
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
+}
+
+void MediaPlayerPrivateMediaFoundation::onNetworkStateChanged(MediaPlayer::NetworkState state)
+{
+    m_networkState = state;
+    m_player->networkStateChanged();
 }
 
 void MediaPlayerPrivateMediaFoundation::onTopologySet()
@@ -854,77 +896,6 @@ void MediaPlayerPrivateMediaFoundation::onSessionEnded()
     m_player->playbackStateChanged();
 
     m_player->timeChanged();
-}
-
-MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback(MediaPlayerPrivateMediaFoundation* mediaPlayer, bool event)
-    : m_refCount(0)
-    , m_mediaPlayer(mediaPlayer)
-    , m_event(event)
-{
-    if (m_mediaPlayer)
-        m_mediaPlayer->addListener(this);
-}
-
-MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback()
-{
-    if (m_mediaPlayer)
-        m_mediaPlayer->removeListener(this);
-}
-
-HRESULT MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
-{
-    if (!ppvObject)
-        return E_POINTER;
-    if (!IsEqualGUID(riid, IID_IMFAsyncCallback)) {
-        *ppvObject = nullptr;
-        return E_NOINTERFACE;
-    }
-    *ppvObject = this;
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::AddRef()
-{
-    m_refCount++;
-    return m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::Release()
-{
-    m_refCount--;
-    ULONG refCount = m_refCount;
-    if (!refCount)
-        delete this;
-    return refCount;
-}
-
-HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue)
-{
-    // Returning E_NOTIMPL gives default values.
-    return E_NOTIMPL;
-}
-
-HRESULT STDMETHODCALLTYPE MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult)
-{
-    Locker locker { m_mutex };
-
-    if (!m_mediaPlayer)
-        return S_OK;
-
-    if (m_event)
-        m_mediaPlayer->endGetEvent(pAsyncResult);
-    else
-        m_mediaPlayer->endCreatedMediaSource(pAsyncResult);
-
-    return S_OK;
-}
-
-void MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted()
-{
-    Locker locker { m_mutex };
-
-    m_mediaPlayer = nullptr;
 }
 
 MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::CustomVideoPresenter(MediaPlayerPrivateMediaFoundation* mediaPlayer)

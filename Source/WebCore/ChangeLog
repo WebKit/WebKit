@@ -1,3 +1,136 @@
+2022-05-04  Ziran Sun  <zsun@igalia.com>
+
+        [InputElement] Selection after type change needs to follow HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=237361
+
+        Reviewed by Chris Dumez.
+
+        As per spec at https://html.spec.whatwg.org/multipage/input.html#input-type-change, 
+        following step 7-9, if the previous type doesn't support Selection API and the new type
+        does, selectionStart and selectionEnd should be 0, selectionDirection should be set to "none".
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::initializeInputType):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+
+2022-05-03  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] Mediastream mock audio interruption fixes after r290985
+        https://bugs.webkit.org/show_bug.cgi?id=239926
+
+        Reviewed by Chris Dumez.
+
+        Similarly to mock video sources, the GStreamer mock audio sources are now cached in a
+        hashset, which is used to dispatch interruption requests.
+
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::interrupted const): Avoid runtime critical GObject
+        warnings that would happen if this method is called before the pipeline has been created.
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp: Cache mock sources in a hashset.
+        (WebCore::MockRealtimeAudioSourceGStreamer::~MockRealtimeAudioSourceGStreamer):
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.h:
+        * platform/mock/MockRealtimeAudioSource.cpp: Dispatch interruption requests to currently
+        cached GStreamer mock audio sources.
+        (WebCore::MockRealtimeAudioSource::setIsInterrupted):
+        * platform/mock/MockRealtimeVideoSource.cpp: Switch to MainThreadNeverDestroyed<T> for caching sources.
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource):
+
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        DisplayList::Recorder has redundant, unused flushContext
+        https://bugs.webkit.org/show_bug.cgi?id=239999
+
+        Reviewed by Simon Fraser.
+
+        Remove DisplayList::Recorder::flushContext(GraphicsContextFlushIdentifier)
+        It was unused.
+
+        "Flush context" is not a display list item. It is a command for the graphics
+        context, issued a underlying resource is being used outside the graphics context
+        abstraction. As display list is working inside the abstraction, there's nothing
+        that could possibly use the underlying resources between flush and the next
+        item.
+
+        GraphicsContextFlushIdentifier cannot possibly be constructed in sensible way
+        at WebCore level.
+
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/displaylists/DisplayListRecorderImpl.h:
+
+2022-05-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable TextCheckingType::Correction on MacCatalyst.
+        https://bugs.webkit.org/show_bug.cgi?id=240036
+
+        Reviewed by Wenson Hsieh.
+
+        Add TextCheckingType::Correction to Catalyst to bring consistency to macOS.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+
+2022-05-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Crash during MediaPlayerPrivateMediaFoundation::removeListener in the async callback thread
+        https://bugs.webkit.org/show_bug.cgi?id=239485
+
+        Reviewed by Don Olmstead.
+
+        WinCairo debug layout tests were observing a random crash while
+        MediaPlayerPrivateMediaFoundation::AsyncCallback was destructing.
+
+        m_mediaPlayer was being accessed without locking m_mutex in
+        ~AsyncCallback.
+
+        m_mediaPlayer can be replaced with using a WeakPtr.
+
+        There is one more multi-threading problem. IMFAsyncCallback should
+        use InterlockedIncrement and InterlockedDecrement for
+        ref-counting.
+        Implementing the Asynchronous Callback - Win32 apps | Microsoft Docs
+        <https://docs.microsoft.com/en-us/windows/win32/medfound/implementing-the-asynchronous-callback>
+
+        This change re-implemented AsyncCallback with a WeakPtr, Function,
+        QISearch and Interlocked{In,De}crement.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback):
+        (WebCore::beginGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onNetworkStateChanged):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AddRef): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Release): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::GetParameters): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
+2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Initialize empty and null AtomString at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=240031
+
+        Reviewed by Mark Lam.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init):
+        * dom/make_names.pl:
+        (printInit):
+
 2022-05-03  Sihui Liu  <sihui_liu@apple.com>
 
         StorageMap::removeItem may fail to remove item from map

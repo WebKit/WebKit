@@ -47,7 +47,7 @@ public:
 
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
-    void flushContext(WebCore::GraphicsContextFlushIdentifier) final;
+    void flushContext(WebCore::GraphicsContextFlushIdentifier);
 
 private:
     template<typename T>

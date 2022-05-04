@@ -94,7 +94,6 @@ void WebAuthnProcess::initializeWebAuthnProcess(WebAuthnProcessCreationParameter
 {
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     WTF::Thread::setCurrentThreadIsUserInitiated();
-    AtomString::init();
 }
 
 void WebAuthnProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)

@@ -239,7 +239,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
                 text = makeString(text, ellipsis);
                 while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && text.length() > 1) {
                     // Remove the second from last character (the character before the ellipsis) and remeasure.
-                    text.remove(text.length() - 2);
+                    text = makeStringByRemoving(text, text.length() - 2, 1);
                     textRun = TextRun(text);
                     textWidth = font.width(textRun);
                 }

@@ -1,3 +1,100 @@
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        DisplayList::Recorder has redundant, unused flushContext
+        https://bugs.webkit.org/show_bug.cgi?id=239999
+
+        Reviewed by Simon Fraser.
+
+        Remove DisplayList::Recorder::flushContext(GraphicsContextFlushIdentifier)
+        It was unused.
+        It has wrong signature for proper operation for the concrete classes.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
+2022-05-04  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCCodecs does no longer need a pixel conformer
+        https://bugs.webkit.org/show_bug.cgi?id=240004
+
+        Reviewed by Eric Carlson.
+
+        Removing no longer used code.
+        No change of behavior.
+        Unified build fix.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.mm: Removed.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+
+2022-05-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable TextCheckingType::Correction on MacCatalyst.
+        https://bugs.webkit.org/show_bug.cgi?id=240036
+
+        Reviewed by Wenson Hsieh.
+
+        Add TextCheckingType::Correction to Catalyst to bring consistency to macOS.
+
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteImageBuffer ThreadSafeImageBufferFlusher hangs if GPU process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=240007
+
+        Reviewed by Geoffrey Garen.
+
+        RemoteResourceCacheProxy clears the RemoteImageBuffer backend when the
+        GPUP is lost. Mark the flush as completed in this case, so that any pending
+        off-thread flush waits can proceed.
+
+        Make sure RemoteResourceCacheProxy clears the backends on destruction too,
+        so that any pending flushes proceed in this case too.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::~RemoteResourceCacheProxy):
+        (WebKit::RemoteResourceCacheProxy::clearImageBufferBackends):
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
+2022-05-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Add logging related to Launch Services database
+        https://bugs.webkit.org/show_bug.cgi?id=240032
+
+        Reviewed by Geoffrey Garen.
+
+        We have reports indicating that it can sometime take unexpectedly long time for the Network process to provide
+        the Launch Services database to the WebContent and GPU process. Add some logging to help diagnose the issue.
+        There are also some related selector response checks that can be removed now.
+
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm:
+        (WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::startObserving):
+        (WebKit::LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver):
+        (WebKit::databaseContext): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::sendXPCEndpointToProcess):
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        (WebKit::LaunchServicesDatabaseManager::handleEvent):
+
+2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Initialize empty and null AtomString at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=240031
+
+        Reviewed by Mark Lam.
+
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::initializeWebAuthnProcess):
+
 2022-05-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r293743.

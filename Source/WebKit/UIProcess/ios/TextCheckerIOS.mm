@@ -228,6 +228,8 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
             types |= NSTextCheckingTypeSpelling;
         if (checkingTypes.contains(TextCheckingType::Grammar))
             types |= NSTextCheckingTypeGrammar;
+        if (checkingTypes.contains(TextCheckingType::Correction))
+            types |= NSTextCheckingTypeCorrection;
         NSDictionary *options = @{
             @"InsertionPoint" : @(insertionPoint)
         };
@@ -264,6 +266,12 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                     detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
                     result.details.uncheckedAppend(WTFMove(detail));
                 }
+                results.append(WTFMove(result));
+            } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(TextCheckingType::Correction)) {
+                TextCheckingResult result;
+                result.type = TextCheckingType::Correction;
+                result.range = resultRange;
+                result.replacement = [incomingResult replacementString];
                 results.append(WTFMove(result));
             }
         }

@@ -35,8 +35,6 @@ namespace WTF {
 class AtomString final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WTF_EXPORT_PRIVATE static void init();
-
     AtomString();
     AtomString(const LChar*, unsigned length);
     AtomString(const UChar*, unsigned length);
@@ -279,12 +277,20 @@ inline AtomString::AtomString(NSString *string)
 
 #endif
 
-// nullAtom and emptyAtom are special AtomString. They can be used from any threads since their StringImpls are not actually registered into AtomStringTable.
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> nullAtomData;
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
+struct StaticAtomString {
+    constexpr StaticAtomString(StringImpl::StaticStringImpl* pointer)
+        : m_pointer(pointer)
+    {
+    }
 
-inline const AtomString& nullAtom() { return nullAtomData.get(); }
-inline const AtomString& emptyAtom() { return emptyAtomData.get(); }
+    StringImpl::StaticStringImpl* m_pointer;
+};
+static_assert(sizeof(AtomString) == sizeof(StaticAtomString), "AtomString and StaticAtomString must be the same size!");
+extern WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData;
+extern WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData;
+
+inline const AtomString& nullAtom() { return *reinterpret_cast<const AtomString*>(&nullAtomData); }
+inline const AtomString& emptyAtom() { return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
     : m_string(literal.length() ? AtomStringImpl::add(literal.characters(), literal.length()) : Ref { *emptyAtom().impl() })

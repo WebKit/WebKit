@@ -108,7 +108,7 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         }
         
         if (tokens.last().startsWith('-') && tokens.last().length() > 1) {
-            tokens.last().remove(0);
+            tokens.last() = tokens.last().substring(1);
             
             if (auto suffix = WTF::URLParser::formURLDecode(tokens.takeLast()))
                 parsedTextDirective.suffix = WTFMove(*suffix);

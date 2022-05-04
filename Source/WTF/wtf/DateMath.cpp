@@ -1038,7 +1038,7 @@ static std::optional<Vector<UChar, 32>> validateTimeZone(StringView timeZone)
     auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
     if (!U_SUCCESS(status))
         return std::nullopt;
-    return WTFMove(canonicalBuffer);
+    return canonicalBuffer;
 }
 
 bool isTimeZoneValid(StringView timeZone)

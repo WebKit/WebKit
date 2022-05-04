@@ -238,6 +238,7 @@ protected:
     void clearBackend() final
     {
         m_remoteDisplayList.resetNeedsFlush();
+        didFlush(m_sentFlushIdentifier);
         BaseConcreteImageBuffer::clearBackend();
     }
 
