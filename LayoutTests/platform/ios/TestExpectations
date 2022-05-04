@@ -3602,3 +3602,5 @@ webkit.org/b/240069 fast/css/continuationCrash.html [ Pass Failure ]
 webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
+
+webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]

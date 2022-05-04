@@ -1,3 +1,13 @@
+2022-05-04  Karl Rackler  <rackler@apple.com>
+
+        [ iOS ][ macOS Debug wk1 ] webaudio/AudioBuffer/huge-buffer.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=240081
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2022-05-04  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r293427): [ iOS ] http/tests/quicklook/same-origin-xmlhttprequest-allowed.html is a constant crash and failure (240024)
