@@ -253,16 +253,8 @@ template<typename CharacterType>
 static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned length)
 {
     for (unsigned i = 0; i < length; ++i) {
-        if (UNLIKELY(isASCIIUpper(input[i]))) {
-            CharacterType* characters;
-            auto result = String::createUninitialized(length, characters);
-            StringImpl::copyCharacters(characters, input, i);
-            for (; i < length; ++i)
-                characters[i] = toASCIILower(input[i]);
-            // FIXME: This is inefficient. Ideally, we wouldn't have to allocate a String/StringImpl if the
-            // string is already in the AtomStringTable.
-            return AtomString(result);
-        }
+        if (UNLIKELY(isASCIIUpper(input[i])))
+            return makeAtomString(lowercase(StringView { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
     return AtomString(input, length);
