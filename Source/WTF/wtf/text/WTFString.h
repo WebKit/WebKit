@@ -380,8 +380,20 @@ bool codePointCompareLessThan(const String&, const String&);
 template<typename CharacterType> void appendNumber(Vector<CharacterType>&, unsigned char number);
 
 // Shared global empty and null string.
-WTF_EXPORT_PRIVATE const String& emptyString();
-WTF_EXPORT_PRIVATE const String& nullString();
+struct StaticString {
+    constexpr StaticString(StringImpl::StaticStringImpl* pointer)
+        : m_pointer(pointer)
+    {
+    }
+
+    StringImpl::StaticStringImpl* m_pointer;
+};
+static_assert(sizeof(String) == sizeof(StaticString), "String and StaticString must be the same size!");
+extern WTF_EXPORT_PRIVATE const StaticString nullStringData;
+extern WTF_EXPORT_PRIVATE const StaticString emptyStringData;
+
+inline const String& nullString() { return *reinterpret_cast<const String*>(&nullStringData); }
+inline const String& emptyString() { return *reinterpret_cast<const String*>(&emptyStringData); }
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String>;

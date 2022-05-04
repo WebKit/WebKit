@@ -1,5 +1,23 @@
 2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [WTF] Initialize emptyString and nullString data at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=240054
+
+        Reviewed by Mark Lam.
+
+        As we did for AtomString in r293757, we can initialize emptyString() and nullString()
+        data at compile time. This patch does that for WTF::String.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::emptyString): Deleted.
+        (WTF::nullString): Deleted.
+        * wtf/text/WTFString.h:
+        (WTF::StaticString::StaticString):
+        (WTF::nullString):
+        (WTF::emptyString):
+
+2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Initialize empty and null AtomString at compile time
         https://bugs.webkit.org/show_bug.cgi?id=240031
 
