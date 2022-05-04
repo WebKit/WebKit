@@ -1,3 +1,15 @@
+2022-05-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable TextCheckingType::Correction on MacCatalyst.
+        https://bugs.webkit.org/show_bug.cgi?id=240036
+
+        Reviewed by Wenson Hsieh.
+
+        Add TextCheckingType::Correction to Catalyst to bring consistency to macOS.
+
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+
 2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteImageBuffer ThreadSafeImageBufferFlusher hangs if GPU process crashes

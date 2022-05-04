@@ -2546,6 +2546,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
 #if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
     if (isGrammarCheckingEnabled()) {
         textCheckingOptions.add(TextCheckingType::Grammar);
+        textCheckingOptions.add(TextCheckingType::Correction);
         auto sentenceStart = startOfSentence(wordStart);
         auto sentenceEnd = endOfSentence(wordStart);
         VisibleSelection fullSentence(sentenceStart, sentenceEnd);
@@ -2860,6 +2861,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
     }
 
     int offsetDueToReplacement = 0;
+    Vector<CharacterRange> previousGrammarRanges;
 
     for (unsigned i = 0; i < results.size(); i++) {
         auto spellingRangeEndOffset = paragraph.checkingEnd() + offsetDueToReplacement;
@@ -2871,6 +2873,16 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         auto automaticReplacementEndLocation = automaticReplacementStartLocation + paragraph.automaticReplacementLength() + offsetDueToReplacement;
         const String& replacement = results[i].replacement;
         bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && selectionOffset - 1 <= resultEndLocation;
+
+        bool resultRangeIsAcceptableForReplacement = automaticReplacementStartLocation <= resultEndLocation && resultEndLocation <= automaticReplacementEndLocation;
+        // In this case the result range just has to touch the automatic replacement range, so we can handle replacing non-word text such as punctuation.
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+        if (!resultRangeIsAcceptableForReplacement && shouldMarkGrammar && shouldCheckForCorrection && resultType == TextCheckingType::Correction) {
+            resultRangeIsAcceptableForReplacement = previousGrammarRanges.containsIf([&](auto& range) {
+                return range.location == resultLocation && range.length == resultLength;
+            });
+        }
+#endif
 
         // Only mark misspelling if:
         // 1. Current text checking isn't done for autocorrection, in which case shouldMarkSpelling is false.
@@ -2891,11 +2903,10 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                 if (paragraph.checkingRangeCovers({ resultLocation + detail.range.location, detail.range.length })) {
                     auto badGrammarRange = paragraph.subrange({ resultLocation + detail.range.location, detail.range.length });
                     addMarker(badGrammarRange, DocumentMarker::Grammar, detail.userDescription);
+                    previousGrammarRanges.append(CharacterRange(resultLocation + detail.range.location, detail.range.length));
                 }
             }
-        } else if (automaticReplacementStartLocation <= resultEndLocation && resultEndLocation <= automaticReplacementEndLocation
-            && isAutomaticTextReplacementType(resultType)) {
-            // In this case the result range just has to touch the automatic replacement range, so we can handle replacing non-word text such as punctuation.
+        } else if (resultRangeIsAcceptableForReplacement && isAutomaticTextReplacementType(resultType)) {
             ASSERT(resultLength > 0);
 
             if (shouldShowCorrectionPanel && (resultEndLocation < automaticReplacementEndLocation
@@ -3924,6 +3935,8 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
 #if !PLATFORM(IOS_FAMILY)
     bool shouldShowCorrectionPanel = textCheckingOptions.contains(TextCheckingType::ShowCorrectionPanel);
     bool shouldCheckForCorrection = shouldShowCorrectionPanel || textCheckingOptions.contains(TextCheckingType::Correction);
+#else
+    bool shouldCheckForCorrection = textCheckingOptions.contains(TextCheckingType::Correction);
 #endif
 
     OptionSet<TextCheckingType> checkingTypes;
@@ -3931,9 +3944,9 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
         checkingTypes.add(TextCheckingType::Spelling);
     if (shouldMarkGrammar)
         checkingTypes.add(TextCheckingType::Grammar);
-#if !PLATFORM(IOS_FAMILY)
     if (shouldCheckForCorrection)
         checkingTypes.add(TextCheckingType::Correction);
+#if !PLATFORM(IOS_FAMILY)
     if (shouldShowCorrectionPanel)
         checkingTypes.add(TextCheckingType::ShowCorrectionPanel);
 
