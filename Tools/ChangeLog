@@ -1,3 +1,13 @@
+2022-05-04  Robert Jenner  <Jenner@apple.com>
+
+        [ Gardening ] REGRESSION(r293671): [ iOS ] 2 TestWebKitAPI.MediaLoading.RangeRequestSynthesis (API-Tests) are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=240033
+
+        Unreviewed test gardening. Disabling API-tests on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         Remove deprecated 'JavaEnabled' feature flag and related code

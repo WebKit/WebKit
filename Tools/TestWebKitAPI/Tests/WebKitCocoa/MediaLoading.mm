@@ -147,7 +147,12 @@ static void runVideoTest(NSURLRequest *request, const char* expectedMessage, boo
     EXPECT_WK_STREQ([webView _test_waitForAlert], expectedMessage);
 }
 
+// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=240033 is resovled 
+#if PLATFORM(IOS)
+TEST(MediaLoading, DISABLED_RangeRequestSynthesisWithContentLength)
+#else
 TEST(MediaLoading, RangeRequestSynthesisWithContentLength)
+#endif
 {
     HTTPServer server({
         {"/"_s, { videoPlayTestHTML }},
@@ -157,7 +162,12 @@ TEST(MediaLoading, RangeRequestSynthesisWithContentLength)
     EXPECT_EQ(server.totalRequests(), 2u);
 }
 
+// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=240033 is resovled 
+#if PLATFORM(IOS)
+TEST(MediaLoading, DISABLED_RangeRequestSynthesisWithoutContentLength)
+#else
 TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
+#endif
 {
     size_t totalRequests { 0 };
     Function<void(Connection)> respondToRequests;
