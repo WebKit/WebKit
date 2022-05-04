@@ -1,3 +1,14 @@
+2022-05-04  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r293703):[ BigSur+ iOS ] TestWTF.WTF_URLExtras.URLExtras_ParsingError (API-Test) is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=240049
+        <rdar://problem/92704160>
+
+        Unreviewed follow-up to r293761 because I dropped an item the std::array but failed to update its size.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-04  Robert Jenner  <Jenner@apple.com>
 
         [ Gardening ] REGRESSION(r293671): [ iOS ] 2 TestWebKitAPI.MediaLoading.RangeRequestSynthesis (API-Tests) are constant failures
