@@ -39,7 +39,8 @@ for (const [value, expected] of values) {
     get roundingIncrement() {
       callOrder.push("roundingIncrement");
       return value;
-    }
+    },
+    minimumFractionDigits: 3
   });
   const resolvedOptions = nf.resolvedOptions();
   assert("roundingIncrement" in resolvedOptions, "has property for value " + value);

@@ -16,4 +16,7 @@ features: [Temporal]
 
 const duration = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 987, 650, 0);
 
-assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: "other string" }));
+for (const fractionalSecondDigits of ["other string", "AUTO", "not-auto", "autos", "auto\0"]) {
+  assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits }),
+    `"${fractionalSecondDigits}" is not a valid value for fractionalSecondDigits`);
+}

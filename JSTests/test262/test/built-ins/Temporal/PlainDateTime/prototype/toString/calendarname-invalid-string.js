@@ -15,4 +15,11 @@ features: [Temporal]
 ---*/
 
 const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
-assert.throws(RangeError, () => datetime.toString({ calendarName: "other string" }));
+const invalidCals = ["other string", "ALWAYS", "sometimes", "auto\0"];
+
+invalidCals.forEach((cal) => {
+  assert.throws(
+    RangeError,
+    () => datetime.toString({ calendarName: cal }),
+    `invalid calendar (${cal})`);
+});

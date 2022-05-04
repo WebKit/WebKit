@@ -9,7 +9,30 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainDate(2000, 5, 2);
 const later = new Temporal.PlainDate(2001, 6, 3);
-const values = ["era", "eraYear", "hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds", "other string"];
-for (const smallestUnit of values) {
-  assert.throws(RangeError, () => later.since(earlier, { smallestUnit }));
+const badValues = [
+  "era",
+  "eraYear",
+  "hour",
+  "minute",
+  "second",
+  "millisecond",
+  "microsecond",
+  "nanosecond",
+  "month\0",
+  "YEAR",
+  "eras",
+  "eraYears",
+  "hours",
+  "minutes",
+  "seconds",
+  "milliseconds",
+  "microseconds",
+  "nanoseconds",
+  "months\0",
+  "YEARS",
+  "other string",
+];
+for (const smallestUnit of badValues) {
+  assert.throws(RangeError, () => later.since(earlier, { smallestUnit }),
+    `"${smallestUnit}" is not a valid value for smallest unit`);
 }

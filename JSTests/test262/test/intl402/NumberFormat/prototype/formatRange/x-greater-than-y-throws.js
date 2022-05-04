@@ -18,7 +18,7 @@ info: |
   (...)
   1.1.21_4.a if y is a mathematical value and y < 0, throw a RangeError exception.
   1.1.21_4.b if y is -∞, throw a RangeError exception.
-  features: [Intl.NumberFormat-v3]
+features: [Intl.NumberFormat-v3]
 ---*/
 
 const nf = new Intl.NumberFormat();

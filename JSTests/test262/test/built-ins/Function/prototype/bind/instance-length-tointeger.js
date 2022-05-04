@@ -13,12 +13,15 @@ info: |
   5. Let targetHasLength be ? HasOwnProperty(Target, "length").
   6. If targetHasLength is true, then
     a. Let targetLen be ? Get(Target, "length").
-    b. If Type(targetLen) is not Number, let L be 0.
-    c. Else,
-      i. Set targetLen to ! ToInteger(targetLen).
-      ii. Let L be the larger of 0 and the result of targetLen minus the number of elements of args.
-  7. Else, let L be 0.
-  8. Perform ! SetFunctionLength(F, L).
+    b. If Type(targetLen) is Number, then
+       i. If targetLen is +∞𝔽, set L to +∞.
+       ii. Else if targetLen is -∞𝔽, set L to 0.
+       iii. Else,
+            1. Let targetLenAsInt be ! ToIntegerOrInfinity(targetLen).
+            2. Assert: targetLenAsInt is finite.
+            3. Let argCount be the number of elements in args.
+            4. Set L to max(targetLenAsInt - argCount, 0).
+  7. Perform ! SetFunctionLength(F, L).
   [...]
 
   ToInteger ( argument )
@@ -40,10 +43,12 @@ Object.defineProperty(fn, "length", {value: -0});
 assert.sameValue(fn.bind().length, 0);
 
 Object.defineProperty(fn, "length", {value: Infinity});
-assert.sameValue(fn.bind().length, Infinity);
+assert.sameValue(fn.bind().length, Infinity, "target length of infinity, zero bound arguments");
+assert.sameValue(fn.bind(0, 0).length, Infinity, "target length of infinity, one bound argument");
 
 Object.defineProperty(fn, "length", {value: -Infinity});
-assert.sameValue(fn.bind().length, 0);
+assert.sameValue(fn.bind().length, 0, "target length of negative infinity, zero bound arguments");
+assert.sameValue(fn.bind(0, 0).length, 0, "target length of negative infinity, one bound argument");
 
 Object.defineProperty(fn, "length", {value: 3.66});
 assert.sameValue(fn.bind().length, 3);

@@ -1,26 +1,53 @@
-// Copyright (C) 2021 Igalia, S.L. All rights reserved.
+// Copyright (C) 2022 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
 esid: sec-temporal.plaintime.prototype.round
-description: Fallback value for roundingMode option
-includes: [temporalHelpers.js]
+description: Tests calculations with roundingMode undefined.
 features: [Temporal]
+includes: [temporalHelpers.js]
 ---*/
 
-const time = new Temporal.PlainTime(12, 34, 56, 123, 987, 500);
+const plainTime = Temporal.PlainTime.from("13:46:23.123456789");
 
-const explicit1 = time.round({ smallestUnit: "microsecond", roundingMode: undefined });
-TemporalHelpers.assertPlainTime(explicit1, 12, 34, 56, 123, 988, 0, "default roundingMode is halfExpand");
-const implicit1 = time.round({ smallestUnit: "microsecond" });
-TemporalHelpers.assertPlainTime(implicit1, 12, 34, 56, 123, 988, 0, "default roundingMode is halfExpand");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "hour", roundingMode: undefined }),
+  14, 0, 0, 0, 0, 0, "hour");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "hour" }),
+  14, 0, 0, 0, 0, 0, "hour");
 
-const explicit2 = time.round({ smallestUnit: "millisecond", roundingMode: undefined });
-TemporalHelpers.assertPlainTime(explicit2, 12, 34, 56, 124, 0, 0, "default roundingMode is halfExpand");
-const implicit2 = time.round({ smallestUnit: "millisecond" });
-TemporalHelpers.assertPlainTime(implicit2, 12, 34, 56, 124, 0, 0, "default roundingMode is halfExpand");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "minute", roundingMode: undefined }),
+  13, 46, 0, 0, 0, 0, "minute");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "minute" }),
+  13, 46, 0, 0, 0, 0, "minute");
 
-const explicit3 = time.round({ smallestUnit: "second", roundingMode: undefined });
-TemporalHelpers.assertPlainTime(explicit3, 12, 34, 56, 0, 0, 0, "default roundingMode is halfExpand");
-const implicit3 = time.round({ smallestUnit: "second" });
-TemporalHelpers.assertPlainTime(implicit3, 12, 34, 56, 0, 0, 0, "default roundingMode is halfExpand");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "second", roundingMode: undefined }),
+  13, 46, 23, 0, 0, 0, "second");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "second" }),
+  13, 46, 23, 0, 0, 0, "second");
+
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "millisecond", roundingMode: undefined }),
+  13, 46, 23, 123, 0, 0, "millisecond");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "millisecond" }),
+  13, 46, 23, 123, 0, 0, "millisecond");
+
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "microsecond", roundingMode: undefined }),
+  13, 46, 23, 123, 457, 0, "microsecond");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "microsecond" }),
+  13, 46, 23, 123, 457, 0, "microsecond");
+
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "nanosecond", roundingMode: undefined }),
+  13, 46, 23, 123, 456, 789, "nanosecond");
+TemporalHelpers.assertPlainTime(
+  plainTime.round({ smallestUnit: "nanosecond" }),
+  13, 46, 23, 123, 456, 789, "nanosecond");

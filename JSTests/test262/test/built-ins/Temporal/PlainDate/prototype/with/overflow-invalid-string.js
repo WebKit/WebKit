@@ -17,6 +17,12 @@ features: [Temporal]
 ---*/
 
 const date = new Temporal.PlainDate(2000, 5, 2);
-["", "CONSTRAIN", "balance", "other string"].forEach((overflow) =>
-  assert.throws(RangeError, () => date.with({ month: 8 }, { overflow }))
-);
+
+const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
+for (const overflow of badOverflows) {
+  assert.throws(
+    RangeError,
+    () => date.with({ month: 8 }, { overflow }),
+    `invalid overflow ("${overflow}")`
+  );
+}

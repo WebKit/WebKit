@@ -27,6 +27,13 @@ ambiguousStrings.forEach((string) => {
   // The same string with a T prefix should not throw:
   arg = `T${string}`;
   instance.toZonedDateTime({ plainTime: arg, timeZone: "UTC" });
+
+  arg = ` ${string}`;
+  assert.throws(
+    RangeError,
+    () => instance.toZonedDateTime({ plainTime: arg, timeZone: "UTC" }),
+    "space is not accepted as a substitute for T prefix"
+  );
 });
 
 // None of these should throw without a T prefix, because they are unambiguously time strings:

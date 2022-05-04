@@ -32,6 +32,14 @@ const validValues = [
   { year: 2000, month: 5, day: 2, hour: 12, timeZone: "UTC" },
   "2001-09-09T01:46:40.987654321+00:00[UTC]",
 ];
-validValues.forEach((value) => {
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.from(value, { overflow: "other string" }));
-});
+
+const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
+for (const value of validValues) {
+  for (const overflow of badOverflows) {
+    assert.throws(
+      RangeError,
+      () => Temporal.ZonedDateTime.from(value, { overflow }),
+      `invalid overflow ("${overflow}")`
+    );
+  }
+}

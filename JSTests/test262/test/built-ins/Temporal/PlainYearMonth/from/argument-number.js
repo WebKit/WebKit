@@ -3,15 +3,26 @@
 
 /*---
 esid: sec-temporal.plainyearmonth.from
-description: A number argument is stringified
+description: A number is converted to a string, then to Temporal.PlainYearMonth
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const plainYearMonth = Temporal.PlainYearMonth.from(201906);
-TemporalHelpers.assertPlainYearMonth(plainYearMonth, 2019, 6, "M06");
-const fields = plainYearMonth.getISOFields();
-assert.sameValue(fields.calendar.id, "iso8601");
-assert.sameValue(fields.isoDay, 1, "isoDay");
-assert.sameValue(fields.isoMonth, 6, "isoMonth");
-assert.sameValue(fields.isoYear, 2019, "isoYear");
+const arg = 201906;
+
+const result = Temporal.PlainYearMonth.from(arg);
+TemporalHelpers.assertPlainYearMonth(result, 2019, 6, "M06", "201906 is a valid ISO string for PlainYearMonth");
+
+const numbers = [
+  1,
+  -201906,
+  1234567,
+];
+
+for (const arg of numbers) {
+  assert.throws(
+    RangeError,
+    () => Temporal.PlainYearMonth.from(arg),
+    `Number ${arg} does not convert to a valid ISO string for PlainYearMonth`
+  );
+}

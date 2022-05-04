@@ -16,6 +16,12 @@ features: [Temporal]
 
 const time = new Temporal.PlainTime(12);
 const values = ["", "CONSTRAIN", "balance", "other string"];
-for (const overflow of values) {
-  assert.throws(RangeError, () => time.with({ minute: 45 }, { overflow }));
+
+const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
+for (const overflow of badOverflows) {
+  assert.throws(
+    RangeError,
+    () => time.with({ minute: 45 }, { overflow }),
+    `invalid overflow ("${overflow}")`
+  );
 }

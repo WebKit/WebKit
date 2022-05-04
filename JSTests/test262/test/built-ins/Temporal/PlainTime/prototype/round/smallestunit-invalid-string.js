@@ -8,4 +8,28 @@ features: [Temporal]
 ---*/
 
 const time = new Temporal.PlainTime(12, 34, 56, 123, 987, 500);
-assert.throws(RangeError, () => time.round({ smallestUnit: "other string" }));
+const badValues = [
+  "era",
+  "eraYear",
+  "year",
+  "month",
+  "week",
+  "day",
+  "millisecond\0",
+  "mill\u0131second",
+  "SECOND",
+  "eras",
+  "eraYears",
+  "years",
+  "months",
+  "weeks",
+  "days",
+  "milliseconds\0",
+  "mill\u0131seconds",
+  "SECONDS",
+  "other string",
+];
+for (const smallestUnit of badValues) {
+  assert.throws(RangeError, () => time.round({ smallestUnit }),
+    `"${smallestUnit}" is not a valid value for smallest unit`);
+}

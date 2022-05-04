@@ -8,14 +8,21 @@ features: [Temporal]
 ---*/
 
 const instance = new Temporal.PlainDate(2000, 5, 2);
-const bad = "-000000-08-24";
+const invalidStrings = [
+  "-000000-10-31",
+  "-000000-10-31T00:45",
+  "-000000-10-31T00:45+01:00",
+  "-000000-10-31T00:45+00:00[UTC]",
+];
 
-assert.throws(RangeError,
-  () => Temporal.PlainDate.compare(bad, instance),
-  "Minus zero is an invalid extended year (first argument)"
-);
+invalidStrings.forEach((arg) => {
+  assert.throws(RangeError,
+    () => Temporal.PlainDate.compare(arg, instance),
+    "Minus zero is an invalid extended year (first argument)"
+  );
 
-assert.throws(RangeError,
-  () => Temporal.PlainDate.compare(instance, bad),
-  "Minus zero is an invalid extended year (second argument)"
-);
+  assert.throws(RangeError,
+    () => Temporal.PlainDate.compare(instance, arg),
+    "Minus zero is an invalid extended year (second argument)"
+  );
+});

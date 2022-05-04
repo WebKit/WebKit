@@ -8,7 +8,7 @@ features: [Temporal]
 ---*/
 
 const props = {};
-assert.throws(TypeError, () => Temporal.PlainTime.compare(props, new Temporal.PlainTime(0, 30)), "TypeError if at least one property is not present");
+assert.throws(TypeError, () => Temporal.PlainTime.compare(props, new Temporal.PlainTime(0, 30)), "TypeError if no properties are present");
 
 props.minute = 30;
 const result = Temporal.PlainTime.compare(props, new Temporal.PlainTime(0, 30));

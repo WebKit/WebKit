@@ -27,6 +27,13 @@ ambiguousStrings.forEach((string) => {
   // The same string with a T prefix should not throw:
   arg = `T${string}`;
   instance.equals(arg);
+
+  arg = ` ${string}`;
+  assert.throws(
+    RangeError,
+    () => instance.equals(arg),
+    "space is not accepted as a substitute for T prefix"
+  );
 });
 
 // None of these should throw without a T prefix, because they are unambiguously time strings:

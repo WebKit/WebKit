@@ -4,7 +4,7 @@
 /*---
 esid: sec-parseint-string-radix
 description: >
-    pareseInt - 'S' is the empty string when inputString does not
+    parseInt - 'S' is the empty string when inputString does not
     contain any such characters
 ---*/
 

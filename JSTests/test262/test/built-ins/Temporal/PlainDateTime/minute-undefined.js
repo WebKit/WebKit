@@ -5,12 +5,19 @@
 esid: sec-temporal.plaindatetime
 description: Minute argument defaults to 0 if not given
 features: [Temporal]
+includes: [temporalHelpers.js]
 ---*/
 
 const args = [2000, 5, 2, 12];
 
-const explicit = new Temporal.PlainDateTime(...args, undefined);
-assert.sameValue(explicit.minute, 0, "minute default argument");
+TemporalHelpers.assertPlainDateTime(
+  new Temporal.PlainDateTime(...args, undefined),
+  2000, 5, "M05", 2, 12, 0, 0, 0, 0, 0,
+  "minute default argument (argument present)"
+);
 
-const implicit = new Temporal.PlainDateTime(...args);
-assert.sameValue(implicit.minute, 0, "minute default argument");
+TemporalHelpers.assertPlainDateTime(
+  new Temporal.PlainDateTime(...args),
+  2000, 5, "M05", 2, 12, 0, 0, 0, 0, 0,
+  "minute default argument (argument missing)"
+);

@@ -11,12 +11,14 @@ const with_ = Temporal.Duration.prototype.with;
 
 assert.sameValue(typeof with_, "function");
 
-assert.throws(TypeError, () => with_.call(undefined), "undefined");
-assert.throws(TypeError, () => with_.call(null), "null");
-assert.throws(TypeError, () => with_.call(true), "true");
-assert.throws(TypeError, () => with_.call(""), "empty string");
-assert.throws(TypeError, () => with_.call(Symbol()), "symbol");
-assert.throws(TypeError, () => with_.call(1), "1");
-assert.throws(TypeError, () => with_.call({}), "plain object");
-assert.throws(TypeError, () => with_.call(Temporal.Duration), "Temporal.Duration");
-assert.throws(TypeError, () => with_.call(Temporal.Duration.prototype), "Temporal.Duration.prototype");
+const arg = { years: 3 };
+
+assert.throws(TypeError, () => with_.call(undefined, arg), "undefined");
+assert.throws(TypeError, () => with_.call(null, arg), "null");
+assert.throws(TypeError, () => with_.call(true, arg), "true");
+assert.throws(TypeError, () => with_.call("", arg), "empty string");
+assert.throws(TypeError, () => with_.call(Symbol(), arg), "symbol");
+assert.throws(TypeError, () => with_.call(1, arg), "1");
+assert.throws(TypeError, () => with_.call({}, arg), "plain object");
+assert.throws(TypeError, () => with_.call(Temporal.Duration, arg), "Temporal.Duration");
+assert.throws(TypeError, () => with_.call(Temporal.Duration.prototype, arg), "Temporal.Duration.prototype");

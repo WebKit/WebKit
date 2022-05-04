@@ -5,6 +5,8 @@
 info: RegExp.prototype.toString can't be used as constructor
 es5id: 15.10.6.4_A7
 description: Checking if creating the RegExp.prototype.toString object fails
+includes: [isConstructor.js]
+features: [Reflect.construct]
 ---*/
 
 var __FACTORY = RegExp.prototype.toString;
@@ -19,5 +21,11 @@ try {
     'The result of evaluating (e instanceof TypeError) is expected to be true'
   );
 }
+
+assert.sameValue(
+  isConstructor(RegExp.prototype.toString),
+  false,
+  'isConstructor(RegExp.prototype.toString) must return false'
+);
 
 // TODO: Convert to assert.throws() format.

@@ -14,15 +14,15 @@ var locales = [
 ];
 var numberingSystems = ['arab', 'latn', 'thai', 'hanidec'];
 
-// minimumSignificantDigits is less precise
+// maximumSignificantDigits defaults to 21, beating maximumFractionDigits, which defaults to 3
 testNumberFormat(
   locales,
   numberingSystems,
   {useGrouping: false, roundingPriority: 'morePrecision', minimumSignificantDigits: 2, minimumFractionDigits: 2},
-  {'1': '1.00'}
+  {'1': '1.0'}
 );
 
-// minimumSignificantDigits is more precise
+// maximumSignificantDigits defaults to 21, beating maximumFractionDigits, which defaults to 3
 testNumberFormat(
   locales,
   numberingSystems,

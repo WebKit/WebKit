@@ -28,12 +28,12 @@ testNumberFormat(
 testNumberFormat(
   locales,
   numberingSystems,
-  {roundingIncrement: 5, maximumFractionDigits: 2},
+  {roundingIncrement: 5, maximumFractionDigits: 2, minimumFractionDigits: 2},
   {
     '1.0500': '1.05',
     '1.0625': '1.05',
-    '1.0750': '1.1',
-    '1.0875': '1.1',
-    '1.1000': '1.1',
+    '1.0750': '1.10',
+    '1.0875': '1.10',
+    '1.1000': '1.10',
   }
 );

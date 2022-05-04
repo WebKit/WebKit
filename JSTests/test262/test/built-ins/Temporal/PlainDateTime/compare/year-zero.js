@@ -8,14 +8,21 @@ features: [Temporal]
 ---*/
 
 const ok = new Temporal.PlainDateTime(2000, 5, 2, 15);
-const bad = "-000000-12-07T03:24:30";
+const invalidStrings = [
+  "-000000-12-07",
+  "-000000-12-07T03:24:30",
+  "-000000-12-07T03:24:30+01:00",
+  "-000000-12-07T03:24:30+00:00[UTC]",
+];
 
-assert.throws(RangeError,
-  () => Temporal.PlainDateTime.compare(bad,ok),
-  "Cannot use minus zero as extended year (first argument)"
-);
+invalidStrings.forEach((arg) => {
+  assert.throws(RangeError,
+    () => Temporal.PlainDateTime.compare(arg, ok),
+    "Cannot use minus zero as extended year (first argument)"
+  );
 
-assert.throws(RangeError,
-  () => Temporal.PlainDateTime.compare(ok, bad),
-  "Cannot use minus zero as extended year (second argument)"
-);
+  assert.throws(RangeError,
+    () => Temporal.PlainDateTime.compare(ok, arg),
+    "Cannot use minus zero as extended year (second argument)"
+  );
+});

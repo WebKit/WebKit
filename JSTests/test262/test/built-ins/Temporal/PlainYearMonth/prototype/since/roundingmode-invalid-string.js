@@ -9,4 +9,6 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainYearMonth(2000, 5);
 const later = new Temporal.PlainYearMonth(2001, 6);
-assert.throws(RangeError, () => later.since(earlier, { smallestUnit: "microsecond", roundingMode: "other string" }));
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l", "auto", "expand", "halfCeil", "halfFloor", "halfTrunc", "halfEven", "halfexpand", "floor\0"]) {
+  assert.throws(RangeError, () => later.since(earlier, { smallestUnit: "microsecond", roundingMode }));
+}

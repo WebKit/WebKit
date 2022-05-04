@@ -16,10 +16,21 @@ info: |
 features: [Temporal]
 ---*/
 
-const duration = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 987, 650, 0);
+const wholeSeconds = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7);
+const subSeconds = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 987, 650);
 
-const explicit = duration.toString({ fractionalSecondDigits: undefined });
-assert.sameValue(explicit, "P1Y2M3W4DT5H6M7.98765S", "default fractionalSecondDigits is auto");
+const tests = [
+  [wholeSeconds, "P1Y2M3W4DT5H6M7S"],
+  [subSeconds, "P1Y2M3W4DT5H6M7.98765S"],
+];
 
-const implicit = duration.toString({});
-assert.sameValue(implicit, "P1Y2M3W4DT5H6M7.98765S", "default fractionalSecondDigits is auto");
+for (const [duration, expected] of tests) {
+  const explicit = duration.toString({ fractionalSecondDigits: undefined });
+  assert.sameValue(explicit, expected, "default fractionalSecondDigits is auto (property present but undefined)");
+
+  const implicit = duration.toString({});
+  assert.sameValue(implicit, expected, "default fractionalSecondDigits is auto (property not present)");
+
+  const lambda = duration.toString(() => {});
+  assert.sameValue(lambda, expected, "default fractionalSecondDigits is auto (property not present, function object)");
+}

@@ -8,18 +8,31 @@ info: |
     sec-getoption step 3:
       3. If _value_ is *undefined*, return _fallback_.
     sec-getstringornumberoption step 2:
-      2. Let _value_ be ? GetOption(_options_, _property_, *"stringOrNumber"*, *undefined*, _fallback_).
+      2. Let _value_ be ? GetOption(_options_, _property_, « Number, String », *undefined*, _fallback_).
     sec-temporal-tosecondsstringprecision step 9:
       9. Let _digits_ be ? GetStringOrNumberOption(_normalizedOptions_, *"fractionalSecondDigits"*, « *"auto"* », 0, 9, *"auto"*).
     sec-temporal.instant.prototype.tostring step 6:
-      6. Let _precision_ be ? ToDurationSecondsStringPrecision(_options_).
+      6. Let _precision_ be ? ToSecondsStringPrecision(_options_).
 features: [Temporal]
 ---*/
 
-const instant = new Temporal.Instant(1_000_000_000_987_650_000n);
+const zeroSeconds = new Temporal.Instant(0n);
+const wholeSeconds = new Temporal.Instant(30_000_000_000n);
+const subSeconds = new Temporal.Instant(30_123_400_000n);
 
-const explicit = instant.toString({ fractionalSecondDigits: undefined });
-assert.sameValue(explicit, "2001-09-09T01:46:40.98765Z", "default fractionalSecondDigits is auto");
+const tests = [
+  [zeroSeconds, "1970-01-01T00:00:00Z"],
+  [wholeSeconds, "1970-01-01T00:00:30Z"],
+  [subSeconds, "1970-01-01T00:00:30.1234Z"],
+];
 
-const implicit = instant.toString({});
-assert.sameValue(implicit, "2001-09-09T01:46:40.98765Z", "default fractionalSecondDigits is auto");
+for (const [instant, expected] of tests) {
+  const explicit = instant.toString({ fractionalSecondDigits: undefined });
+  assert.sameValue(explicit, expected, "default fractionalSecondDigits is auto (property present but undefined)");
+
+  const implicit = instant.toString({});
+  assert.sameValue(implicit, expected, "default fractionalSecondDigits is auto (property not present)");
+
+  const lambda = instant.toString(() => {});
+  assert.sameValue(lambda, expected, "default fractionalSecondDigits is auto (property not present, function object)");
+}

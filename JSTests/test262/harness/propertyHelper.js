@@ -6,13 +6,13 @@ description: |
     property descriptors.
 defines:
   - verifyProperty
-  - verifyEqualTo
-  - verifyWritable
-  - verifyNotWritable
-  - verifyEnumerable
-  - verifyNotEnumerable
-  - verifyConfigurable
-  - verifyNotConfigurable
+  - verifyEqualTo # deprecated
+  - verifyWritable # deprecated
+  - verifyNotWritable # deprecated
+  - verifyEnumerable # deprecated
+  - verifyNotEnumerable # deprecated
+  - verifyConfigurable # deprecated
+  - verifyNotConfigurable # deprecated
 ---*/
 
 // @ts-check
@@ -173,6 +173,9 @@ function isWritable(obj, name, verifyProp, value) {
   return writeSucceeded;
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyEqualTo(obj, name, value) {
   if (!isSameValue(obj[name], value)) {
     throw new Test262Error("Expected obj[" + String(name) + "] to equal " + value +
@@ -180,6 +183,9 @@ function verifyEqualTo(obj, name, value) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyWritable(obj, name, verifyProp, value) {
   if (!verifyProp) {
     assert(Object.getOwnPropertyDescriptor(obj, name).writable,
@@ -190,6 +196,9 @@ function verifyWritable(obj, name, verifyProp, value) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyNotWritable(obj, name, verifyProp, value) {
   if (!verifyProp) {
     assert(!Object.getOwnPropertyDescriptor(obj, name).writable,
@@ -200,6 +209,9 @@ function verifyNotWritable(obj, name, verifyProp, value) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyEnumerable(obj, name) {
   assert(Object.getOwnPropertyDescriptor(obj, name).enumerable,
        "Expected obj[" + String(name) + "] to have enumerable:true.");
@@ -208,6 +220,9 @@ function verifyEnumerable(obj, name) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyNotEnumerable(obj, name) {
   assert(!Object.getOwnPropertyDescriptor(obj, name).enumerable,
        "Expected obj[" + String(name) + "] to have enumerable:false.");
@@ -216,6 +231,9 @@ function verifyNotEnumerable(obj, name) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyConfigurable(obj, name) {
   assert(Object.getOwnPropertyDescriptor(obj, name).configurable,
        "Expected obj[" + String(name) + "] to have configurable:true.");
@@ -224,6 +242,9 @@ function verifyConfigurable(obj, name) {
   }
 }
 
+/**
+ * Deprecated; please use `verifyProperty` in new tests.
+ */
 function verifyNotConfigurable(obj, name) {
   assert(!Object.getOwnPropertyDescriptor(obj, name).configurable,
        "Expected obj[" + String(name) + "] to have configurable:false.");

@@ -7,7 +7,7 @@ description: Throw a TypeError if the fields is not an object
 features: [Symbol, Temporal]
 ---*/
 
-const tests = [undefined, null, false, "string", Symbol("sym"), Math.PI, 42n];
+const tests = [undefined, null, true, false, "string", Symbol("sym"), Math.PI, Infinity, NaN, 42n];
 const iso = Temporal.Calendar.from("iso8601");
 for (const fields of tests) {
   assert.throws(TypeError, () => iso.monthDayFromFields(fields, {}));

@@ -8,20 +8,83 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const earlier = new Temporal.PlainTime(12, 34, 56, 0, 0, 0);
-const later = new Temporal.PlainTime(13, 35, 57, 123, 987, 500);
+const earlier = Temporal.PlainTime.from("08:22:36.123456789");
+const later = Temporal.PlainTime.from("12:39:40.987654321");
 
-const explicit1 = earlier.until(later, { smallestUnit: "microsecond", roundingMode: undefined });
-TemporalHelpers.assertDuration(explicit1, 0, 0, 0, 0, 1, 1, 1, 123, 987, 0, "default roundingMode is trunc");
-const implicit1 = earlier.until(later, { smallestUnit: "microsecond" });
-TemporalHelpers.assertDuration(implicit1, 0, 0, 0, 0, 1, 1, 1, 123, 987, 0, "default roundingMode is trunc");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "hours", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 0, 0, 0, 0, 0, "hours");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "hours" }),
+  0, 0, 0, 0, 4, 0, 0, 0, 0, 0, "hours");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "hours", roundingMode: undefined }),
+  0, 0, 0, 0, -4, 0, 0, 0, 0, 0, "hours");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "hours" }),
+  0, 0, 0, 0, -4, 0, 0, 0, 0, 0, "hours");
 
-const explicit2 = earlier.until(later, { smallestUnit: "millisecond", roundingMode: undefined });
-TemporalHelpers.assertDuration(explicit2, 0, 0, 0, 0, 1, 1, 1, 123, 0, 0, "default roundingMode is trunc");
-const implicit2 = earlier.until(later, { smallestUnit: "millisecond" });
-TemporalHelpers.assertDuration(implicit2, 0, 0, 0, 0, 1, 1, 1, 123, 0, 0, "default roundingMode is trunc");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "minutes", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 17, 0, 0, 0, 0, "minutes");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "minutes" }),
+  0, 0, 0, 0, 4, 17, 0, 0, 0, 0, "minutes");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "minutes", roundingMode: undefined }),
+  0, 0, 0, 0, -4, -17, 0, 0, 0, 0, "minutes");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "minutes" }),
+  0, 0, 0, 0, -4, -17, 0, 0, 0, 0, "minutes");
 
-const explicit3 = earlier.until(later, { smallestUnit: "second", roundingMode: undefined });
-TemporalHelpers.assertDuration(explicit3, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, "default roundingMode is trunc");
-const implicit3 = earlier.until(later, { smallestUnit: "second" });
-TemporalHelpers.assertDuration(implicit3, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, "default roundingMode is trunc");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "seconds", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 17, 4, 0, 0, 0, "seconds");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "seconds" }),
+  0, 0, 0, 0, 4, 17, 4, 0, 0, 0, "seconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "seconds", roundingMode: undefined }),
+  0, 0, 0, 0, -4, -17, -4, 0, 0, 0, "seconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "seconds" }),
+  0, 0, 0, 0, -4, -17, -4, 0, 0, 0, "seconds");
+
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "milliseconds", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 17, 4, 864, 0, 0, "milliseconds");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "milliseconds" }),
+  0, 0, 0, 0, 4, 17, 4, 864, 0, 0, "milliseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "milliseconds", roundingMode: undefined }),
+  0, 0, 0, 0, -4, -17, -4, -864, 0, 0, "milliseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "milliseconds" }),
+  0, 0, 0, 0, -4, -17, -4, -864, 0, 0, "milliseconds");
+
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "microseconds", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 17, 4, 864, 197, 0, "microseconds");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "microseconds" }),
+  0, 0, 0, 0, 4, 17, 4, 864, 197, 0, "microseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "microseconds", roundingMode: undefined }),
+  0, 0, 0, 0, -4, -17, -4, -864, -197, 0, "microseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "microseconds" }),
+  0, 0, 0, 0, -4, -17, -4, -864, -197, 0, "microseconds");
+
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "nanoseconds", roundingMode: undefined }),
+  0, 0, 0, 0, 4, 17, 4, 864, 197, 532, "nanoseconds");
+TemporalHelpers.assertDuration(
+  earlier.until(later, { smallestUnit: "nanoseconds" }),
+  0, 0, 0, 0, 4, 17, 4, 864, 197, 532, "nanoseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "nanoseconds", roundingMode: undefined }),
+  0, 0, 0, 0, -4, -17, -4, -864, -197, -532, "nanoseconds");
+TemporalHelpers.assertDuration(
+  later.until(earlier, { smallestUnit: "nanoseconds" }),
+  0, 0, 0, 0, -4, -17, -4, -864, -197, -532, "nanoseconds");

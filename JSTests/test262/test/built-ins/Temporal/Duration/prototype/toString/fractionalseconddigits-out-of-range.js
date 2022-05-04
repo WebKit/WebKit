@@ -16,5 +16,11 @@ features: [Temporal]
 
 const duration = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 987, 650, 0);
 
-assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: -1 }));
-assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: 10 }));
+assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: -Infinity }),
+  "−∞ is out of range for fractionalSecondDigits");
+assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: -1 }),
+  "−1 is out of range for fractionalSecondDigits");
+assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: 10 }),
+  "10 is out of range for fractionalSecondDigits");
+assert.throws(RangeError, () => duration.toString({ fractionalSecondDigits: Infinity }),
+  "∞ is out of range for fractionalSecondDigits");

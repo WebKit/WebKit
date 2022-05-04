@@ -51,7 +51,7 @@ function printStringCodePoints(string) {
 function testPropertyEscapes(regExp, string, expression) {
   if (!regExp.test(string)) {
     for (const symbol of string) {
-      printCodePoint(symbol.codePointAt(0));
+      const hex = printCodePoint(symbol.codePointAt(0));
       assert(
         regExp.test(symbol),
         `\`${ expression }\` should match U+${ hex } (\`${ symbol }\`)`

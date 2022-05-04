@@ -13,19 +13,16 @@ info: |
     4. Perform CreateDataProperty(unscopableList, "fill", true).
     5. Perform CreateDataProperty(unscopableList, "find", true).
     6. Perform CreateDataProperty(unscopableList, "findIndex", true).
-    7. Perform CreateDataProperty(unscopableList, "findLast", true).
-    8. Perform CreateDataProperty(unscopableList, "findLastIndex", true).
-    9. Perform CreateDataProperty(unscopableList, "flat", true).
-    10. Perform CreateDataProperty(unscopableList, "flatMap", true).
-    11. Perform ! CreateDataPropertyOrThrow(unscopableList, "groupBy", true).
-    12. Perform ! CreateDataPropertyOrThrow(unscopableList, "groupByToMap", true).
-    13. Perform CreateDataProperty(unscopableList, "includes", true).
-    14. Perform CreateDataProperty(unscopableList, "keys", true).
-    15. Perform CreateDataProperty(unscopableList, "values", true).
-    16. Assert: Each of the above calls returns true.
-    17. Return unscopableList.
+    7. Perform CreateDataProperty(unscopableList, "flat", true).
+    8. Perform CreateDataProperty(unscopableList, "flatMap", true).
+    9. Perform CreateDataProperty(unscopableList, "includes", true).
+    10. Perform CreateDataProperty(unscopableList, "keys", true).
+    11. Perform CreateDataProperty(unscopableList, "values", true).
+    12. Assert: Each of the above calls returns true.
+    13. Return unscopableList.
+
 includes: [propertyHelper.js]
-features: [Symbol.unscopables, array-find-from-last]
+features: [Symbol.unscopables]
 ---*/
 
 var unscopables = Array.prototype[Symbol.unscopables];
@@ -57,17 +54,6 @@ verifyEnumerable(unscopables, 'findIndex');
 verifyWritable(unscopables, 'findIndex');
 verifyConfigurable(unscopables, 'findIndex');
 
-
-assert.sameValue(unscopables.findLast, true, '`findLast` property value');
-verifyEnumerable(unscopables, 'findLast');
-verifyWritable(unscopables, 'findLast');
-verifyConfigurable(unscopables, 'findLast');
-
-assert.sameValue(unscopables.findLastIndex, true, '`findLastIndex` property value');
-verifyEnumerable(unscopables, 'findLastIndex');
-verifyWritable(unscopables, 'findLastIndex');
-verifyConfigurable(unscopables, 'findLastIndex');
-
 assert.sameValue(unscopables.flat, true, '`flat` property value');
 verifyEnumerable(unscopables, 'flat');
 verifyWritable(unscopables, 'flat');
@@ -77,16 +63,6 @@ assert.sameValue(unscopables.flatMap, true, '`flatMap` property value');
 verifyEnumerable(unscopables, 'flatMap');
 verifyWritable(unscopables, 'flatMap');
 verifyConfigurable(unscopables, 'flatMap');
-
-assert.sameValue(unscopables.groupBy, true, '`groupBy` property value');
-verifyEnumerable(unscopables, 'groupBy');
-verifyWritable(unscopables, 'groupBy');
-verifyConfigurable(unscopables, 'groupBy');
-
-assert.sameValue(unscopables.groupByToMap, true, '`groupByToMap` property value');
-verifyEnumerable(unscopables, 'groupByToMap');
-verifyWritable(unscopables, 'groupByToMap');
-verifyConfigurable(unscopables, 'groupByToMap');
 
 assert.sameValue(unscopables.includes, true, '`includes` property value');
 verifyEnumerable(unscopables, 'includes');

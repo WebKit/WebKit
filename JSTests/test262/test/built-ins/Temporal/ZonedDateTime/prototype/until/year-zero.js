@@ -4,11 +4,20 @@
 /*---
 esid: sec-temporal.zoneddatetime.prototype.until
 description: Negative zero, as an extended year, is rejected
-features: [Temporal]
+features: [Temporal, arrow-function]
 ---*/
 
+const invalidStrings = [
+  "-0000000-01-01T00:02Z[UTC]",
+  "-0000000-01-01T00:02+00:00[UTC]",
+  "-0000000-01-01T00:02:00.000000000+00:00[UTC]",
+];
 const timeZone = new Temporal.TimeZone("UTC");
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
-const str = "-0000000-01-01T00:02:00.000000000+00:00[UTC]";
-
-assert.throws(RangeError, () => { instance.until(str); }, "reject minus zero as extended year");
+invalidStrings.forEach((arg) => {
+  assert.throws(
+    RangeError,
+    () => instance.until(arg),
+    "reject minus zero as extended year"
+  );
+});

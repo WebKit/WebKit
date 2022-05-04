@@ -10,7 +10,7 @@ info: |
     sec-temporal-tosecondsstringprecision step 9:
       9. Let _digits_ be ? GetStringOrNumberOption(_normalizedOptions_, *"fractionalSecondDigits"*, « *"auto"* », 0, 9, *"auto"*).
     sec-temporal.plaindatetime.prototype.tostring step 4:
-      4. Let _precision_ be ? ToDurationSecondsStringPrecision(_options_).
+      4. Let _precision_ be ? ToSecondsStringPrecision(_options_).
 features: [Temporal]
 ---*/
 

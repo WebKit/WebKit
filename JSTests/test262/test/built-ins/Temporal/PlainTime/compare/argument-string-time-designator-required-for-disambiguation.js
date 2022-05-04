@@ -33,6 +33,18 @@ ambiguousStrings.forEach((string) => {
   arg = `T${string}`;
   Temporal.PlainTime.compare(arg, midnight);
   Temporal.PlainTime.compare(midnight, arg);
+
+  arg = ` ${string}`;
+  assert.throws(
+    RangeError,
+    () => Temporal.PlainTime.compare(arg, midnight),
+    'space is not accepted as a substitute for T prefix (first argument)'
+  );
+  assert.throws(
+    RangeError,
+    () => Temporal.PlainTime.compare(midnight, arg),
+    'space is not accepted as a substitute for T prefix (second argument)'
+  );
 });
 
 // None of these should throw without a T prefix, because they are unambiguously time strings:

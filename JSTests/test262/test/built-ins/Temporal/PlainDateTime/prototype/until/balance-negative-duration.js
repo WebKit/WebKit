@@ -25,10 +25,10 @@ features: [Temporal]
 
 const earlier1 = new Temporal.PlainDateTime(2000, 5, 2, 9);
 const later1 = new Temporal.PlainDateTime(2000, 5, 5, 10);
-const result1 = later1.until(earlier1, { largestUnit: 'day' });
+const result1 = later1.until(earlier1, { largestUnit: "day" });
 TemporalHelpers.assertDuration(result1, 0, 0, 0, -3, -1, 0, 0, 0, 0, 0, "date sign == time sign");
 
 const earlier2 = new Temporal.PlainDateTime(2000, 5, 2, 10);
 const later2 = new Temporal.PlainDateTime(2000, 5, 5, 9);
-const result2 = later2.until(earlier2, { largestUnit: 'day' });
+const result2 = later2.until(earlier2, { largestUnit: "day" });
 TemporalHelpers.assertDuration(result2, 0, 0, 0, -2, -23, 0, 0, 0, 0, 0, "date sign != time sign");

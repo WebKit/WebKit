@@ -1,15 +1,21 @@
 // Copyright 2012 Norbert Lindenberg. All rights reserved.
 // Copyright 2012 Mozilla Corporation. All rights reserved.
 // Copyright 2013 Microsoft Corporation. All rights reserved.
+// Copyright (C) 2022 Richard Gibson. All rights reserved.
 // This code is governed by the license found in the LICENSE file.
 
 /*---
-es5id: 15.5.4.9_CE
 description: >
-    Tests that String.prototype.localeCompare  returns 0 when
-    comparing Strings that are considered canonically equivalent  by
-    the Unicode standard.
-author: Norbert Lindenberg
+    String.prototype.localeCompare must return 0 when
+    comparing Strings that are considered canonically equivalent by
+    the Unicode Standard.
+esid: sec-string.prototype.localecompare
+info: |
+    String.prototype.localeCompare ( _that_ [ , _reserved1_ [ , _reserved2_ ] ] )
+
+    This function must treat Strings that are canonically equivalent
+    according to the Unicode standard as identical and must return `0`
+    when comparing Strings that are considered canonically equivalent.
 ---*/
 
 // pairs with characters not in Unicode 3.0 are commented out
@@ -49,26 +55,12 @@ var pairs = [
   //  ["\uD87E\uDC2B", "北"]
 ];
 
-// Detect whether we are using locale-sensitive comparisons or a bitwise comparison
-if ("a".localeCompare("Z") < 0) {
-  // We are using locale-sensitive comparison, so all pairs should be canonically equivalent
-  var i;
-  for (i = 0; i < pairs.length; i++) {
-    var pair = pairs[i];
-    if (pair[0].localeCompare(pair[1]) !== 0) {
-      throw new Test262Error("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
-        ") ≠ " + pair[1] + " (" + toU(pair[1]) + ").");
-    }
-  }
-} else {
-  // We are using bitwise comparison, so all pairs should not be equivalent
-  var i;
-  for (i = 0; i < pairs.length; i++) {
-    var pair = pairs[i];
-    if (pair[0].localeCompare(pair[1]) === 0) {
-      throw new Test262Error("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
-        ") = " + pair[1] + " (" + toU(pair[1]) + ").");
-    }
+var i;
+for (i = 0; i < pairs.length; i++) {
+  var pair = pairs[i];
+  if (pair[0].localeCompare(pair[1]) !== 0) {
+    throw new Test262Error("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
+      ") ≠ " + pair[1] + " (" + toU(pair[1]) + ").");
   }
 }
 

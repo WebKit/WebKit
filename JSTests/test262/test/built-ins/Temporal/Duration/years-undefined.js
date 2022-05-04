@@ -4,11 +4,14 @@
 /*---
 esid: sec-temporal.duration
 description: Undefined arguments should be treated as zero.
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const explicit = new Temporal.Duration(undefined);
-assert.sameValue(explicit.years, 0, "years default argument");
+const args = [];
 
-const implicit = new Temporal.Duration();
-assert.sameValue(implicit.years, 0, "years default argument");
+const explicit = new Temporal.Duration(...args, undefined);
+TemporalHelpers.assertDuration(explicit, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "explicit");
+
+const implicit = new Temporal.Duration(...args);
+TemporalHelpers.assertDuration(implicit, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "implicit");

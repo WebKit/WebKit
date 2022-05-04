@@ -16,4 +16,11 @@ features: [Temporal]
 
 const datetime = new Temporal.PlainDateTime(2001, 9, 9, 1, 46, 40, 987, 654, 321);
 const timeZone = new Temporal.TimeZone("UTC");
-assert.throws(RangeError, () => datetime.toZonedDateTime(timeZone, { disambiguation: "other string" }));
+const invalidStrings = ["obviously bad", "", "EARLIER", "earlıer", "late\u0131r", "reject\0"];
+invalidStrings.forEach((s) => {
+  assert.throws(
+    RangeError,
+    () => datetime.toZonedDateTime(timeZone, { disambiguation: s }),
+    `invalid disambiguation string (${s})`);
+});
+

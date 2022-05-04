@@ -21,11 +21,10 @@ for (const [smallestUnit, expected] of tests) {
     smallestUnit,
     get fractionalSecondDigits() { throw new Test262Error("should not get fractionalSecondDigits") }
   });
-  assert.sameValue(string, expected, smallestUnit);
+  assert.sameValue(string, expected, `smallestUnit: "${smallestUnit}" overrides fractionalSecondDigits`);
 }
 
 assert.throws(RangeError, () => time.toString({
   smallestUnit: "hour",
   get fractionalSecondDigits() { throw new Test262Error("should not get fractionalSecondDigits") }
-}));
-
+}), "hour is an invalid smallestUnit but still overrides fractionalSecondDigits");

@@ -4,16 +4,14 @@
 /*---
 esid: sec-temporal.duration.from
 description: Property bag is converted to Duration; Duration is copied
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const d1 = Temporal.Duration.from({ milliseconds: 1000 });
-assert.sameValue(d1.seconds, 0);
-assert.sameValue(d1.milliseconds, 1000);
+const d1 = Temporal.Duration.from({ milliseconds: 1000, month: 1 });
+TemporalHelpers.assertDuration(d1, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0);
 
 const d2 = Temporal.Duration.from(d1);
 assert.notSameValue(d1, d2);
-assert.sameValue(d1.seconds, 0);
-assert.sameValue(d1.milliseconds, 1000);
-assert.sameValue(d2.seconds, 0);
-assert.sameValue(d2.milliseconds, 1000);
+TemporalHelpers.assertDuration(d1, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0);
+TemporalHelpers.assertDuration(d2, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0);

@@ -27,6 +27,14 @@ const validValues = [
   { monthCode: "M05", day: 2 },
   "05-02",
 ];
-validValues.forEach((value) => {
-  assert.throws(RangeError, () => Temporal.PlainMonthDay.from(value, { overflow: "other string" }));
-});
+
+const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
+for (const value of validValues) {
+  for (const overflow of badOverflows) {
+    assert.throws(
+      RangeError,
+      () => Temporal.PlainMonthDay.from(value, { overflow }),
+      `invalid overflow ("${overflow}")`
+    );
+  }
+}

@@ -15,7 +15,7 @@ const instance = new Temporal.Calendar("iso8601");
 invalidStrings.forEach((arg) => {
   assert.throws(
     RangeError,
-    () => instance.dateAdd(arg),
+    () => instance.dateAdd(arg, new Temporal.Duration()),
     "String with UTC designator should not be valid as a PlainDate"
   );
 });

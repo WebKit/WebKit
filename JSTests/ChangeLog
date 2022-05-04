@@ -1,3 +1,2196 @@
+2022-05-04  Keith Miller  <keith_miller@apple.com>
+
+        May 2022 test262 update
+        https://bugs.webkit.org/show_bug.cgi?id=240076
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/harness/propertyHelper.js:
+        * test262/harness/regExpUtils.js:
+        (testPropertyEscapes):
+        * test262/harness/temporalHelpers.js:
+        (TemporalHelpers.assertPlainYearMonth):
+        (TemporalHelpers.calendarFromFieldsUndefinedOptions.CalendarFromFieldsUndefinedOptions):
+        (TemporalHelpers.calendarFromFieldsUndefinedOptions.CalendarFromFieldsUndefinedOptions.prototype.toString):
+        (TemporalHelpers.calendarFromFieldsUndefinedOptions.CalendarFromFieldsUndefinedOptions.prototype.dateFromFields):
+        (TemporalHelpers.calendarFromFieldsUndefinedOptions.CalendarFromFieldsUndefinedOptions.prototype.yearMonthFromFields):
+        (TemporalHelpers.calendarFromFieldsUndefinedOptions.CalendarFromFieldsUndefinedOptions.prototype.monthDayFromFields):
+        (TemporalHelpers.OneShiftTimeZone.prototype.getPossibleInstantsFor):
+        (TemporalHelpers.checkFractionalSecondDigitsOptionWrongType): Deleted.
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/Symbol.unscopables/array-find-from-last.js: Added.
+        * test262/test/built-ins/Array/prototype/Symbol.unscopables/array-grouping.js: Added.
+        * test262/test/built-ins/Array/prototype/Symbol.unscopables/value.js:
+        * test262/test/built-ins/Array/prototype/concat/create-species-non-ctor.js:
+        * test262/test/built-ins/Array/prototype/filter/create-species-non-ctor.js:
+        * test262/test/built-ins/Array/prototype/map/create-species-non-ctor.js:
+        * test262/test/built-ins/Array/prototype/slice/create-species-non-ctor.js:
+        * test262/test/built-ins/Array/prototype/splice/create-species-non-ctor.js:
+        * test262/test/built-ins/Date/parse/year-zero.js: Added.
+        * test262/test/built-ins/Date/year-zero.js: Added.
+        * test262/test/built-ins/Error/constructor.js:
+        * test262/test/built-ins/Function/prototype/bind/instance-length-tointeger.js:
+        * test262/test/built-ins/Number/S15.7.1.1_A1.js:
+        * test262/test/built-ins/RegExp/prototype/toString/S15.10.6.4_A6.js:
+        * test262/test/built-ins/RegExp/prototype/toString/S15.10.6.4_A7.js:
+        * test262/test/built-ins/ShadowRealm/WrappedFunction/throws-typeerror-on-revoked-proxy.js: Added.
+        (const.fn.r.evaluate.globalThis.revocable.Proxy.revocable):
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/globalthis-ordinary-object.js: Added.
+        (catch):
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/globalthis-orginary-object.js: Removed.
+        * test262/test/built-ins/ShadowRealm/prototype/evaluate/throws-typeerror-wrap-throwing.js: Added.
+        (r.evaluate.const.revocable.Proxy.revocable):
+        (r.evaluate.const.fn):
+        * test262/test/built-ins/String/prototype/localeCompare/15.5.4.9_CE.js:
+        (i.pair.0.localeCompare):
+        (string_appeared_here.localeCompare): Deleted.
+        (else.i.pair.0.localeCompare): Deleted.
+        * test262/test/built-ins/Temporal/Calendar/from/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/from/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/from/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Calendar.from):
+        (description.of.typeErrorTests.Temporal.Calendar.from):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.Duration):
+        (description.of.typeErrorTests.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-string-with-utc-designator.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.Duration):
+        (description.of.typeErrorTests.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateAdd/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateFromFields/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateFromFields/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDate):
+        (description.of.rangeErrorTests.instance.dateUntil.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.instance.dateUntil.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDate):
+        (description.of.rangeErrorTests.instance.dateUntil.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.instance.dateUntil.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dateUntil/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.day):
+        (description.of.typeErrorTests.instance.day):
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.day):
+        (description.of.typeErrorTests.instance.day):
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/day/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.dayOfWeek):
+        (description.of.typeErrorTests.instance.dayOfWeek):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.dayOfWeek):
+        (description.of.typeErrorTests.instance.dayOfWeek):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfWeek/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.dayOfYear):
+        (description.of.typeErrorTests.instance.dayOfYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.dayOfYear):
+        (description.of.typeErrorTests.instance.dayOfYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/dayOfYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInMonth):
+        (description.of.typeErrorTests.instance.daysInMonth):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInMonth):
+        (description.of.typeErrorTests.instance.daysInMonth):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInMonth/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInWeek):
+        (description.of.typeErrorTests.instance.daysInWeek):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInWeek):
+        (description.of.typeErrorTests.instance.daysInWeek):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInWeek/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInYear):
+        (description.of.typeErrorTests.instance.daysInYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.daysInYear):
+        (description.of.typeErrorTests.instance.daysInYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/daysInYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.inLeapYear):
+        (description.of.typeErrorTests.instance.inLeapYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.inLeapYear):
+        (description.of.typeErrorTests.instance.inLeapYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/basic.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/branding.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/inLeapYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/mergeFields/basic.js: Added.
+        (assert.deepEqual.cal.mergeFields):
+        * test262/test/built-ins/Temporal/Calendar/prototype/mergeFields/iso8601-calendar-month-monthCode.js: Added.
+        (assert.deepEqual.cal.mergeFields):
+        * test262/test/built-ins/Temporal/Calendar/prototype/mergeFields/non-string-properties.js: Added.
+        (assert.deepEqual.cal.mergeFields):
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.month):
+        (description.of.typeErrorTests.instance.month):
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.month):
+        (description.of.typeErrorTests.instance.month):
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/month/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.monthCode):
+        (description.of.typeErrorTests.instance.monthCode):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.monthCode):
+        (description.of.typeErrorTests.instance.monthCode):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthCode/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/basic.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/fields-missing-properties.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/fields-not-object.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/monthcode-invalid.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/overflow-constrain.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/overflow-reject.js: Added.
+        (9995.forEach):
+        (999.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthDayFromFields/reference-year-1972.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.monthsInYear):
+        (description.of.typeErrorTests.instance.monthsInYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.monthsInYear):
+        (description.of.typeErrorTests.instance.monthsInYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/basic.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/branding.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/monthsInYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-plaindate.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-plaindatetime.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.weekOfYear):
+        (description.of.typeErrorTests.instance.weekOfYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.weekOfYear):
+        (description.of.typeErrorTests.instance.weekOfYear):
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/branding.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/weekOfYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.year):
+        (description.of.typeErrorTests.instance.year):
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.year):
+        (description.of.typeErrorTests.instance.year):
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/year/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/basic.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/branding.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/fields-missing-properties.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/fields-not-object.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/monthcode-invalid.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/options-not-object.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/overflow-constrain.js: Added.
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/Calendar/prototype/yearMonthFromFields/overflow-reject.js: Added.
+        (9995.forEach):
+        * test262/test/built-ins/Temporal/Duration/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/call-builtin.js: Added.
+        (Number.isFinite):
+        (Math.sign):
+        * test262/test/built-ins/Temporal/Duration/compare/argument-cast.js: Added.
+        (assert.sameValue.Temporal.Duration.compare.new.Temporal.Duration):
+        (Temporal.Duration.compare.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/compare/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/relativeto-hour.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/relativeto-month.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/relativeto-propertybag-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/relativeto-year.js: Added.
+        * test262/test/built-ins/Temporal/Duration/compare/timezone-string-leap-second.js: Added.
+        (new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/compare/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.Duration):
+        (description.of.typeErrorTests.new.Temporal.Duration):
+        (new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js: Added.
+        * test262/test/built-ins/Temporal/Duration/days-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/from/argument-duration.js: Added.
+        * test262/test/built-ins/Temporal/Duration/from/argument-existing-object.js:
+        * test262/test/built-ins/Temporal/Duration/from/argument-object-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Duration/from/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Duration/from/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Duration/hours-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/microseconds-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/milliseconds-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/minutes-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/mixed.js: Added.
+        * test262/test/built-ins/Temporal/Duration/months-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/nanoseconds-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/abs/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/abs/new-object.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/argument-object-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/options-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/add/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-leap-second.js: Added.
+        (const.result1.instance.add.new.Temporal.Duration):
+        (const.result2.instance.add.new.Temporal.Duration):
+        (const.result3.instance.add.new.Temporal.Duration):
+        (const.result4.instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-month.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-number.js: Added.
+        (const.result.instance.add.new.Temporal.Duration):
+        (const.relativeTo.of.numbers.instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-order.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-number.js: Added.
+        (const.result1.instance.add.new.Temporal.Duration):
+        (const.result2.instance.add.new.Temporal.Duration):
+        (const.calendar.of.numbers.instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.add.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.add.new.Temporal.Duration):
+        (instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-required.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.add.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/relativeto-year.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/add/timezone-string-leap-second.js: Added.
+        (instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/add/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.add.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.add.new.Temporal.Duration):
+        (instance.add.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/blank/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/negated/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/calendar-dateadd-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-mismatch.js: Added.
+        (largestIdx.smallestIdx.d.round):
+        * test262/test/built-ins/Temporal/Duration/prototype/round/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/relativeto-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/relativeto-number.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.round):
+        (description.of.typeErrorTests.instance.round):
+        * test262/test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.round):
+        (description.of.typeErrorTests.instance.round):
+        * test262/test/built-ins/Temporal/Duration/prototype/round/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/round/roundto-invalid-string.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/smallestunit-disallowed-units-string.js: Removed.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/round/smallestunit.js: Added.
+        (expected.of.Object.entries):
+        * test262/test/built-ins/Temporal/Duration/prototype/round/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/round/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/round/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.round):
+        (description.of.typeErrorTests.instance.round):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/argument-object-invalid.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/options-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-leap-second.js: Added.
+        (const.result1.instance.subtract.new.Temporal.Duration):
+        (const.result2.instance.subtract.new.Temporal.Duration):
+        (const.result3.instance.subtract.new.Temporal.Duration):
+        (const.result4.instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-month.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-number.js: Added.
+        (const.result.instance.subtract.new.Temporal.Duration):
+        (const.relativeTo.of.numbers.instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-order.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-number.js: Added.
+        (const.result1.instance.subtract.new.Temporal.Duration):
+        (const.result2.instance.subtract.new.Temporal.Duration):
+        (const.calendar.of.numbers.instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.subtract.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.subtract.new.Temporal.Duration):
+        (instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-required.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.subtract.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/relativeto-year.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/timezone-string-leap-second.js: Added.
+        (instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/subtract/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.subtract.new.Temporal.Duration):
+        (description.of.typeErrorTests.instance.subtract.new.Temporal.Duration):
+        (instance.subtract.new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/Duration/prototype/toJSON/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toJSON/options.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/balance.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-auto.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-invalid-string.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-number.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-out-of-range.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-undefined.js:
+        (expected.of.tests.const.lambda.duration.toString):
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-wrong-type.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/negative-components.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/smallestunit-fractionalseconddigits.js: Added.
+        (expected.of.tests.const.string.duration.toString.get fractionalSecondDigits):
+        (duration.toString.get fractionalSecondDigits):
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/toString/smallestunit-valid-units.js:
+        (test):
+        (notValid.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/total/calendar-dateadd-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/options-wrong-type.js:
+        (values.forEach): Deleted.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/relativeto-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/relativeto-number.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.total):
+        (description.of.typeErrorTests.instance.total):
+        * test262/test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.total):
+        (description.of.typeErrorTests.instance.total):
+        * test262/test/built-ins/Temporal/Duration/prototype/total/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/total/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/total/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.total):
+        (description.of.typeErrorTests.instance.total):
+        * test262/test/built-ins/Temporal/Duration/prototype/valueOf/basic.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/all-negative.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/all-positive.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/argument-invalid-prop.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/argument-mixed-sign.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/argument-object-wrong-shape.js: Added.
+        (let.d.new.Temporal.Duration):
+        (forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/with/argument-sign-prop.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/argument-wrong-type.js: Added.
+        (forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/with/branding.js:
+        * test262/test/built-ins/Temporal/Duration/prototype/with/partial-positive.js: Added.
+        * test262/test/built-ins/Temporal/Duration/prototype/with/sign-conflict-throws-rangeerror.js: Added.
+        (fields.forEach):
+        * test262/test/built-ins/Temporal/Duration/prototype/with/sign-replace.js: Added.
+        * test262/test/built-ins/Temporal/Duration/seconds-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/weeks-undefined.js:
+        * test262/test/built-ins/Temporal/Duration/years-undefined.js:
+        * test262/test/built-ins/Temporal/Instant/compare/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/Instant/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Instant.compare):
+        (description.of.typeErrorTests.Temporal.Instant.compare):
+        * test262/test/built-ins/Temporal/Instant/compare/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/Instant/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/from/argument-instant.js: Added.
+        * test262/test/built-ins/Temporal/Instant/from/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/Instant/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Instant.from):
+        (description.of.typeErrorTests.Temporal.Instant.from):
+        * test262/test/built-ins/Temporal/Instant/from/basic.js: Added.
+        * test262/test/built-ins/Temporal/Instant/from/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/Instant/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/add/basic.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/add/branding.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/add/disallowed-duration-units.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/add/result-out-of-range.js:
+        (fields.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/equals/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/Instant/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/Instant/prototype/equals/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/equals/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/round/options-wrong-type.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/round/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/round/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/round/roundto-invalid-string.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/round/smallestunit-disallowed-units.js: Removed.
+        * test262/test/built-ins/Temporal/Instant/prototype/round/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/since/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/Instant/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/Instant/prototype/since/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/since/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/subtract/basic.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/subtract/branding.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/subtract/disallowed-duration-units.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/subtract/result-out-of-range.js:
+        (fields.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/toJSON/year-format.js: Added.
+        (epochNsInYear):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-auto.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-non-integer.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-number.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-out-of-range.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-undefined.js:
+        (expected.of.tests.const.lambda.instant.toString):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-wrong-type.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/rounding-cross-midnight.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/smallestunit-fractionalseconddigits.js: Added.
+        (expected.of.tests.const.string.instant.toString.get fractionalSecondDigits):
+        (instant.toString.get fractionalSecondDigits):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/smallestunit-valid-units.js:
+        (test):
+        (notValid.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toString):
+        (description.of.typeErrorTests.instance.toString):
+        * test262/test/built-ins/Temporal/Instant/prototype/toString/year-format.js: Added.
+        (epochNsInYear):
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTimeISO):
+        (description.of.typeErrorTests.instance.toZonedDateTimeISO):
+        * test262/test/built-ins/Temporal/Instant/prototype/until/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/Instant/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/Instant/prototype/until/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/Instant/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/Instant/prototype/until/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainDate/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDate/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDate/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDate):
+        (description.of.typeErrorTests.Temporal.Now.plainDate):
+        * test262/test/built-ins/Temporal/Now/plainDate/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDate/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainDate/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDate):
+        (description.of.typeErrorTests.Temporal.Now.plainDate):
+        * test262/test/built-ins/Temporal/Now/plainDateISO/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDateISO/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainDateISO/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDateISO):
+        (description.of.typeErrorTests.Temporal.Now.plainDateISO):
+        * test262/test/built-ins/Temporal/Now/plainDateTime/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDateTime/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDateTime/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDateTime):
+        (description.of.typeErrorTests.Temporal.Now.plainDateTime):
+        * test262/test/built-ins/Temporal/Now/plainDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDateTime):
+        (description.of.typeErrorTests.Temporal.Now.plainDateTime):
+        * test262/test/built-ins/Temporal/Now/plainDateTimeISO/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainDateTimeISO/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainDateTimeISO/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainDateTimeISO):
+        (description.of.typeErrorTests.Temporal.Now.plainDateTimeISO):
+        * test262/test/built-ins/Temporal/Now/plainTimeISO/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/plainTimeISO/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/plainTimeISO/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.plainTimeISO):
+        (description.of.typeErrorTests.Temporal.Now.plainTimeISO):
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.zonedDateTime):
+        (description.of.typeErrorTests.Temporal.Now.zonedDateTime):
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/zonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.zonedDateTime):
+        (description.of.typeErrorTests.Temporal.Now.zonedDateTime):
+        * test262/test/built-ins/Temporal/Now/zonedDateTimeISO/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/Now/zonedDateTimeISO/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/Now/zonedDateTimeISO/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.Now.zonedDateTimeISO):
+        (description.of.typeErrorTests.Temporal.Now.zonedDateTimeISO):
+        * test262/test/built-ins/Temporal/PlainDate/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDate):
+        (description.of.rangeErrorTests.Temporal.PlainDate.compare.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.Temporal.PlainDate.compare.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDate):
+        (description.of.rangeErrorTests.Temporal.PlainDate.compare.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.Temporal.PlainDate.compare.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/PlainDate/compare/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-number.js:
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-plaindate.js:
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainDate.from):
+        (description.of.typeErrorTests.Temporal.PlainDate.from):
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-string-invalid.js:
+        (const.object.get overflow): Deleted.
+        * test262/test/built-ins/Temporal/PlainDate/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainDate.from):
+        (description.of.typeErrorTests.Temporal.PlainDate.from):
+        * test262/test/built-ins/Temporal/PlainDate/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string-invalid.js: Copied from JSTests/test262/test/built-ins/Temporal/PlainDate/from/argument-string-invalid.js.
+        (const.object.get overflow):
+        * test262/test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainDate/from/argument-string-overflow.js.
+        * test262/test/built-ins/Temporal/PlainDate/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/from/overflow-invalid-string.js:
+        (validItems.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainDate/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/add/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/add/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/equals/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/largestunit-default.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/largestunit-higher-units.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/since/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/subtract/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toJSON/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toPlainDateTime):
+        (description.of.typeErrorTests.instance.toPlainDateTime):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/limits.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay/calendar-monthdayfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toString/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/largestunit-default.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/largestunit-higher-units.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/until/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDate/prototype/with/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDate/prototype/withCalendar/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/withCalendar/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDate/prototype/withCalendar/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withCalendar):
+        (description.of.typeErrorTests.instance.withCalendar):
+        * test262/test/built-ins/Temporal/PlainDateTime/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDateTime):
+        (description.of.typeErrorTests.new.Temporal.PlainDateTime):
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDateTime):
+        (description.of.rangeErrorTests.Temporal.PlainDateTime.compare.new.Temporal.PlainDateTime):
+        (description.of.typeErrorTests.new.Temporal.PlainDateTime):
+        (description.of.typeErrorTests.Temporal.PlainDateTime.compare.new.Temporal.PlainDateTime):
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainDateTime):
+        (description.of.rangeErrorTests.Temporal.PlainDateTime.compare.new.Temporal.PlainDateTime):
+        (description.of.typeErrorTests.new.Temporal.PlainDateTime):
+        (description.of.typeErrorTests.Temporal.PlainDateTime.compare.new.Temporal.PlainDateTime):
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/calendar-ignored.js: Added.
+        (const.calendar1.toString):
+        (const.calendar2.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/cast.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/constructor-full.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/datetime-math.js: Added.
+        (units.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-object-month.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-plaindatetime.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainDateTime.from):
+        (description.of.typeErrorTests.Temporal.PlainDateTime.from):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-comma-decimal-separator.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-invalid.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-minus-sign.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-offset.js: Added.
+        (strs.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-optional-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-out-of-range.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-subsecond.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-time-separators.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string-timezone.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainDateTime.from):
+        (description.of.typeErrorTests.Temporal.PlainDateTime.from):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/limits.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/overflow-default-constrain.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/overflow-invalid-string.js:
+        (validValues.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/overflow-reject.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/hour-undefined.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/limits.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/microsecond-undefined.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/millisecond-undefined.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/minute-undefined.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/nanosecond-undefined.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/ambiguous-date.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/argument-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/argument-plain-object-mixed-signs.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/hour-overflow.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/limits.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/negative-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/options-empty.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/options-invalid.js: Added.
+        (badOptions.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/add/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/dayOfWeek/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/dayOfYear/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/daysInMonth/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/daysInWeek/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/daysInYear/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/calendar-checked.js: Added.
+        (const.calendar4.toString):
+        (const.calendar5.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/cast.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/equals/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/monthsInYear/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/balance.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/limits.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-divides.js: Added.
+        (12.forEach):
+        (string_appeared_here.forEach):
+        (Object.entries.nextIncrements.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-does-not-divide.js: Added.
+        (units.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-one-day.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-ceil-basic.js: Added.
+        (Object.entries.incrementOneCeil.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-floor-basic.js: Added.
+        (Object.entries.incrementOneFloor.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfexpand-basic.js: Added.
+        (Object.entries.incrementOneNearest.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfexpand-is-default.js: Added.
+        (Object.entries.units.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-trunc-basic.js: Added.
+        (Object.entries.incrementOneFloor.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/roundto-invalid-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-disallowed-units.js: Removed.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/throws-argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/throws-argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/throws-no-argument.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/round/throws-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/different-calendars-throws.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/no-unnecessary-units.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/options-empty.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/options-invalid.js: Added.
+        (badOptions.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/returns-days.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/round-relative-to-receiver.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingincrement-basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingincrement-cleanly-divides.js: Added.
+        (12.forEach):
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingincrement-does-not-divide.js: Added.
+        (Object.entries.badIncrements.forEach):
+        (Object.entries.fullIncrements.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-ceil-basic.js: Added.
+        (incrementOneCeil.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-floor-basic.js: Added.
+        (incrementOneFloor.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-halfexpand-basic.js: Added.
+        (ensureUnsignedZero):
+        (incrementOneNearest.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-halfexpand-default-changes.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-trunc-basic.js: Added.
+        (ensureUnsignedZero):
+        (incrementOneTrunc.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/roundingmode-trunc-is-default.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/subseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/weeks-months-mutually-exclusive.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/since/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/ambiguous-date.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-plain-object-mixed-signs.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/hour-overflow.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/limits.js: Added.
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/negative-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/options-empty.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/options-invalid.js: Added.
+        (badOptions.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/subtract/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toJSON/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toPlainMonthDay/calendar-monthdayfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toPlainTime/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toPlainYearMonth/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-always.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js: Added.
+        (const.customCal.toString):
+        (const.fakeISO8601Cal.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-invalid-string.js:
+        (invalidCals.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-never.js: Added.
+        (const.cal.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-auto.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-non-integer.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-out-of-range.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-undefined.js:
+        (expected.of.tests.const.lambda.datetime.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-wrong-type.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/rounding-cross-midnight.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-fractionalseconddigits.js: Added.
+        (expected.of.tests.const.string.datetime.toString.get fractionalSecondDigits):
+        (datetime.toString.get fractionalSecondDigits):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-valid-units.js:
+        (test):
+        (notValid.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toString/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/disambiguation-invalid-string.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/invalid-instant.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/multiple-instants.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/options-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/balance-negative-duration.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/balance.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/casts-argument.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/different-calendars-throws.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/inverse.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/no-unnecessary-units.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/options-empty.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/options-invalid.js: Added.
+        (badOptions.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/returns-days.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/round-relative-to-receiver.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingincrement-basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingincrement-cleanly-divides.js: Added.
+        (12.forEach):
+        (string_appeared_here.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingincrement-does-not-divide.js: Added.
+        (Object.entries.nondivisibleUnits.forEach):
+        (Object.entries.equalDivisibleUnits.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-ceil-basic.js: Added.
+        (incrementOneCeil.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-floor-basic.js: Added.
+        (incrementOneFloor.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-halfexpand-basic.js: Added.
+        (ensureUnsignedZero):
+        (incrementOneNearest.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-halfexpand-default-changes.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-trunc-basic.js: Added.
+        (ensureUnsignedZero):
+        (incrementOneTrunc.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/roundingmode-trunc-is-default.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/subseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/units-changed.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/weeks-months-mutually-exclusive.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/until/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/valueOf/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/weekOfYear/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/argument-not-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/argument-object-insufficient-data.js: Added.
+        (units.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-options.js: Added.
+        (Calendar):
+        (Calendar.prototype.dateFromFields):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-temporal-object-throws.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-throws.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/month-and-monthcode-must-agree.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/multiple-unrecognized-properties-ignored.js: Added.
+        (units.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/options-empty.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/options-invalid.js: Added.
+        (badOptions.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
+        (const.options.get overflow):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/string-throws.js: Added.
+        (baddies.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/with/timezone-throws.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/argument-string.js: Added.
+        (const.calendar.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/calendar-temporal-object.js:
+        (TemporalHelpers.checkToTemporalCalendarFastPath):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withCalendar/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withCalendar):
+        (description.of.typeErrorTests.instance.withCalendar):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-noniso.js: Added.
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-id.js: Added.
+        (const.cal1.toString):
+        (const.cal2.toString):
+        (const.cal2.year):
+        (const.cal2.month):
+        (const.cal2.monthCode):
+        (const.cal2.day):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-object.js: Added.
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar.js: Added.
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainDate):
+        (description.of.typeErrorTests.instance.withPlainDate):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-iso-calendar.js: Added.
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainDate):
+        (description.of.typeErrorTests.instance.withPlainDate):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/non-compatible-calendars-throw.js: Added.
+        (const.cal.toString):
+        (const.anotherCal.toString):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-object-insufficient-data.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-without-time-designator.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-time.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainTime):
+        (description.of.typeErrorTests.instance.withPlainTime):
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/no-argument-default-to-midnight.js: Added.
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainDateTime/second-undefined.js:
+        * test262/test/built-ins/Temporal/PlainMonthDay/calendar-always.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainMonthDay):
+        (description.of.typeErrorTests.new.Temporal.PlainMonthDay):
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-plainmonthday.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainMonthDay.from):
+        (description.of.typeErrorTests.Temporal.PlainMonthDay.from):
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainMonthDay.from):
+        (description.of.typeErrorTests.Temporal.PlainMonthDay.from):
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/calendar-monthdayfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.monthDayFromFields):
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/overflow-invalid-string.js:
+        (validValues.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainMonthDay/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/calendar-monthdayfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.monthDayFromFields):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/equals/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/toJSON/year-format.js: Added.
+        (NotISO):
+        (NotISO.prototype.toString):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-always.js:
+        (toString):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/toString/year-format.js: Added.
+        (NotISO):
+        (NotISO.prototype.toString):
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/with/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainMonthDay/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/compare/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainTime):
+        (description.of.rangeErrorTests.Temporal.PlainTime.compare.new.Temporal.PlainTime):
+        (description.of.typeErrorTests.new.Temporal.PlainTime):
+        (description.of.typeErrorTests.Temporal.PlainTime.compare.new.Temporal.PlainTime):
+        * test262/test/built-ins/Temporal/PlainTime/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/compare/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainTime/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-object-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-plaintime.js:
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainTime.from):
+        (description.of.typeErrorTests.Temporal.PlainTime.from):
+        * test262/test/built-ins/Temporal/PlainTime/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/observable-get-overflow-argument-string-invalid.js: Renamed from JSTests/test262/test/built-ins/Temporal/PlainTime/from/argument-string-invalid.js.
+        * test262/test/built-ins/Temporal/PlainTime/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/overflow-constrain.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/overflow-invalid-string.js:
+        (validValues.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainTime/from/overflow-reject.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/negative-zero.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/add/argument-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/add/argument-higher-units.js: Added.
+        (new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/add/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/equals/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/rounding-cross-midnight.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-hours.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-microseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-milliseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-minutes.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-nanoseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingincrement-seconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-undefined.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/roundto-invalid-string.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-disallowed-units.js: Removed.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-missing.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/argument-cast.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/largestunit.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/result-sub-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-hours.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-microseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-milliseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-minutes.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-nanoseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingincrement-seconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-undefined.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/since/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/subtract/argument-duration.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/subtract/argument-higher-units.js: Added.
+        (new.Temporal.Duration):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/subtract/argument-object.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toPlainDateTime):
+        (description.of.typeErrorTests.instance.toPlainDateTime):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toPlainDateTime):
+        (description.of.typeErrorTests.instance.toPlainDateTime):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/limits.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-auto.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-non-integer.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-number.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-out-of-range.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-undefined.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-wrong-type.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/rounding-cross-midnight.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-ceil.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-floor.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfExpand.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-trunc.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-fractionalseconddigits.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-valid-units.js:
+        (test):
+        (notValid.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-string-with-utc-designator.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.toZonedDateTime):
+        (description.of.typeErrorTests.instance.toZonedDateTime):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.plainDate.new.Temporal.PlainDate):
+        (description.of.typeErrorTests.plainDate.new.Temporal.PlainDate):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/argument-cast.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/basic.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/largestunit.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/result-sub-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-hours.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-invalid.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-microseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-milliseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-minutes.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-nanoseconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingincrement-seconds.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-undefined.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/until/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainTime/prototype/with/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainTime/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/calendar-always.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainYearMonth):
+        (description.of.typeErrorTests.new.Temporal.PlainYearMonth):
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainYearMonth):
+        (description.of.rangeErrorTests.Temporal.PlainYearMonth.compare.new.Temporal.PlainYearMonth):
+        (description.of.typeErrorTests.new.Temporal.PlainYearMonth):
+        (description.of.typeErrorTests.Temporal.PlainYearMonth.compare.new.Temporal.PlainYearMonth):
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.PlainYearMonth):
+        (description.of.rangeErrorTests.Temporal.PlainYearMonth.compare.new.Temporal.PlainYearMonth):
+        (description.of.typeErrorTests.new.Temporal.PlainYearMonth):
+        (description.of.typeErrorTests.Temporal.PlainYearMonth.compare.new.Temporal.PlainYearMonth):
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.yearMonthFromFields):
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-number.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-plainyearmonth.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainYearMonth.from):
+        (description.of.typeErrorTests.Temporal.PlainYearMonth.from):
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.PlainYearMonth.from):
+        (description.of.typeErrorTests.Temporal.PlainYearMonth.from):
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.yearMonthFromFields):
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/overflow-invalid-string.js:
+        (validValues.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainYearMonth/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/limits.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/add/calendar-datefromfields-called.js: Added.
+        (CustomCalendar):
+        (CustomCalendar.prototype.year):
+        (CustomCalendar.prototype.month):
+        (CustomCalendar.prototype.monthCode):
+        (CustomCalendar.prototype.day):
+        (CustomCalendar.prototype.daysInMonth):
+        (CustomCalendar.prototype._dateFromFieldsImpl):
+        (CustomCalendar.prototype.dateFromFields):
+        (CustomCalendar.prototype.yearMonthFromFields):
+        (CustomCalendar.prototype.monthDayFromFields):
+        (CustomCalendar.prototype.dateAdd):
+        (CustomCalendar.prototype.toString):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/add/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/add/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-wrong-type.js:
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.yearMonthFromFields):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/equals/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.yearMonthFromFields):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/since/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/subtract/calendar-datefromfields-called.js: Added.
+        (CustomCalendar):
+        (CustomCalendar.prototype.year):
+        (CustomCalendar.prototype.month):
+        (CustomCalendar.prototype.monthCode):
+        (CustomCalendar.prototype.day):
+        (CustomCalendar.prototype.daysInMonth):
+        (CustomCalendar.prototype._dateFromFieldsImpl):
+        (CustomCalendar.prototype.dateFromFields):
+        (CustomCalendar.prototype.yearMonthFromFields):
+        (CustomCalendar.prototype.monthDayFromFields):
+        (CustomCalendar.prototype.dateAdd):
+        (CustomCalendar.prototype.toString):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/subtract/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/subtract/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/toJSON/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-always.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/toString/year-format.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        (Temporal.Calendar.prototype.yearMonthFromFields):
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/until/year-zero.js:
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/with/options-wrong-type.js:
+        (values.forEach): Deleted.
+        * test262/test/built-ins/Temporal/PlainYearMonth/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/TimeZone/from/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/from/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/from/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.TimeZone.from):
+        (description.of.typeErrorTests.Temporal.TimeZone.from):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getInstantFor):
+        (description.of.typeErrorTests.instance.getInstantFor):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getInstantFor):
+        (description.of.typeErrorTests.instance.getInstantFor):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getInstantFor/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getNextTransition/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getNextTransition/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getOffsetNanosecondsFor/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getOffsetNanosecondsFor/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getOffsetStringFor/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getOffsetStringFor/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/argument-object-tostring.js: Added.
+        (arg.toString):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getPlainDateTimeFor):
+        (description.of.typeErrorTests.instance.getPlainDateTimeFor):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getPlainDateTimeFor.new.Temporal.Instant):
+        (description.of.typeErrorTests.instance.getPlainDateTimeFor.new.Temporal.Instant):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/instant-string-sub-minute-offset.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/limits.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPlainDateTimeFor/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getPossibleInstantsFor):
+        (description.of.typeErrorTests.instance.getPossibleInstantsFor):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.getPossibleInstantsFor):
+        (description.of.typeErrorTests.instance.getPossibleInstantsFor):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPossibleInstantsFor/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPreviousTransition/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/TimeZone/prototype/getPreviousTransition/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.ZonedDateTime):
+        (description.of.typeErrorTests.new.Temporal.ZonedDateTime):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.compare):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.compare):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.compare):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.compare):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.compare):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.compare):
+        * test262/test/built-ins/Temporal/ZonedDateTime/compare/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.from):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.from):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.from):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.from):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/argument-zoneddatetime.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/overflow-invalid-string.js:
+        (validValues.forEach): Deleted.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.Temporal.ZonedDateTime.from):
+        (description.of.typeErrorTests.Temporal.ZonedDateTime.from):
+        * test262/test/built-ins/Temporal/ZonedDateTime/from/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/add/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/add/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.equals):
+        (description.of.typeErrorTests.instance.equals):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/equals/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/roundto-invalid-string.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/smallestunit-disallowed-units.js: Removed.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/round/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/calendar-dateadd-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.since):
+        (description.of.typeErrorTests.instance.since):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/since/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/subtract/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/subtract/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toJSON/year-format.js: Added.
+        (epochNsInYear):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toPlainMonthDay/calendar-monthdayfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toPlainYearMonth/calendar-yearmonthfromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-auto.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-non-integer.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-out-of-range.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-undefined.js:
+        (expected.of.tests.const.lambda.datetime.toString):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/fractionalseconddigits-wrong-type.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/rounding-cross-midnight.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/rounding-direction.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/roundingmode-ceil.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/roundingmode-floor.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/roundingmode-halfExpand.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/roundingmode-trunc.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/smallestunit-fractionalseconddigits.js: Added.
+        (expected.of.tests.const.string.datetime.toString.get fractionalSecondDigits):
+        (datetime.toString.get fractionalSecondDigits):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/smallestunit-valid-units.js:
+        (test):
+        (notValid.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/toString/year-format.js: Added.
+        (epochNsInYear):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/calendar-dateadd-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/largestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/roundingmode-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/smallestunit-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.until):
+        (description.of.typeErrorTests.instance.until):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/until/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/with/options-wrong-type.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/with/overflow-invalid-string.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withCalendar/calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withCalendar/calendar-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withCalendar/calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withCalendar):
+        (description.of.typeErrorTests.instance.withCalendar):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-propertybag-calendar-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainDate):
+        (description.of.typeErrorTests.instance.withPlainDate):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-string-invalid.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainDate):
+        (description.of.typeErrorTests.instance.withPlainDate):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainDate/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-number.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js:
+        (ambiguousStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withPlainTime):
+        (description.of.typeErrorTests.instance.withPlainTime):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/plaintime-propertybag-no-time-units.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/year-zero.js:
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withTimeZone/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withTimeZone/timezone-string-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/built-ins/Temporal/ZonedDateTime/prototype/withTimeZone/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.withTimeZone):
+        (description.of.typeErrorTests.instance.withTimeZone):
+        * test262/test/built-ins/Temporal/ZonedDateTime/timezone-string-leap-second.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/timezone-string-multiple-offsets.js: Added.
+        * test262/test/built-ins/Temporal/ZonedDateTime/timezone-wrong-type.js: Added.
+        (description.of.rangeErrorTests.new.Temporal.ZonedDateTime):
+        (description.of.typeErrorTests.new.Temporal.ZonedDateTime):
+        * test262/test/built-ins/TypedArray/prototype/set/BigInt/array-arg-targetbuffer-detached-on-get-src-value-throws.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/set/array-arg-targetbuffer-detached-on-get-src-value-no-throw.js: Added.
+        (testWithTypedArrayConstructors.):
+        (testWithTypedArrayConstructors.get let):
+        * test262/test/built-ins/TypedArray/prototype/set/array-arg-targetbuffer-detached-on-get-src-value-throws.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/sort/BigInt/detached-buffer-comparefn.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/sort/detached-buffer-comparefn-coerce.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/sort/detached-buffer-comparefn.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/sort/sort-tonumber.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/detached-when-species-retrieved-different-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/detached-when-species-retrieved-same-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-custom-species-proto-from-ctor-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-custom-species.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-not-object-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-species-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-species-not-ctor-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/other-ctor-buffer-ctor-species-prototype-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-species-custom-proto-from-ctor-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-species-custom.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-species-not-ctor.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-species-prototype-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-species-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/no-species.js: Added.
+        (GrossBuffer):
+        (GrossBuffer.get Symbol):
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-different-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-same-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-custom-species-proto-from-ctor-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-custom-species.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-not-object-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-not-ctor-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-null.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-prototype-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-undefined.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/out-of-bounds-when-species-retrieved-different-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/out-of-bounds-when-species-retrieved-same-type.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-access-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-custom-proto-from-ctor-realm.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-custom.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-not-ctor.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-prototype-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-throws.js: Removed.
+        * test262/test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js: Removed.
+        * test262/test/built-ins/parseInt/15.1.2.2-2-1.js:
+        * test262/test/harness/temporalHelpers-one-shift-time-zone.js: Added.
+        (checkTimeZoneArithmetic):
+        * test262/test/intl402/DurationFormat/constructor-locales-invalid.js: Added.
+        (expectedError.of.getInvalidLocaleArguments):
+        * test262/test/intl402/DurationFormat/constructor-locales-valid.js: Added.
+        (name.of.tests.matchers.forEach):
+        * test262/test/intl402/DurationFormat/constructor-options-defaults.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-fractionalDigits-invalid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-fractionalDigits-valid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-invalid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-localeMatcher-invalid.js: Added.
+        (const.localeMatcher.of.invalidOptions.new.Intl.DurationFormat):
+        * test262/test/intl402/DurationFormat/constructor-options-localeMatcher-valid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-numberingSystem-invalid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-numberingSystem-valid.js: Added.
+        * test262/test/intl402/DurationFormat/constructor-options-order.js: Added.
+        (const.options.get localeMatcher):
+        (const.options.get numberingSystem):
+        (const.options.get style):
+        * test262/test/intl402/DurationFormat/constructor-options-style-invalid.js: Added.
+        (const.invalidOption.of.invalidOptions.new.Intl.DurationFormat):
+        * test262/test/intl402/DurationFormat/constructor-options-style-valid.js: Added.
+        (toString):
+        * test262/test/intl402/DurationFormat/extensibility.js: Renamed from JSTests/test262/test/intl402/DurationFormat/instance/extensibility.js.
+        * test262/test/intl402/DurationFormat/length.js: Renamed from JSTests/test262/test/intl402/DurationFormat/instance/length.js.
+        * test262/test/intl402/DurationFormat/name.js: Renamed from JSTests/test262/test/intl402/DurationFormat/instance/name.js.
+        * test262/test/intl402/DurationFormat/newtarget-undefined.js: Added.
+        * test262/test/intl402/DurationFormat/prop-desc.js: Renamed from JSTests/test262/test/intl402/DurationFormat/instance/prop-desc.js.
+        * test262/test/intl402/DurationFormat/prototype.js: Renamed from JSTests/test262/test/intl402/DurationFormat/instance/prototype.js.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/basic.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/branding.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/length.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/locales-empty.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/locales-invalid.js: Added.
+        (expectedError.of.getInvalidLocaleArguments):
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/locales-specific.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/name.js: Added.
+        * test262/test/intl402/DurationFormat/supportedLocalesOf/prop-desc.js: Added.
+        * test262/test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js: Added.
+        (Object.entries.instances.forEach):
+        * test262/test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js: Added.
+        (Object.entries.instances.forEach):
+        * test262/test/intl402/NumberFormat/constructor-roundingIncrement-invalid.js:
+        * test262/test/intl402/NumberFormat/constructor-roundingIncrement.js:
+        (expected.of.values.get roundingIncrement):
+        * test262/test/intl402/NumberFormat/prototype/format/format-max-min-fraction-significant-digits.js: Added.
+        (nfTestMatrix.forEach):
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-10.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-100.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-1000.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-2.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-20.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-200.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-2000.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-25.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-250.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-2500.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-5.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-50.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-500.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-increment-5000.js:
+        * test262/test/intl402/NumberFormat/prototype/format/format-rounding-priority-more-precision.js:
+        * test262/test/intl402/NumberFormat/prototype/formatRange/x-greater-than-y-throws.js:
+        * test262/test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-throws.js:
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-number.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-propertybag-calendar-number.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.era):
+        (description.of.typeErrorTests.instance.era):
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-string-invalid.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.era):
+        (description.of.typeErrorTests.instance.era):
+        * test262/test/intl402/Temporal/Calendar/prototype/era/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/leap-second.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/era/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-number.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-propertybag-calendar-leap-second.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-propertybag-calendar-number.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-propertybag-calendar-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.eraYear):
+        (description.of.typeErrorTests.instance.eraYear):
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-propertybag-calendar-year-zero.js: Added.
+        (invalidStrings.forEach):
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-string-invalid.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/argument-wrong-type.js: Added.
+        (description.of.rangeErrorTests.instance.eraYear):
+        (description.of.typeErrorTests.instance.eraYear):
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/calendar-datefromfields-called-with-options-undefined.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/leap-second.js: Added.
+        * test262/test/intl402/Temporal/Calendar/prototype/eraYear/year-zero.js:
+        (invalidStrings.forEach):
+        * test262/test/intl402/Temporal/Duration/compare/relativeto-hour.js: Added.
+        * test262/test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js: Added.
+        (test):
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/toString/calendarname-always.js: Added.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js: Added.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/toString/calendarname-never.js: Added.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-noniso.js: Added.
+        (const.cal.era):
+        (const.cal.eraYear):
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-id.js: Added.
+        (const.cal1.toString):
+        (const.cal2.era):
+        (const.cal2.eraYear):
+        (const.cal2.toString):
+        (const.cal2.year):
+        (const.cal2.month):
+        (const.cal2.monthCode):
+        (const.cal2.day):
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-object.js: Added.
+        (const.cal.era):
+        (const.cal.eraYear):
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar.js: Added.
+        (const.cal.era):
+        (const.cal.eraYear):
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-calendar.js: Added.
+        * test262/test/intl402/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-iso-calendar.js: Added.
+        (const.cal.era):
+        (const.cal.eraYear):
+        (const.cal.toString):
+        (const.cal.year):
+        (const.cal.month):
+        (const.cal.monthCode):
+        (const.cal.day):
+        * test262/test/intl402/Temporal/TimeZone/etc-timezone.js: Added.
+        (14.forEach):
+        (9.forEach):
+        (12.forEach):
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-accessor-property-and.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-accessor-property-nullish.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-accessor-property-or.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-data-property-and.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-data-property-nullish.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-data-property-or.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-method-and.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-method-nullish.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-method-or.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-readonly-accessor-property-and.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-readonly-accessor-property-nullish.js: Removed.
+        * test262/test/language/expressions/compound-assignment/left-hand-side-private-reference-readonly-accessor-property-or.js: Removed.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-and.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-nullish.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-or.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-short-circuit-and.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.set field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-short-circuit-nullish.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.set field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-accessor-property-short-circuit-or.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.set field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-and.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-nullish.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-or.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-short-circuit-and.js: Added.
+        (doNotCall):
+        (C.prototype.compoundAssignment):
+        (C.prototype.fieldValue):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-short-circuit-nullish.js: Added.
+        (doNotCall):
+        (C.prototype.compoundAssignment):
+        (C.prototype.fieldValue):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-data-property-short-circuit-or.js: Added.
+        (doNotCall):
+        (C.prototype.compoundAssignment):
+        (C.prototype.fieldValue):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-method-and.js: Added.
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-method-short-circuit-nullish.js: Added.
+        (doNotCall):
+        (C.prototype.compoundAssignment):
+        (C.prototype.getPrivateMethodFunctionObject):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-method-short-circuit-or.js: Added.
+        (doNotCall):
+        (C.prototype.compoundAssignment):
+        (C.prototype.getPrivateMethodFunctionObject):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-and.js: Added.
+        (C.prototype.get field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-nullish.js: Added.
+        (C.prototype.get field):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-or.js: Added.
+        (C.prototype.get field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-short-circuit-and.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-short-circuit-nullish.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/logical-assignment/left-hand-side-private-reference-readonly-accessor-property-short-circuit-or.js: Added.
+        (doNotCall):
+        (C.prototype.get field):
+        (C.prototype.compoundAssignment):
+        (C):
+        * test262/test/language/expressions/unary-plus/S11.4.6_A3_T3.js:
+        (new.Number):
+        (isNaN):
+        * test262/test/language/statements/for-in/S12.6.4_A7_T2.js:
+        (erasator_T_1000):
+        (__accum.indexOf.string_appeared_here.1.__accum.indexOf): Deleted.
+        (__accum.indexOf): Deleted.
+        * test262/test262-Revision.txt:
+
 2022-05-03  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip test currently failing on ARM

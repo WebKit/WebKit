@@ -42,6 +42,12 @@ const expected = [
   "get year",
   "get year.valueOf",
   "call year.valueOf",
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
 const fields = {
@@ -70,7 +76,13 @@ const argument = new Proxy(fields, {
     return key in target;
   },
 });
-const result = instance.with(argument);
+const options = {
+  get overflow() {
+    actual.push("get options.overflow");
+    return TemporalHelpers.toPrimitiveObserver(actual, "constrain", "options.overflow");
+  }
+};
+const result = instance.with(argument, options);
 TemporalHelpers.assertPlainDateTime(result, 1, 1, "M01", 1, 1, 1, 1, 1, 1, 1);
 assert.sameValue(result.calendar.id, "iso8601", "calendar result");
 assert.compareArray(actual, expected, "order of operations");

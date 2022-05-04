@@ -3,20 +3,23 @@
 
 /*---
 esid: sec-temporal.plainyearmonth.from
-description: A PlainYearMonth argument is cloned
+description: A PlainYearMonth object is copied, not returned directly
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const original = new Temporal.PlainYearMonth(2019, 11, undefined, 7);
-const result = Temporal.PlainYearMonth.from(original);
-assert.notSameValue(result, original);
+const orig = new Temporal.PlainYearMonth(2000, 5, undefined, 7);
+const result = Temporal.PlainYearMonth.from(orig);
 
-for (const plainYearMonth of [original, result]) {
-  TemporalHelpers.assertPlainYearMonth(plainYearMonth, 2019, 11, "M11");
-  const fields = plainYearMonth.getISOFields();
-  assert.sameValue(fields.calendar.id, "iso8601");
-  assert.sameValue(fields.isoDay, 7, "isoDay");
-  assert.sameValue(fields.isoMonth, 11, "isoMonth");
-  assert.sameValue(fields.isoYear, 2019, "isoYear");
-}
+TemporalHelpers.assertPlainYearMonth(
+  result,
+  2000, 5, "M05",
+  "PlainYearMonth is copied",
+  /* era = */ undefined, /* eraYear = */ undefined, /* isoDay = */ 7
+);
+
+assert.notSameValue(
+  result,
+  orig,
+  "When a PlainYearMonth is given, the returned value is not the original PlainYearMonth"
+);

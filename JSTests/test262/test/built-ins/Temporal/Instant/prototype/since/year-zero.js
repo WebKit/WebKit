@@ -4,19 +4,19 @@
 /*---
 esid: sec-temporal.instant.prototype.since
 description: Negative zero, as an extended year, is rejected
-features: [Temporal]
+features: [Temporal, arrow-function]
 ---*/
 
 const invalidStrings = [
-    "-000000-03-30T00:45Z",
-    "-000000-03-30T01:45+01:00",
-    "-000000-03-30T01:45:00+01:00[UTC]"
+  "-000000-03-30T00:45Z",
+  "-000000-03-30T01:45+01:00",
+  "-000000-03-30T01:45:00+00:00[UTC]",
 ];
 const instance = new Temporal.Instant(0n);
-invalidStrings.forEach((str) => {
+invalidStrings.forEach((arg) => {
   assert.throws(
     RangeError,
-    () => instance.since(str),
+    () => instance.since(arg),
     "reject minus zero as extended year"
   );
 });

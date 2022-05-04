@@ -34,8 +34,14 @@ const invalidOverflow = [
   "CONSTRAIN",
   "constra\u0131n",
 ];
-validItems.forEach((item) => {
-  invalidOverflow.forEach((overflow) => {
-    assert.throws(RangeError, () => Temporal.PlainDate.from(item, { overflow }));
-  });
-});
+
+const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
+for (const item of validItems) {
+  for (const overflow of badOverflows) {
+    assert.throws(
+      RangeError,
+      () => Temporal.PlainDate.from(item, { overflow }),
+      `invalid overflow ("${overflow}")`
+    );
+  }
+}

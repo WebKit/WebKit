@@ -19,8 +19,15 @@ info: |
        b. If C is null, let C be undefined.
     [...]
     9. If IsConstructor(C) is false, throw a TypeError exception.
-features: [Symbol.species]
+includes: [isConstructor.js]
+features: [Symbol.species, Reflect.construct]
 ---*/
+
+assert.sameValue(
+  isConstructor(parseInt),
+  false,
+  'precondition: isConstructor(parseInt) must return false'
+);
 
 var a = [];
 
@@ -29,4 +36,4 @@ a.constructor[Symbol.species] = parseInt;
 
 assert.throws(TypeError, function() {
   a.slice();
-});
+}, 'a.slice() throws a TypeError exception');

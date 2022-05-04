@@ -8,9 +8,9 @@ features: [Temporal]
 ---*/
 
 const tests = [
-  [[], "05-02[u-ca=iso8601]"],
+  [[], "1972-05-02[u-ca=iso8601]"],
   [[{ toString() { return "custom"; } }], "1972-05-02[u-ca=custom]"],
-  [[{ toString() { return "iso8601"; } }], "05-02[u-ca=iso8601]"],
+  [[{ toString() { return "iso8601"; } }], "1972-05-02[u-ca=iso8601]"],
   [[{ toString() { return "ISO8601"; } }], "1972-05-02[u-ca=ISO8601]"],
   [[{ toString() { return "\u0131so8601"; } }], "1972-05-02[u-ca=\u0131so8601]"], // dotless i
 ];

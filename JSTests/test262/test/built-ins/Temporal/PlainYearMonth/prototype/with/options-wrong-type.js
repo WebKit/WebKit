@@ -7,7 +7,7 @@ description: TypeError thrown when options argument is a primitive
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const values = [
+const badOptions = [
   null,
   true,
   "2021-01",
@@ -16,7 +16,8 @@ const values = [
   2n,
 ];
 
-const ym = Temporal.PlainYearMonth.from("2019-10");
-values.forEach((value) => {
-  assert.throws(TypeError, () => ym.with({ year: 2020 }, value), `TypeError on wrong argument type ${typeof value}`);
-});
+const instance = new Temporal.PlainYearMonth(2019, 10);
+for (const value of badOptions) {
+  assert.throws(TypeError, () => instance.with({ year: 2020 }, value),
+    `TypeError on wrong options type ${typeof value}`);
+};

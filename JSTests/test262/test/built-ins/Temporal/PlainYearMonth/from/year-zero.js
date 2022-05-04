@@ -8,15 +8,17 @@ features: [Temporal, arrow-function]
 ---*/
 
 const invalidStrings = [
-  '-000000-06',
-  '-000000-06-24',
-  '-000000-06-24T15:43:27',
-  '-000000-06-24T15:43:27+01:00[UTC]'
+  "-000000-06",
+  "-000000-06-24",
+  "-000000-06-24T15:43:27",
+  "-000000-06-24T15:43:27+01:00",
+  "-000000-06-24T15:43:27+00:00[UTC]",
 ];
+
 invalidStrings.forEach((arg) => {
   assert.throws(
     RangeError,
-    () => { Temporal.PlainYearMonth.from(arg); },
+    () => Temporal.PlainYearMonth.from(arg),
     "reject minus zero as extended year"
   );
 });

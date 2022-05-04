@@ -8,16 +8,24 @@ features: [Temporal]
 ---*/
 
 const ok = new Temporal.PlainYearMonth(2000, 5);
-const bad = "-000000-06";
+const invalidStrings = [
+  "-000000-06",
+  "-000000-06-24",
+  "-000000-06-24T15:43:27",
+  "-000000-06-24T15:43:27+01:00",
+  "-000000-06-24T15:43:27+00:00[UTC]",
+];
 
-assert.throws(
-  RangeError,
-  () => Temporal.PlainYearMonth.compare(bad, ok),
-  "Cannot use minus zero as extended year (first argument)"
-);
+invalidStrings.forEach((arg) => {
+  assert.throws(
+    RangeError,
+    () => Temporal.PlainYearMonth.compare(arg, ok),
+    "Cannot use minus zero as extended year (first argument)"
+  );
 
-assert.throws(
-  RangeError,
-  () => Temporal.PlainYearMonth.compare(ok, bad),
-  "Cannot use minus zero as extended year (second argument)"
-);
+  assert.throws(
+    RangeError,
+    () => Temporal.PlainYearMonth.compare(ok, arg),
+    "Cannot use minus zero as extended year (second argument)"
+  );
+});

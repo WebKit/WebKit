@@ -4,11 +4,21 @@
 /*---
 esid: sec-temporal.plaintime.from
 description: A PlainTime object is copied, not returned directly
-includes: [compareArray.js, temporalHelpers.js]
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const plainTime = Temporal.PlainTime.from("11:42:00");
-const result = Temporal.PlainTime.from(plainTime);
-assert.notSameValue(result, plainTime);
-TemporalHelpers.assertPlainTime(result, 11, 42, 0, 0, 0, 0);
+const orig = new Temporal.PlainTime(11, 42, 0, 0, 0, 0);
+const result = Temporal.PlainTime.from(orig);
+
+TemporalHelpers.assertPlainTime(
+  result,
+  11, 42, 0, 0, 0, 0,
+  "PlainTime is copied"
+);
+
+assert.notSameValue(
+  result,
+  orig,
+  "When a PlainTime is given, the returned value is not the original PlainTime"
+);

@@ -15,25 +15,25 @@ var numberingSystems = ['arab', 'latn', 'thai', 'hanidec'];
 testNumberFormat(
   locales,
   numberingSystems,
-  {roundingIncrement: 5000, maximumFractionDigits: 4, minimumFractionDigits: 1},
+  {roundingIncrement: 5000, maximumFractionDigits: 4, minimumFractionDigits: 4},
   {
-    '1.500': '1.5',
-    '1.625': '1.5',
-    '1.750': '2.0',
-    '1.875': '2.0',
-    '2.000': '2.0',
+    '1.500': '1.5000',
+    '1.625': '1.5000',
+    '1.750': '2.0000',
+    '1.875': '2.0000',
+    '2.000': '2.0000',
   }
 );
 
 testNumberFormat(
   locales,
   numberingSystems,
-  {roundingIncrement: 5000, maximumFractionDigits: 5},
+  {roundingIncrement: 5000, maximumFractionDigits: 5, minimumFractionDigits: 5},
   {
-    '1.0500': '1.05',
-    '1.0625': '1.05',
-    '1.0750': '1.1',
-    '1.0875': '1.1',
-    '1.1000': '1.1',
+    '1.0500': '1.05000',
+    '1.0625': '1.05000',
+    '1.0750': '1.10000',
+    '1.0875': '1.10000',
+    '1.1000': '1.10000',
   }
 );

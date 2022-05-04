@@ -21,16 +21,12 @@ testWithTypedArrayConstructors(function(TA) {
   var ab = ta.buffer;
 
   var called = false;
-  assert.throws(TypeError, function() {
-    ta.sort(function(a, b) {
-      // IsDetachedBuffer is checked right after calling comparefn.
-      // So, detach the ArrayBuffer to cause sort to throw, to make sure we're actually calling ToNumber immediately (as spec'd)
-      // (a possible bug is to wait until the result is inspected to call ToNumber, rather than immediately)
-      $DETACHBUFFER(ab);
-      return {
-        [Symbol.toPrimitive]() { called = true; }
-      };
-    });
+  ta.sort(function(a, b) {
+    // Detaching the buffer does not cause sort to throw.
+    $DETACHBUFFER(ab);
+    return {
+      [Symbol.toPrimitive]() { called = true; }
+    };
   });
 
   assert.sameValue(true, called);

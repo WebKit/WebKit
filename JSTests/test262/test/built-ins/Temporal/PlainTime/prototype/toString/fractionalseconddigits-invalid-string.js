@@ -10,12 +10,13 @@ info: |
     sec-temporal-tosecondsstringprecision step 9:
       9. Let _digits_ be ? GetStringOrNumberOption(_normalizedOptions_, *"fractionalSecondDigits"*, « *"auto"* », 0, 9, *"auto"*).
     sec-temporal.plaintime.prototype.tostring step 4:
-      4. Let _precision_ be ? ToDurationSecondsStringPrecision(_options_).
+      4. Let _precision_ be ? ToSecondsStringPrecision(_options_).
 features: [Temporal]
 ---*/
 
 const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
 
-for (const fractionalSecondDigits of ["other string", "AUTO", "not-auto", "autos"]) {
-  assert.throws(RangeError, () => time.toString({ fractionalSecondDigits }));
+for (const fractionalSecondDigits of ["other string", "AUTO", "not-auto", "autos", "auto\0"]) {
+  assert.throws(RangeError, () => time.toString({ fractionalSecondDigits }),
+    `"${fractionalSecondDigits}" is not a valid value for fractionalSecondDigits`);
 }

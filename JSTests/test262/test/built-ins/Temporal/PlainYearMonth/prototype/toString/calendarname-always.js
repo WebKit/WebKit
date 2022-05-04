@@ -14,7 +14,7 @@ const yearmonth1 = new Temporal.PlainYearMonth(2000, 5);
 const yearmonth2 = new Temporal.PlainYearMonth(2000, 5, calendar);
 
 [
-  [yearmonth1, "2000-05[u-ca=iso8601]"],
+  [yearmonth1, "2000-05-01[u-ca=iso8601]"], // fallback day 1 used
   [yearmonth2, "2000-05-01[u-ca=custom]"],
 ].forEach(([yearmonth, expected]) => {
   const result = yearmonth.toString({ calendarName: "always" });

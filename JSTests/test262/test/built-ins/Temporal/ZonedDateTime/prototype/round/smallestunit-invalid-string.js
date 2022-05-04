@@ -8,4 +8,26 @@ features: [Temporal]
 ---*/
 
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_123_987_500n, "UTC");
-assert.throws(RangeError, () => datetime.round({ smallestUnit: "other string" }));
+const badValues = [
+  "era",
+  "eraYear",
+  "year",
+  "month",
+  "week",
+  "millisecond\0",
+  "mill\u0131second",
+  "SECOND",
+  "eras",
+  "eraYears",
+  "years",
+  "months",
+  "weeks",
+  "milliseconds\0",
+  "mill\u0131seconds",
+  "SECONDS",
+  "other string",
+];
+for (const smallestUnit of badValues) {
+  assert.throws(RangeError, () => datetime.round({ smallestUnit }),
+    `"${smallestUnit}" is not a valid value for smallest unit`);
+}

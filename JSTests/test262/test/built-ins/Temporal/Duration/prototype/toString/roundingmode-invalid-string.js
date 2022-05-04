@@ -8,4 +8,6 @@ features: [Temporal]
 ---*/
 
 const duration = new Temporal.Duration(0, 0, 0, 0, 12, 34, 56, 123, 987, 500);
-assert.throws(RangeError, () => duration.toString({ smallestUnit: "microsecond", roundingMode: "other string" }));
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l", "auto", "expand", "halfCeil", "halfFloor", "halfTrunc", "halfEven", "halfexpand", "floor\0"]) {
+  assert.throws(RangeError, () => duration.toString({ smallestUnit: "microsecond", roundingMode }));
+}

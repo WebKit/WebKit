@@ -13,8 +13,10 @@ assert.throws(RangeError, () => new Temporal.PlainYearMonth(275760, 10), "max");
 TemporalHelpers.assertPlainYearMonth(new Temporal.PlainYearMonth(-271821, 4),
   -271821, 4, "M04", "min");
 TemporalHelpers.assertPlainYearMonth(new Temporal.PlainYearMonth(-271821, 4, "iso8601", 18),
-  -271821, 4, "M04", "min with referenceISODay");
+  -271821, 4, "M04", "min with referenceISODay",
+  /* era = */ undefined, /* eraYear = */ undefined, /* referenceISODay = */ 18);
 TemporalHelpers.assertPlainYearMonth(new Temporal.PlainYearMonth(275760, 9),
   275760, 9, "M09", "max");
 TemporalHelpers.assertPlainYearMonth(new Temporal.PlainYearMonth(275760, 9, "iso8601", 14),
-  275760, 9, "M09", "max with referenceISODay");
+  275760, 9, "M09", "max with referenceISODay",
+  /* era = */ undefined, /* eraYear = */ undefined, /* referenceISODay = */ 14);

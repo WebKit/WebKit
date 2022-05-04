@@ -603,12 +603,18 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/built-ins/Array/prototype/Symbol.unscopables/value.js:
+test/built-ins/Array/prototype/Symbol.unscopables/array-grouping.js:
   default: 'Test262Error: `groupBy` property value Expected SameValue(«undefined», «true») to be true'
   strict mode: 'Test262Error: `groupBy` property value Expected SameValue(«undefined», «true») to be true'
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
+test/built-ins/Date/parse/year-zero.js:
+  default: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
+  strict mode: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
+test/built-ins/Date/year-zero.js:
+  default: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
+  strict mode: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -822,18 +828,54 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/ShadowRealm/prototype/evaluate/throws-typeerror-wrap-throwing.js:
+  default: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/basic.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-options-undefined.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
 test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/compare/calendar-possibly-required.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/compare/options-wrong-type.js:
+  default: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/relativeto-hour.js:
+  default: 'TypeError: Right side of assignment cannot be destructured'
+  strict mode: 'TypeError: Right side of assignment cannot be destructured'
+test/built-ins/Temporal/Duration/compare/relativeto-month.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-invalid.js:
+  default: 'Test262Error: missing year Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: missing year Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/compare/relativeto-year.js:
+  default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/Duration/compare/timezone-string-leap-second.js:
+  default: 'Test262Error: leap second in time zone name not valid Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: leap second in time zone name not valid Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/timezone-string-year-zero.js:
+  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js:
+  default: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js:
+  default: 'TypeError: Right side of assignment cannot be destructured'
+  strict mode: 'TypeError: Right side of assignment cannot be destructured'
 test/built-ins/Temporal/Duration/fractional-throws-rangeerror.js:
   default: 'Test262Error: Duration constructor throws RangeError with fractional value in the years position Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Duration constructor throws RangeError with fractional value in the years position Expected a RangeError to be thrown but no exception was thrown at all'
@@ -843,66 +885,201 @@ test/built-ins/Temporal/Duration/prototype/add/argument-string-fractional-units-
 test/built-ins/Temporal/Duration/prototype/add/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/options-wrong-type.js:
+  default: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-leap-second.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-month.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-number.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-order.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-number.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
 test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-required.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+test/built-ins/Temporal/Duration/prototype/add/relativeto-year.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/Duration/prototype/add/timezone-string-leap-second.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/add/timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/negated/basic.js:
+  default: 'Test262Error: zeros years result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: zeros years result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/round/calendar-dateadd-called-with-options-undefined.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
 test/built-ins/Temporal/Duration/prototype/round/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/round/calendar-possibly-required.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-leap-second.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-number.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-number.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-wrong-type.js:
+  default: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError but got a Error'
+  strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a RangeError but got a Error'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a Error'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js:
+  default: 'Test262Error: undefined does not convert to a valid ISO string Expected a RangeError but got a Error'
+  strict mode: 'Test262Error: undefined does not convert to a valid ISO string Expected a RangeError but got a Error'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/Duration/prototype/round/smallestunit-disallowed-units-string.js:
-  default: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
+test/built-ins/Temporal/Duration/prototype/round/roundto-invalid-string.js:
+  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted-string.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/Duration/prototype/round/smallestunit-string-shorthand-string.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
+test/built-ins/Temporal/Duration/prototype/round/smallestunit.js:
+  default: 'TypeError: options argument is not an object or undefined'
+  strict mode: 'TypeError: options argument is not an object or undefined'
+test/built-ins/Temporal/Duration/prototype/round/timezone-string-leap-second.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/round/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
 test/built-ins/Temporal/Duration/prototype/subtract/argument-string-fractional-units-rounding-mode.js:
   default: 'Test262Error: positive fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
   strict mode: 'Test262Error: positive fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/subtract/basic.js:
+  default: 'Test262Error:  hours result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error:  hours result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/subtract/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/options-undefined.js:
+  default: 'Test262Error: no options with days hours result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: no options with days hours result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/subtract/options-wrong-type.js:
+  default: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-leap-second.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-month.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-number.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-order.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-number.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
 test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-required.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-year.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/Duration/prototype/subtract/timezone-string-leap-second.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-exact-number-of-digits.js:
   default: 'Test262Error: Expected SameValue(«P3Y», «P3YT0S») to be true'
   strict mode: 'Test262Error: Expected SameValue(«P3Y», «P3YT0S») to be true'
+test/built-ins/Temporal/Duration/prototype/total/calendar-dateadd-called-with-options-undefined.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
 test/built-ins/Temporal/Duration/prototype/total/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-leap-second.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-number.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-number.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-undefined-throw-on-calendar-units.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
 test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/Duration/prototype/total/timezone-string-leap-second.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/timezone-wrong-type.js:
+  default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/total/unit-disallowed-units-string.js:
   default: 'Test262Error: "era" should not be allowed as an argument to total Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: "era" should not be allowed as an argument to total Expected a RangeError but got a TypeError'
@@ -921,9 +1098,12 @@ test/built-ins/Temporal/Instant/from/year-zero.js:
 test/built-ins/Temporal/Instant/prototype/equals/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/round/smallestunit-disallowed-units.js:
-  default: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
+test/built-ins/Temporal/Instant/prototype/round/rounding-direction.js:
+  default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
+  strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
+test/built-ins/Temporal/Instant/prototype/round/roundto-invalid-string.js:
+  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/Instant/prototype/round/smallestunit-plurals-accepted.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
@@ -931,35 +1111,47 @@ test/built-ins/Temporal/Instant/prototype/round/smallestunit-string-shorthand.js
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/Instant/prototype/since/largestunit-invalid-string.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
 test/built-ins/Temporal/Instant/prototype/since/smallestunit-invalid-string.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/toJSON/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Instant/prototype/toJSON/year-format.js:
+  default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
+  strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
+test/built-ins/Temporal/Instant/prototype/toString/rounding-direction.js:
+  default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
+  strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js:
   default: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'
   strict mode: 'Test262Error: offset of UTC is +00:00 Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T00:00:00+00:00») to be true'
+test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.js:
+  default: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
+  strict mode: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js:
   default: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
   strict mode: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
+test/built-ins/Temporal/Instant/prototype/toString/year-format.js:
+  default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
+  strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
 test/built-ins/Temporal/Instant/prototype/until/largestunit-invalid-string.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/smallestunit-invalid-string.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
@@ -972,12 +1164,21 @@ test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-requir
 test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/PlainTime/compare/leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/compare/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/compare/year-zero.js:
   default: 'Test262Error: Cannot use minus zero as extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Cannot use minus zero as extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainTime/from/argument-object-leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
+test/built-ins/Temporal/PlainTime/from/argument-object.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/from/argument-plaindatetime.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
@@ -990,9 +1191,18 @@ test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
 test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/PlainTime/from/leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/from/options-undefined.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
+test/built-ins/Temporal/PlainTime/from/overflow-constrain.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
+test/built-ins/Temporal/PlainTime/from/overflow-reject.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/PlainTime/from/overflow-undefined.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1011,36 +1221,63 @@ test/built-ins/Temporal/PlainTime/prototype/equals/argument-cast.js:
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainTime/prototype/equals/argument-wrong-type.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/PlainTime/prototype/equals/leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/equals/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-disallowed-units.js:
-  default: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" should not be allowed as an argument to round Expected a RangeError but got a TypeError'
+test/built-ins/Temporal/PlainTime/prototype/round/roundto-invalid-string.js:
+  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-string-shorthand.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
+test/built-ins/Temporal/PlainTime/prototype/since/argument-cast.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/PlainTime/prototype/since/basic.js:
+  default: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/since/leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/since/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js:
+  default: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
+  strict mode: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js:
+  default: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
+  strict mode: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfExpand.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-trunc.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-undefined.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/since/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainTime/prototype/until/argument-cast.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1050,15 +1287,48 @@ test/built-ins/Temporal/PlainTime/prototype/until/argument-string-with-time-desi
 test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
+test/built-ins/Temporal/PlainTime/prototype/until/basic.js:
+  default: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/until/leap-second.js:
+  default: 'TypeError: "microsecond" field is missing'
+  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-ceil.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-floor.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfExpand.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-trunc.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-undefined.js:
+  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: PlainDateTime'
   strict mode: 'Test262Error: PlainDateTime'
+test/built-ins/TypedArray/prototype/set/array-arg-targetbuffer-detached-on-get-src-value-no-throw.js:
+  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/sort/sort-tonumber.js:
+  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/ctors/no-species.js:
+  default: 'Test262Error: unreachable'
+  strict mode: 'Test262Error: unreachable'
+test/harness/temporalHelpers-one-shift-time-zone.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789)')"
@@ -1080,219 +1350,39 @@ test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-timezone-ge
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
+test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321)')"
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
-test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
-test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
-  default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
-  default: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
-test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
-  default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
-test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+  default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-10.js:
-  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":10,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
-  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":10,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-100.js:
-  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":100,"maximumFractionDigits":3} is ١٫١٠٠; expected ١٫١.'
-  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":100,"maximumFractionDigits":3} is ١٫١٠٠; expected ١٫١.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-1000.js:
-  default: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":1000,"maximumFractionDigits":4} is ١٫١٠٠٠; expected ١٫١.'
-  strict mode: 'Test262Error: Formatted value for 1.100, en-US-u-nu-arab and options {"roundingIncrement":1000,"maximumFractionDigits":4} is ١٫١٠٠٠; expected ١٫١.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-20.js:
-  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":20,"maximumFractionDigits":2} is ١٫٢٠; expected ١٫٢.'
-  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":20,"maximumFractionDigits":2} is ١٫٢٠; expected ١٫٢.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-200.js:
-  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":200,"maximumFractionDigits":3} is ١٫٢٠٠; expected ١٫٢.'
-  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":200,"maximumFractionDigits":3} is ١٫٢٠٠; expected ١٫٢.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-2000.js:
-  default: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":2000,"maximumFractionDigits":4} is ١٫٢٠٠٠; expected ١٫٢.'
-  strict mode: 'Test262Error: Formatted value for 1.20, en-US-u-nu-arab and options {"roundingIncrement":2000,"maximumFractionDigits":4} is ١٫٢٠٠٠; expected ١٫٢.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-25.js:
-  default: 'Test262Error: Formatted value for 1.3750, en-US-u-nu-arab and options {"roundingIncrement":25,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
-  strict mode: 'Test262Error: Formatted value for 1.3750, en-US-u-nu-arab and options {"roundingIncrement":25,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-250.js:
-  default: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":250,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٢٥٠; expected ١٫٢٥.'
-  strict mode: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":250,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٢٥٠; expected ١٫٢٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-2500.js:
-  default: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":2500,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٢٥٠٠; expected ١٫٢٥.'
-  strict mode: 'Test262Error: Formatted value for 1.2500, en-US-u-nu-arab and options {"roundingIncrement":2500,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٢٥٠٠; expected ١٫٢٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-5.js:
-  default: 'Test262Error: Formatted value for 1.0750, en-US-u-nu-arab and options {"roundingIncrement":5,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
-  strict mode: 'Test262Error: Formatted value for 1.0750, en-US-u-nu-arab and options {"roundingIncrement":5,"maximumFractionDigits":2} is ١٫١٠; expected ١٫١.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-50.js:
-  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":50,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
-  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":50,"maximumFractionDigits":2,"minimumFractionDigits":1} is ١٫٥٠; expected ١٫٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-500.js:
-  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":500,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٥٠٠; expected ١٫٥.'
-  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":500,"maximumFractionDigits":3,"minimumFractionDigits":1} is ١٫٥٠٠; expected ١٫٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-increment-5000.js:
-  default: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":5000,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٥٠٠٠; expected ١٫٥.'
-  strict mode: 'Test262Error: Formatted value for 1.500, en-US-u-nu-arab and options {"roundingIncrement":5000,"maximumFractionDigits":4,"minimumFractionDigits":1} is ١٫٥٠٠٠; expected ١٫٥.'
-test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-ceil.js:
-  default: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
-  strict mode: 'Test262Error: Formatted value for -1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfCeil","maximumSignificantDigits":2} is ؜-١٫٢; expected ؜-١٫١.'
-test/intl402/NumberFormat/prototype/format/format-rounding-mode-half-floor.js:
-  default: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
-  strict mode: 'Test262Error: Formatted value for 1.15, en-US-u-nu-arab and options {"useGrouping":false,"roundingMode":"halfFloor","maximumSignificantDigits":2} is ١٫٢; expected ١٫١.'
+test/intl402/NumberFormat/constructor-roundingIncrement-invalid.js:
+  default: 'Test262Error: 2, roundingType is "morePrecision" Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: 2, roundingType is "morePrecision" Expected a TypeError but got a RangeError'
 test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js:
-  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
-  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":3,"minimumFractionDigits":1} is ١٫٠٠; expected ١٫٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":3,"minimumFractionDigits":1} is ١٫٠٠; expected ١٫٠.'
 test/intl402/NumberFormat/prototype/format/format-rounding-priority-more-precision.js:
-  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
-  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١; expected ١٫٠٠.'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-de-DE.js:
-  default: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-en-US.js:
-  default: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-ja-JP.js:
-  default: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-$987.00», «($987.00)») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-ko-KR.js:
-  default: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-currency-zh-TW.js:
-  default: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-US$987.00», «(US$987.00)») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-de-DE.js:
-  default: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-en-US.js:
-  default: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-ja-JP.js:
-  default: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-ko-KR.js:
-  default: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-negative-zh-TW.js:
-  default: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 Expected SameValue(«-0», «0») to be true'
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١٫٠٠; expected ١٫٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"morePrecision","minimumSignificantDigits":2,"minimumFractionDigits":2} is ١٫٠٠; expected ١٫٠.'
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
-test/intl402/NumberFormat/prototype/formatRange/builtin.js:
-  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
-  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
-test/intl402/NumberFormat/prototype/formatRange/en-US.js:
-  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
-  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
-test/intl402/NumberFormat/prototype/formatRange/invoked-as-func.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/intl402/NumberFormat/prototype/formatRange/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/NumberFormat/prototype/formatRange/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/NumberFormat/prototype/formatRange/nan-arguments-throws.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/intl402/NumberFormat/prototype/formatRange/prop-desc.js:
-  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
-test/intl402/NumberFormat/prototype/formatRange/pt-PT.js:
-  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
-  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
-test/intl402/NumberFormat/prototype/formatRange/x-greater-than-y-throws.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/intl402/NumberFormat/prototype/formatRangeToParts/builtin.js:
-  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
-  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
-test/intl402/NumberFormat/prototype/formatRangeToParts/en-US.js:
-  default: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
-  strict mode: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
-test/intl402/NumberFormat/prototype/formatRangeToParts/invoked-as-func.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/intl402/NumberFormat/prototype/formatRangeToParts/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/NumberFormat/prototype/formatRangeToParts/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/NumberFormat/prototype/formatRangeToParts/nan-arguments-throws.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/intl402/NumberFormat/prototype/formatRangeToParts/prop-desc.js:
-  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
-test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-throws.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-de-DE.js:
-  default: 'Test262Error: negativeNearZero: length Expected SameValue(«6», «5») to be true'
-  strict mode: 'Test262Error: negativeNearZero: length Expected SameValue(«6», «5») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-en-US.js:
-  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-ja-JP.js:
-  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-ko-KR.js:
-  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-currency-zh-TW.js:
-  default: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-  strict mode: 'Test262Error: negative: length Expected SameValue(«5», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-de-DE.js:
-  default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-en-US.js:
-  default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-ja-JP.js:
-  default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-ko-KR.js:
-  default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-negative-zh-TW.js:
-  default: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (negative): length Expected SameValue(«2», «1») to be true'
-test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
-  default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
-  strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
-test/intl402/PluralRules/prototype/selectRange/invoked-as-func.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/intl402/PluralRules/prototype/selectRange/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/PluralRules/prototype/selectRange/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/PluralRules/prototype/selectRange/nan-arguments-throws.js:
-  default: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
-test/intl402/PluralRules/prototype/selectRange/prop-desc.js:
-  default: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
-test/intl402/PluralRules/prototype/selectRange/x-greater-than-y-throws.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/Temporal/Duration/compare/relativeto-hour.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
 test/intl402/Temporal/Duration/prototype/add/relativeto-string-datetime.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
@@ -1305,6 +1395,9 @@ test/intl402/Temporal/Duration/prototype/subtract/relativeto-string-datetime.js:
 test/intl402/Temporal/Duration/prototype/total/relativeto-string-datetime.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js:
+  default: 'Test262Error: positive offset Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T01:00:00+01:00») to be true'
+  strict mode: 'Test262Error: positive offset Expected SameValue(«1970-01-01T00:00:00Z», «1970-01-01T01:00:00+01:00») to be true'
 test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js:
   default: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
   strict mode: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
@@ -1948,18 +2041,6 @@ test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
 test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/compound-assignment/left-hand-side-private-reference-method-nullish.js:
-  default: 'Test262Error: PutValue throws when storing the result in a method private reference Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: PutValue throws when storing the result in a method private reference Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/expressions/compound-assignment/left-hand-side-private-reference-method-or.js:
-  default: 'Test262Error: PutValue throws when storing the result in a method private reference Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: PutValue throws when storing the result in a method private reference Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/expressions/compound-assignment/left-hand-side-private-reference-readonly-accessor-property-nullish.js:
-  default: 'Test262Error: PutValue throws when storing the result if no setter Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: PutValue throws when storing the result if no setter Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/expressions/compound-assignment/left-hand-side-private-reference-readonly-accessor-property-or.js:
-  default: 'Test262Error: PutValue throws when storing the result if no setter Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: PutValue throws when storing the result if no setter Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/expressions/dynamic-import/catch/nested-async-gen-await-eval-script-code-target.js:
   module: 'Test262:AsyncTestFailure:Test262Error: [object Object]'
 test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eval-script-code-target.js:
@@ -2047,30 +2128,6 @@ test/language/global-code/script-decl-var-err.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/identifiers/part-unicode-14.0.0-class-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0898'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0898'"
-test/language/identifiers/part-unicode-14.0.0-class.js:
-  default: "SyntaxError: Invalid character '\\u0898'"
-  strict mode: "SyntaxError: Invalid character '\\u0898'"
-test/language/identifiers/part-unicode-14.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0898'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0898'"
-test/language/identifiers/part-unicode-14.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0898'"
-  strict mode: "SyntaxError: Invalid character '\\u0898'"
-test/language/identifiers/start-unicode-14.0.0-class-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '#\\u0870'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#\\u0870'"
-test/language/identifiers/start-unicode-14.0.0-class.js:
-  default: "SyntaxError: Invalid character: '#'"
-  strict mode: "SyntaxError: Invalid character: '#'"
-test/language/identifiers/start-unicode-14.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '\\u0870'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u0870'"
-test/language/identifiers/start-unicode-14.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0870'"
-  strict mode: "SyntaxError: Invalid character '\\u0870'"
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'

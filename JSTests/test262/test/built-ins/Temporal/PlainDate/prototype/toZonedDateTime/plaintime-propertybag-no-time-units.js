@@ -10,7 +10,7 @@ features: [Temporal]
 const instance = new Temporal.PlainDate(2000, 1, 1);
 
 const props = {};
-assert.throws(TypeError, () => instance.toZonedDateTime({ plainTime: props, timeZone: "UTC" }), "TypeError if at least one property is not present");
+assert.throws(TypeError, () => instance.toZonedDateTime({ plainTime: props, timeZone: "UTC" }), "TypeError if no properties are present");
 
 props.minute = 30;
 const result = instance.toZonedDateTime({ plainTime: props, timeZone: "UTC" });

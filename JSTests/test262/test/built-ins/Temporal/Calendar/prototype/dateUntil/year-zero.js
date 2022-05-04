@@ -9,16 +9,23 @@ features: [Temporal]
 
 const calendar = new Temporal.Calendar("iso8601");
 const date = new Temporal.PlainDate(2000, 5, 2);
-const bad = "-000000-03-14";
+const invalidStrings = [
+  "-000000-10-31",
+  "-000000-10-31T00:45",
+  "-000000-10-31T00:45+01:00",
+  "-000000-10-31T00:45+00:00[UTC]",
+];
 
-assert.throws(
-  RangeError,
-  () => calendar.dateUntil(bad, date),
-  "cannot use minus zero as extended date (first argument)"
-);
+invalidStrings.forEach((arg) => {
+  assert.throws(
+    RangeError,
+    () => calendar.dateUntil(arg, date),
+    "cannot use minus zero as extended date (first argument)"
+  );
 
-assert.throws(
-  RangeError,
-  () => calendar.dateUntil(date, bad),
-  "cannot use minus zero as extended date (second argument)"
-);
+  assert.throws(
+    RangeError,
+    () => calendar.dateUntil(date, arg),
+    "cannot use minus zero as extended date (second argument)"
+  );
+});

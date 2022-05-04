@@ -11,7 +11,7 @@ features: [Temporal]
 const instance = new Temporal.PlainDateTime(2000, 1, 1, 12, 30, 45, 123, 456, 789);
 
 const props = {};
-assert.throws(TypeError, () => instance.withPlainTime(props), "TypeError if at least one property is not present");
+assert.throws(TypeError, () => instance.withPlainTime(props), "TypeError if no properties are present");
 
 props.minute = 30;
 const result = instance.withPlainTime(props);

@@ -1,17 +1,36 @@
-// Copyright (C) 2020 Igalia, S.L. All rights reserved.
+// Copyright (C) 2022 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
 esid: sec-temporal.plaindate.prototype.equals
-description: Appropriate error thrown when argument cannot be converted to a valid string
-features: [Symbol, Temporal]
+description: >
+  Appropriate error thrown when argument cannot be converted to a valid string
+  or property bag for PlainDate
+features: [BigInt, Symbol, Temporal]
 ---*/
 
-const instance = Temporal.PlainDate.from({ year: 2000, month: 5, day: 2 });
+const instance = new Temporal.PlainDate(2000, 5, 2);
 
-assert.throws(RangeError, () => instance.equals(undefined), "undefined");
-assert.throws(RangeError, () => instance.equals(null), "null");
-assert.throws(RangeError, () => instance.equals(true), "true");
-assert.throws(RangeError, () => instance.equals(""), "empty string");
-assert.throws(TypeError, () => instance.equals(Symbol()), "symbol");
-assert.throws(RangeError, () => instance.equals(1), "1");
+const rangeErrorTests = [
+  [undefined, "undefined"],
+  [null, "null"],
+  [true, "boolean"],
+  ["", "empty string"],
+  [1, "number that doesn't convert to a valid ISO string"],
+  [1n, "bigint"],
+];
+
+for (const [arg, description] of rangeErrorTests) {
+  assert.throws(RangeError, () => instance.equals(arg), `${description} does not convert to a valid ISO string`);
+}
+
+const typeErrorTests = [
+  [Symbol(), "symbol"],
+  [{}, "plain object"],
+  [Temporal.PlainDate, "Temporal.PlainDate, object"],
+  [Temporal.PlainDate.prototype, "Temporal.PlainDate.prototype, object"],
+];
+
+for (const [arg, description] of typeErrorTests) {
+  assert.throws(TypeError, () => instance.equals(arg), `${description} is not a valid property bag and does not convert to a string`);
+}

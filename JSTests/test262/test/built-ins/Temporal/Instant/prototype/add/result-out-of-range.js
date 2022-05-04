@@ -9,8 +9,22 @@ features: [Temporal]
 
 const fields = ["hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds"];
 
-const instance = Temporal.Instant.fromEpochNanoseconds(8640000_000_000_000_000_000n);
+const latest = Temporal.Instant.fromEpochNanoseconds(8640000_000_000_000_000_000n);
 
 fields.forEach((field) => {
-  assert.throws(RangeError, () => instance.add({ [field]: 1 }));
+  assert.throws(
+    RangeError,
+    () => latest.add({ [field]: 1 }),
+    `adding ${field} with result out of range (positive)`
+  );
+});
+
+const earliest = Temporal.Instant.fromEpochNanoseconds(-8640000_000_000_000_000_000n);
+
+fields.forEach((field) => {
+  assert.throws(
+    RangeError,
+    () => earliest.add({ [field]: -1 }),
+    `adding ${field} with result out of range (negative)`
+  );
 });

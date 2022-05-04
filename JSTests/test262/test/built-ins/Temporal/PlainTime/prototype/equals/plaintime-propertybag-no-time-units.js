@@ -10,7 +10,7 @@ features: [Temporal]
 const instance = new Temporal.PlainTime(0, 30, 0, 0, 0, 0);
 
 const props = {};
-assert.throws(TypeError, () => instance.equals(props), "TypeError if at least one property is not present");
+assert.throws(TypeError, () => instance.equals(props), "TypeError if no properties are present");
 
 props.minute = 30;
 const result = instance.equals(props);

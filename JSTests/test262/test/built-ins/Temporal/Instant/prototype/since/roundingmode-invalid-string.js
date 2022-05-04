@@ -9,4 +9,6 @@ features: [Temporal]
 
 const earlier = new Temporal.Instant(1_000_000_000_000_000_000n);
 const later = new Temporal.Instant(1_000_090_061_123_987_500n);
-assert.throws(RangeError, () => later.since(earlier, { smallestUnit: "microsecond", roundingMode: "other string" }));
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l", "auto", "expand", "halfCeil", "halfFloor", "halfTrunc", "halfEven", "halfexpand", "floor\0"]) {
+  assert.throws(RangeError, () => later.since(earlier, { smallestUnit: "microsecond", roundingMode }));
+}
