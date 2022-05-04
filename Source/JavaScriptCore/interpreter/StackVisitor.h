@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "WasmIndexOrName.h"
 #include <wtf/Function.h>
 #include <wtf/Indenter.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -150,8 +151,8 @@ public:
         if (action == TerminateIfTopEntryFrameIsEmpty && visitor.topEntryFrameIsEmpty())
             return;
         while (visitor->callFrame()) {
-            Status status = functor(visitor);
-            if (status != Continue)
+            IterationStatus status = functor(visitor);
+            if (status != IterationStatus::Continue)
                 break;
             visitor.gotoNextFrame();
         }
@@ -188,15 +189,15 @@ public:
 
     CallFrame* callerFrame() const { return m_callerFrame; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
 
         m_callerFrame = visitor->callFrame();
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
     
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -374,14 +374,14 @@ JSC_DEFINE_HOST_FUNCTION(assertCall, (JSGlobalObject* globalObject, CallFrame* c
     callFrame->iterate(globalObject->vm(), [&] (StackVisitor& visitor) {
         if (!iteratedOnce) {
             iteratedOnce = true;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
 
         RELEASE_ASSERT(visitor->hasLineAndColumnInfo());
         unsigned column;
         visitor->computeLineAndColumn(line, column);
         codeBlock = visitor->codeBlock();
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     });
     RELEASE_ASSERT(!!codeBlock);
     RELEASE_ASSERT_WITH_MESSAGE(false, "JS assertion failed at line %u in:\n%s\n", line, codeBlock->sourceCodeForTools().data());

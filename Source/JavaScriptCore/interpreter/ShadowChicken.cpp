@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -173,20 +173,20 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
     if (!m_stack.isEmpty()) {
         Vector<Frame> stackRightNow;
         StackVisitor::visit(
-            callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+            callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
                 if (visitor->isInlinedFrame())
-                    return StackVisitor::Continue;
+                    return IterationStatus::Continue;
                 if (visitor->isWasmFrame()) {
                     // FIXME: Make shadow chicken work with Wasm.
                     // https://bugs.webkit.org/show_bug.cgi?id=165441
-                    return StackVisitor::Continue;
+                    return IterationStatus::Continue;
                 }
 
                 bool isTailDeleted = false;
                 // FIXME: Make shadow chicken work with Wasm.
                 // https://bugs.webkit.org/show_bug.cgi?id=165441
                 stackRightNow.append(Frame(jsCast<JSObject*>(visitor->callee().asCell()), visitor->callFrame(), isTailDeleted));
-                return StackVisitor::Continue;
+                return IterationStatus::Continue;
             });
         stackRightNow.reverse();
         
@@ -294,16 +294,16 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
     
     Vector<Frame> toPush;
     StackVisitor::visit(
-        callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+        callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
             if (visitor->isInlinedFrame()) {
                 // FIXME: Handle inlining.
                 // https://bugs.webkit.org/show_bug.cgi?id=155686
-                return StackVisitor::Continue;
+                return IterationStatus::Continue;
             }
 
             if (visitor->isWasmFrame()) {
                 // FIXME: Make shadow chicken work with Wasm.
-                return StackVisitor::Continue;
+                return IterationStatus::Continue;
             }
 
             CallFrame* callFrame = visitor->callFrame();
@@ -322,7 +322,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                 // that do not run into the current call frame but are left in the shadow stack.
                 // Those tail deleted frames should be validated somehow.
 
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             }
 
             bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
@@ -392,7 +392,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                 }
             }
 
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         });
 
     if (ShadowChickenInternal::verbose)

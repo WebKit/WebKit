@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -122,17 +122,17 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (!visitor->callee().isCell())
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         JSCell* callee = visitor->callee().asCell();
         if (callee != m_targetCallee)
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         m_result = JSValue(visitor->createArguments(m_vm));
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
 
 private:
@@ -174,28 +174,28 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (!visitor->callee().isCell())
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         JSCell* callee = visitor->callee().asCell();
 
         if (callee && (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType))
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         if (!m_hasFoundFrame && callee != m_targetCallee)
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         m_hasFoundFrame = true;
         if (!m_hasSkippedToCallerFrame) {
             m_hasSkippedToCallerFrame = true;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
 
         if (callee)
             m_result = callee;
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -444,12 +444,12 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
     Locker locker { AdoptLock, inspector.getLock() };
     inspector.iterate([&] (VM& vm) {
         if (!vm.heap.m_verifier)
-            return VMInspector::FunctorStatus::Continue;
+            return IterationStatus::Continue;
         
         auto* verifier = vm.heap.m_verifier.get();
         dataLog("Search for cell ", RawPointer(candidateHeapCell), " in VM ", RawPointer(&vm), ":\n");
         verifier->checkIfRecorded(candidateHeapCell);
-        return VMInspector::FunctorStatus::Continue;
+        return IterationStatus::Continue;
     });
 }
 

@@ -1376,10 +1376,10 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         m_trace.append(makeString("    ", visitor->index(), "   ", visitor->toString(), '\n'));
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
 
 private:
@@ -2936,11 +2936,11 @@ static void startTimeoutTimer(Seconds duration)
 {
     Thread::create("jsc Timeout Thread", [=] () {
         sleep(duration);
-        VMInspector::forEachVM([&] (VM& vm) -> VMInspector::FunctorStatus {
+        VMInspector::forEachVM([&] (VM& vm) -> IterationStatus {
             if (&vm != s_vm)
-                return VMInspector::FunctorStatus::Continue;
+                return IterationStatus::Continue;
             vm.notifyNeedShellTimeoutCheck();
-            return VMInspector::FunctorStatus::Done;
+            return IterationStatus::Done;
         });
 
         if (const char* timeoutString = getenv("JSCTEST_hardTimeout")) {

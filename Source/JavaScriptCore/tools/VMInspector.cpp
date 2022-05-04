@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,7 @@ static bool ensureIsSafeToLock(Lock& lock)
 }
 #endif // ENABLE(JIT)
 
-void VMInspector::forEachVM(Function<FunctorStatus(VM&)>&& func)
+void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
 {
     VMInspector& inspector = instance();
     Locker lock { inspector.getLock() };
@@ -87,22 +87,22 @@ auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Err
 #if ENABLE(JIT)
     bool found = false;
     bool hasTimeout = false;
-    iterate([&] (VM&) -> FunctorStatus {
+    iterate([&] (VM&) -> IterationStatus {
         auto& allocator = ExecutableAllocator::singleton();
         auto& lock = allocator.getLock();
 
         bool isSafeToLock = ensureIsSafeToLock(lock);
         if (!isSafeToLock) {
             hasTimeout = true;
-            return FunctorStatus::Continue; // Skip this VM.
+            return IterationStatus::Continue; // Skip this VM.
         }
 
         Locker executableAllocatorLocker { lock };
         if (allocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
             found = true;
-            return FunctorStatus::Done;
+            return IterationStatus::Done;
         }
-        return FunctorStatus::Continue;
+        return IterationStatus::Continue;
     });
 
     if (!found && hasTimeout)
@@ -121,7 +121,7 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
     bool hasTimeout = false;
     iterate([&] (VM& vm) {
         if (!vm.currentThreadIsHoldingAPILock())
-            return FunctorStatus::Continue;
+            return IterationStatus::Continue;
 
         // It is safe to call Heap::forEachCodeBlockIgnoringJITPlans here because:
         // 1. CodeBlocks are added to the CodeBlockSet from the main thread before
@@ -138,7 +138,7 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
         bool isSafeToLock = ensureIsSafeToLock(codeBlockSetLock);
         if (!isSafeToLock) {
             hasTimeout = true;
-            return FunctorStatus::Continue; // Skip this VM.
+            return IterationStatus::Continue; // Skip this VM.
         }
 
         Locker locker { codeBlockSetLock };
@@ -160,8 +160,8 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
             }
         });
         if (codeBlock)
-            return FunctorStatus::Done;
-        return FunctorStatus::Continue;
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
     });
 
     if (!codeBlock && hasTimeout)
@@ -280,14 +280,14 @@ CodeBlock* VMInspector::codeBlockForFrame(VM* vm, CallFrame* topCallFrame, unsig
         {
         }
 
-        StackVisitor::Status operator()(StackVisitor& visitor) const
+        IterationStatus operator()(StackVisitor& visitor) const
         {
             auto currentFrame = nextFrame++;
             if (currentFrame == targetFrame) {
                 codeBlock = visitor->codeBlock();
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             }
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
 
         unsigned targetFrame;
@@ -313,7 +313,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         m_currentFrame++;
         if (m_currentFrame > m_framesToSkip) {
@@ -322,8 +322,8 @@ public:
             });
         }
         if (m_action == DumpOne && m_currentFrame > m_framesToSkip)
-            return StackVisitor::Done;
-        return StackVisitor::Continue;
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
     }
 
 private:
@@ -381,9 +381,9 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
             unsigned unusedColumn = 0;
             visitor->computeLineAndColumn(line, unusedColumn);
             dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, visitor->bytecodeIndex().offset(), line);
-            return StackVisitor::Done;
+            return IterationStatus::Done;
         }
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     });
 
     --it;
@@ -425,9 +425,9 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     if (topCallFrame) {
         topCallFrame->iterate(vm, [&] (StackVisitor& visitor) {
             if (callFrame == visitor->callFrame())
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             nextCallFrame = visitor->callFrame();
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         });
     }
 

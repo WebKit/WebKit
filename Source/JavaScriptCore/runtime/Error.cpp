@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -127,7 +127,7 @@ public:
         , m_index(0)
     { }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (!m_foundStartCallFrame && (visitor->callFrame() == m_startCallFrame))
             m_foundStartCallFrame = true;
@@ -135,12 +135,12 @@ public:
         if (m_foundStartCallFrame) {
             if (!visitor->isWasmFrame() && visitor->callFrame()->codeBlock()) {
                 m_foundCallFrame = visitor->callFrame();
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             }
             m_index++;
         }
 
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
 
     CallFrame* foundCallFrame() const { return m_foundCallFrame; }

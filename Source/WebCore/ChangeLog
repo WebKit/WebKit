@@ -1,3 +1,15 @@
+2022-05-04  Mark Lam  <mark.lam@apple.com>
+
+        Use IterationStatus in more places.
+        https://bugs.webkit.org/show_bug.cgi?id=239864
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::callerGlobalObject):
+        * testing/Internals.cpp:
+        (WebCore::GetCallerCodeBlockFunctor::operator() const):
+
 2022-05-04  Ziran Sun  <zsun@igalia.com>
 
         [InputElement] Selection after type change needs to follow HTML specification

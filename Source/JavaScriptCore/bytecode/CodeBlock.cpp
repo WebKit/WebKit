@@ -2339,7 +2339,7 @@ public:
         , m_didRecurse(false)
     { }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         CallFrame* currentCallFrame = visitor->callFrame();
 
@@ -2349,14 +2349,14 @@ public:
         if (m_foundStartCallFrame) {
             if (visitor->callFrame()->codeBlock() == m_codeBlock) {
                 m_didRecurse = true;
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             }
 
             if (!m_depthToCheck--)
-                return StackVisitor::Done;
+                return IterationStatus::Done;
         }
 
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
 
     bool didRecurse() const { return m_didRecurse; }

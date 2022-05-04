@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,7 +171,7 @@ public:
             DollarVMAssertScope assertScope;
 
             if (frameIndex++ != requestedFrameIndex)
-                return StackVisitor::Continue;
+                return IterationStatus::Continue;
 
             addProperty(vm, "name"_s, jsString(vm, visitor->functionName()));
 
@@ -186,7 +186,7 @@ public:
             }
             isValid = true;
 
-            return StackVisitor::Done;
+            return IterationStatus::Done;
         });
 
         addProperty(vm, "valid"_s, jsBoolean(isValid));
@@ -2314,16 +2314,16 @@ public:
         DollarVMAssertScope assertScope;
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         unsigned index = m_currentFrame++;
         // First frame (index 0) is `llintTrue` etc. function itself.
         if (index == 1) {
             if (visitor->codeBlock())
                 m_jitType = visitor->codeBlock()->jitType();
-            return StackVisitor::Done;
+            return IterationStatus::Done;
         }
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
     
     JITType jitType() { return m_jitType; }
@@ -2618,9 +2618,9 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpRegisters, (JSGlobalObject* globalObject, C
     callFrame->iterate(vm, [&] (StackVisitor& visitor) {
         DollarVMAssertScope assertScope;
         if (frameIndex++ != requestedFrameIndex)
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         VMInspector::dumpRegisters(visitor->callFrame());
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     });
 
     return encodedJSUndefined();
@@ -3251,15 +3251,15 @@ JSC_DEFINE_HOST_FUNCTION(functionShadowChickenFunctionsOnStack, (JSGlobalObject*
 
     JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
-    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
         DollarVMAssertScope assertScope;
         if (visitor->isInlinedFrame())
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         if (visitor->isWasmFrame())
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         result->push(globalObject, jsCast<JSObject*>(visitor->callee().asCell()));
         scope.releaseAssertNoException(); // This function is only called from tests.
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     });
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);

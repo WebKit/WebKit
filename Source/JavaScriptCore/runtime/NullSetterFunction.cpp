@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,17 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         ++m_iterations;
         if (m_iterations < 2)
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         CodeBlock* codeBlock = visitor->codeBlock();
         // This does not take into account that we might have an strict opcode in a non-strict context, but that's
         // ok since we assert below that this function should never be called from any kind strict context.
         m_callerIsStrict = codeBlock && codeBlock->ownerExecutable()->isInStrictContext();
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
 
     bool callerIsStrict() const { return m_callerIsStrict; }

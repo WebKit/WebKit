@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -318,7 +318,7 @@ namespace JSC  {
         String friendlyFunctionName();
 
         // CallFrame::iterate() expects a Functor that implements the following method:
-        //     StackVisitor::Status operator()(StackVisitor&) const;
+        //     IterationStatus operator()(StackVisitor&) const;
         // FIXME: This method is improper. We rely on the fact that we can call it with a null
         // receiver. We should always be using StackVisitor directly.
         // It's only valid to call this from a non-wasm top frame.

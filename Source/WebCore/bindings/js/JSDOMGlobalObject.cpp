@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -651,12 +651,12 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                 : m_skipFirstFrame(skipFirstFrame)
             { }
 
-            StackVisitor::Status operator()(StackVisitor& visitor) const
+            IterationStatus operator()(StackVisitor& visitor) const
             {
                 if (m_skipFirstFrame) {
                     if (!m_hasSkippedFirstFrame) {
                         m_hasSkippedFirstFrame = true;
-                        return StackVisitor::Continue;
+                        return IterationStatus::Continue;
                     }
                 }
 
@@ -670,7 +670,7 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                     if (visitor->callee().isCell() && visitor->callee().asCell()->isObject())
                         m_globalObject = jsCast<JSObject*>(visitor->callee().asCell())->globalObject();
                 }
-                return StackVisitor::Done;
+                return IterationStatus::Done;
             }
 
             JSC::JSGlobalObject* globalObject() const { return m_globalObject; }

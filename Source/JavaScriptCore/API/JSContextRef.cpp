@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -290,7 +290,7 @@ public:
     {
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
@@ -298,7 +298,7 @@ public:
             if (visitor->callee().isCell()) {
                 JSCell* callee = visitor->callee().asCell();
                 if (!callee && visitor->index())
-                    return StackVisitor::Done;
+                    return IterationStatus::Done;
             }
 
             StringBuilder& builder = m_builder;
@@ -313,12 +313,12 @@ public:
             }
 
             if (!visitor->callee().rawPtr())
-                return StackVisitor::Done;
+                return IterationStatus::Done;
 
             m_remainingCapacityForFrameCapture--;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "VM.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Expected.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Lock.h>
 
 namespace JSC {
@@ -50,21 +51,16 @@ public:
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    enum class FunctorStatus {
-        Continue,
-        Done
-    };
-
     template <typename Functor> void iterate(const Functor& functor) WTF_REQUIRES_LOCK(m_lock)
     {
         for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
-            FunctorStatus status = functor(*vm);
-            if (status == FunctorStatus::Done)
+            IterationStatus status = functor(*vm);
+            if (status == IterationStatus::Done)
                 return;
         }
     }
 
-    JS_EXPORT_PRIVATE static void forEachVM(Function<FunctorStatus(VM&)>&&);
+    JS_EXPORT_PRIVATE static void forEachVM(Function<IterationStatus(VM&)>&&);
 
     Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);

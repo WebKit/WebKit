@@ -386,11 +386,11 @@ public:
         m_results.reserveInitialCapacity(capacity);
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         if (m_framesToSkip > 0) {
             m_framesToSkip--;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
 
         if (m_remainingCapacityForFrameCapture) {
@@ -405,9 +405,9 @@ public:
             }
     
             m_remainingCapacityForFrameCapture--;
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
         }
-        return StackVisitor::Done;
+        return IterationStatus::Done;
     }
 
 private:
@@ -428,10 +428,10 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
     size_t framesCount = 0;
     size_t maxFramesCountNeeded = maxStackSize + framesToSkip;
-    StackVisitor::visit(callFrame, vm, [&] (StackVisitor&) -> StackVisitor::Status {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor&) -> IterationStatus {
         if (++framesCount < maxFramesCountNeeded)
-            return StackVisitor::Continue;
-        return StackVisitor::Done;
+            return IterationStatus::Continue;
+        return IterationStatus::Done;
     });
     if (framesCount <= framesToSkip)
         return;
@@ -482,19 +482,19 @@ public:
 
     HandlerInfo* handler() { return m_handler; }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         visitor.unwindToMachineCodeBlockFrame();
 
         CodeBlock* codeBlock = visitor->codeBlock();
         if (!codeBlock)
-            return StackVisitor::Continue;
+            return IterationStatus::Continue;
 
         m_handler = findExceptionHandler(visitor, codeBlock, RequiredHandler::CatchHandler);
         if (m_handler)
-            return StackVisitor::Done;
+            return IterationStatus::Done;
 
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
 
 private:
@@ -561,7 +561,7 @@ public:
 #endif
     }
 
-    StackVisitor::Status operator()(StackVisitor& visitor) const
+    IterationStatus operator()(StackVisitor& visitor) const
     {
         visitor.unwindToMachineCodeBlockFrame();
         m_callFrame = visitor->callFrame();
@@ -572,7 +572,7 @@ public:
             if (!m_isTermination) {
                 m_handler = { findExceptionHandler(visitor, m_codeBlock, RequiredHandler::AnyHandler), m_codeBlock };
                 if (m_handler.m_valid)
-                    return StackVisitor::Done;
+                    return IterationStatus::Done;
             }
         }
 
@@ -590,7 +590,7 @@ public:
                 unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
                 m_handler = { wasmCallee->handlerForIndex(jsInstance->instance(), exceptionHandlerIndex, m_wasmTag), wasmCallee };
                 if (m_handler.m_valid)
-                    return StackVisitor::Done;
+                    return IterationStatus::Done;
             }
         }
 #endif
@@ -607,9 +607,9 @@ public:
 
         bool shouldStopUnwinding = visitor->callerIsEntryFrame();
         if (shouldStopUnwinding)
-            return StackVisitor::Done;
+            return IterationStatus::Done;
 
-        return StackVisitor::Continue;
+        return IterationStatus::Continue;
     }
 
 private:
