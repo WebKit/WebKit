@@ -495,6 +495,9 @@
     (home-literal "/Library/Preferences/com.apple.mobilemail.plist")
     (with no-log))
 
+(allow file-read*
+    (home-subpath "/Library/Fonts"))
+
 (allow-preferences-common)
 
 ;; Home Button
