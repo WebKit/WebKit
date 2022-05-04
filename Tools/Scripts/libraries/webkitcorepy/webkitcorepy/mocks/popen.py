@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ class PopenBase(object):
     SIGTERM = getattr(signal, 'SIGTERM', 1)
     SIGKILL = getattr(signal, 'SIGKILL', 2)
 
-    def __init__(self, args, bufsize=None, cwd=None, stdin=None, stdout=None, stderr=None):
+    def __init__(self, args, bufsize=None, cwd=None, env=None, stdin=None, stdout=None, stderr=None):
         self._completion = None
         self._communication_started = False
         if bufsize is None:
@@ -53,6 +53,7 @@ class PopenBase(object):
 
         self._args = args
         self._cwd = cwd
+        self._env = env or dict()
 
         self.returncode = None
 
@@ -80,7 +81,7 @@ class PopenBase(object):
     def poll(self):
         if not self._completion:
             self.stdin.seek(0)
-            self._completion = Subprocess.completion_for(*self._args, cwd=self._cwd, input=self.stdin.read())
+            self._completion = Subprocess.completion_for(*self._args, cwd=self._cwd, env=self._env, input=self.stdin.read())
 
             (self.stdout or sys.stdout).write(
                 string_utils.decode(self._completion.stdout, target_type=self._stdout_type))
@@ -126,7 +127,7 @@ if sys.version_info > (3, 0):
                      restore_signals=True, start_new_session=False,
                      pass_fds=(), encoding=None, errors=None, text=None):
 
-            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr)
+            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
 
             if pass_fds and not close_fds:
                 log.warn("pass_fds overriding close_fds.")
@@ -204,7 +205,7 @@ else:
                      shell=False, cwd=None, env=None, universal_newlines=None,
                      startupinfo=None, creationflags=0):
 
-            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr)
+            super(Popen, self).__init__(args, bufsize=bufsize, cwd=cwd, env=env, stdin=stdin, stdout=stdout, stderr=stderr)
 
             for index in range(len(args)):
                 if not isinstance(args[index], (str, unicode)):

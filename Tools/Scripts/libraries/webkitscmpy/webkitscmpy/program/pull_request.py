@@ -108,13 +108,24 @@ class PullRequest(Command):
             log.info('Using committed changes...')
             return 0
 
+        bug_urls = getattr(args, '_bug_urls', None) or ''
+        if isinstance(bug_urls, (list, tuple)):
+            bug_urls = '\n'.join(bug_urls)
+
         # Otherwise, we need to create a commit
         will_amend = has_commit and args.technique == 'overwrite'
         if not modified:
             sys.stderr.write('No modified files\n')
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
-        if run([repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []), cwd=repository.root_path).returncode:
+        if run(
+            [repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []),
+            cwd=repository.root_path,
+            env=dict(
+                COMMIT_MESSAGE_TITLE=getattr(args, '_title', None) or '',
+                COMMIT_MESSAGE_BUG=bug_urls,
+            ),
+        ).returncode:
             sys.stderr.write('Failed to generate commit\n')
             return 1
 

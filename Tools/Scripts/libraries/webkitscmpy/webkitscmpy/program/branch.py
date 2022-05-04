@@ -111,6 +111,16 @@ class Branch(Command):
             elif issue:
                 args.issue = str(issue.id)
 
+        if issue:
+            args._title = issue.title
+            args._bug_urls = [issue.link]
+            types = [type(issue.tracker)]
+            for related in issue.references:
+                if type(related.tracker) in types:
+                    continue
+                args._bug_urls.append(related.link)
+                types.append(type(related.tracker))
+
         args.issue = cls.normalize_branch_name(args.issue)
 
         if run([repository.executable(), 'check-ref-format', args.issue], capture_output=True).returncode:

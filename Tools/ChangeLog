@@ -1,3 +1,32 @@
+2022-05-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Populate commit message with bug details
+        https://bugs.webkit.org/show_bug.cgi?id=240022
+        <rdar://problem/92674438>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/hooks/prepare-commit-msg: Pull title and bugs from environment variables.
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/popen.py:
+        (PopenBase.__init__): Support environment variables.
+        (PopenBase.poll): Ditto.
+        (Popen.__init__): Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/subprocess.py:
+        (Subprocess.CommandRoute.__init__): Support environment variables.
+        (Subprocess.CommandRoute.matches): Ditto
+        (Subprocess.CommandRoute.__call__): Ditto.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py: Pull title and bugs from
+        environment variables.
+        (Branch.main): Pass bug title and URLs to caller via args.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.create_commit): Pass title and bug urls to `git commit`.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2022-05-03  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r287574-r287580): [ iOS ] 3 TestWebKitAPI.WebKitLegacy.* tests are constantly crashing (ScrollingDoesNotPauseMedia, PreemptVideoFullscreen, AudioSessionCategoryIOS)

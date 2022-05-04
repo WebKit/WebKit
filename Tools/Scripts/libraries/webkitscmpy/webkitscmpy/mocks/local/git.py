@@ -480,11 +480,11 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'commit', '--date=now',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.commit(amend=False),
+                generator=lambda *args, **kwargs: self.commit(amend=False, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
                 self.executable, 'commit', '--date=now', '--amend',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.commit(amend=True),
+                generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
                 self.executable, 'revert', '--no-commit', re.compile(r'.+'),
                 cwd=self.path,
@@ -902,7 +902,8 @@ nothing to commit, working tree clean
 
         return mocks.ProcessCompletion(returncode=0)
 
-    def commit(self, amend=False):
+    def commit(self, amend=False, env=None):
+        env = env or dict()
         if not self.head:
             return mocks.ProcessCompletion(returncode=1, stdout='Allowed in git, but disallowed by reasonable workflows')
         if not self.staged and not amend:
@@ -918,8 +919,9 @@ nothing to commit, working tree clean
             self.commits[self.branch].append(self.head)
 
         self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
-        self.head.message = '[Testing] {} commits\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
-            'Amending' if amend else 'Creating',
+        self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
+            env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
+            ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
             '\n * '.join(self.staged.keys()),
         )
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]

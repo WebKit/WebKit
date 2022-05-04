@@ -58,13 +58,17 @@ def message(source=None, sha=None):
                 dirname = line.split(':')[0]
                 continue
 
-        return '''Need a short description (OOPS!).
-Need the bug URL (OOPS!).
+        return '''{title}
+{bugs}
 
 Reviewed by NOBODY (OOPS!).
 
-{}
-'''.format('\n'.join(commit_message))
+{content}
+'''.format(
+        title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
+        bugs=os.environ.get('COMMIT_MESSAGE_BUG', '') or 'Need the bug URL (OOPS!).',
+        content='\n'.join(commit_message),
+    )
 
     except subprocess.CalledProcessError:
         return ''
