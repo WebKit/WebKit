@@ -132,7 +132,7 @@ class GitHub(object):
     def email_for_owners(cls, owners):
         if not owners:
             return None, 'No owners defined, so email cannot be extracted'
-        contributors, errors = Contributors.load(use_network=False)
+        contributors, errors = Contributors.load()
         return contributors.get(owners[0].lower(), {}).get('email'), errors
 
 
@@ -415,6 +415,8 @@ class AddToLogMixin(object):
 class Contributors(object):
     url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
     contributors = {}
+    last_update = 0
+    REFRESH = 4 * 60 * 60
 
     @classmethod
     def load_from_disk(cls):
@@ -438,36 +440,52 @@ class Contributors(object):
             return {}, 'Failed to access {url}\n'.format(url=cls.url)
 
     @classmethod
-    def load(cls, use_network=True):
+    def load(cls, use_network=None):
         errors = []
 
+        now = int(time.time())
+        if cls.last_update < now - cls.REFRESH:
+            cls.contributors = {}
+
         if use_network:
+            cls.contributors = {}
             contributors_json, error = cls.load_from_github()
             if error:
                 errors.append(error)
+            else:
+                cls.last_update = now
+        elif use_network is False:
+            contributors_json, error = cls.load_from_disk()
+            if error:
+                errors.append(error)
+        elif cls.contributors:
+            return cls.contributors, errors
         else:
-            contributors_json = []
+            contributors_json, error = cls.load_from_github()
+            if error:
+                errors.append(error)
+            else:
+                cls.last_update = now
 
         if not contributors_json:
             contributors_json, error = cls.load_from_disk()
             if error:
                 errors.append(error)
 
-        contributors = {}
         for value in contributors_json:
             name = value.get('name')
             emails = value.get('emails')
             github_username = value.get('github')
             if name and emails:
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
-                contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
+                cls.contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
             if github_username and name and emails:
-                contributors[github_username.lower()] = dict(
+                cls.contributors[github_username.lower()] = dict(
                     name=name,
                     status=value.get('status'),
                     email=emails[0].lower(),
                 )
-        return contributors, errors
+        return cls.contributors, errors
 
 
 class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
@@ -1553,7 +1571,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         return contributor.get('name')
 
     def start(self):
-        self.contributors, errors = Contributors.load()
+        self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
             print(error)
             self._addToLog('stdio', error)
@@ -4783,7 +4801,7 @@ class AddReviewerMixin(object):
                 FILTER_BRANCH_SQUELCH_WARNING='1',
             )
 
-        contributors, _ = Contributors.load(use_network=False)
+        contributors, _ = Contributors.load()
         return dict(
             GIT_COMMITTER_NAME=contributors.get(owners[0].lower(), {}).get('name', 'EWS'),
             GIT_COMMITTER_EMAIL=contributors.get(owners[0].lower(), {}).get('email', FROM_EMAIL),
@@ -4846,15 +4864,16 @@ class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         super(AddAuthorToCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
 
     def author(self):
-        contributors, _ = Contributors.load(use_network=False)
+        contributors, _ = Contributors.load()
         username = self.getProperty('github.head.user.login')
-        owners = self.getProperty('owners', [])
-        for candidate in [username, owners[0] if owners else None]:
+        owners = self.getProperty('owners', [None])
+        for candidate in [username, owners[0]]:
             if not candidate:
                 continue
 
             name = contributors.get(candidate.lower(), {}).get('name', None)
             email = contributors.get(candidate.lower(), {}).get('email', None)
+
             if name and email:
                 return name, email
 

@@ -1,3 +1,21 @@
+2022-05-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews-build.webkit.org] Cache contributors by default
+        https://bugs.webkit.org/show_bug.cgi?id=240040
+        <rdar://problem/92695239>
+
+        Reviewed by Aakash Jain.
+
+        On-disk contributor record can get stale quickly. Rely on the network by default.
+
+        * CISupport/ews-build/steps.py:
+        (GitHub.email_for_owners): Rely on the network contributors.json by default.
+        (Contributors.load): Force reload contributors every 4 hours. Use disk or remote if specifically
+        requested, otherwise default to remote. Use cache if not expired.
+        (ValidateCommitterAndReviewer.start): Rely on the network contributors.json by default.
+        (AddReviewerMixin.gitCommitEnvironment): Ditto.
+        (AddAuthorToCommitMessage.author): Ditto.
+
 2022-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r293703): 358 JSC tests failing
