@@ -549,6 +549,9 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         owners = self.getProperty('owners', [])
         revision = self.getProperty('github.head.sha')
 
+        if self.getProperty('project') != 'WebKit/WebKit':
+            self.setProperty('sensitive', True)
+
         self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
 
         title = f': {title}' if title else ''
@@ -4688,6 +4691,9 @@ class DetermineLandedIdentifier(shell.ShellCommand):
             comment += f'\n\nReviewed commits have been landed. Closing PR #{pr_number} and removing active labels.'
         return comment
 
+    def hideStepIf(self, results, step):
+        return self.getProperty('sensitive', False)
+
 
 class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
     name = 'check-status-on-other-ewses'
@@ -4965,14 +4971,14 @@ class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
         return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
 
     def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
+        return not self.doStepIf(step) or self.getProperty('sensitive', False)
 
 
-class ValidateCommitMessage(shell.ShellCommand):
+class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
     name = 'validate-commit-message'
     haltOnFailure = False
     flunkOnFailure = True
-    OOPS_RE = re.compile(r'\(OO*PP*S!\)')
+    OOPS_RE = 'OO*PP*S!'
     REVIEWED_STRINGS = (
         'Reviewed by',
         'Unreviewed',
@@ -4982,38 +4988,38 @@ class ValidateCommitMessage(shell.ShellCommand):
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
-        self.summary = 'Patches have no commit message'
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
-        self.command = ['git', 'log', head_ref, f'^{base_ref}']
+
+        self.commands = []
+        commands = [
+            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!)' || test $? -eq 1",
+            "git log {} ^{} | grep -q '\\({}\\)' || echo 'No reviewer information in commit message'".format(
+                head_ref, base_ref,
+                '\\|'.join(self.REVIEWED_STRINGS),
+            ),
+        ]
+        for command in commands:
+            self.commands.append(util.ShellArg(command=self.shell_command(command), logname='stdio', haltOnFailure=True))
 
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
 
-        return super(ValidateCommitMessage, self).start()
+        rc = yield super(ValidateCommitMessage, self).run()
 
-    def getResultSummary(self):
-        if self.results in (SUCCESS, FAILURE):
-            return {'step': self.summary}
-        return super(ValidateCommitMessage, self).getResultSummary()
-
-    def evaluateCommand(self, cmd):
-        rc = super(ValidateCommitMessage, self).evaluateCommand(cmd)
         if rc == SKIPPED:
+            self.summary = 'Patches have no commit message'
             return rc
 
-        if rc == SUCCESS:
+        log_text = self.log_observer.getStdout().rstrip()
+        if log_text:
+            self.summary = log_text
+            rc = FAILURE
+        elif rc == SUCCESS:
             self.summary = 'Validated commit message'
-            log_text = self.log_observer.getStdout()
-            if self.OOPS_RE.search(log_text):
-                self.summary = 'Commit message contains (OOPS!)'
-                rc = FAILURE
-            elif all([candidate not in log_text for candidate in self.REVIEWED_STRINGS]):
-                self.summary = 'No reviewer information in commit message'
-                rc = FAILURE
-
         else:
             self.summary = 'Error parsing commit message'
             rc = FAILURE
@@ -5023,6 +5029,11 @@ class ValidateCommitMessage(shell.ShellCommand):
             self.setProperty('build_finish_summary', 'Commit message validation failed')
             self.build.addStepsAfterCurrentStep([LeaveComment(),  BlockPullRequest()])
         return rc
+
+    def getResultSummary(self):
+        if self.results in (SUCCESS, FAILURE):
+            return {'step': self.summary}
+        return super(ValidateCommitMessage, self).getResultSummary()
 
     def doStepIf(self, step):
         return self.getProperty('github.number')

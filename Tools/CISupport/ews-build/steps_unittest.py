@@ -6206,53 +6206,13 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
-            + 0
-            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
-https://bugs.webkit.org/show_bug.cgi?id=238172
-<rdar://problem/90602594>
-
-Reviewed by Aakash Jain.'''),
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
-        return self.runStep()
-
-    def test_success_unreviewed(self):
-        self.setupStep(ValidateCommitMessage())
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
             + 0
-            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed (Follow-up)
-https://bugs.webkit.org/show_bug.cgi?id=238172
-<rdar://problem/90602594>
-
-Unreviewed follow-up fix.'''),
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
-        return self.runStep()
-
-    def test_success_rubber_stamped(self):
-        self.setupStep(ValidateCommitMessage())
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
-            + 0
-            + ExpectShell.log('stdio', stdout='''[build.webkit.org] Support identifiers on dashboard
-https://bugs.webkit.org/show_bug.cgi?id=239473
-<rdar://problem/76852365>
-
-Rubber-stamped by Aakash Jain.'''),
+            + ExpectShell.log('stdio', stdout=''),
         )
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
@@ -6266,13 +6226,9 @@ Rubber-stamped by Aakash Jain.'''),
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
-            + 0
-            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
-https://bugs.webkit.org/show_bug.cgi?id=238172
-<rdar://problem/90602594>
-
-Reviewed by NOBODY (OOPS!)'''),
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 1
+            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!)\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!)')
         rc = self.runStep()
@@ -6288,11 +6244,13 @@ Reviewed by NOBODY (OOPS!)'''),
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
             + 0
-            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
-https://bugs.webkit.org/show_bug.cgi?id=238172
-<rdar://problem/90602594>'''),
+            + ExpectShell.log('stdio', stdout='No reviewer information in commit message\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
