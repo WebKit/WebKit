@@ -1883,3 +1883,4 @@ webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba4-rgba-un
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
+webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
