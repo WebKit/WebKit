@@ -1,3 +1,45 @@
+2022-05-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Crash during MediaPlayerPrivateMediaFoundation::removeListener in the async callback thread
+        https://bugs.webkit.org/show_bug.cgi?id=239485
+
+        Reviewed by Don Olmstead.
+
+        WinCairo debug layout tests were observing a random crash while
+        MediaPlayerPrivateMediaFoundation::AsyncCallback was destructing.
+
+        m_mediaPlayer was being accessed without locking m_mutex in
+        ~AsyncCallback.
+
+        m_mediaPlayer can be replaced with using a WeakPtr.
+
+        There is one more multi-threading problem. IMFAsyncCallback should
+        use InterlockedIncrement and InterlockedDecrement for
+        ref-counting.
+        Implementing the Asynchronous Callback - Win32 apps | Microsoft Docs
+        <https://docs.microsoft.com/en-us/windows/win32/medfound/implementing-the-asynchronous-callback>
+
+        This change re-implemented AsyncCallback with a WeakPtr, Function,
+        QISearch and Interlocked{In,De}crement.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback):
+        (WebCore::beginGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onNetworkStateChanged):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AddRef): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Release): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::GetParameters): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke): Deleted.
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Initialize empty and null AtomString at compile time
