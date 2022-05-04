@@ -88,7 +88,7 @@ static_assert(sizeof(StructureID) == sizeof(uint32_t));
 ALWAYS_INLINE Structure* StructureID::decode() const
 {
     ASSERT(decontaminate());
-    return reinterpret_cast<Structure*>(static_cast<uintptr_t>(m_bits) << encodeShiftAmount);
+    return reinterpret_cast<Structure*>(static_cast<uintptr_t>(decontaminate().m_bits) << encodeShiftAmount);
 }
 
 ALWAYS_INLINE Structure* StructureID::tryDecode() const
@@ -140,7 +140,7 @@ ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 ALWAYS_INLINE Structure* StructureID::decode() const
 {
     ASSERT(decontaminate());
-    return reinterpret_cast<Structure*>(m_bits);
+    return reinterpret_cast<Structure*>(decontaminate().m_bits);
 }
 
 ALWAYS_INLINE Structure* StructureID::tryDecode() const
