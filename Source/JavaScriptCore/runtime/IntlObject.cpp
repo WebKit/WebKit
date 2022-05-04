@@ -1899,7 +1899,7 @@ static JSArray* availableUnits(JSGlobalObject* globalObject)
 
     int32_t index = 0;
     for (const MeasureUnit& unit : simpleUnits) {
-        result->putDirectIndex(globalObject, index++, jsString(vm, StringImpl::createFromLiteral(unit.subType)));
+        result->putDirectIndex(globalObject, index++, jsString(vm, StringImpl::create(unit.subType)));
         RETURN_IF_EXCEPTION(scope, { });
     }
     return result;

@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createFromLiteral(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String()))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String()))
 {
 }
 
