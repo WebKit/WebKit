@@ -321,8 +321,11 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
 
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     [requestContext setRelyingPartyIdentifier:options.rpId];
-    if (mediation == MediationRequirement::Conditional && [requestContext respondsToSelector:@selector(setRequestStyle:)])
+    if (mediation == MediationRequirement::Conditional) {
+        if (![requestContext respondsToSelector:@selector(setRequestStyle:)])
+            return nil;
         requestContext.get().requestStyle = ASCredentialRequestStyleAutoFill;
+    }
     setGlobalFrameIDForContext(requestContext, globalFrameID);
 
     if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion) {
