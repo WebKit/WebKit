@@ -1,3 +1,22 @@
+2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Initialize empty and null AtomString at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=240031
+
+        Reviewed by Mark Lam.
+
+        Because they are initialized from static data, we can just initialize them
+        at compile time, and we do not need to have `AtomString::init`.
+
+        * wtf/Threading.cpp:
+        (WTF::initialize):
+        * wtf/text/AtomString.cpp:
+        (WTF::AtomString::init): Deleted.
+        * wtf/text/AtomString.h:
+        (WTF::StaticAtomString::StaticAtomString):
+        (WTF::nullAtom):
+        (WTF::emptyAtom):
+
 2022-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r293703): 358 JSC tests failing
