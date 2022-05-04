@@ -210,7 +210,10 @@ const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
 
 bool GStreamerAudioCaptureSource::interrupted() const
 {
-    return m_capturer->isInterrupted() || RealtimeMediaSource::interrupted();
+    if (m_capturer->pipeline())
+        return m_capturer->isInterrupted() || RealtimeMediaSource::interrupted();
+
+    return RealtimeMediaSource::interrupted();
 }
 
 void GStreamerAudioCaptureSource::setInterruptedForTesting(bool isInterrupted)

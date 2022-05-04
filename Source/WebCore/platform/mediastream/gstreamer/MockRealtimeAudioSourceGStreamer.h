@@ -34,7 +34,9 @@ class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource {
 public:
     static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(String&& deviceID, String&& name, String&& hashSalt);
 
-    ~MockRealtimeAudioSourceGStreamer() = default;
+    static const HashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSources();
+
+    ~MockRealtimeAudioSourceGStreamer();
 
 protected:
     void render(Seconds) final;

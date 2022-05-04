@@ -69,7 +69,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
 
 static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
 {
-    static NeverDestroyed<HashSet<MockRealtimeVideoSource*>> videoSources;
+    static MainThreadNeverDestroyed<HashSet<MockRealtimeVideoSource*>> videoSources;
     return videoSources;
 }
 
@@ -77,7 +77,6 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
     : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
-    ASSERT(isMainThread());
     allMockRealtimeVideoSource().add(this);
 
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
@@ -104,7 +103,6 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
 
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
 {
-    ASSERT(isMainThread());
     allMockRealtimeVideoSource().remove(this);
 }
 
