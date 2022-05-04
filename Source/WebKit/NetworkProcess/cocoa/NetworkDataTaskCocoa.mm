@@ -151,7 +151,7 @@ static WebCore::RegistrableDomain lastCNAMEDomain(NSArray<NSString *> *cnames)
     if (auto* lastResolvedCNAMEInChain = [cnames lastObject]) {
         auto cname = String(lastResolvedCNAMEInChain);
         if (cname.endsWith('.'))
-            cname.remove(cname.length() - 1);
+            cname = cname.left(cname.length() - 1);
         return WebCore::RegistrableDomain::uncheckedCreateFromHost(cname);
     }
 

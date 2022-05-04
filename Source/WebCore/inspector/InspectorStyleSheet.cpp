@@ -1062,8 +1062,7 @@ ExceptionOr<void> InspectorStyleSheet::deleteRule(const InspectorCSSId& id)
 
     // |rule| MAY NOT be addressed after this!
 
-    String sheetText = m_parsedStyleSheet->text();
-    sheetText.remove(sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
+    auto sheetText = makeStringByRemoving(m_parsedStyleSheet->text(), sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
     setText(sheetText);
     fireStyleSheetChanged();
     return { };

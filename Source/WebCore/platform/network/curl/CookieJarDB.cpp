@@ -596,7 +596,7 @@ bool CookieJarDB::deleteCookie(const String& url, const String& name)
 
     String urlCopied = String(url);
     if (urlCopied.startsWith('.'))
-        urlCopied.remove(0, 1);
+        urlCopied = urlCopied.substring(1);
 
     URL urlObj({ }, urlCopied);
     if (urlObj.isValid()) {

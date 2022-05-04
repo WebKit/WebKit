@@ -326,7 +326,7 @@ String LocaleWin::shortTimeFormat()
         builder.append("ss");
         size_t pos = format.reverseFind(builder.toString());
         if (pos != notFound)
-            format.remove(pos, builder.length());
+            format = makeStringByRemoving(format, pos, builder.length());
     }
     m_timeFormatWithoutSeconds = convertWindowsDateTimeFormat(format);
     return m_timeFormatWithoutSeconds;

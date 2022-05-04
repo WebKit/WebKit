@@ -150,8 +150,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 
     count = std::min(count, length() - offset);
 
-    String newData = m_data;
-    newData.remove(offset, count);
+    auto newData = makeStringByRemoving(m_data, offset, count);
     setDataAndUpdate(WTFMove(newData), offset, count, 0);
 
     return { };
