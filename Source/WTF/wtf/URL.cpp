@@ -569,8 +569,7 @@ void URL::remove(unsigned start, unsigned length)
     ASSERT(start < m_string.length());
     ASSERT(length <= m_string.length() - start);
 
-    auto stringAfterRemoval = std::exchange(m_string, { });
-    stringAfterRemoval.remove(start, length);
+    auto stringAfterRemoval = makeStringByRemoving(std::exchange(m_string, { }), start, length);
     parse(WTFMove(stringAfterRemoval));
 }
 

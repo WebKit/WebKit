@@ -82,7 +82,7 @@ AtomString GStreamerMediaDescription::extractCodecName()
         size_t braceStart = codecName.find(" (");
         size_t braceEnd = codecName.find(")");
         if (braceStart != notFound && braceEnd != notFound)
-            codecName.remove(braceStart, braceEnd - braceStart);
+            codecName = makeStringByRemoving(codecName, braceStart, braceEnd - braceStart);
     }
 
     return codecName;

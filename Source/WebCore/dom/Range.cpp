@@ -473,9 +473,8 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
                 result = WTFMove(processingInstruction);
         }
         if (action == Range::Extract || action == Range::Delete) {
-            String data { instruction.data() };
-            data.remove(startOffset, endOffset - startOffset);
-            instruction.setData(data);
+            auto data = makeStringByRemoving(instruction.data(), startOffset, endOffset - startOffset);
+            instruction.setData(WTFMove(data));
         }
         break;
     }
