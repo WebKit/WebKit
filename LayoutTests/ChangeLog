@@ -1,5 +1,14 @@
 2022-05-04  Karl Rackler  <rackler@apple.com>
 
+        [Gardening]REGRESSION(r293038):[ iOS ] fast/forms/auto-fill-button/input-auto-fill-button.html is a consistent failure
+        https://bugs.webkit.org/show_bug.cgi?id=240065
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
+2022-05-04  Karl Rackler  <rackler@apple.com>
+
         Unreviewed revert
         This reverts commit 250254@main because rebaseline resolved failure
         https://bugs.webkit.org/show_bug.cgi?id=240065
