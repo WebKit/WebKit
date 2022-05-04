@@ -207,7 +207,11 @@ protected:
 
     void fulfill(ResultType result)
     {
-        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with result for bundleID = %{public}s, scope = %{private}s", description().characters(), this, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
+        bool hasResult = true;
+        if constexpr (std::is_constructible_v<bool, ResultType>)
+            hasResult = static_cast<bool>(result);
+
+        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with result (hasResult: %d) for bundleID = %{public}s, scope = %{private}s", description().characters(), this, hasResult, m_bundleIdentifier.utf8().data(), m_scope.utf8().data());
 
         m_resultHandler(WTFMove(result));
         finish();
@@ -521,11 +525,13 @@ void PushService::incrementSilentPushCount(const String& bundleIdentifier, const
 
 void PushService::removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&& handler)
 {
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s", bundleIdentifier.utf8().data());
     removeRecordsImpl(bundleIdentifier, std::nullopt, WTFMove(handler));
 }
 
 void PushService::removeRecordsForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
 {
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s %{private}s", bundleIdentifier.utf8().data(), securityOrigin.utf8().data());
     removeRecordsImpl(bundleIdentifier, securityOrigin, WTFMove(handler));
 }
 

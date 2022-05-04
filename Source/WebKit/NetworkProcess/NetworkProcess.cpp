@@ -2329,7 +2329,7 @@ void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, Completion
 void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, PushPermissionState permissionState, CompletionHandler<void(bool)>&& callback)
 {
     if (auto* session = networkSession(sessionID)) {
-        LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
+        RELEASE_LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
         auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL);
 
         if (permissionState == PushPermissionState::Prompt) {
@@ -2362,7 +2362,7 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
             callback(result);
         });
     } else
-        LOG(Push, "Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
+        RELEASE_LOG_ERROR(Push, "Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
 }
 
 #else

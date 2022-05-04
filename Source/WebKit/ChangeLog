@@ -1,3 +1,44 @@
+2022-05-03  Ben Nham  <nham@apple.com>
+
+        Add push service result logging
+        https://bugs.webkit.org/show_bug.cgi?id=240035
+
+        Reviewed by Geoffrey Garen.
+
+        This adds logging to make it easier to debug certain errors we have seen internally (e.g.
+        unexpectedly missing subscriptions and service workers that aren't spawning to service push
+        events):
+
+        1. In some cases, it appears that a push event is coming in, but the service worker to
+           handle the event never spawns. This can happen if we think an origin doesn't have
+           permission to show a notification in UIProcess and we bail out early. Currently we don't
+           have logging for this case.
+
+           To fix this, I removed the early bail-out in NetworkProcessProxy::processPushMessage
+           entirely. Instead, we always IPC the message to NetworkProcess::processPushMessage.
+
+           This will trigger existing logging around whether a service worker spawns to handle the
+           push event on the NetworkProcess side. The optimization to not spawn NetworkProcess in
+           the permission-denied case will not be used in the long run, because we plan to move the
+           subscription to the ignore list in this case (see the FIXME in
+           NetworkProcess::processPushMessage), which requires spawning NetworkProcess to message
+           webpushd anyway.
+
+        2. For push service requests that produce a result, we additionally log whether or not the
+           result exists (e.g. to know if a push subscription exists or not).
+
+        3. Add logging for the cases where WebKit explicitly asks webpushd to bulk-remove
+           subscriptions.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processPushMessage):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processPushMessage):
+        * webpushd/PushService.mm:
+        (WebPushD::PushServiceRequestImpl::fulfill):
+        (WebPushD::PushService::removeRecordsForBundleIdentifier):
+        (WebPushD::PushService::removeRecordsForBundleIdentifierAndOrigin):
+
 2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         DisplayList::Recorder has redundant, unused flushContext

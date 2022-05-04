@@ -1766,11 +1766,6 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
     if (auto it = permissions.find(origin); it != permissions.end())
         permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
 
-    if (permission == PushPermissionState::Denied) {
-        callback(false);
-        return;
-    }
-
     sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage, permission }, WTFMove(callback));
 }
 
