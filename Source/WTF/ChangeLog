@@ -1,3 +1,11 @@
+2022-05-04  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r293729.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        * wtf/DateMath.cpp:
+        (WTF::validateTimeZone):
+
 2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Initialize emptyString and nullString data at compile time
