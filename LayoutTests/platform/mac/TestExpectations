@@ -2297,3 +2297,6 @@ webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [
 webkit.org/b/239794 webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
+
+webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
+
