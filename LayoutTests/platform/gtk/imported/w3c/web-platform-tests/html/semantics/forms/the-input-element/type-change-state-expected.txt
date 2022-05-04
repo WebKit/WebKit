@@ -1,10 +1,10 @@
 
-FAIL change state from hidden to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from hidden to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from hidden to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from hidden to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from hidden to text
+PASS change state from hidden to search
+PASS change state from hidden to tel
+PASS change state from hidden to url
 PASS change state from hidden to email
-FAIL change state from hidden to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from hidden to password
 PASS change state from hidden to datetime-local
 PASS change state from hidden to date
 PASS change state from hidden to month
@@ -105,11 +105,11 @@ PASS change state from url to image
 PASS change state from url to reset
 PASS change state from url to button
 PASS change state from email to hidden
-FAIL change state from email to text assert_equals: selectionStart should be 0 expected 0 but got 6
-FAIL change state from email to search assert_equals: selectionStart should be 0 expected 0 but got 6
-FAIL change state from email to tel assert_equals: selectionStart should be 0 expected 0 but got 6
-FAIL change state from email to url assert_equals: selectionStart should be 0 expected 0 but got 6
-FAIL change state from email to password assert_equals: selectionStart should be 0 expected 0 but got 6
+PASS change state from email to text
+PASS change state from email to search
+PASS change state from email to tel
+PASS change state from email to url
+PASS change state from email to password
 PASS change state from email to datetime-local
 PASS change state from email to date
 PASS change state from email to month
@@ -147,12 +147,12 @@ PASS change state from password to image
 PASS change state from password to reset
 PASS change state from password to button
 PASS change state from datetime-local to hidden
-FAIL change state from datetime-local to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from datetime-local to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from datetime-local to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from datetime-local to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from datetime-local to text
+PASS change state from datetime-local to search
+PASS change state from datetime-local to tel
+PASS change state from datetime-local to url
 PASS change state from datetime-local to email
-FAIL change state from datetime-local to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from datetime-local to password
 PASS change state from datetime-local to date
 PASS change state from datetime-local to month
 PASS change state from datetime-local to week
@@ -168,12 +168,12 @@ PASS change state from datetime-local to image
 PASS change state from datetime-local to reset
 PASS change state from datetime-local to button
 PASS change state from date to hidden
-FAIL change state from date to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from date to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from date to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from date to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from date to text
+PASS change state from date to search
+PASS change state from date to tel
+PASS change state from date to url
 PASS change state from date to email
-FAIL change state from date to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from date to password
 PASS change state from date to datetime-local
 PASS change state from date to month
 PASS change state from date to week
@@ -189,12 +189,12 @@ PASS change state from date to image
 PASS change state from date to reset
 PASS change state from date to button
 PASS change state from month to hidden
-FAIL change state from month to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from month to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from month to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from month to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from month to text
+PASS change state from month to search
+PASS change state from month to tel
+PASS change state from month to url
 PASS change state from month to email
-FAIL change state from month to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from month to password
 PASS change state from month to datetime-local
 PASS change state from month to date
 PASS change state from month to week
@@ -210,12 +210,12 @@ PASS change state from month to image
 PASS change state from month to reset
 PASS change state from month to button
 PASS change state from week to hidden
-FAIL change state from week to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from week to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from week to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from week to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from week to text
+PASS change state from week to search
+PASS change state from week to tel
+PASS change state from week to url
 PASS change state from week to email
-FAIL change state from week to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from week to password
 PASS change state from week to datetime-local
 PASS change state from week to date
 PASS change state from week to month
@@ -231,12 +231,12 @@ PASS change state from week to image
 PASS change state from week to reset
 PASS change state from week to button
 PASS change state from time to hidden
-FAIL change state from time to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from time to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from time to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from time to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from time to text
+PASS change state from time to search
+PASS change state from time to tel
+PASS change state from time to url
 PASS change state from time to email
-FAIL change state from time to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from time to password
 PASS change state from time to datetime-local
 PASS change state from time to date
 PASS change state from time to month
@@ -273,12 +273,12 @@ PASS change state from number to image
 PASS change state from number to reset
 PASS change state from number to button
 PASS change state from range to hidden
-FAIL change state from range to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from range to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from range to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from range to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from range to text
+PASS change state from range to search
+PASS change state from range to tel
+PASS change state from range to url
 PASS change state from range to email
-FAIL change state from range to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from range to password
 PASS change state from range to datetime-local
 PASS change state from range to date
 PASS change state from range to month
@@ -294,12 +294,12 @@ PASS change state from range to image
 PASS change state from range to reset
 PASS change state from range to button
 PASS change state from color to hidden
-FAIL change state from color to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from color to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from color to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from color to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from color to text
+PASS change state from color to search
+PASS change state from color to tel
+PASS change state from color to url
 PASS change state from color to email
-FAIL change state from color to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from color to password
 PASS change state from color to datetime-local
 PASS change state from color to date
 PASS change state from color to month
@@ -315,12 +315,12 @@ PASS change state from color to image
 PASS change state from color to reset
 PASS change state from color to button
 PASS change state from checkbox to hidden
-FAIL change state from checkbox to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from checkbox to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from checkbox to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from checkbox to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from checkbox to text
+PASS change state from checkbox to search
+PASS change state from checkbox to tel
+PASS change state from checkbox to url
 PASS change state from checkbox to email
-FAIL change state from checkbox to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from checkbox to password
 PASS change state from checkbox to datetime-local
 PASS change state from checkbox to date
 PASS change state from checkbox to month
@@ -336,12 +336,12 @@ PASS change state from checkbox to image
 PASS change state from checkbox to reset
 PASS change state from checkbox to button
 PASS change state from radio to hidden
-FAIL change state from radio to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from radio to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from radio to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from radio to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from radio to text
+PASS change state from radio to search
+PASS change state from radio to tel
+PASS change state from radio to url
 PASS change state from radio to email
-FAIL change state from radio to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from radio to password
 PASS change state from radio to datetime-local
 PASS change state from radio to date
 PASS change state from radio to month
@@ -378,12 +378,12 @@ PASS change state from file to image
 PASS change state from file to reset
 PASS change state from file to button
 PASS change state from submit to hidden
-FAIL change state from submit to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from submit to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from submit to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from submit to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from submit to text
+PASS change state from submit to search
+PASS change state from submit to tel
+PASS change state from submit to url
 PASS change state from submit to email
-FAIL change state from submit to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from submit to password
 PASS change state from submit to datetime-local
 PASS change state from submit to date
 PASS change state from submit to month
@@ -399,12 +399,12 @@ PASS change state from submit to image
 PASS change state from submit to reset
 PASS change state from submit to button
 PASS change state from image to hidden
-FAIL change state from image to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from image to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from image to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from image to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from image to text
+PASS change state from image to search
+PASS change state from image to tel
+PASS change state from image to url
 PASS change state from image to email
-FAIL change state from image to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from image to password
 PASS change state from image to datetime-local
 PASS change state from image to date
 PASS change state from image to month
@@ -420,12 +420,12 @@ PASS change state from image to submit
 PASS change state from image to reset
 PASS change state from image to button
 PASS change state from reset to hidden
-FAIL change state from reset to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from reset to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from reset to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from reset to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from reset to text
+PASS change state from reset to search
+PASS change state from reset to tel
+PASS change state from reset to url
 PASS change state from reset to email
-FAIL change state from reset to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from reset to password
 PASS change state from reset to datetime-local
 PASS change state from reset to date
 PASS change state from reset to month
@@ -441,12 +441,12 @@ PASS change state from reset to submit
 PASS change state from reset to image
 PASS change state from reset to button
 PASS change state from button to hidden
-FAIL change state from button to text assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from button to search assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from button to tel assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
-FAIL change state from button to url assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from button to text
+PASS change state from button to search
+PASS change state from button to tel
+PASS change state from button to url
 PASS change state from button to email
-FAIL change state from button to password assert_equals: selectionDirection should be '{noneDirectionResult}' expected "none" but got "forward"
+PASS change state from button to password
 PASS change state from button to datetime-local
 PASS change state from button to date
 PASS change state from button to month

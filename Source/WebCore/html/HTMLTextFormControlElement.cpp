@@ -88,7 +88,7 @@ static bool showPlaceholderForPointer(bool, String)
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
-    , m_cachedSelectionDirection(SelectionHasNoDirection)
+    , m_cachedSelectionDirection(document.frame() && document.frame()->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
     , m_lastChangeWasUserEdit(false)
     , m_isPlaceholderVisible(false)
     , m_canShowPlaceholder(true)

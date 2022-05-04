@@ -565,6 +565,8 @@ void HTMLInputElement::updateType()
     m_inputType->destroyShadowSubtree();
     m_inputType->detachFromElement();
 
+    bool previouslySelectable = m_inputType->supportsSelectionAPI();
+
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtreeIfNeeded();
 
@@ -600,6 +602,21 @@ void HTMLInputElement::updateType()
         form()->resetDefaultButton();
 
     runPostTypeUpdateTasks();
+
+    // https://html.spec.whatwg.org/multipage/input.html#input-type-change
+    // 8. Let nowSelectable be true if setRangeText() now applies to the element, and false otherwise.
+    bool nowSelectable = m_inputType->supportsSelectionAPI();
+    // 9. If previouslySelectable is false and nowSelectable is true, set the element's text entry cursor position to the beginning of the text control, and set its selection direction to "none".
+    if (!previouslySelectable && nowSelectable) {
+        TextFieldSelectionDirection direction = SelectionHasNoDirection;
+        // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#set-the-selection-direction
+        RefPtr frame = document().frame();
+        if (isTextField() && frame && frame->editor().behavior().shouldConsiderSelectionAsDirectional())
+            direction = SelectionHasForwardDirection;
+        cacheSelection(0, 0, direction);
+    }
+
+    updateValidity();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()
@@ -625,8 +642,6 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
     setChangedSinceLastFormControlChangeEvent(false);
 
     addToRadioButtonGroup();
-
-    updateValidity();
 }
 
 void HTMLInputElement::subtreeHasChanged()
@@ -728,6 +743,7 @@ inline void HTMLInputElement::initializeInputType()
     updateWillValidateAndValidity();
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();
+    updateValidity();
 }
 
 void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)

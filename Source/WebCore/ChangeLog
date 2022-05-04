@@ -1,3 +1,21 @@
+2022-05-04  Ziran Sun  <zsun@igalia.com>
+
+        [InputElement] Selection after type change needs to follow HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=237361
+
+        Reviewed by Chris Dumez.
+
+        As per spec at https://html.spec.whatwg.org/multipage/input.html#input-type-change, 
+        following step 7-9, if the previous type doesn't support Selection API and the new type
+        does, selectionStart and selectionEnd should be 0, selectionDirection should be set to "none".
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::initializeInputType):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+
 2022-05-03  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] Mediastream mock audio interruption fixes after r290985
