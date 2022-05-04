@@ -73,6 +73,7 @@ private:
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
     void clearFontMap();
+    void clearImageBufferBackends();
 
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
