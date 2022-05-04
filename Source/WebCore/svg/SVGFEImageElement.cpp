@@ -110,7 +110,7 @@ void SVGFEImageElement::buildPendingResource()
     } else if (is<SVGElement>(*target.element))
         downcast<SVGElement>(*target.element).addReferencingElement(*this);
 
-    invalidate();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -128,7 +128,7 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (attrName == SVGNames::preserveAspectRatioAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

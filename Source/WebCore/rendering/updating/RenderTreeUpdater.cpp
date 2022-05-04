@@ -46,6 +46,7 @@
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGElement.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "TextManipulationController.h"
@@ -192,6 +193,9 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (elementUpdates)
             updateElementRenderer(element, *elementUpdates);
+
+        if (is<SVGElement>(element))
+            downcast<SVGElement>(element).invalidateSVGResourcesInAncestorChainIfNeeded();
 
         storePreviousRenderer(element);
 

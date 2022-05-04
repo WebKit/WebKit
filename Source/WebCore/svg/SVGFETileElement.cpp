@@ -63,7 +63,7 @@ void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

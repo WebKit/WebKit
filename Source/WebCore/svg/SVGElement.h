@@ -84,6 +84,8 @@ public:
 
     inline void invalidateSVGAttributes();
     inline void invalidateSVGPresentationalHintStyle();
+    void setSVGResourcesInAncestorChainAreDirty();
+    void invalidateSVGResourcesInAncestorChainIfNeeded();
 
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement>& instances() const;

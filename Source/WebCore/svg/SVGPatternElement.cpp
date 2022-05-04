@@ -118,8 +118,7 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
-        if (RenderObject* object = renderer())
-            object->setNeedsLayout();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -133,8 +132,7 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

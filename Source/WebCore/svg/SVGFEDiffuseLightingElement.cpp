@@ -135,7 +135,7 @@ void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrN
 
     if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

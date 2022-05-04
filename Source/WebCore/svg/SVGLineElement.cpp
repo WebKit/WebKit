@@ -74,10 +74,9 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
 
-        if (auto* renderer = downcast<LegacyRenderSVGShape>(this->renderer())) {
-            renderer->setNeedsShapeUpdate();
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        if (auto* renderer = this->renderer())
+            static_cast<LegacyRenderSVGShape*>(renderer)->setNeedsShapeUpdate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

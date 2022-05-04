@@ -250,10 +250,13 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     if (!targetElement)
         return;
 
-    if (RenderElement* renderer = targetElement->renderer()) {
-        renderer->setNeedsTransformUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-    }
+    auto updateTargetElement = [](SVGElement& element) {
+        if (auto renderer = element.renderer())
+            renderer->setNeedsTransformUpdate();
+        element.setSVGResourcesInAncestorChainAreDirty();
+    };
+
+    updateTargetElement(*targetElement);
 
     AffineTransform* targetSupplementalTransform = targetElement->supplementalTransform();
     if (!targetSupplementalTransform)
@@ -265,10 +268,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         if (!transform || *transform == *targetSupplementalTransform)
             continue;
         *transform = *targetSupplementalTransform;
-        if (RenderElement* renderer = instance->renderer()) {
-            renderer->setNeedsTransformUpdate();
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        updateTargetElement(instance);
     }
 }
 

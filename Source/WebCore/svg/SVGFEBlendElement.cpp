@@ -93,7 +93,7 @@ void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

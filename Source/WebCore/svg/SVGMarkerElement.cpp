@@ -98,14 +98,12 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         if (PropertyRegistry::isAnimatedLengthAttribute(attrName))
             updateRelativeLengthsInformation();
-        if (RenderObject* object = renderer())
-            object->setNeedsLayout();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
     
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        if (RenderObject* object = renderer())
-            object->setNeedsLayout();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -119,8 +117,7 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 String SVGMarkerElement::orient() const

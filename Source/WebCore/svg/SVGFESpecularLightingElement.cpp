@@ -144,7 +144,7 @@ void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attr
 
     if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidate();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
