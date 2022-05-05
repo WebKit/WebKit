@@ -1,3 +1,21 @@
+2022-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(249114@main) [GTK] Crashes on shutdown if the display is not set
+        https://bugs.webkit.org/show_bug.cgi?id=239767
+
+        Reviewed by Michael Catanzaro.
+
+        Handle the case of PlatformDisplay created with a nullptr GdkDisplay.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::PlatformDisplay):
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::~PlatformDisplayWayland):
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::PlatformDisplayX11):
+        (WebCore::PlatformDisplayX11::~PlatformDisplayX11):
+
 2022-05-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [iOS] REGRESSION(r293570): Snapshot rendering is not scaled with the device scale factor

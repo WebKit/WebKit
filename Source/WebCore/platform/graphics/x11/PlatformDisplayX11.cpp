@@ -96,7 +96,7 @@ PlatformDisplayX11::PlatformDisplayX11(Display* display)
 #if PLATFORM(GTK)
 PlatformDisplayX11::PlatformDisplayX11(GdkDisplay* display)
     : PlatformDisplay(display)
-    , m_display(GDK_DISPLAY_XDISPLAY(display))
+    , m_display(display ? GDK_DISPLAY_XDISPLAY(display) : nullptr)
 {
     clearSharingGLContextAtExit();
 }
@@ -113,7 +113,7 @@ PlatformDisplayX11::~PlatformDisplayX11()
 #else
     bool nativeDisplayOwned = true;
 #endif
-    if (nativeDisplayOwned)
+    if (nativeDisplayOwned && m_display)
         XCloseDisplay(m_display);
 }
 
