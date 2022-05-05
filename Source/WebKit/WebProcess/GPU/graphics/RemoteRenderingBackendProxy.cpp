@@ -273,6 +273,9 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
 
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {
+    if (prepareBuffersInput.isEmpty())
+        return { };
+
     auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
         if (!buffer)
             return std::nullopt;
