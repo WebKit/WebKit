@@ -441,7 +441,7 @@
         "JavaScriptCore": [ "keith_miller@apple.com", "sbarati@apple.com", "mark.lam@apple.com", "msaboff@apple.com", "tzagallo@apple.com" ],
         "MacAndIOSTextLayoutAndRendering": [ "mmaxfield@apple.com" ],
         "MathML": [ "dbarton@mathscribe.com", "fred.wang@free.fr" ],
-        "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio@correia.cc" ],
+        "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com", "sergio@correia.cc", "y_soliman@apple.com", "youssefdevelops@gmail.com" ],
         "MSEEME": [ "eric.carlson@apple.com", "calvaris@igalia.com" ],
         "NetworkCache": [ "cgarcia@igalia.com", "cdumez@apple.com" ],
         "StreamsAPI": [ "benjamin@webkit.org", "calvaris@igalia.com", "youennf@gmail.com" ],
