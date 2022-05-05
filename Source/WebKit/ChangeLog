@@ -1,3 +1,15 @@
+2022-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        Allow hw.cpu64bit_capable sysctl-read in network process sandbox on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=240124
+        <rdar://92797350>
+
+        Reviewed by Per Arne Vollan.
+
+        It's used on watchOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+
 2022-05-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] NativeImage should share the ShareableBitmap data when it's sent to GPU Process

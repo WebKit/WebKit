@@ -481,6 +481,9 @@
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu"
+#if PLATFORM(WATCHOS)
+        "hw.cpu64bit_capable"
+#endif
         "hw.machine"
         "hw.memsize"
         "hw.ncpu"
