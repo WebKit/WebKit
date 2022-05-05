@@ -394,9 +394,15 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_s);
         return;
     }
-    if (m_roundingIncrement != 1 && m_roundingType != IntlRoundingType::FractionDigits) {
-        throwRangeError(globalObject, scope, "rounding type is not fraction-digits while roundingIncrement is specified"_s);
-        return;
+    if (m_roundingIncrement != 1) {
+        if (m_roundingType != IntlRoundingType::FractionDigits) {
+            throwTypeError(globalObject, scope, "rounding type is not fraction-digits while roundingIncrement is specified"_s);
+            return;
+        }
+        if (m_maximumFractionDigits != m_minimumFractionDigits) {
+            throwRangeError(globalObject, scope, "maximum and minimum fraction-digits are not equal while roundingIncrement is specified"_s);
+            return;
+        }
     }
 
     m_trailingZeroDisplay = intlOption<TrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, TrailingZeroDisplay::Auto }, { "stripIfInteger"_s, TrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, TrailingZeroDisplay::Auto);
