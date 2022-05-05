@@ -845,7 +845,7 @@ String XMLHttpRequest::getAllResponseHeaders() const
 
         StringBuilder stringBuilder;
         for (auto& header : headers)
-            stringBuilder.append(lowercase(header.first), ": ", header.second, "\r\n");
+            stringBuilder.append(asASCIILowercase(header.first), ": ", header.second, "\r\n");
 
         m_allResponseHeaders = stringBuilder.toString();
     }

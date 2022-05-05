@@ -60,8 +60,7 @@ static AtomString extractLocaleFromDictionaryFileName(const String& fileName)
     // so we strip everything except the locale.
     constexpr int prefixLength = 5;
     constexpr int suffixLength = 4;
-    // FIXME: Ideally, we'd do the conversion to lowercase as part of converting to AtomString.
-    return AtomString { StringView(fileName).substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercase() };
+    return StringView(fileName).substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercaseAtom();
 }
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
@@ -176,7 +175,7 @@ bool canHyphenate(const AtomString& localeIdentifier)
         return false;
     if (availableLocales().contains(localeIdentifier))
         return true;
-    return availableLocales().contains(AtomString(localeIdentifier.string().convertToASCIILowercase()));
+    return availableLocales().contains(localeIdentifier.convertToASCIILowercase());
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {

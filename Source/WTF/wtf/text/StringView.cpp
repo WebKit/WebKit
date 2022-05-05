@@ -254,7 +254,7 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
 {
     for (unsigned i = 0; i < length; ++i) {
         if (UNLIKELY(isASCIIUpper(input[i])))
-            return makeAtomString(lowercase(StringView { input, length }));
+            return makeAtomString(asASCIILowercase(StringView { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
     return AtomString(input, length);

@@ -659,11 +659,12 @@ static String languageIdentifier(const String& languageCode)
     if (languageCode.isEmpty())
         return languageCode;
 
-    String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
-
+    String lowercaseLanguageCode;
     // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
-    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
-        lowercaseLanguageCode = lowercaseLanguageCode.left(2);
+    if (languageCode.length() >= 3 && (languageCode[2U] == '_' || languageCode[2U] == '-'))
+        lowercaseLanguageCode = StringView(languageCode).left(2).convertToASCIILowercase();
+    else
+        lowercaseLanguageCode = languageCode.convertToASCIILowercase();
 
     return lowercaseLanguageCode;
 }

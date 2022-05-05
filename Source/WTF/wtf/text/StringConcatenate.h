@@ -377,12 +377,12 @@ struct ASCIICaseConverter {
     StringView string;
 };
 
-inline ASCIICaseConverter lowercase(StringView stringView)
+inline ASCIICaseConverter asASCIILowercase(StringView stringView)
 {
     return { StringView::CaseConvertType::Lower, stringView };
 }
 
-inline ASCIICaseConverter uppercase(StringView stringView)
+inline ASCIICaseConverter asASCIIUppercase(StringView stringView)
 {
     return { StringView::CaseConvertType::Upper, stringView };
 }
@@ -544,9 +544,9 @@ using WTF::makeAtomString;
 using WTF::makeString;
 using WTF::makeStringByInserting;
 using WTF::pad;
-using WTF::lowercase;
+using WTF::asASCIILowercase;
+using WTF::asASCIIUppercase;
 using WTF::tryMakeString;
 using WTF::tryMakeAtomString;
-using WTF::uppercase;
 
 #include <wtf/text/StringOperators.h>

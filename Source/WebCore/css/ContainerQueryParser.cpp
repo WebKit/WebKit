@@ -171,9 +171,7 @@ static AtomString consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
-    // FIXME: This is a bit inefficient. Ideally, we'd convert to lowercase as part of converting the
-    // StringView to an AtomString.
-    return AtomString { range.consumeIncludingWhitespace().value().convertToASCIILowercase() };
+    return range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
 }
 
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSSParserTokenRange& range)

@@ -60,20 +60,16 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
     selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(pseudoType);
     AtomString name;
-    if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed) {
-        // FIXME: This is a bit inefficient. Ideally, we'd convert to lowercase as part of converting the
-        // StringView to an AtomString.
-        name = AtomString { pseudoTypeString.convertToASCIILowercase() };
-    } else {
+    if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
+        name = pseudoTypeString.convertToASCIILowercaseAtom();
+    else {
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
             name = "placeholder"_s;
         else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"_s))
             name = "file-selector-button"_s;
         else {
             ASSERT_NOT_REACHED();
-            // FIXME: This is a bit inefficient. Ideally, we'd convert to lowercase as part of converting the
-            // StringView to an AtomString.
-            name = AtomString { pseudoTypeString.convertToASCIILowercase() };
+            name = pseudoTypeString.convertToASCIILowercaseAtom();
         }
     }
     selector->m_selector->setValue(name);
@@ -93,9 +89,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(S
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::PseudoElement);
         selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
-        // FIXME: This is a bit inefficient. Ideally, we'd convert to lowercase as part of converting the
-        // StringView to an AtomString.
-        selector->m_selector->setValue(AtomString { pseudoTypeString.convertToASCIILowercase() });
+        selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
         return selector;
     }
     return nullptr;
