@@ -151,53 +151,6 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
 }
 
-static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, size_t alignment)
-{
-    // Assert that the alignment is a power of 2.
-    ASSERT(alignment && !(alignment & (alignment - 1)));
-
-    uintptr_t alignmentMask = alignment - 1;
-    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
-}
-
-static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferStart, const uint8_t* bufferEnd, size_t size)
-{
-    // When size == 0 for the last argument and it's a variable length byte array,
-    // bufferStart == alignedPosition == bufferEnd, so checking (bufferEnd >= alignedPosition)
-    // is not an off-by-one error since (static_cast<size_t>(bufferEnd - alignedPosition) >= size)
-    // will catch issues when size != 0.
-    return bufferEnd >= alignedPosition && bufferStart <= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
-}
-
-bool Decoder::alignBufferPosition(size_t alignment, size_t size)
-{
-    const uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
-    if (UNLIKELY(!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size))) {
-        // We've walked off the end of this buffer.
-        markInvalid();
-        return false;
-    }
-
-    m_bufferPos = alignedPosition;
-    return true;
-}
-
-bool Decoder::bufferIsLargeEnoughToContain(size_t alignment, size_t size) const
-{
-    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_buffer, m_bufferEnd, size);
-}
-
-bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t alignment)
-{
-    if (!alignBufferPosition(alignment, size))
-        return false;
-
-    memcpy(data, m_bufferPos, size);
-    m_bufferPos += size;
-
-    return true;
-}
-
 const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment)
 {
     if (!alignBufferPosition(alignment, size))
