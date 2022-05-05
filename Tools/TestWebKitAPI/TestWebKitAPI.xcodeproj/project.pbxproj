@@ -753,6 +753,7 @@
 		93625D271CD9741C006DC1F1 /* large-video-without-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93625D261CD973AF006DC1F1 /* large-video-without-audio.html */; };
 		9368A25E229EFB4700A829CA /* local-storage-process-suspends-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9368A25D229EFB3A00A829CA /* local-storage-process-suspends-1.html */; };
 		9368A25F229EFB4700A829CA /* local-storage-process-suspends-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */; };
+		936E4AE42821BB6D00208654 /* SuspendableWorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 936E4AE32821BB6D00208654 /* SuspendableWorkQueue.cpp */; };
 		936EC36627BA3B0D00AFA8AE /* general-storage-directory.salt in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */; };
 		936F72801CD7D9EC0068A0FB /* large-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */; };
 		936F72811CD7D9EC0068A0FB /* large-video-with-audio.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */; };
@@ -2563,6 +2564,7 @@
 		93625D261CD973AF006DC1F1 /* large-video-without-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-without-audio.html"; sourceTree = "<group>"; };
 		9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "local-storage-process-suspends-2.html"; sourceTree = "<group>"; };
 		9368A25D229EFB3A00A829CA /* local-storage-process-suspends-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "local-storage-process-suspends-1.html"; sourceTree = "<group>"; };
+		936E4AE32821BB6D00208654 /* SuspendableWorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendableWorkQueue.cpp; sourceTree = "<group>"; };
 		936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "general-storage-directory.salt"; sourceTree = "<group>"; };
 		936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-with-audio.html"; sourceTree = "<group>"; };
 		936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "large-video-with-audio.mp4"; sourceTree = "<group>"; };
@@ -4725,6 +4727,7 @@
 				7CD70C4E24A436EE00E61040 /* StringParsingBuffer.cpp */,
 				9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */,
 				7C74D42D188228F300E5ED57 /* StringView.cpp */,
+				936E4AE32821BB6D00208654 /* SuspendableWorkQueue.cpp */,
 				5597F8341D9596C80066BC21 /* SynchronizedFixedQueue.cpp */,
 				9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */,
 				7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */,
@@ -5522,6 +5525,7 @@
 				7CD70C4F24A436EE00E61040 /* StringParsingBuffer.cpp in Sources */,
 				9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,
+				936E4AE42821BB6D00208654 /* SuspendableWorkQueue.cpp in Sources */,
 				5597F8361D9596C80066BC21 /* SynchronizedFixedQueue.cpp in Sources */,
 				7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */,
 				9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */,

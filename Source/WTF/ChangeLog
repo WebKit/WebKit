@@ -1,3 +1,23 @@
+2022-05-05  Sihui Liu  <sihui_liu@apple.com>
+
+        SuspendableWorkQueue::suspend should invoke callback immediately when queue is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=240070
+
+        Reviewed by Chris Dumez.
+
+        With current implementation, if suspend() is called when queue is suspended, the completionHandler is not 
+        invoked unitl the queue is resumed and suspended again. This might cause confusion for callers. To fix it,
+        now SuspendableWorkQueue will invoke callback immediately when queue is already suspended.
+
+        API test: WTF_SuspendableWorkQueue.SuspendTwice
+
+        * wtf/SuspendableWorkQueue.cpp:
+        (WTF::SuspendableWorkQueue::suspend):
+        (WTF::SuspendableWorkQueue::resume):
+        (WTF::SuspendableWorkQueue::dispatchSync):
+        (WTF::SuspendableWorkQueue::suspendIfNeeded):
+        * wtf/SuspendableWorkQueue.h:
+
 2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         SharedMemory::systemPageSize is redundant function

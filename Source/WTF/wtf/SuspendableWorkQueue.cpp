@@ -44,13 +44,16 @@ void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, Completio
     ASSERT(isMainThread());
     Locker suspensionLocker { m_suspensionLock };
 
+    if (m_state == State::Suspended)
+        return completionHandler();
+
     // Last suspend function will be the one that is used.
     m_suspendFunction = WTFMove(suspendFunction);
     m_suspensionCompletionHandlers.append(WTFMove(completionHandler));
-    if (m_isOrWillBeSuspended)
+    if (m_state == State::WillSuspend)
         return;
 
-    m_isOrWillBeSuspended = true;
+    m_state = State::WillSuspend;
     // Make sure queue will be suspended when there is no task scheduled on the queue.
     WorkQueue::dispatch([this] {
         suspendIfNeeded();
@@ -62,11 +65,13 @@ void SuspendableWorkQueue::resume()
     ASSERT(isMainThread());
     Locker suspensionLocker { m_suspensionLock };
 
-    if (!m_isOrWillBeSuspended)
+    if (m_state == State::Running)
         return;
 
-    m_isOrWillBeSuspended = false;
-    m_suspensionCondition.notifyOne();
+    if (m_state == State::Suspended)
+        m_suspensionCondition.notifyOne();
+
+    m_state = State::Running;
 }
 
 void SuspendableWorkQueue::dispatch(Function<void()>&& function)
@@ -92,7 +97,7 @@ void SuspendableWorkQueue::dispatchSync(Function<void()>&& function)
     // otherwise thread may be blocked.
     if (isMainThread()) {
         Locker suspensionLocker { m_suspensionLock };
-        RELEASE_ASSERT(!m_isOrWillBeSuspended);
+        RELEASE_ASSERT(m_state == State::Running);
     }
     WorkQueue::dispatchSync(WTFMove(function));
 }
@@ -118,12 +123,14 @@ void SuspendableWorkQueue::suspendIfNeeded()
 
     Locker suspensionLocker { m_suspensionLock };
     auto suspendFunction = std::exchange(m_suspendFunction, { });
-    if (m_isOrWillBeSuspended)
-        suspendFunction();
+    if (m_state != State::WillSuspend)
+        return;
 
+    m_state = State::Suspended;
+    suspendFunction();
     invokeAllSuspensionCompletionHandlers();
 
-    while (m_isOrWillBeSuspended)
+    while (m_state != State::Running)
         m_suspensionCondition.wait(m_suspensionLock);
 }
 

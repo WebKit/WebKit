@@ -56,7 +56,8 @@ private:
 
     Lock m_suspensionLock;
     Condition m_suspensionCondition;
-    bool m_isOrWillBeSuspended WTF_GUARDED_BY_LOCK(m_suspensionLock) { false };
+    enum class State : uint8_t { Running, WillSuspend, Suspended };
+    State m_state WTF_GUARDED_BY_LOCK(m_suspensionLock) { State::Running };
     Function<void()> m_suspendFunction WTF_GUARDED_BY_LOCK(m_suspensionLock);
     Vector<CompletionHandler<void()>> m_suspensionCompletionHandlers WTF_GUARDED_BY_LOCK(m_suspensionLock);
 };
