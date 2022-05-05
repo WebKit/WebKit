@@ -1,3 +1,46 @@
+2022-05-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293825. rdar://problem/92635752
+
+    [GPU Process] [iOS] REGRESSION(r293570): Snapshot rendering is not scaled with the device scale factor
+    https://bugs.webkit.org/show_bug.cgi?id=240100
+    rdar://92635752
+    
+    Reviewed by Simon Fraser.
+    
+    The scaling factor is not set in the GraphicsContext of the
+    ImageBufferShareableBitmapBackend.
+    
+    To fix this bug is to make snapshotFrameRectWithClip() handle the scaling
+    outside the ImageBuffer creation. This is similar to what we do in
+    GraphicsContext::createAlignedImageBuffer() where we scale the size and
+    create the ImageBuffer with scaleFactor = 1.
+    
+    * page/FrameSnapshotting.cpp:
+    (WebCore::snapshotFrameRectWithClip):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293825 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-05  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] [iOS] REGRESSION(r293570): Snapshot rendering is not scaled with the device scale factor
+            https://bugs.webkit.org/show_bug.cgi?id=240100
+            rdar://92635752
+
+            Reviewed by Simon Fraser.
+
+            The scaling factor is not set in the GraphicsContext of the
+            ImageBufferShareableBitmapBackend.
+
+            To fix this bug is to make snapshotFrameRectWithClip() handle the scaling
+            outside the ImageBuffer creation. This is similar to what we do in
+            GraphicsContext::createAlignedImageBuffer() where we scale the size and
+            create the ImageBuffer with scaleFactor = 1.
+
+            * page/FrameSnapshotting.cpp:
+            (WebCore::snapshotFrameRectWithClip):
+
 2022-04-29  Don Olmstead  <don.olmstead@sony.com>
 
         The isYahooMail quirk is specific to PLATFORM(IOS_FAMILY)

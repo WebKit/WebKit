@@ -115,19 +115,23 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
+    auto scaledImageRect = imageRect;
+    scaledImageRect.scale(scaleFactor);
+
     auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
     auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;
 
-    auto buffer = ImageBuffer::create(imageRect.size(), purpose, scaleFactor, options.colorSpace, options.pixelFormat, { }, { hostWindow });
+    auto buffer = ImageBuffer::create(scaledImageRect.size(), purpose, 1, options.colorSpace, options.pixelFormat, { }, { hostWindow });
     if (!buffer)
         return nullptr;
 
-    buffer->context().translate(-imageRect.x(), -imageRect.y());
+    buffer->context().translate(-scaledImageRect.location());
+    buffer->context().scale(scaleFactor);
 
     if (!clipRects.isEmpty()) {
         Path clipPath;
         for (auto& rect : clipRects)
-            clipPath.addRect(encloseRectToDevicePixels(rect, scaleFactor));
+            clipPath.addRect(rect);
         buffer->context().clipPath(clipPath);
     }
 
