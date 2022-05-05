@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
+#include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <wtf/ThreadAssertions.h>
 
@@ -63,7 +64,7 @@ public:
 private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
     void initialize();
-    auto createDecoderCallback(RTCDecoderIdentifier, bool useRemoteFrames);
+    auto createDecoderCallback(RTCDecoderIdentifier);
     WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::Connection::ThreadMessageReceiver
@@ -87,8 +88,10 @@ private:
 
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
-
+    Ref<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
+    const WebCore::ProcessIdentity m_resourceOwner;
+
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(workQueue());
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
