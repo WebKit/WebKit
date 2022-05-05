@@ -309,6 +309,49 @@ TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
     for (size_t j = 0; j < queueCount; ++j)
         queue[j]->dispatchSync([] { });
     EXPECT_EQ(queueCount * iterationCount, counter);
-
 }
+
+namespace {
+struct AssertionTestHolder {
+    const RefPtr<WorkQueue> queue { WorkQueue::create("com.apple.WebKit.Test.ThreadSafetyAnalysisAssertIsCurrentWorks", WorkQueue::QOS::UserInteractive) };
+    size_t counter WTF_GUARDED_BY_CAPABILITY(*queue) { 0 };
+    size_t result { 0 }; // This is here to support the result assertion. The compiler doesn't allow us to obtain the `counter` otherwise.
+
+    void testTask()
+    {
+        assertIsCurrent(*queue); // This is being tested.
+        ++counter;
+    }
+    void computeResult() WTF_REQUIRES_CAPABILITY(*queue) // This is being tested.
+    {
+        result = ++counter;
+    }
+    template<typename T> void testTaskThatFailsToCompile()
+    {
+        ++counter;
+    }
+};
+}
+
+TEST(WTF_WorkQueue, ThreadSafetyAnalysisAssertIsCurrentWorks)
+{
+    constexpr size_t queueCount = 50;
+    constexpr size_t iterationCount = 10000;
+
+    AssertionTestHolder holders[queueCount];
+    for (size_t i = 0; i < iterationCount; ++i) {
+        for (auto& holder : holders)
+            holder.queue->dispatch([&holder] { holder.testTask(); });
+    }
+// #define TEST_COMPILE_FAILURE
+#ifdef TEST_COMPILE_FAILURE
+    for (auto& holder : holders)
+        holder.queue->dispatchSync([&holder] { holder.testTaskThatFailsToCompile<int>(); });
+#endif
+    for (auto& holder : holders)
+        holder.queue->dispatchSync([&holder] { assertIsCurrent(*holder.queue); holder.computeResult(); });
+    for (auto& holder : holders)
+        EXPECT_EQ(iterationCount + 1, holder.result);
+}
+
 } // namespace TestWebKitAPI

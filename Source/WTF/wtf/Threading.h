@@ -45,6 +45,7 @@
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
@@ -102,7 +103,7 @@ public:
     WTF_EXPORT_PRIVATE ~ThreadSuspendLocker();
 };
 
-class Thread : public ThreadSafeRefCounted<Thread> {
+class WTF_CAPABILITY("is current") Thread : public ThreadSafeRefCounted<Thread> {
     static std::atomic<uint32_t> s_uid;
 public:
     friend class ThreadGroup;
@@ -427,9 +428,15 @@ inline Thread& Thread::current()
     return initializeCurrentTLS();
 }
 
+inline void assertIsCurrent(const Thread& thread) WTF_ASSERTS_ACQUIRED_CAPABILITY(thread)
+{
+    ASSERT(&thread == &Thread::current());
+}
+
 } // namespace WTF
 
 using WTF::ThreadSuspendLocker;
 using WTF::Thread;
 using WTF::ThreadType;
 using WTF::GCThreadType;
+using WTF::assertIsCurrent;
