@@ -7008,6 +7008,18 @@
    },
    {
       "emails" : [
+         "y_soliman@apple.com",
+         "youssefdevelops@gmail.com"
+      ],
+      "github" : "youssefsoli",
+      "name" : "Youssef Soliman",
+      "nicks" : [
+         "ys",
+         "youssefsoli"
+      ]
+   },
+   {
+      "emails" : [
          "yousuke.kimoto@sony.com"
       ],
       "github" : "ykimot",
