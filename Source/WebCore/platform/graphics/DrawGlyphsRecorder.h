@@ -84,6 +84,7 @@ private:
     void populateInternalState(const GraphicsContextState&);
     void populateInternalContext(const GraphicsContextState&);
     void prepareInternalContext(const Font&, FontSmoothingMode);
+    void recordInitialColors();
     void concludeInternalContext();
 
     void updateFillBrush(const SourceBrush&);
@@ -122,6 +123,11 @@ private:
         bool ignoreTransforms { false };
     };
     State m_originalState;
+
+#if USE(CORE_TEXT) && !PLATFORM(WIN)
+    RetainPtr<CGColorRef> m_initialFillColor;
+    RetainPtr<CGColorRef> m_initialStrokeColor;
+#endif
 };
 
 } // namespace WebCore

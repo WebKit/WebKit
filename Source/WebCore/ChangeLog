@@ -1,3 +1,47 @@
+2022-05-05  Cameron McCormack  <heycam@apple.com>
+
+        Avoid using WebCore::Colors created with out-of-line components in DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=235604
+        rdar://88345680
+
+        Reviewed by Simon Fraser.
+
+        In DrawGlyphsRecorder::recordDrawGlyphs we interrogate the CGContext's
+        state to find out the current fill and stroke color. This needed to
+        record color font glyphs correctly. When we're not using a color font,
+        the CGColors for the fill and stroke will be the same as we set them
+        in prepareInternalContext.
+
+        Those CGColors we create in prepareInternalContext from the
+        WebCore::Colors (created by calling cachedCGColor) don't record the
+        exact form the original colors had. CGColors only expose float
+        components, so Color::createAndPreserveColorSpace conservatively
+        creates a Color with out-of-line components to store those float
+        values, even if the original Color the CGColor was created from had
+        uint8_t components.
+
+        Color::operator== treats colors of different forms as being different,
+        which means we generate additional, unnecessary SetState display list
+        items changing say the fill color from Color(255, 255, 255) (inline) to
+        Color(1.0, 1.0, 1.0) (out of line).
+
+        We can avoid this by checking whether the context state's fill and
+        stroke CGColors are the same object as the ones we set in
+        prepareInternalContext, and if so, set the current fill/stroke brush
+        based on m_originalState.fillBrush/strokeBrush. In the common case of
+        a non-color glyph, this brush change will be detected as the same as
+        the current value, and the SetState item generation will be avoided.
+
+        This improves the MotionMark design subtest by 2.4%, and the overall
+        score by 0.7%, when GPUP DOM rendering is enabled.
+
+        * platform/graphics/DrawGlyphsRecorder.h:
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::recordInitialColors):
+        (WebCore::DrawGlyphsRecorder::prepareInternalContext):
+        (WebCore::DrawGlyphsRecorder::updateFillColor):
+        (WebCore::DrawGlyphsRecorder::updateStrokeColor):
+
 2022-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         Remove abandoned WKPreference for AlwaysUseAcceleratedOverflowScroll

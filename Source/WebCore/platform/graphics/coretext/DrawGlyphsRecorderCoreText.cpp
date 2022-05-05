@@ -122,6 +122,13 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
 }
 
+void DrawGlyphsRecorder::recordInitialColors()
+{
+    CGContextRef cgContext = m_internalContext->platformContext();
+    m_initialFillColor = CGContextGetFillColorAsColor(cgContext);
+    m_initialStrokeColor = CGContextGetStrokeColorAsColor(cgContext);
+}
+
 void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode)
 {
     ASSERT(CGAffineTransformIsIdentity(CTFontGetMatrix(font.platformData().ctFont())));
@@ -136,6 +143,7 @@ void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingM
     auto& contextState = m_owner.state();
     populateInternalState(contextState);
     populateInternalContext(contextState);
+    recordInitialColors();
 }
 
 void DrawGlyphsRecorder::concludeInternalContext()
@@ -152,7 +160,10 @@ void DrawGlyphsRecorder::updateFillColor(CGColorRef fillColor)
         ASSERT(m_originalState.fillBrush.pattern());
         return;
     }
-    m_owner.setFillBrush(Color::createAndPreserveColorSpace(fillColor));
+    if (fillColor == m_initialFillColor)
+        m_owner.setFillBrush(m_originalState.fillBrush);
+    else
+        m_owner.setFillBrush(Color::createAndPreserveColorSpace(fillColor));
 }
 
 void DrawGlyphsRecorder::updateFillBrush(const SourceBrush& newBrush)
@@ -166,7 +177,10 @@ void DrawGlyphsRecorder::updateStrokeColor(CGColorRef strokeColor)
         ASSERT(m_originalState.strokeBrush.pattern());
         return;
     }
-    m_owner.setStrokeBrush(Color::createAndPreserveColorSpace(strokeColor));
+    if (strokeColor == m_initialStrokeColor)
+        m_owner.setStrokeBrush(m_originalState.strokeBrush);
+    else
+        m_owner.setStrokeBrush(Color::createAndPreserveColorSpace(strokeColor));
 }
 
 void DrawGlyphsRecorder::updateStrokeBrush(const SourceBrush& newBrush)

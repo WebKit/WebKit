@@ -244,6 +244,7 @@ CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attr
 CGAffineTransform CGContextGetBaseCTM(CGContextRef);
 CGCompositeOperation CGContextGetCompositeOperation(CGContextRef);
 CGColorRef CGContextGetFillColorAsColor(CGContextRef);
+CGColorRef CGContextGetStrokeColorAsColor(CGContextRef);
 CGFloat CGContextGetLineWidth(CGContextRef);
 bool CGContextGetShouldSmoothFonts(CGContextRef);
 bool CGContextGetShouldAntialias(CGContextRef);

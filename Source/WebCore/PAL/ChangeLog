@@ -1,3 +1,13 @@
+2022-05-05  Cameron McCormack  <heycam@apple.com>
+
+        Avoid using WebCore::Colors created with out-of-line components in DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=235604
+        rdar://88345680
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cg/CoreGraphicsSPI.h: Add CGContextGetStrokeColorAsColor.
+
 2022-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Adjust SPI headers to fix build with non-internal SDK
