@@ -37,7 +37,6 @@
 #import <WebCore/CVUtilities.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/RemoteVideoSample.h>
-#import <WebCore/MediaSampleAVFObjC.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
 #import <webrtc/sdk/WebKit/WebKitEncoder.h>
 #import <wtf/BlockPtr.h>
