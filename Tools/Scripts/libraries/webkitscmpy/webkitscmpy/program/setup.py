@@ -95,7 +95,7 @@ class Setup(Command):
         return result
 
     @classmethod
-    def _add_remote(cls, repository, name, url):
+    def _add_remote(cls, repository, name, url, fetch=True):
         returncode = run(
             [repository.executable(), 'remote', 'add', name, url],
             capture_output=True, cwd=repository.root_path,
@@ -110,6 +110,18 @@ class Setup(Command):
             return 1
 
         log.info("Added remote '{}'".format(name))
+
+        if not fetch:
+            return 0
+
+        returncode = run(
+            [repository.executable(), 'fetch', name],
+            capture_output=True, cwd=repository.root_path,
+        ).returncode
+        if returncode:
+            sys.stderr.write("Failed to fetch added remote '{}'\n".format(name))
+            return 1
+        log.info("Fetched remote '{}'".format(name))
         return 0
 
     @classmethod
@@ -363,7 +375,7 @@ class Setup(Command):
                     if url.startswith(protocol):
                         remote_to_add = url
                         break
-                if cls._add_remote(repository, name, remote_to_add):
+                if cls._add_remote(repository, name, remote_to_add, fetch=True):
                     result += 1
                 else:
                     available_remotes.append(name)
@@ -376,7 +388,7 @@ class Setup(Command):
                     remote=name, username=username,
                 ))
                 for fork_name in ['{}-{}'.format(username, name), '{}-fork'.format(name)]:
-                    if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name))):
+                    if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name)), fetch=False):
                         result += 1
                     else:
                         available_remotes.append(fork_name)
@@ -400,7 +412,7 @@ Automation may create pull requests and forks in unexpected locations
 
         log.info("Adding forked remote as '{}' and 'fork'...".format(username))
         for name in [username, 'fork']:
-            if cls._add_remote(repository, name, cls._fork_remote(repository.url(), username, rmt.name)):
+            if cls._add_remote(repository, name, cls._fork_remote(repository.url(), username, rmt.name), fetch=False):
                 result += 1
             else:
                 available_remotes.append(name)

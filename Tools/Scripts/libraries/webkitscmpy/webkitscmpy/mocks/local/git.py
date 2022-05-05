@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -449,7 +449,7 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     self.edit_config(args[2], args[3]),
             ), mocks.Subprocess.Route(
-                self.executable, 'fetch', 'fork',
+                self.executable, 'fetch', re.compile(r'.+'),
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
                     returncode=0,
