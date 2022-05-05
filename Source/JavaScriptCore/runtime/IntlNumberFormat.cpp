@@ -399,10 +399,9 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
             throwTypeError(globalObject, scope, "rounding type is not fraction-digits while roundingIncrement is specified"_s);
             return;
         }
-        if (m_maximumFractionDigits != m_minimumFractionDigits) {
-            throwRangeError(globalObject, scope, "maximum and minimum fraction-digits are not equal while roundingIncrement is specified"_s);
-            return;
-        }
+        // FIXME: The proposal has m_maximumFractionDigits != m_minimumFractionDigits check here, but it breaks the use case.
+        // We intentionally do not follow to that here until the issue is fixed.
+        // https://github.com/tc39/proposal-intl-numberformat-v3/issues/97
     }
 
     m_trailingZeroDisplay = intlOption<TrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, TrailingZeroDisplay::Auto }, { "stripIfInteger"_s, TrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, TrailingZeroDisplay::Auto);
