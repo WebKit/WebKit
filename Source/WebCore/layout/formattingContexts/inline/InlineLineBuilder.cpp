@@ -930,7 +930,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
             auto& layoutBoxParent = trailingInlineItem.layoutBox().parent();
 
             // Need to ensure we use the correct style here, so the content breaker and line builder remain in sync.
-            auto& parentStyle = isFirstLine() ? layoutBoxParent.firstLineStyle() : layoutBoxParent.style();
+            auto& parentStyle = m_isFirstLine ? layoutBoxParent.firstLineStyle() : layoutBoxParent.style();
 
             auto isWrapOpportunity = TextUtil::isWrappingAllowed(parentStyle);
             if (!isWrapOpportunity && (trailingInlineItem.isInlineBoxStart() || trailingInlineItem.isInlineBoxEnd()))
