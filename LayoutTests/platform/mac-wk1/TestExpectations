@@ -850,8 +850,6 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 # repaint rects work differently on WK1
 fast/repaint/vertical-text-repaint.html [ Pass Failure ]
 
-webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
-
 # <rdar://problem/24818712>
 editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 
@@ -958,12 +956,6 @@ http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 
 # auto-sizing produces inconsistent image results
 css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
-
-webkit.org/b/170877 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
-
-webkit.org/b/231514 [ BigSur+ ] webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
-
-webkit.org/b/231541 [ BigSur+ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Pass Timeout ]
 
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
@@ -1147,8 +1139,6 @@ imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-e
 
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
-webkit.org/b/219449 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
-
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
 
 webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Pass Failure ]
@@ -1243,13 +1233,6 @@ webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/209479 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Pass Timeout ]
-
-webkit.org/b/209480 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Pass Timeout ]
-
-webkit.org/b/229580 [ Debug ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Pass Crash ]
-webkit.org/b/229580 [ Debug ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Pass Crash ]
-
 webkit.org/b/208825 [ Debug ] inspector/script-profiler/event-type-Microtask.html [ Pass Failure ]
 
 webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
@@ -1265,8 +1248,6 @@ webkit.org/b/209921 [ Debug ] inspector/css/add-css-property.html [ Pass Timeout
 webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html [ Pass Failure ]
 
 webkit.org/b/230072 [ Release ] inspector/dom/shadow-and-non-shadow-children.html [ Pass Failure ]
-
-webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
 accessibility/mac/textmarker-range-for-range.html [ Skip ]
@@ -1424,9 +1405,6 @@ fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ Ima
 fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ Skip ]
-webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
@@ -1625,10 +1603,6 @@ webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
-
-webkit.org/b/230835 [ BigSur Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
-webkit.org/b/230835 [ BigSur Debug ] webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Pass Crash ]
-webkit.org/b/230835 [ BigSur Debug ] webgl/2.0.0/conformance/extensions/ext-blend-minmax.html [ Pass Crash ]
 
 webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
 
@@ -1866,21 +1840,9 @@ webkit.org/b/238642 imported/w3c/web-platform-tests/css/css-contain/contain-body
 
 webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Timeout ]
 
-webkit.org/b/239835 webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-half_float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-rg32f-rg-float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb9_e5-rgb-float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rg16f-rg-half_float.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba4-rgba-unsigned_byte.html [ Pass Timeout ]
-
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
 webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
+
+# rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
+webgl [ Skip ]
