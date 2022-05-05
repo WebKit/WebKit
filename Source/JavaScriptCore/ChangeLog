@@ -1,3 +1,19 @@
+2022-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up StructureID related data
+        https://bugs.webkit.org/show_bug.cgi?id=240114
+
+        Reviewed by Mark Lam.
+
+        This patch moves structureHeapAddressSize to StructureID. And define it only when we use it.
+        We also use decontaminate() in ADDRESS32 tryDecode. Strictly speaking, it is not necessary
+        for now since 32bit environment does not have concurrent GC & concurrent JIT compiler, but
+        it can have that.
+
+        * runtime/JSCConfig.h:
+        * runtime/StructureID.h:
+        (JSC::StructureID::tryDecode const):
+
 2022-05-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GCC] REGRESSION(r293605): error: cannot convert ‘<brace-enclosed initializer list>’ to ‘unsigned char:3’ in initialization

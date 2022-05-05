@@ -34,13 +34,27 @@ namespace JSC {
 
 class Structure;
 
+#if CPU(ADDRESS64)
+
 // We would like to define this value in PlatformEnable.h, but it is not possible since the following is relying on MACH_VM_MAX_ADDRESS.
-#if CPU(ADDRESS64) && CPU(ARM64) && OS(DARWIN)
+#if CPU(ARM64) && OS(DARWIN)
 #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
 #define ENABLE_STRUCTURE_ID_WITH_SHIFT 1
 static_assert(MACH_VM_MAX_ADDRESS_RAW == MACH_VM_MAX_ADDRESS);
 #endif
 #endif
+
+#if !ENABLE(STRUCTURE_ID_WITH_SHIFT)
+#if defined(STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB) && STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB > 0
+constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
+#elif PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+#else
+constexpr uintptr_t structureHeapAddressSize = 4 * GB;
+#endif
+#endif // !ENABLE(STRUCTURE_ID_WITH_SHIFT)
+
+#endif // CPU(ADDRESS64)
 
 class StructureID {
 public:
@@ -145,7 +159,7 @@ ALWAYS_INLINE Structure* StructureID::decode() const
 
 ALWAYS_INLINE Structure* StructureID::tryDecode() const
 {
-    return reinterpret_cast<Structure*>(m_bits);
+    return reinterpret_cast<Structure*>(decontaminate().m_bits);
 }
 
 ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
