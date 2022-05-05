@@ -506,10 +506,10 @@ void CachedImage::updateBufferInternal(const SharedBuffer& data)
     if (encodedDataStatus == EncodedDataStatus::Error || m_image->isNull()) {
         // Image decoding failed. Either we need more image data or the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
-        if (m_loader && encodedDataStatus == EncodedDataStatus::Error)
-            m_loader->cancel();
         if (inCache())
             MemoryCache::singleton().remove(*this);
+        if (m_loader && encodedDataStatus == EncodedDataStatus::Error)
+            m_loader->cancel();
         return;
     }
 
@@ -554,14 +554,12 @@ void CachedImage::updateBuffer(const FragmentedSharedBuffer& buffer)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     updateBufferInternal(buffer.makeContiguous());
-    CachedResource::updateBuffer(buffer);
 }
 
 void CachedImage::updateData(const SharedBuffer& data)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
     updateBufferInternal(data);
-    CachedResource::updateData(data);
 }
 
 void CachedImage::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

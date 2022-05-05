@@ -1,3 +1,17 @@
+2022-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary calls to CachedResource::updateBuffer and CachedResource::updateData
+        https://bugs.webkit.org/show_bug.cgi?id=240126
+
+        Reviewed by Chris Dumez.
+
+        It adds a function call that does nothing but a redundant assert.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::updateBufferInternal):
+        (WebCore::CachedImage::updateBuffer):
+        (WebCore::CachedImage::updateData):
+
 2022-05-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] NativeImage should share the ShareableBitmap data when it's sent to GPU Process
