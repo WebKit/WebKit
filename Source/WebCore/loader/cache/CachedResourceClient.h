@@ -26,13 +26,14 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class CachedResource;
 class NetworkLoadMetrics;
 
-class CachedResourceClient {
+class CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient> {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
 public:
     enum CachedResourceClientType {

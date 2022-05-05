@@ -511,8 +511,8 @@ void CachedResource::didAddClient(CachedResourceClient& client)
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
 
-    if (m_clientsAwaitingCallback.remove(&client)) {
-        m_clients.add(&client);
+    if (m_clientsAwaitingCallback.remove(client)) {
+        m_clients.add(client);
 #if ASSERT_ENABLED
         client.addAssociatedResource(*this);
 #endif
@@ -541,12 +541,12 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
         // synchronously (e.g., scripts may not have set all the state they need to handle the load).
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
         // we schedule the callbacks and ensure we never finish synchronously.
-        ASSERT(!m_clientsAwaitingCallback.contains(&client));
-        m_clientsAwaitingCallback.add(&client, makeUnique<Callback>(*this, client));
+        ASSERT(!m_clientsAwaitingCallback.contains(client));
+        m_clientsAwaitingCallback.add(client, makeUnique<Callback>(*this, client));
         return false;
     }
 
-    m_clients.add(&client);
+    m_clients.add(client);
 #if ASSERT_ENABLED
     client.addAssociatedResource(*this);
 #endif
@@ -555,16 +555,16 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
 
 void CachedResource::removeClient(CachedResourceClient& client)
 {
-    auto callback = m_clientsAwaitingCallback.take(&client);
+    auto callback = m_clientsAwaitingCallback.take(client);
     if (callback) {
-        ASSERT(!m_clients.contains(&client));
+        ASSERT(!m_clients.contains(client));
         callback->cancel();
         callback = nullptr;
     } else {
-        ASSERT(m_clients.contains(&client));
-        m_clients.remove(&client);
+        ASSERT(m_clients.contains(client));
+        m_clients.remove(client);
 #if ASSERT_ENABLED
-        if (!m_clients.contains(&client))
+        if (!m_clients.contains(client))
             client.removeAssociatedResource(*this);
 #endif
         didRemoveClient(client);
@@ -779,9 +779,9 @@ void CachedResource::switchClientsToRevalidatedResource()
     ASSERT(!m_handleCount);
     m_handlesToRevalidate.clear();
 
-    Vector<CachedResourceClient*> clientsToMove;
-    for (auto& entry : m_clients) {
-        CachedResourceClient* client = entry.key;
+    Vector<WeakPtr<CachedResourceClient>> clientsToMove;
+    for (auto entry : m_clients) {
+        auto& client = entry.key;
         unsigned count = entry.value;
         while (count) {
             clientsToMove.append(client);
@@ -789,18 +789,22 @@ void CachedResource::switchClientsToRevalidatedResource()
         }
     }
 
-    for (auto& client : clientsToMove)
-        removeClient(*client);
-    ASSERT(m_clients.isEmpty());
+    for (auto& client : clientsToMove) {
+        if (client)
+            removeClient(*client);
+    }
+    ASSERT(!m_clients.computeSize());
 
-    for (auto& client : clientsToMove)
-        m_resourceToRevalidate->addClientToSet(*client);
+    for (auto& client : clientsToMove) {
+        if (client)
+            m_resourceToRevalidate->addClientToSet(*client);
+    }
     for (auto& client : clientsToMove) {
         // Calling didAddClient may do anything, including trying to cancel revalidation.
         // Assert that it didn't succeed.
         ASSERT(m_resourceToRevalidate);
         // Calling didAddClient for a client may end up removing another client. In that case it won't be in the set anymore.
-        if (m_resourceToRevalidate->m_clients.contains(client))
+        if (client && m_resourceToRevalidate->m_clients.contains(*client))
             m_resourceToRevalidate->didAddClient(*client);
     }
     m_switchingClientsToRevalidatedResource = false;

@@ -166,7 +166,7 @@ void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
     if (m_clientsWaitingForAsyncDecoding.contains(&client))
         return;
-    if (!m_clients.contains(&client)) {
+    if (!m_clients.contains(client)) {
         // If the <html> element does not have its own background specified, painting the root box
         // renderer uses the style of the <body> element, see RenderView::rendererForRootBackground().
         // In this case, the client we are asked to add is the root box renderer. Since we can't add

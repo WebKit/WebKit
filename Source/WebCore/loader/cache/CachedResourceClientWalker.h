@@ -39,10 +39,10 @@ class CachedResourceClientWalker {
 public:
     CachedResourceClientWalker(const CachedResource& resource)
         : m_resource(const_cast<CachedResource*>(&resource))
-        , m_clientVector(resource.m_clients.size())
+        , m_clientVector(resource.m_clients.computeSize())
     {
         size_t clientIndex = 0;
-        for (const auto& client : resource.m_clients)
+        for (auto client : resource.m_clients)
             m_clientVector[clientIndex++] = client.key;
     }
 
@@ -50,10 +50,10 @@ public:
     {
         size_t size = m_clientVector.size();
         while (m_index < size) {
-            CachedResourceClient* next = m_clientVector[m_index++];
-            if (m_resource->m_clients.contains(next)) {
+            auto& next = m_clientVector[m_index++];
+            if (next && m_resource->m_clients.contains(*next)) {
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType());
-                return static_cast<T*>(next);
+                return static_cast<T*>(next.get());
             }
         }
         return nullptr;
@@ -61,7 +61,7 @@ public:
 
 private:
     CachedResourceHandle<CachedResource> m_resource;
-    FixedVector<CachedResourceClient*> m_clientVector;
+    FixedVector<WeakPtr<CachedResourceClient>> m_clientVector;
     size_t m_index { 0 };
 };
 

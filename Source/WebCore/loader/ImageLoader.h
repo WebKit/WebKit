@@ -42,7 +42,7 @@ using ImageEventSender = EventSender<ImageLoader>;
 
 enum class RelevantMutation : bool { No, Yes };
 
-class ImageLoader : public CachedImageClient, public CanMakeWeakPtr<ImageLoader> {
+class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ImageLoader();
