@@ -120,6 +120,17 @@ ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const El
     return part;
 }
 
+static bool isAppearanceAllowedForAllElements(ControlPart part)
+{
+#if ENABLE(APPLE_PAY)
+    if (part == ApplePayButtonPart)
+        return true;
+#endif
+
+    UNUSED_PARAM(part);
+    return false;
+}
+
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
     ControlPart autoAppearance = autoAppearanceForElement(element);
@@ -150,7 +161,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         style.setEffectiveAppearance(part);
     }
 
-    if (!userAgentAppearanceStyle
+    if (!isAppearanceAllowedForAllElements(part)
+        && !userAgentAppearanceStyle
         && autoAppearance == NoControlPart
         && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
         style.setEffectiveAppearance(NoControlPart);
