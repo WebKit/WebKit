@@ -313,7 +313,13 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData), Messages::RemoteRenderingBackend::PrepareBuffersForDisplay::Reply(outputData));
-    RELEASE_ASSERT_WITH_MESSAGE(sendResult, "PrepareBuffersForDisplay: IPC failed, probably because of a GPU Process crash");
+    if (!sendResult) {
+        // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
+        outputData.resize(inputData.size());
+        for (auto& perLayerOutputData : outputData)
+            perLayerOutputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
+    }
+
     RELEASE_ASSERT_WITH_MESSAGE(inputData.size() == outputData.size(), "PrepareBuffersForDisplay: mismatched buffer vector sizes");
 
     auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt, bool isFrontBuffer = false) -> RefPtr<ImageBuffer> {

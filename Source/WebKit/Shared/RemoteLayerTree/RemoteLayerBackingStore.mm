@@ -489,10 +489,8 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     }
 
     IntRect layerBounds(IntPoint(), expandedIntSize(m_size));
-    if (!m_dirtyRegion.contains(layerBounds)) {
-        ASSERT(m_backBuffer.imageBuffer);
+    if (!m_dirtyRegion.contains(layerBounds) && m_backBuffer.imageBuffer)
         context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
-    }
 
     if (m_paintingRects.size() == 1)
         context.clip(m_paintingRects[0]);

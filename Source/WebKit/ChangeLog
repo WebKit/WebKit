@@ -1,3 +1,25 @@
+2022-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash in RemoteRenderingBackendProxy::prepareBuffersForDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=240089
+        <rdar://91444900>
+
+        Reviewed by Tim Horton.
+
+        We keep WebContent processes alive after a GPU Process crash, so having a RELEASE_ASSERT
+        when IPC with the GPU Process fails is the wrong approach. Instead, just behave as if all
+        the returned buffers are null, and need full display.
+
+        In testing, I saw a single instance of a crash in RemoteLayerBackingStore::drawInContext(),
+        probably because m_backBuffer.imageBuffer was null.
+        SwapBuffersDisplayRequirement::NeedsFullDisplay should mean that we don't hit this, but
+        null-check the back buffer just in case.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::prepareBuffersForDisplay):
+
 2022-05-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][GPUP] Grant read access to font directory
