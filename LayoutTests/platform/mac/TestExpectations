@@ -8,7 +8,6 @@
 
 accessibility/mac [ Pass ]
 compositing/scrolling/async-overflow-scrolling/mac [ Pass ]
-displaylists [ Pass ]
 editing/execCommand/mac [ Pass ]
 editing/input/cocoa [ Pass ]
 editing/mac [ Pass ]
@@ -17,6 +16,9 @@ fast/dom/Range/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 model-element [ Pass ]
 fast/images/mac [ Pass ]
+
+# Display list logging is only available in debug
+[ Debug ] displaylists [ Pass ]
 
 # Disable plug-in tests on Apple Silicon
 [ arm64 ] compositing/plugins [ Skip ]

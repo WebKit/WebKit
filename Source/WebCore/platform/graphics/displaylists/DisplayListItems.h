@@ -2050,7 +2050,69 @@ using DisplayListItem = std::variant
 size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem&);
 ItemType displayListItemType(const DisplayListItem&);
 
+#if !LOG_DISABLED
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Translate&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Rotate&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Scale&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetCTM&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ConcatenateCTM&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetInlineFillColor&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetInlineStrokeColor&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetStrokeThickness&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetState&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineCap&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineDash&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineJoin&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetMiterLimit&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Clip&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipOut&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipToImageBuffer&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipOutToPath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipPath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFilteredImageBuffer&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawGlyphs&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawImageBuffer&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawNativeImage&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawSystemImage&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawPattern&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawLine&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawLinesForText&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawDotsForDocumentMarker&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawEllipse&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawPath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFocusRingPath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFocusRingRects&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithColor&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithGradient&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillCompositedRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRoundedRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithRoundedHole&);
+#if ENABLE(INLINE_PATH_DATA)
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillLine&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillArc&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillQuadCurve&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillBezierCurve&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeArc&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeQuadCurve&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeBezierCurve&);
+#endif // ENABLE(INLINE_PATH_DATA)
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillPath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillEllipse&);
+#if ENABLE(VIDEO)
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PaintFrameForMedia&);
+#endif // ENABLE(VIDEO)
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokePath&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeEllipse&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeLine&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClearRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const BeginTransparencyLayer&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ApplyDeviceScaleFactor&);
+
 TextStream& operator<<(TextStream&, ItemHandle);
+#endif
 
 } // namespace DisplayList
 } // namespace WebCore

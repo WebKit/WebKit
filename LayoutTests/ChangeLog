@@ -1,3 +1,14 @@
+2022-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve logging of display list items in IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=240053
+
+        Reviewed by Cameron McCormack.
+
+        Now that display list logging is debug only, these tests will only work in debug builds.
+
+        * platform/mac/TestExpectations:
+
 2022-05-04  Aditya Keerthi  <akeerthi@apple.com>
 
         Indeterminate, checked checkboxes do not render correctly on iOS, GTK, and Windows

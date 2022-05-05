@@ -59,24 +59,9 @@ void Translate::apply(GraphicsContext& context) const
     context.translate(m_x, m_y);
 }
 
-static TextStream& operator<<(TextStream& ts, const Translate& item)
-{
-    ts.dumpProperty("x", item.x());
-    ts.dumpProperty("y", item.y());
-
-    return ts;
-}
-
 void Rotate::apply(GraphicsContext& context) const
 {
     context.rotate(m_angle);
-}
-
-static TextStream& operator<<(TextStream& ts, const Rotate& item)
-{
-    ts.dumpProperty("angle", item.angle());
-
-    return ts;
 }
 
 void Scale::apply(GraphicsContext& context) const
@@ -84,23 +69,9 @@ void Scale::apply(GraphicsContext& context) const
     context.scale(m_size);
 }
 
-static TextStream& operator<<(TextStream& ts, const Scale& item)
-{
-    ts.dumpProperty("size", item.amount());
-
-    return ts;
-}
-
 void SetCTM::apply(GraphicsContext& context) const
 {
     context.setCTM(m_transform);
-}
-
-static TextStream& operator<<(TextStream& ts, const SetCTM& item)
-{
-    ts.dumpProperty("set-ctm", item.transform());
-
-    return ts;
 }
 
 void ConcatenateCTM::apply(GraphicsContext& context) const
@@ -108,22 +79,9 @@ void ConcatenateCTM::apply(GraphicsContext& context) const
     context.concatCTM(m_transform);
 }
 
-static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
-{
-    ts.dumpProperty("ctm", item.transform());
-
-    return ts;
-}
-
 void SetInlineFillColor::apply(GraphicsContext& context) const
 {
     context.setFillColor(color());
-}
-
-static TextStream& operator<<(TextStream& ts, const SetInlineFillColor& state)
-{
-    ts.dumpProperty("color", state.color());
-    return ts;
 }
 
 void SetInlineStrokeColor::apply(GraphicsContext& context) const
@@ -131,21 +89,9 @@ void SetInlineStrokeColor::apply(GraphicsContext& context) const
     context.setStrokeColor(color());
 }
 
-static TextStream& operator<<(TextStream& ts, const SetInlineStrokeColor& state)
-{
-    ts.dumpProperty("color", state.color());
-    return ts;
-}
-
 void SetStrokeThickness::apply(GraphicsContext& context) const
 {
     context.setStrokeThickness(m_thickness);
-}
-
-static TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
-{
-    ts.dumpProperty("thickness", state.thickness());
-    return ts;
 }
 
 SetState::SetState(const GraphicsContextState& state)
@@ -158,21 +104,9 @@ void SetState::apply(GraphicsContext& context)
     context.updateState(m_state);
 }
 
-static TextStream& operator<<(TextStream& ts, const SetState& item)
-{
-    ts << item.state();
-    return ts;
-}
-
 void SetLineCap::apply(GraphicsContext& context) const
 {
     context.setLineCap(m_lineCap);
-}
-
-static TextStream& operator<<(TextStream& ts, const SetLineCap& lineCap)
-{
-    ts.dumpProperty("line-cap", lineCap.lineCap());
-    return ts;
 }
 
 void SetLineDash::apply(GraphicsContext& context) const
@@ -180,33 +114,14 @@ void SetLineDash::apply(GraphicsContext& context) const
     context.setLineDash(m_dashArray, m_dashOffset);
 }
 
-static TextStream& operator<<(TextStream& ts, const SetLineDash& lineDash)
-{
-    ts.dumpProperty("dash-array", lineDash.dashArray());
-    ts.dumpProperty("dash-offset", lineDash.dashOffset());
-    return ts;
-}
-
 void SetLineJoin::apply(GraphicsContext& context) const
 {
     context.setLineJoin(m_lineJoin);
 }
 
-static TextStream& operator<<(TextStream& ts, const SetLineJoin& lineJoin)
-{
-    ts.dumpProperty("line-join", lineJoin.lineJoin());
-    return ts;
-}
-
 void SetMiterLimit::apply(GraphicsContext& context) const
 {
     context.setMiterLimit(m_miterLimit);
-}
-
-static TextStream& operator<<(TextStream& ts, const SetMiterLimit& miterLimit)
-{
-    ts.dumpProperty("mitre-limit", miterLimit.miterLimit());
-    return ts;
 }
 
 void ClearShadow::apply(GraphicsContext& context) const
@@ -219,21 +134,9 @@ void Clip::apply(GraphicsContext& context) const
     context.clip(m_rect);
 }
 
-static TextStream& operator<<(TextStream& ts, const Clip& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void ClipOut::apply(GraphicsContext& context) const
 {
     context.clipOut(m_rect);
-}
-
-static TextStream& operator<<(TextStream& ts, const ClipOut& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
 }
 
 NO_RETURN_DUE_TO_ASSERT void ClipToImageBuffer::apply(GraphicsContext&) const
@@ -246,34 +149,14 @@ void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& im
     context.clipToImageBuffer(imageBuffer, m_destinationRect);
 }
 
-static TextStream& operator<<(TextStream& ts, const ClipToImageBuffer& item)
-{
-    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
-    ts.dumpProperty("dest-rect", item.destinationRect());
-    return ts;
-}
-
 void ClipOutToPath::apply(GraphicsContext& context) const
 {
     context.clipOut(m_path);
 }
 
-static TextStream& operator<<(TextStream& ts, const ClipOutToPath& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 void ClipPath::apply(GraphicsContext& context) const
 {
     context.clipPath(m_path, m_windRule);
-}
-
-static TextStream& operator<<(TextStream& ts, const ClipPath& item)
-{
-    ts.dumpProperty("path", item.path());
-    ts.dumpProperty("wind-rule", item.windRule());
-    return ts;
 }
 
 DrawFilteredImageBuffer::DrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
@@ -291,13 +174,6 @@ NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) co
 void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results)
 {
     context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawFilteredImageBuffer& item)
-{
-    ts.dumpProperty("source-image-identifier", item.sourceImageIdentifier());
-    ts.dumpProperty("source-image-rect", item.sourceImageRect());
-    return ts;
 }
 
 DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatRect& bounds, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
@@ -346,16 +222,6 @@ void DrawGlyphs::computeBounds(const Font& font)
     }
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawGlyphs& item)
-{
-    // FIXME: dump more stuff.
-    ts.dumpProperty("local-anchor", item.localAnchor());
-    ts.dumpProperty("anchor-point", item.anchorPoint());
-    ts.dumpProperty("length", item.glyphs().size());
-
-    return ts;
-}
-
 NO_RETURN_DUE_TO_ASSERT void DrawImageBuffer::apply(GraphicsContext&) const
 {
     ASSERT_NOT_REACHED();
@@ -364,14 +230,6 @@ NO_RETURN_DUE_TO_ASSERT void DrawImageBuffer::apply(GraphicsContext&) const
 void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)
-{
-    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
-    ts.dumpProperty("source-rect", item.source());
-    ts.dumpProperty("dest-rect", item.destinationRect());
-    return ts;
 }
 
 NO_RETURN_DUE_TO_ASSERT void DrawNativeImage::apply(GraphicsContext&) const
@@ -384,25 +242,9 @@ void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
     context.drawNativeImage(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
-{
-    // FIXME: dump more stuff.
-    ts.dumpProperty("image-identifier", item.imageIdentifier());
-    ts.dumpProperty("source-rect", item.source());
-    ts.dumpProperty("dest-rect", item.destinationRect());
-    return ts;
-}
-
 void DrawSystemImage::apply(GraphicsContext& context) const
 {
     context.drawSystemImage(m_systemImage, m_destinationRect);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawSystemImage& item)
-{
-    // FIXME: dump more stuff.
-    ts.dumpProperty("destination", item.destinationRect());
-    return ts;
 }
 
 DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -436,27 +278,9 @@ void DrawPattern::apply(GraphicsContext& context, SourceImage& sourceImage) cons
     ASSERT_NOT_REACHED();
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawPattern& item)
-{
-    ts.dumpProperty("image-identifier", item.imageIdentifier());
-    ts.dumpProperty("pattern-transform", item.patternTransform());
-    ts.dumpProperty("tile-rect", item.tileRect());
-    ts.dumpProperty("dest-rect", item.destRect());
-    ts.dumpProperty("phase", item.phase());
-    ts.dumpProperty("spacing", item.spacing());
-    return ts;
-}
-
 void DrawRect::apply(GraphicsContext& context) const
 {
     context.drawRect(m_rect, m_borderThickness);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawRect& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    ts.dumpProperty("border-thickness", item.borderThickness());
-    return ts;
 }
 
 std::optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
@@ -469,13 +293,6 @@ std::optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
 void DrawLine::apply(GraphicsContext& context) const
 {
     context.drawLine(m_point1, m_point2);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawLine& item)
-{
-    ts.dumpProperty("point-1", item.point1());
-    ts.dumpProperty("point-2", item.point2());
-    return ts;
 }
 
 DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
@@ -506,19 +323,6 @@ std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) c
     return result;
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
-{
-    ts.dumpProperty("block-location", item.blockLocation());
-    ts.dumpProperty("local-anchor", item.localAnchor());
-    ts.dumpProperty("point", item.point());
-    ts.dumpProperty("thickness", item.thickness());
-    ts.dumpProperty("double", item.doubleLines());
-    ts.dumpProperty("widths", item.widths());
-    ts.dumpProperty("is-printing", item.isPrinting());
-    ts.dumpProperty("double", item.doubleLines());
-    return ts;
-}
-
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
     context.drawDotsForDocumentMarker(m_rect, {
@@ -532,32 +336,14 @@ std::optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsCo
     return m_rect;
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawDotsForDocumentMarker& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void DrawEllipse::apply(GraphicsContext& context) const
 {
     context.drawEllipse(m_rect);
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void DrawPath::apply(GraphicsContext& context) const
 {
     context.drawPath(m_path);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawPath&)
-{
-    // FIXME: add logging for paths.
-    return ts;
 }
 
 void DrawFocusRingPath::apply(GraphicsContext& context) const
@@ -570,15 +356,6 @@ std::optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) 
     FloatRect result = m_path.fastBoundingRect();
     result.inflate(platformFocusRingWidth);
     return result;
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawFocusRingPath& item)
-{
-//    ts.dumpProperty("path", item.path()); // FIXME: add logging for paths.
-    ts.dumpProperty("width", item.width());
-    ts.dumpProperty("offset", item.offset());
-    ts.dumpProperty("color", item.color());
-    return ts;
 }
 
 DrawFocusRingRects::DrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
@@ -603,36 +380,14 @@ std::optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&)
     return result;
 }
 
-static TextStream& operator<<(TextStream& ts, const DrawFocusRingRects& item)
-{
-    ts.dumpProperty("rects", item.rects());
-    ts.dumpProperty("width", item.width());
-    ts.dumpProperty("offset", item.offset());
-    ts.dumpProperty("color", item.color());
-    return ts;
-}
-
 void FillRect::apply(GraphicsContext& context) const
 {
     context.fillRect(m_rect);
 }
 
-static TextStream& operator<<(TextStream& ts, const FillRect& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void FillRectWithColor::apply(GraphicsContext& context) const
 {
     context.fillRect(m_rect, m_color);
-}
-
-static TextStream& operator<<(TextStream& ts, const FillRectWithColor& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    ts.dumpProperty("color", item.color());
-    return ts;
 }
 
 FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, Gradient& gradient)
@@ -646,25 +401,9 @@ void FillRectWithGradient::apply(GraphicsContext& context) const
     context.fillRect(m_rect, m_gradient.get());
 }
 
-static TextStream& operator<<(TextStream& ts, const FillRectWithGradient& item)
-{
-    // FIXME: log gradient.
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void FillCompositedRect::apply(GraphicsContext& context) const
 {
     context.fillRect(m_rect, m_color, m_op, m_blendMode);
-}
-
-static TextStream& operator<<(TextStream& ts, const FillCompositedRect& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    ts.dumpProperty("color", item.color());
-    ts.dumpProperty("composite-operation", item.compositeOperator());
-    ts.dumpProperty("blend-mode", item.blendMode());
-    return ts;
 }
 
 void FillRoundedRect::apply(GraphicsContext& context) const
@@ -672,25 +411,9 @@ void FillRoundedRect::apply(GraphicsContext& context) const
     context.fillRoundedRect(m_rect, m_color, m_blendMode);
 }
 
-static TextStream& operator<<(TextStream& ts, const FillRoundedRect& item)
-{
-    ts.dumpProperty("rect", item.roundedRect());
-    ts.dumpProperty("color", item.color());
-    ts.dumpProperty("blend-mode", item.blendMode());
-    return ts;
-}
-
 void FillRectWithRoundedHole::apply(GraphicsContext& context) const
 {
     context.fillRectWithRoundedHole(m_rect, m_roundedHoleRect, m_color);
-}
-
-static TextStream& operator<<(TextStream& ts, const FillRectWithRoundedHole& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    ts.dumpProperty("rounded-hole-rect", item.roundedHoleRect());
-    ts.dumpProperty("color", item.color());
-    return ts;
 }
 
 #if ENABLE(INLINE_PATH_DATA)
@@ -700,21 +423,9 @@ void FillLine::apply(GraphicsContext& context) const
     context.fillPath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const FillLine& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 void FillArc::apply(GraphicsContext& context) const
 {
     context.fillPath(path());
-}
-
-static TextStream& operator<<(TextStream& ts, const FillArc& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
 }
 
 void FillQuadCurve::apply(GraphicsContext& context) const
@@ -722,21 +433,9 @@ void FillQuadCurve::apply(GraphicsContext& context) const
     context.fillPath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const FillQuadCurve& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 void FillBezierCurve::apply(GraphicsContext& context) const
 {
     context.fillPath(path());
-}
-
-static TextStream& operator<<(TextStream& ts, const FillBezierCurve& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
@@ -746,21 +445,9 @@ void FillPath::apply(GraphicsContext& context) const
     context.fillPath(m_path);
 }
 
-static TextStream& operator<<(TextStream& ts, const FillPath& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 void FillEllipse::apply(GraphicsContext& context) const
 {
     context.fillEllipse(m_rect);
-}
-
-static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
 }
 
 #if ENABLE(VIDEO)
@@ -776,11 +463,6 @@ NO_RETURN_DUE_TO_ASSERT void PaintFrameForMedia::apply(GraphicsContext&) const
     ASSERT_NOT_REACHED();
 }
 
-static TextStream& operator<<(TextStream& ts, const PaintFrameForMedia& item)
-{
-    ts.dumpProperty("destination", item.destination());
-    return ts;
-}
 #endif
 
 std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
@@ -793,13 +475,6 @@ std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
 void StrokeRect::apply(GraphicsContext& context) const
 {
     context.strokeRect(m_rect, m_lineWidth);
-}
-
-static TextStream& operator<<(TextStream& ts, const StrokeRect& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    ts.dumpProperty("line-width", item.lineWidth());
-    return ts;
 }
 
 std::optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
@@ -817,12 +492,6 @@ void StrokePath::apply(GraphicsContext& context) const
     context.strokePath(m_path);
 }
 
-static TextStream& operator<<(TextStream& ts, const StrokePath& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 std::optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
 {
     float strokeThickness = context.strokeThickness();
@@ -835,12 +504,6 @@ std::optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& conte
 void StrokeEllipse::apply(GraphicsContext& context) const
 {
     context.strokeEllipse(m_rect);
-}
-
-static TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
 }
 
 std::optional<FloatRect> StrokeLine::localBounds(const GraphicsContext& context) const
@@ -865,13 +528,6 @@ void StrokeLine::apply(GraphicsContext& context) const
     context.strokePath(path);
 }
 
-static TextStream& operator<<(TextStream& ts, const StrokeLine& item)
-{
-    ts.dumpProperty("start", item.start());
-    ts.dumpProperty("end", item.end());
-    return ts;
-}
-
 #if ENABLE(INLINE_PATH_DATA)
 
 std::optional<FloatRect> StrokeArc::localBounds(const GraphicsContext& context) const
@@ -889,12 +545,6 @@ void StrokeArc::apply(GraphicsContext& context) const
     context.strokePath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const StrokeArc& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 std::optional<FloatRect> StrokeQuadCurve::localBounds(const GraphicsContext& context) const
 {
     // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
@@ -908,12 +558,6 @@ std::optional<FloatRect> StrokeQuadCurve::localBounds(const GraphicsContext& con
 void StrokeQuadCurve::apply(GraphicsContext& context) const
 {
     context.strokePath(path());
-}
-
-static TextStream& operator<<(TextStream& ts, const StrokeQuadCurve& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
 }
 
 std::optional<FloatRect> StrokeBezierCurve::localBounds(const GraphicsContext& context) const
@@ -931,12 +575,6 @@ void StrokeBezierCurve::apply(GraphicsContext& context) const
     context.strokePath(path());
 }
 
-static TextStream& operator<<(TextStream& ts, const StrokeBezierCurve& item)
-{
-    ts.dumpProperty("path", item.path());
-    return ts;
-}
-
 #endif // ENABLE(INLINE_PATH_DATA)
 
 void ClearRect::apply(GraphicsContext& context) const
@@ -944,21 +582,9 @@ void ClearRect::apply(GraphicsContext& context) const
     context.clearRect(m_rect);
 }
 
-static TextStream& operator<<(TextStream& ts, const ClearRect& item)
-{
-    ts.dumpProperty("rect", item.rect());
-    return ts;
-}
-
 void BeginTransparencyLayer::apply(GraphicsContext& context) const
 {
     context.beginTransparencyLayer(m_opacity);
-}
-
-static TextStream& operator<<(TextStream& ts, const BeginTransparencyLayer& item)
-{
-    ts.dumpProperty("opacity", item.opacity());
-    return ts;
 }
 
 void EndTransparencyLayer::apply(GraphicsContext& context) const
@@ -985,12 +611,7 @@ void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
     context.applyDeviceScaleFactor(m_scaleFactor);
 }
 
-static TextStream& operator<<(TextStream& ts, const ApplyDeviceScaleFactor& item)
-{
-    ts.dumpProperty("scale-factor", item.scaleFactor());
-    return ts;
-}
-
+#if !LOG_DISABLED
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1064,6 +685,390 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ApplyDeviceScaleFactor: ts << "apply-device-scale-factor"; break;
     case ItemType::ClearShadow: ts << "clear-shadow"; break;
     }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const Translate& item)
+{
+    ts.dumpProperty("x", item.x());
+    ts.dumpProperty("y", item.y());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const Rotate& item)
+{
+    ts.dumpProperty("angle", item.angle());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const Scale& item)
+{
+    ts.dumpProperty("size", item.amount());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetCTM& item)
+{
+    ts.dumpProperty("set-ctm", item.transform());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
+{
+    ts.dumpProperty("ctm", item.transform());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetInlineFillColor& state)
+{
+    ts.dumpProperty("color", state.color());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetInlineStrokeColor& state)
+{
+    ts.dumpProperty("color", state.color());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
+{
+    ts.dumpProperty("thickness", state.thickness());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetState& item)
+{
+    ts << item.state();
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetLineCap& lineCap)
+{
+    ts.dumpProperty("line-cap", lineCap.lineCap());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetLineDash& lineDash)
+{
+    ts.dumpProperty("dash-array", lineDash.dashArray());
+    ts.dumpProperty("dash-offset", lineDash.dashOffset());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetLineJoin& lineJoin)
+{
+    ts.dumpProperty("line-join", lineJoin.lineJoin());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const SetMiterLimit& miterLimit)
+{
+    ts.dumpProperty("mitre-limit", miterLimit.miterLimit());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const Clip& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ClipOut& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ClipToImageBuffer& item)
+{
+    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
+    ts.dumpProperty("dest-rect", item.destinationRect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ClipOutToPath& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ClipPath& item)
+{
+    ts.dumpProperty("path", item.path());
+    ts.dumpProperty("wind-rule", item.windRule());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawFilteredImageBuffer& item)
+{
+    ts.dumpProperty("source-image-identifier", item.sourceImageIdentifier());
+    ts.dumpProperty("source-image-rect", item.sourceImageRect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawGlyphs& item)
+{
+    // FIXME: dump more stuff.
+    ts.dumpProperty("local-anchor", item.localAnchor());
+    ts.dumpProperty("anchor-point", item.anchorPoint());
+    ts.dumpProperty("length", item.glyphs().size());
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)
+{
+    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
+    ts.dumpProperty("source-rect", item.source());
+    ts.dumpProperty("dest-rect", item.destinationRect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
+{
+    ts.dumpProperty("image-identifier", item.imageIdentifier());
+    ts.dumpProperty("source-rect", item.source());
+    ts.dumpProperty("dest-rect", item.destinationRect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawSystemImage& item)
+{
+    // FIXME: dump more stuff.
+    ts.dumpProperty("destination", item.destinationRect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawPattern& item)
+{
+    ts.dumpProperty("image-identifier", item.imageIdentifier());
+    ts.dumpProperty("pattern-transform", item.patternTransform());
+    ts.dumpProperty("tile-rect", item.tileRect());
+    ts.dumpProperty("dest-rect", item.destRect());
+    ts.dumpProperty("phase", item.phase());
+    ts.dumpProperty("spacing", item.spacing());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawRect& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("border-thickness", item.borderThickness());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawLine& item)
+{
+    ts.dumpProperty("point-1", item.point1());
+    ts.dumpProperty("point-2", item.point2());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
+{
+    ts.dumpProperty("block-location", item.blockLocation());
+    ts.dumpProperty("local-anchor", item.localAnchor());
+    ts.dumpProperty("point", item.point());
+    ts.dumpProperty("thickness", item.thickness());
+    ts.dumpProperty("double", item.doubleLines());
+    ts.dumpProperty("widths", item.widths());
+    ts.dumpProperty("is-printing", item.isPrinting());
+    ts.dumpProperty("double", item.doubleLines());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawDotsForDocumentMarker& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawPath& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawFocusRingPath& item)
+{
+    ts.dumpProperty("path", item.path());
+    ts.dumpProperty("width", item.width());
+    ts.dumpProperty("offset", item.offset());
+    ts.dumpProperty("color", item.color());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const DrawFocusRingRects& item)
+{
+    ts.dumpProperty("rects", item.rects());
+    ts.dumpProperty("width", item.width());
+    ts.dumpProperty("offset", item.offset());
+    ts.dumpProperty("color", item.color());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillRect& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillRectWithColor& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("color", item.color());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillRectWithGradient& item)
+{
+    // FIXME: log gradient.
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillCompositedRect& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("color", item.color());
+    ts.dumpProperty("composite-operation", item.compositeOperator());
+    ts.dumpProperty("blend-mode", item.blendMode());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillRoundedRect& item)
+{
+    ts.dumpProperty("rect", item.roundedRect());
+    ts.dumpProperty("color", item.color());
+    ts.dumpProperty("blend-mode", item.blendMode());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillRectWithRoundedHole& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("rounded-hole-rect", item.roundedHoleRect());
+    ts.dumpProperty("color", item.color());
+    return ts;
+}
+
+#if ENABLE(INLINE_PATH_DATA)
+
+TextStream& operator<<(TextStream& ts, const FillLine& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillArc& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillQuadCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillBezierCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokeArc& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokeQuadCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokeBezierCurve& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
+TextStream& operator<<(TextStream& ts, const FillPath& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FillEllipse& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+#if ENABLE(VIDEO)
+
+TextStream& operator<<(TextStream& ts, const PaintFrameForMedia& item)
+{
+    ts.dumpProperty("destination", item.destination());
+    return ts;
+}
+
+#endif // ENABLE(VIDEO)
+
+
+TextStream& operator<<(TextStream& ts, const StrokeRect& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("line-width", item.lineWidth());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokePath& item)
+{
+    ts.dumpProperty("path", item.path());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokeEllipse& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StrokeLine& item)
+{
+    ts.dumpProperty("start", item.start());
+    ts.dumpProperty("end", item.end());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ClearRect& item)
+{
+    ts.dumpProperty("rect", item.rect());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const BeginTransparencyLayer& item)
+{
+    ts.dumpProperty("opacity", item.opacity());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ApplyDeviceScaleFactor& item)
+{
+    ts.dumpProperty("scale-factor", item.scaleFactor());
     return ts;
 }
 
@@ -1257,6 +1262,7 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     }
     return ts;
 }
+#endif
 
-}
-}
+} // namespace DisplayList
+} // namespace WebCore
