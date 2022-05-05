@@ -1,3 +1,15 @@
+2022-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        ARIA reflection for Element attributes
+        https://bugs.webkit.org/show_bug.cgi?id=239852
+
+        Reviewed by Chris Dumez.
+
+        Update test to include the new reflected attributes.
+
+        * accessibility/ARIA-reflection-expected.txt:
+        * accessibility/ARIA-reflection.html:
+
 2022-05-05  Karl Rackler  <rackler@apple.com>
 
         [ iOS ][ Monterey Release wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html is a flaky failure

@@ -1,3 +1,16 @@
+2022-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        ARIA reflection for Element attributes
+        https://bugs.webkit.org/show_bug.cgi?id=239852
+
+        Reviewed by Chris Dumez.
+
+        Small fix on the test and update test results with the new PASS.
+        Add new test case to cover elements moved to a different document.
+
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative-expected.txt:
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative.html:
+
 2022-05-05  Ziran Sun  <zsun@igalia.com>
 
         <input type=color> should have box-sizing: border-box in UA stylesheet

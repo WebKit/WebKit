@@ -66,6 +66,18 @@ AccessibilityObjectModelEnabled:
     WebKit:
       default: false
 
+AriaReflectionForElementReferencesEnabled:
+  type: bool
+  humanReadableName: "ARIA Reflection for Element References"
+  humanReadableDescription: "Enable ARIA reflection for attributes that refer to elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AspectRatioEnabled:
   type: bool
   humanReadableName: "CSS Aspect Ratio"

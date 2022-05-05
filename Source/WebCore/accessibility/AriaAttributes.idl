@@ -25,6 +25,7 @@
 
 // https://wicg.github.io/aom/spec/aria-reflection.html#AriaAttributes
 interface mixin AriaAttributes {
+    [Reflect=aria_activedescendant, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute Element? ariaActiveDescendantElement;
     [Reflect=aria_atomic]           attribute [AtomString] DOMString? ariaAtomic;
     [Reflect=aria_autocomplete]     attribute [AtomString] DOMString? ariaAutoComplete;
     [Reflect=aria_busy]             attribute [AtomString] DOMString? ariaBusy;
@@ -34,6 +35,7 @@ interface mixin AriaAttributes {
     [Reflect=aria_colspan]          attribute [AtomString] DOMString? ariaColSpan;
     [Reflect=aria_current]          attribute [AtomString] DOMString? ariaCurrent;
     [Reflect=aria_disabled]         attribute [AtomString] DOMString? ariaDisabled;
+    [Reflect=aria_errormessage, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute Element? ariaErrorMessageElement;
     [Reflect=aria_expanded]         attribute [AtomString] DOMString? ariaExpanded;
     [Reflect=aria_haspopup]         attribute [AtomString] DOMString? ariaHasPopup;
     [Reflect=aria_hidden]           attribute [AtomString] DOMString? ariaHidden;

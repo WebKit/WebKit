@@ -1,3 +1,63 @@
+2022-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        ARIA reflection for Element attributes
+        https://bugs.webkit.org/show_bug.cgi?id=239852
+
+        Reviewed by Chris Dumez.
+
+        Implement ARIA reflection for attributes that refer to a single Element:
+        aria-activedescendant & aria-errormessage.
+        For the properties names this patch uses "Element" suffix:
+        ariaActiveDescendantElement & ariaErrorMessageElement;
+        this matches Chromium implementation and AOM explainer, but not AOM spec:
+        https://github.com/w3c/aria/issues/1732
+
+        This implementation is done following the proposed spec text defined at:
+        https://github.com/whatwg/html/pull/3917
+
+        * accessibility/AriaAttributes.idl: Add ariaActiveDescendantElement &
+        ariaErrorMessageElement.
+        * bindings/scripts/CodeGenerator.pm:
+        (GetterExpression): Add function for Element attributes.
+        (SetterExpression): Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Add tests for element
+        attribute reflection.
+        (WebCore::JSTestObjDOMConstructor::construct):
+        (WebCore::jsTestObj_reflectedElementAttrGetter):
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        (WebCore::setJSTestObj_reflectedElementAttrSetter):
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/TestObj.idl: Add reflectedElementAttr
+        attribute.
+        * dom/Element.cpp:
+        (WebCore::isElementReflectionAttribute): Utility function to identify
+        Element reflection attributes.
+        (WebCore::Element::attributeChanged): If an element reflection
+        attribute has changed we need to synchronize the map entry by removing
+        it as it'll be properly updated in setElementAttribute() when needed.
+        (WebCore::Element::explicitlySetAttrElementsMap): Kind of getter
+        for the ExplicitlySetAttrElementsMap but that creates the map if it
+        doesn't exist yet.
+        (WebCore::Element::explicitlySetAttrElementsMapIfExists const):
+        Getter for the map.
+        (WebCore::Element::getElementAttribute const): Implement getter for
+        element attribute.
+        (WebCore::Element::setElementAttribute): Implement setter for
+        element attribute.
+        * dom/Element.h: Add new method headers and defines the
+        ExplicitlySetAttrElementsMap, which so far only stores one Element in
+        the Vector, but uses a Vector in preparation for supporting
+        FrozenArray<Element> reflection in the future.
+        * dom/ElementRareData.cpp: Update size of SameSizeAsElementRareData to
+        include the new pointer.
+        * dom/ElementRareData.h: Add m_explicitlySetAttrElementsMap attribute.
+        (WebCore::ElementRareData::explicitlySetAttrElementsMap): Getter.
+        (WebCore::ElementRareData::useTypes const):Include
+        ExplicitlySetAttrElementsMap.
+        * dom/Node.cpp:
+        (WebCore::stringForRareDataUseType): Add ExplicitlySetAttrElementsMap.
+        * dom/NodeRareData.h: Ditto.
+
 2022-05-05  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary calls to CachedResource::updateBuffer and CachedResource::updateData

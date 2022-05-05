@@ -107,6 +107,8 @@ public:
     void setComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { m_computedStyleMap = WTFMove(map); }
 #endif
 
+    ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -147,6 +149,8 @@ public:
             result.add(UseType::PartNames);
         if (m_nonce)
             result.add(UseType::Nonce);
+        if (!m_explicitlySetAttrElementsMap.isEmpty())
+            result.add(UseType::ExplicitlySetAttrElementsMap);
         return result;
     }
 #endif
@@ -179,6 +183,8 @@ private:
     SpaceSplitString m_partNames;
 
     AtomString m_nonce;
+
+    ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 
     void releasePseudoElement(PseudoElement*);
 };

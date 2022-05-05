@@ -5,7 +5,8 @@
 <div id="content">
 
 <div id="test" data="some data">
-
+  <div id="firstChild"></div>
+  <div id="secondChild"></div>
 </div>
 
 <p id="description"></p>
@@ -21,22 +22,40 @@
     var currentProperty;
     var currentAttribute;
 
+    function isElementReflectionProperty(property) {
+        switch (property) {
+            case "ariaActiveDescendantElement":
+            case "ariaErrorMessageElement":
+                return true;
+        }
+        return false;
+    }
+
+    function convertPropertyToAttribute(property) {
+        if (isElementReflectionProperty(property))
+          property = property.replace("Element", "");
+        return property.replace("aria", "aria-").toLowerCase();
+    }
+
     function testElement() {
-        currentAttribute = currentProperty.replace("aria", "aria-").toLowerCase();
-        
+        currentAttribute = convertPropertyToAttribute(currentProperty);
+
         debug("\nTest " + currentProperty + " < - > " + currentAttribute);
         shouldBeNull("element[currentProperty]");
         shouldBeNull("element.getAttribute(currentAttribute)");
-        
+
         // Set the property value
-        debug("element[\"" + currentProperty + "\"] = data;");
-        element[currentProperty] = data;
-        shouldBe("element.getAttribute(currentAttribute)", "data");
+        dataProperty = isElementReflectionProperty(currentProperty) ? firstChild : data;
+        dataAttribute = isElementReflectionProperty(currentProperty) ? firstChild.id : data;
+        element[currentProperty] = dataProperty;
+        shouldBe("element.getAttribute(currentAttribute)", "dataAttribute");
 
         // Set the attribute value
+        otherDataProperty = isElementReflectionProperty(currentProperty) ? secondChild : otherData;
+        otherDataAttribute = isElementReflectionProperty(currentProperty) ? secondChild.id : otherData;
         debug("element.setAttribute(\"" + currentAttribute + "\", otherData);");
-        element.setAttribute(currentAttribute, otherData);
-        shouldBe("element[currentProperty]", "otherData");
+        element.setAttribute(currentAttribute, otherDataAttribute);
+        shouldBe("element[currentProperty]", "otherDataProperty");
     }
 
     function testRole() {
@@ -59,7 +78,7 @@
         }
 
         debug("\n");
-        shouldBe("count", "38");
+        shouldBe("count", "40");
 
     } else {
         testFailed("Could not load accessibility controller");

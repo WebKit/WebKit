@@ -93,6 +93,10 @@ struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
+// FIXME: This only stores one Element in the Vector right now, though this will change
+// once reflection for FrozenArray<Element> is implemented in https://webkit.org/b/239853.
+using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element>>>;
+
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
@@ -121,6 +125,8 @@ public:
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
     WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
+    WEBCORE_EXPORT Element* getElementAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
@@ -667,6 +673,9 @@ public:
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMapReadOnly* computedStyleMap();
 #endif
+
+    ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
+    ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

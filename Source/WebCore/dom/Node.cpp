@@ -144,6 +144,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "PartList";
     case NodeRareData::UseType::PartNames:
         return "PartNames";
+    case NodeRareData::UseType::ExplicitlySetAttrElementsMap:
+        return "ExplicitlySetAttrElementsMap";
     }
     return nullptr;
 }

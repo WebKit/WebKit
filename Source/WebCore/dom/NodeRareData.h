@@ -265,6 +265,7 @@ public:
         PartNames = 1 << 16,
         Nonce = 1 << 17,
         ComputedStyleMap = 1 << 18,
+        ExplicitlySetAttrElementsMap = 1 << 19,
     };
 #endif
 

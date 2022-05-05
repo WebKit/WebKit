@@ -1901,6 +1901,11 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
     return value;
 }
 
+static inline bool isElementReflectionAttribute(const QualifiedName& name)
+{
+    return name == HTMLNames::aria_activedescendantAttr || name == HTMLNames::aria_errormessageAttr;
+}
+
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
@@ -1937,7 +1942,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             }
         } else if (name == HTMLNames::partAttr)
             partAttributeChanged(newValue);
-        else if (name == HTMLNames::exportpartsAttr) {
+        else if (isElementReflectionAttribute(name)) {
+            ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+            if (auto* map = explicitlySetAttrElementsMapIfExists())
+                map->remove(name);
+        } else if (name == HTMLNames::exportpartsAttr) {
             if (auto* shadowRoot = this->shadowRoot()) {
                 shadowRoot->invalidatePartMappings();
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
@@ -1959,6 +1968,60 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(name, this);
+}
+
+ExplicitlySetAttrElementsMap& Element::explicitlySetAttrElementsMap()
+{
+    return ensureElementRareData().explicitlySetAttrElementsMap();
+}
+
+ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() const
+{
+    return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
+}
+
+Element* Element::getElementAttribute(const QualifiedName& attributeName) const
+{
+    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+    ASSERT(isElementReflectionAttribute(attributeName));
+
+    if (auto* map = explicitlySetAttrElementsMapIfExists()) {
+        auto it = map->find(attributeName);
+        if (it != map->end()) {
+            ASSERT(it->value.size() == 1);
+            auto* element = it->value[0].get();
+            if (element && isDescendantOrShadowDescendantOf(element->rootNode()))
+                return element;
+            return nullptr;
+        }
+    }
+
+    auto id = getAttribute(attributeName);
+    if (id.isNull())
+        return nullptr;
+
+    return treeScope().getElementById(id);
+}
+
+void Element::setElementAttribute(const QualifiedName& attributeName, Element* element)
+{
+    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+    ASSERT(isElementReflectionAttribute(attributeName));
+
+    if (!element) {
+        if (auto* map = explicitlySetAttrElementsMapIfExists())
+            map->remove(attributeName);
+        removeAttribute(attributeName);
+        return;
+    }
+
+    auto id = element->getIdAttribute();
+    if (!id.isNull() && &rootNode() == &element->rootNode() && treeScope().getElementById(id) == element)
+        setAttribute(attributeName, id);
+    else
+        setAttribute(attributeName, emptyAtom());
+
+    explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element>> { element });
 }
 
 template <typename CharacterType>
