@@ -192,29 +192,29 @@ public:
     bool endsWith(char character) const { return endsWith(static_cast<UChar>(character)); }
     bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
-    WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = MaxLength) const;
-    WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
-    String left(unsigned length) const { return substring(0, length); }
-    String right(unsigned length) const { return substring(this->length() - length, length); }
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN substring(unsigned position, unsigned length = MaxLength) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
+    String WARN_UNUSED_RETURN left(unsigned length) const { return substring(0, length); }
+    String WARN_UNUSED_RETURN right(unsigned length) const { return substring(this->length() - length, length); }
 
-    WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
-    WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
-    WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocale() const;
-    WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
-    WTF_EXPORT_PRIVATE String convertToUppercaseWithoutLocale() const;
-    WTF_EXPORT_PRIVATE String convertToLowercaseWithLocale(const AtomString& localeIdentifier) const;
-    WTF_EXPORT_PRIVATE String convertToUppercaseWithLocale(const AtomString& localeIdentifier) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToASCIILowercase() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToASCIIUppercase() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToLowercaseWithoutLocale() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToUppercaseWithoutLocale() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToLowercaseWithLocale(const AtomString& localeIdentifier) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN convertToUppercaseWithLocale(const AtomString& localeIdentifier) const;
 
-    WTF_EXPORT_PRIVATE String stripWhiteSpace() const;
-    WTF_EXPORT_PRIVATE String simplifyWhiteSpace() const;
-    WTF_EXPORT_PRIVATE String simplifyWhiteSpace(CodeUnitMatchFunction) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN stripWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN simplifyWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
-    WTF_EXPORT_PRIVATE String stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
-    template<typename Predicate> String removeCharacters(const Predicate&) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
+    template<typename Predicate> String WARN_UNUSED_RETURN removeCharacters(const Predicate&) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
-    WTF_EXPORT_PRIVATE String foldCase() const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN foldCase() const;
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
@@ -224,18 +224,18 @@ public:
     using SplitFunctor = WTF::Function<void(StringView)>;
 
     WTF_EXPORT_PRIVATE void split(UChar separator, const SplitFunctor&) const;
-    WTF_EXPORT_PRIVATE Vector<String> split(UChar separator) const;
-    WTF_EXPORT_PRIVATE Vector<String> split(StringView separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> WARN_UNUSED_RETURN split(UChar separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> WARN_UNUSED_RETURN split(StringView separator) const;
 
     WTF_EXPORT_PRIVATE void splitAllowingEmptyEntries(UChar separator, const SplitFunctor&) const;
-    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(UChar separator) const;
-    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(StringView separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> WARN_UNUSED_RETURN splitAllowingEmptyEntries(UChar separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> WARN_UNUSED_RETURN splitAllowingEmptyEntries(StringView separator) const;
 
     WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
     WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
 
-    WTF_EXPORT_PRIVATE String isolatedCopy() const &;
-    WTF_EXPORT_PRIVATE String isolatedCopy() &&;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN isolatedCopy() const &;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN isolatedCopy() &&;
 
     WTF_EXPORT_PRIVATE bool isSafeToSendToAnotherThread() const;
 
