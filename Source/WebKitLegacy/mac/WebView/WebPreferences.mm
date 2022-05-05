@@ -1391,16 +1391,6 @@ public:
     return [self _boolValueForKey:WebKitAlwaysRequestGeolocationPermissionPreferenceKey];
 }
 
-- (void)_setAlwaysUseAcceleratedOverflowScroll:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitAlwaysUseAcceleratedOverflowScrollPreferenceKey];
-}
-
-- (BOOL)_alwaysUseAcceleratedOverflowScroll
-{
-    return [self _boolValueForKey:WebKitAlwaysUseAcceleratedOverflowScrollPreferenceKey];
-}
-
 - (void)_setInterpolationQuality:(int)quality
 {
     [self _setIntegerValue:quality forKey:WebKitInterpolationQualityPreferenceKey];

@@ -232,16 +232,6 @@ AlternateFormControlDesignEnabled:
     WebCore:
       default: false
 
-AlwaysUseAcceleratedOverflowScroll:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 AnimatedImageAsyncDecodingEnabled:
   type: bool
   defaultValue:

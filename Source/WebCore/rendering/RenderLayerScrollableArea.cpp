@@ -483,7 +483,7 @@ bool RenderLayerScrollableArea::canUseCompositedScrolling() const
         return isVisible && scrollsOverflow() && !m_layer.isInsideSVGForeignObject();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    return isVisible && scrollsOverflow() && (renderer.style().useTouchOverflowScrolling() || renderer.settings().alwaysUseAcceleratedOverflowScroll());
+    return isVisible && scrollsOverflow() && renderer.style().useTouchOverflowScrolling();
 #else
     return false;
 #endif

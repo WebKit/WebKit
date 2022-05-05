@@ -280,7 +280,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, setter=_setTelephoneNumberParsingEnabled:) BOOL _telephoneNumberParsingEnabled;
 @property (nonatomic, setter=_setAllowMultiElementImplicitFormSubmission:) BOOL _allowMultiElementImplicitFormSubmission;
 @property (nonatomic, setter=_setAlwaysRequestGeolocationPermission:) BOOL _alwaysRequestGeolocationPermission;
-@property (nonatomic, setter=_setAlwaysUseAcceleratedOverflowScroll:) BOOL _alwaysUseAcceleratedOverflowScroll;
 @property (nonatomic, setter=_setMaxParseDuration:) float _maxParseDuration;
 @property (nonatomic, setter=_setInterpolationQuality:) int _interpolationQuality;
 @property (nonatomic, readonly) BOOL _allowPasswordEcho;
