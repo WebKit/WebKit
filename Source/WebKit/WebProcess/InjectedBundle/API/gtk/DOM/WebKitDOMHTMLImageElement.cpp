@@ -441,8 +441,7 @@ void webkit_dom_html_image_element_set_name(WebKitDOMHTMLImageElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_image_element_get_align(WebKitDOMHTMLImageElement* self)
@@ -460,8 +459,7 @@ void webkit_dom_html_image_element_set_align(WebKitDOMHTMLImageElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_image_element_get_alt(WebKitDOMHTMLImageElement* self)
@@ -479,8 +477,7 @@ void webkit_dom_html_image_element_set_alt(WebKitDOMHTMLImageElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_image_element_get_border(WebKitDOMHTMLImageElement* self)
@@ -498,8 +495,7 @@ void webkit_dom_html_image_element_set_border(WebKitDOMHTMLImageElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::borderAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::borderAttr, WTF::AtomString::fromUTF8(value));
 }
 
 glong webkit_dom_html_image_element_get_height(WebKitDOMHTMLImageElement* self)
@@ -568,8 +564,7 @@ void webkit_dom_html_image_element_set_long_desc(WebKitDOMHTMLImageElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_image_element_get_src(WebKitDOMHTMLImageElement* self)
@@ -587,8 +582,7 @@ void webkit_dom_html_image_element_set_src(WebKitDOMHTMLImageElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_image_element_get_use_map(WebKitDOMHTMLImageElement* self)
@@ -606,8 +600,7 @@ void webkit_dom_html_image_element_set_use_map(WebKitDOMHTMLImageElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, WTF::AtomString::fromUTF8(value));
 }
 
 glong webkit_dom_html_image_element_get_vspace(WebKitDOMHTMLImageElement* self)
@@ -668,8 +661,7 @@ void webkit_dom_html_image_element_set_lowsrc(WebKitDOMHTMLImageElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLImageElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::lowsrcAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::lowsrcAttr, WTF::AtomString::fromUTF8(value));
 }
 
 glong webkit_dom_html_image_element_get_natural_height(WebKitDOMHTMLImageElement* self)

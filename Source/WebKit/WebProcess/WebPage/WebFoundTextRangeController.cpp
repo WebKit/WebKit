@@ -58,7 +58,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     if (!findMatches.isEmpty())
         m_cachedFoundRanges.clear();
 
-    String frameName;
+    AtomString frameName;
     uint64_t order = 0;
     Vector<WebFoundTextRange> foundTextRanges;
     for (auto& simpleRange : findMatches) {
@@ -68,7 +68,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
         if (!element)
             continue;
 
-        String currentFrameName = document.frame()->tree().uniqueName();
+        auto currentFrameName = document.frame()->tree().uniqueName();
         if (frameName != currentFrameName) {
             frameName = currentFrameName;
             order++;
@@ -76,7 +76,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
 
         // FIXME: We should get the character ranges at the same time as the SimpleRanges to avoid additional traversals.
         auto range = characterRange(makeBoundaryPointBeforeNodeContents(*element), simpleRange, WebCore::findIteratorOptions());
-        auto foundTextRange = WebFoundTextRange { range.location, range.length, frameName.length() ? frameName : emptyString(), order };
+        auto foundTextRange = WebFoundTextRange { range.location, range.length, frameName.length() ? frameName : emptyAtom(), order };
 
         m_cachedFoundRanges.add(foundTextRange, simpleRange);
         foundTextRanges.append(foundTextRange);
@@ -315,7 +315,7 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
     if (range.frameIdentifier.isEmpty())
         return mainFrame.document();
 
-    if (auto* frame = mainFrame.tree().find(range.frameIdentifier, mainFrame))
+    if (auto* frame = mainFrame.tree().find(AtomString { range.frameIdentifier }, mainFrame))
         return frame->document();
 
     return nullptr;

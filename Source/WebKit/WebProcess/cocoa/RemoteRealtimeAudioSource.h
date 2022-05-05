@@ -33,13 +33,13 @@ namespace WebKit {
 
 class RemoteRealtimeAudioSource final : public RemoteRealtimeMediaSource {
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
+    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
     ~RemoteRealtimeAudioSource();
 
     void remoteAudioSamplesAvailable(const MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t);
 
 private:
-    RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
+    RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
 };
 
 } // namespace WebKit

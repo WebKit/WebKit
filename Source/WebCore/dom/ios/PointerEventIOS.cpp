@@ -68,7 +68,7 @@ Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned
     return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
 }
 
-Ref<PointerEvent> PointerEvent::create(const String& type, const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
     return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
 }

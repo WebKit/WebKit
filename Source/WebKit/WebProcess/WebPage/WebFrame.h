@@ -71,7 +71,7 @@ struct WebsitePoliciesData;
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
     static Ref<WebFrame> create() { return adoptRef(*new WebFrame); }
-    static Ref<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static Ref<WebFrame> createSubframe(WebPage*, const AtomString& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
     void initWithCoreMainFrame(WebPage&, WebCore::Frame&);
@@ -144,7 +144,7 @@ public:
     void stopLoading();
     bool handlesPageScaleGesture() const;
     bool requiresUnifiedScaleFactor() const;
-    void setAccessibleName(const String&);
+    void setAccessibleName(const AtomString&);
 
     static WebFrame* frameForContext(JSContextRef);
     static WebFrame* contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);

@@ -141,8 +141,7 @@ WebKitDOMNode* webkit_dom_named_node_map_get_named_item(WebKitDOMNamedNodeMap* s
     g_return_val_if_fail(WEBKIT_DOM_IS_NAMED_NODE_MAP(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->getNamedItem(convertedName));
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->getNamedItem(WTF::AtomString::fromUTF8(name)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -175,8 +174,7 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap
     g_return_val_if_fail(name, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    auto result = item->removeNamedItem(convertedName);
+    auto result = item->removeNamedItem(WTF::AtomString::fromUTF8(name));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -201,8 +199,8 @@ WebKitDOMNode* webkit_dom_named_node_map_get_named_item_ns(WebKitDOMNamedNodeMap
     g_return_val_if_fail(namespaceURI, 0);
     g_return_val_if_fail(localName, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->getNamedItemNS(convertedNamespaceURI, convertedLocalName));
     return WebKit::kit(gobjectResult.get());
 }
@@ -220,8 +218,8 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNode
     g_return_val_if_fail(localName, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::NamedNodeMap* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     auto result = item->removeNamedItemNS(convertedNamespaceURI, convertedLocalName);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

@@ -81,7 +81,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, Atom
     if (!decoder.decode(string))
         return false;
 
-    atomString = string;
+    atomString = AtomString { string };
     return true;
 }
 

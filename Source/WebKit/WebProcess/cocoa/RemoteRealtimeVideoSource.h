@@ -50,7 +50,7 @@ public:
 
 private:
     RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
-    RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&&, String&& name, String&& hashSalt, UserMediaCaptureManager&);
+    RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&&, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&);
 
     Ref<RealtimeMediaSource> clone() final;
     void endProducingData() final;

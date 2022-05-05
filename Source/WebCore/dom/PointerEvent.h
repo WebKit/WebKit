@@ -83,7 +83,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
-    static Ref<PointerEvent> create(const String& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
+    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
     virtual ~PointerEvent();

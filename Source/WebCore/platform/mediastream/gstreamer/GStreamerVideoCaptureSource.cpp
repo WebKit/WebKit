@@ -118,7 +118,7 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
     return factory.get();
 }
 
-GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
+GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, String&& hashSalt, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
     : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), { })
     , m_capturer(makeUnique<GStreamerVideoCapturer>(sourceFactory, deviceType))
     , m_deviceType(deviceType)
@@ -129,7 +129,7 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, Stri
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
-    : RealtimeVideoCaptureSource(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), { })
+    : RealtimeVideoCaptureSource(AtomString { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), { })
     , m_capturer(makeUnique<GStreamerVideoCapturer>(device))
     , m_deviceType(CaptureDevice::DeviceType::Camera)
 {

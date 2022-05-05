@@ -111,11 +111,11 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
     m_coreFrame = coreFrame;
-    m_coreFrame->tree().setName(String());
+    m_coreFrame->tree().setName(nullAtom());
     m_coreFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     auto frame = create();
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
@@ -559,7 +559,7 @@ bool WebFrame::requiresUnifiedScaleFactor() const
     return pluginView && pluginView->requiresUnifiedScaleFactor();
 }
 
-void WebFrame::setAccessibleName(const String& accessibleName)
+void WebFrame::setAccessibleName(const AtomString& accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;

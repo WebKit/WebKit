@@ -218,8 +218,7 @@ void webkit_dom_html_hr_element_set_align(WebKitDOMHTMLHRElement* self, const gc
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHRElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gboolean webkit_dom_html_hr_element_get_no_shade(WebKitDOMHTMLHRElement* self)
@@ -254,8 +253,7 @@ void webkit_dom_html_hr_element_set_size(WebKitDOMHTMLHRElement* self, const gch
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHRElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_hr_element_get_width(WebKitDOMHTMLHRElement* self)
@@ -273,8 +271,7 @@ void webkit_dom_html_hr_element_set_width(WebKitDOMHTMLHRElement* self, const gc
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHRElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

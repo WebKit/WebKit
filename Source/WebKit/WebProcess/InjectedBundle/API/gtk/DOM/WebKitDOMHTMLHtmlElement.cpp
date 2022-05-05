@@ -166,7 +166,6 @@ void webkit_dom_html_html_element_set_version(WebKitDOMHTMLHtmlElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHtmlElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, WTF::AtomString::fromUTF8(value));
 }
 G_GNUC_END_IGNORE_DEPRECATIONS;

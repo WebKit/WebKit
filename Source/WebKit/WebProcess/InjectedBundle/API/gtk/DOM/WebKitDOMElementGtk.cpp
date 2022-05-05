@@ -584,8 +584,7 @@ gchar* webkit_dom_element_get_attribute(WebKitDOMElement* self, const gchar* nam
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    gchar* result = convertToUTF8String(item->getAttribute(convertedName));
+    gchar* result = convertToUTF8String(item->getAttribute(WTF::AtomString::fromUTF8(name)));
     return result;
 }
 
@@ -597,8 +596,8 @@ void webkit_dom_element_set_attribute(WebKitDOMElement* self, const gchar* name,
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    auto convertedName = WTF::AtomString::fromUTF8(name);
+    auto convertedValue = WTF::AtomString::fromUTF8(value);
     auto result = item->setAttribute(convertedName, convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -612,8 +611,7 @@ void webkit_dom_element_remove_attribute(WebKitDOMElement* self, const gchar* na
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
     g_return_if_fail(name);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    item->removeAttribute(convertedName);
+    item->removeAttribute(WTF::AtomString::fromUTF8(name));
 }
 
 WebKitDOMAttr* webkit_dom_element_get_attribute_node(WebKitDOMElement* self, const gchar* name)
@@ -622,8 +620,7 @@ WebKitDOMAttr* webkit_dom_element_get_attribute_node(WebKitDOMElement* self, con
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    RefPtr<WebCore::Attr> gobjectResult = WTF::getPtr(item->getAttributeNode(convertedName));
+    RefPtr<WebCore::Attr> gobjectResult = WTF::getPtr(item->getAttributeNode(WTF::AtomString::fromUTF8(name)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -667,7 +664,7 @@ WebKitDOMHTMLCollection* webkit_dom_element_get_elements_by_tag_name_as_html_col
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
+    auto convertedName = WTF::AtomString::fromUTF8(name);
     RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->getElementsByTagName(convertedName));
     return WebKit::kit(gobjectResult.get());
 }
@@ -688,8 +685,8 @@ gchar* webkit_dom_element_get_attribute_ns(WebKitDOMElement* self, const gchar* 
     g_return_val_if_fail(namespaceURI, 0);
     g_return_val_if_fail(localName, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     gchar* result = convertToUTF8String(item->getAttributeNS(convertedNamespaceURI, convertedLocalName));
     return result;
 }
@@ -702,9 +699,9 @@ void webkit_dom_element_set_attribute_ns(WebKitDOMElement* self, const gchar* na
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedQualifiedName = WTF::String::fromUTF8(qualifiedName);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedQualifiedName = WTF::AtomString::fromUTF8(qualifiedName);
+    auto convertedValue = WTF::AtomString::fromUTF8(value);
     auto result = item->setAttributeNS(convertedNamespaceURI, convertedQualifiedName, convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -719,8 +716,8 @@ void webkit_dom_element_remove_attribute_ns(WebKitDOMElement* self, const gchar*
     g_return_if_fail(namespaceURI);
     g_return_if_fail(localName);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     item->removeAttributeNS(convertedNamespaceURI, convertedLocalName);
 }
 
@@ -731,8 +728,8 @@ WebKitDOMHTMLCollection* webkit_dom_element_get_elements_by_tag_name_ns_as_html_
     g_return_val_if_fail(namespaceURI, 0);
     g_return_val_if_fail(localName, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->getElementsByTagNameNS(convertedNamespaceURI, convertedLocalName));
     return WebKit::kit(gobjectResult.get());
 }
@@ -744,8 +741,8 @@ WebKitDOMAttr* webkit_dom_element_get_attribute_node_ns(WebKitDOMElement* self, 
     g_return_val_if_fail(namespaceURI, 0);
     g_return_val_if_fail(localName, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     RefPtr<WebCore::Attr> gobjectResult = WTF::getPtr(item->getAttributeNodeNS(convertedNamespaceURI, convertedLocalName));
     return WebKit::kit(gobjectResult.get());
 }
@@ -773,8 +770,7 @@ gboolean webkit_dom_element_has_attribute(WebKitDOMElement* self, const gchar* n
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), FALSE);
     g_return_val_if_fail(name, FALSE);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    gboolean result = item->hasAttribute(convertedName);
+    gboolean result = item->hasAttribute(WTF::AtomString::fromUTF8(name));
     return result;
 }
 
@@ -785,8 +781,8 @@ gboolean webkit_dom_element_has_attribute_ns(WebKitDOMElement* self, const gchar
     g_return_val_if_fail(namespaceURI, FALSE);
     g_return_val_if_fail(localName, FALSE);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
+    auto convertedNamespaceURI = WTF::AtomString::fromUTF8(namespaceURI);
+    auto convertedLocalName = WTF::AtomString::fromUTF8(localName);
     gboolean result = item->hasAttributeNS(convertedNamespaceURI, convertedLocalName);
     return result;
 }
@@ -845,8 +841,7 @@ WebKitDOMHTMLCollection* webkit_dom_element_get_elements_by_class_name_as_html_c
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->getElementsByClassName(convertedName));
+    RefPtr<WebCore::HTMLCollection> gobjectResult = WTF::getPtr(item->getElementsByClassName(WTF::AtomString::fromUTF8(name)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -1053,8 +1048,7 @@ void webkit_dom_element_set_id(WebKitDOMElement* self, const gchar* value)
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::idAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::idAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_element_get_namespace_uri(WebKitDOMElement* self)
@@ -1296,8 +1290,7 @@ void webkit_dom_element_set_class_name(WebKitDOMElement* self, const gchar* valu
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::classAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::classAttr, WTF::AtomString::fromUTF8(value));
 }
 
 WebKitDOMDOMTokenList* webkit_dom_element_get_class_list(WebKitDOMElement* self)

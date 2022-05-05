@@ -100,7 +100,7 @@ static char* webkitDOMNativeXPathNSResolverLookupNamespaceURI(WebKitDOMXPathNSRe
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_NATIVE_XPATH_NS_RESOLVER(resolver), nullptr);
 
-    return convertToUTF8String(WebKit::core(resolver)->lookupNamespaceURI(WTF::String::fromUTF8(prefix)));
+    return convertToUTF8String(WebKit::core(resolver)->lookupNamespaceURI(WTF::AtomString::fromUTF8(prefix)));
 }
 
 static void webkitDOMXPathNSResolverIfaceInit(WebKitDOMXPathNSResolverIface* iface)

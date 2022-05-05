@@ -74,15 +74,17 @@ AtomString GStreamerMediaDescription::extractCodecName()
     }
 
     GUniquePtr<gchar> description(gst_pb_utils_get_codec_description(originalCaps.get()));
-    auto codecName = String::fromLatin1(description.get());
+    auto codecName = AtomString::fromLatin1(description.get());
 
     // Report "H.264 (Main Profile)" and "H.264 (High Profile)" just as "H.264" to allow changes between both variants
     // go unnoticed to the SourceBuffer layer.
     if (codecName.startsWith("H.264")) {
-        size_t braceStart = codecName.find(" (");
-        size_t braceEnd = codecName.find(")");
-        if (braceStart != notFound && braceEnd != notFound)
-            codecName = makeStringByRemoving(codecName, braceStart, braceEnd - braceStart);
+        size_t braceStart = codecName.find(" ("_s);
+        size_t braceEnd = codecName.find(')', braceStart + 1);
+        if (braceStart != notFound && braceEnd != notFound) {
+            StringView codecNameView { codecName };
+            codecName = makeAtomString(codecNameView.left(braceStart), codecNameView.substring(braceEnd + 1));
+        }
     }
 
     return codecName;

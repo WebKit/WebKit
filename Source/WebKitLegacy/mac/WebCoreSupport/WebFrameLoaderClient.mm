@@ -1586,7 +1586,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, WebCore::HTMLFrameOwnerElement& ownerElement)
+RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     

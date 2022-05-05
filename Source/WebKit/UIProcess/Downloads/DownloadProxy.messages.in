@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DownloadProxy {
-    DidStart(WebCore::ResourceRequest request, AtomString suggestedFilename)
+    DidStart(WebCore::ResourceRequest request, String suggestedFilename)
     DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge, WebKit::AuthenticationChallengeIdentifier challengeID)
     WillSendRequest(WebCore::ResourceRequest redirectRequest, WebCore::ResourceResponse redirectResponse))
     DecideDestinationWithSuggestedFilename(WebCore::ResourceResponse response, String suggestedFilename) -> (String filename, WebKit::SandboxExtension::Handle handle, enum:bool WebKit::AllowOverwrite allowOverwrite)

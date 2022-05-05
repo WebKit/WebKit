@@ -34,7 +34,7 @@ namespace WebKit {
 struct WebFoundTextRange {
     uint64_t location { 0 };
     uint64_t length { 0 };
-    String frameIdentifier;
+    AtomString frameIdentifier;
     uint64_t order { 0 };
 
     bool operator==(const WebFoundTextRange& other) const;

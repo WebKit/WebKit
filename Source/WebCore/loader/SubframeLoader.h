@@ -62,7 +62,7 @@ public:
 private:
     bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
-    RefPtr<Frame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const String& name, const String& referrer);
+    RefPtr<Frame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const String& referrer);
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);

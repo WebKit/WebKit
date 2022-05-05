@@ -289,7 +289,7 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(name, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), String::fromUTF8(name), API::ContentWorld::pageContentWorld());
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), AtomString::fromUTF8(name), API::ContentWorld::pageContentWorld());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -339,7 +339,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_in_world(We
     g_return_val_if_fail(worldName, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), String::fromUTF8(name), webkitContentWorld(worldName));
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), AtomString::fromUTF8(name), webkitContentWorld(worldName));
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 

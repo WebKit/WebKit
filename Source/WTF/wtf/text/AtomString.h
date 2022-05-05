@@ -52,8 +52,8 @@ public:
     AtomString(Ref<AtomStringImpl>&&);
     AtomString(const StaticStringImpl*);
     AtomString(StringImpl*);
-    AtomString(const String&);
-    AtomString(String&&);
+    explicit AtomString(const String&);
+    explicit AtomString(String&&);
     AtomString(StringImpl* baseString, unsigned start, unsigned length);
 
     // FIXME: AtomString doesn’t always have AtomStringImpl, so one of those two names needs to change.
@@ -361,6 +361,11 @@ inline bool equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
 inline int codePointCompare(const AtomString& a, const AtomString& b)
 {
     return codePointCompare(a.string(), b.string());
+}
+
+ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const AtomString& string, UChar target, UChar replacement)
+{
+    return makeStringByReplacingAll(string.string(), target, replacement);
 }
 
 template<> struct IntegerToStringConversionTrait<AtomString> {

@@ -103,7 +103,7 @@ std::optional<WebScriptMessageHandlerData> WebScriptMessageHandlerData::decode(I
     if (!worldIdentifier)
         return std::nullopt;
     
-    std::optional<String> name;
+    std::optional<AtomString> name;
     decoder >> name;
     if (!name)
         return std::nullopt;

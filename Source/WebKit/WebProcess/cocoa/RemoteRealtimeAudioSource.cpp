@@ -35,7 +35,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
 {
     auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
@@ -44,7 +44,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& 
     return source;
 }
 
-RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
     : RemoteRealtimeMediaSource(identifier, device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);

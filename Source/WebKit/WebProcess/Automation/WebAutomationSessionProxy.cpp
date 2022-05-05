@@ -523,7 +523,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(name);
+    WebCore::Frame* coreChildFrame = coreFrame->tree().scopedChild(AtomString { name });
     if (!coreChildFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;

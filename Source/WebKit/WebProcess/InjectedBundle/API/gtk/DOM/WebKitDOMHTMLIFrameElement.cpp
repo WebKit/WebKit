@@ -350,8 +350,7 @@ void webkit_dom_html_iframe_element_set_align(WebKitDOMHTMLIFrameElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_frame_border(WebKitDOMHTMLIFrameElement* self)
@@ -369,8 +368,7 @@ void webkit_dom_html_iframe_element_set_frame_border(WebKitDOMHTMLIFrameElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_height(WebKitDOMHTMLIFrameElement* self)
@@ -388,8 +386,7 @@ void webkit_dom_html_iframe_element_set_height(WebKitDOMHTMLIFrameElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_long_desc(WebKitDOMHTMLIFrameElement* self)
@@ -407,8 +404,7 @@ void webkit_dom_html_iframe_element_set_long_desc(WebKitDOMHTMLIFrameElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_margin_height(WebKitDOMHTMLIFrameElement* self)
@@ -426,8 +422,7 @@ void webkit_dom_html_iframe_element_set_margin_height(WebKitDOMHTMLIFrameElement
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_margin_width(WebKitDOMHTMLIFrameElement* self)
@@ -445,8 +440,7 @@ void webkit_dom_html_iframe_element_set_margin_width(WebKitDOMHTMLIFrameElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_name(WebKitDOMHTMLIFrameElement* self)
@@ -464,8 +458,7 @@ void webkit_dom_html_iframe_element_set_name(WebKitDOMHTMLIFrameElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_scrolling(WebKitDOMHTMLIFrameElement* self)
@@ -483,8 +476,7 @@ void webkit_dom_html_iframe_element_set_scrolling(WebKitDOMHTMLIFrameElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_src(WebKitDOMHTMLIFrameElement* self)
@@ -502,8 +494,7 @@ void webkit_dom_html_iframe_element_set_src(WebKitDOMHTMLIFrameElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_iframe_element_get_width(WebKitDOMHTMLIFrameElement* self)
@@ -521,8 +512,7 @@ void webkit_dom_html_iframe_element_set_width(WebKitDOMHTMLIFrameElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_IFRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLIFrameElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, WTF::AtomString::fromUTF8(value));
 }
 
 WebKitDOMDocument* webkit_dom_html_iframe_element_get_content_document(WebKitDOMHTMLIFrameElement* self)

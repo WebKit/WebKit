@@ -167,8 +167,7 @@ void webkit_dom_html_head_element_set_profile(WebKitDOMHTMLHeadElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HEAD_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHeadElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::profileAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::profileAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

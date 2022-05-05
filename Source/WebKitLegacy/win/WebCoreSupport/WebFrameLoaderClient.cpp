@@ -946,7 +946,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const String& name, HTMLFrameOwnerElement& ownerElement)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
 {
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);

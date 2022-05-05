@@ -225,7 +225,7 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     // IE disregards "@" regardless of the orientation, so we follow the behavior.
     auto familyName = StringView(passedFamilyName).substring(passedFamilyName[0] == '@' ? 1 : 0).toAtomString();
 #else
-    const AtomString& familyName { passedFamilyName };
+    AtomString familyName { passedFamilyName };
 #endif
 
     static std::once_flag onceFlag;

@@ -42,7 +42,7 @@
     [CEReactions] attribute boolean draggable;
     [CEReactions] attribute boolean spellcheck;
     // FIXME: 'autocapitalize' should not be [LegacyNullToEmptyString].
-    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [LegacyNullToEmptyString] DOMString autocapitalize;
+    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString autocapitalize;
 
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerText;
 

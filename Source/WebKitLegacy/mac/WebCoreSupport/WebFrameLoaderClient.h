@@ -207,7 +207,7 @@ private:
 
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::Frame> createFrame(const WTF::AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
     const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;

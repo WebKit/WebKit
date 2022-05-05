@@ -184,8 +184,7 @@ void webkit_dom_html_base_element_set_href(WebKitDOMHTMLBaseElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BASE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBaseElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setHref(convertedValue);
+    item->setHref(WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_base_element_get_target(WebKitDOMHTMLBaseElement* self)
@@ -203,8 +202,7 @@ void webkit_dom_html_base_element_set_target(WebKitDOMHTMLBaseElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BASE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBaseElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

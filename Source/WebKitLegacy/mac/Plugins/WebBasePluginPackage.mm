@@ -151,7 +151,7 @@
                 mimeClassInfo.extensions.append(component);
         }
 
-        mimeClassInfo.type = String(MIME).convertToASCIILowercase();
+        mimeClassInfo.type = AtomString { String(MIME).convertToASCIILowercase() };
         mimeClassInfo.desc = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
 
         pluginInfo.mimes.append(mimeClassInfo);

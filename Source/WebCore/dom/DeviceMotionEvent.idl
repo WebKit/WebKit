@@ -34,7 +34,7 @@
 
     [CallWith=CurrentDocument, EnabledBySetting=DeviceOrientationPermissionAPIEnabled] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
 
-    undefined initDeviceMotionEvent(optional DOMString type = "",
+    undefined initDeviceMotionEvent(optional [AtomString] DOMString type = "",
                                optional boolean bubbles = false,
                                optional boolean cancelable = false,
                                optional Acceleration? acceleration = null,

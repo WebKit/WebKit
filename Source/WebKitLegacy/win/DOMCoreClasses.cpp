@@ -416,7 +416,7 @@ HRESULT DOMNode::setTextContent(_In_ BSTR /*text*/)
 HRESULT DOMNode::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     auto webListener = WebEventListener::create(listener);
-    m_node->addEventListener(String(type), WTFMove(webListener), useCapture);
+    m_node->addEventListener(AtomString(type), WTFMove(webListener), useCapture);
 
     return S_OK;
 }
@@ -428,7 +428,7 @@ HRESULT DOMNode::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener*
     if (!m_node)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_node->removeEventListener(String(type), webListener, useCapture);
+    m_node->removeEventListener(AtomString(type), webListener, useCapture);
     return S_OK;
 }
 
@@ -643,7 +643,7 @@ HRESULT DOMDocument::createElement(_In_ BSTR tagName, _COM_Outptr_opt_ IDOMEleme
     if (!m_document)
         return E_FAIL;
 
-    String tagNameString(tagName);
+    AtomString tagNameString(tagName);
     auto createElementResult = m_document->createElementForBindings(tagNameString);
     if (createElementResult.hasException())
         return E_FAIL;
@@ -722,7 +722,7 @@ HRESULT DOMDocument::getElementsByTagName(_In_ BSTR tagName, _COM_Outptr_opt_ ID
     if (!m_document)
         return E_FAIL;
 
-    String tagNameString(tagName);
+    AtomString tagNameString(tagName);
     RefPtr<WebCore::NodeList> elements;
     if (!tagNameString.isNull())
         elements = m_document->getElementsByTagName(tagNameString);
@@ -765,8 +765,8 @@ HRESULT DOMDocument::getElementsByTagNameNS(_In_ BSTR namespaceURI, _In_ BSTR lo
     if (!m_document)
         return E_FAIL;
 
-    String namespaceURIString(namespaceURI);
-    String localNameString(localName);
+    AtomString namespaceURIString(namespaceURI);
+    AtomString localNameString(localName);
     RefPtr<WebCore::NodeList> elements;
     if (!localNameString.isNull())
         elements = m_document->getElementsByTagNameNS(namespaceURIString, localNameString);
@@ -926,7 +926,7 @@ HRESULT DOMWindow::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* 
     if (!m_window)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_window->addEventListener(String(type), WTFMove(webListener), useCapture);
+    m_window->addEventListener(AtomString(type), WTFMove(webListener), useCapture);
     return S_OK;
 }
 
@@ -937,7 +937,7 @@ HRESULT DOMWindow::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListene
     if (!m_window)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_window->removeEventListener(String(type), webListener, useCapture);
+    m_window->removeEventListener(AtomString(type), webListener, useCapture);
     return S_OK;
 }
 
@@ -1070,7 +1070,7 @@ HRESULT DOMElement::getAttribute(_In_ BSTR name, __deref_opt_out BSTR* result)
     *result = nullptr;
     if (!m_element)
         return E_FAIL;
-    WTF::String nameString(name, SysStringLen(name));
+    WTF::AtomString nameString(name, SysStringLen(name));
     WTF::String& attrValueString = (WTF::String&) m_element->getAttribute(nameString);
     *result = BString(attrValueString).release();
     if (attrValueString.length() && !*result)
@@ -1083,8 +1083,8 @@ HRESULT DOMElement::setAttribute(_In_ BSTR name, _In_ BSTR value)
     if (!m_element)
         return E_FAIL;
 
-    WTF::String nameString(name, SysStringLen(name));
-    WTF::String valueString(value, SysStringLen(value));
+    WTF::AtomString nameString(name, SysStringLen(name));
+    WTF::AtomString valueString(value, SysStringLen(value));
     auto result = m_element->setAttribute(nameString, valueString);
     return result.hasException() ? E_FAIL : S_OK;
 }

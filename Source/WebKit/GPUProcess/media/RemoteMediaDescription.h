@@ -69,7 +69,7 @@ struct MediaDescriptionInfo {
     template <class Decoder>
     static std::optional<MediaDescriptionInfo> decode(Decoder& decoder)
     {
-        std::optional<String> codec;
+        std::optional<AtomString> codec;
         decoder >> codec;
         if (!codec)
             return std::nullopt;

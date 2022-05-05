@@ -258,7 +258,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     return ownerElement.contentFrame();
 }
 
-RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
+RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)
 {
     Ref protectedFrame { m_frame };
     Ref document = ownerElement.document();

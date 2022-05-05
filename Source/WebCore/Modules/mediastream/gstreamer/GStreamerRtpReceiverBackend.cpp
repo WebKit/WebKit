@@ -53,10 +53,10 @@ Vector<RTCRtpSynchronizationSource> GStreamerRtpReceiverBackend::getSynchronizat
 Ref<RealtimeMediaSource> GStreamerRtpReceiverBackend::createSource(const String& trackKind, const String& trackId)
 {
     if (trackKind == "video"_s)
-        return RealtimeIncomingVideoSourceGStreamer::create(trackId.isolatedCopy());
+        return RealtimeIncomingVideoSourceGStreamer::create(AtomString { trackId });
 
     RELEASE_ASSERT(trackKind == "audio"_s);
-    return RealtimeIncomingAudioSourceGStreamer::create(trackId.isolatedCopy());
+    return RealtimeIncomingAudioSourceGStreamer::create(AtomString { trackId });
 }
 
 Ref<RTCRtpTransformBackend> GStreamerRtpReceiverBackend::rtcRtpTransformBackend()

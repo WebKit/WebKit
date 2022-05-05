@@ -232,8 +232,7 @@ void webkit_dom_html_style_element_set_media(WebKitDOMHTMLStyleElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_STYLE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLStyleElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_style_element_get_type_attr(WebKitDOMHTMLStyleElement* self)
@@ -251,8 +250,7 @@ void webkit_dom_html_style_element_set_type_attr(WebKitDOMHTMLStyleElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_STYLE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLStyleElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
 }
 
 WebKitDOMStyleSheet* webkit_dom_html_style_element_get_sheet(WebKitDOMHTMLStyleElement* self)

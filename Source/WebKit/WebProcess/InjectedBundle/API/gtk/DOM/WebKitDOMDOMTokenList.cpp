@@ -177,8 +177,7 @@ gboolean webkit_dom_dom_token_list_contains(WebKitDOMDOMTokenList* self, const g
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_TOKEN_LIST(self), FALSE);
     g_return_val_if_fail(token, FALSE);
     WebCore::DOMTokenList* item = WebKit::core(self);
-    WTF::String convertedToken = WTF::String::fromUTF8(token);
-    gboolean result = item->contains(convertedToken);
+    gboolean result = item->contains(WTF::AtomString::fromUTF8(token));
     return result;
 }
 
@@ -191,7 +190,7 @@ void webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, 
     va_list variadicParameterList;
     va_start(variadicParameterList, error);
     while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*)) {
-        auto result = item->add(WTF::String::fromUTF8(variadicParameter));
+        auto result = item->add(WTF::AtomString::fromUTF8(variadicParameter));
         if (result.hasException()) {
             auto description = WebCore::DOMException::description(result.releaseException().code());
             g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -211,7 +210,7 @@ void webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** erro
     Vector<WTF::String> convertedTokens;
     va_start(variadicParameterList, error);
     while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*)) {
-        auto result = item->remove(WTF::String::fromUTF8(variadicParameter));
+        auto result = item->remove(WTF::AtomString::fromUTF8(variadicParameter));
         if (result.hasException()) {
             auto description = WebCore::DOMException::description(result.releaseException().code());
             g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -228,8 +227,7 @@ gboolean webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gch
     g_return_val_if_fail(token, FALSE);
     g_return_val_if_fail(!error || !*error, FALSE);
     WebCore::DOMTokenList* item = WebKit::core(self);
-    WTF::String convertedToken = WTF::String::fromUTF8(token);
-    auto result = item->toggle(convertedToken, force);
+    auto result = item->toggle(WTF::AtomString::fromUTF8(token), force);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -246,8 +244,8 @@ void webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar*
     g_return_if_fail(newToken);
     g_return_if_fail(!error || !*error);
     WebCore::DOMTokenList* item = WebKit::core(self);
-    WTF::String convertedToken = WTF::String::fromUTF8(token);
-    WTF::String convertedNewToken = WTF::String::fromUTF8(newToken);
+    auto convertedToken = WTF::AtomString::fromUTF8(token);
+    auto convertedNewToken = WTF::AtomString::fromUTF8(newToken);
     auto result = item->replace(convertedToken, convertedNewToken);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -279,8 +277,7 @@ void webkit_dom_dom_token_list_set_value(WebKitDOMDOMTokenList* self, const gcha
     g_return_if_fail(WEBKIT_DOM_IS_DOM_TOKEN_LIST(self));
     g_return_if_fail(value);
     WebCore::DOMTokenList* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setValue(convertedValue);
+    item->setValue(WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -167,8 +167,7 @@ void webkit_dom_html_paragraph_element_set_align(WebKitDOMHTMLParagraphElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_PARAGRAPH_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLParagraphElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

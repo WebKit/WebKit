@@ -40,7 +40,7 @@
     undefined initTouchEvent(optional TouchList? touches = null,
                         optional TouchList? targetTouches = null,
                         optional TouchList? changedTouches = null,
-                        optional DOMString type,
+                        optional [AtomString] DOMString type,
                         optional WindowProxy? view = null,
                         optional long screenX = 0,
                         optional long screenY = 0,

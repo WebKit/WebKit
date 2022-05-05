@@ -1184,7 +1184,7 @@ HRESULT DOMHTMLInputElement::setType(_In_ BSTR type)
 {
     ASSERT(is<HTMLInputElement>(m_element));
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
-    WTF::String typeString(type, SysStringLen(type));
+    WTF::AtomString typeString(type, SysStringLen(type));
     inputElement.setType(typeString);
     return S_OK;
 }

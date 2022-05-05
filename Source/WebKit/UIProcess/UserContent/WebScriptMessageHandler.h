@@ -58,20 +58,20 @@ public:
         virtual void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&) = 0;
     };
 
-    static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::ContentWorld&);
+    static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const AtomString& name, API::ContentWorld&);
     virtual ~WebScriptMessageHandler();
 
-    String name() const { return m_name; }
+    AtomString name() const { return m_name; }
 
     API::ContentWorld& world() { return m_world.get(); }
 
     Client& client() const { return *m_client; }
 
 private:
-    WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::ContentWorld&);
+    WebScriptMessageHandler(std::unique_ptr<Client>, const AtomString&, API::ContentWorld&);
 
     std::unique_ptr<Client> m_client;
-    String m_name;
+    AtomString m_name;
     Ref<API::ContentWorld> m_world;
 };
 

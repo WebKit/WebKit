@@ -191,8 +191,7 @@ void webkit_dom_html_label_element_set_html_for(WebKitDOMHTMLLabelElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LABEL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLabelElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -295,7 +295,7 @@ WebView *getWebView(WebFrame *webFrame)
     return kit(coreFrame->page());
 }
 
-+ (Ref<WebCore::Frame>)_createFrameWithPage:(WebCore::Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement
++ (Ref<WebCore::Frame>)_createFrameWithPage:(WebCore::Page*)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement
 {
     WebView *webView = kit(page);
 
@@ -316,7 +316,7 @@ WebView *getWebView(WebFrame *webFrame)
     return coreFrame;
 }
 
-+ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView
++ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
 {
     WebView *webView = kit(page);
 
@@ -330,7 +330,7 @@ WebView *getWebView(WebFrame *webFrame)
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 }
 
-+ (Ref<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView
++ (Ref<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
 {
     return [self _createFrameWithPage:ownerElement->document().frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
 }
@@ -2113,10 +2113,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
     
     auto* rootObject = _private->coreFrame->document()->axObjectCache()->rootObject();
-    if (rootObject) {
-        String strName(name);
-        rootObject->setAccessibleName(strName);
-    }
+    if (rootObject)
+        rootObject->setAccessibleName(AtomString { name });
 #endif
 }
 

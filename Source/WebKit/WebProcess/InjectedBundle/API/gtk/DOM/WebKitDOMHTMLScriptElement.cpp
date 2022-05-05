@@ -286,8 +286,7 @@ void webkit_dom_html_script_element_set_html_for(WebKitDOMHTMLScriptElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_script_element_get_event(WebKitDOMHTMLScriptElement* self)
@@ -305,8 +304,7 @@ void webkit_dom_html_script_element_set_event(WebKitDOMHTMLScriptElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::eventAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::eventAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_script_element_get_charset(WebKitDOMHTMLScriptElement* self)
@@ -324,8 +322,7 @@ void webkit_dom_html_script_element_set_charset(WebKitDOMHTMLScriptElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gboolean webkit_dom_html_script_element_get_defer(WebKitDOMHTMLScriptElement* self)
@@ -360,8 +357,7 @@ void webkit_dom_html_script_element_set_src(WebKitDOMHTMLScriptElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_script_element_get_type_attr(WebKitDOMHTMLScriptElement* self)
@@ -379,7 +375,6 @@ void webkit_dom_html_script_element_set_type_attr(WebKitDOMHTMLScriptElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
 }
 G_GNUC_END_IGNORE_DEPRECATIONS;

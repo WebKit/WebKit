@@ -925,8 +925,7 @@ void webkit_dom_dom_window_set_name(WebKitDOMDOMWindow* self, const gchar* value
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
     g_return_if_fail(value);
     WebCore::DOMWindow* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setName(convertedValue);
+    item->setName(WTF::AtomString::fromUTF8(value));
 }
 
 gchar* webkit_dom_dom_window_get_status(WebKitDOMDOMWindow* self)
@@ -1069,7 +1068,7 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
     if (!webkitNamespace)
         return FALSE;
 
-    auto handler = webkitNamespace->messageHandlers()->namedItem(WebCore::mainThreadNormalWorld(), String::fromUTF8(handlerName));
+    auto handler = webkitNamespace->messageHandlers()->namedItem(WebCore::mainThreadNormalWorld(), AtomString::fromUTF8(handlerName));
     if (!handler)
         return FALSE;
     

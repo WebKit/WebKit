@@ -626,7 +626,7 @@ Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(const ResourceR
     return DocumentLoader::create(request, substituteData);
 }
 
-RefPtr<Frame> EmptyFrameLoaderClient::createFrame(const String&, HTMLFrameOwnerElement&)
+RefPtr<Frame> EmptyFrameLoaderClient::createFrame(const AtomString&, HTMLFrameOwnerElement&)
 {
     return nullptr;
 }

@@ -51,23 +51,24 @@ static const char* const gDictionaryDirectories[] = {
     "/usr/local/share/hyphen",
 };
 
-static String extractLocaleFromDictionaryFileName(const String& fileName)
+static AtomString extractLocaleFromDictionaryFileName(const String& fileName)
 {
     if (!fileName.startsWith("hyph_") || !fileName.endsWith(".dic"))
-        return { };
+        return nullAtom();
 
     // Dictionary files always have the form "hyph_<locale name>.dic"
     // so we strip everything except the locale.
     constexpr int prefixLength = 5;
     constexpr int suffixLength = 4;
-    return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercase();
+    // FIXME: Ideally, we'd do the conversion to lowercase as part of converting to AtomString.
+    return AtomString { StringView(fileName).substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercase() };
 }
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
 {
     auto directoryPathString = String::fromUTF8(directoryPath);
     for (auto& fileName : FileSystem::listDirectory(directoryPathString)) {
-        String locale = extractLocaleFromDictionaryFileName(fileName);
+        auto locale = extractLocaleFromDictionaryFileName(fileName);
         if (locale.isEmpty())
             continue;
 
@@ -81,11 +82,11 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
 
         String localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');
         if (locale != localeReplacingUnderscores)
-            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
+            availableLocales.add(AtomString { localeReplacingUnderscores }, Vector<String>()).iterator->value.append(filePath);
 
         size_t dividerPosition = localeReplacingUnderscores.find('-');
         if (dividerPosition != notFound)
-            availableLocales.add(localeReplacingUnderscores.left(dividerPosition), Vector<String>()).iterator->value.append(filePath);
+            availableLocales.add(StringView(localeReplacingUnderscores).left(dividerPosition).toAtomString(), Vector<String>()).iterator->value.append(filePath);
     }
 }
 
@@ -289,7 +290,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    String lowercaseLocaleIdentifier = AtomString(localeIdentifier.string().convertToASCIILowercase());
+    AtomString lowercaseLocaleIdentifier = localeIdentifier.convertToASCIILowercase();
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))

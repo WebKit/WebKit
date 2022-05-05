@@ -84,7 +84,7 @@ public:
     }
 
     uint64_t requestID() const { return m_requestID; }
-    const String& target() const { return m_request.frameName(); }
+    const AtomString& target() const { return m_request.frameName(); }
     const ResourceRequest & request() const { return m_request.resourceRequest(); }
     bool allowPopups() const { return m_allowPopups; }
 
@@ -1206,7 +1206,7 @@ void PluginView::pageMutedStateDidChange()
 {
 }
 
-void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
+void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const AtomString& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
     FrameLoadRequest frameLoadRequest { m_pluginElement->document(), m_pluginElement->document().securityOrigin(), { }, target, InitiatedByMainFrame::Unknown };
     frameLoadRequest.resourceRequest().setHTTPMethod(method);

@@ -55,7 +55,7 @@ AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType t
         }
     }();
 
-    return makeString(prefix, index);
+    return makeAtomString(prefix, index);
 }
 
 static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
@@ -192,10 +192,10 @@ bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& va
 {
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
-        language = String::fromLatin1(gst_tag_get_language_code_iso_639_1(language.utf8().data()));
-        GST_DEBUG("Converted track %d's language code to %s.", m_index, language.utf8().data());
-        if (language != value) {
-            value = language;
+        AtomString convertedLanguage = AtomString::fromLatin1(gst_tag_get_language_code_iso_639_1(language.utf8().data()));
+        GST_DEBUG("Converted track %d's language code to %s.", m_index, convertedLanguage.string().utf8().data());
+        if (convertedLanguage != value) {
+            value = WTFMove(convertedLanguage);
             return true;
         }
     }

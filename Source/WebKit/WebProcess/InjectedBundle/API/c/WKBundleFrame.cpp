@@ -233,7 +233,7 @@ void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef direct
 
 void WKBundleFrameSetAccessibleName(WKBundleFrameRef frameRef, WKStringRef accessibleNameRef)
 {
-    WebKit::toImpl(frameRef)->setAccessibleName(WebKit::toWTFString(accessibleNameRef));
+    WebKit::toImpl(frameRef)->setAccessibleName(AtomString { WebKit::toWTFString(accessibleNameRef) });
 }
 
 WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frameRef)

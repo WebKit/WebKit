@@ -134,8 +134,7 @@ WebKitDOMNode* webkit_dom_html_options_collection_named_item(WebKitDOMHTMLOption
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OPTIONS_COLLECTION(self), 0);
     g_return_val_if_fail(name, 0);
     WebCore::HTMLOptionsCollection* item = WebKit::core(self);
-    WTF::String convertedName = WTF::String::fromUTF8(name);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->namedItem(convertedName));
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->namedItem(WTF::AtomString::fromUTF8(name)));
     return WebKit::kit(gobjectResult.get());
 }
 

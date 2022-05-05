@@ -74,7 +74,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         // Workaround for <rdar://problem/8757088>, can be removed once that is fixed.
         unsigned textEncodingNameLength = m_textEncodingName.length();
         if (textEncodingNameLength >= 2 && m_textEncodingName[0U] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
-            m_textEncodingName = m_textEncodingName.string().substring(1, textEncodingNameLength - 2);
+            m_textEncodingName = StringView { m_textEncodingName }.substring(1, textEncodingNameLength - 2).toAtomString();
 
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
@@ -95,7 +95,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     if (m_initLevel < AllFields && initLevel == AllFields) {
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
-            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(httpResponse)).get()).convertToASCIIUppercase();
+            m_httpVersion = AtomString { String(adoptCF(CFHTTPMessageCopyVersion(httpResponse)).get()).convertToASCIIUppercase() };
 
             RetainPtr<CFStringRef> statusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(httpResponse));
             m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(statusLine.get());

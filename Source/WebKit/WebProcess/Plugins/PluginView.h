@@ -182,7 +182,7 @@ private:
     void pageMutedStateDidChange() override;
 
     // PluginController
-    void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
+    void loadURL(uint64_t requestID, const String& method, const String& urlString, const AtomString& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
     float contentsScaleFactor() override;
 
     void didInitializePlugin() override;

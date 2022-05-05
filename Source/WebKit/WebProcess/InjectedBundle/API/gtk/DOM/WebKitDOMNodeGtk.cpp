@@ -438,8 +438,7 @@ gchar* webkit_dom_node_lookup_prefix(WebKitDOMNode* self, const gchar* namespace
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     g_return_val_if_fail(namespaceURI, 0);
     WebCore::Node* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    gchar* result = convertToUTF8String(item->lookupPrefix(convertedNamespaceURI));
+    gchar* result = convertToUTF8String(item->lookupPrefix(WTF::AtomString::fromUTF8(namespaceURI)));
     return result;
 }
 
@@ -449,8 +448,7 @@ gchar* webkit_dom_node_lookup_namespace_uri(WebKitDOMNode* self, const gchar* pr
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     g_return_val_if_fail(prefix, 0);
     WebCore::Node* item = WebKit::core(self);
-    WTF::String convertedPrefix = WTF::String::fromUTF8(prefix);
-    gchar* result = convertToUTF8String(item->lookupNamespaceURI(convertedPrefix));
+    gchar* result = convertToUTF8String(item->lookupNamespaceURI(WTF::AtomString::fromUTF8(prefix)));
     return result;
 }
 
@@ -460,8 +458,7 @@ gboolean webkit_dom_node_is_default_namespace(WebKitDOMNode* self, const gchar* 
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), FALSE);
     g_return_val_if_fail(namespaceURI, FALSE);
     WebCore::Node* item = WebKit::core(self);
-    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
-    gboolean result = item->isDefaultNamespace(convertedNamespaceURI);
+    gboolean result = item->isDefaultNamespace(WTF::AtomString::fromUTF8(namespaceURI));
     return result;
 }
 

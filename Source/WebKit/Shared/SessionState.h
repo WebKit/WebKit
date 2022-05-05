@@ -99,7 +99,7 @@ public:
     String urlString;
     String originalURLString;
     String referrer;
-    String target;
+    AtomString target;
 
     std::optional<Vector<uint8_t>> stateObjectData;
 

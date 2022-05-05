@@ -45,7 +45,7 @@ public:
     // fails to load, Plugin::frameDidFailToLoad will be called.
     //
     // If the URL is a JavaScript URL, the JavaScript code will be evaluated and the result sent back using Plugin::didEvaluateJavaScript.
-    virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
+    virtual void loadURL(uint64_t requestID, const String& method, const String& urlString, const AtomString& target,
                          const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) = 0;
 
     // Returns the contents scale factor.

@@ -209,11 +209,11 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 {
     RELEASE_ASSERT(is<Element>(target));
 
-    auto dispatchOverOrOutEvent = [&](const String& type, EventTarget* target) {
+    auto dispatchOverOrOutEvent = [&](const AtomString& type, EventTarget* target) {
         dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view), target);
     };
 
-    auto dispatchEnterOrLeaveEvent = [&](const String& type, Element& targetElement) {
+    auto dispatchEnterOrLeaveEvent = [&](const AtomString& type, Element& targetElement) {
         bool hasCapturingListenerInHierarchy = false;
         for (RefPtr<ContainerNode> currentNode = &targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
             if (currentNode->hasCapturingEventListeners(type)) {

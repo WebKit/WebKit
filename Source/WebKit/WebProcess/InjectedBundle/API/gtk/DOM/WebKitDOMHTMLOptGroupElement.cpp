@@ -201,8 +201,7 @@ void webkit_dom_html_opt_group_element_set_label(WebKitDOMHTMLOptGroupElement* s
     g_return_if_fail(WEBKIT_DOM_IS_HTML_OPT_GROUP_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLOptGroupElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::labelAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::labelAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

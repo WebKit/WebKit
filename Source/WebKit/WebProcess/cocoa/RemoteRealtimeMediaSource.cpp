@@ -53,14 +53,14 @@ static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
     }
 }
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(toSourceType(device.type()), WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
 }
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, String&& name, String&& hashSalt, UserMediaCaptureManager& manager)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager)
     : RealtimeMediaSource(toSourceType(proxy.device().type()), WTFMove(name), String { proxy.device().persistentId() }, WTFMove(hashSalt), proxy.pageIdentifier())
     , m_proxy(WTFMove(proxy))
     , m_manager(manager)
@@ -77,7 +77,7 @@ void RemoteRealtimeMediaSource::createRemoteMediaSource()
 
         setSettings(WTFMove(settings));
         setCapabilities(WTFMove(capabilities));
-        setName(String { m_settings.label().string() });
+        setName(m_settings.label());
 
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())

@@ -659,13 +659,13 @@ AtomString AppendPipeline::generateTrackId(StreamType streamType, int padIndex)
 {
     switch (streamType) {
     case Audio:
-        return makeString("A", padIndex);
+        return makeAtomString('A', padIndex);
     case Video:
-        return makeString("V", padIndex);
+        return makeAtomString('V', padIndex);
     case Text:
-        return makeString("T", padIndex);
+        return makeAtomString('T', padIndex);
     default:
-        return makeString("O", padIndex);
+        return makeAtomString('O', padIndex);
     }
 }
 

@@ -217,7 +217,7 @@ private:
     bool canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const String& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::Frame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
 
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) final;
     void redirectDataToPlugin(WebCore::Widget&) final;

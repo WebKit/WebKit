@@ -537,15 +537,15 @@ void ResourceHandle::handleDataURL()
     if (mediaType.isEmpty())
         mediaType = "text/plain"_s;
 
-    String mimeType = extractMIMETypeFromMediaType(mediaType);
-    StringView charset = extractCharsetFromMediaType(mediaType);
+    auto mimeType = extractMIMETypeFromMediaType(mediaType);
+    auto charset = extractCharsetFromMediaType(mediaType);
 
     if (charset.isEmpty())
         charset = "US-ASCII"_s;
 
     ResourceResponse response;
-    response.setMimeType(mimeType);
-    response.setTextEncodingName(charset.toString());
+    response.setMimeType(AtomString { mimeType });
+    response.setTextEncodingName(charset.toAtomString());
     response.setURL(d->m_firstRequest.url());
 
     if (base64) {

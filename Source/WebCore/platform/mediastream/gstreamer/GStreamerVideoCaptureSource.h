@@ -51,7 +51,7 @@ public:
     void sourceCapsChanged(const GstCaps*) final;
 
 protected:
-    GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
+    GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, String&& hashSalt, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
     GStreamerVideoCaptureSource(GStreamerCaptureDevice, String&& hashSalt);
     virtual ~GStreamerVideoCaptureSource();
     void startProducingData() override;

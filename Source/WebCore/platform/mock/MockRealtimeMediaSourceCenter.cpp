@@ -191,7 +191,7 @@ public:
             UNUSED_PARAM(pageIdentifier);
             return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalt), constraints);
 #else
-            return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+            return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
 #endif
             break;
         case CaptureDevice::DeviceType::Microphone:

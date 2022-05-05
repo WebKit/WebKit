@@ -38,7 +38,7 @@
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     [ImplementedAs=compassHeading] readonly attribute unrestricted double? webkitCompassHeading;
     [ImplementedAs=compassAccuracy] readonly attribute unrestricted double? webkitCompassAccuracy;
-    undefined initDeviceOrientationEvent(optional DOMString type = "",
+    undefined initDeviceOrientationEvent(optional [AtomString] DOMString type = "",
                                     optional boolean bubbles = false,
                                     optional boolean cancelable = false,
                                     optional unrestricted double? alpha = null,

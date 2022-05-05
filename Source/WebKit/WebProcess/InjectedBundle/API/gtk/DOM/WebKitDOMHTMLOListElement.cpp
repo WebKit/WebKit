@@ -235,8 +235,7 @@ void webkit_dom_html_o_list_element_set_type_attr(WebKitDOMHTMLOListElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_O_LIST_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLOListElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -113,7 +113,7 @@ private:
     void addUserStyleSheetInternal(InjectedBundleScriptWorld&, const std::optional<uint64_t>& userStyleSheetIdentifier, WebCore::UserStyleSheet&&);
     void removeUserStyleSheetInternal(InjectedBundleScriptWorld&, uint64_t userStyleSheetIdentifier);
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier, const String& name);
+    void addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier, const AtomString& name);
     void removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier);
 #endif
 

@@ -1624,7 +1624,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *doc
     m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const String& name, HTMLFrameOwnerElement& ownerElement)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
 {
     auto* webPage = m_frame->page();
 

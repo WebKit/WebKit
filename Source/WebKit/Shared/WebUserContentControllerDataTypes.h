@@ -60,7 +60,7 @@ struct WebScriptMessageHandlerData {
 
     uint64_t identifier;
     ContentWorldIdentifier worldIdentifier;
-    String name;
+    AtomString name;
 };
 
 } // namespace WebKit

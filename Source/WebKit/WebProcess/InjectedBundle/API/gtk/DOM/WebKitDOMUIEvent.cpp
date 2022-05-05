@@ -203,8 +203,7 @@ void webkit_dom_ui_event_init_ui_event(WebKitDOMUIEvent* self, const gchar* type
     g_return_if_fail(type);
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(view));
     WebCore::UIEvent* item = WebKit::core(self);
-    WTF::String convertedType = WTF::String::fromUTF8(type);
-    item->initUIEvent(convertedType, canBubble, cancelable, WebKit::toWindowProxy(view), detail);
+    item->initUIEvent(WTF::AtomString::fromUTF8(type), canBubble, cancelable, WebKit::toWindowProxy(view), detail);
 }
 
 WebKitDOMDOMWindow* webkit_dom_ui_event_get_view(WebKitDOMUIEvent* self)

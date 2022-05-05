@@ -1833,7 +1833,7 @@ void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint do
     auto mouseEvent = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         MonotonicTime::now(), nullptr, singleClick, screenPoint, documentPoint, { }, { }, 0, 0, nullptr, 0, WebCore::NoTap);
 
-    mainFrame->loader().changeLocation(mainFrameDocument->completeURL(url), emptyString(), mouseEvent.ptr(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
+    mainFrame->loader().changeLocation(mainFrameDocument->completeURL(url), emptyAtom(), mouseEvent.ptr(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
 void WebPage::stopLoadingFrame(FrameIdentifier frameID)
@@ -7451,7 +7451,7 @@ void WebPage::voicesDidChange()
 void WebPage::insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&& callback)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    frame->editor().insertAttachment(identifier, WTFMove(fileSize), fileName, contentType);
+    frame->editor().insertAttachment(identifier, WTFMove(fileSize), AtomString { fileName }, AtomString { contentType });
     callback();
 }
 
@@ -7459,7 +7459,7 @@ void WebPage::updateAttachmentAttributes(const String& identifier, std::optional
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
-        attachment->updateAttributes(WTFMove(fileSize), contentType, fileName);
+        attachment->updateAttributes(WTFMove(fileSize), AtomString { contentType }, AtomString { fileName });
         attachment->updateEnclosingImageWithData(contentType, enclosingImageData.safeBuffer());
     }
     callback();

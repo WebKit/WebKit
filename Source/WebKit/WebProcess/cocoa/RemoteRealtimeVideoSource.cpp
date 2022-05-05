@@ -43,11 +43,11 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& 
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
-    : RemoteRealtimeMediaSource(identifier, device, constraints, String { device.label() }, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier)
+    : RemoteRealtimeMediaSource(identifier, device, constraints, AtomString { device.label() }, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
 }
 
-RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, String&& name, String&& hashSalt, UserMediaCaptureManager& manager)
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager)
     : RemoteRealtimeMediaSource(WTFMove(proxy), WTFMove(name), WTFMove(hashSalt), manager)
 {
 }
@@ -73,7 +73,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
     if (isEnded() || proxy().isEnded())
         return *this;
 
-    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), String { name() }, deviceIDHashSalt(), manager()));
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), AtomString { name() }, deviceIDHashSalt(), manager()));
 
     source->setSettings(RealtimeMediaSourceSettings { settings() });
     source->setCapabilities(RealtimeMediaSourceCapabilities { capabilities() });
