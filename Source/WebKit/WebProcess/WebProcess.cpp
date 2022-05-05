@@ -191,7 +191,6 @@
 #if ENABLE(GPU_PROCESS)
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
-#include "GPUProcessConnectionInfo.h"
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -1297,55 +1296,13 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
-#if !PLATFORM(COCOA)
-void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters&)
-{
-}
-#endif
-
-GPUProcessConnectionInfo WebProcess::getGPUProcessConnection(IPC::Connection& connection)
-{
-    GPUProcessConnectionParameters parameters;
-    platformInitializeGPUProcessConnectionParameters(parameters);
-
-    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
-
-    GPUProcessConnectionInfo connectionInfo;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
-        // If we failed the first time, retry once. The attachment may have become invalid
-        // before it was received by the web process if the network process crashed.
-        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
-            failedToSendSyncMessage();
-    }
-
-    return connectionInfo;
-}
-
 GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
     // If we've lost our connection to the GPU process (e.g. it crashed) try to re-establish it.
     if (!m_gpuProcessConnection) {
-        auto connectionInfo = getGPUProcessConnection(*parentProcessConnection());
-
-        // Retry once if the IPC to get the connectionIdentifier succeeded but the connectionIdentifier we received
-        // is invalid. This may indicate that the GPU process has crashed.
-        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
-            connectionInfo = getGPUProcessConnection(*parentProcessConnection());
-
-        if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
-            CRASH();
-
-        m_gpuProcessConnection = GPUProcessConnection::create(connectionInfo.releaseIdentifier(), connectionInfo.parameters);
-#if HAVE(AUDIT_TOKEN)
-        ASSERT(connectionInfo.auditToken);
-        m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
-#endif
-#if ENABLE(IPC_TESTING_API)
-        if (parentProcessConnection()->ignoreInvalidMessageForTesting())
-            m_gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
-#endif
+        m_gpuProcessConnection = GPUProcessConnection::create(*parentProcessConnection());
 
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.

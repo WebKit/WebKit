@@ -27,7 +27,6 @@
 #import "WebProcess.h"
 
 #import "AccessibilitySupportSPI.h"
-#import "GPUProcessConnectionParameters.h"
 #import "LaunchServicesDatabaseManager.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
@@ -1245,15 +1244,6 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
         }
     }
 }
-
-#if ENABLE(GPU_PROCESS)
-void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters& parameters)
-{
-    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
-
-    parameters.overrideLanguages = userPreferredLanguagesOverride();
-}
-#endif
 
 #if PLATFORM(MAC)
 void WebProcess::systemWillPowerOn()

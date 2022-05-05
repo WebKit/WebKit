@@ -143,8 +143,6 @@ class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
 
-struct GPUProcessConnectionInfo;
-struct GPUProcessConnectionParameters;
 struct RemoteWorkerInitializationData;
 struct UserMessage;
 struct WebProcessCreationParameters;
@@ -584,11 +582,6 @@ private:
 
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
-#endif
-
-#if ENABLE(GPU_PROCESS)
-    static GPUProcessConnectionInfo getGPUProcessConnection(IPC::Connection&);
-    static void platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters&);
 #endif
 
 #if ENABLE(VIDEO)

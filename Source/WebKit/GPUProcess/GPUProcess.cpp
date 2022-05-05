@@ -33,7 +33,6 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
-#include "GPUProcessConnectionInitializationParameters.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessProxyMessages.h"
@@ -116,16 +115,25 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
-void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&, GPUProcessConnectionInitializationParameters&&)>&& completionHandler)
+static IPC::Connection::Identifier asConnectionIdentifier(IPC::Attachment&& connectionHandle)
+{
+#if USE(UNIX_DOMAIN_SOCKETS)
+    return IPC::Connection::Identifier { connectionHandle.release().release() };
+#elif OS(DARWIN)
+    return IPC::Connection::Identifier { connectionHandle.port() };
+#elif OS(WINDOWS)
+    return IPC::Connection::Identifier { connectionHandle.handle() };
+#else
+    notImplemented();
+    return IPC::Connection::Identifier { };
+#endif
+}
+
+void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
-    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
-    if (!connectionIdentifiers) {
-        completionHandler({ }, { });
-        return;
-    }
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, connectionIdentifiers->server, sessionID, WTFMove(parameters));
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, asConnectionIdentifier(WTFMove(connectionIdentifier)), WTFMove(parameters));
 
 #if ENABLE(MEDIA_STREAM)
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
@@ -142,11 +150,8 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
-    GPUProcessConnectionInitializationParameters connectionParameters;
-#if ENABLE(VP9)
-    connectionParameters.hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
-#endif
-    completionHandler(WTFMove(connectionIdentifiers->client), WTFMove(connectionParameters));
+
+    completionHandler();
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)

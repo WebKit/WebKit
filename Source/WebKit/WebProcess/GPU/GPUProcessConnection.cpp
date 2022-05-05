@@ -31,7 +31,9 @@
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
-#include "GPUProcessConnectionInitializationParameters.h"
+#include "GPUProcessConnectionInfo.h"
+#include "GPUProcessConnectionMessages.h"
+#include "GPUProcessConnectionParameters.h"
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "Logging.h"
@@ -53,6 +55,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageMessages.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Language.h>
@@ -106,11 +109,34 @@ static void languagesChanged(void* context)
     static_cast<GPUProcessConnection*>(context)->connection().send(Messages::GPUConnectionToWebProcess::SetUserPreferredLanguages(userPreferredLanguages()), { });
 }
 
-GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectionIdentifier, const GPUProcessConnectionInitializationParameters& parameters)
-    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
-#if ENABLE(VP9)
-    , m_hasVP9HardwareDecoder(parameters.hasVP9HardwareDecoder)
+static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
+{
+    GPUProcessConnectionParameters parameters;
+#if PLATFORM(COCOA)
+    parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
+    parameters.overrideLanguages = userPreferredLanguagesOverride();
 #endif
+    return parameters;
+}
+
+RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& parentConnection)
+{
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers)
+        return nullptr;
+
+    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(connectionIdentifiers->client, getGPUProcessConnectionParameters()), 0);
+
+    auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
+#if ENABLE(IPC_TESTING_API)
+    if (parentConnection.ignoreInvalidMessageForTesting())
+        instance->connection().setIgnoreInvalidMessageForTesting();
+#endif
+    return instance;
+}
+
+GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
+    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
 {
     m_connection->open();
 
@@ -131,6 +157,21 @@ GPUProcessConnection::~GPUProcessConnection()
         m_audioSourceProviderManager->stopListeningForIPC();
 #endif
     removeLanguageChangeObserver(this);
+}
+
+#if HAVE(AUDIT_TOKEN)
+std::optional<audit_token_t> GPUProcessConnection::auditToken()
+{
+    if (!waitForDidInitialize())
+        return std::nullopt;
+    return m_auditToken;
+}
+#endif
+
+void GPUProcessConnection::invalidate()
+{
+    m_connection->invalidate();
+    m_hasInitialized = true;
 }
 
 void GPUProcessConnection::didClose(IPC::Connection&)
@@ -260,6 +301,30 @@ bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC:
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
+void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>&& info)
+{
+    if (!info) {
+        invalidate();
+        return;
+    }
+    m_hasInitialized = true;
+#if ENABLE(VP9)
+    m_hasVP9HardwareDecoder = info->hasVP9HardwareDecoder;
+#endif
+}
+
+bool GPUProcessConnection::waitForDidInitialize()
+{
+    if (!m_hasInitialized) {
+        bool result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
+        if (!result) {
+            invalidate();
+            return false;
+        }
+    }
+    return m_connection->isValid();
+}
+
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
@@ -316,6 +381,14 @@ void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableV
     m_enableVP9SWDecoder = enableVP9SWDecoder;
     connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(enableVP8Decoder, enableVP9Decoder, enableVP9SWDecoder), { });
 }
+
+bool GPUProcessConnection::hasVP9HardwareDecoder()
+{
+    if (!waitForDidInitialize())
+        return false;
+    return m_hasVP9HardwareDecoder;
+}
+
 #endif
 
 void GPUProcessConnection::updateMediaConfiguration()

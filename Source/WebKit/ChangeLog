@@ -1,3 +1,71 @@
+2022-05-05  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Connecting to GPU process may hang if UI process sends sync message simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=239905
+
+        Reviewed by Chris Dumez.
+
+        Previously, establishing GPU process connection would be a sync message:
+         1. WP -> UI sync GetGPUProcessConnection
+         2. UI -> GPUP async CreateGPUConnectionToWebProcess
+         3. GPUP -> UI async reply CreateGPUConnectionToWebProcess
+         4. UI -> WP sync reply GetGPUProcessConnection
+
+        If UI would send a message to WP after step 3 and wait for reply, this
+        would never come as WP would be waiting for the sync reply for GetGPUProcessConnection.
+
+        This would happen for example with requestAutocorrectionContextWithCompletionHandler,
+        which would send HandleAutocorrectionContextRequest and wait for
+        Messages::WebPageProxy::HandleAutocorrectionContext messages.
+
+        Mitigate this by creating the GPU connection in WP and sending
+        that to GPUP through UI in an async message. This way WP does not block on the GPUP
+        connection initialization. Send the GPUP connection initialization result, audit token and
+        vp9 HW decoder presence, as the first user message through the new connection.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::create):
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::asConnectionIdentifier):
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * Shared/GPUProcessConnectionInitializationParameters.h:
+        (WebKit::GPUProcessConnectionInitializationParameters::decode):
+        * Shared/GPUProcessConnectionParameters.h:
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::createGPUProcessConnection):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createGPUProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createGPUProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::getGPUProcessConnectionParameters):
+        (WebKit::GPUProcessConnection::create):
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        (WebKit::GPUProcessConnection::auditToken):
+        (WebKit::GPUProcessConnection::invalidate):
+        (WebKit::GPUProcessConnection::didInitialize):
+        (WebKit::GPUProcessConnection::waitForDidInitialize):
+        (WebKit::GPUProcessConnection::hasVP9HardwareDecoder):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        * WebProcess/GPU/GPUProcessConnectionInfo.h:
+        (WebKit::GPUProcessConnectionInfo::encode const):
+        (WebKit::GPUProcessConnectionInfo::decode):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2022-05-05  Youenn Fablet  <youenn@apple.com>
 
         SWOriginStore is no longer needed
