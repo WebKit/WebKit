@@ -1,3 +1,26 @@
+2022-05-05  Ziran Sun  <zsun@igalia.com>
+
+        <input type=color> should have box-sizing: border-box in UA stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=197878
+
+        Reviewed by Tim Nguyen.
+
+        As discussed at [1], We should have box-sizing: border-box for <input type=color>, the same
+        as buttons. WebKit currently has content-box. This patch is to change it to box-box.
+
+        Since <input type=color> is disabled with WebKitLegacy [2], this fix doesn't apply to it. Hence,
+        for mac-wk1 platform, the test expectation for html/rendering/non-replaced-elements/form-controls/resets.html
+        stays as it is.        
+
+        [1] https://github.com/whatwg/html/issues/4281
+        [2] https://webkit-search.igalia.com/webkit/source/Source/WTF/Scripts/Preferences/WebPreferencesInternal.yaml#425-437
+
+        
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::colorInputStyleSheet const):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::colorInputStyleSheet const):
+
 2022-05-05  Youenn Fablet  <youenn@apple.com>
 
         replaceTrack with different constraints stops sending packets
