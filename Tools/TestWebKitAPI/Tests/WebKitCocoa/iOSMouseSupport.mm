@@ -37,6 +37,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WebKit.h>
+#import <pal/spi/cocoa/RevealSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
@@ -70,6 +71,7 @@
 
 @interface WKContentView ()
 - (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer;
+- (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler;
 @end
 
 @interface WKTestingEvent : UIEvent
@@ -164,6 +166,25 @@ TEST(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
     [webView _doAfterProcessingAllPendingMouseEvents:^{
         NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.getSelection().isCollapsed"];
         EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"emptyTable"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('target'))"];
+
+    auto contentView = [webView wkContentView];
+
+    __block bool done = false;
+    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 10) completionHandler:^(BOOL, RVItem *) {
+        NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.getSelection().isCollapsed"];
+        EXPECT_FALSE([result boolValue]);
         done = true;
     }];
 

@@ -1,3 +1,16 @@
+2022-05-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        Right click using trackpad crashes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=240030
+        rdar://91786269
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/emptyTable.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (TEST):
+
 2022-05-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitbugspy] Include mocks in package
