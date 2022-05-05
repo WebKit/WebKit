@@ -272,7 +272,9 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         GraphicsContextStateSaver checkedStateSaver(graphicsContext);
         graphicsContext.translate(fieldRect.x(), fieldRect.y());
         graphicsContext.scale(FloatSize::narrowPrecision(fieldRect.width() / toggleSize, fieldRect.height() / toggleSize));
-        if (states.states().contains(ControlStates::States::Checked)) {
+        if (states.states().contains(ControlStates::States::Indeterminate))
+            path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
+        else {
             path.moveTo({ 2.43, 6.57 });
             path.addLineTo({ 7.5, 11.63 });
             path.addLineTo({ 14, 5 });
@@ -280,8 +282,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
             path.addLineTo({ 7.5, 7.38 });
             path.addLineTo({ 4.56, 4.44 });
             path.closeSubpath();
-        } else
-            path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
+        }
 
         graphicsContext.setFillColor(foregroundColor);
 

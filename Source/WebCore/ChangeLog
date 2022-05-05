@@ -1,3 +1,26 @@
+2022-05-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        Indeterminate, checked checkboxes do not render correctly on iOS, GTK, and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=240015
+        rdar://92645056
+
+        Reviewed by Cameron McCormack.
+
+        Checkboxes can have the indeterminate and checked attributes set to
+        true at the same time. In this scenario, an indeterminate appearance
+        should be rendered. Reorder logic to ensure that the indeterminate
+        attribute has precedence when deciding what to draw. This approach
+        aligns with the macOS logic in ThemeMac.
+
+        Test: fast/forms/checkbox-checked-indeterminate.html
+
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::paintCheckbox):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintCheckbox):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::determineState):
+
 2022-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] ScreenCaptureKitCaptureSource should stop content sharing session when capture ends

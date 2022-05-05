@@ -443,10 +443,10 @@ unsigned RenderThemeWin::determineState(const RenderObject& o)
         result = TS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOVER;
-    if (isChecked(o))
-        result += 4; // 4 unchecked states, 4 checked states.
-    else if (isIndeterminate(o) && appearance == CheckboxPart)
+    if (isIndeterminate(o) && appearance == CheckboxPart)
         result += 8;
+    else if (isChecked(o))
+        result += 4; // 4 unchecked states, 4 checked states.
     return result;
 }
 
