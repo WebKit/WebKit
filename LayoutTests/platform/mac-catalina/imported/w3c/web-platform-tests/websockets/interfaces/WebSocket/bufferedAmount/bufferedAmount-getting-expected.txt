@@ -1,3 +1,0 @@
-
-FAIL WebSockets: bufferedAmount after send()ing assert_true: bufferedAmount after received "x" expected true got false
-

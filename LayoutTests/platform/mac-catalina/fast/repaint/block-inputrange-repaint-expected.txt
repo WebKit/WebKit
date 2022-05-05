@@ -1,5 +1,0 @@
-FAIL repaintRects.indexOf('493 8 17 17') should not be -1.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

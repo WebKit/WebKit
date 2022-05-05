@@ -1,4 +1,0 @@
-
-PASS Setup worker
-PASS Open a WebSocket in service worker
-
