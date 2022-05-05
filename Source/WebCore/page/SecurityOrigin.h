@@ -28,9 +28,11 @@
 
 #pragma once
 
+#include "ProcessQualified.h"
 #include "SecurityOriginData.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
+#include <wtf/Markable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -155,7 +157,7 @@ public:
     // There's a subtle difference between a unique origin and an origin that
     // has the SandboxOrigin flag set. The latter implies the former, and, in
     // addition, the SandboxOrigin flag is inherited by iframes.
-    bool isUnique() const { return m_isUnique; }
+    bool isUnique() const { return !!m_uniqueOriginIdentifier; }
 
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
@@ -225,10 +227,13 @@ private:
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
 
+    enum UniqueOriginIdentifierType { };
+    using UniqueOriginIdentifier = ProcessQualified<ObjectIdentifier<UniqueOriginIdentifierType>>;
+
     SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    bool m_isUnique { false };
+    Markable<UniqueOriginIdentifier, UniqueOriginIdentifier::MarkableTraits> m_uniqueOriginIdentifier;
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
@@ -249,7 +254,7 @@ template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) con
     encoder << m_data;
     encoder << m_domain;
     encoder << m_filePath;
-    encoder << m_isUnique;
+    encoder << m_uniqueOriginIdentifier;
     encoder << m_universalAccess;
     encoder << m_domainWasSetInDOM;
     encoder << m_canLoadLocalResources;
@@ -273,7 +278,7 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
         return nullptr;
     if (!decoder.decode(origin->m_filePath))
         return nullptr;
-    if (!decoder.decode(origin->m_isUnique))
+    if (!decoder.decode(origin->m_uniqueOriginIdentifier))
         return nullptr;
     if (!decoder.decode(origin->m_universalAccess))
         return nullptr;

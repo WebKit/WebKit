@@ -120,8 +120,9 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
 
 void BroadcastChannel::MainThreadBridge::registerChannel()
 {
-    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto& document) {
-        m_origin = PartitionedSecurityOrigin { shouldPartitionOrigin(document) ? document.topOrigin() : document.securityOrigin(), document.securityOrigin() };
+    auto securityOrigin = m_broadcastChannel->scriptExecutionContext()->securityOrigin()->isolatedCopy();
+    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier(), securityOrigin = WTFMove(securityOrigin)](auto& document) {
+        m_origin = PartitionedSecurityOrigin { shouldPartitionOrigin(document) ? Ref { document.topOrigin() } : securityOrigin.copyRef(), securityOrigin.copyRef() };
         if (auto* page = document.page())
             page->broadcastChannelRegistry().registerChannel(*m_origin, m_name, m_identifier);
         channelToContextIdentifier().add(m_identifier, contextIdentifier);

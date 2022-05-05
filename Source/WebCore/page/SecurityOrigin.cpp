@@ -195,7 +195,7 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 SecurityOrigin::SecurityOrigin()
     : m_data { emptyString(), emptyString(), std::nullopt }
     , m_domain { emptyString() }
-    , m_isUnique { true }
+    , m_uniqueOriginIdentifier { UniqueOriginIdentifier::generateThreadSafe() }
     , m_isPotentiallyTrustworthy { false }
 {
 }
@@ -204,7 +204,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_data { other->m_data.isolatedCopy() }
     , m_domain { other->m_domain.isolatedCopy() }
     , m_filePath { other->m_filePath.isolatedCopy() }
-    , m_isUnique { other->m_isUnique }
+    , m_uniqueOriginIdentifier { other->m_uniqueOriginIdentifier }
     , m_universalAccess { other->m_universalAccess }
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
     , m_canLoadLocalResources { other->m_canLoadLocalResources }
@@ -277,7 +277,7 @@ bool SecurityOrigin::isSameOriginDomain(const SecurityOrigin& other) const
         return true;
 
     if (isUnique() || other.isUnique())
-        return false;
+        return m_uniqueOriginIdentifier == other.m_uniqueOriginIdentifier;
 
     // Here are two cases where we should permit access:
     //
@@ -432,7 +432,7 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
         return true;
 
     if (isUnique() || other.isUnique())
-        return false;
+        return m_uniqueOriginIdentifier == other.m_uniqueOriginIdentifier;
 
     return isSameSchemeHostPort(other);
 }
@@ -575,6 +575,9 @@ bool SecurityOrigin::equal(const SecurityOrigin* other) const
 {
     if (other == this)
         return true;
+
+    if (isUnique() || other->isUnique())
+        return m_uniqueOriginIdentifier == other->m_uniqueOriginIdentifier;
     
     if (!isSameSchemeHostPort(*other))
         return false;
