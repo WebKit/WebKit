@@ -414,7 +414,7 @@ private:
     void playerContentBoxRectChanged(const WebCore::LayoutRect&) final;
 
 #if PLATFORM(COCOA)
-    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
+    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return m_manager.gpuProcessConnection().videoFrameObjectHeapProxy(); }
 
@@ -467,10 +467,6 @@ private:
     std::optional<bool> m_shouldMaintainAspectRatio;
     std::optional<bool> m_pageIsVisible;
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
-#if PLATFORM(COCOA)
-    RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;
-    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
-#endif
     std::optional<WebCore::VideoFrameMetadata> m_videoFrameMetadata;
     bool m_isGatheringVideoFrameMetadata { false };
 };

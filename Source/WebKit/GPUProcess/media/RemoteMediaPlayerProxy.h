@@ -329,7 +329,7 @@ private:
     void startVideoFrameMetadataGathering();
     void stopVideoFrameMetadataGathering();
 #if PLATFORM(COCOA)
-    void mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
+    void mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&);
 #endif
 
     void playerContentBoxRectChanged(const WebCore::LayoutRect&);

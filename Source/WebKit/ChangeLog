@@ -1,3 +1,30 @@
+2022-05-05  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Cocoa] Remove use of CVPixelBufferConformer from WebContent process in MediaPlayerPrivateRemote::nativeImageForCurrentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=240108
+        <rdar://problem/92773611>
+
+        Reviewed by Simon Fraser.
+
+        CVPixelBufferConformer makes use of hardware acceleration to perform colorspace conversions,
+        and these calls fail when IOKit access is blocked from the WebContent sandbox. The use of
+        CVPixelBufferConformer (via PixelBufferConformerCV) in nativeImageForCurrentTime() is a
+        convenince when a web page is using rVFC() to avoid a call into the GPU process when that
+        callback results in a video->canvas paint. However, this convenience is not strictly necessary,
+        and by reverting this optimization, the conformance of the resulting pixel buffer is
+        performed upon request in the GPU process instead.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::stopVideoFrameMetadataGathering):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::pushVideoFrameMetadata):
+        (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime):
+
 2022-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize IPC Decoding for primitive types
