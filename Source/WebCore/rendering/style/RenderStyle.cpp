@@ -1527,7 +1527,7 @@ static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const 
     case PathOperation::Shape:
         return downcast<ShapePathOperation>(operation).pathForReferenceRect(box);
     case PathOperation::Reference:
-        if (!is<SVGPathElement>(downcast<ReferencePathOperation>(operation).element()) && !is<SVGGeometryElement>(downcast<ReferencePathOperation>(operation).element()))
+        if (!downcast<ReferencePathOperation>(operation).element() || (!is<SVGPathElement>(downcast<ReferencePathOperation>(operation).element()) && !is<SVGGeometryElement>(downcast<ReferencePathOperation>(operation).element())))
             return std::nullopt;
         return pathFromGraphicsElement(downcast<ReferencePathOperation>(operation).element());
     case PathOperation::Box:

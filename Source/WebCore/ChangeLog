@@ -1,3 +1,16 @@
+2022-05-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Add check if referenced element is SVG for clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=240096
+
+        Reviewed by Simon Fraser.
+
+        Add check when creating new ReferencePathOperation that it is referencing
+        an svg element.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertPathOperation):
+
 2022-05-05  Cameron McCormack  <heycam@apple.com>
 
         Avoid using WebCore::Colors created with out-of-line components in DrawGlyphsRecorder
