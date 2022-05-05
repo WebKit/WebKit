@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitbugspy',
-    version='0.5.4',
+    version='0.6.0',
     description='Library containing a shared API for various bug trackers.',
     long_description=readme(),
     classifiers=[
@@ -49,6 +49,8 @@ setup(
     license='Modified BSD',
     packages=[
         'webkitbugspy',
+        'webkitbugspy.mocks',
+        'webkitbugspy.tests',
     ],
     install_requires=[
         'webkitcorepy',

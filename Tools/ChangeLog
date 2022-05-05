@@ -1,3 +1,14 @@
+2022-05-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Include mocks in package
+        https://bugs.webkit.org/show_bug.cgi?id=240098
+        <rdar://problem/92763124>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitbugspy/setup.py:
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py:
+
 2022-05-05  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Fetch alternate remotes when adding remote
