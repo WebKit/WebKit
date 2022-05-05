@@ -1,5 +1,18 @@
 2022-05-05  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, reverting r293697.
+
+        Mergred to branch, not needed on trunk
+
+        Reverted changeset:
+
+        "Revert all use of
+        _setPrivacyProxyFailClosedForUnreachableNonMainHosts"
+        https://bugs.webkit.org/show_bug.cgi?id=239977
+        https://commits.webkit.org/r293697
+
+2022-05-05  Alex Christensen  <achristensen@webkit.org>
+
         Allow hw.cpu64bit_capable sysctl-read in network process sandbox on iOS
         https://bugs.webkit.org/show_bug.cgi?id=240124
         <rdar://92797350>
