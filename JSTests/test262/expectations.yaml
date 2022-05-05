@@ -1344,9 +1344,27 @@ test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
+test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
+  default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
+  default: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
+  default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
+test/intl402/Locale/getters-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+test/intl402/Locale/likely-subtags-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg») to be true'
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
@@ -1362,6 +1380,78 @@ test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
+test/intl402/NumberFormat/prototype/formatRange/builtin.js:
+  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+test/intl402/NumberFormat/prototype/formatRange/en-US.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRange/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/nan-arguments-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRange/pt-PT.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/x-greater-than-y-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRangeToParts/builtin.js:
+  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+test/intl402/NumberFormat/prototype/formatRangeToParts/en-US.js:
+  default: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
+  strict mode: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
+test/intl402/NumberFormat/prototype/formatRangeToParts/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRangeToParts/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRangeToParts/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRangeToParts/nan-arguments-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRangeToParts/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
+  default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+  strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+test/intl402/PluralRules/prototype/selectRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/PluralRules/prototype/selectRange/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/PluralRules/prototype/selectRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/PluralRules/prototype/selectRange/nan-arguments-throws.js:
+  default: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+test/intl402/PluralRules/prototype/selectRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/PluralRules/prototype/selectRange/x-greater-than-y-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
 test/intl402/Temporal/Duration/compare/relativeto-hour.js:
   default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
