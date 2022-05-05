@@ -210,6 +210,10 @@ ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(const CaptureDevice
 
 ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
+    if (m_contentSharingSession) {
+        [m_contentSharingSession end];
+        m_contentSharingSession = nullptr;
+    }
 }
 
 bool ScreenCaptureKitCaptureSource::start()
@@ -302,6 +306,11 @@ void ScreenCaptureKitCaptureSource::sessionDidChangeContent(RetainPtr<SCContentS
 
 void ScreenCaptureKitCaptureSource::sessionDidEnd(RetainPtr<SCContentSharingSession>)
 {
+    if (m_contentSharingSession) {
+        [m_contentSharingSession end];
+        m_contentSharingSession = nullptr;
+    }
+
     streamFailedWithError(nil, "sessionDidEnd"_s);
 }
 
