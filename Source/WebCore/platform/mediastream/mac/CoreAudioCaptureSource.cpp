@@ -298,9 +298,6 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
 {
     ASSERT(isMainThread());
 
-    if (!isProducingMicrophoneSamples())
-        return noErr;
-
     AURenderCallbackStruct callback = { microphoneCallback, this };
     auto err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback));
     if (err) {

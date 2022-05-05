@@ -1,3 +1,20 @@
+2022-05-05  Youenn Fablet  <youenn@apple.com>
+
+        replaceTrack with different constraints stops sending packets
+        https://bugs.webkit.org/show_bug.cgi?id=239978
+        <rdar://problem/92624773>
+
+        Reviewed by Eric Carlson.
+
+        We should always reconfigure the microphone processor even if we are not using it,
+        as VPIO expects that input and output formats should match.
+
+        Manually tested with https://bugs.webkit.org/show_bug.cgi?id=239978 and https://jsfiddle.net/72qsLw9a/.
+        A follow-up should allow to put more common code between CoreAudioSharedUnit and MockAudioSharedUnit
+        so that we can write a regression test.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+
 2022-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(249114@main) [GTK] Crashes on shutdown if the display is not set
