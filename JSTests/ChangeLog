@@ -1,3 +1,15 @@
+2022-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Temporal.Instant since/until should not accept year / month / day / week units
+        https://bugs.webkit.org/show_bug.cgi?id=240097
+
+        Reviewed by Ross Kirsling.
+
+        * stress/temporal-instant-since-and-until-with-year-month-week-day.js: Added.
+        (shouldThrow):
+        (let.smallestUnit.of.units.shouldThrow):
+        (let.largestUnit.of.units.shouldThrow):
+
 2022-05-04  Keith Miller  <keith_miller@apple.com>
 
         May 2022 test262 update

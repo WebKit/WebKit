@@ -295,18 +295,20 @@ JSValue TemporalInstant::compare(JSGlobalObject* globalObject, JSValue oneValue,
 
 ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, TemporalInstant* other, JSValue optionsValue) const
 {
+    // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.since
+    // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.until
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto smallest = temporalSmallestUnit(globalObject, options, { });
+    auto smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
     RETURN_IF_EXCEPTION(scope, { });
     TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
 
     TemporalUnit defaultLargestUnit = std::min(smallestUnit, TemporalUnit::Second);
-    auto largest = temporalLargestUnit(globalObject, options, { }, defaultLargestUnit);
+    auto largest = temporalLargestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }, defaultLargestUnit);
     RETURN_IF_EXCEPTION(scope, { });
     TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
 

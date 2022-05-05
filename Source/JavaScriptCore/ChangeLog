@@ -1,5 +1,20 @@
 2022-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Temporal.Instant since/until should not accept year / month / day / week units
+        https://bugs.webkit.org/show_bug.cgi?id=240097
+
+        Reviewed by Ross Kirsling.
+
+        Temporal.Instant.{since,until} should not accept year / month / day / week units as smallestUnit / largestUnit
+        according to the spec [1,2]. But we missed that and crashing with the attached test. This patch fixes it.
+
+        [1]: https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.until
+        [2]: https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.since
+
+        * runtime/TemporalInstant.cpp:
+
+2022-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Use decontaminate in StructureID::decode
         https://bugs.webkit.org/show_bug.cgi?id=240088
 

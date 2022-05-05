@@ -1110,15 +1110,9 @@ test/built-ins/Temporal/Instant/prototype/round/smallestunit-plurals-accepted.js
 test/built-ins/Temporal/Instant/prototype/round/smallestunit-string-shorthand.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Instant/prototype/since/largestunit-invalid-string.js:
-  default: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
-test/built-ins/Temporal/Instant/prototype/since/smallestunit-invalid-string.js:
-  default: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1146,12 +1140,6 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offs
 test/built-ins/Temporal/Instant/prototype/toString/year-format.js:
   default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
   strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
-test/built-ins/Temporal/Instant/prototype/until/largestunit-invalid-string.js:
-  default: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "year" is not a valid value for largestUnit Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/until/smallestunit-invalid-string.js:
-  default: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "year" is not a valid value for smallest unit Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
