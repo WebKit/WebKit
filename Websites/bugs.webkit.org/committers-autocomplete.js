@@ -24,7 +24,7 @@
 // DAMAGE.
 
 WebKitCommitters = (function() {
-    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/metadata/contributors.json';
+    var COMMITTERS_URL = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json';
     var m_committers;
 
     function statusToType(status) {
