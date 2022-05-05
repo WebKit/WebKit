@@ -2043,7 +2043,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/context/ServiceWorkerThreadProxy.h
 
     workers/service/server/RegistrationDatabase.h
-    workers/service/server/SWOriginStore.h
     workers/service/server/SWServer.h
     workers/service/server/SWServerRegistration.h
     workers/service/server/SWServerToContextConnection.h

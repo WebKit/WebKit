@@ -1,3 +1,26 @@
+2022-05-05  Youenn Fablet  <youenn@apple.com>
+
+        SWOriginStore is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=240003
+
+        Reviewed by Chris Dumez.
+
+        No observable change, we remove the SWOrigin optimization as its main remaining use
+        is to optimize the case of a page being loaded by service worker instead of app cache which is a tiny edge case.
+
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/ServiceWorker/WebSWOriginStore.cpp: Removed.
+        * NetworkProcess/ServiceWorker/WebSWOriginStore.h: Removed.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWOriginTable.cpp: Removed.
+        * WebProcess/Storage/WebSWOriginTable.h: Removed.
+
 2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         SharedMemory::systemPageSize is redundant function

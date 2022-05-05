@@ -1435,7 +1435,6 @@
 		83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A0ED321F747CC6003299EB /* PreconnectTask.h */; };
 		83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */; };
 		83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */; };
-		83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F1A0781F96E7710045B94E /* WebSWOriginTable.h */; };
 		83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		8644890B27B47020007A1C66 /* _WKSystemPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890A27B47020007A1C66 /* _WKSystemPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1470,8 +1469,6 @@
 		9354242C2703BDCB005CA72C /* WebFileSystemStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */; };
 		9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
 		9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BA04E02151ADF4007F455F /* WebSWServerConnection.h */; };
-		9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BA04DE2151ADF4007F455F /* WebSWOriginStore.h */; };
-		9356F2DF2152B72300E6D5DF /* WebSWOriginStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */; };
 		9356F2E02152B75200E6D5DF /* WebSWServerToContextConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DD2151ADF3007F455F /* WebSWServerToContextConnection.cpp */; };
 		9356F2E12152B76600E6D5DF /* WebSWServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */; };
 		935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */; };
@@ -5690,8 +5687,6 @@
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadClient.h; sourceTree = "<group>"; };
 		83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebValidationMessageClient.cpp; sourceTree = "<group>"; };
 		83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
-		83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginTable.cpp; sourceTree = "<group>"; };
-		83F1A0781F96E7710045B94E /* WebSWOriginTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginTable.h; sourceTree = "<group>"; };
 		83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedStringHashTableReadOnly.cpp; sourceTree = "<group>"; };
 		83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedStringHashTableReadOnly.h; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
@@ -5807,8 +5802,6 @@
 		93BA04DB2151ADF3007F455F /* WebSWServerToContextConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerToContextConnection.h; sourceTree = "<group>"; };
 		93BA04DC2151ADF3007F455F /* WebSWServerToContextConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWServerToContextConnection.messages.in; sourceTree = "<group>"; };
 		93BA04DD2151ADF3007F455F /* WebSWServerToContextConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerToContextConnection.cpp; sourceTree = "<group>"; };
-		93BA04DE2151ADF4007F455F /* WebSWOriginStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginStore.h; sourceTree = "<group>"; };
-		93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginStore.cpp; sourceTree = "<group>"; };
 		93BA04E02151ADF4007F455F /* WebSWServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnection.h; sourceTree = "<group>"; };
 		93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnection.cpp; sourceTree = "<group>"; };
 		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
@@ -10280,8 +10273,6 @@
 				466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */,
 				466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */,
 				466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */,
-				83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */,
-				83F1A0781F96E7710045B94E /* WebSWOriginTable.h */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -11340,8 +11331,6 @@
 				41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */,
 				41D5C6D9238EB20E00B9B3CB /* ServiceWorkerSoftUpdateLoader.cpp */,
 				41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */,
-				93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */,
-				93BA04DE2151ADF4007F455F /* WebSWOriginStore.h */,
 				93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */,
 				93BA04E02151ADF4007F455F /* WebSWServerConnection.h */,
 				93BA04DA2151ADF3007F455F /* WebSWServerConnection.messages.in */,
@@ -15114,8 +15103,6 @@
 				466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */,
 				460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */,
 				C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */,
-				9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */,
-				83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */,
 				9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */,
 				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */,
@@ -17380,7 +17367,6 @@
 				93D6B78A254CD43E0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp in Sources */,
 				517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */,
 				460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */,
-				9356F2DF2152B72300E6D5DF /* WebSWOriginStore.cpp in Sources */,
 				9356F2E12152B76600E6D5DF /* WebSWServerConnection.cpp in Sources */,
 				517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */,
 				9356F2E02152B75200E6D5DF /* WebSWServerToContextConnection.cpp in Sources */,

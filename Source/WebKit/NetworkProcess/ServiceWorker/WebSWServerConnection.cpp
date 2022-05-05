@@ -82,14 +82,10 @@ WebSWServerConnection::WebSWServerConnection(NetworkProcess& networkProcess, SWS
     , m_contentConnection(connection)
     , m_networkProcess(networkProcess)
 {
-    if (auto* session = this->session())
-        session->registerSWServerConnection(*this);
 }
 
 WebSWServerConnection::~WebSWServerConnection()
 {
-    if (auto* session = this->session())
-        session->unregisterSWServerConnection(*this);
     for (const auto& keyValue : m_clientOrigins)
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
     for (auto& completionHandler : m_unregisterJobs.values())
@@ -388,18 +384,30 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin });
 }
 
-void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::matchRegistration(SecurityOriginData&& topOrigin, URL&& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    if (auto* registration = doRegistrationMatching(topOrigin, clientURL)) {
-        callback(registration->data());
-        return;
-    }
-    callback({ });
+    server().whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, topOrigin = WTFMove(topOrigin), clientURL = WTFMove(clientURL), callback = WTFMove(callback)]() mutable {
+        if (!weakThis) {
+            callback({ });
+            return;
+        }
+        if (auto* registration = weakThis->doRegistrationMatching(topOrigin, clientURL)) {
+            callback(registration->data());
+            return;
+        }
+        callback({ });
+    });
 }
 
-void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
+void WebSWServerConnection::getRegistrations(SecurityOriginData&& topOrigin, URL&& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
-    callback(server().getRegistrations(topOrigin, clientURL));
+    server().whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, topOrigin = WTFMove(topOrigin), clientURL = WTFMove(clientURL), callback = WTFMove(callback)]() mutable {
+        if (!weakThis) {
+            callback({ });
+            return;
+        }
+        callback(weakThis->server().getRegistrations(topOrigin, clientURL));
+    });
 }
 
 void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)

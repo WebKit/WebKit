@@ -39,7 +39,6 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
@@ -62,7 +61,6 @@ using namespace WebCore;
 
 WebSWClientConnection::WebSWClientConnection()
     : m_identifier(Process::identifier())
-    , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
 }
 
@@ -78,9 +76,7 @@ IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    runOrDelayTaskForImport([this, jobData] {
-        send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
-    });
+    send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
 }
 
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, WorkerFetchResult&& result)
@@ -130,47 +126,10 @@ void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerReg
     send(Messages::WebSWServerConnection::DidResolveRegistrationPromise { key });
 }
 
-bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData& origin) const
-{
-    if (!m_swOriginTable->isImported())
-        return true;
-
-    return m_swOriginTable->contains(origin);
-}
-
-void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::IPCHandle& ipcHandle)
-{
-    m_swOriginTable->setSharedMemory(ipcHandle.handle);
-}
-
-void WebSWClientConnection::setSWOriginTableIsImported()
-{
-    m_swOriginTable->setIsImported();
-    while (!m_tasksPendingOriginImport.isEmpty())
-        m_tasksPendingOriginImport.takeFirst()();
-}
-
 void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
     ASSERT(isMainRunLoop());
-
-    if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
-        callback(std::nullopt);
-        return;
-    }
-
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(callback));
-    });
-}
-
-void WebSWClientConnection::runOrDelayTaskForImport(Function<void()>&& task)
-{
-    if (m_swOriginTable->isImported()) {
-        task();
-        return;
-    }
-    m_tasksPendingOriginImport.append(WTFMove(task));
+    sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(callback));
 }
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
@@ -199,15 +158,7 @@ void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionCo
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
 {
     ASSERT(isMainRunLoop());
-
-    if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
-        callback({ });
-        return;
-    }
-
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
-    });
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTFMove(callback));
 }
 
 void WebSWClientConnection::connectionToServerLost()

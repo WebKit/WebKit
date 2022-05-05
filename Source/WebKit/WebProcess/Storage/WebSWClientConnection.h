@@ -42,7 +42,6 @@ class ResourceLoader;
 
 namespace WebKit {
 
-class WebSWOriginTable;
 class WebServiceWorkerProvider;
 
 class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::MessageReceiver {
@@ -57,8 +56,6 @@ public:
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    bool mayHaveServiceWorkerRegisteredForOrigin(const WebCore::SecurityOriginData&) const final;
 
     void connectionToServerLost();
 
@@ -110,16 +107,10 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    void setSWOriginTableSharedMemory(const SharedMemory::IPCHandle&);
-    void setSWOriginTableIsImported();
-
     void clear();
 
     WebCore::SWServerConnectionIdentifier m_identifier;
 
-    UniqueRef<WebSWOriginTable> m_swOriginTable;
-
-    Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };
 }; // class WebSWServerConnection
 
