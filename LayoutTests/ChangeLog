@@ -1,5 +1,15 @@
 2022-05-05  Karl Rackler  <rackler@apple.com>
 
+        [ iOS ][ macOS ] imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=240123
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2022-05-05  Karl Rackler  <rackler@apple.com>
+
         [Gardening]REGRESSION (r293506): [ iOS ][ macOS ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=240074
 
