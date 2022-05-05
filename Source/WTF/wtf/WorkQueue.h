@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Seconds.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Threading.h>
 
 #if USE(COCOA_EVENT_LOOP)
@@ -75,6 +76,9 @@ protected:
     OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 #else
     RunLoop* m_runLoop;
+#if ASSERT_ENABLED
+    uint32_t m_threadID { 0 };
+#endif
 #endif
 };
 
@@ -83,8 +87,9 @@ protected:
  * Runnables dispatched to a WorkQueue are required to execute serially.
  * That is, two different runnables dispatched to the WorkQueue should never be allowed to execute simultaneously.
  * They may be executed on different threads but can safely be used by objects that aren't already threadsafe.
+ * Use `assertIsCurrent(m_myQueue);` in a runnable to assert that the runnable runs in a specific queue.
  */
-class WorkQueue : public WorkQueueBase {
+class WTF_CAPABILITY("is current") WorkQueue : public WorkQueueBase {
 public:
     WTF_EXPORT_PRIVATE static WorkQueue& main();
 
@@ -106,7 +111,19 @@ private:
     explicit WorkQueue(RunLoop&);
 #endif
     static Ref<WorkQueue> constructMainWorkQueue();
+
+#if ASSERT_ENABLED
+    WTF_EXPORT_PRIVATE void assertIsCurrent() const;
+    friend void assertIsCurrent(const WorkQueue&);
+#endif
 };
+
+inline void assertIsCurrent(const WorkQueue& workQueue) WTF_ASSERTS_ACQUIRED_CAPABILITY(workQueue)
+{
+#if ASSERT_ENABLED
+    workQueue.assertIsCurrent();
+#endif
+}
 
 /**
  * A ConcurrentWorkQueue unlike a WorkQueue doesn't guarantee the order in which the dispatched runnable will run
@@ -127,3 +144,4 @@ private:
 
 using WTF::WorkQueue;
 using WTF::ConcurrentWorkQueue;
+using WTF::assertIsCurrent;
