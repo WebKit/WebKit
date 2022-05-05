@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <wtf/PageBlock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
@@ -133,14 +134,6 @@ static size_t lowWatermarkPages(FILE* zoneInfoFile)
     return sumLow;
 }
 
-static inline size_t systemPageSize()
-{
-    static size_t pageSize = 0;
-    if (!pageSize)
-        pageSize = sysconf(_SC_PAGE_SIZE);
-    return pageSize;
-}
-
 // If MemAvailable was not present in /proc/meminfo, because it's an old kernel version,
 // we can do the same calculation with the information we have from meminfo and the low watermaks.
 // See https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=34e431b0ae398fc54ea69ff85ec700722c9da773
@@ -153,11 +146,11 @@ static size_t calculateMemoryAvailable(size_t memoryFree, size_t activeFile, siz
     if (lowWatermark == notSet)
         return notSet;
 
-    lowWatermark *= systemPageSize() / KB;
+    lowWatermark *= pageSize() / KB;
 
     // Estimate the amount of memory available for userspace allocations, without causing swapping.
     // Free memory cannot be taken below the low watermark, before the system starts swapping.
-    lowWatermark *= systemPageSize() / KB;
+    lowWatermark *= pageSize() / KB;
     size_t memoryAvailable = memoryFree - lowWatermark;
 
     // Not all the page cache can be freed, otherwise the system will start swapping. Assume at least

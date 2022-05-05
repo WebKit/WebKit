@@ -151,9 +151,6 @@ public:
     Protection protection() const { return m_protection; }
 #endif
 
-    // Return the system page size in bytes.
-    static unsigned systemPageSize();
-
     Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:

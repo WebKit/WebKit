@@ -250,16 +250,6 @@ bool SharedMemory::createHandle(Handle& handle, Protection)
     return true;
 }
 
-unsigned SharedMemory::systemPageSize()
-{
-    static unsigned pageSize = 0;
-
-    if (!pageSize)
-        pageSize = getpagesize();
-
-    return pageSize;
-}
-
 } // namespace WebKit
 
 #endif

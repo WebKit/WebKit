@@ -1,3 +1,17 @@
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        SharedMemory::systemPageSize is redundant function
+        https://bugs.webkit.org/show_bug.cgi?id=240057
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/PageBlock.cpp:
+        (WTF::systemPageSize):
+        Remove pointless static variable from OS(WINDOWS) variant.
+        * wtf/linux/CurrentProcessMemoryStatus.cpp:
+        (WTF::currentProcessMemoryStatus):
+        Remove another redundant implementation.
+
 2022-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         Remove deprecated 'JavaEnabled' feature flag and related code

@@ -345,11 +345,6 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
     return true;
 }
 
-unsigned SharedMemory::systemPageSize()
-{
-    return vm_page_size;
-}
-
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 {
     ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);

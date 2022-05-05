@@ -1,5 +1,25 @@
 2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        SharedMemory::systemPageSize is redundant function
+        https://bugs.webkit.org/show_bug.cgi?id=240057
+
+        Reviewed by Antti Koivisto.
+
+        Remove SharedMemory::systemPageSize().
+        Use WTF::pageSize() from PageBlock.h.
+
+        * Platform/SharedMemory.h:
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        * Platform/win/SharedMemoryWin.cpp:
+        * Shared/SharedStringHashStore.cpp:
+        (WebKit::tableSizeForKeyCount):
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::calculateMemoryAvailable):
+        * mac/WebKit2.order:
+
+2022-05-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Empty remote backing store collection prepare starts up GPU process
         https://bugs.webkit.org/show_bug.cgi?id=240067
 
