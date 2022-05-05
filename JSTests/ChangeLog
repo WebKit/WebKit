@@ -1,3 +1,13 @@
+2022-05-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Temporal.Duration constructor should throw on non-integers
+        https://bugs.webkit.org/show_bug.cgi?id=240094
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
 2022-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Temporal.Instant since/until should not accept year / month / day / week units

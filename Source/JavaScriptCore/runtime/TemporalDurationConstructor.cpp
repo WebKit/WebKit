@@ -92,11 +92,15 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
     ISO8601::Duration result;
     auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalUnits);
     for (size_t i = 0; i < count; i++) {
-        result[i] = callFrame->uncheckedArgument(i).toIntegerOrInfinity(globalObject);
+        JSValue value = callFrame->uncheckedArgument(i);
+        if (value.isUndefined())
+            continue;
+
+        result[i] = value.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!std::isfinite(result[i]))
-            return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be finite"_s);
+        if (!isInteger(result[i]))
+            return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(result), structure)));

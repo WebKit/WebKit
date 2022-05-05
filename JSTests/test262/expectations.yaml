@@ -876,9 +876,6 @@ test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js:
   default: 'TypeError: Right side of assignment cannot be destructured'
   strict mode: 'TypeError: Right side of assignment cannot be destructured'
-test/built-ins/Temporal/Duration/fractional-throws-rangeerror.js:
-  default: 'Test262Error: Duration constructor throws RangeError with fractional value in the years position Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Duration constructor throws RangeError with fractional value in the years position Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/add/argument-string-fractional-units-rounding-mode.js:
   default: 'Test262Error: negative fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
   strict mode: 'Test262Error: negative fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
