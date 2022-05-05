@@ -638,7 +638,6 @@
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
 		2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */; };
 		2D7303791A7C2B7500F8F487 /* WKPageNavigationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7303781A7C2B7500F8F487 /* WKPageNavigationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2D77BF202820BA0D00C9A961 /* WebKit.plist in Copy Feature Flags Plist */ = {isa = PBXBuildFile; fileRef = 1D0530D2259162C900E436F7 /* WebKit.plist */; };
 		2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */; };
@@ -2729,17 +2728,6 @@
 			);
 			name = "Copy Message Generation Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2D77BF1F2820B9F500C9A961 /* Copy Feature Flags Plist */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
-			dstPath = "$(WK_INSTALL_PATH_PREFIX)/$(SYSTEM_LIBRARY_DIR)/FeatureFlags/Domain";
-			dstSubfolderSpec = 0;
-			files = (
-				2D77BF202820BA0D00C9A961 /* WebKit.plist in Copy Feature Flags Plist */,
-			);
-			name = "Copy Feature Flags Plist";
-			runOnlyForDeploymentPostprocessing = 1;
 		};
 		372589431C1E496800C92CA9 /* Copy Shims */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -15782,7 +15770,7 @@
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
-				2D77BF1F2820B9F500C9A961 /* Copy Feature Flags Plist */,
+				2DE7751928233C75004336C1 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
@@ -16129,6 +16117,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		2DE7751928233C75004336C1 /* Copy Feature Flags Plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/FeatureFlags/WebKit.plist",
+			);
+			name = "Copy Feature Flags Plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == maccatalyst || \"${WK_PLATFORM_NAME}\" == iosmac ]]; then\n    exit 0\nfi\n\nFEATURE_FLAGS_PLIST_SOURCE=\"${SRCROOT}/FeatureFlags/WebKit.plist\"\nFEATURE_FLAGS_PLIST_DESTINATION=\"${DSTROOT}/System/Library/FeatureFlags/Domain/WebKit.plist\"\necho \"copying feature flags plist\"\nmkdir -p \"$(dirname \"${FEATURE_FLAGS_PLIST_DESTINATION}\")\"\necho plutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\nplutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\n";
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;
