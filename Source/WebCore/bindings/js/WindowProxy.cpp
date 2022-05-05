@@ -186,9 +186,10 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
             cacheableBindingRootObject->updateGlobalObject(windowProxy->window());
 
         windowProxy->attachDebugger(page ? page->debugger() : nullptr);
-        if (page)
+        if (page) {
             windowProxy->window()->setProfileGroup(page->group().identifier());
-        windowProxy->window()->setConsoleClient(page->console());
+            windowProxy->window()->setConsoleClient(page->console());
+        }
     }
 }
 

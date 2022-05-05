@@ -1,3 +1,19 @@
+2022-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Crash in WindowProxy::setDOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=232763
+
+        Reviewed by Chris Dumez.
+
+        Add a few null checks here and there.
+
+        Test: fast/dom/set-dom-window-without-page.html
+
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::setDOMWindow):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::findFrameForNavigation):
+
 2022-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Improve logging of display list items in IPC messages
