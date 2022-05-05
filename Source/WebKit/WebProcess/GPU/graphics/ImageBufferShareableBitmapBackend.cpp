@@ -148,9 +148,9 @@ RefPtr<cairo_surface_t> ImageBufferShareableBitmapBackend::createCairoSurface()
 }
 #endif
 
-RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    return NativeImage::create(m_bitmap->createPlatformImage());
+    return NativeImage::create(m_bitmap->createPlatformImage(copyBehavior));
 }
 
 RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, PreserveResolution) const

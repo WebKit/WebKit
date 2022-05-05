@@ -347,11 +347,11 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
     if (!bitmap)
         return;
 
-    auto image = NativeImage::create(bitmap->createPlatformImage(), nativeImageResourceIdentifier.object());
+    auto image = NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes), nativeImageResourceIdentifier.object());
     if (!image)
         return;
 
-    m_remoteResourceCache.cacheNativeImage(*image, nativeImageResourceIdentifier);
+    m_remoteResourceCache.cacheNativeImage(image.releaseNonNull(), nativeImageResourceIdentifier);
 }
 
 void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)

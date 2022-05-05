@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SharedMemory.h"
+#include <WebCore/CopyImageOptions.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
@@ -114,25 +115,24 @@ public:
 
     // This creates a CGImageRef that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
-    RetainPtr<CGImageRef> makeCGImage();
+    RetainPtr<CGImageRef> makeCGImage(WebCore::ShouldInterpolate = WebCore::ShouldInterpolate::No);
 
-    WebCore::PlatformImagePtr createPlatformImage() { return makeCGImageCopy(); }
+    WebCore::PlatformImagePtr createPlatformImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::ShouldInterpolate = WebCore::ShouldInterpolate::No);
 #elif USE(CAIRO)
     // This creates a BitmapImage that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     RefPtr<cairo_surface_t> createPersistentCairoSurface();
     RefPtr<cairo_surface_t> createCairoSurface();
 
-    WebCore::PlatformImagePtr createPlatformImage() { return createCairoSurface(); }
+    WebCore::PlatformImagePtr createPlatformImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::ShouldInterpolate = WebCore::ShouldInterpolate::No) { return createCairoSurface(); }
 #endif
 
 private:
     ShareableBitmap(const WebCore::IntSize&, Configuration, Ref<SharedMemory>&&);
 
 #if USE(CG)
-    RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
+    RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
-    static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
 #endif
 
 #if USE(CAIRO)

@@ -1,3 +1,29 @@
+2022-05-05  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] NativeImage should share the ShareableBitmap data when it's sent to GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=239874
+        rdar://92031359
+
+        Reviewed by Simon Fraser.
+
+        Instead of allocating a new memory buffer in GPUProcess and copying the 
+        ShareableBitmap data to it, we can create a PlatformImage that directly 
+        references this data. This will make all the NativeImages data be attributed
+        to WebProcess.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::createPlatformImage):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::makeCGImage):
+        (WebKit::ShareableBitmap::createPlatformImage):
+        (WebKit::ShareableBitmap::createCGImage const):
+        (WebKit::ShareableBitmap::releaseDataProviderData): Deleted.
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::copyNativeImage const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2022-05-05  Jer Noble  <jer.noble@apple.com>
 
         [WK2][Cocoa] Remove use of CVPixelBufferConformer from WebContent process in MediaPlayerPrivateRemote::nativeImageForCurrentTime()

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CopyImageOptions.h"
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
@@ -51,11 +52,6 @@ class IOSurfacePool;
 class Image;
 class NativeImage;
 class PixelBuffer;
-
-enum BackingStoreCopy {
-    CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
-    DontCopyBackingStore // Subsequent draws may affect the copy.
-};
 
 enum class PreserveResolution : uint8_t {
     No,
