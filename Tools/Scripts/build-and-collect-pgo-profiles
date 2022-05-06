@@ -24,6 +24,7 @@ rm -rf "$BASE/*"
 
 mkdir -p "$BASE/speedometer"
 mkdir -p "$BASE/jetstream"
+mkdir -p "$BASE/motionmark"
 mkdir -p "$BASE/output"
 mkdir -p "$BASE/Internal/WebKit/WebKitAdditions/Profiling/"
 
@@ -32,17 +33,20 @@ cd ../Internal
 rm -rf ../OpenSource/WebKitBuild
 make release WK_LTO_MODE=thin ENABLE_LLVM_PROFILE_GENERATION=ON
 
-run-benchmark --plan jetstream2 --diagnose-directory=/Volumes/WebKit/BenchmarkProfiles/jetstream --generate-profiles --build-directory=../OpenSource/WebKitBuild/Release --count 1
+run-benchmark --plan jetstream2 --diagnose-directory="$BASE/jetstream" --generate-profiles --build-directory=../OpenSource/WebKitBuild/Release --count 1
 pgo-profile merge "$BASE/jetstream"
 
-run-benchmark --plan speedometer --diagnose-directory=/Volumes/WebKit/BenchmarkProfiles/speedometer --generate-profiles --build-directory=../OpenSource/WebKitBuild/Release --count 1
+run-benchmark --plan speedometer --diagnose-directory="$BASE/speedometer" --generate-profiles --build-directory=../OpenSource/WebKitBuild/Release --count 1
 pgo-profile merge "$BASE/speedometer"
+
+run-benchmark --plan motionmark --diagnose-directory="$BASE/motionmark" --generate-profiles --build-directory=../OpenSource/WebKitBuild/Release --count 1
+pgo-profile merge "$BASE/motionmark"
 
 rm *.result
 
-pgo-profile combine --jetstream "$BASE/jetstream" --speedometer "$BASE/speedometer" --output "$BASE/output"
+pgo-profile combine --jetstream "$BASE/jetstream" --speedometer "$BASE/speedometer" --motionmark "$BASE/motionmark" --output "$BASE/output"
 
 pgo-profile compress --input "$BASE/output" --output "$BASE/Internal/WebKit/WebKitAdditions/Profiling/"
 
 echo "Done! Find your profiles in $BASE/Internal/WebKit/WebKitAdditions/Profiling/"
-echo "To check these in, do: 'cp -r /Volumes/WebKit/BenchmarkProfiles/Internal/ ../Internal/'"
+echo "To check these in, do: 'cp -r $BASE/Internal/ ../Internal/'"

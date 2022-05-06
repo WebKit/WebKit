@@ -7,7 +7,7 @@ import subprocess
 import os
 
 PROFILED_DYLIBS = ["JavaScriptCore", "WebCore", "WebKit"]
-BENCHMARK_GROUP_WEIGHTS = [("speedometer", 0.6), ("jetstream", 0.4)]
+BENCHMARK_GROUP_WEIGHTS = [("speedometer", 0.6), ("jetstream", 0.2), ("motionmark", 0.2)]
 
 def pad(string, max_length):
     if len(string) > max_length:
@@ -75,13 +75,14 @@ def merge(args):
         inputs = [f"\"{i}\"" for i in inputs]
         inputs = " ".join(inputs)
         output_file = os.path.join(path, lib + '.profdata')
-        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge {inputs} -output=\"{output_file}\""))
+        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge --sparse {inputs} -output=\"{output_file}\""))
 
 
 def combine_parser(subparsers):
     parser = subparsers.add_parser("combine", help="Combine directories containing *.profdata files from different platforms together.")
-    parser.add_argument("--speedometer", default=None, help="Path to the directory containing the *.profdata files from a speedometer run.")
-    parser.add_argument("--jetstream", default=None, help="Path to the directory containing the *.profdata files from a jetstream run.")
+    for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
+        group, _ = BENCHMARK_GROUP_WEIGHTS[i]
+        parser.add_argument(f"--{group}", default=None, help=f"Path to the directory containing the *.profdata files from a {group} run.")
     parser.add_argument("--output", help="Path to the directory where the output will be placed.")
     parser.set_defaults(func=combine)
     return parser
@@ -125,7 +126,7 @@ def combine(args):
         group_input = ["--weighted-input={},\"{}\"".format(weight, os.path.join(path, lib + ".profdata")) for path, weight in group_paths]
         group_input = " ".join(group_input)
         output_file = os.path.join(out, lib + '.profdata')
-        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge {group_input} -output=\"{output_file}\""))
+        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge --sparse {group_input} -output=\"{output_file}\""))
 
 
 def compress_parser(subparsers):
