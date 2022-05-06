@@ -1899,16 +1899,6 @@ SelectTrailingWhitespaceEnabled:
     WebCore:
       default: false
 
-SelectionPaintingWithoutSelectionGapsEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 SerifFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitSerifFont
