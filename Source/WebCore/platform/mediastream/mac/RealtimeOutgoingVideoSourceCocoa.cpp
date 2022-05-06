@@ -102,13 +102,31 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
         }
     }
 
-    auto pixelBuffer = videoFrame.pixelBuffer();
-    auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto pixelFormat = videoFrame.pixelFormat();
+    if (pixelFormat == kCVPixelFormatType_32BGRA) {
+        auto size = videoFrame.presentationSize();
+        auto pixelBufferPool = this->pixelBufferPool(size.width(), size.height());
+        if (!pixelBufferPool)
+            return;
+        CVPixelBufferRef newPixelBuffer = nullptr;
+        auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferPool, &newPixelBuffer);
+        if (status != kCVReturnSuccess) {
+            RELEASE_LOG_ERROR(WebRTC, "RealtimeOutgoingVideoSourceCocoa failed creating a pixel buffer with error %d", status);
+            return;
+        }
 
-    RetainPtr<CVPixelBufferRef> convertedBuffer = pixelBuffer;
-    if (pixelFormatType != preferedPixelBufferFormat())
-        convertedBuffer = convertToYUV(pixelBuffer);
+        auto convertedBuffer = adoptCF(newPixelBuffer);
+        ASSERT(!m_currentRotation);
+        if (webrtc::convertBGRAToYUV(videoFrame.pixelBuffer(), convertedBuffer.get()))
+            sendFrame(webrtc::pixelBufferToFrame(convertedBuffer.get()));
+        else
+            RELEASE_LOG_ERROR(WebRTC, "Unable to convert BGRA video frame to YUV");
+        return;
+    }
 
+    // FIXME: For other pixel formats, we should use a pixel conformer.
+    ASSERT(pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
+    RetainPtr<CVPixelBufferRef> convertedBuffer = videoFrame.pixelBuffer();
     if (shouldApplyRotation)
         convertedBuffer = rotatePixelBuffer(convertedBuffer.get(), m_currentRotation);
 

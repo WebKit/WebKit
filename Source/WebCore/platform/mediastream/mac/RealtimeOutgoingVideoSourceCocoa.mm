@@ -29,26 +29,15 @@
 #if USE(LIBWEBRTC)
 
 #import "AffineTransform.h"
+#import "CVUtilities.h"
 #import "ImageRotationSessionVT.h"
 #import "Logging.h"
-#import "PixelBufferConformerCV.h"
 #import "RealtimeVideoUtilities.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
-
-RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::convertToYUV(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return nullptr;
-
-    if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(preferedPixelBufferFormat()) });
-
-    return m_pixelBufferConformer->convert(pixelBuffer);
-}
 
 static inline unsigned rotationToAngle(webrtc::VideoRotation rotation)
 {
@@ -84,6 +73,22 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
     }
 
     return m_rotationSession->rotate(pixelBuffer);
+}
+
+CVPixelBufferPoolRef RealtimeOutgoingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height)
+{
+    if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
+        auto result = createInMemoryCVPixelBufferPool(width, height, preferedPixelBufferFormat());
+        if (!result) {
+            RELEASE_LOG_ERROR(WebRTC, "RealtimeOutgoingVideoSourceCocoa failed creating buffer pool with error %d", result.error());
+            return nullptr;
+        }
+
+        m_pixelBufferPool = WTFMove(*result);
+        m_pixelBufferPoolWidth = width;
+        m_pixelBufferPoolHeight = height;
+    }
+    return m_pixelBufferPool.get();
 }
 
 } // namespace WebCore

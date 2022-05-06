@@ -26,6 +26,7 @@
 #pragma once
 
 #include "api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
 #include "api/scoped_refptr.h"
 #include <CoreFoundation/CFBase.h>
 #include <functional>
@@ -55,6 +56,8 @@ bool copyVideoFrameBuffer(VideoFrameBuffer&, uint8_t*);
 
 typedef CVPixelBufferRef (*GetBufferCallback)(void*);
 typedef void (*ReleaseBufferCallback)(void*);
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> toWebRTCVideoFrameBuffer(void*, GetBufferCallback, ReleaseBufferCallback, int width, int height);
+rtc::scoped_refptr<VideoFrameBuffer> toWebRTCVideoFrameBuffer(void*, GetBufferCallback, ReleaseBufferCallback, int width, int height);
 void* videoFrameBufferProvider(const VideoFrame&);
+
+bool convertBGRAToYUV(CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer);
 }

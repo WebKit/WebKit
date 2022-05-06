@@ -25,6 +25,7 @@
 
 #include "WebKitUtilities.h"
 
+#include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "native/src/objc_frame_buffer.h"
 #include "rtc_base/logging.h"
@@ -238,6 +239,38 @@ bool copyVideoFrameBuffer(VideoFrameBuffer& buffer, uint8_t* data)
                                    i010Frame->width(), i010Frame->height());
     }
     return false;
+}
+
+bool convertBGRAToYUV(CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer)
+{
+    int width = CVPixelBufferGetWidth(sourceBuffer);
+    int height = CVPixelBufferGetHeight(sourceBuffer);
+
+    CVPixelBufferLockBaseAddress(destinationBuffer, 0);
+    CVPixelBufferLockBaseAddress(sourceBuffer, kCVPixelBufferLock_ReadOnly);
+
+    auto* destinationY = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(destinationBuffer, 0));
+    auto* destinationUV = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(destinationBuffer, 1));
+    uint32_t bytesPerRowDestinationY = CVPixelBufferGetBytesPerRowOfPlane(destinationBuffer, 0);
+    uint32_t bytesPerRowDestinationUV = CVPixelBufferGetBytesPerRowOfPlane(destinationBuffer, 1);
+
+    auto result = libyuv::ARGBToNV12(
+        static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(sourceBuffer)),
+        CVPixelBufferGetBytesPerRow(sourceBuffer),
+        destinationY,
+        bytesPerRowDestinationY,
+        destinationUV,
+        bytesPerRowDestinationUV,
+        width,
+        height);
+
+    CVPixelBufferUnlockBaseAddress(sourceBuffer, kCVPixelBufferLock_ReadOnly);
+    CVPixelBufferUnlockBaseAddress(destinationBuffer, 0);
+
+    if (result)
+        return false;
+
+    return true;
 }
 
 }

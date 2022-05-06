@@ -1,3 +1,19 @@
+2022-05-06  Youenn Fablet  <youenn@apple.com>
+
+        Remove usage of PixelBufferConformer in RealtimeOutgoingVideoSourceCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=240118
+
+        Reviewed by Eric Carlson.
+
+        Add a routine to convert RGB CVPixelBuffer to YUV webrtc VideoFrameBuffer.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::convertBGRAToYUV):
+
 2022-04-30  Jer Noble  <jer.noble@apple.com>
 
         [Mac] VTVideoDecoderClass object pointers can become unaligned on x86
