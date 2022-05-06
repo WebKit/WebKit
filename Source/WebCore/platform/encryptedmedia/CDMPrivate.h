@@ -44,6 +44,7 @@ namespace WebCore {
 struct CDMKeySystemConfiguration;
 struct CDMMediaCapability;
 struct CDMRestrictions;
+class SharedBuffer;
 
 class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
 public:
@@ -73,8 +74,8 @@ public:
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
-    virtual bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const = 0;
-    virtual RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const = 0;
+    virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
+    virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
     virtual std::optional<String> sanitizeSessionId(const String&) const = 0;
 
 protected:

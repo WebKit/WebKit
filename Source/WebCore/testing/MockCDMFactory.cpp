@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "InitDataRegistry.h"
+#include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
@@ -63,7 +64,17 @@ bool MockCDMFactory::supportsKeySystem(const String& keySystem)
     return equalIgnoringASCIICase(keySystem, "org.webkit.mock");
 }
 
-void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<FragmentedSharedBuffer>>&& keys)
+bool MockCDMFactory::hasSessionWithID(const String& id)
+{
+    return m_sessions.contains(id);
+}
+
+void MockCDMFactory::removeSessionWithID(const String& id)
+{
+    m_sessions.remove(id);
+}
+
+void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&& keys)
 {
     auto addResult = m_sessions.add(id, WTFMove(keys));
     if (addResult.isNewEntry)
@@ -74,7 +85,7 @@ void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<Fragmen
         value.append(WTFMove(key));
 }
 
-Vector<Ref<FragmentedSharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const String& id)
+Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const String& id)
 {
     auto it = m_sessions.find(id);
     if (it == m_sessions.end())
@@ -83,7 +94,7 @@ Vector<Ref<FragmentedSharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(
     return WTFMove(it->value);
 }
 
-const Vector<Ref<FragmentedSharedBuffer>>* MockCDMFactory::keysForSessionWithID(const String& id) const
+const Vector<Ref<SharedBuffer>>* MockCDMFactory::keysForSessionWithID(const String& id) const
 {
     auto it = m_sessions.find(id);
     if (it == m_sessions.end())
@@ -202,7 +213,7 @@ bool MockCDM::supportsSessions() const
     return m_factory && m_factory->supportsSessions();
 }
 
-bool MockCDM::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData) const
+bool MockCDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
 {
     if (!supportedInitDataTypes().contains(initDataType))
         return false;
@@ -211,7 +222,7 @@ bool MockCDM::supportsInitData(const AtomString& initDataType, const FragmentedS
     return true;
 }
 
-RefPtr<FragmentedSharedBuffer> MockCDM::sanitizeResponse(const FragmentedSharedBuffer& response) const
+RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) const
 {
     auto buffer = response.makeContiguous();
     if (!charactersAreAllASCII(buffer->data(), response.size()))
@@ -222,7 +233,7 @@ RefPtr<FragmentedSharedBuffer> MockCDM::sanitizeResponse(const FragmentedSharedB
     if (!responseArray.contains(String("valid-response"_s)))
         return nullptr;
 
-    return response.copy();
+    return response.makeContiguous();
 }
 
 std::optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const
@@ -270,7 +281,7 @@ void MockCDMInstance::initializeWithConfiguration(const MediaKeySystemConfigurat
     callback(initialize());
 }
 
-void MockCDMInstance::setServerCertificate(Ref<FragmentedSharedBuffer>&& certificate, SuccessCallback&& callback)
+void MockCDMInstance::setServerCertificate(Ref<SharedBuffer>&& certificate, SuccessCallback&& callback)
 {
     StringView certificateStringView(certificate->makeContiguous()->data(), certificate->size());
 
@@ -298,7 +309,7 @@ MockCDMInstanceSession::MockCDMInstanceSession(WeakPtr<MockCDMInstance>&& instan
 {
 }
 
-void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&& callback)
+void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
@@ -324,7 +335,7 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomS
     callback(SharedBuffer::create(license.data(), license.length()), sessionID, false, SuccessValue::Succeeded);
 }
 
-void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType, Ref<FragmentedSharedBuffer>&& response, LicenseUpdateCallback&& callback)
+void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
@@ -390,7 +401,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
 {
     MockCDMFactory* factory = m_instance ? m_instance->factory() : nullptr;
     if (!factory) {
-        callback({ }, std::nullopt, SuccessValue::Failed);
+        callback({ }, nullptr, SuccessValue::Failed);
         return;
     }
 

@@ -31,7 +31,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 #include "RemoteLegacyCDMSessionMessages.h"
-#include "SharedBufferCopy.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <WebCore/LegacyCDM.h>
 #include <WebCore/SharedBuffer.h>
@@ -54,26 +53,26 @@ RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(WeakPtr<RemoteLegacyCDM
 
 RemoteLegacyCDMSessionProxy::~RemoteLegacyCDMSessionProxy() = default;
 
-static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
+static RefPtr<Uint8Array> convertToUint8Array(RefPtr<SharedBuffer>&& buffer)
 {
-    if (!buffer.buffer())
+    if (!buffer)
         return nullptr;
 
-    auto arrayBuffer = buffer.buffer()->tryCreateArrayBuffer();
+    auto arrayBuffer = buffer->tryCreateArrayBuffer();
     if (!arrayBuffer)
         return nullptr;
-    return Uint8Array::create(arrayBuffer.releaseNonNull(), 0, buffer.size());
+    return Uint8Array::create(arrayBuffer.releaseNonNull(), 0, buffer->size());
 }
 
 template <typename T>
-static std::optional<IPC::SharedBufferCopy> convertToOptionalSharedBuffer(T array)
+static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
 {
     if (!array)
-        return std::nullopt;
-    return { IPC::SharedBufferCopy(SharedBuffer::create((const char*)array->data(), array->byteLength())) };
+        return nullptr;
+    return SharedBuffer::create((const char*)array->data(), array->byteLength());
 }
 
-void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&& completion)
+void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)
 {
     auto initDataArray = convertToUint8Array(WTFMove(initData));
     if (!initDataArray) {
@@ -97,11 +96,11 @@ void RemoteLegacyCDMSessionProxy::releaseKeys()
     m_session->releaseKeys();
 }
 
-void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferCopy&& update, UpdateCallback&& completion)
+void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCallback&& completion)
 {
     auto updateArray = convertToUint8Array(WTFMove(update));
     if (!updateArray) {
-        completion(false, std::nullopt, 0, 0);
+        completion(false, nullptr, 0, 0);
         return;
     }
 

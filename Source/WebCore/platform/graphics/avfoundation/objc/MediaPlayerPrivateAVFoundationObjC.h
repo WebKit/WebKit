@@ -69,7 +69,7 @@ class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
 class QueuedVideoOutput;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -430,7 +430,7 @@ private:
     mutable std::optional<WallTime> m_wallClockAtCachedCurrentTime;
     mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
     mutable double m_requestedRateAtCachedCurrentTime { 0 };
-    RefPtr<FragmentedSharedBuffer> m_keyID;
+    RefPtr<SharedBuffer> m_keyID;
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
     double m_requestedRate { 1.0 };

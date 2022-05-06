@@ -35,10 +35,6 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-class FragmentedSharedBuffer;
-}
-
 namespace WebKit {
 
 class RemoteLegacyCDMProxy

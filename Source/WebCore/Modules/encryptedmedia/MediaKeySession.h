@@ -57,7 +57,7 @@ class CDM;
 class DeferredPromise;
 class MediaKeyStatusMap;
 class MediaKeys;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 template<typename IDLType> class DOMPromiseProxy;
 
@@ -87,20 +87,20 @@ public:
     using ClosedPromise = DOMPromiseProxy<IDLUndefined>;
     ClosedPromise& closed() { return m_closedPromise.get(); }
 
-    const Vector<std::pair<Ref<FragmentedSharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
+    const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
     unsigned internalInstanceSessionObjectRefCount() const { return m_instanceSession->refCount(); }
 
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
-    void enqueueMessage(MediaKeyMessageType, const FragmentedSharedBuffer&);
+    void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
     void updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
-    void sendMessage(CDMMessageType, Ref<FragmentedSharedBuffer>&& message) final;
+    void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) final;
     void sessionIdChanged(const String&) final;
     PlatformDisplayID displayID() final;
 
@@ -140,10 +140,10 @@ private:
     MediaKeySessionType m_sessionType;
     Ref<CDM> m_implementation;
     Ref<CDMInstanceSession> m_instanceSession;
-    Vector<Ref<FragmentedSharedBuffer>> m_recordOfKeyUsage;
+    Vector<Ref<SharedBuffer>> m_recordOfKeyUsage;
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
-    Vector<std::pair<Ref<FragmentedSharedBuffer>, MediaKeyStatus>> m_statuses;
+    Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
 
     using DisplayChangedObserver = Observer<void(PlatformDisplayID)>;
     DisplayChangedObserver m_displayChangedObserver;

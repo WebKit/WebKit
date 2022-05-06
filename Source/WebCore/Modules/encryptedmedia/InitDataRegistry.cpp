@@ -54,13 +54,13 @@ namespace {
     const uint32_t kKeyIdsMaxKeyIdSizeInBytes = 512;
 }
 
-static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsKeyids(const FragmentedSharedBuffer& buffer)
+static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)
@@ -74,7 +74,7 @@ static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsKeyids(co
     if (!kidsArray)
         return std::nullopt;
 
-    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
+    Vector<Ref<SharedBuffer>> keyIDs;
     for (auto& value : *kidsArray) {
         auto keyID = value->asString();
         if (!keyID)
@@ -93,7 +93,7 @@ static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsKeyids(co
     return keyIDs;
 }
 
-static RefPtr<FragmentedSharedBuffer> sanitizeKeyids(const FragmentedSharedBuffer& buffer)
+static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
@@ -104,14 +104,14 @@ static RefPtr<FragmentedSharedBuffer> sanitizeKeyids(const FragmentedSharedBuffe
     auto object = JSON::Object::create();
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
-        kidsArray->pushString(base64URLEncodeToString(buffer->makeContiguous()->data(), buffer->size()));
+        kidsArray->pushString(base64URLEncodeToString(buffer->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));
 
     CString jsonData = object->toJSONString().utf8();
     return SharedBuffer::create(jsonData.data(), jsonData.length());
 }
 
-std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const FragmentedSharedBuffer& buffer)
+std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const SharedBuffer& buffer)
 {
     // 4. Common SystemID and PSSH Box Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html#common-system
@@ -151,9 +151,9 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
     return psshBoxes;
 }
 
-std::optional<Vector<Ref<FragmentedSharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const FragmentedSharedBuffer& buffer)
+std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
 {
-    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
+    Vector<Ref<SharedBuffer>> keyIDs;
 
     auto psshBoxes = extractPsshBoxesFromCenc(buffer);
     if (!psshBoxes)
@@ -185,30 +185,30 @@ std::optional<Vector<Ref<FragmentedSharedBuffer>>> InitDataRegistry::extractKeyI
     return keyIDs;
 }
 
-RefPtr<FragmentedSharedBuffer> InitDataRegistry::sanitizeCenc(const FragmentedSharedBuffer& buffer)
+RefPtr<SharedBuffer> InitDataRegistry::sanitizeCenc(const SharedBuffer& buffer)
 {
     // 4. Common SystemID and PSSH Box Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html#common-system
     if (!extractKeyIDsCenc(buffer))
         return nullptr;
 
-    return buffer.copy();
+    return buffer.makeContiguous();
 }
 
-static RefPtr<FragmentedSharedBuffer> sanitizeWebM(const FragmentedSharedBuffer& buffer)
+static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
 {
     // Check if the buffer is a valid WebM initData.
     // The WebM initData is the ContentEncKeyID, so should be less than kWebMMaxContentEncKeyIDSize.
     if (buffer.isEmpty() || buffer.size() > kWebMMaxContentEncKeyIDSize)
         return nullptr;
 
-    return buffer.copy();
+    return buffer.makeContiguous();
 }
 
-static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsWebM(const FragmentedSharedBuffer& buffer)
+static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
-    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
-    RefPtr<FragmentedSharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
+    Vector<Ref<SharedBuffer>> keyIDs;
+    RefPtr<SharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
     if (!sanitizedBuffer)
         return std::nullopt;
 
@@ -233,7 +233,7 @@ InitDataRegistry::InitDataRegistry()
 
 InitDataRegistry::~InitDataRegistry() = default;
 
-RefPtr<FragmentedSharedBuffer> InitDataRegistry::sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer& buffer)
+RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -241,7 +241,7 @@ RefPtr<FragmentedSharedBuffer> InitDataRegistry::sanitizeInitData(const AtomStri
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<Vector<Ref<FragmentedSharedBuffer>>> InitDataRegistry::extractKeyIDs(const AtomString& initDataType, const FragmentedSharedBuffer& buffer)
+std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const AtomString& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)

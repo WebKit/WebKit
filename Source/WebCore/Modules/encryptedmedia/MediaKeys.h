@@ -86,7 +86,7 @@ protected:
     MediaKeys(Document&, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, Ref<CDMInstance>&&);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }

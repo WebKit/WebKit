@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 messages -> RemoteLegacyCDMSession NotRefCounted {
-    SendMessage(std::optional<IPC::SharedBufferCopy> message, String destinationURL)
+    SendMessage(RefPtr<WebCore::SharedBuffer> message, String destinationURL)
     SendError(enum:uint8_t WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
 }
 

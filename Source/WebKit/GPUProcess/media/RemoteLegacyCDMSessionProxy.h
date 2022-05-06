@@ -37,11 +37,7 @@
 namespace WebCore {
 class LegacyCDM;
 class LegacyCDMSession;
-class FragmentedSharedBuffer;
-}
-
-namespace IPC {
-class SharedBufferCopy;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -77,12 +73,12 @@ private:
     String mediaKeysStorageDirectory() const final;
 
     // Messages
-    using GenerateKeyCallback = CompletionHandler<void(std::optional<IPC::SharedBufferCopy>&&, const String&, unsigned short, uint32_t)>;
-    void generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&&);
+    using GenerateKeyCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String&, unsigned short, uint32_t)>;
+    void generateKeyRequest(const String& mimeType, RefPtr<WebCore::SharedBuffer>&& initData, GenerateKeyCallback&&);
     void releaseKeys();
-    using UpdateCallback = CompletionHandler<void(bool, std::optional<IPC::SharedBufferCopy>&&, unsigned short, uint32_t)>;
-    void update(IPC::SharedBufferCopy&& update, UpdateCallback&&);
-    using CachedKeyForKeyIDCallback = CompletionHandler<void(std::optional<IPC::SharedBufferCopy>&&)>;
+    using UpdateCallback = CompletionHandler<void(bool, RefPtr<WebCore::SharedBuffer>&&, unsigned short, uint32_t)>;
+    void update(RefPtr<WebCore::SharedBuffer>&& update, UpdateCallback&&);
+    using CachedKeyForKeyIDCallback = CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>;
     void cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&&);
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;

@@ -26,11 +26,11 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 messages -> RemoteCDMInstanceSessionProxy NotRefCounted {
-    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, AtomString initDataType, IPC::SharedBufferCopy initData) -> (IPC::SharedBufferCopy message, String sessionId, bool needsIndividualization, bool succeeded) Async
-    UpdateLicense(String sessionId, WebCore::CDMInstanceSession::LicenseType type, IPC::SharedBufferCopy response) -> (bool sessionWasClosed, std::optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, std::optional<double> changedExpiration, std::optional<WebCore::CDMInstanceSession::Message> message, bool succeeded) Async
+    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, AtomString initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded) Async
+    UpdateLicense(String sessionId, WebCore::CDMInstanceSession::LicenseType type, RefPtr<WebCore::SharedBuffer> response) -> (bool sessionWasClosed, std::optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, std::optional<double> changedExpiration, std::optional<WebCore::CDMInstanceSession::Message> message, bool succeeded) Async
     LoadSession(WebCore::CDMInstanceSession::LicenseType type, String sessionId, String origin) -> (std::optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, std::optional<double> changedExpiration, std::optional<WebCore::CDMInstanceSession::Message> message, bool succeeded, enum:uint8_t WebCore::CDMInstanceSession::SessionLoadFailure loadFailure) Async
     CloseSession(String sessionId) -> () Async
-    RemoveSessionData(String sessionId, WebCore::CDMInstanceSession::LicenseType type) -> (WebCore::CDMInstanceSession::KeyStatusVector changedKeys, std::optional<IPC::SharedBufferCopy> message, bool succeeded) Async
+    RemoveSessionData(String sessionId, WebCore::CDMInstanceSession::LicenseType type) -> (WebCore::CDMInstanceSession::KeyStatusVector changedKeys, RefPtr<WebCore::SharedBuffer> message, bool succeeded) Async
     StoreRecordOfKeyUsage(String sessionId)
     DisplayIDChanged(uint32_t displayID)
 }

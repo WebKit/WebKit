@@ -66,7 +66,7 @@ private:
     RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstance>&&, UniqueRef<RemoteCDMInstanceConfiguration>&&, RemoteCDMInstanceIdentifier);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::FragmentedSharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -78,7 +78,7 @@ private:
 
     // Messages
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
-    void setServerCertificate(IPC::SharedBufferCopy&&, CompletionHandler<void(SuccessValue)>&&);
+    void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
     void setStorageDirectory(const String&);
     void createSession(CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&&);
 

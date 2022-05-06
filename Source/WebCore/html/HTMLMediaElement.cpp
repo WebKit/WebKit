@@ -2956,7 +2956,7 @@ void HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary()
     attemptToResumePlaybackIfNecessary();
 }
 
-void HTMLMediaElement::cdmClientUnrequestedInitializationDataReceived(const String& initDataType, Ref<FragmentedSharedBuffer>&& initData)
+void HTMLMediaElement::cdmClientUnrequestedInitializationDataReceived(const String& initDataType, Ref<SharedBuffer>&& initData)
 {
     mediaPlayerInitializationDataEncountered(initDataType, initData->tryCreateArrayBuffer());
 }

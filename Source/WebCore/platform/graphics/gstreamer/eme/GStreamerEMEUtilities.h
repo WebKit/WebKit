@@ -51,30 +51,14 @@ public:
         m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
-    InitData(const String& systemId, RefPtr<FragmentedSharedBuffer>&& payload)
+    InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
     {
         if (payload)
-            m_payload = extractCencIfNeeded(payload->makeContiguous());
+            m_payload = extractCencIfNeeded(WTFMove(payload));
     }
 
-    void append(InitData&& initData)
-    {
-        // FIXME: There is some confusion here about how to detect the
-        // correct "initialization data type", if the system ID is
-        // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID, then we know it came
-        // from WebM. If the system id is specified with one of the
-        // defined ClearKey / Playready / Widevine / etc UUIDs, then
-        // we know it's MP4. For the latter case, it does not matter
-        // which of the UUIDs it is, so we just overwrite it. This is
-        // a quirk of how GStreamer provides protection events, and
-        // it's not very robust, so be careful here!
-        m_systemId = initData.m_systemId;
-
-        m_payload.append(*initData.payload());
-    }
-
-    RefPtr<FragmentedSharedBuffer> payload() const { return m_payload.get(); }
+    RefPtr<SharedBuffer> payload() const { return m_payload; }
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
@@ -88,7 +72,7 @@ public:
 private:
     static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
     String m_systemId;
-    SharedBufferBuilder m_payload;
+    RefPtr<SharedBuffer> m_payload;
 };
 
 class ProtectionSystemEvents {

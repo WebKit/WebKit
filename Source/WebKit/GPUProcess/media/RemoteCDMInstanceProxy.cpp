@@ -32,7 +32,7 @@
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceMessages.h"
 #include "RemoteCDMInstanceSessionProxy.h"
-#include "SharedBufferCopy.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/CDMInstance.h>
 
 namespace WebKit {
@@ -61,7 +61,7 @@ RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
     m_instance->clearClient();
 }
 
-void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<FragmentedSharedBuffer>&& initData)
+void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
 {
     if (!m_cdm)
         return;
@@ -74,7 +74,7 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, IPC::SharedBufferCopy(WTFMove(initData))), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
 }
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
@@ -82,14 +82,9 @@ void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySy
     m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
 }
 
-void RemoteCDMInstanceProxy::setServerCertificate(IPC::SharedBufferCopy&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
+void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
 {
-    if (!certificate.buffer()) {
-        completion(CDMInstance::Failed);
-        return;
-    }
-
-    m_instance->setServerCertificate(certificate.buffer().releaseNonNull(), WTFMove(completion));
+    m_instance->setServerCertificate(WTFMove(certificate), WTFMove(completion));
 }
 
 void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)

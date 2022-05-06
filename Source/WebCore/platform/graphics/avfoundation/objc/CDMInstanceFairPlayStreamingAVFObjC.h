@@ -84,7 +84,7 @@ public:
     ImplementationType implementationType() const final { return ImplementationType::FairPlayStreaming; }
 
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
-    void setServerCertificate(Ref<FragmentedSharedBuffer>&&, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     RefPtr<CDMInstanceSession> createSession() final;
     void setClient(WeakPtr<CDMInstanceClient>&&) final;
@@ -94,10 +94,10 @@ public:
 
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
-    FragmentedSharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
+    SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
     AVContentKeySession* contentKeySession();
 
-    RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, FragmentedSharedBuffer& initData);
+    RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, SharedBuffer& initData);
 
     // AVContentKeySessionDelegateClient
     void didProvideRequest(AVContentKeyRequest*) final;
@@ -112,7 +112,7 @@ public:
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
     void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) final;
 
-    using Keys = Vector<Ref<FragmentedSharedBuffer>>;
+    using Keys = Vector<Ref<SharedBuffer>>;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(AVContentKeyReportGroup*) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForRequest(AVContentKeyRequest*) const;
@@ -129,7 +129,7 @@ private:
     WeakPtr<CDMInstanceClient> m_client;
     RetainPtr<AVContentKeySession> m_session;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
-    RefPtr<FragmentedSharedBuffer> m_serverCertificate;
+    RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
@@ -150,8 +150,8 @@ public:
 #endif
 
     // CDMInstanceSession
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<FragmentedSharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;

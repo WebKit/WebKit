@@ -24,10 +24,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 messages -> RemoteLegacyCDMSessionProxy NotRefCounted {
-    GenerateKeyRequest(String mimeType, IPC::SharedBufferCopy initData) -> (std::optional<IPC::SharedBufferCopy> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
+    GenerateKeyRequest(String mimeType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
     ReleaseKeys()
-    Update(IPC::SharedBufferCopy update) -> (bool succeeded, std::optional<IPC::SharedBufferCopy> nextMessage, unsigned short errorCode, uint32_t systemCode) Synchronous
-    CachedKeyForKeyID(String keyId) -> (std::optional<IPC::SharedBufferCopy> key) Synchronous
+    Update(RefPtr<WebCore::SharedBuffer> update) -> (bool succeeded, RefPtr<WebCore::SharedBuffer> nextMessage, unsigned short errorCode, uint32_t systemCode) Synchronous
+    CachedKeyForKeyID(String keyId) -> (RefPtr<WebCore::SharedBuffer> key) Synchronous
 }
 
 #endif

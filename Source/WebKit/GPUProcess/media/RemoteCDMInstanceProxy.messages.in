@@ -28,7 +28,7 @@
 messages -> RemoteCDMInstanceProxy NotRefCounted {
     CreateSession() -> (WebKit::RemoteCDMInstanceSessionIdentifier identifier) Synchronous
     InitializeWithConfiguration(struct WebCore::CDMKeySystemConfiguration configuration, enum:bool WebCore::CDMInstance::AllowDistinctiveIdentifiers distinctiveIdentifiersAllowed, enum:bool WebCore::CDMInstance::AllowPersistentState persistentStateAllowed) -> (enum:bool WebCore::CDMInstance::SuccessValue success) Async
-    SetServerCertificate(IPC::SharedBufferCopy certificate) -> (enum:bool WebCore::CDMInstance::SuccessValue success) Async
+    SetServerCertificate(Ref<WebCore::SharedBuffer> certificate) -> (enum:bool WebCore::CDMInstance::SuccessValue success) Async
     SetStorageDirectory(String directory)
 }
 

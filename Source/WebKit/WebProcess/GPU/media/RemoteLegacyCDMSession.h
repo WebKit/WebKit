@@ -32,8 +32,8 @@
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/WeakPtr.h>
 
-namespace IPC {
-class SharedBufferCopy;
+namespace WebCore {
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -65,7 +65,7 @@ private:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
 
     // Messages
-    void sendMessage(std::optional<IPC::SharedBufferCopy>&& message, const String& destinationURL);
+    void sendMessage(RefPtr<WebCore::SharedBuffer>&& message, const String& destinationURL);
     void sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode, uint32_t systemCode);
 
     WeakPtr<RemoteLegacyCDMFactory> m_factory;

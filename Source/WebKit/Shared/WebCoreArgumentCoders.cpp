@@ -3154,7 +3154,7 @@ void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encode
 {
     encoder << message.first;
 
-    RefPtr<FragmentedSharedBuffer> messageData = message.second.copyRef();
+    RefPtr<SharedBuffer> messageData = message.second.copyRef();
     encoder << messageData;
 }
 
@@ -3164,7 +3164,7 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
     if (!decoder.decode(type))
         return std::nullopt;
 
-    RefPtr<FragmentedSharedBuffer> buffer;
+    RefPtr<SharedBuffer> buffer;
     if (!decoder.decode(buffer) || !buffer)
         return std::nullopt;
 

@@ -48,13 +48,13 @@ private:
     bool supportsConfiguration(const WebCore::CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(const WebCore::CDMSessionType&, const WebCore::CDMKeySystemConfiguration&) const final;
-    bool supportsInitData(const AtomString&, const WebCore::FragmentedSharedBuffer&) const final;
+    bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&) const final;
     WebCore::CDMRequirement distinctiveIdentifiersRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     WebCore::CDMRequirement persistentStateRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const WebCore::CDMKeySystemConfiguration&) const final;
     RefPtr<WebCore::CDMInstance> createInstance() final;
     void loadAndInitialize() final;
-    RefPtr<WebCore::FragmentedSharedBuffer> sanitizeResponse(const WebCore::FragmentedSharedBuffer&) const final;
+    RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 
     Vector<AtomString> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }

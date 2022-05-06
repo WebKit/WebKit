@@ -71,17 +71,17 @@ public:
     void loadAndInitialize() override;
     bool supportsServerCertificates() const override;
     bool supportsSessions() const override;
-    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const override;
-    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const override;
+    bool supportsInitData(const AtomString&, const SharedBuffer&) const override;
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
     std::optional<String> sanitizeSessionId(const String&) const override;
 
     static const AtomString& sinfName();
-    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSinf(const FragmentedSharedBuffer&);
-    static RefPtr<FragmentedSharedBuffer> sanitizeSinf(const FragmentedSharedBuffer&);
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
 
     static const AtomString& skdName();
-    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSkd(const FragmentedSharedBuffer&);
-    static RefPtr<FragmentedSharedBuffer> sanitizeSkd(const FragmentedSharedBuffer&);
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
 

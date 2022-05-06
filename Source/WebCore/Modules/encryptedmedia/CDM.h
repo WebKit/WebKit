@@ -32,7 +32,6 @@
 #include "MediaKeySystemConfiguration.h"
 #include "MediaKeySystemMediaCapability.h"
 #include "MediaKeysRestrictions.h"
-#include "SharedBuffer.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -52,7 +51,7 @@ class CDMInstance;
 class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, private ContextDestructionObserver {
 public:
@@ -73,10 +72,10 @@ public:
     bool supportsSessions() const;
     bool supportsInitDataType(const AtomString&) const;
 
-    RefPtr<FragmentedSharedBuffer> sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
-    bool supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
+    bool supportsInitData(const AtomString& initDataType, const SharedBuffer&);
 
-    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
 
     std::optional<String> sanitizeSessionId(const String& sessionId);
 

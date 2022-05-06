@@ -36,7 +36,7 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
-class FragmentedSharedBuffer;
+class SharedBuffer;
 enum class CDMRequirement : uint8_t;
 enum class CDMSessionType : uint8_t;
 struct CDMKeySystemConfiguration;
@@ -58,8 +58,8 @@ public:
 
     RemoteCDMFactoryProxy* factory() const { return m_factory.get(); }
 
-    bool supportsInitData(const AtomString&, const WebCore::FragmentedSharedBuffer&);
-    RefPtr<WebCore::FragmentedSharedBuffer> sanitizeResponse(const WebCore::FragmentedSharedBuffer& response);
+    bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&);
+    RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);
     std::optional<String> sanitizeSessionId(const String& sessionId);
 
 private:

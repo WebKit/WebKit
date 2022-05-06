@@ -35,6 +35,7 @@ using CVPixelBufferRef = struct __CVBuffer*;
 namespace WebCore {
 
 class PixelBuffer;
+class SharedBuffer;
 
 class MediaSampleAVFObjC : public MediaSample {
 public:

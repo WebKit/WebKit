@@ -176,7 +176,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, initData = SharedBuffer::create(initData.data(), initData.length()), initDataType, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 10.1. If the init data is not valid for initDataType, reject promise with a newly created TypeError.
         // 10.2. Let sanitized init data be a validated and sanitized version of init data.
-        RefPtr<FragmentedSharedBuffer> sanitizedInitData = m_implementation->sanitizeInitData(initDataType, initData);
+        RefPtr<SharedBuffer> sanitizedInitData = m_implementation->sanitizeInitData(initDataType, initData);
 
         // 10.3. If the preceding step failed, reject promise with a newly created TypeError.
         if (!sanitizedInitData) {
@@ -223,7 +223,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             m_latestDecryptTime = 0;
         }
 
-        m_instanceSession->requestLicense(m_sessionType, initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<FragmentedSharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->requestLicense(m_sessionType, initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -422,7 +422,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 6. Run the following steps in parallel:
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, response = SharedBuffer::create(response.data(), response.length()), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 6.1. Let sanitized response be a validated and/or sanitized version of response copy.
-        RefPtr<FragmentedSharedBuffer> sanitizedResponse = m_implementation->sanitizeResponse(response);
+        RefPtr<SharedBuffer> sanitizedResponse = m_implementation->sanitizeResponse(response);
 
         // 6.2. If the preceding step failed, or if sanitized response is empty, reject promise with a newly created TypeError.
         if (!sanitizedResponse || sanitizedResponse->isEmpty()) {
@@ -601,7 +601,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
         // 4.3. Let message type be null.
 
         // 4.4. Use the cdm to execute the following steps:
-        m_instanceSession->removeSessionData(m_sessionId, m_sessionType, [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, std::optional<Ref<FragmentedSharedBuffer>>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->removeSessionData(m_sessionId, m_sessionType, [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -649,7 +649,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 5. Return promise.
 }
 
-void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const FragmentedSharedBuffer& message)
+void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const SharedBuffer& message)
 {
     // 6.4.1 Queue a "message" Event
     // https://w3c.github.io/encrypted-media/#queue-message
@@ -716,7 +716,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         });
 }
 
-void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<FragmentedSharedBuffer>&& message)
+void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&& message)
 {
     enqueueMessage(messageType, message);
 }

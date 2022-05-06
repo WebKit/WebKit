@@ -2793,7 +2793,7 @@ void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstanc
     if (!m_keyID || !m_cdmInstance)
         return;
 
-    auto instanceSession = m_cdmInstance->sessionForKeyIDs(Vector<Ref<FragmentedSharedBuffer>>::from(*m_keyID));
+    auto instanceSession = m_cdmInstance->sessionForKeyIDs(Vector<Ref<SharedBuffer>>::from(*m_keyID));
     if (!instanceSession)
         return;
 

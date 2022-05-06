@@ -41,6 +41,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
@@ -135,17 +136,17 @@ bool CDM::supportsInitDataType(const AtomString& initDataType) const
     return m_private && m_private->supportedInitDataTypes().contains(initDataType);
 }
 
-RefPtr<FragmentedSharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
+RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData)
 {
     return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
 }
 
-bool CDM::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
+bool CDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData)
 {
     return m_private && m_private->supportsInitData(initDataType, initData);
 }
 
-RefPtr<FragmentedSharedBuffer> CDM::sanitizeResponse(const FragmentedSharedBuffer& response)
+RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
 {
     if (!m_private)
         return nullptr;

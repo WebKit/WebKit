@@ -38,19 +38,19 @@
 namespace WebCore {
 
 class ISOProtectionSystemSpecificHeaderBox;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 class InitDataRegistry {
 public:
     WEBCORE_EXPORT static InitDataRegistry& shared();
     friend class NeverDestroyed<InitDataRegistry>;
 
-    RefPtr<FragmentedSharedBuffer> sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
-    WEBCORE_EXPORT std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDs(const AtomString& initDataType, const FragmentedSharedBuffer&);
+    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDs(const AtomString& initDataType, const SharedBuffer&);
 
     struct InitDataTypeCallbacks {
-        using SanitizeInitDataCallback = Function<RefPtr<FragmentedSharedBuffer>(const FragmentedSharedBuffer&)>;
-        using ExtractKeyIDsCallback = Function<std::optional<Vector<Ref<FragmentedSharedBuffer>>>(const FragmentedSharedBuffer&)>;
+        using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
+        using ExtractKeyIDsCallback = Function<std::optional<Vector<Ref<SharedBuffer>>>(const SharedBuffer&)>;
 
         SanitizeInitDataCallback sanitizeInitData;
         ExtractKeyIDsCallback extractKeyIDs;
@@ -61,9 +61,9 @@ public:
     static const AtomString& keyidsName();
     static const AtomString& webmName();
 
-    static std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const FragmentedSharedBuffer&);
-    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsCenc(const FragmentedSharedBuffer&);
-    static RefPtr<FragmentedSharedBuffer> sanitizeCenc(const FragmentedSharedBuffer&);
+    static std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const SharedBuffer&);
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
 
 private:
     InitDataRegistry();
