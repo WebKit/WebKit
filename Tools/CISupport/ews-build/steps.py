@@ -1505,7 +1505,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
             return False
 
-        blocked = self._is_pr_blocked(pr_json) if self.verifyReviewDenied else 0
+        blocked = self._is_pr_blocked(pr_json) if self.verifyMergeQueue else 0
         if blocked == 1:
             self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
