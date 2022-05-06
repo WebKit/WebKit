@@ -3611,3 +3611,4 @@ webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inhe
 
 webkit.org/b/240148 fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ImageOnlyFailure ]
 
+webkit.org/b/240167 [ Release ] fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
