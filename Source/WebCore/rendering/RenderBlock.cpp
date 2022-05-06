@@ -2258,7 +2258,7 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this);
+    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
     if (!shouldIgnoreDescendantContentForLogicalWidth)
         computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
@@ -2293,7 +2293,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
 void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    ASSERT(!shouldApplyInlineSizeContainment(*this));
+    ASSERT(!shouldApplyInlineSizeContainment());
 
     const RenderStyle& styleToUse = style();
     bool nowrap = styleToUse.whiteSpace() == WhiteSpace::NoWrap;
@@ -2531,7 +2531,7 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
 
 std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 {
-    if (shouldApplyLayoutContainment(*this))
+    if (shouldApplyLayoutContainment())
         return std::nullopt;
 
     if (isWritingModeRoot() && !isRubyRun())
@@ -2549,7 +2549,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 
 std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
-    if (shouldApplyLayoutContainment(*this))
+    if (shouldApplyLayoutContainment())
         return synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? marginBottom() : marginLeft());
 
     if (isWritingModeRoot() && !isRubyRun())

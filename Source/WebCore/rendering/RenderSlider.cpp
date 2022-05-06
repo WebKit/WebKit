@@ -69,7 +69,7 @@ LayoutUnit RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, Line
 
 void RenderSlider::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment(*this))
+    if (shouldApplySizeContainment())
         return;
     maxLogicalWidth = defaultTrackLength * style().effectiveZoom();
     if (!style().width().isPercentOrCalculated())

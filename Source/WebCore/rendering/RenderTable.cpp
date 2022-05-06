@@ -1505,7 +1505,7 @@ std::optional<LayoutUnit> RenderTable::firstLineBaseline() const
     // doesn't define the baseline of a 'table' only an 'inline-table').
     // This is also needed to properly determine the baseline of a cell if it has a table child.
 
-    if (isWritingModeRoot() || shouldApplyLayoutContainment(*this))
+    if (isWritingModeRoot() || shouldApplyLayoutContainment())
         return std::optional<LayoutUnit>();
 
     recalcSectionsIfNeeded();

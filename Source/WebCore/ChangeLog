@@ -1,3 +1,105 @@
+2022-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the various shouldApplyContainment() functions member functions on RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=240156
+
+        Reviewed by Alan Bujtas.
+
+        These were free functions, but make more sense as member functions on RenderElement
+        since most callers passed `*this`. Just one call site needs to downcast<> to
+        RenderElement.
+
+        No behavior change.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        (WebCore::RenderBlock::firstLineBaseline const):
+        (WebCore::RenderBlock::inlineBlockBaseline const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::adjustSizeContainmentChildForPagination):
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateLogicalHeight):
+        (WebCore::RenderBox::isUnsplittableForPagination const):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::updateFromStyle):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::baselinePosition const):
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::rendererSubtreeAttached):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects const):
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+        (WebCore::RenderElement::shouldApplyLayoutContainment const):
+        (WebCore::RenderElement::shouldApplySizeContainment const):
+        (WebCore::RenderElement::shouldApplyInlineSizeContainment const):
+        (WebCore::RenderElement::shouldApplyStyleContainment const):
+        (WebCore::RenderElement::shouldApplyPaintContainment const):
+        (WebCore::RenderElement::shouldApplyAnyContainment const):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderFlexibleBox::firstLineBaseline const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const):
+        (WebCore::RenderGrid::firstLineBaseline const):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeIntrinsicRatioInformation const):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::shouldBeCSSStackingContext const):
+        (WebCore::RenderLayer::setAncestorChainHasSelfPaintingLayerDescendant):
+        (WebCore::RenderLayer::setAncestorChainHasVisibleDescendant):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderListBox::baselinePosition const):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::computeIntrinsicLogicalWidths const):
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary):
+        (WebCore::shouldApplyLayoutContainment): Deleted.
+        (WebCore::shouldApplySizeContainment): Deleted.
+        (WebCore::shouldApplyInlineSizeContainment): Deleted.
+        (WebCore::shouldApplyStyleContainment): Deleted.
+        (WebCore::shouldApplyPaintContainment): Deleted.
+        (WebCore::shouldApplyAnyContainment): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox const):
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation const):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computeIntrinsicLogicalWidths const):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBaseline const):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeIntrinsicLogicalWidths const):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::rendererForRootBackground const):
+        * rendering/svg/LegacyRenderSVGRoot.cpp:
+        (WebCore::LegacyRenderSVGRoot::computeIntrinsicRatioInformation const):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation const):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::evaluateSizeFeature const):
+
 2022-05-06  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback

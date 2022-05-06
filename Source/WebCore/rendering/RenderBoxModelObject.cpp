@@ -211,7 +211,7 @@ void RenderBoxModelObject::updateFromStyle()
     setHorizontalWritingMode(styleToUse.isHorizontalWritingMode());
     if (styleToUse.isFlippedBlocksWritingMode())
         view().frameView().setHasFlippedBlockRenderers(true);
-    setPaintContainmentApplies(shouldApplyPaintContainment(*this));
+    setPaintContainmentApplies(shouldApplyPaintContainment());
 }
 
 static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)

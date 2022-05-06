@@ -42,7 +42,7 @@ public:
 
     LayoutSize intrinsicSize() const final
     {
-        if (shouldApplySizeContainment(*this))
+        if (shouldApplySizeContainment())
             return LayoutSize();
         return m_intrinsicSize;
     }

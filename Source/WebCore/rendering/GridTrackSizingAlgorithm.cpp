@@ -1045,8 +1045,8 @@ private:
     double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace) const override;
     bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
     LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
-    bool isComputingSizeContainment() const override { return shouldApplySizeContainment(*renderGrid()); }
-    bool isComputingInlineSizeContainment() const override { return shouldApplyInlineSizeContainment(*renderGrid()); }
+    bool isComputingSizeContainment() const override { return renderGrid()->shouldApplySizeContainment(); }
+    bool isComputingInlineSizeContainment() const override { return renderGrid()->shouldApplyInlineSizeContainment(); }
     void accumulateFlexFraction(double& flexFraction, GridIterator&, GridTrackSizingDirection outermostDirection, HashSet<RenderBox*>& itemsSet) const;
 };
 

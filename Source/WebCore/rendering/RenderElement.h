@@ -86,6 +86,13 @@ public:
     bool canContainAbsolutelyPositionedObjects() const;
     bool canEstablishContainingBlockWithTransform() const;
 
+    bool shouldApplyLayoutContainment() const;
+    bool shouldApplySizeContainment() const;
+    bool shouldApplyInlineSizeContainment() const;
+    bool shouldApplyStyleContainment() const;
+    bool shouldApplyPaintContainment() const;
+    bool shouldApplyAnyContainment() const;
+
     Color selectionColor(CSSPropertyID) const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
@@ -471,8 +478,8 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
-        || shouldApplyLayoutContainment(*this)
-        || shouldApplyPaintContainment(*this);
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
@@ -482,14 +489,50 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned())
         || isSVGForeignObject()
-        || shouldApplyLayoutContainment(*this)
-        || shouldApplyPaintContainment(*this)
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment()
         || isRenderView();
 }
 
 inline bool RenderElement::canEstablishContainingBlockWithTransform() const
 {
     return isRenderBlock() || (isTablePart() && !isRenderTableCol());
+}
+
+inline bool RenderElement::shouldApplyLayoutContainment() const
+{
+    return style().containsLayout() && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isRenderBlockFlow());
+}
+
+inline bool RenderElement::shouldApplySizeContainment() const
+{
+    return style().containsSize() && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
+}
+
+inline bool RenderElement::shouldApplyInlineSizeContainment() const
+{
+    return style().effectiveContainment().contains(Containment::InlineSize) && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
+}
+
+inline bool RenderElement::shouldApplyStyleContainment() const
+{
+    if (!style().containsStyle())
+        return false;
+    return (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
+}
+
+inline bool RenderElement::shouldApplyPaintContainment() const
+{
+    return style().containsPaint() && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isRenderBlockFlow());
+}
+
+inline bool RenderElement::shouldApplyAnyContainment() const
+{
+    if (style().effectiveContainment().isEmpty())
+        return false;
+    if ((style().containsLayout() || style().containsPaint()) && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isRenderBlockFlow()))
+        return true;
+    return (style().containsSize() || style().containsStyle()) && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
 }
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)

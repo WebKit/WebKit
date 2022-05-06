@@ -563,7 +563,7 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.isPositioned() // Note that this only creates stacking context in conjunction with explicit z-index.
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
-        || shouldApplyPaintContainment(renderer)
+        || renderer.shouldApplyPaintContainment()
         || !renderer.style().hasAutoUsedZIndex()
         || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext())
         || layer.establishesTopLayer();
@@ -595,7 +595,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 
 bool RenderLayer::shouldBeCSSStackingContext() const
 {
-    return !renderer().style().hasAutoUsedZIndex() || shouldApplyPaintContainment(renderer()) || isRenderViewLayer();
+    return !renderer().style().hasAutoUsedZIndex() || renderer().shouldApplyPaintContainment() || isRenderViewLayer();
 }
 
 bool RenderLayer::setIsNormalFlowOnly(bool isNormalFlowOnly)
@@ -1100,7 +1100,7 @@ LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
 void RenderLayer::setAncestorChainHasSelfPaintingLayerDescendant()
 {
     for (RenderLayer* layer = this; layer; layer = layer->parent()) {
-        if (shouldApplyPaintContainment(renderer())) {
+        if (renderer().shouldApplyPaintContainment()) {
             m_hasSelfPaintingLayerDescendant = true;
             m_hasSelfPaintingLayerDescendantDirty = false;
             break;
@@ -1523,7 +1523,7 @@ void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 void RenderLayer::setAncestorChainHasVisibleDescendant()
 {
     for (auto* layer = this; layer; layer = layer->parent()) {
-        if (shouldApplyPaintContainment(renderer())) {
+        if (renderer().shouldApplyPaintContainment()) {
             m_hasVisibleDescendant = true;
             m_visibleDescendantStatusDirty = false;
             break;
@@ -4652,7 +4652,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().isPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
-            if (shouldApplyPaintContainment(renderer())) {
+            if (renderer().shouldApplyPaintContainment()) {
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
                 clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
             }

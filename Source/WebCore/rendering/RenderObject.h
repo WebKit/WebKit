@@ -1234,13 +1234,6 @@ void printLayerTreeForLiveDocuments();
 void printGraphicsLayerTreeForLiveDocuments();
 #endif
 
-bool shouldApplyLayoutContainment(const RenderObject&);
-bool shouldApplySizeContainment(const RenderObject&);
-bool shouldApplyInlineSizeContainment(const RenderObject&);
-bool shouldApplyStyleContainment(const RenderObject&);
-bool shouldApplyPaintContainment(const RenderObject&);
-bool shouldApplyAnyContainment(const RenderObject&);
-
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(ToValueTypeName, predicate) \

@@ -150,7 +150,7 @@ static LayoutUnit synthesizedBaselineFromContentBox(const RenderBox& box, LineDi
 
 LayoutUnit RenderButton::baselinePosition(FontBaseline fontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode mode) const
 {
-    if (shouldApplyLayoutContainment(*this))
+    if (shouldApplyLayoutContainment())
         return RenderFlexibleBox::baselinePosition(fontBaseline, firstLine, direction, mode);
     // We cannot rely on RenderFlexibleBox::baselinePosition() because of flexboxes have some special behavior
     // regarding baselines that shouldn't apply to buttons.

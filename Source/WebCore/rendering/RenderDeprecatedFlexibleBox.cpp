@@ -193,7 +193,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
         minLogicalWidth += scrollbarWidth;
     };
 
-    if (shouldApplySizeContainment(*this)) {
+    if (shouldApplySizeContainment()) {
         addScrollbarWidth();
         return;
     }

@@ -299,7 +299,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
-        auto shouldIgnoreGridItemContentForLogicalWidth = shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this);
+        auto shouldIgnoreGridItemContentForLogicalWidth = shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
         if (shouldIgnoreGridItemContentForLogicalWidth)
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForColumns);
         else
@@ -318,7 +318,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         bool shouldRecomputeHeight = false;
         if (!hasDefiniteLogicalHeight) {
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
-            if (shouldApplySizeContainment(*this))
+            if (shouldApplySizeContainment())
                 shouldRecomputeHeight = true;
         } else
             computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
@@ -643,7 +643,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned firstAutoRepeatTrack = insertionPoint + grid.explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
-    if (!grid.hasGridItems() || shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this)) {
+    if (!grid.hasGridItems() || shouldApplySizeContainment() || shouldApplyInlineSizeContainment()) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);
@@ -1433,7 +1433,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
 
 std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
-    if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment(*this))
+    if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment())
         return std::nullopt;
 
     const RenderBox* baselineChild = nullptr;

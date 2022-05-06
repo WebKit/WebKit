@@ -512,7 +512,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->isTextControl())
         return true;
 
-    if (shouldApplyLayoutContainment(*object) && shouldApplySizeContainment(*object))
+    if (object->shouldApplyLayoutContainment() && object->shouldApplySizeContainment())
         return true;
 
     if (object->isSVGRootOrLegacySVGRoot())
@@ -2616,40 +2616,3 @@ void showRenderTree(const WebCore::RenderObject* object)
 }
 
 #endif
-
-bool WebCore::shouldApplyLayoutContainment(const WebCore::RenderObject& renderer)
-{
-    return renderer.style().containsLayout() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
-}
-
-bool WebCore::shouldApplySizeContainment(const WebCore::RenderObject& renderer)
-{
-    return renderer.style().containsSize() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
-}
-
-bool WebCore::shouldApplyInlineSizeContainment(const WebCore::RenderObject& renderer)
-{
-    return renderer.style().effectiveContainment().contains(Containment::InlineSize) && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
-}
-
-bool WebCore::shouldApplyStyleContainment(const WebCore::RenderObject& renderer)
-{
-    if (!renderer.style().containsStyle())
-        return false;
-    return (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
-}
-
-bool WebCore::shouldApplyPaintContainment(const WebCore::RenderObject& renderer)
-{
-    return renderer.style().containsPaint() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
-}
-
-bool WebCore::shouldApplyAnyContainment(const WebCore::RenderObject& renderer)
-{
-    if (renderer.style().effectiveContainment().isEmpty())
-        return false;
-    if ((renderer.style().containsLayout() || renderer.style().containsPaint()) && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow()))
-        return true;
-    return (renderer.style().containsSize() || renderer.style().containsStyle()) && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
-}
-

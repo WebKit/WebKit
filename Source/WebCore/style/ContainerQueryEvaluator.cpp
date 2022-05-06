@@ -239,13 +239,13 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
     auto& renderer = *container.renderer;
 
     auto hasEligibleContainment = [&] {
-        if (!shouldApplyLayoutContainment(renderer))
+        if (!renderer.shouldApplyLayoutContainment())
             return false;
         switch (renderer.style().containerType()) {
         case ContainerType::InlineSize:
-            return shouldApplyInlineSizeContainment(renderer);
+            return renderer.shouldApplyInlineSizeContainment();
         case ContainerType::Size:
-            return shouldApplySizeContainment(renderer);
+            return renderer.shouldApplySizeContainment();
         case ContainerType::None:
             return true;
         }
