@@ -36,6 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/LogInitialization.h>
 #import <getopt.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -86,6 +87,9 @@ int WebPushDaemonMain(int argc, char** argv)
     @autoreleasepool {
         WTF::initializeMainThread();
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+        _CFPrefsSetDirectModeEnabled(YES);
+#endif
         applySandbox();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED

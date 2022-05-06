@@ -1,3 +1,26 @@
+2022-05-04  Ben Nham  <nham@apple.com>
+
+        Improve Mac webpushd sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=240110
+
+        Reviewed by Per Arne Vollan.
+
+        This tightens the webpushd sandbox to only allow essential operations.
+
+        The first ~280 lines or so are similar to the other WebKit sandboxes, although I removed
+        many of the lines in this prelude as most of the services listed in the other profiles
+        have no use in webpushd.
+
+        The last ~50 lines of the profile (starting with the comment about SQLite) allows the
+        operations necessary for functioning of the daemon:
+
+         - Communicating with the push service daemon
+         - Waking up processes in response to a push
+         - Persisting subscriptions to the PushDatabase
+
+        * webpushd/WebPushDaemonMain.mm:
+        * webpushd/mac/com.apple.WebKit.webpushd.sb.in:
+
 2022-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Remove internal WKPreference for non-iTunesAVOutput now that all platform support it 
