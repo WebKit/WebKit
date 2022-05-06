@@ -1,3 +1,9 @@
+2022-04-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.34.7 release
+
+        * wpe/NEWS: Add release notes for 2.34.7
+
 2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.34.6 release
