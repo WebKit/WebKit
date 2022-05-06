@@ -1,3 +1,19 @@
+2022-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reduce the number of calls to canContainFixedPositionObjects()
+        https://bugs.webkit.org/show_bug.cgi?id=240150
+
+        Reviewed by Alan Bujtas.
+
+        canContainFixedPositionObjects() isn't super cheap, so only call it when we need to remove
+        the IsFixed bit.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint const):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer const):
+
 2022-05-05  Chris Dumez  <cdumez@apple.com>
 
         Identifier::string() should return an AtomString

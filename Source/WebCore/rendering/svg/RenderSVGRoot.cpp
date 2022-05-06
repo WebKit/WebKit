@@ -519,7 +519,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
     if (isFixedPos)
         mode.add(IsFixed);
-    else if (canContainFixedPositionObjects())
+    else if (mode.contains(IsFixed) && canContainFixedPositionObjects())
         mode.remove(IsFixed);
 
     if (wasFixed)
