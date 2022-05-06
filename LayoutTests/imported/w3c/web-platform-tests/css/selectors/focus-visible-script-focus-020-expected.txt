@@ -1,0 +1,10 @@
+This test checks that a double script focus after a mouse click on a focusable element that does not match :focus visible, does NOT match :focus-visible.
+
+Click on the element that says "Click me".
+If the element that says "Focused" has a red outline then the test result is FAILURE, if it has a green background then the test result is SUCCESS.
+Click me
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Double script focus after mouse click on a focusable element that does not match :focus-visible, does NOT match :focus-visible
+
