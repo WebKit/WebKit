@@ -51,17 +51,18 @@ namespace WebCore {
 SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
     auto type = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    if (type == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || type == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
-        return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)) };
-    return { type, static_cast<uint32_t>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetHeight(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRow(pixelBuffer)) };
+    if (type == kCVPixelFormatType_32BGRA)
+        return { type, static_cast<uint32_t>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetHeight(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRow(pixelBuffer)) };
+    return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)) };
 }
 
 bool SharedVideoFrameInfo::isReadWriteSupported() const
 {
-    return m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_32BGRA
+    return m_bufferType == kCVPixelFormatType_32BGRA
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+        || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange
+        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
 }
 
 size_t SharedVideoFrameInfo::storageSize() const

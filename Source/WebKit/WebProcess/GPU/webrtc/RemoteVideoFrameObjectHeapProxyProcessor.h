@@ -37,12 +37,18 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 
 namespace IPC {
 class Connection;
 class Decoder;
+}
+
+namespace WebCore {
+class NativeImage;
+class VideoFrame;
 }
 
 namespace WebKit {
@@ -56,6 +62,7 @@ public:
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&);
 
 private:
     explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);
@@ -66,6 +73,7 @@ private:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
     void newVideoFrameBuffer(RemoteVideoFrameIdentifier, std::optional<SharedVideoFrame::Buffer>&&);
+    void newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&&);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);
@@ -80,6 +88,10 @@ private:
     HashMap<RemoteVideoFrameIdentifier, Callback> m_callbacks WTF_GUARDED_BY_LOCK(m_callbacksLock);
     Ref<WorkQueue> m_queue;
     SharedVideoFrameReader m_sharedVideoFrameReader;
+
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
+    RetainPtr<CVPixelBufferRef> m_convertedBuffer;
+    BinarySemaphore m_conversionSemaphore;
 };
 
 } // namespace WebKit

@@ -4407,6 +4407,7 @@
 		4103FBA22061BDB800C2EAF8 /* NetworkLoadChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadChecker.cpp; sourceTree = "<group>"; };
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
+		410AD2E12823BD9F009C93C8 /* RemoteVideoFrameObjectHeap.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteVideoFrameObjectHeap.mm; sourceTree = "<group>"; };
 		410BA139257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCTCPSocketCocoa.mm; sourceTree = "<group>"; };
 		410BA13A257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCTCPSocketCocoa.h; sourceTree = "<group>"; };
 		4111436320F677B10026F912 /* InjectUserScriptImmediately.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectUserScriptImmediately.h; sourceTree = "<group>"; };
@@ -7579,6 +7580,7 @@
 				7B5A3DA827A7DCBC006C6F97 /* RemoteVideoFrameObjectHeap.cpp */,
 				7B5A3DA727A7DCBC006C6F97 /* RemoteVideoFrameObjectHeap.h */,
 				413C542227C90F4C002FCDA8 /* RemoteVideoFrameObjectHeap.messages.in */,
+				410AD2E12823BD9F009C93C8 /* RemoteVideoFrameObjectHeap.mm */,
 				071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */,
 				071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */,
 				07E19F0523D4DC880094FFB4 /* TextTrackPrivateRemoteConfiguration.h */,

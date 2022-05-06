@@ -26,6 +26,9 @@ messages -> RemoteVideoFrameObjectHeap NotRefCounted {
 #if PLATFORM(COCOA)
     GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read, bool canSendIOSurface)
     PixelBuffer(WebKit::RemoteVideoFrameReadReference read) -> (RetainPtr<CVPixelBufferRef> result) Synchronous
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
+    ConvertBuffer(struct WebKit::SharedVideoFrame::Buffer buffer)
 #endif
     ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write)
 }

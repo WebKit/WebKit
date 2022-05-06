@@ -63,6 +63,9 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
+    using NativeImageCreator = RefPtr<NativeImage> (*)(const VideoFrame&);
+    WEBCORE_EXPORT static void setNativeImageCreator(NativeImageCreator&&);
+
     // MediaPlayer Factory Methods
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
@@ -290,8 +293,10 @@ private:
     Seconds m_presentationTime { 0 };
     FloatSize m_videoFrameSize;
     VideoFrameTimeMetadata m_sampleMetadata;
+
+    static NativeImageCreator m_nativeImageCreator;
 };
-    
+
 }
 
 #endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)

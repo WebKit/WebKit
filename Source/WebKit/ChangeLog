@@ -1,3 +1,27 @@
+2022-05-06  Youenn Fablet  <youenn@apple.com>
+
+        Allow MediaPlayerPrivateMediaStreamAVFObjC to avoid pixel conformers if IOSurfaces are not allowed
+        https://bugs.webkit.org/show_bug.cgi?id=240113
+        rdar://92629845
+
+        Reviewed by Eric Carlson.
+
+        Implement VideoFrame conversion to BGRA by sending IPC to GPUProcess, use pixel conformer in GPUProcess and send back the results to WebProcess.
+        This goes through RemoteVideoFrameObjectHeapProxy/RemoteVideoFrameObjectHeapProxyProcessor which exchanges with RemoteVideoFrameObjectHeap.
+        Make use of this conversion code path for MediaPlayerPrivateMediaStreamAVFObjC by setting MediaPlayerPrivateMediaStreamAVFObjC nativeImageCreator callback.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.mm: Added.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxy.h:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.h:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.messages.in:
+
 2022-05-05  Jean-Yves Avenard  <jya@apple.com>
 
         [EME] CDM and friends should be using SharedBuffer rather FragmentedSharedBuffer

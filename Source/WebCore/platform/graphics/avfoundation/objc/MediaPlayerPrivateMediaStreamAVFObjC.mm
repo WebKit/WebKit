@@ -127,6 +127,12 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaStreamAVFObjC
 
+MediaPlayerPrivateMediaStreamAVFObjC::NativeImageCreator MediaPlayerPrivateMediaStreamAVFObjC::m_nativeImageCreator = nullptr;
+void MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator(NativeImageCreator&& callback)
+{
+    m_nativeImageCreator = WTFMove(callback);
+}
+
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_logger(player->mediaPlayerLogger())
@@ -995,6 +1001,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
 {
     if (m_imagePainter.cgImage || !m_imagePainter.videoFrame)
         return;
+
+    if (m_nativeImageCreator) {
+        m_imagePainter.cgImage = m_nativeImageCreator(*m_imagePainter.videoFrame);
+        return;
+    }
 
     if (!m_imagePainter.pixelBufferConformer)
         m_imagePainter.pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });

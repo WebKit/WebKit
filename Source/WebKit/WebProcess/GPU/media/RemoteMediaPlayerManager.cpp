@@ -43,6 +43,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/MediaPlayerPrivateMediaStreamAVFObjC.h>
+#endif
+
 namespace WebKit {
 
 using namespace PAL;
@@ -262,6 +266,9 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
     if (useGPUProcess) {
         WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) {
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);
+        });
+        WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator([](auto& videoFrame) {
+            return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(videoFrame);
         });
     }
 #endif

@@ -32,6 +32,8 @@
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/PixelBufferConformerCV.h>
 
 namespace WebKit {
 
@@ -117,6 +119,33 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
         return;
     }
     IPC::Connection::send(m_connectionID, Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference(), canUseIOSurface), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&& buffer)
+{
+    ASSERT(!m_convertedBuffer);
+    if (buffer)
+        m_convertedBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(*buffer));
+    m_conversionSemaphore.signal();
+}
+
+RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
+{
+    auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+
+    auto nativePixelBuffer = videoFrame.pixelBuffer();
+    auto colorSpace = createCGColorSpaceForCVPixelBuffer(nativePixelBuffer);
+    auto buffer = m_sharedVideoFrameWriter.writeBuffer(nativePixelBuffer,
+        [&](auto& semaphore) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+        [&](auto& handle) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { handle }, 0); });
+    if (!buffer)
+        return nullptr;
+
+    connection.send(Messages::RemoteVideoFrameObjectHeap::ConvertBuffer { WTFMove(*buffer) }, 0);
+    m_conversionSemaphore.wait();
+
+    auto pixelBuffer = WTFMove(m_convertedBuffer);
+    return pixelBuffer ? NativeImage::create(PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(WTFMove(pixelBuffer), colorSpace.get())) : nullptr;
 }
 
 }
