@@ -1,3 +1,17 @@
+2022-05-06  Miguel Gomez  <magomez@igalia.com>
+
+        [Nicosia] Images in webkit.org/blog/ don't show up with threaded rendering
+        https://bugs.webkit.org/show_bug.cgi?id=238259
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implement Nicosia::CairoOperationRecorder::drawFilteredImageBuffer(), which is required
+        to render images that have CSS filters applied.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::drawFilteredImageBuffer):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+
 2022-05-05  Jean-Yves Avenard  <jya@apple.com>
 
         [EME] CDM and friends should be using SharedBuffer rather FragmentedSharedBuffer

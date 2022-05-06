@@ -30,6 +30,8 @@
 #include "NicosiaCairoOperationRecorder.h"
 
 #include "CairoOperations.h"
+#include "Filter.h"
+#include "FilterResults.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -541,6 +543,44 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph
 void CairoOperationRecorder::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
 {
     // FIXME: Not implemented.
+}
+
+void CairoOperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const FloatRect& srcRect, Filter& filter, FilterResults& results)
+{
+    struct DrawFilteredImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, FloatSize, ImagePaintingOptions, float, Cairo::ShadowState> {
+        virtual ~DrawFilteredImageBuffer() = default;
+
+        void execute(PaintingOperationReplay& replayer) override
+        {
+            Cairo::scale(contextForReplay(replayer), { 1 / arg<3>().width(), 1 / arg<3>().height() });
+            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<4>(), arg<5>(), arg<6>());
+            Cairo::scale(contextForReplay(replayer), arg<3>());
+        }
+
+        void dump(TextStream& ts) override
+        {
+            ts << indent << "DrawFilteredImageBuffer<>\n";
+        }
+    };
+
+    auto result = filter.apply(srcImage, srcRect, results);
+    if (!result)
+        return;
+
+    auto imageBuffer = result->imageBuffer();
+    if (!imageBuffer)
+        return;
+
+    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
+
+    auto nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return;
+
+    auto& state = this->state();
+    append(createCommand<DrawFilteredImageBuffer>(nativeImage->platformImage(), FloatRect(result->absoluteImageRect()), FloatRect({ } , imageBuffer->logicalSize()), filter.filterScale(), ImagePaintingOptions(state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
 void CairoOperationRecorder::drawNativeImage(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
