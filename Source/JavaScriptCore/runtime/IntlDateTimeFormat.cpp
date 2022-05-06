@@ -1290,7 +1290,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
 
-    return jsString(vm, String(result));
+    return jsString(vm, String(WTFMove(result)));
 }
 
 static ASCIILiteral partTypeString(UDateFormatField field)
@@ -1613,7 +1613,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         return { };
     }
 
-    return jsString(vm, String(buffer));
+    return jsString(vm, String(WTFMove(buffer)));
 #endif
 }
 

@@ -117,11 +117,11 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
 
     // 8. If name is the empty String, return msg.
     if (!nameString.length())
-        return JSValue::encode(message.isString() ? message : jsString(vm, messageString));
+        return JSValue::encode(message.isString() ? message : jsString(vm, WTFMove(messageString)));
 
     // 9. If msg is the empty String, return name.
     if (!messageString.length())
-        return JSValue::encode(name.isString() ? name : jsString(vm, nameString));
+        return JSValue::encode(name.isString() ? name : jsString(vm, WTFMove(nameString)));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
     RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": ", messageString)));

@@ -1,3 +1,64 @@
+2022-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Identifier::string() should return an AtomString
+        https://bugs.webkit.org/show_bug.cgi?id=240122
+
+        Reviewed by Yusuke Suzuki.
+
+        Identifier::string() should return an AtomString instead of a String, since
+        it holds an AtomString internally.
+    
+        Also add some overloads to jsString() to resolve ambiguity for some callers.
+
+        * API/JSContext.mm:
+        (-[JSContext dependencyIdentifiersForModuleJSScript:]):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::processClauseList):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::toStringSlow):
+        * runtime/Identifier.h:
+        (JSC::Identifier::string const):
+        (JSC::Identifier::atomString const): Deleted.
+        * runtime/IdentifierInlines.h:
+        (JSC::identifierToJSValue):
+        (JSC::identifierToSafePublicJSValue):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::format const):
+        (JSC::IntlDateTimeFormat::formatRange):
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::of const):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::format const):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::format const):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyName):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSString.h:
+        (JSC::jsString):
+        * runtime/JSStringInlines.h:
+        (JSC::repeatCharacter):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::toLocaleCase):
+        (JSC::normalize):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
 2022-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, partial revert of r293813 because of proposal's issue.

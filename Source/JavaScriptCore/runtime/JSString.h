@@ -50,7 +50,13 @@ class LLIntOffsetsExtractor;
 JSString* jsEmptyString(VM&);
 JSString* jsString(VM&, const String&); // returns empty string if passed null string
 JSString* jsString(VM&, String&&); // returns empty string if passed null string
+JSString* jsString(VM&, const AtomString&); // returns empty string if passed null string
+JSString* jsString(VM&, AtomString&&); // returns empty string if passed null string
 JSString* jsString(VM&, StringView); // returns empty string if passed null string
+
+JSString* jsString(VM&, RefPtr<AtomStringImpl>&&);
+JSString* jsString(VM&, Ref<AtomStringImpl>&&);
+JSString* jsString(VM&, Ref<StringImpl>&&);
 
 JSString* jsSingleCharacterString(VM&, UChar);
 JSString* jsSubstring(VM&, const String&, unsigned offset, unsigned length);
@@ -894,6 +900,16 @@ inline JSString* jsString(VM& vm, String&& s)
     return JSString::create(vm, s.releaseImpl().releaseNonNull());
 }
 
+ALWAYS_INLINE JSString* jsString(VM& vm, const AtomString& s)
+{
+    return jsString(vm, s.string());
+}
+
+ALWAYS_INLINE JSString* jsString(VM& vm, AtomString&& s)
+{
+    return jsString(vm, s.releaseString());
+}
+
 inline JSString* jsString(VM& vm, StringView s)
 {
     int size = s.length();
@@ -906,6 +922,21 @@ inline JSString* jsString(VM& vm, StringView s)
     }
     auto impl = s.is8Bit() ? StringImpl::create(s.characters8(), s.length()) : StringImpl::create(s.characters16(), s.length());
     return JSString::create(vm, WTFMove(impl));
+}
+
+ALWAYS_INLINE JSString* jsString(VM& vm, RefPtr<AtomStringImpl>&& s)
+{
+    return jsString(vm, String { WTFMove(s) });
+}
+
+ALWAYS_INLINE JSString* jsString(VM& vm, Ref<AtomStringImpl>&& s)
+{
+    return jsString(vm, String { WTFMove(s) });
+}
+
+ALWAYS_INLINE JSString* jsString(VM& vm, Ref<StringImpl>&& s)
+{
+    return jsString(vm, String { WTFMove(s) });
 }
 
 inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* base, unsigned offset, unsigned length)

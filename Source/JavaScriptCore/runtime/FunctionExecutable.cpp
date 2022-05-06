@@ -227,10 +227,10 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
         parametersStartOffset(),
         parametersStartOffset() + source().length());
 
-    String name = this->name().string();
+    auto name = this->name().string();
     if (name == vm.propertyNames->starDefaultPrivateName.string())
-        name = emptyString();
-    return cacheIfNoException(jsMakeNontrivialString(globalObject, functionHeader, name, src));
+        name = emptyAtom();
+    return cacheIfNoException(jsMakeNontrivialString(globalObject, functionHeader, WTFMove(name), src));
 }
 
 void FunctionExecutable::overrideInfo(const FunctionOverrideInfo& overrideInfo)

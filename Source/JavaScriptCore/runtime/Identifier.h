@@ -86,13 +86,11 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
 class Identifier {
     friend class Structure;
 public:
-    Identifier() { }
+    Identifier() = default;
     enum EmptyIdentifierFlag { EmptyIdentifier };
     Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtom()); }
 
-    // FIXME: Consider renaming atomString() to string() and always return an AtomString.
-    const AtomString& atomString() const { return m_string; }
-    const String& string() const { return m_string.string(); }
+    const AtomString& string() const { return m_string; }
 
     UniquedStringImpl* impl() const { return static_cast<UniquedStringImpl*>(m_string.impl()); }
 

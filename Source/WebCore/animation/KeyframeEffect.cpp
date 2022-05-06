@@ -230,7 +230,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
     Vector<JSC::Identifier> animationProperties;
     for (auto& inputProperty : inputProperties) {
-        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.atomString());
+        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
         if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty))
             animationProperties.append(inputProperty);
@@ -238,7 +238,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
     // 5. Sort animation properties in ascending order by the Unicode codepoints that define each property name.
     std::sort(animationProperties.begin(), animationProperties.end(), [](auto& lhs, auto& rhs) {
-        return lhs.string().utf8() < rhs.string().utf8();
+        return lhs.string().string().utf8() < rhs.string().string().utf8();
     });
 
     // 6. For each property name in animation properties,
@@ -271,7 +271,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
-        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].atomString());
+        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].string());
 
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
         keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyValues });

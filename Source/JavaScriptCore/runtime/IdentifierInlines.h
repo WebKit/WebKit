@@ -129,14 +129,14 @@ inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
 {
     if (identifier.isSymbol())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(vm, String { identifier.impl() });
+    return jsString(vm, identifier.string());
 }
 
 inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifier) 
 {
     if (identifier.isSymbol() && !identifier.isPrivateName())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(vm, String { identifier.impl() });
+    return jsString(vm, identifier.string());
 }
 
 } // namespace JSC

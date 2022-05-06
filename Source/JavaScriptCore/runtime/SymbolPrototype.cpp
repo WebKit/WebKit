@@ -97,8 +97,8 @@ JSC_DEFINE_CUSTOM_GETTER(symbolProtoGetterDescription, (JSGlobalObject* globalOb
         return throwVMTypeError(globalObject, scope, SymbolDescriptionTypeError);
     scope.release();
     Integrity::auditStructureID(symbol->structureID());
-    const auto description = symbol->description();
-    return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, description));
+    auto description = symbol->description();
+    return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, WTFMove(description)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(symbolProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
