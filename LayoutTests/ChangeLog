@@ -1,3 +1,12 @@
+2022-05-06  Karl Rackler  <rackler@apple.com>
+
+        [Gardening][ iOS ] fast/innerHTML/001.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=240170
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/ios/TestExpectations:
+
 2022-05-05  Ben Nham  <nham@apple.com>
 
         Add support for Notification objects with custom data
