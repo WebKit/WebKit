@@ -638,6 +638,7 @@
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
 		2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */; };
 		2D7303791A7C2B7500F8F487 /* WKPageNavigationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7303781A7C2B7500F8F487 /* WKPageNavigationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D77BF202820BA0D00C9A961 /* WebKit.plist in Copy Feature Flags Plist */ = {isa = PBXBuildFile; fileRef = 1D0530D2259162C900E436F7 /* WebKit.plist */; };
 		2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */; };
@@ -2728,6 +2729,17 @@
 			name = "Copy Message Generation Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D77BF1F2820B9F500C9A961 /* Copy Feature Flags Plist */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(WK_INSTALL_PATH_PREFIX)/$(SYSTEM_LIBRARY_DIR)/FeatureFlags/Domain";
+			dstSubfolderSpec = 0;
+			files = (
+				2D77BF202820BA0D00C9A961 /* WebKit.plist in Copy Feature Flags Plist */,
+			);
+			name = "Copy Feature Flags Plist";
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		372589431C1E496800C92CA9 /* Copy Shims */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3727,8 +3739,7 @@
 		1CEF45BB27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModuleCompilationHint.cpp; sourceTree = "<group>"; };
 		1CEF45BC27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleCompilationHint.h; sourceTree = "<group>"; };
 		1CF18F3E26BB5D90004B1722 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
-		1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "combine-feature-flags-plist.py"; sourceTree = "<group>"; };
-		1D0530D52591941500E436F7 /* generate-feature-flags-plist.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-feature-flags-plist.sh"; sourceTree = "<group>"; };
+		1D0530D2259162C900E436F7 /* WebKit.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1D0B66192624C11800F9712F /* WebMediaKeySystemClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaKeySystemClient.cpp; sourceTree = "<group>"; };
 		1D0B661A2624C19600F9712F /* MediaKeySystemPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaKeySystemPermissionRequestManager.cpp; path = EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp; sourceTree = "<group>"; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
@@ -7617,6 +7628,7 @@
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
 				5742A2FF2535758000B7BA14 /* WebAuthnProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
+				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
@@ -8696,6 +8708,14 @@
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
+			isa = PBXGroup;
+			children = (
+				1D0530D2259162C900E436F7 /* WebKit.plist */,
+			);
+			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1F0181681858DC1500F92884 /* Cocoa */ = {
@@ -13191,9 +13211,7 @@
 				535E08CA225460FC00DF00CA /* postprocess-header-rule */,
 				7CDE73A21F9DA59700390312 /* PreferencesTemplates */,
 				0FC0856E187CE0A900780D86 /* __init__.py */,
-				1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
-				1D0530D52591941500E436F7 /* generate-feature-flags-plist.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
 				0FC08570187CE0A900780D86 /* model.py */,
@@ -15762,6 +15780,7 @@
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
+				2D77BF1F2820B9F500C9A961 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
