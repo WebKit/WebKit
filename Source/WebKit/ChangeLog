@@ -1,3 +1,29 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Infinite recursion at -[WKFullScreenWindowController _exitFullscreenImmediately]
+        https://bugs.webkit.org/show_bug.cgi?id=239744
+        <rdar://74201964>
+
+        Reviewed by Eric Carlson.
+
+        When exiting fullscreen immediately, we trigger the correct state transition by calling
+        -[self exitFullScreen]. However, when no fullscreen manager exists (as may happen during
+        navigation), -exitFullscreen may itself call -_exitFullscreenImmediately, which causes an
+        infinite recursion and stack overflow.
+
+        Unroll the implementation by performing all the same pieces as would have been done by
+        -exitFullScreen, but inline. Refactor out common behavior into -_reinsertWebViewUnderPlaceholder,
+        and call that both from -_exitFullscreenImmediately and _completedExitFullScreen.
+
+        Unfortunately, no API tests are possible here because TestWebKitAPI is not an actual iOS UI
+        application.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController _reinsertWebViewUnderPlaceholder]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+
 2022-05-06  Per Arne Vollan  <pvollan@apple.com>
 
         Create reports for long process launch times

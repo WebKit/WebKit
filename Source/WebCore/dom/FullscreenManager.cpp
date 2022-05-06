@@ -113,6 +113,8 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, Full
         }
     }
 
+    INFO_LOG(LOGIDENTIFIER);
+
     m_pendingFullscreenElement = RefPtr { element.ptr() };
 
     m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, element = WTFMove(element), checkType, hasKeyboardAccess, failedPreflights, identifier = LOGIDENTIFIER] () mutable {
@@ -288,6 +290,8 @@ void FullscreenManager::exitFullscreen()
         return;
     }
 
+    INFO_LOG(LOGIDENTIFIER);
+
     // 3. Let descendants be all the doc's descendant browsing context's documents with a non-empty fullscreen
     // element stack (if any), ordered so that the child of the doc is last and the document furthest
     // away from the doc is first.
@@ -331,6 +335,8 @@ void FullscreenManager::exitFullscreen()
         currentDoc = nullptr;
     }
 
+    m_pendingExitFullscreen = true;
+
     // 6. Return, and run the remaining steps asynchronously.
     // 7. Optionally, perform some animation.
     m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, newTop = RefPtr { newTop }, fullscreenElement = m_fullscreenElement, identifier = LOGIDENTIFIER] {
@@ -339,6 +345,7 @@ void FullscreenManager::exitFullscreen()
 
         auto* page = this->page();
         if (!page) {
+            m_pendingExitFullscreen = false;
             ERROR_LOG(identifier, "task - Document not in page; bailing.");
             return;
         }
@@ -349,19 +356,21 @@ void FullscreenManager::exitFullscreen()
         if (!fullscreenElement && m_pendingFullscreenElement) {
             INFO_LOG(identifier, "task - Cancelling pending fullscreen request.");
             m_pendingFullscreenElement = nullptr;
+            m_pendingExitFullscreen = false;
             return;
         }
 
         // Only exit out of full screen window mode if there are no remaining elements in the
         // full screen stack.
         if (!newTop) {
-            m_pendingExitFullscreen = true;
             INFO_LOG(identifier, "task - Empty fullscreen stack; exiting.");
             page->chrome().client().exitFullScreenForElement(fullscreenElement.get());
             return;
         }
 
         // Otherwise, notify the chrome of the new full screen element.
+        m_pendingExitFullscreen = false;
+
         INFO_LOG(identifier, "task - New top of fullscreen stack.");
         page->chrome().client().enterFullScreenForElement(*newTop);
     });
@@ -628,6 +637,8 @@ void FullscreenManager::setAnimatingFullscreen(bool flag)
         return;
     m_isAnimatingFullscreen = flag;
 
+    INFO_LOG(LOGIDENTIFIER, flag);
+
     if (m_fullscreenElement && m_fullscreenElement->isDescendantOf(document())) {
         m_fullscreenElement->invalidateStyleForSubtree();
         scheduleFullStyleRebuild();
@@ -643,6 +654,9 @@ void FullscreenManager::setFullscreenControlsHidden(bool flag)
 {
     if (m_areFullscreenControlsHidden == flag)
         return;
+
+    INFO_LOG(LOGIDENTIFIER, flag);
+
     m_areFullscreenControlsHidden = flag;
 
     if (m_fullscreenElement && m_fullscreenElement->isDescendantOf(document())) {

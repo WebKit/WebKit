@@ -1,3 +1,29 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Infinite recursion at -[WKFullScreenWindowController _exitFullscreenImmediately]
+        https://bugs.webkit.org/show_bug.cgi?id=239744
+        <rdar://74201964>
+
+        Reviewed by Eric Carlson.
+
+        Even after fullscreen is correctly torn down during an immediate exit, fullscreen can never again
+        be entered for the lifetime of the page. This is due to the ivar m_pendingExitFullscreen being set
+        to true with no opportunity for that state to be cleared. This occurs because the callbacks for
+        exiting fullscreen are performed before the lambda form FullscreenManager::exitFullscreen() is
+        called.
+
+        Set m_pendingExitFullscreen inside exitFullscreen(), rather than the lambda, and clear it explicitly
+        in the cases where fullscreen exiting is not actually necessary.
+
+        The mock behavior of Fullscreen inside DumpRenderTree and WebKitTestRunner are not able to exercise
+        this same path. Track improvements to this mock in bug #239747.
+
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::requestFullscreenForElement):
+        (WebCore::FullscreenManager::exitFullscreen):
+        (WebCore::FullscreenManager::setAnimatingFullscreen):
+        (WebCore::FullscreenManager::setFullscreenControlsHidden):
+
 2022-05-06  Youenn Fablet  <youenn@apple.com>
 
         Allow MediaPlayerPrivateMediaStreamAVFObjC to avoid pixel conformers if IOSurfaces are not allowed
