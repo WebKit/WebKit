@@ -173,6 +173,9 @@ PlatformDisplay::PlatformDisplay()
 #if PLATFORM(GTK)
 PlatformDisplay::PlatformDisplay(GdkDisplay* display)
     : m_sharedDisplay(display)
+#if USE(EGL)
+    , m_eglDisplay(EGL_NO_DISPLAY)
+#endif
 {
 #if USE(ATSPI) && USE(GTK4)
     if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))

@@ -1,3 +1,16 @@
+2022-04-26  Xi Ruoyao  <xry111@mengyan1223.wang>
+
+        [GTK] Initialize m_eglDisplay in PlatformDisplay::PlatformDisplay(GdkDisplay*)
+        https://bugs.webkit.org/show_bug.cgi?id=239760
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::PlatformDisplay):
+        initialize m_eglDisplay to EGL_NO_DISPLAY.
+
 2022-04-14  Martin Robinson  <mrobinson@webkit.org>
 
         [GTK] AddressSanitizer: heap-buffer-overflow in WebCore::Length::ref()
