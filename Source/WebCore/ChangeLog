@@ -1,3 +1,17 @@
+2022-05-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] HTTP traffic is not filtered in the parental controls filter
+        https://bugs.webkit.org/show_bug.cgi?id=240180
+        <rdar://problem/92875540>
+
+        Reviewed by Geoffrey Garen.
+
+        Traditionally, we have not filtered HTTP in the parental controls filter on macOS, since other parts of the system
+        has taken care of this. This appears to have changed now, and WebKit should also filter HTTP in addition to HTTPS.
+
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::canHandleResponse):
+
 2022-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Double script focus after mouse click shouldn't match :focus-visible
