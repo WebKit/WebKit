@@ -50,9 +50,10 @@ class QueuedVideoOutput
     , public CanMakeWeakPtr<QueuedVideoOutput> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QueuedVideoOutput> create(AVPlayerItem*, AVPlayer*);
+    static RefPtr<QueuedVideoOutput> create(AVPlayerItem*, AVPlayer*);
     ~QueuedVideoOutput();
 
+    bool valid();
     void invalidate();
     bool hasImageForTime(const MediaTime&) const;
 

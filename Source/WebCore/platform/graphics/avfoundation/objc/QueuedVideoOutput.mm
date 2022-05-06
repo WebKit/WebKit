@@ -123,9 +123,10 @@ static dispatch_queue_t globalOutputDelegateQueue()
     return globalQueue;
 }
 
-Ref<QueuedVideoOutput> QueuedVideoOutput::create(AVPlayerItem* item, AVPlayer* player)
+RefPtr<QueuedVideoOutput> QueuedVideoOutput::create(AVPlayerItem* item, AVPlayer* player)
 {
-    return adoptRef(*new QueuedVideoOutput(item, player));
+    auto queuedVideoOutput = adoptRef(new QueuedVideoOutput(item, player));
+    return queuedVideoOutput->valid() ? queuedVideoOutput : nullptr;
 }
 
 QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
@@ -137,6 +138,9 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
     [m_videoOutput setDelegate:m_delegate.get() queue:globalOutputDelegateQueue()];
     [m_videoOutput requestNotificationOfMediaDataChangeAsSoonAsPossible];
 
+    if (!m_videoOutput)
+        return;
+    
     [m_playerItem addOutput:m_videoOutput.get()];
 
     [m_player addObserver:m_delegate.get() forKeyPath:@"rate" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
@@ -157,6 +161,14 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
 QueuedVideoOutput::~QueuedVideoOutput()
 {
     invalidate();
+}
+
+bool QueuedVideoOutput::valid()
+{
+    return m_videoTimebaseObserver
+        && m_videoOutput
+        && m_player
+        && m_playerItem;
 }
 
 void QueuedVideoOutput::invalidate()
