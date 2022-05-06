@@ -551,7 +551,6 @@ void Internals::resetToConsistentState(Page& page)
     }
 
     WTF::clearDefaultPortForProtocolMapForTesting();
-    overrideUserPreferredLanguages(Vector<String>());
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
     if (!page.mainFrame().editor().isContinuousSpellCheckingEnabled())
         page.mainFrame().editor().toggleContinuousSpellChecking();

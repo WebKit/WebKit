@@ -33,6 +33,7 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/sysctl.h>
+#import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -47,18 +48,15 @@ static void setAppleLanguagesPreference()
 
     if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
         @autoreleasepool {
-            NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-            auto newArguments = adoptNS([existingArguments mutableCopy]);
-            RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
+            Vector<String> newLanguages;
+            auto* newLanguagesPtr = &newLanguages;
             xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
-                [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
+                newLanguagesPtr->append(String::fromUTF8(xpc_string_get_string_ptr(value)));
                 return true;
             });
 
-            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages.get());
-
-            [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
-            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
+            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages);
+            overrideUserPreferredLanguages(newLanguages);
         }
     } else
         LOG(Language, "Bootstrap message does not contain OverrideLanguages");

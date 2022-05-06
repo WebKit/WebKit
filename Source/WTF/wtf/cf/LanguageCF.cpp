@@ -113,4 +113,14 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
     return languages;
 }
 
+void overrideUserPreferredLanguages(const Vector<String>& override)
+{
+    LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
+    auto languages = adoptCF(CFArrayCreateMutable(nullptr, override.size(), nullptr));
+    for (auto& language : override)
+        CFArrayAppendValue(languages.get(), language.createCFString().get());
+    CFPreferencesSetValue(CFSTR("AppleLanguages"), languages.get(), kCFPreferencesCurrentApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    languageDidChange();
+}
+
 } // namespace WTF
