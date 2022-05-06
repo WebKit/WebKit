@@ -98,6 +98,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, StringView);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const AtomString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
 inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, const UniquedStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }

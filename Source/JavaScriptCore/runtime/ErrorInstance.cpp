@@ -141,7 +141,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     }
 
     if (!messageWithSource.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(messageWithSource)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));

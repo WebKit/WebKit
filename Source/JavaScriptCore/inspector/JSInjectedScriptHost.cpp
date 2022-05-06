@@ -266,7 +266,7 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(globalObject);
-    location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, scriptID));
+    location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, WTFMove(scriptID)));
     location->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(lineNumber));
     location->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(columnNumber));
 
@@ -275,11 +275,11 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     String name = function->name(vm);
     if (!name.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, name));
+        result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, WTFMove(name)));
 
     String displayName = function->displayName(vm);
     if (!displayName.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, displayName));
+        result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, WTFMove(displayName)));
 
     return result;
 }

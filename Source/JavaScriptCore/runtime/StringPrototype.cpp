@@ -332,7 +332,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
             }
         }
 
-        RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
+        RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
     UChar* buffer;
@@ -352,7 +352,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         }
     }
 
-    RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
 static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const StringRange* substringRanges, int rangeCount, const String* separators, int separatorCount)
@@ -420,7 +420,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* 
             }
         }        
 
-        RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
+        RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
     UChar* buffer;
@@ -453,7 +453,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* 
         }
     }
 
-    RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
 #define OUT_OF_MEMORY(exec__, scope__) \
@@ -1624,7 +1624,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
         return throwVMTypeError(globalObject, scope, String::fromLatin1(u_errorName(status)));
 
     // 18. Return L.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { buffer })));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { WTFMove(buffer) })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLocaleLowerCase, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1923,7 +1923,7 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     unorm2_normalize(normalizer, characters, view.length(), buffer, normalizedStringLength, &status);
     ASSERT(U_SUCCESS(status));
 
-    RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(result)));
+    RELEASE_AND_RETURN(scope, jsString(vm, result.releaseNonNull()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject, CallFrame* callFrame))

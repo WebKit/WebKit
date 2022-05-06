@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/PrintStream.h>
 
+#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -102,6 +103,11 @@ void printInternal(PrintStream& out, const CString& string)
 void printInternal(PrintStream& out, const String& string)
 {
     printExpectedCStringHelper(out, "String", string.tryGetUtf8());
+}
+
+void printInternal(PrintStream& out, const AtomString& string)
+{
+    printExpectedCStringHelper(out, "String", string.string().tryGetUtf8());
 }
 
 void printInternal(PrintStream& out, const StringImpl* string)

@@ -270,7 +270,7 @@ JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double valu
     String result = formatInternal(globalObject, value, unit);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return jsString(vm, result);
+    return jsString(vm, WTFMove(result));
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTimeToParts

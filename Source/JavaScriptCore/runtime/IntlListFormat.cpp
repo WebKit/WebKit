@@ -226,7 +226,7 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, String(result));
+    return jsString(vm, String(WTFMove(result)));
 #else
     UNUSED_PARAM(list);
     return throwTypeError(globalObject, scope, "failed to format list of strings"_s);

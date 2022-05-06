@@ -629,7 +629,7 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
         name = makeString("set ", name);
 
     rareData->setHasReifiedName();
-    putDirect(vm, propID, jsString(vm, name), initialAttributes);
+    putDirect(vm, propID, jsString(vm, WTFMove(name)), initialAttributes);
 }
 
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)

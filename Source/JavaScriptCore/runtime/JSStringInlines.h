@@ -77,7 +77,7 @@ inline JSString* repeatCharacter(JSGlobalObject* globalObject, CharacterType cha
 
     std::fill_n(buffer, repeatCount, character);
 
-    RELEASE_AND_RETURN(scope, jsString(vm, WTFMove(impl)));
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
 } // namespace JSC
