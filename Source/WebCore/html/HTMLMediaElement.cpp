@@ -749,6 +749,16 @@ bool HTMLMediaElement::isInteractiveContent() const
     return controls();
 }
 
+void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (name == webkitwirelessvideoplaybackdisabledAttr)
+        mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
+    else
+#endif
+        HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+}
+
 void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == idAttr)

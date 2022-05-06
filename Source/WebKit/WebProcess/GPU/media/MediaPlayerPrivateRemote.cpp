@@ -1079,6 +1079,9 @@ bool MediaPlayerPrivateRemote::wirelessVideoPlaybackDisabled() const
 
 void MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled(bool disabled)
 {
+    // Update the cache state so we don't have to make this a synchronous message send to avoid a
+    // race condition with the web process fetching the new state immediately after change.
+    m_cachedState.wirelessVideoPlaybackDisabled = disabled;
     connection().send(Messages::RemoteMediaPlayerProxy::SetWirelessVideoPlaybackDisabled(disabled), m_id);
 }
 

@@ -743,6 +743,7 @@ void RemoteMediaPlayerProxy::setWirelessVideoPlaybackDisabled(bool disabled)
 {
     m_player->setWirelessVideoPlaybackDisabled(disabled);
     m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
+    sendCachedState();
 }
 
 void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
