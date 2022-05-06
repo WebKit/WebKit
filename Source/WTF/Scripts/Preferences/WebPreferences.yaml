@@ -2455,18 +2455,6 @@ ViewGestureDebuggingEnabled:
     WebKit:
       default: false
 
-ViewportFitEnabled:
-  type: bool
-  humanReadableName: "Viewport Fit"
-  humanReadableDescription: "Enable viewport-fit viewport parameter"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 VisualViewportEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames

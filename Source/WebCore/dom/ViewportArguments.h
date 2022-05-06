@@ -143,7 +143,7 @@ WEBCORE_EXPORT float computeMinimumScaleFactorForContentContained(const Viewport
 
 typedef Function<void(ViewportErrorCode, const String&)> ViewportErrorHandler;
 void setViewportFeature(ViewportArguments&, Document&, StringView key, StringView value);
-WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, bool viewportFitEnabled, const ViewportErrorHandler&);
+WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, const ViewportErrorHandler&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ViewportArguments&);
 

@@ -1,3 +1,20 @@
+2022-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the viewportFitEnabled WKPreference now that it is always on 
+        https://bugs.webkit.org/show_bug.cgi?id=240147
+
+        Reviewed by Tim Horton.
+
+        Remove the WKPreference 'ViewportFitEnabled' now that it is always enabled on all platforms, and
+        we do not wish to turn it off in testing or in other debugging circumstances.
+
+        * fast/css/variables/env/ios/safe-area-inset-env-set-expected.html:
+        * fast/css/variables/env/ios/safe-area-inset-env-set.html:
+        * fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html:
+        * fast/viewport/ios/viewport-fit-auto.html:
+        * fast/viewport/ios/viewport-fit-contain.html:
+        * fast/viewport/ios/viewport-fit-cover.html:
+
 2022-05-06  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback

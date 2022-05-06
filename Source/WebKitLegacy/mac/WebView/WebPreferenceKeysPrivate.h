@@ -174,7 +174,6 @@
 #define WebKitLinkPreloadEnabledPreferenceKey @"WebKitLinkPreloadEnabled"
 #define WebKitMediaPreloadingEnabledPreferenceKey @"WebKitMediaPreloadingEnabled"
 #define WebKitMediaUserGestureInheritsFromDocument @"WebKitMediaUserGestureInheritsFromDocument"
-#define WebKitViewportFitEnabledPreferenceKey @"WebKitViewportFitEnabled"
 #define WebKitConstantPropertiesEnabledPreferenceKey @"WebKitConstantPropertiesEnabled"
 #define WebKitColorFilterEnabledPreferenceKey @"WebKitColorFilterEnabled"
 #define WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey @"WebKitPunchOutWhiteBackgroundsInDarkMode"

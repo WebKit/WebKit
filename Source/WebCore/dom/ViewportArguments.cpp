@@ -448,7 +448,7 @@ static void reportViewportWarning(Document& document, ViewportErrorCode errorCod
     document.addConsoleMessage(MessageSource::Rendering, viewportErrorMessageLevel(errorCode), message);
 }
 
-void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, bool viewportFitEnabled, const ViewportErrorHandler& errorHandler)
+void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, const ViewportErrorHandler& errorHandler)
 {
     InternalViewportErrorHandler internalErrorHandler = [&errorHandler] (ViewportErrorCode errorCode, StringView replacement1, StringView replacement2) {
         errorHandler(errorCode, viewportErrorMessage(errorCode, replacement1, replacement2));
@@ -474,7 +474,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
 #endif
     else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"_s))
         arguments.shrinkToFit = findBooleanValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s) && viewportFitEnabled)
+    else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s))
         arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
     else
         internalErrorHandler(UnrecognizedViewportArgumentKeyError, key, { });
@@ -482,7 +482,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
 
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
-    setViewportFeature(arguments, key, value, document.settings().viewportFitEnabled(), [&](ViewportErrorCode errorCode, const String& message) {
+    setViewportFeature(arguments, key, value, [&](ViewportErrorCode errorCode, const String& message) {
         reportViewportWarning(document, errorCode, message);
     });
 }

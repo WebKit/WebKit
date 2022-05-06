@@ -1,3 +1,15 @@
+2022-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the viewportFitEnabled WKPreference now that it is always on 
+        https://bugs.webkit.org/show_bug.cgi?id=240147
+
+        Reviewed by Tim Horton.
+
+        Remove the WKPreference 'ViewportFitEnabled' now that it is always enabled on all platforms, and
+        we do not wish to turn it off in testing or in other debugging circumstances.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2022-05-05  Chris Dumez  <cdumez@apple.com>
 
         Identifier::string() should return an AtomString

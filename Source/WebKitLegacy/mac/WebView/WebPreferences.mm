@@ -2769,16 +2769,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitPictureInPictureAPIEnabledKey];
 }
 
-- (BOOL)viewportFitEnabled
-{
-    return [self _boolValueForKey:WebKitViewportFitEnabledPreferenceKey];
-}
-
-- (void)setViewportFitEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitViewportFitEnabledPreferenceKey];
-}
-
 - (BOOL)constantPropertiesEnabled
 {
     return [self _boolValueForKey:WebKitConstantPropertiesEnabledPreferenceKey];

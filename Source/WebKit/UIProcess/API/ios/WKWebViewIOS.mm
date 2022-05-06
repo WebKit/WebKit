@@ -3406,7 +3406,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _maximumUnobscuredSizeOverride = std::nullopt;
 }
 
-static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool viewportFitEnabled)
+static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs)
 {
     if (!viewportArgumentPairs)
         return std::nullopt;
@@ -3418,7 +3418,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
             [NSException raise:NSInvalidArgumentException format:@"-[WKWebView _overrideViewportWithArguments:]: Keys and values must all be NSStrings."];
         String keyString = key;
         String valueString = value;
-        WebCore::setViewportFeature(viewportArguments, keyString, valueString, viewportFitEnabled, [] (WebCore::ViewportErrorCode, const String& errorMessage) {
+        WebCore::setViewportFeature(viewportArguments, keyString, valueString, [] (WebCore::ViewportErrorCode, const String& errorMessage) {
             NSLog(@"-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", errorMessage.utf8().data());
         });
     }).get()];
@@ -3431,7 +3431,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     if (!_page)
         return;
 
-    _page->setOverrideViewportArguments(viewportArgumentsFromDictionary(arguments, _page->preferences().viewportFitEnabled()));
+    _page->setOverrideViewportArguments(viewportArgumentsFromDictionary(arguments));
 }
 
 - (UIView *)_viewForFindUI
