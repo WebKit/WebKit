@@ -104,10 +104,6 @@ private:
 
     WebCore::PaymentCoordinator& paymentCoordinator();
 
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-    bool remoteUIEnabled() const;
-#endif
-
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();
 

@@ -65,20 +65,6 @@ AlwaysZoomOnDoubleTap:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-ApplePayRemoteUIEnabled:
-  type: bool
-  humanReadableDescription: "Enable Apple Pay Remote UI"
-  humanReadableName: "Apple Pay Remote UI"
-  condition: ENABLE(APPLE_PAY_REMOTE_UI)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 AsyncFrameScrollingEnabled:
   type: bool
   webcoreOnChange: setNeedsRelayoutAllFrames

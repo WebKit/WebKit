@@ -61,8 +61,7 @@ WebPaymentCoordinator::~WebPaymentCoordinator()
 void WebPaymentCoordinator::networkProcessConnectionClosed()
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (remoteUIEnabled())
-        didCancelPaymentSession({ });
+    didCancelPaymentSession({ });
 #endif
 }
 
@@ -161,10 +160,10 @@ void WebPaymentCoordinator::paymentCoordinatorDestroyed()
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (remoteUIEnabled())
-        return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
-#endif
+    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+#else
     return WebProcess::singleton().parentProcessConnection();
+#endif
 }
 
 uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
@@ -215,15 +214,6 @@ WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()
 {
     return m_webPage.corePage()->paymentCoordinator();
 }
-
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-bool WebPaymentCoordinator::remoteUIEnabled() const
-{
-    if (auto page = m_webPage.corePage())
-        return page->settings().applePayRemoteUIEnabled();
-    return false;
-}
-#endif
 
 void WebPaymentCoordinator::getSetupFeatures(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&& completionHandler)
 {
