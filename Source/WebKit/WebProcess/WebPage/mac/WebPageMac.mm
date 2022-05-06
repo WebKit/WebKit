@@ -113,6 +113,10 @@ using namespace WebCore;
 
 void WebPage::platformInitializeAccessibility()
 {
+    // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
+    // Currently, it is also needed to allocate and initialize an NSApplication object.
+    [NSApplication _accessibilityInitialize];
+
     auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
 
     // Get the pid for the starting process.

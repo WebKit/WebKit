@@ -241,6 +241,10 @@
 #include "WebMockContentFilterManager.h"
 #endif
 
+#if HAVE(LSDATABASECONTEXT)
+#include "LaunchServicesDatabaseManager.h"
+#endif
+
 #undef WEBPROCESS_RELEASE_LOG
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #if RELEASE_LOG_DISABLED
@@ -1190,6 +1194,12 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if ENABLE(SERVICE_WORKER)
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
             m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
+#endif
+
+#if HAVE(LSDATABASECONTEXT)
+        // On Mac, this needs to be called before NSApplication is being initialized.
+        // The NSApplication initialization is being done in [NSApplication _accessibilityInitialize]
+        LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate();
 #endif
 
         // This can be called during a WebPage's constructor, so wait until after the constructor returns to touch the WebPage.

@@ -27,7 +27,6 @@
 #import "WebProcess.h"
 
 #import "AccessibilitySupportSPI.h"
-#import "LaunchServicesDatabaseManager.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -330,12 +329,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 #endif
 
-#if HAVE(LSDATABASECONTEXT)
-    // On Mac, this needs to be called before NSApplication is being initialized.
-    // The NSApplication initialization is being done in [NSApplication _accessibilityInitialize]
-    LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate();
-#endif
-
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     RefPtr<SandboxExtension> launchServicesExtension;
     if (parameters.launchServicesExtensionHandle) {
@@ -345,12 +338,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         }
     }
 
-    // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
-    // Currently, it is also needed to allocate and initialize an NSApplication object.
-    // This method call will also call RegisterApplication, so there is no need for us to call this or
-    // check in with Launch Services
-    [NSApplication _accessibilityInitialize];
-
+    // Register the application. This will also check in with Launch Services.
+    _RegisterApplication(nullptr, nullptr);
+    
     // Update process name while holding the Launch Services sandbox extension
     updateProcessName(IsInProcessInitialization::Yes);
 

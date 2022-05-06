@@ -1,3 +1,25 @@
+2022-05-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [WP] Wait for Launch Services database after Network process connection has been established
+        https://bugs.webkit.org/show_bug.cgi?id=240125
+        <rdar://92107043>
+
+        Reviewed by Geoffrey Garen.
+
+        Since the Launch Services database is provided to the WebContent process by the Network process, it makes sense
+        to wait for the database when we're certain that the Network process is running. This should fix main thread hangs
+        in the cases where we before started waiting for the database before the Network process had launched. To support
+        this move, we also need to delay the initialization of accessibility in NSApplication, since that depends on having
+        the database available. This is now being done in WebPage::platformInitializeAccessibility, which is a natural
+        place for this initialization to take place.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitializeAccessibility):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-05-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPU Process crash under IPC::Connection::open() ASSERTION FAILED: m_sendPort
