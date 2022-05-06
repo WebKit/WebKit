@@ -1,3 +1,12 @@
+2022-05-05  Karl Rackler  <rackler@apple.com>
+
+        [ iOS ] fast/images/exif-orientation-background-image-repeat.html is a consistent image failure
+        https://bugs.webkit.org/show_bug.cgi?id=240148
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
 2022-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         ARIA reflection for Element attributes
