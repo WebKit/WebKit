@@ -187,6 +187,7 @@ private:
     bool m_didBeginResponsivenessChecks { false };
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
+    MonotonicTime m_proccessStart;
 };
 
 template<typename T>

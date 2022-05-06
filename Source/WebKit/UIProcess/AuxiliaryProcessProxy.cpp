@@ -108,6 +108,7 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
 void AuxiliaryProcessProxy::connect()
 {
     ASSERT(!m_processLauncher);
+    m_proccessStart = MonotonicTime::now();
     ProcessLauncher::LaunchOptions launchOptions;
     getLaunchOptions(launchOptions);
     m_processLauncher = ProcessLauncher::create(this, WTFMove(launchOptions));
@@ -257,6 +258,10 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     ASSERT(!m_connection);
     ASSERT(isMainRunLoop());
 
+    auto launchTime = MonotonicTime::now() - m_proccessStart;
+    if (launchTime > 1_s)
+        RELEASE_LOG_FAULT(Process, "%s process (%p) took %f seconds to launch", processName().characters(), this, launchTime.value());
+    
     if (!IPC::Connection::identifierIsValid(connectionIdentifier))
         return;
 

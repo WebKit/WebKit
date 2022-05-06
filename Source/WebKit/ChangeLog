@@ -1,5 +1,21 @@
 2022-05-06  Per Arne Vollan  <pvollan@apple.com>
 
+        Create reports for long process launch times
+        https://bugs.webkit.org/show_bug.cgi?id=240127
+
+        Reviewed by Yusuke Suzuki.
+
+        We have reports that it can take a long time to launch WebKit processes in some cases. This is the time 
+        it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens 
+        in order to help diagnose the issue.
+        
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::connect):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        * UIProcess/AuxiliaryProcessProxy.h:
+
+2022-05-06  Per Arne Vollan  <pvollan@apple.com>
+
         [WP] Wait for Launch Services database after Network process connection has been established
         https://bugs.webkit.org/show_bug.cgi?id=240125
         <rdar://92107043>
