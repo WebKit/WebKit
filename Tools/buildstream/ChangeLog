@@ -1,3 +1,20 @@
+2022-05-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Update mold to version 1.2.1
+        https://bugs.webkit.org/show_bug.cgi?id=240162
+
+        Reviewed by Philippe Normand.
+
+        Update Mold to version 1.2.1, which now properly supports --gdb-index and Clang's
+        ThinLTO (on top of regular LTO support). The copy of libtbb bundled with the Mold
+        sources does no longer build with the rest of tooling from the SDK, so this patch
+        adds Buildstream elements for it and its hwloc dependency; both these two packages
+        are built with the minimal set of options needed to build Mold.
+
+        * elements/sdk/hwloc.bst: Added.
+        * elements/sdk/mold.bst: Updated to version 1.2.1
+        * elements/sdk/tbb.bst: Added.
+
 2022-05-05  Philippe Normand  <philn@igalia.com>
 
         [Flatpak SDK] Bump to GStreamer 1.20.2
