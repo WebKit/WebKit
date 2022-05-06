@@ -1,3 +1,15 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        Video playback fails when using postMessage() during a User Gesture
+        https://bugs.webkit.org/show_bug.cgi?id=239781
+        <rdar://91281385>
+
+        Reviewed by Eric Carlson.
+
+        * workers/worker-user-gesture-expected.txt: Added.
+        * workers/worker-user-gesture.html: Added.
+        * workers/worker-user-gesture.js: Added.
+
 2022-05-06  Karl Rackler  <rackler@apple.com>
 
         [ iOS Release ] fast/css-custom-paint/animate-repaint.html is a flaky failure

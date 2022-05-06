@@ -54,6 +54,41 @@
 
 namespace WebCore {
 
+// WorkerUserGestureForwarder is a ThreadSafeRefCounted utility class indended for
+// holding a non-thread-safe RefCounted UserGestureToken. Because UserGestureToken
+// is not intended to be used off the main thread, all WorkerUserGestureForwarder
+// public methods, constructor, and destructor, can only be used from the main thread.
+// The WorkerUserGestureForwarder, on the other hand, can be ref'd and deref'd from
+// non-main thread contexts, allowing it to be passed from main to Worker scopes and
+// vice versa.
+class WorkerUserGestureForwarder : public ThreadSafeRefCounted<WorkerUserGestureForwarder, WTF::DestructionThread::Main> {
+public:
+    static Ref<WorkerUserGestureForwarder> create(RefPtr<UserGestureToken>&& token) { return *new WorkerUserGestureForwarder(WTFMove(token)); }
+
+    ~WorkerUserGestureForwarder()
+    {
+        ASSERT(isMainThread());
+        m_token = nullptr;
+    }
+
+    UserGestureToken* userGestureToForward() const
+    {
+        ASSERT(isMainThread());
+        if (!m_token || m_token->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
+            return nullptr;
+        return m_token.get();
+    }
+
+private:
+    explicit WorkerUserGestureForwarder(RefPtr<UserGestureToken>&& token)
+        : m_token(WTFMove(token))
+    {
+        ASSERT(isMainThread());
+    }
+
+    RefPtr<UserGestureToken> m_token;
+};
+
 WorkerGlobalScopeProxy& WorkerGlobalScopeProxy::create(Worker& worker)
 {
     return *new WorkerMessagingProxy(worker);
@@ -106,13 +141,18 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
 void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& message)
 {
-    m_scriptExecutionContext->postTask([this, message = WTFMove(message)] (ScriptExecutionContext& context) mutable {
+    // Pass a RefPtr to the WorkerUserGestureForwarder, if present, into the main thread
+    // task; the m_userGestureForwarder ivar may be cleared after this function returns.
+    m_scriptExecutionContext->postTask([this, message = WTFMove(message), userGestureForwarder = m_userGestureForwarder] (auto& context) mutable {
         Worker* workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
 
         auto ports = MessagePort::entanglePorts(context, WTFMove(message.transferredPorts));
-        ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
+        ActiveDOMObject::queueTaskKeepingObjectAlive(*workerObject, TaskSource::PostedMessageQueue, [worker = Ref { *workerObject }, message = WTFMove(message), userGestureForwarder = WTFMove(userGestureForwarder), ports = WTFMove(ports)] () mutable {
+            UserGestureIndicator userGestureIndicator(userGestureForwarder ? userGestureForwarder->userGestureToForward() : nullptr);
+            worker->dispatchEvent(MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
+        });
     });
 }
 
@@ -128,12 +168,23 @@ void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& func
 
 void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
 {
-    postTaskToWorkerGlobalScope([message = WTFMove(message)](auto& scriptContext) mutable {
+    auto userGestureForwarder = WorkerUserGestureForwarder::create(UserGestureIndicator::currentUserGesture());
+    postTaskToWorkerGlobalScope([this, protectedThis = Ref { *this }, message = WTFMove(message), userGestureForwarder = WTFMove(userGestureForwarder)](auto& scriptContext) mutable {
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         auto& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
         auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
+
+        // Setting m_userGestureForwarder here, before dispatching the MessageEvent, will allow all calls to
+        // worker.postMessage() made during the handling of that MessageEvent to inherit the UserGestureToken
+        // held by the forwarder; see postMessageToWorkerObject() above.
+        m_userGestureForwarder = WTFMove(userGestureForwarder);
+
         context.dispatchEvent(MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
         context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
+
+        // Because WorkerUserGestureForwarder is defined as DestructionThread::Main, releasing this Ref
+        // on the Worker thread will cause the forwarder to be destroyed on the main thread.
+        m_userGestureForwarder = nullptr;
     });
 }
 

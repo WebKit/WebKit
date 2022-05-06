@@ -36,6 +36,7 @@ namespace WebCore {
 
 class DedicatedWorkerThread;
 class WorkerInspectorProxy;
+class WorkerUserGestureForwarder;
 
 class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -95,6 +96,7 @@ private:
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     RefPtr<WorkerInspectorProxy> m_inspectorProxy;
+    RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
     Worker* m_workerObject;
     bool m_mayBeDestroyed { false };
     RefPtr<DedicatedWorkerThread> m_workerThread;

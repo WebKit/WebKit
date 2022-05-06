@@ -1,3 +1,38 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        Video playback fails when using postMessage() during a User Gesture
+        https://bugs.webkit.org/show_bug.cgi?id=239781
+        <rdar://91281385>
+
+        Reviewed by Eric Carlson.
+
+        Test: workers/worker-user-gesture.html
+
+        Certain frameworks handle user gestures by sending messages through postMessage() to
+        to a non-shared worker, where the message is processed and a response is sent back
+        to the page. In the case of APIs which require a user gesture, this gesture is lost
+        during the response event, even if it was present in the originating postMessage().
+        Other web APIs, such as Fetch, have been modified to forward this user gesture through
+        to the resulting event handlers. This change will expand that forwarding behavior to
+        include postMessage() to a non-shared Worker context.
+
+        When a message is sent to a WorkerContext, the current UserGestureToken is saved inside
+        a thread-safe RefCounted utility class WorkerUserGestureForwarder. This forwarder is
+        saved into an ivar of WorkerMessagingProxy, where it can be read during the handling
+        of a WorkerContext-originated postMessage(). The ivar is cleared immediately after sending
+        the initial postMessage(). The effect is that all calls to workerScope.postMessage()
+        made during the handling of a worker.postMessage() event will inherit the user gesture
+        of that initial call.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerUserGestureForwarder::create):
+        (WebCore::WorkerUserGestureForwarder::~WorkerUserGestureForwarder):
+        (WebCore::WorkerUserGestureForwarder::userGestureToForward const):
+        (WebCore::WorkerUserGestureForwarder::WorkerUserGestureForwarder):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+
 2022-05-06  Rob Buis  <rbuis@igalia.com>
 
         Add lambda for fragmented flow state change handling
