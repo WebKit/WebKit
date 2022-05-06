@@ -98,7 +98,11 @@ class Branch(Command):
             return 1
 
         if not args.issue:
-            args.issue = Terminal.input('{}nter name of new branch (or bug URL): '.format('{}, e'.format(why) if why else 'E'))
+            if Tracker.instance():
+                prompt = '{}nter issue URL or title of new issue: '.format('{}, e'.format(why) if why else 'E')
+            else:
+                prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
+            args.issue = Terminal.input(prompt)
 
         if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
             issue = Tracker.instance().issue(int(args.issue))
@@ -110,6 +114,20 @@ class Branch(Command):
                 args.issue = cls.to_branch_name(issue.title)
             elif issue:
                 args.issue = str(issue.id)
+
+        if not issue and Tracker.instance():
+            if ' ' in args.issue:
+                issue = Tracker.instance().create(
+                    title=args.issue,
+                    description=Terminal.input('Issue description: '),
+                )
+                print("Created '{}'".format(issue))
+                if issue and issue.title and not redact:
+                    args.issue = cls.to_branch_name(issue.title)
+                elif issue:
+                    args.issue = str(issue.id)
+            else:
+                log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
 
         if issue:
             args._title = issue.title

@@ -1,3 +1,24 @@
+2022-05-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Automatically file bug
+        https://bugs.webkit.org/show_bug.cgi?id=240139
+        <rdar://problem/92818331>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.main): If a project has defined bug trackers and the user provides a bug title instead of a bug
+        url or branch name (determined by spaces in the provided string), walk the user through bug creation.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/branch_unittest.py:
+        (TestBranch): Add mock issues, rebase prompts.
+        (TestBranch.test_create_bug): Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/revert_unittest.py:
+        (TestRevert.test_github): Add mock issues, rebase prompts.
+        (TestRevert.test_modified): Ditto.
+
 2022-05-05  Sihui Liu  <sihui_liu@apple.com>
 
         SuspendableWorkQueue::suspend should invoke callback immediately when queue is suspended

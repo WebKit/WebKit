@@ -259,7 +259,7 @@ class TestDoPullRequest(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_svn(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path), patch('webkitbugspy.Tracker._trackers', []):
             self.assertEqual(1, program.main(
                 args=('pull-request',),
                 path=self.path,
@@ -268,7 +268,7 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
 
     def test_none(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             self.assertEqual(1, program.main(
                 args=('pull-request',),
                 path=self.path,
@@ -276,7 +276,7 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
 
     def test_no_modified(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
@@ -285,7 +285,7 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
 
     def test_staged(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             repo.staged['added.txt'] = 'added'
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
@@ -308,7 +308,7 @@ No pre-PR checks to run""")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
     def test_modified(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             repo.modified['modified.txt'] = 'diff'
             self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'pr-branch', '-v'),
@@ -335,7 +335,7 @@ No pre-PR checks to run""")
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
@@ -372,7 +372,7 @@ No pre-PR checks to run""")
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
@@ -411,7 +411,7 @@ No pre-PR checks to run""")
         }) as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -460,7 +460,7 @@ No pre-PR checks to run""")
         with mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -503,7 +503,7 @@ No pre-PR checks to run""")
         with mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -735,7 +735,7 @@ No pre-PR checks to run""")
     def test_bitbucket(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
-        )) as repo, mocks.local.Svn():
+        )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
@@ -770,7 +770,7 @@ No pre-PR checks to run""")
     def test_bitbucket_draft(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
-        )) as repo, mocks.local.Svn():
+        )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(1, program.main(
@@ -804,7 +804,7 @@ No pre-PR checks to run""")
     def test_bitbucket_update(self):
         with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
-        )) as repo, mocks.local.Svn():
+        )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -843,7 +843,7 @@ No pre-PR checks to run""")
     def test_bitbucket_append(self):
         with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
-        )) as repo, mocks.local.Svn():
+        )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -883,7 +883,7 @@ No pre-PR checks to run""")
     def test_bitbucket_reopen(self):
         with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
-        )) as repo, mocks.local.Svn():
+        )) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(

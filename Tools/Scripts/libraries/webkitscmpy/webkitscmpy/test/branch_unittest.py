@@ -25,7 +25,7 @@ import os
 
 from mock import patch
 from webkitbugspy import bugzilla, mocks as bmocks, radar
-from webkitcorepy import OutputCapture, testing
+from webkitcorepy import OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal, Environment
 from webkitscmpy import local, program, mocks, log
 
@@ -66,11 +66,14 @@ class TestBranch(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/1234'\n")
 
     def test_prompt_git(self):
-        with MockTerminal.input('eng/example'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+        with MockTerminal.input('eng/example'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), \
+            mocks.local.Svn(), MockTime, patch('webkitbugspy.Tracker._trackers', []):
+
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/example')
+
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/example'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/example'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or issue URL): \nCreated the local development branch 'eng/example'\n")
 
     def test_prompt_number(self):
         with MockTerminal.input('2'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
@@ -84,7 +87,7 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/Example-feature-1'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/Example-feature-1'\n")
 
     def test_prompt_url(self):
         with MockTerminal.input('<rdar://2>'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), \
@@ -93,7 +96,7 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/Example-feature-1'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/Example-feature-1'\n")
 
     def test_redacted(self):
         class MockOptions(object):
@@ -110,16 +113,69 @@ class TestBranch(testing.PathTestCase):
             ))
             self.assertEqual(local.Git(self.path).branch, 'eng/2')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/2'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/2'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/2'\n")
 
 
     def test_invalid_branch(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime, patch('webkitbugspy.Tracker._trackers', []):
             self.assertEqual(1, program.main(
                 args=('branch', '-i', 'reject_underscores'),
                 path=self.path,
             ))
         self.assertEqual(captured.stderr.getvalue(), "'eng/reject_underscores' is an invalid branch name, cannot create it\n")
+
+    def test_create_bug(self):
+        self.maxDiff = None
+        with MockTerminal.input('2'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), mocks.local.Svn(), MockTime, wkmocks.Terminal.input(
+            '[Area] New Issue', 'Issue created via command line prompts.',
+            '2', '1', '2',
+        ):
+            self.assertEqual(0, program.main(
+                args=('branch', ),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Area-New-Issue')
+
+            issue = bugzilla.Tracker(self.BUGZILLA).issue(4)
+            self.assertEqual(issue.title, '[Area] New Issue')
+            self.assertEqual(issue.description, 'Issue created via command line prompts.')
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'SVG')
+            self.assertEqual(issue.version, 'Safari 15')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''Enter issue URL or title of new issue: 
+Issue description: 
+What project should the bug be associated with?:
+    1) CFNetwork
+    2) WebKit
+: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+What version of 'WebKit' should the bug be associated with?:
+    1) Other
+    2) Safari 15
+    3) Safari Technology Preview
+    4) WebKit Local Build
+: 
+Created 'https://bugs.example.com/show_bug.cgi?id=4 [Area] New Issue'
+Created the local development branch 'eng/Area-New-Issue'
+''',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
 
     def test_to_branch_name(self):
         self.assertEqual(program.Branch.to_branch_name('something with spaces'), 'something-with-spaces')

@@ -24,10 +24,8 @@ import logging
 import os
 
 from mock import patch
-from webkitbugspy import Tracker, User, bugzilla, radar, mocks as bmocks
-from webkitcorepy import OutputCapture, testing, log as wcplog
-from webkitcorepy.mocks import Terminal as MockTerminal, Environment
-from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote, log as wsplog
+from webkitcorepy import OutputCapture, testing
+from webkitscmpy import local, program, mocks
 
 
 class TestRevert(testing.PathTestCase):
@@ -44,7 +42,7 @@ class TestRevert(testing.PathTestCase):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             result = program.main(
                 args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--no-history'),
@@ -83,7 +81,8 @@ class TestRevert(testing.PathTestCase):
 
     def test_modified(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn(), \
+            patch('webkitbugspy.Tracker._trackers', []):
 
             repo.modified = {
                 'a.py': """diff --git a/a.py b/a.py
@@ -106,11 +105,10 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(captured.stderr.getvalue(), 'Please commit your changes or stash them before you revert commit: d8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
     def test_update(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn():
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             result = program.main(
                 args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v'),
