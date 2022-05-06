@@ -118,13 +118,13 @@ class PullRequest(Command):
             sys.stderr.write('No modified files\n')
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
+        env = os.environ
+        env['COMMIT_MESSAGE_TITLE'] = getattr(args, '_title', None) or ''
+        env['COMMIT_MESSAGE_BUG'] = bug_urls
         if run(
             [repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []),
             cwd=repository.root_path,
-            env=dict(
-                COMMIT_MESSAGE_TITLE=getattr(args, '_title', None) or '',
-                COMMIT_MESSAGE_BUG=bug_urls,
-            ),
+            env=env,
         ).returncode:
             sys.stderr.write('Failed to generate commit\n')
             return 1
