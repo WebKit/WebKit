@@ -297,7 +297,13 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
 
     // The Notification is kept alive by virtue of being show()'n soon.
     // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.
-    auto notification = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
+    auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
+    if (notificationResult.hasException()) {
+        promise.reject(notificationResult.releaseException());
+        return;
+    }
+
+    auto notification = notificationResult.releaseReturnValue();
     notification->showSoon();
 
     context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise)]() mutable {

@@ -37,7 +37,7 @@ async function registerServiceWorker() {
 
     installingWorker.addEventListener("statechange", () => {
         if (installingWorker.state === "activated") {
-            installingWorker.postMessage("tryshow");
+            installingWorker.postMessage("tryshow|title|body|tag|foobar");
         }
     });
 }
@@ -57,7 +57,7 @@ navigator.serviceWorker.addEventListener('message', async event => {
 
         if (testRunner)
             testRunner.simulateWebNotificationClickForServiceWorkerNotifications();
-    } else if (event.data == "clicked") {
+    } else if (event.data == "clicked|data:foobar") {
         shouldBeFalse("gotClicked");
         shouldBeFalse("gotClosed");
         gotClicked = true;

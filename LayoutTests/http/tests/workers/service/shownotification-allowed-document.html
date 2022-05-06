@@ -20,6 +20,8 @@ description("This tests that a notification shown by a service worker registrati
 
 shouldBeEqualToString("Notification.permission", "granted");
 
+var threwDataCloneError = false;
+
 async function registerServiceWorker() {
     var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
 
@@ -37,7 +39,14 @@ async function registerServiceWorker() {
 
     installingWorker.addEventListener("statechange", async () => {
         if (installingWorker.state === "activated") {
-            await registration.showNotification("This is a notification", { body: "body", tag: "tag" });
+            try {
+                await registration.showNotification("Invalid notification", { data: function() { } });
+            } catch (error) {
+                threwDataCloneError = error.name == 'DataCloneError';
+            }
+            shouldBeTrue('threwDataCloneError');
+
+            await registration.showNotification("This is a notification", { body: "body", tag: "tag", data: "foobar" });
             if (window.testRunner)
                 testRunner.simulateWebNotificationClickForServiceWorkerNotifications();
         }
@@ -50,7 +59,7 @@ var gotClosed = false;
 navigator.serviceWorker.addEventListener('message', async event => {
     if (event.data == "showFailed") {
         failTheTest("Unexpectedly received the failed-to-show message");
-    } else if (event.data == "clicked") {
+    } else if (event.data == "clicked|data:foobar") {
         shouldBeFalse("gotClicked");
         shouldBeFalse("gotClosed");
         gotClicked = true;

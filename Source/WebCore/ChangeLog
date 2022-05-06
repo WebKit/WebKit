@@ -1,3 +1,38 @@
+2022-05-05  Ben Nham  <nham@apple.com>
+        
+        Add support for Notification objects with custom data
+        https://bugs.webkit.org/show_bug.cgi?id=240153
+
+        Reviewed by Chris Dumez.
+
+        This adds support for the data attribute in Notification. This holds an arbitrary structured
+        cloneable object passed through the constructor. The accessor is marked SameObject, which we
+        implement via CachedAttribute. The wire form of the data is serialized and deserialized in
+        NotificationData so that persistent notifications properly support this property.
+
+        Covered by new and existing layout tests.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::createSerializedNotificationData):
+        (WebCore::Notification::create):
+        (WebCore::Notification::createForServiceWorker):
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::dataForBindings):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationData.cpp:
+        (WebCore::NotificationData::isolatedCopy const):
+        (WebCore::NotificationData::isolatedCopy):
+        * Modules/notifications/NotificationData.h:
+        (WebCore::NotificationData::encode const):
+        (WebCore::NotificationData::decode):
+        * Modules/notifications/NotificationDataCocoa.mm:
+        (WebCore::NotificationData::fromDictionary):
+        (WebCore::NotificationData::dictionaryRepresentation const):
+        * Modules/notifications/NotificationOptions.idl:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::showNotification):
+
 2022-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Remove internal WKPreference for non-iTunesAVOutput now that all platform support it 

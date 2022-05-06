@@ -9,7 +9,7 @@ let messageClients = async function(msg) {
 }
 
 self.addEventListener('notificationclick', async function(event) {
-    await messageClients("clicked");
+    await messageClients("clicked|data:" + event.notification.data);
     event.notification.close();
 });
 
@@ -19,15 +19,15 @@ self.addEventListener('notificationclose', async function(event) {
 
 async function tryShow(message)
 {
-    var title, body, tag;
+    var command, title, body, tag, data;
     var components = message.split('|');
 
     if (components.length == 1) {
         title = "This is a notification";        
-    } else {
-        title = components[1];
-        body = components[2];
-        tag = components[3];
+    } else if (components.length == 4) {
+        [command, title, body, tag] = components;
+    } else if (components.length == 5) {
+        [command, title, body, tag, data] = components;
     }
 
     if (!self.Notification) {
@@ -37,7 +37,8 @@ async function tryShow(message)
     try {
          new Notification(title, {
             body: body,
-            tag: tag
+            tag: tag,
+            data: data
         });
         await messageClients("showFailed due to Notification created from constructor");
         return;
@@ -51,7 +52,8 @@ async function tryShow(message)
     try {
         await registration.showNotification(title, {
             body: body,
-            tag: tag
+            tag: tag,
+            data: data
         });
     } catch(error) {
         await messageClients("showFailed");
@@ -59,6 +61,21 @@ async function tryShow(message)
     }
     
     await messageClients("shown");
+}
+
+async function tryShowInvalidData()
+{
+    let error = null;
+    try {
+        await registration.showNotification("Invalid notification", { data: function() { } });
+    } catch (e) {
+        error = e;
+    }
+
+    if (error)
+        await messageClients("showFailed: threw " + error.name);
+    else if (error0)
+        await messageClients("shown");
 }
 
 var seenNotes = new Set();
@@ -81,6 +98,7 @@ async function getNotes(message)
         reply += "Title: " + notification.title + "|";
         reply += "Body: " + notification.body + "|";
         reply += "Tag: " + notification.tag + "|";
+        reply += "Data: " + notification.data + "|";
     }
     await messageClients(reply);
 }
@@ -89,6 +107,8 @@ self.addEventListener('message', async function(event) {
     var messageName = event.data.split('|')[0];
     if (messageName == "tryshow")
         await tryShow(event.data);
+    if (messageName == "tryshowinvaliddata")
+        await tryShowInvalidData();
     if (messageName == "getnotes")
         await getNotes(event.data);
 });

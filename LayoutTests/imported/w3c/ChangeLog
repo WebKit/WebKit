@@ -1,3 +1,14 @@
+2022-05-05  Ben Nham  <nham@apple.com>
+        
+        Add support for Notification objects with custom data
+        https://bugs.webkit.org/show_bug.cgi?id=240153
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/notifications/idlharness.https.any-expected.txt:
+        * web-platform-tests/notifications/idlharness.https.any.serviceworker-expected.txt:
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any-expected.txt:
+
 2022-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         ARIA reflection for Element attributes

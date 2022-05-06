@@ -17,7 +17,7 @@ clients.openWindow('http://127.0.0.1:8000/workers/service/resources/openwindow-c
 });
 
 self.addEventListener('notificationclick', async function(event) {
-    await messageClients("clicked");
+    await messageClients("clicked|data:" + event.notification.data);
     event.notification.close();
 
     // Should fail because about:blank is not an allowable URL
@@ -49,21 +49,22 @@ self.addEventListener('notificationclose', async function(event) {
 
 async function tryShow(message)
 {
-    var title, body, tag;
+    var command, title, body, tag, data;
     var components = message.split('|');
 
     if (components.length == 1) {
         title = "This is a notification";        
-    } else {
-        title = components[1];
-        body = components[2];
-        tag = components[3];
+    } else if (components.length == 4) {
+        [command, title, body, tag] = components;
+    } else if (components.length == 5) {
+        [command, title, body, tag, data] = components;
     }
     
     try {
         await registration.showNotification(title, {
             body: body,
-            tag: tag
+            tag: tag,
+            data: data
         });
     } catch(error) {
         await messageClients("showFailed");
@@ -93,6 +94,7 @@ async function getNotes(message)
         reply += "Title: " + notification.title + "|";
         reply += "Body: " + notification.body + "|";
         reply += "Tag: " + notification.tag + "|";
+        reply += "Data: " + notification.data + "|";
     }
     await messageClients(reply);
 }

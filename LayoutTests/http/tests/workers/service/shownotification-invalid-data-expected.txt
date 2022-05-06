@@ -1,0 +1,11 @@
+This tests that a notification shown by a service worker fails if it is passed an invalid data option
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification.permission is "granted"
+PASS Notification constructor failed with DataCloneError
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -39,6 +39,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
+#include "MessagePort.h"
 #include "NotificationClient.h"
 #include "NotificationData.h"
 #include "NotificationEvent.h"
@@ -53,20 +54,38 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
+static ExceptionOr<Ref<SerializedScriptValue>> createSerializedScriptValue(ScriptExecutionContext& context, JSC::JSValue value)
+{
+    auto globalObject = context.globalObject();
+    if (!globalObject)
+        return Exception { TypeError, "Notification cannot be created without a global object"_s };
+
+    Vector<RefPtr<MessagePort>> dummyPorts;
+    return SerializedScriptValue::create(*globalObject, value, { }, dummyPorts);
+}
+
 ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
 {
     if (context.isServiceWorkerGlobalScope())
         return Exception { TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
 
-    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options)));
+    auto dataResult = createSerializedScriptValue(context, options.data);
+    if (dataResult.hasException())
+        return dataResult.releaseException();
+
+    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->suspendIfNeeded();
     notification->showSoon();
     return notification;
 }
 
-Ref<Notification> Notification::createForServiceWorker(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
+ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
 {
-    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options)));
+    auto dataResult = createSerializedScriptValue(context, options.data);
+    if (dataResult.hasException())
+        return dataResult.releaseException();
+
+    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
     return notification;
@@ -74,14 +93,15 @@ Ref<Notification> Notification::createForServiceWorker(ScriptExecutionContext& c
 
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
-    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL) };
-    auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options)));
+    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull() };
+
+    auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();
     notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, UUID identifier, String&& title, Options&& options)
+Notification::Notification(ScriptExecutionContext& context, UUID identifier, String&& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
     : ActiveDOMObject(&context)
     , m_identifier(identifier)
     , m_title(WTFMove(title).isolatedCopy())
@@ -89,6 +109,7 @@ Notification::Notification(ScriptExecutionContext& context, UUID identifier, Str
     , m_lang(WTFMove(options.lang).isolatedCopy())
     , m_body(WTFMove(options.body).isolatedCopy())
     , m_tag(WTFMove(options.tag).isolatedCopy())
+    , m_dataForBindings(WTFMove(dataForBindings))
     , m_state(Idle)
     , m_contextIdentifier(context.identifier())
 {
@@ -241,6 +262,11 @@ void Notification::dispatchErrorEvent()
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+JSC::JSValue Notification::dataForBindings(JSC::JSGlobalObject& globalObject)
+{
+    return m_dataForBindings->deserialize(globalObject, &globalObject, SerializationErrorMode::NonThrowing);
+}
+
 auto Notification::permission(ScriptExecutionContext& context) -> Permission
 {
     auto* client = context.notificationClient();
@@ -314,7 +340,8 @@ NotificationData Notification::data() const
         m_serviceWorkerRegistrationURL.isolatedCopy(),
         identifier(),
         *sessionID,
-        MonotonicTime::now()
+        MonotonicTime::now(),
+        m_dataForBindings->wireBytes()
     };
 }
 

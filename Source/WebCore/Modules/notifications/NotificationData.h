@@ -61,12 +61,13 @@ struct NotificationData {
     UUID notificationID;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
+    Vector<uint8_t> data;
 };
 
 template<class Encoder>
 void NotificationData::encode(Encoder& encoder) const
 {
-    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << sourceSession << creationTime;
+    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << sourceSession << creationTime << data;
 }
 
 template<class Decoder>
@@ -127,6 +128,11 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!creationTime)
         return std::nullopt;
 
+    std::optional<Vector<uint8_t>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
+
     return { {
         WTFMove(*title),
         WTFMove(*body),
@@ -138,7 +144,8 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
         WTFMove(*serviceWorkerRegistrationURL),
         WTFMove(*notificationID),
         WTFMove(*sourceSession),
-        WTFMove(*creationTime)
+        WTFMove(*creationTime),
+        WTFMove(*data)
     } };
 }
 

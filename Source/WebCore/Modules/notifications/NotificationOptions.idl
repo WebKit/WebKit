@@ -39,6 +39,6 @@
     // boolean renotify = false;
     // boolean silent = false;
     // boolean requireInteraction = false;
-    // any data = null;
+    any data = null;
     // sequence<NotificationAction> actions = [];
 };

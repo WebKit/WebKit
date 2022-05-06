@@ -38,6 +38,7 @@ static NSString * const WebNotificationOriginKey = @"WebNotificationOriginKey";
 static NSString * const WebNotificationServiceWorkerRegistrationURLKey = @"WebNotificationServiceWorkerRegistrationURLKey";
 static NSString * const WebNotificationUUIDStringKey = @"WebNotificationUUIDStringKey";
 static NSString * const WebNotificationSessionIDKey = @"WebNotificationSessionIDKey";
+static NSString * const WebNotificationDataKey = @"WebNotificationDataKey";
 
 namespace WebCore {
 
@@ -51,6 +52,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     NSString *originString = dictionary[WebNotificationOriginKey];
     NSString *serviceWorkerRegistrationURL = dictionary[WebNotificationServiceWorkerRegistrationURLKey];
     NSNumber *sessionID = dictionary[WebNotificationSessionIDKey];
+    NSData *notificationData = dictionary[WebNotificationDataKey];
 
     NSString *uuidString = dictionary[WebNotificationUUIDStringKey];
     auto uuid = UUID::parseVersion4(String(uuidString));
@@ -69,7 +71,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, PAL::SessionID { sessionID.unsignedLongLongValue }, { } };
+    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length } };
     return WTFMove(data);
 }
 
@@ -85,7 +87,8 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationDirectionKey : @((unsigned long)direction),
         WebNotificationServiceWorkerRegistrationURLKey : (NSString *)serviceWorkerRegistrationURL.string(),
         WebNotificationUUIDStringKey : (NSString *)notificationID.toString(),
-        WebNotificationSessionIDKey : @(sourceSession.toUInt64())
+        WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
+        WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()]
     };
 }
 

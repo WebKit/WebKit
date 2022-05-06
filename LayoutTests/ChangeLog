@@ -1,3 +1,35 @@
+2022-05-05  Ben Nham  <nham@apple.com>
+
+        Add support for Notification objects with custom data
+        https://bugs.webkit.org/show_bug.cgi?id=240153
+
+        Reviewed by Chris Dumez.
+
+        Test that Notification objects with custom data can be created and shown by both documents
+        and service workers.
+
+        * http/tests/notifications/notification-expected.txt:
+        * http/tests/notifications/notification.html:
+        * http/tests/workers/service/getnotifications-expected.txt:
+        * http/tests/workers/service/getnotifications-stop-expected.txt:
+        * http/tests/workers/service/getnotifications-stop.html:
+        * http/tests/workers/service/getnotifications.html:
+        * http/tests/workers/service/openwindow-from-notification-click.html:
+        * http/tests/workers/service/resources/shownotification-openwindow-worker.js:
+        (async tryShow):
+        (async getNotes):
+        * http/tests/workers/service/resources/shownotification-worker.js:
+        (async event):
+        (async tryShow):
+        (async tryShowInvalidData.try.data):
+        (async tryShowInvalidData):
+        (async getNotes):
+        * http/tests/workers/service/shownotification-allowed-document-expected.txt:
+        * http/tests/workers/service/shownotification-allowed-document.html:
+        * http/tests/workers/service/shownotification-allowed.html:
+        * http/tests/workers/service/shownotification-invalid-data-expected.txt: Added.
+        * http/tests/workers/service/shownotification-invalid-data.html: Added.
+
 2022-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Remove the viewportFitEnabled WKPreference now that it is always on 
