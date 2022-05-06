@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,13 +82,10 @@ AVRoutePickerViewTargetPicker::~AVRoutePickerViewTargetPicker()
     [m_routePickerViewDelegate clearCallback];
 }
 
-AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal(bool useiTunesAVOutputContext)
+AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal()
 {
     if (!m_outputContext) {
-        if (useiTunesAVOutputContext)
-            m_outputContext = [PAL::getAVOutputContextClass() iTunesAudioContext];
-        else
-            m_outputContext = [PAL::getAVOutputContextClass() outputContext];
+        m_outputContext = [PAL::getAVOutputContextClass() iTunesAudioContext];
         ASSERT(m_outputContext);
         if (m_outputContext)
             [[NSNotificationCenter defaultCenter] addObserver:m_routePickerViewDelegate.get() selector:@selector(notificationHandler:) name:PAL::AVOutputContextOutputDevicesDidChangeNotification object:m_outputContext.get()];
@@ -119,7 +116,7 @@ AVRouteDetector *AVRoutePickerViewTargetPicker::routeDetector()
     return m_routeDetector.get();
 }
 
-void AVRoutePickerViewTargetPicker::showPlaybackTargetPicker(NSView *view, const FloatRect& rectInScreenCoordinates, bool hasActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext)
+void AVRoutePickerViewTargetPicker::showPlaybackTargetPicker(NSView *view, const FloatRect& rectInScreenCoordinates, bool hasActiveRoute, bool useDarkAppearance)
 {
     if (!client())
         return;
@@ -132,7 +129,7 @@ void AVRoutePickerViewTargetPicker::showPlaybackTargetPicker(NSView *view, const
 
     auto rectInWindowCoordinates = [view.window convertRectFromScreen:NSMakeRect(rectInScreenCoordinates.x(), rectInScreenCoordinates.y(), 1.0, 1.0)];
     auto rectInViewCoordinates = [view convertRect:rectInWindowCoordinates fromView:view];
-    [picker showRoutePickingControlsForOutputContext:outputContextInternal(useiTunesAVOutputContext) relativeToRect:rectInViewCoordinates ofView:view];
+    [picker showRoutePickingControlsForOutputContext:outputContextInternal() relativeToRect:rectInViewCoordinates ofView:view];
 }
 
 void AVRoutePickerViewTargetPicker::startingMonitoringPlaybackTargets()

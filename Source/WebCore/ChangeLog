@@ -1,3 +1,29 @@
+2022-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove internal WKPreference for non-iTunesAVOutput now that all platform support it 
+        https://bugs.webkit.org/show_bug.cgi?id=240141
+
+        Reviewed by Eric Carlson.
+
+        WebKit on macOS has used a different AV Output target than IOS_FAMILY targets because those platforms lacked
+        the AVOutput option. Now that all platforms share this target, we can consolidate on the correct endpoint and
+        remove this preference code.
+
+        * Modules/airplay/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        * Modules/airplay/WebMediaSessionManagerClient.h:
+        (WebCore::WebMediaSessionManagerClient::alwaysOnLoggingAllowed const):
+        (WebCore::WebMediaSessionManagerClient::useiTunesAVOutputContext const): Deleted.
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        * platform/graphics/avfoundation/objc/AVPlaybackTargetPicker.h:
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.h:
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm:
+        (WebCore::AVRoutePickerViewTargetPicker::outputContextInternal):
+        (WebCore::AVRoutePickerViewTargetPicker::showPlaybackTargetPicker):
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+
 2022-05-06  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         ASSERT in WebCore::StyleProperties::getGridTemplateValue

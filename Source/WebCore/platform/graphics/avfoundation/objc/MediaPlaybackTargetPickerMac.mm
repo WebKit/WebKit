@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,9 +84,9 @@ AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()
     return *m_routePicker;
 }
 
-void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(PlatformView* view, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance, bool useiTunesAVOutputContext)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(PlatformView* view, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
 {
-    routePicker().showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance, useiTunesAVOutputContext);
+    routePicker().showPlaybackTargetPicker(view, location, hasActiveRoute, useDarkAppearance);
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()

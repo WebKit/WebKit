@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ public:
     }
     virtual ~AVPlaybackTargetPicker() = default;
 
-    virtual void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearancebool, bool useiTunesAVOutputContext) = 0;
+    virtual void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearancebool) = 0;
     virtual void startingMonitoringPlaybackTargets() = 0;
     virtual void stopMonitoringPlaybackTargets() = 0;
     virtual void invalidatePlaybackTargets() = 0;
