@@ -56,6 +56,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
@@ -129,11 +130,18 @@ static IPC::Connection::Identifier asConnectionIdentifier(IPC::Attachment&& conn
 #endif
 }
 
-void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
+void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Attachment&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, asConnectionIdentifier(WTFMove(connectionIdentifier)), WTFMove(parameters));
+    auto reply = makeScopeExit(WTFMove(completionHandler));
+    auto connectionIdentifier = asConnectionIdentifier(WTFMove(connectionHandle));
+    // If sender exited before we received the identifier, the identifier
+    // may not be valid.
+    if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+        return;
+
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(connectionIdentifier), WTFMove(parameters));
 
 #if ENABLE(MEDIA_STREAM)
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
@@ -149,9 +157,6 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
-
-
-    completionHandler();
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
