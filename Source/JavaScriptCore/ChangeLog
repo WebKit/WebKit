@@ -1,3 +1,23 @@
+2022-05-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Temporal.Duration constructor should handle -0 properly
+        https://bugs.webkit.org/show_bug.cgi?id=240145
+
+        Reviewed by Yusuke Suzuki.
+
+        r250284 broke a new test262 test which verifies that -0 is normalized to 0 in cases like
+        `new Temporal.Duration(-0)` and `Temporal.Duration.from({years: -0 })`.
+        This patch properly aligns these paths with the spec.
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toIntegerWithoutRounding const): Added.
+        (JSC::JSValue::toIntegerOrInfinity const):
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::fromDurationLike):
+        * runtime/TemporalDurationConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2022-05-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         builtins-generator-tests are failing after 250242@main

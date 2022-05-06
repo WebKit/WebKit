@@ -100,7 +100,7 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
         }
 
         hasRelevantProperty = true;
-        result[unit] = value.toNumber(globalObject);
+        result[unit] = value.toIntegerWithoutRounding(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!isInteger(result[unit])) {
