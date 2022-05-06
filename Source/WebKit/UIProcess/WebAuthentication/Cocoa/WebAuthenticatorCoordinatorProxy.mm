@@ -447,14 +447,15 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                     return;
                 }
                 continueAfterRequest(credential, error, WTFMove(handler));
+                weakThis->m_proxy.clear();
             });
         }).get()];
         return;
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if PLATFORM(IOS)
-    [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
-        callOnMainRunLoop([handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
+    [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
+        callOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
 #elif PLATFORM(MAC)
     RetainPtr<NSWindow> window = m_webPageProxy.platformWindow();
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), window = WTFMove(window)](NSXPCListenerEndpoint *daemonEndpoint, NSError *error) mutable {
@@ -462,15 +463,18 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
             if (!weakThis || !daemonEndpoint) {
                 LOG_ERROR("Could not connect to authorization daemon: %@\n", error.get());
                 handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "Operation failed."_s });
+                if (weakThis)
+                    weakThis->m_proxy.clear();
                 return;
             }
 
             weakThis->m_presenter = adoptNS([allocASCAuthorizationRemotePresenterInstance() init]);
-            [weakThis->m_presenter presentWithWindow:window.get() daemonEndpoint:daemonEndpoint.get() completionHandler:makeBlockPtr([handler = WTFMove(handler)](id<ASCCredentialProtocol> credentialNotRetain, NSError *errorNotRetain) mutable {
+            [weakThis->m_presenter presentWithWindow:window.get() daemonEndpoint:daemonEndpoint.get() completionHandler:makeBlockPtr([weakThis, handler = WTFMove(handler)](id<ASCCredentialProtocol> credentialNotRetain, NSError *errorNotRetain) mutable {
                 auto credential = retainPtr(credentialNotRetain);
                 auto error = retainPtr(errorNotRetain);
 #endif
                 continueAfterRequest(credential, error, WTFMove(handler));
+                weakThis->m_proxy.clear();
 #if PLATFORM(MAC)
             }).get()];
 #endif
@@ -495,8 +499,10 @@ void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvail
 
 void WebAuthenticatorCoordinatorProxy::cancel()
 {
-    if (m_proxy)
+    if (m_proxy) {
         [m_proxy cancelCurrentRequest];
+        m_proxy.clear();
+    }
 }
 
 } // namespace WebKit
