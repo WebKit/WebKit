@@ -906,6 +906,9 @@ webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFailure ]
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 
+# Requires support for xHE-HAAC audio codec
+webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////

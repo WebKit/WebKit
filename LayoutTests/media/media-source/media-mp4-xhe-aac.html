@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-mp4-xhe-aac</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-xhe-aac-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            run('video.currentTime = video.duration - 0.5');
+            await waitFor(video, 'seeked');
+
+            run('video.play()');
+            await waitFor(video, 'ended');
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

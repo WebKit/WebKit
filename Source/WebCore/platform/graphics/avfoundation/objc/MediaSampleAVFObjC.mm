@@ -281,10 +281,14 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     PAL::CMSampleBufferCreateCopy(kCFAllocatorDefault, m_sample.get(), &newSampleBuffer);
     ASSERT(newSampleBuffer);
 
+    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
+    bool isAudio = PAL::CMFormatDescriptionGetMediaType(formatDescription) == kCMMediaType_Audio;
+    const CFStringRef attachmentKey = isAudio ? PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart : PAL::kCMSampleAttachmentKey_DoNotDisplay;
+
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
+        CFDictionarySetValue(attachments, attachmentKey, kCFBooleanTrue);
     }
 
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);

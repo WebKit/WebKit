@@ -1,3 +1,16 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback
+        https://bugs.webkit.org/show_bug.cgi?id=239750
+        <rdar://91922569>
+
+        Reviewed by Eric Carlson.
+
+        Fix a spelling error in the CoreMediaSoftLink macros.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
 2022-05-05  Cameron McCormack  <heycam@apple.com>
 
         Avoid using WebCore::Colors created with out-of-line components in DrawGlyphsRecorder

@@ -1,3 +1,16 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback
+        https://bugs.webkit.org/show_bug.cgi?id=239750
+        <rdar://91922569>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-xhe-aac-manifest.json: Added.
+        * media/media-source/content/test-xhe-aac.m4a: Added.
+        * media/media-source/media-mp4-xhe-aac-expected.txt: Added.
+        * media/media-source/media-mp4-xhe-aac.html: Added.
+
 2022-05-06  Karl Rackler  <rackler@apple.com>
 
         [ iOS ] fast/innerHTML/001.html is a flaky image failure

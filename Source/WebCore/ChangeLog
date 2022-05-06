@@ -1,3 +1,29 @@
+2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback
+        https://bugs.webkit.org/show_bug.cgi?id=239750
+        <rdar://91922569>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-mp4-xhe-aac.html
+
+        xHE-AAC audio has the concept of an "independant sample", which behaves similarly to an
+        i-frame in a video codec. This sample is a prerequisite for decoding all samples that
+        come after it.
+
+        When such a track is parsed, those samples are marked as "sync", meaning they, as well as all
+        subsequent samples before the playhead, will be enqueued as "non-displaying". However, the
+        AVSampleBufferAudioRenderer does not use the DoNotDisplay sample attachment to control this
+        behavior. Instead, it relies on the TrimDurationAtStart (which has the effect of setting the
+        duration of the sample to zero, rendering it inaudible). Without this attachment, the renderer
+        will get "stuck" waiting for playback to clear out it's queue of samples.
+
+        Adopt this TrimDurationAtStart attachment if a given CMSampleBuffer is of the Audio type.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::createNonDisplayingCopy const):
+
 2022-05-06  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Fix incorrect blocked-uri for inline scripts and strict-dynamic policies
