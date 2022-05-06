@@ -807,7 +807,7 @@ class WebkitFlatpak:
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])
-                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ "
+                sandbox_environment["PS1"] = f"[📦🌐🐱 $FLATPAK_ID {self.platform}@{self.build_type} \\W]\\$ "
             if gather_output:
                 building = False
             else:
