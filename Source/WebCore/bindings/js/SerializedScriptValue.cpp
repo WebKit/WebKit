@@ -2599,9 +2599,10 @@ private:
         LengthType byteLength;
         if (!read(byteLength))
             return false;
-        JSObject* arrayBufferObj = asObject(readTerminal());
-        if (!arrayBufferObj || !arrayBufferObj->inherits<JSArrayBuffer>())
+        JSValue arrayBufferValue = readTerminal();
+        if (!arrayBufferValue || !arrayBufferValue.inherits<JSArrayBuffer>())
             return false;
+        JSObject* arrayBufferObj = asObject(arrayBufferValue);
 
         unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);
         if (!elementSize)
