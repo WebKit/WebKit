@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Passes a User Gesture through postMessage() to a worker context; press any key, click, or tap to continue.");
+window.jsTestIsAsync = true;
+
+function runTest() {
+    const mc = new MessageChannel();
+    const w = new Worker("worker-user-gesture.js");
+    w.postMessage('hello worker');
+    w.onmessage = event => {
+        if (window.internals) {
+            if (internals.isProcessingUserGesture())           
+                testPassed('User Gesture was propagated through postMessage and back.');
+            else
+                testFailed('User Gesture was not propagated through postMessage and back.')
+            finishJSTest();
+            return;
+        }
+
+        navigator.clipboard.writeText(event.data).then(() => {
+            testPassed('User Gesture was propagated through postMessage and back.')
+        }).catch(e => {
+            testFailed('User Gesture was not propagated through postMessage and back.')
+        }).finally(finishJSTest);
+    };
+}
+
+window.addEventListener('load', event => {
+    if (window.internals)
+        internals.withUserGesture(runTest);
+    else
+        ['keypress', 'click', 'touchend'].forEach(eventName => window.addEventListener(eventName, runTest, {once: true}));
+});
+
+</script>
+</head>
+<body>
+</body>
+</html>
