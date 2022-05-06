@@ -1,3 +1,15 @@
+2022-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add more information about MarkedBlock assertion
+        https://bugs.webkit.org/show_bug.cgi?id=240176
+
+        Reviewed by Mark Lam and Saam Barati.
+
+        Collect more information about assertion via CRASH_WITH_INFO.
+
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+
 2022-05-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         Temporal.Duration constructor should handle -0 properly
