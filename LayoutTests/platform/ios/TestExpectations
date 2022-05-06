@@ -3451,7 +3451,6 @@ model-element/model-element-inline-preview-deletion-upon-source-change.html [ Sk
 
 # webkit.org/b/201982 These are flaky failures on iOS
 fast/images/exif-orientation-svg-feimage.html [ Pass Failure ]
-fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ]
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
 fast/images/image-orientation-none.html [ Pass Failure ]
 
@@ -3609,3 +3608,6 @@ webkit.org/b/240104 fast/text/international/system-language/navigator-language/n
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html [ Pass Failure ]
+
+webkit.org/b/240148 fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ImageOnlyFailure ]
+
