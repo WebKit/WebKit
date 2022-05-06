@@ -75,11 +75,11 @@ public:
 
     void unregister();
 
-    bool hasSessionWithID(const String& id) { return m_sessions.contains(id); }
-    void removeSessionWithID(const String& id) { m_sessions.remove(id); }
-    void addKeysToSessionWithID(const String& id, Vector<Ref<FragmentedSharedBuffer>>&&);
-    const Vector<Ref<FragmentedSharedBuffer>>* keysForSessionWithID(const String& id) const;
-    Vector<Ref<FragmentedSharedBuffer>> removeKeysFromSessionWithID(const String& id);
+    bool hasSessionWithID(const String& id);
+    void removeSessionWithID(const String& id);
+    void addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&&);
+    const Vector<Ref<SharedBuffer>>* keysForSessionWithID(const String& id) const;
+    Vector<Ref<SharedBuffer>> removeKeysFromSessionWithID(const String& id);
 
 private:
     MockCDMFactory();
@@ -96,7 +96,7 @@ private:
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };
     bool m_supportsSessions { true };
-    HashMap<String, Vector<Ref<FragmentedSharedBuffer>>> m_sessions;
+    HashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
 };
 
 class MockCDM : public CDMPrivate {
@@ -121,8 +121,8 @@ private:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const final;
-    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const final;
+    bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 
     WeakPtr<MockCDMFactory> m_factory;
@@ -139,7 +139,7 @@ public:
 private:
     ImplementationType implementationType() const final { return ImplementationType::Mock; }
     void initializeWithConfiguration(const MediaKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
-    void setServerCertificate(Ref<FragmentedSharedBuffer>&&, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
@@ -154,8 +154,8 @@ public:
     MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
 
 private:
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<FragmentedSharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;

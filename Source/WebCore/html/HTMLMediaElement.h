@@ -727,7 +727,7 @@ private:
 
     // CDMClient
     void cdmClientAttemptToResumePlaybackIfNecessary() final;
-    void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) final;
+    void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)

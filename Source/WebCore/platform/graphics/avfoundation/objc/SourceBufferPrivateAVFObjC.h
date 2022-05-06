@@ -74,7 +74,7 @@ class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
 class WebCoreDecompressionSession;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
@@ -232,7 +232,7 @@ private:
     WeakPtr<CDMSessionMediaSourceAVFObjC> m_session { nullptr };
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
+    using KeyIDs = Vector<Ref<SharedBuffer>>;
     struct TrackInitData {
         RefPtr<SharedBuffer> initData;
         KeyIDs keyIDs;

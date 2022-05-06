@@ -222,7 +222,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return AtomString(nsInitType);
 }
 
-static Ref<FragmentedSharedBuffer> initializationDataForRequest(AVContentKeyRequest* request)
+static Ref<SharedBuffer> initializationDataForRequest(AVContentKeyRequest* request)
 {
     if (!request)
         return SharedBuffer::create();
@@ -269,7 +269,7 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     return m_session.get();
 }
 
-RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, FragmentedSharedBuffer& initData)
+RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, SharedBuffer& initData)
 {
     for (auto requestIter = m_unexpectedKeyRequests.begin(); requestIter != m_unexpectedKeyRequests.end(); ++requestIter) {
         auto& request = *requestIter;
@@ -319,7 +319,7 @@ private:
     ResponseMap m_responses;
 };
 
-static RefPtr<JSON::Value> parseJSONValue(const FragmentedSharedBuffer& buffer)
+static RefPtr<JSON::Value> parseJSONValue(const SharedBuffer& buffer)
 {
     // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
     size_t size = buffer.size();
@@ -383,7 +383,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMK
     callback(initialize());
 }
 
-void CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate(Ref<FragmentedSharedBuffer>&& serverCertificate, SuccessCallback&& callback)
+void CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate(Ref<SharedBuffer>&& serverCertificate, SuccessCallback&& callback)
 {
     INFO_LOG(LOGIDENTIFIER);
     m_serverCertificate = WTFMove(serverCertificate);
@@ -594,8 +594,8 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
             continue;
 
         auto sessionKeys = sessionInterface->keyIDs();
-        if (anyOf(sessionKeys, [&](const Ref<FragmentedSharedBuffer>& sessionKey) {
-            return keyIDs.findIf([&](const Ref<FragmentedSharedBuffer>& keyID) {
+        if (anyOf(sessionKeys, [&](const Ref<SharedBuffer>& sessionKey) {
+            return keyIDs.findIf([&](const Ref<SharedBuffer>& keyID) {
                 return keyID.get() == sessionKey.get();
             }) != notFound;
         }))
@@ -714,7 +714,7 @@ Keys CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
     return keyIDs;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!isLicenseTypeSupported(licenseType)) {
         ERROR_LOG(LOGIDENTIFIER, " false, licenseType \"", licenseType, "\" not supported");
@@ -782,7 +782,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
     [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
 }
 
-static bool isEqual(const FragmentedSharedBuffer& data, const String& value)
+static bool isEqual(const SharedBuffer& data, const String& value)
 {
     auto arrayBuffer = data.tryCreateArrayBuffer();
     if (!arrayBuffer)
@@ -800,7 +800,7 @@ static bool isEqual(const FragmentedSharedBuffer& data, const String& value)
     return stringOrException.returnValue() == value;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, Ref<FragmentedSharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, Ref<SharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
 {
     if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_s)) {
         auto* certificate = m_instance->serverCertificate();
@@ -902,7 +902,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             auto keyID = SharedBuffer::create(WTFMove(*keyIDVector));
             auto foundIndex = m_currentRequest.value().requests.findIf([&] (auto& request) {
                 auto keyIDs = keyIDsForRequest(request.get());
-                return keyIDs.findIf([&](const Ref<FragmentedSharedBuffer>& id) {
+                return keyIDs.findIf([&](const Ref<SharedBuffer>& id) {
                     return id.get() == keyID.get();
                 }) != notFound;
             });
@@ -1016,7 +1016,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
         ASSERT(!m_updateLicenseCallback);
     }
     if (m_removeSessionDataCallback) {
-        m_removeSessionDataCallback({ }, std::nullopt, Failed);
+        m_removeSessionDataCallback({ }, nullptr, Failed);
         ASSERT(!m_removeSessionDataCallback);
     }
     m_currentRequest = std::nullopt;
@@ -1040,7 +1040,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
 
         if (!m_instance->persistentStateAllowed() || !storageURL || !certificate) {
             ERROR_LOG(LOGIDENTIFIER, " Failed, persistentState not allowed or no storageURL or no certificate");
-            callback({ }, std::nullopt, Failed);
+            callback({ }, nullptr, Failed);
             return;
         }
 
@@ -1064,7 +1064,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
 
         if (!expiredSessionsArray.get().count) {
             ALWAYS_LOG(LOGIDENTIFIER, " Succeeded, no expired sessions");
-            callback(WTFMove(changedKeys), std::nullopt, Succeeded);
+            callback(WTFMove(changedKeys), nullptr, Succeeded);
             return;
         }
 
@@ -1074,7 +1074,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
             // a persistent-usage-record message on close. Signal this by failing and assert.
             ASSERT_NOT_REACHED();
             ERROR_LOG(LOGIDENTIFIER, " Failed, no expired session data");
-            callback(WTFMove(changedKeys), std::nullopt, Failed);
+            callback(WTFMove(changedKeys), nullptr, Failed);
             return;
         }
 
@@ -1090,7 +1090,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
         return;
     }
 
-    callback({ }, std::nullopt, Failed);
+    callback({ }, nullptr, Failed);
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(const String&)
@@ -1212,7 +1212,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
     if (auto* certificate = m_instance->serverCertificate())
         appIdentifier = certificate->makeContiguous()->createNSData();
 
-    using RequestsData = Vector<std::pair<RefPtr<FragmentedSharedBuffer>, RetainPtr<NSData>>>;
+    using RequestsData = Vector<std::pair<RefPtr<SharedBuffer>, RetainPtr<NSData>>>;
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         using CallbackFunction = Function<void(RequestsData&&)>;
         static RefPtr<CallbackAggregator> create(CallbackFunction&& completionHandler)
@@ -1268,7 +1268,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
     @try {
         for (auto request : m_currentRequest.value().requests) {
             auto keyIDs = keyIDsForRequest(request.get());
-            RefPtr<FragmentedSharedBuffer> keyID = WTFMove(keyIDs.first());
+            RefPtr<SharedBuffer> keyID = WTFMove(keyIDs.first());
             auto contentIdentifier = keyID->makeContiguous()->createNSData();
             [request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[keyID = WTFMove(keyID), aggregator] (NSData *contentKeyRequestData, NSError *) mutable {
                 callOnMainThread([keyID = WTFMove(keyID), aggregator = WTFMove(aggregator), contentKeyRequestData = retainPtr(contentKeyRequestData)] () mutable {

@@ -93,8 +93,8 @@ public:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const final;
-    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const final;
+    bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 
 private:
@@ -110,7 +110,7 @@ public:
     // CDMInstance
     ImplementationType implementationType() const final { return ImplementationType::Thunder; }
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
-    void setServerCertificate(Ref<FragmentedSharedBuffer>&&, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final { return m_keySystem; }
     RefPtr<CDMInstanceSession> createSession() final;
@@ -126,8 +126,8 @@ class CDMInstanceSessionThunder final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionThunder(CDMInstanceThunder&);
 
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<FragmentedSharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
@@ -141,14 +141,14 @@ public:
 private:
     CDMInstanceThunder* cdmInstanceThunder() const;
 
-    using Notification = void (CDMInstanceSessionThunder::*)(RefPtr<WebCore::FragmentedSharedBuffer>&&);
+    using Notification = void (CDMInstanceSessionThunder::*)(RefPtr<WebCore::SharedBuffer>&&);
     using ChallengeGeneratedCallback = Function<void()>;
-    using SessionChangedCallback = Function<void(bool, RefPtr<FragmentedSharedBuffer>&&)>;
+    using SessionChangedCallback = Function<void(bool, RefPtr<SharedBuffer>&&)>;
 
-    void challengeGeneratedCallback(RefPtr<FragmentedSharedBuffer>&&);
+    void challengeGeneratedCallback(RefPtr<SharedBuffer>&&);
     void keyUpdatedCallback(KeyIDType&&);
     void keysUpdateDoneCallback();
-    void errorCallback(RefPtr<FragmentedSharedBuffer>&&);
+    void errorCallback(RefPtr<SharedBuffer>&&);
     CDMInstanceSession::KeyStatus status(const KeyIDType&) const;
     void sessionFailure();
 
@@ -159,7 +159,7 @@ private:
     InitData m_initData;
     OpenCDMSessionCallbacks m_thunderSessionCallbacks { };
     BoxPtr<OpenCDMSession> m_session;
-    RefPtr<FragmentedSharedBuffer> m_message;
+    RefPtr<SharedBuffer> m_message;
     bool m_needsIndividualization { false };
     Vector<ChallengeGeneratedCallback> m_challengeCallbacks;
     Vector<SessionChangedCallback> m_sessionChangedCallbacks;

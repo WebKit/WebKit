@@ -35,7 +35,7 @@ using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
-class FragmentedSharedBuffer;
+class SharedBuffer;
 class PixelBuffer;
 class VideoFrameCV;
 
@@ -68,7 +68,7 @@ public:
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
+    using KeyIDs = Vector<Ref<SharedBuffer>>;
     void setKeyIDs(KeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
     const KeyIDs& keyIDs() const { return m_keyIDs; }
     KeyIDs& keyIDs() { return m_keyIDs; }
@@ -85,7 +85,7 @@ protected:
     AtomString m_id;
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
+    Vector<Ref<SharedBuffer>> m_keyIDs;
 #endif
 };
 

@@ -297,7 +297,7 @@ static bool sampleBufferRenderersSupportKeySession()
     return supports;
 }
 
-static Vector<Ref<FragmentedSharedBuffer>> copyKeyIDs(const Vector<Ref<FragmentedSharedBuffer>> keyIDs)
+static Vector<Ref<SharedBuffer>> copyKeyIDs(const Vector<Ref<SharedBuffer>> keyIDs)
 {
     return keyIDs.map([] (auto& keyID) {
         return keyID.copyRef();

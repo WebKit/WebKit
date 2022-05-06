@@ -1,3 +1,128 @@
+2022-05-05  Jean-Yves Avenard  <jya@apple.com>
+
+        [EME] CDM and friends should be using SharedBuffer rather FragmentedSharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=240111
+        rdar://92780561
+
+        Reviewed by Eric Carlson.
+
+        By using SharedBuffer directly we can simplify the code.
+        The change while extensive is rather trivial as the SharedBuffer used
+        were already contiguous.
+
+        No change in observable behaviour
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::sanitizeInitData):
+        (WebCore::CDM::supportsInitData):
+        (WebCore::CDM::sanitizeResponse):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMClient.h:
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        (WebCore::sanitizeKeyids):
+        (WebCore::InitDataRegistry::extractPsshBoxesFromCenc):
+        (WebCore::InitDataRegistry::extractKeyIDsCenc):
+        (WebCore::InitDataRegistry::sanitizeCenc):
+        (WebCore::sanitizeWebM):
+        (WebCore::extractKeyIDsWebM):
+        (WebCore::InitDataRegistry::sanitizeInitData):
+        (WebCore::InitDataRegistry::extractKeyIDs):
+        * Modules/encryptedmedia/InitDataRegistry.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::enqueueMessage):
+        (WebCore::MediaKeySession::sendMessage):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeyStatusMap.cpp:
+        (WebCore::keyIdsMatch):
+        * Modules/encryptedmedia/MediaKeyStatusMap.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::unrequestedInitializationDataReceived):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::cdmClientUnrequestedInitializationDataReceived):
+        * html/HTMLMediaElement.h:
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/encryptedmedia/CDMInstanceSession.h:
+        * platform/encryptedmedia/CDMPrivate.h:
+        * platform/encryptedmedia/CDMProxy.h:
+        (WebCore::KeyHandle::idAsSharedBuffer const):
+        * platform/encryptedmedia/CDMUtilities.cpp:
+        (WebCore::CDMUtilities::parseJSONObject):
+        * platform/encryptedmedia/CDMUtilities.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::extractKeyidsLocationFromCencInitData):
+        (WebCore::isCencInitData):
+        (WebCore::extractKeyidsFromCencInitData):
+        (WebCore::extractKeyIdFromWebMInitData):
+        (WebCore::CDMPrivateClearKey::supportsInitData const):
+        (WebCore::CDMPrivateClearKey::sanitizeResponse const):
+        (WebCore::CDMInstanceClearKey::setServerCertificate):
+        (WebCore::CDMInstanceSessionClearKey::requestLicense):
+        (WebCore::CDMInstanceSessionClearKey::updateLicense):
+        (WebCore::CDMInstanceSessionClearKey::removeSessionData):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::extractSinfData):
+        (WebCore::extractSchemeAndKeyIdFromSinf):
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSinf):
+        (WebCore::CDMPrivateFairPlayStreaming::sanitizeSinf):
+        (WebCore::CDMPrivateFairPlayStreaming::sanitizeSkd):
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSkd):
+        (WebCore::CDMPrivateFairPlayStreaming::supportsInitData const):
+        (WebCore::CDMPrivateFairPlayStreaming::sanitizeResponse const):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::initializationDataForRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData):
+        (WebCore::parseJSONValue):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::isEqual):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::copyKeyIDs):
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::CDMPrivateThunder::supportsInitData const):
+        (WebCore::CDMPrivateThunder::sanitizeResponse const):
+        (WebCore::CDMInstanceThunder::setServerCertificate):
+        (WebCore::ParsedResponseMessage::ParsedResponseMessage):
+        (WebCore::ParsedResponseMessage::payload const):
+        (WebCore::ParsedResponseMessage::payload):
+        (WebCore::CDMInstanceSessionThunder::challengeGeneratedCallback):
+        (WebCore::CDMInstanceSessionThunder::errorCallback):
+        (WebCore::CDMInstanceSessionThunder::requestLicense):
+        (WebCore::CDMInstanceSessionThunder::updateLicense):
+        (WebCore::CDMInstanceSessionThunder::loadSession):
+        (WebCore::CDMInstanceSessionThunder::removeSessionData):
+        * platform/graphics/gstreamer/eme/CDMThunder.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::hasSessionWithID):
+        (WebCore::MockCDMFactory::removeSessionWithID):
+        (WebCore::MockCDMFactory::addKeysToSessionWithID):
+        (WebCore::MockCDMFactory::removeKeysFromSessionWithID):
+        (WebCore::MockCDMFactory::keysForSessionWithID const):
+        (WebCore::MockCDM::supportsInitData const):
+        (WebCore::MockCDM::sanitizeResponse const):
+        (WebCore::MockCDMInstance::setServerCertificate):
+        (WebCore::MockCDMInstanceSession::requestLicense):
+        (WebCore::MockCDMInstanceSession::updateLicense):
+        (WebCore::MockCDMInstanceSession::removeSessionData):
+        * testing/MockCDMFactory.h:
+
 2022-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the number of calls to canContainFixedPositionObjects()

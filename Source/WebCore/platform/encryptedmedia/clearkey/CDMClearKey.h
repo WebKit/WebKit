@@ -86,8 +86,8 @@ public:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const final;
-    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const final;
+    bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 };
 
@@ -99,7 +99,7 @@ public:
     // CDMInstance
     ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
-    void setServerCertificate(Ref<FragmentedSharedBuffer>&&, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
@@ -109,8 +109,8 @@ class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
         : CDMInstanceSessionProxy(parent) { }
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<FragmentedSharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;

@@ -177,7 +177,7 @@ bool MediaKeys::hasOpenSessions() const
         });
 }
 
-void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType, Ref<FragmentedSharedBuffer>&& initData)
+void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType, Ref<SharedBuffer>&& initData)
 {
     for (auto& cdmClient : m_cdmClients)
         cdmClient.cdmClientUnrequestedInitializationDataReceived(initDataType, initData.copyRef());

@@ -25,7 +25,7 @@
 
 messages -> RemoteCDMInstanceSession NotRefCounted {
     UpdateKeyStatuses(WebCore::CDMInstanceSession::KeyStatusVector keyStatuses)
-    SendMessage(enum:uint8_t WebCore::CDMMessageType type, IPC::SharedBufferCopy message)
+    SendMessage(enum:uint8_t WebCore::CDMMessageType type, RefPtr<WebCore::SharedBuffer> message)
     SessionIdChanged(String sessionId)
 }
 

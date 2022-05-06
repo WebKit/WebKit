@@ -66,7 +66,7 @@ private:
     RemoteCDMInstanceProxy(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, UniqueRef<RemoteCDMInstanceConfiguration>&&, RemoteCDMInstanceIdentifier);
 
     // CDMInstanceClient
-    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::FragmentedSharedBuffer>&&) final;
+    void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -82,7 +82,7 @@ private:
 
     // Messages
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
-    void setServerCertificate(IPC::SharedBufferCopy&&, CompletionHandler<void(SuccessValue)>&&);
+    void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
     void setStorageDirectory(const String&);
     void createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&&);
 

@@ -1,3 +1,68 @@
+2022-05-05  Jean-Yves Avenard  <jya@apple.com>
+
+        [EME] CDM and friends should be using SharedBuffer rather FragmentedSharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=240111
+        rdar://92780561
+
+        Reviewed by Eric Carlson.
+
+        Remove the use of IPC::SharedBufferCopy objects to send data over IPC;
+        it adds no value here as SharedBuffer are fully serialisable.
+
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        (WebKit::RemoteCDMInstanceProxy::unrequestedInitializationDataReceived):
+        (WebKit::RemoteCDMInstanceProxy::setServerCertificate):
+        * GPUProcess/media/RemoteCDMInstanceProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::requestLicense):
+        (WebKit::RemoteCDMInstanceSessionProxy::updateLicense):
+        (WebKit::RemoteCDMInstanceSessionProxy::removeSessionData):
+        (WebKit::RemoteCDMInstanceSessionProxy::sendMessage):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        (WebKit::RemoteCDMProxy::supportsInitData):
+        (WebKit::RemoteCDMProxy::sanitizeResponse):
+        * GPUProcess/media/RemoteCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        (WebKit::convertToUint8Array):
+        (WebKit::convertToOptionalSharedBuffer):
+        (WebKit::RemoteLegacyCDMSessionProxy::generateKeyRequest):
+        (WebKit::RemoteLegacyCDMSessionProxy::update):
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode):
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode):
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        (WebKit::RemoteCDM::supportsInitData const):
+        (WebKit::RemoteCDM::sanitizeResponse const):
+        * WebProcess/GPU/media/RemoteCDM.h:
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::unrequestedInitializationDataReceived):
+        (WebKit::RemoteCDMInstance::setServerCertificate):
+        * WebProcess/GPU/media/RemoteCDMInstance.h:
+        * WebProcess/GPU/media/RemoteCDMInstance.messages.in:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        (WebKit::RemoteCDMInstanceSession::requestLicense):
+        (WebKit::RemoteCDMInstanceSession::updateLicense):
+        (WebKit::RemoteCDMInstanceSession::removeSessionData):
+        (WebKit::RemoteCDMInstanceSession::sendMessage):
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        (WebKit::convertToArrayBuffer):
+        (WebKit::convertToUint8Array):
+        (WebKit::convertToSharedBuffer):
+        (WebKit::RemoteLegacyCDMSession::generateKeyRequest):
+        (WebKit::RemoteLegacyCDMSession::update):
+        (WebKit::RemoteLegacyCDMSession::cachedKeyForKeyID const):
+        (WebKit::RemoteLegacyCDMSession::sendMessage):
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in:
+
 2022-05-05  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r293697.

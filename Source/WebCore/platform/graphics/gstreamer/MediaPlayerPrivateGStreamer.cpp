@@ -3919,23 +3919,33 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
 {
     ASSERT(!isMainThread());
 
-    InitData initData;
-    {
-        Locker locker { m_protectionMutex };
-        ProtectionSystemEvents protectionSystemEvents(message);
-        GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
+    Locker locker { m_protectionMutex };
+    ProtectionSystemEvents protectionSystemEvents(message);
+    GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
 
-        for (auto& event : protectionSystemEvents.events()) {
-            const char* eventKeySystemId = nullptr;
-            GstBuffer* data = nullptr;
-            gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
+    String systemId;
+    SharedBufferBuilder payloadBuilder;
+    for (auto& event : protectionSystemEvents.events()) {
+        const char* eventKeySystemId = nullptr;
+        GstBuffer* data = nullptr;
+        gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
 
-            initData.append({ String::fromLatin1(eventKeySystemId), data });
-            m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
-        }
+        // FIXME: There is some confusion here about how to detect the
+        // correct "initialization data type", if the system ID is
+        // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID, then we know it came
+        // from WebM. If the system id is specified with one of the
+        // defined ClearKey / Playready / Widevine / etc UUIDs, then
+        // we know it's MP4. For the latter case, it does not matter
+        // which of the UUIDs it is, so we just overwrite it. This is
+        // a quirk of how GStreamer provides protection events, and
+        // it's not very robust, so be careful here!
+        systemId = String::fromLatin1(eventKeySystemId);
+        InitData initData { systemId, data };
+        payloadBuilder.append(*initData.payload());
+        m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
     }
 
-    return initData;
+    return { systemId, payloadBuilder.takeAsContiguous() };
 }
 
 bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
