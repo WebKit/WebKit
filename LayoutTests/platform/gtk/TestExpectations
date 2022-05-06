@@ -977,6 +977,9 @@ webkit.org/b/232910 fast/text/apply-start-width-after-skipped-text.html [ Failur
 webkit.org/b/232910 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-ic-003.html [ ImageOnlyFailure ]
 webkit.org/b/232910 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001.html [ ImageOnlyFailure ]
 
+# Requires support for xHE-HAAC audio codec
+webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
