@@ -5285,6 +5285,7 @@ sub GenerateAttributeGetterBodyDefinition
     # on the implementation object, we don't require the developers to specify [AtomString] in the IDL. The fact that they need
     # to be AtomStrings is an implementation detail.
     if ($attribute->extendedAttributes->{"Reflect"} && $codeGenerator->IsStringType($attribute->type)) {
+       die "Using [AtomString] on attributes marked as [Reflect] is unnecessary" if $attribute->type->extendedAttributes->{AtomString};
        $attribute->type->extendedAttributes->{AtomString} = 1;
     }
 

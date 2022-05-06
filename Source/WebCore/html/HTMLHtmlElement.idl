@@ -20,7 +20,7 @@
 [
     Exposed=Window
 ] interface HTMLHtmlElement : HTMLElement {
-    [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString version;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString version;
     [Reflect, URL] attribute DOMString manifest;
 };
 
