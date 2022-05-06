@@ -86,7 +86,7 @@ PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display)
 #if PLATFORM(GTK)
 PlatformDisplayWayland::PlatformDisplayWayland(GdkDisplay* display)
     : PlatformDisplay(display)
-    , m_display(gdk_wayland_display_get_wl_display(display))
+    , m_display(display ? gdk_wayland_display_get_wl_display(display) : nullptr)
 {
 }
 #endif
@@ -99,7 +99,7 @@ PlatformDisplayWayland::~PlatformDisplayWayland()
     bool nativeDisplayOwned = true;
 #endif
 
-    if (nativeDisplayOwned) {
+    if (nativeDisplayOwned && m_display) {
         m_compositor = nullptr;
         m_registry = nullptr;
         wl_display_disconnect(m_display);
