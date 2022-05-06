@@ -437,7 +437,7 @@ bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, 
         TextPosition sourcePosition(contextLine, OrdinalNumber());
         const char* message = sourceURL.isEmpty() ? "Refused to execute a script" : "Refused to load";
         String consoleMessage = consoleMessageForViolation(violatedDirective, sourceURL, message);
-        reportViolation(violatedDirective, sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
+        reportViolation(violatedDirective, sourceURL.isEmpty() ? "inline"_s : sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
     };
 
     auto contentHashes = generateHashesForContent(scriptContent, m_hashAlgorithmsForInlineScripts);

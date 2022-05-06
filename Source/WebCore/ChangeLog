@@ -1,3 +1,15 @@
+2022-05-06  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Fix incorrect blocked-uri for inline scripts and strict-dynamic policies
+        https://bugs.webkit.org/show_bug.cgi?id=240136
+
+        Reviewed by Kate Cheney.
+
+        Test: http/tests/security/contentSecurityPolicy/script-src-strict-dynamic-inline-report.py
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowNonParserInsertedScripts const):
+
 2022-05-06  Jer Noble  <jer.noble@apple.com>
 
         Video playback fails when using postMessage() during a User Gesture
