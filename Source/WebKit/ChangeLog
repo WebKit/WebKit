@@ -1,5 +1,32 @@
 2022-05-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r293818. rdar://problem/92751323
+
+    REGRESSION (r293716): macCatalyst WebKit build fails; overlapping content at /System/Library/FeatureFlags/Domain/WebKit.plist
+    https://bugs.webkit.org/show_bug.cgi?id=240099
+    <rdar://92751323>
+    
+    Reviewed by Chris Dumez.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    Avoid copying the feature flags plist for macCatalyst, since it installs into the same place as macOS.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293818 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-04  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r293716): macCatalyst WebKit build fails; overlapping content at /System/Library/FeatureFlags/Domain/WebKit.plist
+            https://bugs.webkit.org/show_bug.cgi?id=240099
+            <rdar://92751323>
+
+            Reviewed by Chris Dumez.
+
+            * WebKit.xcodeproj/project.pbxproj:
+            Avoid copying the feature flags plist for macCatalyst, since it installs into the same place as macOS.
+
+2022-05-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293716. rdar://problem/92644672
 
     REGRESSION (r292351): Processes no longer get the right jetsam priority on iOS
