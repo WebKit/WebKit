@@ -880,7 +880,7 @@ String StyleProperties::getGridTemplateValue() const
         return String();
 
     auto areas = propertyAt(areasIndex);
-    if (isValueID(areas.value(), CSSValueNone) || areas.value()->isInitialValue()) {
+    if (!is<CSSGridTemplateAreasValue>(areas.value())) {
         String rowsText = rows->cssText();
         result.append(rowsText);
 
