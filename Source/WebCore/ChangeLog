@@ -1,3 +1,36 @@
+2022-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize shouldApplyContainment methods
+        https://bugs.webkit.org/show_bug.cgi?id=240164
+
+        Reviewed by Alan Bujtas.
+
+        Based on a patch by Rob Buis.
+
+        Optimize shouldApplyContainment methods by allowing OptionSet as a parameter.
+        Also restrict the principal box checks to a single location.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects const):
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+        (WebCore::RenderElement::shouldApplyLayoutOrPaintContainment const):
+        (WebCore::RenderElement::shouldApplySizeOrStyleContainment const):
+        (WebCore::RenderElement::shouldApplyLayoutContainment const):
+        (WebCore::RenderElement::shouldApplyPaintContainment const):
+        (WebCore::RenderElement::shouldApplySizeContainment const):
+        (WebCore::RenderElement::shouldApplyInlineSizeContainment const):
+        (WebCore::RenderElement::shouldApplyStyleContainment const):
+        (WebCore::RenderElement::shouldApplyAnyContainment const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const):
+
 2022-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r293824.

@@ -345,7 +345,7 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
+    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeOrStyleContainment({ Containment::Size, Containment::InlineSize });
     if (!shouldIgnoreDescendantContentForLogicalWidth) {
         if (childrenInline())
             computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);

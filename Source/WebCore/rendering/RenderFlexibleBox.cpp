@@ -103,7 +103,7 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         minLogicalWidth += scrollbarWidth;
     };
 
-    auto shouldIgnoreFlexItemContentForLogicalWidth = shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
+    auto shouldIgnoreFlexItemContentForLogicalWidth = shouldApplySizeOrStyleContainment({ Containment::Size, Containment::InlineSize });
     if (shouldIgnoreFlexItemContentForLogicalWidth) {
         addScrollbarWidth();
         return;
