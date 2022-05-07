@@ -1,3 +1,15 @@
+2022-05-06  Tim Nguyen  <ntim@apple.com>
+
+        Use dynamicDowncast in getPathFromPathOperation()
+        https://bugs.webkit.org/show_bug.cgi?id=240190
+
+        Reviewed by Chris Dumez.
+
+        Small cleanup.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertPathOperation):
+
 2022-05-06  Rob Buis  <rbuis@igalia.com>
 
         Use correct document as root for lazy image observer

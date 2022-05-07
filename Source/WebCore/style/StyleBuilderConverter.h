@@ -629,9 +629,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
             auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(cssURLValue, builderState.document());
             // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
             auto target = SVGURIReference::targetElementFromIRIString(cssURLValue, builderState.document());
-            if (is<SVGElement>(target.element.get()))
-                return ReferencePathOperation::create(cssURLValue, fragment, downcast<SVGElement>(target.element.get()));
-            return ReferencePathOperation::create(cssURLValue, fragment, nullptr);
+            return ReferencePathOperation::create(cssURLValue, fragment, dynamicDowncast<SVGElement>(target.element.get()));
         }
         ASSERT(primitiveValue.valueID() == CSSValueNone);
         return nullptr;
