@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NotificationData.h"
 #include "RegistrationStore.h"
+#include "SWOriginStore.h"
 #include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
@@ -148,6 +149,7 @@ void SWServer::registrationStoreImportComplete()
 {
     ASSERT(!m_importCompleted);
     m_importCompleted = true;
+    m_originStore->importComplete();
 
     auto clearCallbacks = WTFMove(m_clearCompletionCallbacks);
     for (auto& callback : clearCallbacks)
@@ -222,6 +224,7 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
     if (registration->serviceWorkerPageIdentifier())
         m_serviceWorkerPageIdentifierToRegistrationMap.add(*registration->serviceWorkerPageIdentifier(), *registration);
 
+    m_originStore->add(registration->key().topOrigin());
     auto registrationID = registration->identifier();
     ASSERT(!m_scopeToRegistrationMap.contains(registration->key()));
     m_scopeToRegistrationMap.set(registration->key(), *registration);
@@ -244,6 +247,7 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
             m_uniqueRegistrationCount--;
     }
 
+    m_originStore->remove(registration->key().topOrigin());
     if (m_registrationStore)
         m_registrationStore->removeRegistration(registration->key());
 }
@@ -282,6 +286,7 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
     while (!m_registrations.isEmpty())
         m_registrations.begin()->value->clear();
     m_pendingContextDatas.clear();
+    m_originStore->clearAll();
     if (!m_registrationStore)
         return completionHandler();
 
@@ -334,7 +339,7 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
         return;
     }
 
-    // Calling SWServerRegistration::clear() takes care of updating m_registrations and m_registrationStore.
+    // Calling SWServerRegistration::clear() takes care of updating m_registrations, m_originStore and m_registrationStore.
     for (auto* registration : registrationsToRemove)
         registration->clear();
 
@@ -364,8 +369,9 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorker
     m_server.removeClientServiceWorkerRegistration(*this, identifier);
 }
 
-SWServer::SWServer(bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback, AppBoundDomainsCallback&& appBoundDomainsCallback)
-    : m_sessionID(sessionID)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback, AppBoundDomainsCallback&& appBoundDomainsCallback)
+    : m_originStore(WTFMove(originStore))
+    , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
     , m_createContextConnectionCallback(WTFMove(callback))
     , m_softUpdateCallback(WTFMove(softUpdateCallback))

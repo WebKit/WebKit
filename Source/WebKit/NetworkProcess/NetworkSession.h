@@ -81,6 +81,7 @@ class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSharedWorkerServer;
 class WebSocketTask;
+class WebSWOriginStore;
 class WebSWServerConnection;
 struct NetworkSessionCreationParameters;
 struct SessionSet;
@@ -202,6 +203,9 @@ public:
 
     WebCore::SWServer* swServer() { return m_swServer.get(); }
     WebCore::SWServer& ensureSWServer();
+    WebSWOriginStore* swOriginStore() const; // FIXME: Can be private?
+    void registerSWServerConnection(WebSWServerConnection&);
+    void unregisterSWServerConnection(WebSWServerConnection&);
 
     bool hasServiceWorkerDatabasePath() const;
 #endif

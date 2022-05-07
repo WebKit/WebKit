@@ -46,6 +46,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
+#include "WebSWOriginStore.h"
 #include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
@@ -610,6 +611,25 @@ ServiceWorkerFetchTask* NetworkSession::navigationPreloaderTaskFromFetchIdentifi
     return m_navigationPreloaders.get(identifier).get();
 }
 
+WebSWOriginStore* NetworkSession::swOriginStore() const
+{
+    return m_swServer ? &static_cast<WebSWOriginStore&>(m_swServer->originStore()) : nullptr;
+}
+
+void NetworkSession::registerSWServerConnection(WebSWServerConnection& connection)
+{
+    auto* store = swOriginStore();
+    ASSERT(store);
+    if (store)
+        store->registerSWServerConnection(connection);
+}
+
+void NetworkSession::unregisterSWServerConnection(WebSWServerConnection& connection)
+{
+    if (auto* store = swOriginStore())
+        store->unregisterSWServerConnection(connection);
+}
+
 SWServer& NetworkSession::ensureSWServer()
 {
     if (!m_swServer) {
@@ -628,7 +648,7 @@ SWServer& NetworkSession::ensureSWServer()
             completionHandler({ });
         };
 #endif
-        m_swServer = makeUnique<SWServer>(info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), [this](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
+        m_swServer = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), [this](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
             ServiceWorkerSoftUpdateLoader::start(this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
         }, [this](auto& registrableDomain, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());

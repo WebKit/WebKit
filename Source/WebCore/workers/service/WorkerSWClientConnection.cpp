@@ -178,6 +178,12 @@ SWServerConnectionIdentifier WorkerSWClientConnection::serverConnectionIdentifie
     return identifier;
 }
 
+bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const
+{
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 void WorkerSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& identifier, String&& userAgent)
 {
     callOnMainThread([clientOrigin = clientOrigin.isolatedCopy(), data = crossThreadCopy(WTFMove(data)), identifier, userAgent = crossThreadCopy(WTFMove(userAgent))]() mutable {

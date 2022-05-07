@@ -53,6 +53,7 @@ private:
     void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) final;
     void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) final;
     SWServerConnectionIdentifier serverConnectionIdentifier() const final;
+    bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
     void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationKey&&, WorkerFetchResult&&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&) final;
