@@ -1,3 +1,33 @@
+2022-05-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix flakey test by using the old API on old systems.
+        https://bugs.webkit.org/show_bug.cgi?id=240195
+
+        Reviewed by Tim Horton.
+
+        Turn fast/images/text-recognition/ios/show-data-detector-context-menu.html back on.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteraction:configuration:dismissalPreviewForItemWithIdentifier:contextMenuInteraction:previewForDismissingMenuWithConfiguration:]):
+        (-[WKContentView contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+        (-[WKContentView contextMenuInteraction:configuration:dismissalPreviewForItemWithIdentifier:]): Deleted.
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKDateTimePicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKFileUploadPanel contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKSelectPicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]): Deleted.
+
 2022-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix another internal build

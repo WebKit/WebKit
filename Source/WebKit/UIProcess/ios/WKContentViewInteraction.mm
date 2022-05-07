@@ -11939,7 +11939,11 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     return [_actionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:_positionInformation];
 }
 
+#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
+#else
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+#endif
 {
     [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
     [self _cancelTouchEventGestureRecognizer];
@@ -11973,7 +11977,11 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     }
 }
 
+#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration dismissalPreviewForItemWithIdentifier:(id<NSCopying>)identifier
+#else
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+#endif
 {
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }

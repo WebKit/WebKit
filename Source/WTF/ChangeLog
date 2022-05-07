@@ -1,3 +1,12 @@
+2022-05-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix flakey test by using the old API on old systems.
+        https://bugs.webkit.org/show_bug.cgi?id=240195
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
 2022-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused ApplePayRemoteUIEnabled preference
