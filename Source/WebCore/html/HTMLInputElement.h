@@ -96,11 +96,8 @@ public:
 
     bool isPresentingAttachedView() const;
 
-    // stepUp()/stepDown() for user-interaction.
-    bool isSteppable() const;
-
+    bool isSteppable() const; // stepUp()/stepDown() for user-interaction.
     bool isTextButton() const;
-
     bool isRadioButton() const;
     WEBCORE_EXPORT bool isTextField() const final;
     WEBCORE_EXPORT bool isSearchField() const;
@@ -108,17 +105,14 @@ public:
     WEBCORE_EXPORT bool isPasswordField() const;
     bool isCheckbox() const;
     bool isRangeControl() const;
-
 #if ENABLE(INPUT_TYPE_COLOR)
     WEBCORE_EXPORT bool isColorControl() const;
 #endif
-
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
     // any unknown input type is treated as text. Consider, for example, isTextField or
     // isTextField && !isPasswordField.
     WEBCORE_EXPORT bool isText() const;
-
     WEBCORE_EXPORT bool isEmailField() const;
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
@@ -164,7 +158,7 @@ public:
     bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
 
-    WEBCORE_EXPORT unsigned size() const;
+    unsigned size() const { return m_size; }
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
     float decorationWidth() const;
 
@@ -172,11 +166,11 @@ public:
 
     WEBCORE_EXPORT String value() const final;
     WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
-    WEBCORE_EXPORT void setValueForUser(const String&);
+    void setValueForUser(const String& value) { setValue(value, DispatchChangeEvent); }
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
     bool isValidValue(const String&) const;
-    bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); };
+    bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); }
 
     String placeholder() const;
 
@@ -226,8 +220,8 @@ public:
     WEBCORE_EXPORT const AtomString& defaultValue() const;
     WEBCORE_EXPORT void setDefaultValue(const AtomString&);
 
-    Vector<String> acceptMIMETypes();
-    Vector<String> acceptFileExtensions();
+    Vector<String> acceptMIMETypes() const;
+    Vector<String> acceptFileExtensions() const;
     String accept() const;
     WEBCORE_EXPORT String alt() const;
 
@@ -239,27 +233,22 @@ public:
 
     WEBCORE_EXPORT bool multiple() const;
 
+    // AutoFill.
     bool isAutoFilled() const { return m_isAutoFilled; }
     WEBCORE_EXPORT void setAutoFilled(bool = true);
-
     bool isAutoFilledAndViewable() const { return m_isAutoFilledAndViewable; }
     WEBCORE_EXPORT void setAutoFilledAndViewable(bool = true);
-
     bool isAutoFilledAndObscured() const { return m_isAutoFilledAndObscured; }
     WEBCORE_EXPORT void setAutoFilledAndObscured(bool = true);
-
     AutoFillButtonType lastAutoFillButtonType() const { return static_cast<AutoFillButtonType>(m_lastAutoFillButtonType); }
     AutoFillButtonType autoFillButtonType() const { return static_cast<AutoFillButtonType>(m_autoFillButtonType); }
     WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
-
     bool hasAutoFillStrongPasswordButton() const  { return autoFillButtonType() == AutoFillButtonType::StrongPassword; }
-
     bool isAutoFillAvailable() const { return m_isAutoFillAvailable; }
     void setAutoFillAvailable(bool autoFillAvailable) { m_isAutoFillAvailable = autoFillAvailable; }
 
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
-
     FileList* filesForBindings() { return files(); }
     void setFilesForBindings(RefPtr<FileList>&& fileList) { return setFiles(WTFMove(fileList), WasSetByJavaScript::Yes); }
 
@@ -273,7 +262,7 @@ public:
 
     // These functions are used for rendering the input active during a
     // drag-and-drop operation.
-    bool canReceiveDroppedFiles() const;
+    bool canReceiveDroppedFiles() const { return m_canReceiveDroppedFiles; }
     void setCanReceiveDroppedFiles(bool);
 
     void addSearchResult();
@@ -313,7 +302,11 @@ public:
     MediaCaptureType mediaCaptureType() const;
 #endif
 
-    static const unsigned maxEffectiveLength;
+    // FIXME: According to HTML4, the length attribute's value can be arbitrarily
+    // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
+    // get rather sluggish when a text field has a larger number of characters than
+    // this, even when just clicking in the text field.
+    static constexpr unsigned maxEffectiveLength = 524288;
 
     WEBCORE_EXPORT unsigned height() const;
     WEBCORE_EXPORT unsigned width() const;
@@ -370,6 +363,7 @@ protected:
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
+    static constexpr int defaultSize = 20;
 
     void willChangeForm() final;
     void didChangeForm() final;
@@ -472,33 +466,33 @@ private:
 
     AtomString m_name;
     String m_valueIfDirty;
-    unsigned m_size;
+    unsigned m_size { defaultSize };
     short m_maxResults { -1 };
-    bool m_isChecked : 1;
-    bool m_dirtyCheckednessFlag : 1;
-    bool m_isIndeterminate : 1;
-    bool m_hasType : 1;
-    bool m_isActivatedSubmit : 1;
-    unsigned m_autocomplete : 2; // AutoCompleteSetting
-    bool m_isAutoFilled : 1;
-    bool m_isAutoFilledAndViewable : 1;
-    bool m_isAutoFilledAndObscured : 1;
-    unsigned m_autoFillButtonType : 3; // AutoFillButtonType
-    unsigned m_lastAutoFillButtonType : 3; // AutoFillButtonType
-    bool m_isAutoFillAvailable : 1;
+    bool m_isChecked : 1 { false };
+    bool m_dirtyCheckednessFlag : 1 { false };
+    bool m_isIndeterminate : 1 { false };
+    bool m_hasType : 1 { false };
+    bool m_isActivatedSubmit : 1 { false };
+    unsigned m_autocomplete : 2 { Uninitialized }; // AutoCompleteSetting
+    bool m_isAutoFilled : 1 { false };
+    bool m_isAutoFilledAndViewable : 1 { false };
+    bool m_isAutoFilledAndObscured : 1 { false };
+    unsigned m_autoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
+    unsigned m_lastAutoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
+    bool m_isAutoFillAvailable : 1 { false };
 #if ENABLE(DATALIST_ELEMENT)
-    bool m_hasNonEmptyList : 1;
+    bool m_hasNonEmptyList : 1 { false };
 #endif
-    bool m_stateRestored : 1;
+    bool m_stateRestored : 1 { false };
     bool m_parsingInProgress : 1;
-    bool m_valueAttributeWasUpdatedAfterParsing : 1;
-    bool m_wasModifiedByUser : 1;
-    bool m_canReceiveDroppedFiles : 1;
+    bool m_valueAttributeWasUpdatedAfterParsing : 1 { false };
+    bool m_wasModifiedByUser : 1 { false };
+    bool m_canReceiveDroppedFiles : 1 { false };
 #if ENABLE(TOUCH_EVENTS)
-    bool m_hasTouchEventHandler : 1;
+    bool m_hasTouchEventHandler : 1 { false };
 #endif
-    bool m_isSpellcheckDisabledExceptTextReplacement : 1;
-    bool m_hasPendingUserAgentShadowTreeUpdate : 1;
+    bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
+    bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };
     RefPtr<InputType> m_inputType;
     // The ImageLoader must be owned by this element because the loader code assumes
     // that it lives as long as its owning element lives. If we move the loader into

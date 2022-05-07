@@ -48,14 +48,19 @@ public:
         ASSERT(needsShadowSubtree());
     }
 
+    Vector<Color> suggestedColors() const;
+    Color valueAsColor() const;
+    void selectColor(StringView);
+
     virtual ~ColorInputType();
     bool typeMismatchFor(const String&) const final;
+
+    void detach() final;
 
 private:
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
     IntRect elementRectRelativeToRootView() const final;
-    Vector<Color> suggestedColors() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isPresentingAttachedView() const final;
@@ -69,12 +74,9 @@ private:
     void handleDOMActivateEvent(Event&) final;
     void showPicker() final;
     bool allowsShowPickerAcrossFrames() final;
-    void detach() final;
     void elementDidBlur() final;
     bool shouldRespectListAttribute() final;
     bool shouldResetOnDocumentActivation() final;
-    Color valueAsColor() const final;
-    void selectColor(StringView) final;
 
     void endColorChooser();
     void updateColorSwatch();

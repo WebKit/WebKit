@@ -116,6 +116,9 @@ private:
     typename PtrTraits::StorageType m_ptr;
 };
 
+// Template deduction guide.
+template<typename X, typename Y> RefPtr(Ref<X, Y>&&) -> RefPtr<X, Y, DefaultRefDerefTraits<X>>;
+
 template<typename T, typename U, typename V>
 template<typename X, typename Y>
 inline RefPtr<T, U, V>::RefPtr(Ref<X, Y>&& reference)

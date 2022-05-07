@@ -36,6 +36,7 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ColorInputType.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DateTimeChooser.h"
@@ -101,48 +102,15 @@ private:
 };
 #endif
 
-// FIXME: According to HTML4, the length attribute's value can be arbitrarily
-// large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
-// get rather sluggish when a text field has a larger number of characters than
-// this, even when just clicking in the text field.
-const unsigned HTMLInputElement::maxEffectiveLength = 524288;
-const int defaultSize = 20;
-const int maxSavedResults = 256;
+static constexpr int maxSavedResults = 256;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLTextFormControlElement(tagName, document, form)
-    , m_size(defaultSize)
-    , m_isChecked(false)
-    , m_dirtyCheckednessFlag(false)
-    , m_isIndeterminate(false)
-    , m_hasType(false)
-    , m_isActivatedSubmit(false)
-    , m_autocomplete(Uninitialized)
-    , m_isAutoFilled(false)
-    , m_isAutoFilledAndViewable(false)
-    , m_isAutoFilledAndObscured(false)
-    , m_autoFillButtonType(static_cast<uint8_t>(AutoFillButtonType::None))
-    , m_lastAutoFillButtonType(static_cast<uint8_t>(AutoFillButtonType::None))
-    , m_isAutoFillAvailable(false)
-#if ENABLE(DATALIST_ELEMENT)
-    , m_hasNonEmptyList(false)
-#endif
-    , m_stateRestored(false)
     , m_parsingInProgress(createdByParser)
-    , m_valueAttributeWasUpdatedAfterParsing(false)
-    , m_wasModifiedByUser(false)
-    , m_canReceiveDroppedFiles(false)
-#if ENABLE(TOUCH_EVENTS)
-    , m_hasTouchEventHandler(false)
-#endif
-    , m_isSpellcheckDisabledExceptTextReplacement(false)
-    , m_hasPendingUserAgentShadowTreeUpdate(false)
-{
     // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
     // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
-    if (!createdByParser)
-        m_inputType = InputType::createText(*this);
-
+    , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
+{
     ASSERT(hasTagName(inputTag));
     setHasCustomStyleResolveCallbacks();
 }
@@ -501,7 +469,7 @@ void HTMLInputElement::endEditing()
     if (!isTextField())
         return;
 
-    if (RefPtr<Frame> frame = document().frame())
+    if (RefPtr frame = document().frame())
         frame->editor().textFieldDidEndEditing(this);
 }
 
@@ -557,10 +525,8 @@ void HTMLInputElement::updateType()
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
     bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
 
-    if (didStoreValue && !willStoreValue && hasDirtyValue()) {
-        setAttributeWithoutSynchronization(valueAttr, AtomString { m_valueIfDirty });
-        m_valueIfDirty = String();
-    }
+    if (didStoreValue && !willStoreValue && hasDirtyValue())
+        setAttributeWithoutSynchronization(valueAttr, AtomString { std::exchange(m_valueIfDirty, { }) });
 
     m_inputType->destroyShadowSubtree();
     m_inputType->detachFromElement();
@@ -598,8 +564,8 @@ void HTMLInputElement::updateType()
             attributeChanged(alignAttr, nullAtom(), align->value());
     }
 
-    if (form() && wasSuccessfulSubmitButtonCandidate != m_inputType->canBeSuccessfulSubmitButton())
-        form()->resetDefaultButton();
+    if (auto* form = this->form(); form && wasSuccessfulSubmitButtonCandidate != m_inputType->canBeSuccessfulSubmitButton())
+        form->resetDefaultButton();
 
     runPostTypeUpdateTasks();
 
@@ -688,8 +654,7 @@ bool HTMLInputElement::canHaveSelection() const
 
 bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 {
-    Ref<InputType> protectedInputType(*m_inputType);
-    return protectedInputType->accessKeyAction(sendMouseEvents);
+    return Ref { *m_inputType }->accessKeyAction(sendMouseEvents);
 }
 
 bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -731,7 +696,7 @@ inline void HTMLInputElement::initializeInputType()
     ASSERT(m_parsingInProgress);
     ASSERT(!m_inputType);
 
-    const AtomString& type = attributeWithoutSynchronization(typeAttr);
+    auto& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
         m_inputType = InputType::createText(*this);
         updateWillValidateAndValidity();
@@ -749,7 +714,7 @@ inline void HTMLInputElement::initializeInputType()
 void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     ASSERT(m_inputType);
-    Ref<InputType> protectedInputType(*m_inputType);
+    Ref protectedInputType { *m_inputType };
 
     if (name == nameAttr) {
         removeFromRadioButtonGroup();
@@ -856,9 +821,8 @@ void HTMLInputElement::finishParsingChildren()
     ASSERT(m_inputType);
     HTMLTextFormControlElement::finishParsingChildren();
     if (!m_stateRestored) {
-        bool checked = hasAttributeWithoutSynchronization(checkedAttr);
-        if (checked)
-            setChecked(checked);
+        if (hasAttributeWithoutSynchronization(checkedAttr))
+            setChecked(true);
         m_dirtyCheckednessFlag = false;
     }
 }
@@ -941,14 +905,14 @@ void HTMLInputElement::setActivatedSubmit(bool flag)
 
 bool HTMLInputElement::appendFormData(DOMFormData& formData)
 {
-    Ref<InputType> protectedInputType(*m_inputType);
+    Ref protectedInputType { *m_inputType };
     return m_inputType->isFormDataAppendable() && m_inputType->appendFormData(formData);
 }
 
 void HTMLInputElement::reset()
 {
     if (m_inputType->storesValueSeparateFromAttribute())
-        setValue(String());
+        setValue({ });
 
     setAutoFilled(false);
     setAutoFilledAndViewable(false);
@@ -980,17 +944,17 @@ void HTMLInputElement::setChecked(bool isChecked)
 
     m_isChecked = isChecked;
 
-    if (RadioButtonGroups* buttons = radioButtonGroups())
+    if (auto* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
-    if (renderer() && renderer()->style().hasEffectiveAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+        renderer->theme().stateChanged(*renderer, ControlStates::States::Checked);
     updateValidity();
 
     // Ideally we'd do this from the render tree (matching
     // RenderTextView), but it's not possible to do it at the moment
     // because of the way the code is structured.
-    if (renderer()) {
-        if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
+    if (auto* renderer = this->renderer()) {
+        if (auto* cache = renderer->document().existingAXObjectCache())
             cache->checkedStateChanged(this);
     }
 }
@@ -1003,13 +967,8 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClassIndeterminate, newValue);
     m_isIndeterminate = newValue;
 
-    if (renderer() && renderer()->style().hasEffectiveAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
-}
-
-unsigned HTMLInputElement::size() const
-{
-    return m_size;
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+        renderer->theme().stateChanged(*renderer, ControlStates::States::Checked);
 }
 
 bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
@@ -1041,35 +1000,26 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 
 String HTMLInputElement::value() const
 {
-    String value;
-    if (m_inputType->canHaveTypeSpecificValue() && m_inputType->getTypeSpecificValue(value))
-        return value;
+    if (auto* fileInput = dynamicDowncast<FileInputType>(*m_inputType))
+        return fileInput->firstElementPathForInputValue();
 
-    value = m_valueIfDirty;
-    if (!value.isNull())
-        return value;
+    if (!m_valueIfDirty.isNull())
+        return m_valueIfDirty;
 
-    auto& valueString = attributeWithoutSynchronization(valueAttr);
-    value = sanitizeValue(valueString);
-    if (!value.isNull())
-        return value;
+    if (auto& valueString = attributeWithoutSynchronization(valueAttr); !valueString.isNull()) {
+        if (auto sanitizedValue = sanitizeValue(valueString); !sanitizedValue.isNull())
+            return sanitizedValue;
+    }
 
     return m_inputType->fallbackValue();
 }
 
 String HTMLInputElement::valueWithDefault() const
 {
-    String value = this->value();
-    if (!value.isNull())
+    if (auto value = this->value(); !value.isNull())
         return value;
 
     return m_inputType->defaultValue();
-}
-
-void HTMLInputElement::setValueForUser(const String& value)
-{
-    // Call setValue and make it send a change event.
-    setValue(value, DispatchChangeEvent);
 }
 
 ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
@@ -1077,17 +1027,14 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     if (isFileUpload() && !value.isEmpty())
         return Exception { InvalidStateError };
 
-    if (!m_inputType->canSetValue(value))
-        return { };
-
-    Ref<HTMLInputElement> protectedThis(*this);
+    Ref protectedThis { *this };
     EventQueueScope scope;
-    String sanitizedValue = sanitizeValue(value);
+    auto sanitizedValue = sanitizeValue(value);
     bool valueChanged = sanitizedValue != this->value();
 
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
-    m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior, selection);
+    m_inputType->setValue(WTFMove(sanitizedValue), valueChanged, eventBehavior, selection);
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically) {
@@ -1191,22 +1138,22 @@ void HTMLInputElement::didBlur()
 
 void HTMLInputElement::defaultEventHandler(Event& event)
 {
-    if (is<MouseEvent>(event) && event.type() == eventNames().clickEvent && downcast<MouseEvent>(event).button() == LeftButton) {
-        m_inputType->handleClickEvent(downcast<MouseEvent>(event));
-        if (event.defaultHandled())
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
+        m_inputType->handleClickEvent(*mouseEvent);
+        if (mouseEvent->defaultHandled())
             return;
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (is<TouchEvent>(event)) {
-        m_inputType->handleTouchEvent(downcast<TouchEvent>(event));
+    if (auto* touchEvent = dynamicDowncast<TouchEvent>(event)) {
+        m_inputType->handleTouchEvent(*touchEvent);
         if (event.defaultHandled())
             return;
     }
 #endif
 
-    if (is<KeyboardEvent>(event) && event.type() == eventNames().keydownEvent) {
-        auto shouldCallBaseEventHandler = m_inputType->handleKeydownEvent(downcast<KeyboardEvent>(event));
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keydownEvent) {
+        auto shouldCallBaseEventHandler = m_inputType->handleKeydownEvent(*keyboardEvent);
         if (event.defaultHandled() || shouldCallBaseEventHandler == InputType::ShouldCallBaseEventHandler::No)
             return;
     }
@@ -1232,15 +1179,14 @@ void HTMLInputElement::defaultEventHandler(Event& event)
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (is<KeyboardEvent>(event)) {
-        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.type() == eventNames().keypressEvent) {
-            m_inputType->handleKeypressEvent(keyboardEvent);
-            if (keyboardEvent.defaultHandled())
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
+        if (keyboardEvent->type() == eventNames().keypressEvent) {
+            m_inputType->handleKeypressEvent(*keyboardEvent);
+            if (keyboardEvent->defaultHandled())
                 return;
-        } else if (keyboardEvent.type() == eventNames().keyupEvent) {
-            m_inputType->handleKeyupEvent(keyboardEvent);
-            if (keyboardEvent.defaultHandled())
+        } else if (keyboardEvent->type() == eventNames().keyupEvent) {
+            m_inputType->handleKeyupEvent(*keyboardEvent);
+            if (keyboardEvent->defaultHandled())
                 return;
         }
     }
@@ -1263,12 +1209,12 @@ void HTMLInputElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (is<BeforeTextInsertedEvent>(event))
-        m_inputType->handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(event));
+    if (auto* beforeTextInsertedEvent = dynamicDowncast<BeforeTextInsertedEvent>(event); beforeTextInsertedEvent)
+        m_inputType->handleBeforeTextInsertedEvent(*beforeTextInsertedEvent);
 
-    if (is<MouseEvent>(event) && event.type() == eventNames().mousedownEvent) {
-        m_inputType->handleMouseDownEvent(downcast<MouseEvent>(event));
-        if (event.defaultHandled())
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().mousedownEvent) {
+        m_inputType->handleMouseDownEvent(*mouseEvent);
+        if (mouseEvent->defaultHandled())
             return;
     }
 
@@ -1365,12 +1311,12 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
     return types;
 }
 
-Vector<String> HTMLInputElement::acceptMIMETypes()
+Vector<String> HTMLInputElement::acceptMIMETypes() const
 {
     return parseAcceptAttribute(attributeWithoutSynchronization(acceptAttr), isValidMIMEType);
 }
 
-Vector<String> HTMLInputElement::acceptFileExtensions()
+Vector<String> HTMLInputElement::acceptFileExtensions() const
 {
     return parseAcceptAttribute(attributeWithoutSynchronization(acceptAttr), isValidFileExtension);
 }
@@ -1438,7 +1384,7 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
 
 void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonType)
 {
-    if (static_cast<uint8_t>(autoFillButtonType) == m_autoFillButtonType)
+    if (autoFillButtonType == this->autoFillButtonType())
         return;
 
     m_lastAutoFillButtonType = m_autoFillButtonType;
@@ -1450,12 +1396,15 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
 
 FileList* HTMLInputElement::files()
 {
-    return m_inputType->files();
+    if (auto* fileInputType = dynamicDowncast<FileInputType>(*m_inputType))
+        return &fileInputType->files();
+    return nullptr;
 }
 
 void HTMLInputElement::setFiles(RefPtr<FileList>&& files, WasSetByJavaScript wasSetByJavaScript)
 {
-    m_inputType->setFiles(WTFMove(files), wasSetByJavaScript);
+    if (auto* fileInputType = dynamicDowncast<FileInputType>(*m_inputType))
+        fileInputType->setFiles(WTFMove(files), wasSetByJavaScript);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1473,11 +1422,6 @@ Icon* HTMLInputElement::icon() const
 String HTMLInputElement::displayString() const
 {
     return m_inputType->displayString();
-}
-
-bool HTMLInputElement::canReceiveDroppedFiles() const
-{
-    return m_canReceiveDroppedFiles;
 }
 
 void HTMLInputElement::setCanReceiveDroppedFiles(bool canReceiveDroppedFiles)
@@ -1564,11 +1508,11 @@ void HTMLInputElement::onSearch()
 {
     // The type of the input element could have changed during event handling. If we are no longer
     // a search field, don't try to do search things.
-    if (!isSearchField())
+    auto* searchInputType = dynamicDowncast<SearchInputType>(*m_inputType);
+    if (!searchInputType)
         return;
 
-    if (m_inputType)
-        downcast<SearchInputType>(*m_inputType.get()).stopSearchEventTimer();
+    searchInputType->stopSearchEventTimer();
     dispatchEvent(Event::create(eventNames().searchEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
@@ -1590,12 +1534,9 @@ void HTMLInputElement::resumeFromDocumentSuspension()
 #if ENABLE(INPUT_TYPE_COLOR)
 void HTMLInputElement::prepareForDocumentSuspension()
 {
-    if (!isColorControl())
-        return;
     m_inputType->detach();
 }
 #endif // ENABLE(INPUT_TYPE_COLOR)
-
 
 void HTMLInputElement::willChangeForm()
 {
@@ -1701,17 +1642,30 @@ void HTMLInputElement::requiredStateChanged()
 
 Color HTMLInputElement::valueAsColor() const
 {
-    return m_inputType->valueAsColor();
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
+        return colorInputType->valueAsColor();
+#endif
+    return Color::transparentBlack;
 }
 
 void HTMLInputElement::selectColor(StringView color)
 {
-    m_inputType->selectColor(color);
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
+        colorInputType->selectColor(color);
+#else
+    UNUSED_PARAM(color);
+#endif
 }
 
 Vector<Color> HTMLInputElement::suggestedColors() const
 {
-    return m_inputType->suggestedColors();
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
+        return colorInputType->suggestedColors();
+#endif
+    return { };
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -1723,17 +1677,10 @@ RefPtr<HTMLElement> HTMLInputElement::list() const
 
 RefPtr<HTMLDataListElement> HTMLInputElement::dataList() const
 {
-    if (!m_hasNonEmptyList)
+    if (!m_hasNonEmptyList || !m_inputType->shouldRespectListAttribute())
         return nullptr;
 
-    if (!m_inputType->shouldRespectListAttribute())
-        return nullptr;
-
-    RefPtr<Element> element = treeScope().getElementById(attributeWithoutSynchronization(listAttr));
-    if (!is<HTMLDataListElement>(element))
-        return nullptr;
-
-    return downcast<HTMLDataListElement>(element.get());
+    return dynamicDowncast<HTMLDataListElement>(treeScope().getElementById(attributeWithoutSynchronization(listAttr)));
 }
 
 void HTMLInputElement::resetListAttributeTargetObserver()
@@ -1934,7 +1881,7 @@ void HTMLInputElement::minLengthAttributeChanged(const AtomString& newValue)
 
 void HTMLInputElement::updateValueIfNeeded()
 {
-    String newValue = sanitizeValue(m_valueIfDirty);
+    auto newValue = sanitizeValue(m_valueIfDirty);
     ASSERT(!m_valueIfDirty.isNull() || newValue.isNull());
     if (newValue != m_valueIfDirty)
         setValue(newValue);
@@ -1982,17 +1929,16 @@ MediaCaptureType HTMLInputElement::mediaCaptureType() const
 bool HTMLInputElement::isInRequiredRadioButtonGroup()
 {
     ASSERT(isRadioButton());
-    if (RadioButtonGroups* buttons = radioButtonGroups())
+    if (auto* buttons = radioButtonGroups())
         return buttons->isInRequiredGroup(*this);
     return false;
 }
 
 Vector<Ref<HTMLInputElement>> HTMLInputElement::radioButtonGroup() const
 {
-    RadioButtonGroups* buttons = radioButtonGroups();
-    if (!buttons)
-        return { };
-    return buttons->groupMembers(*this);
+    if (auto* buttons = radioButtonGroups())
+        return buttons->groupMembers(*this);
+    return { };
 }
 
 RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
@@ -2003,7 +1949,7 @@ RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
         return const_cast<HTMLInputElement*>(this);
 
     auto& name = this->name();
-    if (RadioButtonGroups* buttons = radioButtonGroups())
+    if (auto* buttons = radioButtonGroups())
         return buttons->checkedButtonForGroup(name);
 
     if (name.isEmpty())

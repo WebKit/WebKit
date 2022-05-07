@@ -771,20 +771,6 @@ bool InputType::rendererIsNeeded()
     return true;
 }
 
-FileList* InputType::files()
-{
-    return nullptr;
-}
-
-void InputType::setFiles(RefPtr<FileList>&&, WasSetByJavaScript)
-{
-}
-
-bool InputType::getTypeSpecificValue(String&)
-{
-    return false;
-}
-
 String InputType::fallbackValue() const
 {
     return String();
@@ -830,11 +816,6 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
         if (auto* cache = element()->document().existingAXObjectCache())
             cache->postNotification(element(), AXObjectCache::AXValueChanged);
     }
-}
-
-bool InputType::canSetValue(const String&)
-{
-    return true;
 }
 
 void InputType::willDispatchClick(InputElementClickState&)
@@ -1182,20 +1163,6 @@ void InputType::stepUpFromRenderer(int n)
         } else
             applyStep(n, AnyStepHandling::Default, DispatchInputAndChangeEvent);
     }
-}
-
-Color InputType::valueAsColor() const
-{
-    return Color::transparentBlack;
-}
-
-void InputType::selectColor(StringView)
-{
-}
-
-Vector<Color> InputType::suggestedColors() const
-{
-    return { };
 }
 
 RefPtr<TextControlInnerTextElement> InputType::innerTextElement() const

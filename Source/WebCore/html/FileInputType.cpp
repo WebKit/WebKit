@@ -234,26 +234,10 @@ bool FileInputType::canSetStringValue() const
     return false;
 }
 
-FileList* FileInputType::files()
+String FileInputType::firstElementPathForInputValue() const
 {
-    return m_fileList.ptr();
-}
-
-bool FileInputType::canSetValue(const String& value)
-{
-    // For security reasons, we don't allow setting the filename, but we do allow clearing it.
-    // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't
-    // applicable to the file upload control at all, but for now we are keeping this behavior
-    // to avoid breaking existing websites that may be relying on this.
-    return value.isEmpty();
-}
-
-bool FileInputType::getTypeSpecificValue(String& value)
-{
-    if (m_fileList->isEmpty()) {
-        value = { };
-        return true;
-    }
+    if (m_fileList->isEmpty())
+        return { };
 
     // HTML5 tells us that we're supposed to use this goofy value for
     // file input controls. Historically, browsers revealed the real
@@ -261,8 +245,7 @@ bool FileInputType::getTypeSpecificValue(String& value)
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    value = makeString("C:\\fakepath\\", m_fileList->file(0).name());
-    return true;
+    return makeString("C:\\fakepath\\", m_fileList->file(0).name());
 }
 
 void FileInputType::setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection)
