@@ -1006,7 +1006,7 @@ or creating a new `WeakPtr` from `CanMakeWeakPtr` since these WTF classes' mutat
 
 FIXME: Discuss Active DOM objects
 
-## Referencing Counting of DOM Nodes
+## Reference Counting of DOM Nodes
 
 [`Node`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h) is a reference counted object but with a twist.
 It has a [separate boolean flag](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Node.h#L832)
