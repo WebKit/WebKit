@@ -10,11 +10,13 @@ _log = logging.getLogger(__name__)
 class OSXChromeDriverBase(OSXBrowserDriver):
     app_name = None
 
-    def launch_url(self, url, options, browser_build_path, browser_path):
-        # FIXME: handle self._browser_path.
-        args_with_url = ['--args', '--homepage', url, self._window_size_arg(), '--no-first-run',
+    # FIXME: handle self._browser_path.
+    def launch_args_with_url(self, url):
+        return ['--args', '--homepage', url, self._window_size_arg(), '--no-first-run',
                          '--no-default-browser-check', '--disable-extensions']
-        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
+
+    def launch_url(self, url, options, browser_build_path, browser_path):
+        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=self.launch_args_with_url(url))
 
     def launch_driver(self, url, options, browser_build_path):
         from selenium import webdriver
@@ -68,6 +70,9 @@ class OSXChromeCanaryDriver(OSXChromeDriverBase):
     def _set_chrome_binary_location(self, options, browser_build_path):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
+    def launch_args_with_url(self, url):
+        return super(OSXChromeCanaryDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+
 
 class OSXChromeBetaDriver(OSXChromeDriverBase):
     process_name = 'Google Chrome Beta'
@@ -78,6 +83,9 @@ class OSXChromeBetaDriver(OSXChromeDriverBase):
     def _set_chrome_binary_location(self, options, browser_build_path):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
+    def launch_args_with_url(self, url):
+        return super(OSXChromeBetaDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+
 class OSXChromeDevDriver(OSXChromeDriverBase):
     process_name = 'Google Chrome Dev'
     browser_name = 'chrome-dev'
@@ -86,3 +94,6 @@ class OSXChromeDevDriver(OSXChromeDriverBase):
 
     def _set_chrome_binary_location(self, options, browser_build_path):
         set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
+
+    def launch_args_with_url(self, url):
+        return super(OSXChromeDevDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
