@@ -106,6 +106,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(ATSPI)
@@ -982,8 +983,11 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<WebCore::CompositionHighlight>&);
@@ -1532,6 +1536,10 @@ public:
 
     void extractVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
     void cancelVideoExtractionInElementFullScreen();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void shouldAllowImageMarkup(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&) const;
+#endif
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -2465,6 +2473,10 @@ private:
     
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    WeakHashSet<WebCore::HTMLImageElement> m_elementsToExcludeFromMarkup;
 #endif
 };
 

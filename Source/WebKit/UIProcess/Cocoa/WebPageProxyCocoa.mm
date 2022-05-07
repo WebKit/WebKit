@@ -916,10 +916,14 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
     send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
 void WebPageProxy::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
     send(Messages::WebPage::ReplaceImageWithMarkupResults(elementContext, types, data));
 }
+
+#endif
 
 } // namespace WebKit
 

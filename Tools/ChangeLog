@@ -1,3 +1,18 @@
+2022-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Don't show "Markup Image" item for images that have already been marked up
+        https://bugs.webkit.org/show_bug.cgi?id=240133
+        rdar://92064534
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to verify that the option to Markup Image goes away after invoking Markup Image on an image
+        element.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::runMarkupTest):
+        (TestWebKitAPI::TEST):
+
 2022-05-06  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Forward environment to `git commit`

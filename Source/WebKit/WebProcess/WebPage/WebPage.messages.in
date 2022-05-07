@@ -473,7 +473,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
     GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::IPCHandle ipcHandle) Synchronous
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
-    ReplaceImageWithMarkupResults(struct WebCore::ElementContext context, Vector<String> types, IPC::DataReference data)
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
@@ -497,6 +496,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
     RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event)
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    ReplaceImageWithMarkupResults(struct WebCore::ElementContext context, Vector<String> types, IPC::DataReference data)
+    ShouldAllowImageMarkup(struct WebCore::ElementContext context) -> (bool result)
 #endif
 
     SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)

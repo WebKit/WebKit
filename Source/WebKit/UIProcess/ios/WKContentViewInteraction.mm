@@ -4787,37 +4787,45 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    _page->requestImageBitmap(*elementToAnalyze, [context = *elementToAnalyze, completion = WTFMove(completion), weakSelf = WeakObjCPtr<WKContentView>(self)](auto& imageData, auto& sourceMIMEType) mutable {
+    _page->shouldAllowImageMarkup(*elementToAnalyze, [context = *elementToAnalyze, completion = WTFMove(completion), weakSelf = WeakObjCPtr<WKContentView>(self)](bool shouldAllow) mutable {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf) {
+        if (!shouldAllow || !strongSelf) {
             completion();
             return;
         }
 
-        auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
-        if (!imageBitmap) {
-            completion();
-            return;
-        }
-
-        auto cgImage = imageBitmap->makeCGImage();
-        if (!cgImage) {
-            completion();
-            return;
-        }
-
-        WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
+        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](auto& imageData, auto& sourceMIMEType) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
                 return;
             }
 
-            if (result)
-                strongSelf->_imageAnalysisMarkupData = { { context, { result }, sourceMIMEType } };
-            else
-                strongSelf->_imageAnalysisMarkupData = std::nullopt;
-            completion();
+            auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
+            if (!imageBitmap) {
+                completion();
+                return;
+            }
+
+            auto cgImage = imageBitmap->makeCGImage();
+            if (!cgImage) {
+                completion();
+                return;
+            }
+
+            WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
+                auto strongSelf = weakSelf.get();
+                if (!strongSelf) {
+                    completion();
+                    return;
+                }
+
+                if (result)
+                    strongSelf->_imageAnalysisMarkupData = { { context, { result }, sourceMIMEType } };
+                else
+                    strongSelf->_imageAnalysisMarkupData = std::nullopt;
+                completion();
+            });
         });
     });
 }

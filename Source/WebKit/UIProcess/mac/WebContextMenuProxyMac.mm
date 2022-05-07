@@ -300,31 +300,39 @@ void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
     if (!page || !page->preferences().imageAnalysisMarkupEnabled())
         return;
 
-    auto* imageBitmap = m_context.controlledImage();
-    if (!imageBitmap)
+    auto context = m_context.controlledImageElementContext();
+    if (!context)
         return;
 
-    auto image = imageBitmap->makeCGImage();
-    if (!image)
-        return;
-
-    requestImageAnalysisMarkup(image.get(), [protectedThis = Ref { *this }, weakMenu = WeakObjCPtr<NSMenu> { m_menu.get() }](CGImageRef result, CGRect) {
-        if (!result)
+    page->shouldAllowImageMarkup(*context, [protectedThis = Ref { *this }, weakMenu = WeakObjCPtr<NSMenu> { m_menu.get() }](bool shouldAllow) mutable {
+        if (!shouldAllow)
             return;
 
-        auto strongMenu = weakMenu.get();
-        if (!strongMenu)
+        auto* imageBitmap = protectedThis->m_context.controlledImage();
+        if (!imageBitmap)
             return;
 
-        auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
-        [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
-        [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
-        [markupImageItem setAction:@selector(markupImage)];
-        if (auto numberOfItems = [strongMenu numberOfItems])
-            [markupImageItem setIndentationLevel:[strongMenu itemAtIndex:numberOfItems - 1].indentationLevel];
-        [strongMenu addItem:markupImageItem.get()];
+        auto image = imageBitmap->makeCGImage();
+        if (!image)
+            return;
 
-        protectedThis->m_croppedImageResult = result;
+        requestImageAnalysisMarkup(image.get(), [protectedThis = WTFMove(protectedThis), weakMenu = WTFMove(weakMenu)](CGImageRef result, CGRect) {
+            if (!result)
+                return;
+
+            auto strongMenu = weakMenu.get();
+            if (!strongMenu)
+                return;
+
+            auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
+            [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
+            [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
+            [markupImageItem setAction:@selector(markupImage)];
+            [markupImageItem setIndentationLevel:[strongMenu itemArray].lastObject.indentationLevel];
+            [strongMenu addItem:markupImageItem.get()];
+
+            protectedThis->m_croppedImageResult = result;
+        });
     });
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }

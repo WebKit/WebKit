@@ -1200,7 +1200,6 @@ public:
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
     // Called by the UI process when it is ready to send its tokens to the web process.
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
-    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();
@@ -2100,6 +2099,11 @@ public:
 
     void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelVideoExtractionInElementFullScreen();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
+    void shouldAllowImageMarkup(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

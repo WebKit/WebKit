@@ -6731,6 +6731,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     updateMainFrameScrollOffsetPinning();
 
     updateMockAccessibilityElementAfterCommittingLoad();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    m_elementsToExcludeFromMarkup.clear();
+#endif
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)
@@ -8096,6 +8100,16 @@ void WebPage::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLa
 {
     ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(*this, layerID, error);
 }
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void WebPage::shouldAllowImageMarkup(const ElementContext& context, CompletionHandler<void(bool)>&& completion) const
+{
+    auto element = elementForContext(context);
+    completion(element && !m_elementsToExcludeFromMarkup.contains(*element));
+}
+
 #endif
 
 } // namespace WebKit

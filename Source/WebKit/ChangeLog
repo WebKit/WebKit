@@ -1,3 +1,53 @@
+2022-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Don't show "Markup Image" item for images that have already been marked up
+        https://bugs.webkit.org/show_bug.cgi?id=240133
+        rdar://92064534
+
+        Reviewed by Aditya Keerthi.
+
+        Add some logic to avoid showing the "Markup Image" menu item on both macOS (in the context menu) and iOS (in the
+        callout bar or editing context menu) for image elements that were created and inserted in the process of
+        invoking "Markup Image". See below for more details.
+
+        Tests: ImageAnalysisTests.AllowImageAnalysisMarkupOnce
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldAllowImageMarkup):
+
+        Add an async reply IPC message that the UI process uses to determine whether or not we should enable image
+        markup for an element corresponding to the given `ElementContext`.
+
+        * UIProcess/WebPageProxy.h:
+
+        Also move the declaration of `replaceImageWithMarkupResults` into the `ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)`
+        section.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView doAfterComputingImageAnalysisResultsForMarkup:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded):
+
+        Consult `shouldAllowImageMarkup()` before triggering image analysis when determining whether or not we should
+        include the "Markup Image" item.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::replaceImageWithMarkupResults):
+
+        Keep track of image elements that were created to replace existing images when performing image markup. To
+        achieve this, we scan the selection range before the caret after replacing the image to find the newly inserted
+        image and add it to `m_elementsToExcludeFromMarkup`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+
+        Clear out the `m_imageElementsToExcludeFromMarkup` vector.
+
+        (WebKit::WebPage::shouldAllowImageMarkup const):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix adattributiond build in internal build on older macOS

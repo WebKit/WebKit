@@ -428,7 +428,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
     EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 }
 
-static void runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView)
+static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView = { })
 {
     ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
@@ -446,7 +446,11 @@ static void runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Func
 
     NSString *previousSelectedText = [webView selectedText];
     invokeImageMarkupAction(webView.get());
-    checkWebView(webView.get(), previousSelectedText);
+
+    if (checkWebView)
+        checkWebView(webView.get(), previousSelectedText);
+
+    return webView;
 }
 
 TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
@@ -470,6 +474,22 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkupWithWebPImages)
             return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
         }, 3, @"Expected bounding client rect to become 215.");
     });
+}
+
+TEST(ImageAnalysisTests, AllowImageAnalysisMarkupOnce)
+{
+    auto webView = runMarkupTest(@"image", @"getSelection().selectAllChildren(document.body)");
+
+    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; getSelection().setBaseAndExtent(image, 0, image, 1)"];
+    [webView waitForNextPresentationUpdate];
+    simulateCalloutBarAppearance(webView.get());
+
+    auto menuBuilder = adoptNS([TestUIMenuBuilder new]);
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+
+    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)

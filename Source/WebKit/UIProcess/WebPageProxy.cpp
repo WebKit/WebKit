@@ -11383,6 +11383,15 @@ void WebPageProxy::cancelVideoExtractionInElementFullScreen()
     pageClient().cancelElementFullscreenVideoExtraction();
 }
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void WebPageProxy::shouldAllowImageMarkup(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
+{
+    sendWithAsyncReply(Messages::WebPage::ShouldAllowImageMarkup(context), WTFMove(completion));
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

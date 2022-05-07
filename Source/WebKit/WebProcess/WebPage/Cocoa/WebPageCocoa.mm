@@ -47,6 +47,7 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
@@ -565,6 +566,8 @@ private:
     Vector<String> m_types;
 };
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
 void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
@@ -594,6 +597,16 @@ void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext
         OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
         IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
         frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName(), EditAction::MarkupImage);
+
+        auto position = frame->selection().selection().visibleStart();
+        if (auto imageRange = makeSimpleRange(WebCore::VisiblePositionRange { position.previous(), position })) {
+            for (WebCore::TextIterator iterator { *imageRange, { } }; !iterator.atEnd(); iterator.advance()) {
+                if (RefPtr image = dynamicDowncast<HTMLImageElement>(iterator.node())) {
+                    m_elementsToExcludeFromMarkup.add(*image);
+                    break;
+                }
+            }
+        }
     }
 
     constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered);
@@ -619,6 +632,8 @@ void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext
     auto newSelectionRange = resolveCharacterRange(selectionHostRange, *rangeToRestore, iteratorOptions);
     frame->selection().setSelection(newSelectionRange, restoreSelectionOptions);
 }
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
