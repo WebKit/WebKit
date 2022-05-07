@@ -178,6 +178,11 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
                 decisionHandler(unblocked);
             });
         });
+    } else {
+        callOnMainThread([decisionHandler] {
+            auto unblocked = false;
+            decisionHandler(unblocked);
+        });
     }
 }
 

@@ -1,5 +1,22 @@
 2022-05-06  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Content filter blocking shield is not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=240178
+        <rdar://91586177>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a regression from moving content filtering from the WebContent process to the Network process in r291630.
+        After r291630, the function to determine if a blocked request can be unblocked, is called in the Network process,
+        but it is not handling the case where the function to unblock the request is not set. This is causing the load
+        for blocked URLs to never finish, since the decision handler provided to the unblock request function is never
+        called. This patch addresses this by calling the decisionhandler with the blocked flag set in this case.
+
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::requestUnblockAsync const):
+
+2022-05-06  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] HTTP traffic is not filtered in the parental controls filter
         https://bugs.webkit.org/show_bug.cgi?id=240180
         <rdar://problem/92875540>
