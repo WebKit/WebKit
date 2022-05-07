@@ -281,6 +281,7 @@ for (let i = 1; i < 10; i++)
     shouldBe(pos.toString({ fractionalSecondDigits: i }), `P1Y2M3W4DT5H6M7.${decimalPart.slice(0,i)}S`);
 shouldBe(pos.toString({ fractionalSecondDigits: 'auto' }), pos.toString());
 shouldBe(zero.toString({ fractionalSecondDigits: 2 }), 'PT0.00S');
+shouldBe(new Temporal.Duration(1).toString({ fractionalSecondDigits: 2 }), 'P1YT0.00S');
 
 shouldThrow(() => pos.toString({ roundingMode: 'bogus' }), RangeError);
 shouldBe(pos.toString({ roundingMode: 'trunc' }), pos.toString());

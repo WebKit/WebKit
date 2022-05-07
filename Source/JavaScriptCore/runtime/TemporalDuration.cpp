@@ -605,7 +605,7 @@ String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<
         builder.append(formatInteger(duration.days()), 'D');
 
     // The zero value is displayed in seconds.
-    auto usesSeconds = balancedSeconds || balancedMilliseconds || balancedMicroseconds || balancedNanoseconds || !sign;
+    auto usesSeconds = balancedSeconds || balancedMilliseconds || balancedMicroseconds || balancedNanoseconds || !sign || std::get<0>(precision) != Precision::Auto;
     if (!duration.hours() && !duration.minutes() && !usesSeconds)
         return builder.toString();
 
