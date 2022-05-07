@@ -1,3 +1,14 @@
+2022-05-07  Cameron McCormack  <heycam@apple.com>
+
+        Don't propagate GraphicsContextState change bits into TextPainter's glyph display list recorder
+        https://bugs.webkit.org/show_bug.cgi?id=239952
+        <rdar://problem/92635604>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/glyph-display-list-color-expected.txt: Added.
+        * fast/text/glyph-display-list-color.html: Added.
+
 2022-05-06  Megan Gardner  <megan_gardner@apple.com>
 
         Fix flakey test by using the old API on old systems.

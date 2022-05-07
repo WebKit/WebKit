@@ -65,6 +65,11 @@ public:
         return nullptr;
     }
 
+    DisplayList::DisplayList* getIfExists(const LayoutRun& run)
+    {
+        return m_glyphRunMap.get(&run);
+    }
+
     void remove(const LayoutRun& run)
     {
         m_glyphRunMap.remove(&run);

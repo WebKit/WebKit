@@ -1,3 +1,68 @@
+2022-05-07  Cameron McCormack  <heycam@apple.com>
+
+        Don't propagate GraphicsContextState change bits into TextPainter's glyph display list recorder
+        https://bugs.webkit.org/show_bug.cgi?id=239952
+        <rdar://problem/92635604>
+
+        Reviewed by Said Abou-Hallawa and Antti Koivisto.
+
+        In FontCascade::displayListForTextRun, we create a
+        DisplayList::Recorder, then call drawGlyphBuffer. We initialize the
+        DisplayList::Recorder with the GraphicsContextState of the
+        GraphicsContext we're drawing to. Just before this, we will have set the
+        current fill color on that GraphicsContext.
+
+        When GPUP DOM rendering is disabled, GraphicsContextCG responds to
+        setFillColor etc. by updating GraphicsContextState, including setting
+        the Change flag, then immediately updating the CGContext, and clearing
+        the Change flag.
+
+        But when GPUP DOM rendering is enabled, the GraphicsContext is a
+        DisplayList::Recorder for the layer we're painting in to. Because
+        DisplayList::Recorder applies its state changes lazily, it can be in the
+        situation where its GraphicsContextState has had the fill brush changed,
+        and the Change flag is still set. So DisplayList::Recorder starts off
+        with a GraphicsContextState with unapplied changes in it. We end up in
+        DisplayList::Recorder::drawGlyphsAndCacheFont, which calls
+        appendStateChangeItemIfNecessary, which sees that the Change bit is set,
+        and generates a SetInlineFillColor display list item, which is
+        recorded and then replayed the next time the same text is painted.
+        This recorded fill color then may be wrong for the next TextPainter
+        that wants to reuse the cached glyph display list.
+
+        Display list recorders should never be initialized with a
+        GraphicsContextState that has change flags set on it. We can assert
+        this, then make FontCascade explicitly clear those flags on the state
+        object it passes in to the DisplayList::Recorder.
+
+        Test: fast/text/glyph-display-list-color.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/GraphicsContextState.cpp:
+        (WebCore::GraphicsContextState::cloneForRecording const):
+        * platform/graphics/GraphicsContextState.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+
+        Add setForceUseGlyphDisplayListForTesting and
+        cachedGlyphDisplayListsForTextNode functions on Internal for the
+        test to use:
+
+        * rendering/GlyphDisplayListCache.h:
+        (WebCore::GlyphDisplayListCache::getIfExists):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::shouldUseGlyphDisplayList):
+        (WebCore::TextPainter::setForceUseGlyphDisplayListForTesting):
+        (WebCore::TextPainter::cachedGlyphDisplayListsForTextNodeAsText):
+        * rendering/TextPainter.h:
+        (WebCore::TextPainter::glyphDisplayListIfExists):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setForceUseGlyphDisplayListForTesting):
+        (WebCore::Internals::cachedGlyphDisplayListsForTextNode):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Block-style image overlay containers should have lighter shadows

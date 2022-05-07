@@ -610,6 +610,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     // Returns the display list that was actually painted.
     DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
 
+    undefined setForceUseGlyphDisplayListForTesting(boolean enabled);
+    DOMString cachedGlyphDisplayListsForTextNode(Node node, optional unsigned short flags = 0);
+
     undefined garbageCollectDocumentResources();
 
     undefined insertAuthorCSS(DOMString css);

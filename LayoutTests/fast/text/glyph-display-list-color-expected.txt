@@ -1,0 +1,6 @@
+
+(draw-glyphs
+  (local-anchor (0,0))
+  (anchor-point (0,0))
+  (length 9) extent at (0,0) size 0x0)
+

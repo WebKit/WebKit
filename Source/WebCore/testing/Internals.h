@@ -482,6 +482,9 @@ public:
     ExceptionOr<String> displayListForElement(Element&, unsigned short flags);
     ExceptionOr<String> replayDisplayListForElement(Element&, unsigned short flags);
 
+    void setForceUseGlyphDisplayListForTesting(bool enabled);
+    ExceptionOr<String> cachedGlyphDisplayListsForTextNode(Node&, unsigned short flags);
+
     ExceptionOr<void> garbageCollectDocumentResources() const;
 
     void beginSimulatedMemoryPressure();
