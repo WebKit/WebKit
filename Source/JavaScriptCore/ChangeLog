@@ -1,3 +1,16 @@
+2022-05-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ISO8601::Duration should guard against -0
+        https://bugs.webkit.org/show_bug.cgi?id=240185
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, when we parse a negative ISO duration string or negate a positive Duration object,
+        we end up storing -0 for the zero fields. This patch ensures that we always store +0 instead.
+
+        * runtime/ISO8601.h:
+        (JSC::ISO8601::Duration::operator- const):
+
 2022-05-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add more information about MarkedBlock assertion

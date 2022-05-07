@@ -876,9 +876,6 @@ test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js:
   default: 'TypeError: Right side of assignment cannot be destructured'
   strict mode: 'TypeError: Right side of assignment cannot be destructured'
-test/built-ins/Temporal/Duration/prototype/add/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: negative fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: negative fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/add/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
@@ -924,9 +921,6 @@ test/built-ins/Temporal/Duration/prototype/add/timezone-string-leap-second.js:
 test/built-ins/Temporal/Duration/prototype/add/timezone-wrong-type.js:
   default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Duration/prototype/negated/basic.js:
-  default: 'Test262Error: zeros years result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: zeros years result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/round/calendar-dateadd-called-with-options-undefined.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone, calendar)')"
@@ -981,18 +975,9 @@ test/built-ins/Temporal/Duration/prototype/round/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/prototype/round/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: positive fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: positive fractional units rounded with correct rounding mode microseconds result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/Duration/prototype/subtract/basic.js:
-  default: 'Test262Error:  hours result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error:  hours result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/subtract/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/subtract/options-undefined.js:
-  default: 'Test262Error: no options with days hours result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: no options with days hours result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/subtract/options-wrong-type.js:
   default: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: TypeError on wrong options type object Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1233,9 +1218,6 @@ test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designato
 test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/since/basic.js:
-  default: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/since/leap-second.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1248,15 +1230,6 @@ test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js:
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js:
   default: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
   strict mode: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfExpand.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-trunc.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-undefined.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/since/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1266,36 +1239,15 @@ test/built-ins/Temporal/PlainTime/prototype/until/argument-cast.js:
 test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainTime/prototype/until/argument-string-with-time-designator.js:
-  default: 'Test262Error: T prefix is accepted: T00:30 hours result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: T prefix is accepted: T00:30 hours result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/until/basic.js:
-  default: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error:  minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/leap-second.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-ceil.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-floor.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfExpand.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-trunc.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-undefined.js:
-  default: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: hours minutes result Expected SameValue(«-0», «0») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'

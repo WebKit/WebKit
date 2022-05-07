@@ -56,7 +56,7 @@ public:
 
 #define JSC_DEFINE_ISO8601_DURATION_FIELD(name, capitalizedName) \
     double name##s() const { return m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)]; } \
-    void set##capitalizedName##s(double value) { m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = value; }
+    void set##capitalizedName##s(double value) { m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = !value ? 0 : value; }
     JSC_TEMPORAL_UNITS(JSC_DEFINE_ISO8601_DURATION_FIELD);
 #undef JSC_DEFINE_ISO8601_DURATION_FIELD
 
@@ -71,8 +71,10 @@ public:
     Duration operator-() const
     {
         Duration result(*this);
-        for (auto& value : result.m_data)
-            value = -value;
+        for (auto& value : result.m_data) {
+            if (value)
+                value = -value;
+        }
         return result;
     }
 

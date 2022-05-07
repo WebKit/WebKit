@@ -1,3 +1,13 @@
+2022-05-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ISO8601::Duration should guard against -0
+        https://bugs.webkit.org/show_bug.cgi?id=240185
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark 32 test cases as passing.
+
 2022-05-05  Keith Miller  <keith_miller@apple.com>
 
         Rebaseline icu tests to public sdk's icu
