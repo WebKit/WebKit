@@ -1006,6 +1006,91 @@ or creating a new `WeakPtr` from `CanMakeWeakPtr` since these WTF classes' mutat
 
 FIXME: Discuss Active DOM objects
 
+## Referencing Counting of DOM Nodes
+
+[`Node`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h) is a reference counted object but with a twist.
+It has a [separate boolean flag](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Node.h#L832)
+indicating whether it has a [parent](https://dom.spec.whatwg.org/#concept-tree-parent) node or not.
+A `Node` object is [not deleted](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Node.h#L801)
+so long as it has a reference count above 0 or this boolean flag is set.
+The boolean flag effectively functions as a `RefPtr` from a parent `Node`
+to each one of its [child](https://dom.spec.whatwg.org/#concept-tree-child) `Node`.
+We do this because `Node` only knows its [first child](https://dom.spec.whatwg.org/#concept-tree-first-child)
+and its [last child](https://dom.spec.whatwg.org/#concept-tree-last-child)
+and each [sibling](https://dom.spec.whatwg.org/#concept-tree-sibling) nodes are implemented
+as a [doubly linked list](https://en.wikipedia.org/wiki/Doubly_linked_list) to allow
+efficient [insertion](https://dom.spec.whatwg.org/#concept-node-insert)
+and [removal](https://dom.spec.whatwg.org/#concept-node-remove) and traversal of sibling nodes.
+
+Conceptually, each `Node` is kept alive by its root node and external references to it,
+and we use the root node as an opaque root of each `Node`'s JS wrapper.
+Therefore the JS wrapper of each `Node` is kept alive as long as either the node itself
+or any other node which shares the same root node is visited by the garbage collector.
+
+On the other hand, a `Node` does not keep its parent or any of its
+[shadow-including ancestor](https://dom.spec.whatwg.org/#concept-shadow-including-ancestor) `Node` alive
+either by reference counting or via the boolean flag even though the JavaScript API requires this to be the case.
+In order to implement this DOM API behavior,
+WebKit [will create](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/bindings/js/JSNodeCustom.cpp#L174)
+a JS wrapper for each `Node` which is being removed from its parent if there isn't already one.
+A `Node` which is a root node (of the newly removed [subtree](https://dom.spec.whatwg.org/#concept-tree)) is an opaque root of its JS wrapper,
+and the garbage collector will visit this opaque root if there is any JS wrapper in the removed subtree that needs to be kept alive.
+In effect, this keeps the new root node and all its [descendant](https://dom.spec.whatwg.org/#concept-tree-descendant) nodes alive
+if the newly removed subtree contains any node with a live JS wrapper, preserving the API contract.
+
+It's important to recognize that storing a `Ref` or a `RefPtr` to another `Node` in a `Node` subclass
+or an object directly owned by the Node can create a [reference cycle](https://en.wikipedia.org/wiki/Reference_counting#Dealing_with_reference_cycles),
+or a reference that never gets cleared.
+It's not guaranteed that every node is [disconnected](https://dom.spec.whatwg.org/#connected)
+from a [`Document`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Document.h) at some point in the future,
+and some `Node` may always have a parent node or a child node so long as it exists.
+Only permissible circumstances in which a `Ref` or a `RefPtr` to another `Node` can be stored
+in a `Node` subclass or other data structures owned by it is if it's temporally limited.
+For example, it's okay to store a `Ref` or a `RefPtr` in
+an enqueued [event loop task](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/EventLoop.h#L69).
+In all other circumstances, `WeakPtr` should be used to reference another `Node`,
+and JS wrapper relationships such as opaque roots should be used to preserve the lifecycle ties between `Node` objects.
+
+It's equally crucial to observe that keeping C++ Node object alive by storing `Ref` or `RefPtr`
+in an enqueued [event loop task](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/EventLoop.h#L69)
+does not keep its JS wrapper alive, and can result in the JS wrapper of a conceptually live object to be erroneously garbage collected.
+To avoid this problem, use [`GCReachableRef`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/GCReachableRef.h) instead
+to temporarily hold a strong reference to a node over a period of time.
+For example, [`HTMLTextFormControlElement::scheduleSelectEvent()`](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/html/HTMLTextFormControlElement.cpp#L547)
+uses `GCReachableRef` to fire an event in an event loop task:
+```cpp
+void HTMLTextFormControlElement::scheduleSelectEvent()
+{
+    document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
+        protectedThis->dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    });
+}
+```
+
+Alternatively, we can make it inherit from an [active DOM object](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h),
+and use one of the following functions to enqueue a task or an event:
+ - [`queueTaskKeepingObjectAlive`](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/ActiveDOMObject.h#L107)
+ - [`queueCancellableTaskKeepingObjectAlive`](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/ActiveDOMObject.h#L115)
+ - [`queueTaskToDispatchEvent`](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/ActiveDOMObject.h#L124)
+ - [`queueCancellableTaskToDispatchEvent`](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/ActiveDOMObject.h#L130)
+
+[`Document`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Document.h) node has one more special quirk
+because every [`Node`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h) can have access to a document
+via [`ownerDocument` property](https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument)
+whether Node is [connected](https://dom.spec.whatwg.org/#connected) to the document or not.
+Every document has a regular reference count used by external clients and
+[referencing node count](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Document.h#L2093).
+The referencing node count of a document is the total number of Node's whose `ownerDocument` is the document.
+A document is [kept alive](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Document.cpp#L749)
+so long as its reference count and node referencing count is above 0.
+In addition, when the regular reference count is to become 0,
+it clears various states including its internal references to owning Nodes to sever any reference cycles with them.
+A document is special in that sense that it can store `RefPtr` to other nodes.
+Note that whilst the referencing node count acts like `Ref` from each `Node` to its owner `Document`,
+storing a `Ref` or a `RefPtr` to the same document or any other document will create
+a [reference cycle](https://en.wikipedia.org/wiki/Reference_counting#Dealing_with_reference_cycles)
+and should be avoided unless it's temporally limited as noted above.
+
 ## Inserting or Removing DOM Nodes 
 
 FIXME: Talk about how a node insertion or removal works.
