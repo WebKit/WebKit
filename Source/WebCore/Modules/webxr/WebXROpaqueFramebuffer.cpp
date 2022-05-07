@@ -336,7 +336,11 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         m_multisampleColorBuffer = gl.createRenderbuffer();
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
         gl.bindRenderbuffer(GL::RENDERBUFFER, m_multisampleColorBuffer);
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+        gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, GL::SRGB8_ALPHA8, m_width, m_height);
+#else
         gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, GL::RGBA8, m_width, m_height);
+#endif
         gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_multisampleColorBuffer);
         if (hasDepthOrStencil) {
             m_depthStencilBuffer = gl.createRenderbuffer();
