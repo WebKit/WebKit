@@ -29,6 +29,7 @@
 #include "LayoutRect.h"
 #include "RenderStyleConstants.h"
 #include "StyleValidity.h"
+#include "TaskSource.h"
 #include "TreeScope.h"
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactUniquePtrTuple.h>
@@ -266,6 +267,9 @@ public:
     Node& getRootNode(const GetRootNodeOptions&) const;
     
     void* opaqueRoot() const;
+
+    void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
+    void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
 
     // Use when it's guaranteed to that shadowHost is null.
     ContainerNode* parentNodeGuaranteedHostFree() const;

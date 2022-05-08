@@ -141,7 +141,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_shouldCreateModelPlayerUponRendererAttachment = false;
 
     if (m_sourceURL.isEmpty()) {
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
     }
 
@@ -155,7 +155,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
     auto resource = document().cachedResourceLoader().requestModelResource(WTFMove(request));
     if (!resource.has_value()) {
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { NetworkError });
         return;
@@ -217,7 +217,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     if (resource.loadFailedOrCanceled()) {
         m_data.reset();
 
-        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
         invalidateResourceHandleAndUpdateRenderer();
 
@@ -229,7 +229,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     m_dataComplete = true;
     m_model = Model::create(m_data.takeAsContiguous().get(), resource.mimeType(), resource.url());
 
-    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     invalidateResourceHandleAndUpdateRenderer();
 

@@ -42,8 +42,10 @@
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "GCReachableRef.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
@@ -1307,6 +1309,20 @@ Node& Node::shadowIncludingRoot() const
 Node& Node::getRootNode(const GetRootNodeOptions& options) const
 {
     return options.composed ? shadowIncludingRoot() : rootNode();
+}
+
+void Node::queueTaskKeepingThisNodeAlive(TaskSource source, Function<void ()>&& task)
+{
+    document().eventLoop().queueTask(source, [protectedThis = GCReachableRef(*this), task = WTFMove(task)] () {
+        task();
+    });
+}
+
+void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
+{
+    queueTaskKeepingThisNodeAlive(source, [protectedThis = Ref { *this }, event = WTFMove(event)]() {
+        protectedThis->dispatchEvent(event);
+    });
 }
 
 Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

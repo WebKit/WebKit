@@ -38,7 +38,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "GCReachableRef.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -546,9 +545,7 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 
 void HTMLTextFormControlElement::scheduleSelectEvent()
 {
-    document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
-        protectedThis->dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-    });
+    queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 } 
 
 void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
