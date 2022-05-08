@@ -207,6 +207,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.hasExplicitlySetTextAlign = false;
     m_nonInheritedFlags.hasViewportUnits = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
+    m_nonInheritedFlags.disallowsFastPathInheritance = false;
     m_nonInheritedFlags.isUnique = false;
     m_nonInheritedFlags.emptyState = false;
     m_nonInheritedFlags.firstChildState = false;
@@ -354,6 +355,21 @@ void RenderStyle::inheritFrom(const RenderStyle& inheritParent)
         m_svgStyle.access().inheritFrom(inheritParent.m_svgStyle.get());
 }
 
+void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
+{
+    ASSERT(!disallowsFastPathInheritance());
+
+    if (m_inheritedData.ptr() == inheritParent.m_inheritedData.ptr())
+        return;
+
+    // FIXME: Use this mechanism for other properties too, like variables.
+    if (m_inheritedData->nonFastPathInheritedEqual(*inheritParent.m_inheritedData)) {
+        m_inheritedData = inheritParent.m_inheritedData;
+        return;
+    }
+    m_inheritedData.access().fastPathInheritFrom(*inheritParent.m_inheritedData);
+}
+
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
 {
     m_boxData = other.m_boxData;
@@ -453,6 +469,26 @@ bool RenderStyle::inheritedEqual(const RenderStyle& other) const
         && m_inheritedData == other.m_inheritedData
         && (m_svgStyle.ptr() == other.m_svgStyle.ptr() || m_svgStyle->inheritedEqual(other.m_svgStyle))
         && m_rareInheritedData == other.m_rareInheritedData;
+}
+
+bool RenderStyle::fastPathInheritedEqual(const RenderStyle& other) const
+{
+    if (m_inheritedData.ptr() == other.m_inheritedData.ptr())
+        return true;
+    return m_inheritedData->fastPathInheritedEqual(*other.m_inheritedData);
+}
+
+bool RenderStyle::nonFastPathInheritedEqual(const RenderStyle& other) const
+{
+    if (m_inheritedFlags != other.m_inheritedFlags)
+        return false;
+    if (m_inheritedData.ptr() != other.m_inheritedData.ptr() && !m_inheritedData->nonFastPathInheritedEqual(*other.m_inheritedData))
+        return false;
+    if (m_rareInheritedData != other.m_rareInheritedData)
+        return false;
+    if (m_svgStyle.ptr() != other.m_svgStyle.ptr() && !m_svgStyle->inheritedEqual(other.m_svgStyle))
+        return false;
+    return true;
 }
 
 bool RenderStyle::descendantAffectingNonInheritedPropertiesEqual(const RenderStyle& other) const

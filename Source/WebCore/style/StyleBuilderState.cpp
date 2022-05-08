@@ -319,6 +319,7 @@ Color BuilderState::colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPri
     if (value.valueID() == CSSValueCurrentcolor) {
         // Color is an inherited property so depending on it effectively makes the property inherited.
         m_style.setHasExplicitlyInheritedProperties();
+        m_style.setDisallowsFastPathInheritance();
         return m_style.color();
     }
 

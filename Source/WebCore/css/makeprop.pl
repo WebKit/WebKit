@@ -97,6 +97,7 @@ my %styleBuilderOptions = (
     "conditional-converter" => 1,
     "converter" => 1,
     "custom" => 1,
+    "fast-path-inherited" => 1,
     "fill-layer-property" => 1,
     "font-property" => 1,
     "getter" => 1,
@@ -1337,6 +1338,10 @@ sub generateInitialValueSetter {
     my $initialValue = ($isSVG ? "SVGRenderStyle" : "RenderStyle") . "::" . $initial . "()";
     $setterContent .= $indent . "    " . generateSetValueStatement($name, $initialValue) . ";\n";
   }
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
+    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
+  }
+
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -1379,6 +1384,9 @@ sub generateInheritValueSetter {
   if (!$didCallSetValue) {
     my $inheritedValue = $parentStyle . "." . ($isSVG ? "svgStyle()." : "") .  $getter . "()";
     $setterContent .= $indent . "    " . generateSetValueStatement($name, "forwardInheritedValue(" . $inheritedValue . ")") . ";\n";
+  }
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
+    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
   }
   $setterContent .= $indent . "}\n";
 
@@ -1444,6 +1452,9 @@ sub generateValueSetter {
       $setterContent .= "    ";
     }
     $setterContent .= $indent . "    " . generateSetValueStatement($name, $convertedValue) . ";\n";
+  }
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
+    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
   }
   $setterContent .= $indent . "}\n";
 

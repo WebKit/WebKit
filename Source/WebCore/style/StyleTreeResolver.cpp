@@ -126,7 +126,7 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const ResolutionContext& resolutionContext)
+std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext)
 {
     auto& element = styleable.element;
 
@@ -138,6 +138,14 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& st
 
             return WTFMove(customStyle->renderStyle);
         }
+    }
+
+    if (resolutionType == ResolutionType::FastPathInherit) {
+        // If the only reason we are computing the style is that some parent inherited properties changed, we can just copy them.
+        auto& existingStyle = *element.renderOrDisplayContentsStyle();
+        auto style = RenderStyle::clonePtr(existingStyle);
+        style->fastPathInheritFrom(parent().style);
+        return style;
     }
 
     if (auto style = scope().sharingResolver.resolve(styleable, *m_update))
@@ -188,6 +196,7 @@ auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity,
         return DescendantsToResolve::None;
     case Change::NonInherited:
         return DescendantsToResolve::ChildrenWithExplicitInherit;
+    case Change::FastPathInherited:
     case Change::Inherited:
         return DescendantsToResolve::Children;
     case Change::Renderer:
@@ -197,7 +206,7 @@ auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity,
     return DescendantsToResolve::None;
 };
 
-auto TreeResolver::resolveElement(Element& element) -> std::pair<ElementUpdate, DescendantsToResolve>
+auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
     if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
@@ -210,7 +219,7 @@ auto TreeResolver::resolveElement(Element& element) -> std::pair<ElementUpdate, 
     auto resolutionContext = makeResolutionContext();
 
     Styleable styleable { element, PseudoId::None };
-    auto newStyle = styleForStyleable(styleable, resolutionContext);
+    auto newStyle = styleForStyleable(styleable, resolutionType, resolutionContext);
 
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
@@ -584,27 +593,35 @@ static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
     return pseudoElement->needsStyleRecalc();
 }
 
-bool TreeResolver::shouldResolveElement(const Element& element, DescendantsToResolve parentDescendantsToResolve)
+auto TreeResolver::determineResolutionType(const Element& element, DescendantsToResolve parentDescendantsToResolve, Change parentChange) -> std::optional<ResolutionType>
 {
     if (element.styleValidity() != Validity::Valid)
-        return true;
+        return ResolutionType::Full;
     if (shouldResolvePseudoElement(element.beforePseudoElement()))
-        return true;
+        return ResolutionType::Full;
     if (shouldResolvePseudoElement(element.afterPseudoElement()))
-        return true;
+        return ResolutionType::Full;
 
     switch (parentDescendantsToResolve) {
     case DescendantsToResolve::None:
-        return false;
+        return { };
     case DescendantsToResolve::Children:
+        if (parentChange == Change::FastPathInherited) {
+            auto* existingStyle = element.renderOrDisplayContentsStyle();
+            if (existingStyle && !existingStyle->disallowsFastPathInheritance())
+                return ResolutionType::FastPathInherit;
+        }
+        return ResolutionType::Full;
     case DescendantsToResolve::All:
-        return true;
+        return ResolutionType::Full;
     case DescendantsToResolve::ChildrenWithExplicitInherit:
         auto* existingStyle = element.renderOrDisplayContentsStyle();
-        return existingStyle && existingStyle->hasExplicitlyInheritedProperties();
+        if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
+            return ResolutionType::Full;
+        return { };
     };
     ASSERT_NOT_REACHED();
-    return false;
+    return { };
 }
 
 static void clearNeedsStyleResolution(Element& element)
@@ -708,8 +725,8 @@ void TreeResolver::resolveComposedTree()
         auto descendantsToResolve = DescendantsToResolve::None;
         auto previousContainerType = style ? style->containerType() : ContainerType::None;
 
-        bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve);
-        if (shouldResolve) {
+        auto resolutionType = determineResolutionType(element, parent.descendantsToResolve, parent.change);
+        if (resolutionType) {
             if (!element.hasDisplayContents())
                 element.resetComputedStyle();
             element.resetStyleRelations();
@@ -717,7 +734,7 @@ void TreeResolver::resolveComposedTree()
             if (element.hasCustomStyleResolveCallbacks())
                 element.willRecalcStyle(parent.change);
 
-            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element);
+            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element, *resolutionType);
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.didRecalcStyle(elementUpdate.change);

@@ -1490,6 +1490,7 @@ inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& 
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = builderState.style().color();
         paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
+        builderState.style().setDisallowsFastPathInheritance();
     } else {
         color = builderState.colorFromPrimitiveValue(*localValue);
         paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
@@ -1534,6 +1535,7 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = builderState.style().color();
         paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
+        builderState.style().setDisallowsFastPathInheritance();
     } else {
         color = builderState.colorFromPrimitiveValue(*localValue);
         paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;

@@ -92,6 +92,10 @@
         "Indicates that this CSS property is color-related (populates",
         "CSSProperty::isColorProperty().",
         "",
+        "* fast-path-inherited:",
+        "Indicates that this CSS property can use the fast-path inheritance mechanism.",
+        "This generates code that disables the mechanism if the property is explicitly mutated.",
+        "",
         "* logical-property-group:",
         "Indicates that this CSS property belongs to a logical property group",
         "(https://drafts.csswg.org/css-logical/#logical-property-group)",
@@ -250,7 +254,8 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "high-priority": true
+                "high-priority": true,
+                "fast-path-inherited": true
             },
             "status": {
                 "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."

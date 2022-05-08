@@ -290,6 +290,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'custom': self.validate_string,
             'descriptor-only': self.validate_boolean,
             'enable-if': self.validate_string,
+            'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,
             'font-property': self.validate_boolean,
             'getter': self.validate_string,

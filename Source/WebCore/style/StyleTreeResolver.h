@@ -58,7 +58,8 @@ public:
     bool hasUnresolvedQueryContainers() const { return !m_unresolvedQueryContainers.isEmpty(); }
 
 private:
-    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const ResolutionContext&);
+    enum class ResolutionType : uint8_t { FastPathInherit, Full };
+    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&);
 
     void resolveComposedTree();
 
@@ -66,7 +67,7 @@ private:
     QueryContainerAction updateQueryContainer(Element&, const RenderStyle&, ContainerType previousContainerType);
 
     enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
-    std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&);
+    std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, ResolutionType);
 
     static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
     std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
@@ -109,7 +110,7 @@ private:
     void popParentsToDepth(unsigned depth);
 
     static DescendantsToResolve computeDescendantsToResolve(Change, Validity, DescendantsToResolve);
-    static bool shouldResolveElement(const Element&, DescendantsToResolve);
+    static std::optional<ResolutionType> determineResolutionType(const Element&, DescendantsToResolve, Change parentChange);
     static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     ResolutionContext makeResolutionContext();

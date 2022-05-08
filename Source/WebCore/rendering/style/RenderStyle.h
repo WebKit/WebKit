@@ -165,7 +165,8 @@ public:
     bool operator==(const RenderStyle&) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
 
-    void inheritFrom(const RenderStyle& inheritParent);
+    void inheritFrom(const RenderStyle&);
+    void fastPathInheritFrom(const RenderStyle&);
     void copyNonInheritedFrom(const RenderStyle&);
     void copyContentFrom(const RenderStyle&);
 
@@ -1539,6 +1540,9 @@ public:
     const AtomString& hyphenString() const;
 
     bool inheritedEqual(const RenderStyle&) const;
+    bool fastPathInheritedEqual(const RenderStyle&) const;
+    bool nonFastPathInheritedEqual(const RenderStyle&) const;
+
     bool descendantAffectingNonInheritedPropertiesEqual(const RenderStyle&) const;
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1588,7 +1592,10 @@ public:
 
     void setHasExplicitlyInheritedProperties() { m_nonInheritedFlags.hasExplicitlyInheritedProperties = true; }
     bool hasExplicitlyInheritedProperties() const { return m_nonInheritedFlags.hasExplicitlyInheritedProperties; }
-    
+
+    bool disallowsFastPathInheritance() const { return m_nonInheritedFlags.disallowsFastPathInheritance; }
+    void setDisallowsFastPathInheritance() { m_nonInheritedFlags.disallowsFastPathInheritance = true; }
+
     void setMathStyle(const MathStyle& v) { SET_VAR(m_rareInheritedData, mathStyle, static_cast<unsigned>(v)); }
 
     // Initial values for all the properties
@@ -1987,6 +1994,7 @@ private:
 #endif
         unsigned hasViewportUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
+        unsigned disallowsFastPathInheritance : 1;
         unsigned isUnique : 1; // Style cannot be shared.
         unsigned emptyState : 1;
         unsigned firstChildState : 1;
@@ -2127,6 +2135,7 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
 #endif
         && hasViewportUnits == other.hasViewportUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
+        && disallowsFastPathInheritance == other.disallowsFastPathInheritance
         && isUnique == other.isUnique
         && emptyState == other.emptyState
         && firstChildState == other.firstChildState

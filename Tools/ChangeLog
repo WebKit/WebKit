@@ -1,3 +1,14 @@
+2022-05-08  Antti Koivisto  <antti@apple.com>
+
+        Avoid resolving style for elements that only inherit changes from parent
+        https://bugs.webkit.org/show_bug.cgi?id=240132
+        <rdar://problem/92867346>
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+
 2022-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Don't show "Markup Image" item for images that have already been marked up
