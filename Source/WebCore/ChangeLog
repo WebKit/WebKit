@@ -1,5 +1,28 @@
 2022-05-07  Cameron McCormack  <heycam@apple.com>
 
+        Use an OptionSet iterator to skip directly to GraphicsContextState::Change bits to handle
+        https://bugs.webkit.org/show_bug.cgi?id=239954
+        <rdar://problem/92593424>
+
+        Reviewed by Simon Fraser.
+
+        It would be rare for display list SetState items to have many Change
+        bits set on them. Instead of checking for all 15 bits in mergeChanges,
+        we can use OptionSet's iterator to skip directly to each changed bit.
+
+        Using ctz to turn the Change bit into a bit position helps the
+        compiler generate compact code to jump to each case in the switch
+        statement.
+
+        On an iPad I tested with, this is a ~2% win on the MotionMark Design
+        subtest, 5.5% on Leaves, and 1.4% overall.
+
+        * platform/graphics/GraphicsContextState.cpp:
+        (WebCore::toIndex):
+        (WebCore::GraphicsContextState::mergeChanges):
+
+2022-05-07  Cameron McCormack  <heycam@apple.com>
+
         Don't propagate GraphicsContextState change bits into TextPainter's glyph display list recorder
         https://bugs.webkit.org/show_bug.cgi?id=239952
         <rdar://problem/92635604>
