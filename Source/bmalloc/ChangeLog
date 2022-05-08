@@ -1,3 +1,33 @@
+2022-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Force PAS_ASSERT to generate different crash sites for each assertion.
+        https://bugs.webkit.org/show_bug.cgi?id=240209
+
+        Reviewed by Yusuke Suzuki.
+
+        Clang currently optimizes all crash sites into one in each function.  Hence, if we
+        get a crash address at the 1 crash site, we don't know which failed assertion got
+        us there.  This patch uses an asm statement to force Clang to emit a different
+        crash site for each assertion.
+
+        Benchmarks show that performance is neutral on both Jetstream2 and Speedometer2.
+
+        Size-wise, there is some increase.  The following is the "size" output on
+        JavaScriptCore on M1:
+
+                  __TEXT.   __DATA  __OBJC  others    dec       hex
+            old   19628032  180224  0       18792448  38600704  24d0000
+            new   19644416  180224  0       19251200  39075840  2544000
+
+            diff  16384     0       0       458752    475136
+
+        The increase in the "others" categories are mostly in the String Table, Symbol
+        Table, and Function Start Addresses.  These take up disk space but should not
+        impact RAM usage unless they are accessed by a a debugger.
+
+        * libpas/src/libpas/pas_utils.h:
+        (pas_assertion_failed):
+
 2022-04-27  Ross Kirsling  <rkirsling@gmail.com>
 
         Unreviewed libpas build fix for PlayStation.
