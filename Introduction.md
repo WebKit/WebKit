@@ -882,9 +882,9 @@ and it does not conform to a specific interface or behavior.
 It could have been an arbitrary integer value but `void*` is used out of convenience since pointer values of live objects are unique.
 
 In the case of a `StyleSheet` object, `StyleSheet`'s JavaScript wrapper tells the garbage collector that it needs to be kept alive
-because an opaque root it cares about has been encountered whenever `onwerNode` is visited by the garbage collector.
+because an opaque root it cares about has been encountered whenever `ownerNode` is visited by the garbage collector.
 
-In the most simplistic model, the opaque root for this case will be the `onwerNode` itself.
+In the most simplistic model, the opaque root for this case will be the `ownerNode` itself.
 However, each `Node` object also has to keep its parent, siblings, and children alive.
 To this end, each `Node` designates the [root](https://dom.spec.whatwg.org/#concept-tree-root) node as its opaque root.
 Both `Node` and `StyleSheet` objects use this unique opaque root as a way of communicating with the gargage collector.
@@ -932,7 +932,7 @@ Generally, using opaque roots as a way of keeping JavaScript wrappers involve tw
  1. Add opaque roots in `visitAdditionalChildren`.
  2. Return true in `isReachableFromOpaqueRoots` when relevant opaque roots are found.
 
-The first step can be achieved by using the aforementioend `JSCustomMarkFunction` with `visitAdditionalChildren`.
+The first step can be achieved by using the aforementioned `JSCustomMarkFunction` with `visitAdditionalChildren`.
 Alternatively and more preferably, `GenerateAddOpaqueRoot` can be added to the IDL interface to auto-generate this code.
 For example, [AbortController.idl](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/AbortController.idl)
 makes use of this IDL attribute as follows:
@@ -950,7 +950,7 @@ makes use of this IDL attribute as follows:
 };
 ```
 
-Here, `singal` is a public member function funtion of
+Here, `signal` is a public member function funtion of
 the [underlying C++ object](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/AbortController.h):
 
 ```cpp
@@ -1006,7 +1006,7 @@ or creating a new `WeakPtr` from `CanMakeWeakPtr` since these WTF classes' mutat
 
 FIXME: Discuss Active DOM objects
 
-## Reference Counting of DOM Nodes
+## Referencing Counting of DOM Nodes
 
 [`Node`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h) is a reference counted object but with a twist.
 It has a [separate boolean flag](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Node.h#L832)
@@ -1080,7 +1080,7 @@ via [`ownerDocument` property](https://developer.mozilla.org/en-US/docs/Web/API/
 whether Node is [connected](https://dom.spec.whatwg.org/#connected) to the document or not.
 Every document has a regular reference count used by external clients and
 [referencing node count](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Document.h#L2093).
-The referencing node count of a document is the total number of Node's whose `ownerDocument` is the document.
+The referencing node count of a document is the total number of nodes whose `ownerDocument` is the document.
 A document is [kept alive](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Document.cpp#L749)
 so long as its reference count and node referencing count is above 0.
 In addition, when the regular reference count is to become 0,
