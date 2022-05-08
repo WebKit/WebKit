@@ -42,24 +42,9 @@ def read_content_from_webkit_additions(built_products_directory, sdk_root_direct
             return ""
 
 
-def is_supported_os():
-    os_version_string = os.environ.get("MACOSX_DEPLOYMENT_TARGET")
-    if os_version_string is not None:
-        os_version = float('.'.join(os_version_string.split('.')[:2]))
-        return os_version >= 13.0
-    os_version_string = os.environ.get("IPHONEOS_DEPLOYMENT_TARGET")
-    if os_version_string is not None:
-        os_version = float('.'.join(os_version_string.split('.')[:2]))
-        return os_version >= 16.0
-    os_version_string = os.environ.get("WATCHOS_DEPLOYMENT_TARGET")
-    if os_version_string is not None:
-        os_version = float('.'.join(os_version_string.split('.')[:2]))
-        return os_version >= 9.0
-    os_version_string = os.environ.get("TVOS_DEPLOYMENT_TARGET")
-    if os_version_string is not None:
-        os_version = float('.'.join(os_version_string.split('.')[:2]))
-        return os_version >= 16.0
-    return True
+def check_should_do_replacement(built_products_directory, sdk_root_directory):
+    feature_name = read_content_from_webkit_additions(built_products_directory, sdk_root_directory, 'FeatureNeededForHeaderReplacement').strip()
+    return os.environ.get(feature_name) == '1'
 
 
 def main(argv=None):
@@ -81,8 +66,7 @@ def main(argv=None):
         print("(%s): SDK root directory unspecified" % argv[0], file=sys.stderr)
         return 1
 
-    # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
-    should_do_replacement = is_supported_os()
+    should_do_replacement = check_should_do_replacement(built_products_directory, sdk_root_directory)
 
     additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
     header_contents = sys.stdin.read()
