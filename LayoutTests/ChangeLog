@@ -1,3 +1,13 @@
+2022-05-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] accessibility/aria-combobox-control-owns-elements.html is crashing after 250325@main
+        https://bugs.webkit.org/show_bug.cgi?id=240218
+        <rdar://problem/92929718>
+
+        Unreviewed test gardening.
+
+        * platform/wincairo-wk1/TestExpectations: Skip it.
+
 2022-05-07  Cameron McCormack  <heycam@apple.com>
 
         Don't propagate GraphicsContextState change bits into TextPainter's glyph display list recorder
