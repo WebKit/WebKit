@@ -1,3 +1,32 @@
+2022-05-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293936. rdar://problem/92859012
+
+    Fix adattributiond build in internal build on older macOS
+    https://bugs.webkit.org/show_bug.cgi?id=240184
+    <rdar://92859012>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-05-06
+    Reviewed by Alexey Proskuryakov.
+    
+    We need to search for WK_OVERRIDE_FRAMEWORKS_DIR to find the right frameworks
+    
+    * Configurations/adattributiond.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293936 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-06  Alex Christensen  <achristensen@webkit.org>
+
+            Fix adattributiond build in internal build on older macOS
+            https://bugs.webkit.org/show_bug.cgi?id=240184
+            <rdar://92859012>
+
+            Reviewed by Alexey Proskuryakov.
+
+            We need to search for WK_OVERRIDE_FRAMEWORKS_DIR to find the right frameworks
+
+            * Configurations/adattributiond.xcconfig:
+
 2022-04-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r293339. rdar://problem/92283605
