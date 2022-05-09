@@ -18,18 +18,6 @@ public
         string = normalize_line_ending(string)
         str = "#{HEADER}<body>\n"
 
-        # Just look at the first line to see if it is an SVN revision number as added
-        # by webkit-patch for git checkouts.
-        $svn_revision = 0
-        string.each_line do |line|
-            match = /^Subversion\ Revision: (\d*)$/.match(line)
-            unless match.nil?
-                str << "<span class='revision'>#{match[1]}</span>\n"
-                $svn_revision = match[1].to_i;
-            end
-            break
-        end
-
         fileDiffs = FileDiff.parse(string)
 
         # Newly added images get two diffs with svn 1.7; toss the first one.
@@ -101,7 +89,7 @@ private
 
     SMALLEST_EQUAL_OPERATION = 3
 
-    OPENSOURCE_TRAC_URL = "http://trac.webkit.org/"
+    OPENSOURCE_GITHUB_URL = "https://github.com/WebKit/WebKit/blob/"
 
     OPENSOURCE_DIRS = Set.new %w[
         Examples
@@ -148,29 +136,8 @@ private
         end
     end
 
-    def self.find_url_and_path(file_path)
-        # Search file_path from the bottom up, at each level checking whether
-        # we've found a directory we know exists in the source tree.
-
-        dirname, basename = File.split(file_path)
-        dirname.split(/\//).reverse.inject(basename) do |path, directory|
-            path = directory + "/" + path
-
-            return [OPENSOURCE_TRAC_URL, path] if OPENSOURCE_DIRS.include?(directory)
-
-            path
-        end
-
-        [nil, file_path]
-    end
-
-    def self.linkifyFilename(filename, force)
-        if force
-          "<a href='#{OPENSOURCE_TRAC_URL}browser/trunk/#{filename}'>#{filename}</a>"
-        else
-          url, pathBeneathTrunk = find_url_and_path(filename)
-          url.nil? ? filename : "<a href='#{url}browser/trunk/#{pathBeneathTrunk}'>#{filename}</a>"
-        end
+    def self.linkifyFilename(filename)
+        "<a href='#{OPENSOURCE_GITHUB_URL}{filename}'>#{filename}</a>"
     end
 
 
@@ -725,7 +692,7 @@ EOF
 
                     raise "no binary chunks" unless chunks
 
-                    from_filepath = FileDiff.extract_contents_of_from_revision(@filename, chunks[0], @git_indexes[0])
+                    from_filepath = FileDiff.extract_contents_from_remote(@filename, chunks[0], @git_indexes[0])
                     to_filepath = FileDiff.extract_contents_of_to_revision(@filename, chunks[1], @git_indexes[1], from_filepath, @git_indexes[0])
                     filepaths = from_filepath, to_filepath
 
@@ -763,9 +730,9 @@ EOF
             if @renameFrom
                 str += "<h1>#{@filename}</h1>"
                 str += "was renamed from"
-                str += "<h1>#{PrettyPatch.linkifyFilename(@renameFrom.to_s, true)}</h1>"
+                str += "<h1>#{PrettyPatch.linkifyFilename(@renameFrom.to_s)}</h1>"
             else
-                str += "<h1>#{PrettyPatch.linkifyFilename(@filename, false)}</h1>\n"
+                str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
             end
             if @image then
                 str += self.image_to_html
@@ -862,8 +829,8 @@ HcmV?d00001
 END
         end
 
-        def self.get_svn_uri(repository_path)
-            "http://svn.webkit.org/repository/webkit/!svn/bc/" + $svn_revision.to_s + "/trunk/" + (repository_path)
+        def self.get_github_uri(repository_path)
+            "https://raw.githubusercontent.com/WebKit/WebKit/main/" + (repository_path)
         end
 
         def self.get_new_temp_filepath_and_name
@@ -873,11 +840,11 @@ END
             return filepath, filename
         end
 
-        def self.download_from_revision_from_svn(repository_path)
+        def self.download_from_revision_from_github(repository_path)
             filepath, filename = get_new_temp_filepath_and_name
-            svn_uri = get_svn_uri(repository_path)
+            github_uri = get_github_uri(repository_path)
             open(filepath, 'wb') do |to_file|
-                to_file << open(svn_uri) { |from_file| from_file.read }
+                to_file << open(github_uri) { |from_file| from_file.read }
             end
             return filepath
         end
@@ -926,14 +893,14 @@ END
             return to_filepath
         end
 
-        def self.extract_contents_of_from_revision(repository_path, encoded_chunk, git_index)
+        def self.extract_contents_from_remote(repository_path, encoded_chunk, git_index)
             # For literal encoded, simply reconstruct.
             if GIT_LITERAL_FORMAT.match(encoded_chunk[0])
                 return extract_contents_from_git_binary_literal_chunk(encoded_chunk, git_index)
             end
             #  For delta encoded, download from svn.
             if GIT_DELTA_FORMAT.match(encoded_chunk[0])
-                return download_from_revision_from_svn(repository_path)
+                return download_from_revision_from_github(repository_path)
             end
             raise "Error: unknown git patch encoding"
         end

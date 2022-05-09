@@ -70,7 +70,7 @@ var CODE_REVIEW_UNITTEST;
   var files = {};
   var original_file_contents = {};
   var patched_file_contents = {};
-  var WEBKIT_BASE_DIR = "//svn.webkit.org/repository/webkit/trunk/";
+  var WEBKIT_BASE_DIR = "//raw.githubusercontent.com/WebKit/WebKit/main/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
   var g_next_line_id = 0;
@@ -624,15 +624,15 @@ var CODE_REVIEW_UNITTEST;
 
   function tracLinks(file_name, url_hash) {
     var trac_links = $('<a target="_blank">annotate</a><a target="_blank">revision log</a>');
-    trac_links[0].href = 'http://trac.webkit.org/browser/trunk/' + file_name + '?annotate=blame' + url_hash;
-    trac_links[1].href = 'http://trac.webkit.org/log/trunk/' + file_name;
+    trac_links[0].href = 'https://github.com/WebKit/WebKit/blame/main/' + file_name + url_hash;
+    trac_links[1].href = 'https://github.com/WebKit/WebKit/commits/main/' + file_name;
     var implementation_suffix_list = ['.cpp', '.mm'];
     for (var i = 0; i < implementation_suffix_list.length; ++i) {
       var suffix = implementation_suffix_list[i];
       if (file_name.lastIndexOf(suffix) == file_name.length - suffix.length) {
         var new_link = $('<a target="_blank">header</a>');
         var stem = file_name.substr(0, file_name.length - suffix.length);
-        new_link[0].href= 'http://trac.webkit.org/log/trunk/' + stem + '.h';
+        new_link[0].href= 'https://github.com/WebKit/WebKit/commits/main/' + stem + '.h';
         trac_links = $.merge(new_link, trac_links);
       }
     }

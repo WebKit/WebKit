@@ -42,30 +42,30 @@ function ASSERT_EQUAL(actual, expected) {
 function testTracLinks() {
   var links = tracLinks('foo/bar/baz.cpp', '');
   ASSERT_EQUAL($('<div>').append(links).html(),
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.h">header</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar/baz.cpp?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.cpp">revision log</a>');
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar/baz.h">header</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/blame/main/foo/bar/baz.cpp">annotate</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar/baz.cpp">revision log</a>');
 
   var links = tracLinks('foo/bar.cpp/qux.mm', '');
   ASSERT_EQUAL($('<div>').append(links).html(),
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h">header</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.cpp/qux.mm?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.mm">revision log</a>');
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar.cpp/qux.h">header</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/blame/main/foo/bar.cpp/qux.mm">annotate</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar.cpp/qux.mm">revision log</a>');
 
   var links = tracLinks('foo/bar.h', '');
   ASSERT_EQUAL($('<div>').append(links).html(),
-    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.h?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.h">revision log</a>');
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/blame/main/foo/bar.h">annotate</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar.h">revision log</a>');
 
   var links = tracLinks('foo/bar.gypi', '');
   ASSERT_EQUAL($('<div>').append(links).html(),
-    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.gypi?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.gypi">revision log</a>');
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/blame/main/foo/bar.gypi">annotate</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/bar.gypi">revision log</a>');
 
   var links = tracLinks('foo/ChangeLog', '');
   ASSERT_EQUAL($('<div>').append(links).html(),
-    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/ChangeLog?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/ChangeLog">revision log</a>');
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/blame/main/foo/ChangeLog">annotate</a>' +
+    '<a target="_blank" href="https://github.com/WebKit/WebKit/commits/main/foo/ChangeLog">revision log</a>');
 }
 
 function testDraftCommentSaver() {
@@ -221,7 +221,7 @@ function syncSlideUp(type, handler) {
 function testReadDiscardedCommentWithPreviousComment() {
   document.getElementById('diff-content').innerHTML =
       '<div class="FileDiff">' +
-        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
         '<div class="DiffSection">' +
           '<div class="DiffBlock">' +
             '<div class="DiffBlockPart add">' +
@@ -284,7 +284,7 @@ function testReadDiscardedCommentWithPreviousComment() {
 function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
   document.getElementById('diff-content').innerHTML =
       '<div class="FileDiff">' +
-        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
         '<div class="DiffSection">' +
           '<div class="DiffBlock">' +
             '<div class="DiffBlockPart shared">' +
@@ -326,7 +326,7 @@ function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
 function testSanitizeFragmentForCopy() {
   var fragment = document.createElement('div');
   fragment.innerHTML = '<div class="FileDiff">' +
-      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
       '<div class="FileDiffLinkContainer LinkContainer" style="opacity: 0;"><a href="javascript:" class="unify-link cremed" style="display: inline;">unified</a></div>' +
       '<div class="DiffSection">' +
         '<div class="DiffBlock">' +
@@ -346,7 +346,7 @@ function testSanitizeFragmentForCopy() {
     '</div>';
 
   var expectedWithLineNumbers = '<div class="FileDiff">' +
-      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
       '<div class="DiffSection">' +
         '<div class="DiffBlock">' +
           '<div class="DiffBlockPart shared">' +
@@ -369,7 +369,7 @@ function testSanitizeFragmentForCopy() {
   ASSERT_EQUAL(fragmentCopy.innerHTML, expectedWithLineNumbers);
 
   var expectedWithOutLineNumbers = '<div class="FileDiff">' +
-      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
       '<div class="DiffSection">' +
         '<div class="DiffBlock">' +
           '<div class="DiffBlockPart shared">' +
@@ -402,7 +402,7 @@ function testIsChangeLog() {
 function testSaveCommentsWithMissingLineIds() {
   document.getElementById('diff-content').innerHTML =
       '<div class="FileDiff">' +
-        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/dummy.txt</a></h1>' +
+        '<h1><a href="https://github.com/WebKit/WebKit/blob/main/Source/WebCore/ChangeLog">Source/WebCore/dummy.txt</a></h1>' +
         '<div class="DiffSection">' +
           '<div class="DiffBlock">' +
             '<div class="DiffBlockPart shared">' +
