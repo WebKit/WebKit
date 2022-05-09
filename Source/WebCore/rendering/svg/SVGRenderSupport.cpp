@@ -355,9 +355,9 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
         break;
     case CSSBoxType::ViewBox:
         if (renderer.element()) {
-            FloatSize viewportSize;
-            SVGLengthContext(downcast<SVGElement>(renderer.element())).determineViewport(viewportSize);
-            referenceBox.setSize(viewportSize);
+            auto viewportSize = SVGLengthContext(downcast<SVGElement>(renderer.element())).viewportSize();
+            if (viewportSize)
+                referenceBox.setSize(*viewportSize);
             break;
         }
         FALLTHROUGH;

@@ -1,3 +1,31 @@
+2022-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Cache the viewport size inside SVGLengthContext
+        https://bugs.webkit.org/show_bug.cgi?id=240157
+
+        Reviewed by Alan Bujtas.
+
+        Each call to SVGLengthContext::determineViewport() did an ancestor element walk
+        looking for a viewport element, and some call sites hit this two or more times
+        (e.g. for width, then height). So cache m_viewportSize in the class, modernizing
+        the code to use optionals.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::referenceBoxRect const):
+        * rendering/svg/LegacyRenderSVGRoot.cpp:
+        (WebCore::LegacyRenderSVGRoot::computeFloatVisibleRectInContainer const):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::clipPathReferenceBox):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::valueForLength):
+        (WebCore::SVGLengthContext::convertValueToUserUnits const):
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToPercentage const):
+        (WebCore::SVGLengthContext::convertValueFromPercentageToUserUnits const):
+        (WebCore::SVGLengthContext::viewportSize const):
+        (WebCore::SVGLengthContext::computeViewportSize const):
+        (WebCore::SVGLengthContext::determineViewport const): Deleted.
+        * svg/SVGLengthContext.h:
+
 2022-05-09  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS :modal pseudo class

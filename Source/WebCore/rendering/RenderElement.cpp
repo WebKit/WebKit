@@ -2452,8 +2452,7 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
         return alignReferenceBox(strokeBoundingBox());
     case CSSBoxType::ViewBox:
         // FIXME: [LBSE] Upstream: Cache the immutable SVGLengthContext per SVGElement, to avoid the repeated RenderSVGRoot size queries in determineViewport().
-        FloatSize viewportSize;
-        SVGLengthContext(downcast<SVGElement>(element())).determineViewport(viewportSize);
+        auto viewportSize = SVGLengthContext(downcast<SVGElement>(element())).viewportSize().value_or(FloatSize { });
         return alignReferenceBox({ { }, viewportSize });
     }
 
