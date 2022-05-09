@@ -234,8 +234,9 @@
 
 ;; Analytics.
 (with-filter (system-attribute apple-internal)
-    (allow mach-lookup (global-name "com.apple.analyticsd"))
-    (allow mach-lookup (global-name "com.apple.awdd")))
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
 
 ;; Daemon prefs.
 (allow user-preference-read user-preference-write

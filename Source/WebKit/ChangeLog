@@ -1,3 +1,16 @@
+2022-05-09  Ben Nham  <nham@apple.com>
+
+        Allow log streaming from webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=240238
+
+        Reviewed by Per Arne Vollan.
+
+        `log stream` outputs nothing from webpushd because we blocked the diagnosticd service in its
+        sandbox. We should allow that and also block awdd since it's unlikely that webpushd needs
+        access to the wireless diagnostics daemon.
+
+        * webpushd/mac/com.apple.WebKit.webpushd.sb.in:
+
 2022-05-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for Internal iOS build
