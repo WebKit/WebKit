@@ -3065,7 +3065,6 @@ static TrackingType mergeTrackingTypes(TrackingType a, TrackingType b)
 void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
-    const EventNames& names = eventNames();
     for (auto& touchPoint : touchStartEvent.touchPoints()) {
         IntPoint location = touchPoint.location();
         auto updateTrackingType = [this, location](TrackingType& trackingType, EventTrackingRegions::Event event) {

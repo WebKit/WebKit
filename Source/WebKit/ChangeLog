@@ -1,3 +1,11 @@
+2022-05-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for Internal iOS build
+        https://bugs.webkit.org/show_bug.cgi?id=240206
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateTouchEventTracking):
+
 2022-05-09  Ian Anderson  <iana@apple.com>
 
         WebKit has a broken module in Mac Catalyst
