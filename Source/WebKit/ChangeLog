@@ -1,3 +1,23 @@
+2022-05-08  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled
+        https://bugs.webkit.org/show_bug.cgi?id=240203
+        rdar://92892014
+
+        Reviewed by Tim Horton.
+
+        In getShareableBitmapForImageBufferWithQualifiedIdentifier(), we used to
+        pass the backendSize as the srcRect and the backendSize as the destRect 
+        to GraphicsContext::drawImageBuffer(). The backendSize is the logicalSize
+        scaled by the resolutionScale. But in ImageBufferCGBackend::draw() we
+        scale the srcRect by the resolutionScale one more time. This double-
+        scaled srcRect draws a srcRect whose size = backendSize * resolutionScale
+        to a destRect whose size = backendSize. And this results in shrinking the 
+        desired snapshot image by 1 / resolutionScale.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+
 2022-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Introduce EventTrackingRegions::Event enum

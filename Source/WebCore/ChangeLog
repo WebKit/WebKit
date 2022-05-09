@@ -1,3 +1,23 @@
+2022-05-08  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled
+        https://bugs.webkit.org/show_bug.cgi?id=240203
+        rdar://92892014
+
+        Reviewed by Tim Horton.
+
+        takeSnapshots() depends on the snapshot ImageBuffer::resolutionScale() to
+        set the size of the TextIndicatorData image. r293825 scaled the size of 
+        the ImageBuffer before creation and moved the scaling to the GraphicsContext.
+        So we have correct scaled pixels but the resolutionScale is 1. So we get
+        enlarged incorrect image.
+
+        The fix is to revert r293825 and fix the iOS snapshot without having to
+        change snapshotFrameRectWithClip().
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+
 2022-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Introduce EventTrackingRegions::Event enum
