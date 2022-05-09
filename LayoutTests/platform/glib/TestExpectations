@@ -554,6 +554,9 @@ webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 webkit.org/b/228920 imported/w3c/web-platform-tests/css/css-overflow/clip-006.html [ ImageOnlyFailure ]
 webkit.org/b/228920 imported/w3c/web-platform-tests/css/css-overflow/clip-007.html [ ImageOnlyFailure ]
 
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht [ ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-013.xht [ ImageOnlyFailure ]
+
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-001.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-002.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-003.html [ ImageOnlyFailure ]
@@ -1294,6 +1297,8 @@ webkit.org/b/234118 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFa
 webkit.org/b/234118 svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
 webkit.org/b/234118 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
 webkit.org/b/234118 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
 webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/morphology-mirrored.html [ ImageOnlyFailure ]
 webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
 webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/svg-sourcegraphic-currentcolor-dynamic-001.html [ ImageOnlyFailure ]
