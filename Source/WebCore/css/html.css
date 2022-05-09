@@ -768,7 +768,7 @@ input::placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
-    line-height: initial;
+    line-height: initial !important;
 }
 
 input:is([type="hidden"], [type="image"], [type="file"]) {
