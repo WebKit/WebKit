@@ -215,10 +215,18 @@ void WebContextMenuProxyMac::setupServicesMenu()
 {
     bool includeEditorServices = m_context.controlledDataIsEditable();
     bool hasControlledImage = m_context.controlledImage();
+    bool isPDFAttachment = false;
+    auto attachment = page()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
+    if (attachment) {
+#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
+        isPDFAttachment = attachment->utiType() == [UTTypePDF.identifier UTF8String];
+#else
+        isPDFAttachment = attachment->utiType() == String(kUTTypePDF);
+#endif
+    }
     NSArray *items = nil;
+    RetainPtr<NSItemProvider> itemProvider;
     if (hasControlledImage) {
-        auto attachment = page()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
-        RetainPtr<NSItemProvider> itemProvider;
         if (attachment)
             itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->enclosingImageNSData() typeIdentifier:attachment->utiType()]);
         else {
@@ -239,13 +247,16 @@ void WebContextMenuProxyMac::setupServicesMenu()
         auto selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
 
         items = @[ selection.get() ];
+    } else if (isPDFAttachment) {
+        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->enclosingImageNSData() typeIdentifier:attachment->utiType()]);
+        items = @[ itemProvider.get() ];
     } else {
         LOG_ERROR("No service controlled item represented in the context");
         return;
     }
 
     RetainPtr<NSSharingServicePicker> picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
-    [picker setStyle:hasControlledImage ? NSSharingServicePickerStyleRollover : NSSharingServicePickerStyleTextSelection];
+    [picker setStyle:hasControlledImage || isPDFAttachment ? NSSharingServicePickerStyleRollover : NSSharingServicePickerStyleTextSelection];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:!includeEditorServices];

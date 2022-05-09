@@ -149,7 +149,7 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
     updateAltText();
 #if ENABLE(SERVICE_CONTROLS)
     if (is<HTMLImageElement>(element))
-        m_hasShadowControls = downcast<HTMLImageElement>(element).imageMenuEnabled();
+        m_hasShadowControls = downcast<HTMLImageElement>(element).isImageMenuEnabled();
 #endif
 }
 

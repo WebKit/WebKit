@@ -375,6 +375,10 @@
 #include "HTMLModelElement.h"
 #endif
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
+
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -6599,7 +6603,7 @@ ExceptionOr<Internals::AttachmentThumbnailInfo> Internals::attachmentThumbnailIn
 #if ENABLE(SERVICE_CONTROLS)
 bool Internals::hasImageControls(const HTMLImageElement& element) const
 {
-    return element.hasImageControls();
+    return ImageControlsMac::hasImageControls(element);
 }
 #endif
 

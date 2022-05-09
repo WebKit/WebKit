@@ -160,7 +160,7 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
 #if ENABLE(SERVICE_CONTROLS)
 bool ContextMenuContextData::controlledDataIsEditable() const
 {
-    if (!m_controlledSelectionData.isEmpty() || m_controlledImage)
+    if (!m_controlledSelectionData.isEmpty() || m_controlledImage || !m_controlledImageAttachmentID.isNull())
         return m_selectionIsEditable;
 
     return false;

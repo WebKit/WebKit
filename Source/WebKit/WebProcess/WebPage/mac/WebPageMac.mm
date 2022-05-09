@@ -786,6 +786,17 @@ void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, HTMLI
     }, { }));
 }
 
+void WebPage::handlePDFServiceClick(const IntPoint& point, HTMLAttachmentElement& element)
+{
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData {
+        point,
+        element.isContentEditable(),
+        element.renderBox()->absoluteContentQuad().enclosingBoundingBox(),
+        element.uniqueIdentifier(),
+        "application/pdf"_s
+    }, { }));
+}
+
 #endif
 
 String WebPage::platformUserAgent(const URL&) const

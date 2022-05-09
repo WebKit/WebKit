@@ -1367,6 +1367,11 @@ void WebChromeClient::handleImageServiceClick(const IntPoint& point, Image& imag
     m_page.handleImageServiceClick(point, image, element);
 }
 
+void WebChromeClient::handlePDFServiceClick(const IntPoint& point, HTMLAttachmentElement& element)
+{
+    m_page.handlePDFServiceClick(point, element);
+}
+
 #endif
 
 bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const

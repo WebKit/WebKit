@@ -1,3 +1,36 @@
+2022-05-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Image controls menu button is not appearing for multi-page PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=240120
+        rdar://86425721
+
+        Reviewed by Megan Gardner.
+
+        Refactor image controls button code so it can also be used for PDF
+        attachments.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::controlledDataIsEditable const):
+        We need to make sure PDF attachments are marked as editable so the
+        context menu gets properly populated.
+
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::enclosingImageNSData const):
+        Remove the image check so we return the PDF NSData in the attachment
+        case.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handlePDFServiceClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handlePDFServiceClick):
+        Plumbing for handling a click on the image controls button for PDFs.
+
 2022-05-09  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293562

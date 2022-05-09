@@ -1,3 +1,16 @@
+2022-05-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Image controls menu button is not appearing for multi-page PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=240120
+        rdar://86425721
+
+        Reviewed by Megan Gardner.
+
+        * TestExpectations:
+        * fast/attachment/attachment-image-controls-basic.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/fast/attachment/attachment-image-controls-basic-expected.txt: Added.
+
 2022-05-09  Ziran Sun  <zsun@igalia.com>
 
         Make input placeholder line-height declaration !important

@@ -895,6 +895,9 @@ http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-uni
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 media/deactivate-audio-session.html [ Pass ]
 
+# Image controls menu is mac only.
+fast/attachment/attachment-image-controls-basic.html [ Pass ]
+
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]

@@ -77,6 +77,11 @@ public:
     FloatSize iconSize() const { return m_iconSize; }
     RenderAttachment* renderer() const;
 
+#if ENABLE(SERVICE_CONTROLS)
+    bool isImageMenuEnabled() const { return m_isImageMenuEnabled; }
+    void setImageMenuEnabled(bool value) { m_isImageMenuEnabled = value; }
+#endif
+
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
     virtual ~HTMLAttachmentElement();
@@ -91,12 +96,20 @@ private:
     }
     bool canContainRangeEndPoint() const final { return false; }
     void parseAttribute(const QualifiedName&, const AtomString&) final;
-    
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool childShouldCreateRenderer(const Node&) const final;
+#endif
+
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
     RefPtr<Image> m_thumbnail;
     RefPtr<Image> m_icon;
     FloatSize m_iconSize;
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool m_isImageMenuEnabled { false };
+#endif
 };
 
 } // namespace WebCore

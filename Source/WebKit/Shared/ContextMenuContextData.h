@@ -64,7 +64,17 @@ public:
         , m_selectionIsEditable(isEditable)
     {
     }
-    
+
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, const String& sourceImageMIMEType)
+        : m_type(Type::ServicesMenu)
+        , m_menuLocation(menuLocation)
+        , m_selectionIsEditable(isEditable)
+        , m_controlledImageBounds(imageRect)
+        , m_controlledImageAttachmentID(attachmentID)
+        , m_controlledImageMIMEType(sourceImageMIMEType)
+    {
+    }
+
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
 
     ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }

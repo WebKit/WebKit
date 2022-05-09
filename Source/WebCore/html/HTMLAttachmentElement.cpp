@@ -39,11 +39,16 @@
 #include "HTMLNames.h"
 #include "MIMETypeRegistry.h"
 #include "RenderAttachment.h"
+#include "ShadowRoot.h"
 #include "SharedBuffer.h"
 #include <pal/FileSizeFormatter.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
+
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
 
 #if PLATFORM(COCOA)
 #include "UTIUtilities.h"
@@ -169,6 +174,13 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     }
 
     HTMLElement::parseAttribute(name, value);
+
+#if ENABLE(SERVICE_CONTROLS)
+    if (name == typeAttr && attachmentType() == "application/pdf") {
+        setImageMenuEnabled(true);
+        ImageControlsMac::updateImageControls(*this);
+    }
+#endif
 }
 
 String HTMLAttachmentElement::attachmentTitle() const
@@ -281,6 +293,13 @@ void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
 
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);
 }
+
+#if ENABLE(SERVICE_CONTROLS)
+bool HTMLAttachmentElement::childShouldCreateRenderer(const Node& child) const
+{
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+}
+#endif
 
 } // namespace WebCore
 

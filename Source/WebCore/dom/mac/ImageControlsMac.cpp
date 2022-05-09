@@ -34,6 +34,7 @@
 #include "ElementRareData.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLButtonElement.h"
@@ -42,6 +43,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "MouseEvent.h"
+#include "RenderAttachment.h"
 #include "RenderImage.h"
 #include "ShadowRoot.h"
 #include "UserAgentStyleSheets.h"
@@ -141,14 +143,6 @@ bool handleEvent(HTMLElement& element, Event& event)
     auto& node = downcast<Node>(*mouseEvent.target());
 
     if (ImageControlsMac::isImageControlsButtonElement(node)) {
-        RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(node.shadowHost());
-        if (!shadowHost)
-            return false;
-
-        auto* image = imageFromImageElementNode(*shadowHost);
-        if (!image)
-            return false;
-
         Ref element = downcast<Element>(node);
         auto* renderer = element->renderer();
         if (!renderer)
@@ -159,11 +153,88 @@ bool handleEvent(HTMLElement& element, Event& event)
             return false;
 
         auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
-        page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);
+
+        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(node.shadowHost())) {
+            auto* image = imageFromImageElementNode(*shadowHost);
+            if (!image)
+                return false;
+            page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);
+        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(node.shadowHost()))
+            page->chrome().client().handlePDFServiceClick(point, *shadowHost);
+
         event.setDefaultHandled();
         return true;
     }
     return false;
+}
+
+static bool isImageMenuEnabled(HTMLElement& element)
+{
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+        return imageElement->isImageMenuEnabled();
+
+    if (RefPtr attachmentElement = dynamicDowncast<HTMLAttachmentElement>(element))
+        return attachmentElement->isImageMenuEnabled();
+
+    return false;
+}
+
+void updateImageControls(HTMLElement& element)
+{
+    // If this is an image element and it is inside a shadow tree then it is part of an image control.
+    if (element.isInShadowTree())
+        return;
+
+    if (!element.document().settings().imageControlsEnabled())
+        return;
+
+    element.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+        RefPtr protectedElement = weakElement.get();
+        if (!protectedElement)
+            return;
+        ASSERT(is<HTMLAttachmentElement>(*protectedElement) || is<HTMLImageElement>(*protectedElement));
+        bool imageMenuEnabled = isImageMenuEnabled(*protectedElement);
+        bool hasControls = hasImageControls(*protectedElement);
+        if (!imageMenuEnabled && hasControls)
+            destroyImageControls(*protectedElement);
+        else if (imageMenuEnabled && !hasControls)
+            tryCreateImageControls(*protectedElement);
+    });
+}
+
+void tryCreateImageControls(HTMLElement& element)
+{
+    ASSERT(isImageMenuEnabled(element));
+    ASSERT(!hasImageControls(element));
+    createImageControls(element);
+}
+
+void destroyImageControls(HTMLElement& element)
+{
+    auto shadowRoot = element.userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+
+    if (RefPtr node = shadowRoot->firstChild()) {
+        if (!is<HTMLElement>(*node))
+            return;
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasControls(downcast<HTMLElement>(*node)));
+        shadowRoot->removeChild(*node);
+    }
+
+    auto* renderObject = element.renderer();
+    if (!renderObject)
+        return;
+
+    if (auto* renderImage = dynamicDowncast<RenderImage>(*renderObject))
+        renderImage->setHasShadowControls(false);
+    else if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
+        renderAttachment->setHasShadowControls(false);
+}
+
+bool hasImageControls(const HTMLElement& element)
+{
+    return hasControls(element);
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)
