@@ -1942,8 +1942,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             }
         } else if (name == HTMLNames::partAttr)
             partAttributeChanged(newValue);
-        else if (isElementReflectionAttribute(name)) {
-            ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+        else if (document().settings().ariaReflectionForElementReferencesEnabled() && isElementReflectionAttribute(name)) {
             if (auto* map = explicitlySetAttrElementsMapIfExists())
                 map->remove(name);
         } else if (name == HTMLNames::exportpartsAttr) {

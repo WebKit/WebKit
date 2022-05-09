@@ -258,7 +258,7 @@ accessibility/win/text-role.html [ Failure ]
 
 webkit.org/b/181501 accessibility/table-header-calculation-for-header-rows.html [ Failure ]
 
-webkit.org/b/240218 accessibility/aria-combobox-control-owns-elements.html [ Skip ] # Crash
+webkit.org/b/240218 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 

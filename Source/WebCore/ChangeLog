@@ -1,3 +1,25 @@
+2022-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WinCairo][WK1] accessibility/aria-combobox-control-owns-elements.html is crashing after 250325@main
+        https://bugs.webkit.org/show_bug.cgi?id=240218
+        <rdar://problem/92929718>
+
+        Reviewed by Joanmarie Diggs.
+
+        Fix a wrong ASSERT for AriaReflectionForElementReferencesEnabled.
+        If AriaReflectionForElementReferencesEnabled is disabled, and you set
+        one of the attributes that have reflection under that flag,
+        we'll hit an ASSERT in Element::attributeChanged().
+
+        The fact that we set such attribute doesn't mean that the flag
+        has to be enabled.
+
+        Removed the ASSERT and added an if to check if the flag is enabled,
+        otherwise we don't need to do anything with the map.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
 2022-05-09  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293562
