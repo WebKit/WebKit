@@ -1,3 +1,18 @@
+2022-05-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] HTTP traffic is not filtered in the parental controls filter
+        https://bugs.webkit.org/show_bug.cgi?id=240180
+        <rdar://problem/92875540>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Traditionally, we have not filtered HTTP in the parental controls filter on macOS, since other parts of the system
+        has taken care of this. This has changed in the most recent macOS version, and WebKit should also filter HTTP in
+        addition to HTTPS.
+
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::canHandleResponse):
+
 2022-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Cache the viewport size inside SVGLengthContext
