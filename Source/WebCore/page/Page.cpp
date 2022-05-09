@@ -549,7 +549,7 @@ Ref<DOMRectList> Page::nonFastScrollableRectsForTesting()
     return DOMRectList::create(quads);
 }
 
-Ref<DOMRectList> Page::touchEventRectsForEventForTesting(const String& eventName)
+Ref<DOMRectList> Page::touchEventRectsForEventForTesting(EventTrackingRegions::Event event)
 {
     if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
@@ -561,7 +561,7 @@ Ref<DOMRectList> Page::touchEventRectsForEventForTesting(const String& eventName
     Vector<IntRect> rects;
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         const EventTrackingRegions& eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
-        const auto& region = eventTrackingRegions.eventSpecificSynchronousDispatchRegions.get(eventName);
+        const auto& region = eventTrackingRegions.eventSpecificSynchronousDispatchRegions.get(event);
         rects.appendVector(region.rects());
     }
 

@@ -28,9 +28,48 @@
 
 namespace WebCore {
 
-TrackingType EventTrackingRegions::trackingTypeForPoint(const String& eventName, const IntPoint& point)
+ASCIILiteral EventTrackingRegions::eventName(Event event)
 {
-    auto synchronousRegionIterator = eventSpecificSynchronousDispatchRegions.find(eventName);
+    switch (event) {
+    case Event::Mousedown:
+        return "mousedown"_s;
+    case Event::Mousemove:
+        return "mousemove"_s;
+    case Event::Mouseup:
+        return "mouseup"_s;
+    case Event::Mousewheel:
+        return "mousewheel"_s;
+    case Event::Pointerdown:
+        return "pointerdown"_s;
+    case Event::Pointerenter:
+        return "pointerenter"_s;
+    case Event::Pointerleave:
+        return "pointerleave"_s;
+    case Event::Pointermove:
+        return "pointermove"_s;
+    case Event::Pointerout:
+        return "pointerout"_s;
+    case Event::Pointerover:
+        return "pointerover"_s;
+    case Event::Pointerup:
+        return "pointerup"_s;
+    case Event::Touchend:
+        return "touchend"_s;
+    case Event::Touchforcechange:
+        return "touchforcechange"_s;
+    case Event::Touchmove:
+        return "touchmove"_s;
+    case Event::Touchstart:
+        return "touchstart"_s;
+    case Event::Wheel:
+        return "wheel"_s;
+    }
+    return ASCIILiteral();
+}
+
+TrackingType EventTrackingRegions::trackingTypeForPoint(Event event, const IntPoint& point)
+{
+    auto synchronousRegionIterator = eventSpecificSynchronousDispatchRegions.find(event);
     if (synchronousRegionIterator != eventSpecificSynchronousDispatchRegions.end()) {
         if (synchronousRegionIterator->value.contains(point))
             return TrackingType::Synchronous;
@@ -53,12 +92,12 @@ void EventTrackingRegions::translate(IntSize offset)
         slot.value.translate(offset);
 }
 
-void EventTrackingRegions::uniteSynchronousRegion(const String& eventName, const Region& region)
+void EventTrackingRegions::uniteSynchronousRegion(Event event, const Region& region)
 {
     if (region.isEmpty())
         return;
 
-    auto addResult = eventSpecificSynchronousDispatchRegions.add(eventName, region);
+    auto addResult = eventSpecificSynchronousDispatchRegions.add(event, region);
     if (!addResult.isNewEntry)
         addResult.iterator->value.unite(region);
 }

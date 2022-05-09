@@ -1,3 +1,20 @@
+2022-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Introduce EventTrackingRegions::Event enum
+        https://bugs.webkit.org/show_bug.cgi?id=240206
+
+        Reviewed by Mark Lam.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<EventTrackingRegions>::decode):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint const):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateTouchEventTracking):
+
 2022-05-06  Megan Gardner  <megan_gardner@apple.com>
 
         Fix flakey test by using the old API on old systems.

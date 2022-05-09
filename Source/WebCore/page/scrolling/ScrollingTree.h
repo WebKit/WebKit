@@ -157,7 +157,7 @@ public:
     virtual void scrollingTreeNodeDidEndScroll(ScrollingNodeID) { }
 #endif
 
-    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomString& eventName, IntPoint);
+    WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::Event, IntPoint);
 
     virtual WheelEventTestMonitor* wheelEventTestMonitor() { return nullptr; }
 

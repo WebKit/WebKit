@@ -1,3 +1,39 @@
+2022-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Introduce EventTrackingRegions::Event enum
+        https://bugs.webkit.org/show_bug.cgi?id=240206
+
+        Reviewed by Mark Lam.
+
+        We noticed that EventNames 260~ AtomStrings are allocated in scrolling thread only because we are using
+        eventNames() for EventTrackingRegions. But since use of it is limited, we can just use enum instead.
+
+            1. We can make EventTrackingRegions more efficient by using enum instead of String.
+            2. We can save memory by avoiding EventNames string allocations & AtomStringTable registration.
+            3. We can make this parameter more strictly typed compared to accepting any kind of Strings
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        * page/Page.cpp:
+        (WebCore::Page::touchEventRectsForEventForTesting):
+        * page/Page.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteEventTrackingRegionsForFrame const):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::computeWheelProcessingSteps):
+        (WebCore::ScrollingTree::eventTrackingTypeForPoint):
+        * page/scrolling/ScrollingTree.h:
+        * platform/EventTrackingRegions.cpp:
+        (WebCore::EventTrackingRegions::eventName):
+        (WebCore::EventTrackingRegions::trackingTypeForPoint):
+        (WebCore::EventTrackingRegions::uniteSynchronousRegion):
+        * platform/EventTrackingRegions.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::touchEventRectsForEvent):
+        * testing/Internals.h:
+
 2022-05-08  Antti Koivisto  <antti@apple.com>
 
         Avoid resolving style for elements that only inherit changes from parent

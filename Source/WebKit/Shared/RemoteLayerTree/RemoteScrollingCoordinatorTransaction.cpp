@@ -779,7 +779,7 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
         }
         for (const auto& synchronousEventRegion : node.eventTrackingRegions().eventSpecificSynchronousDispatchRegions) {
             TextStream::GroupScope group(ts);
-            ts << "synchronous-event-tracking-region for event " << synchronousEventRegion.key;
+            ts << "synchronous-event-tracking-region for event " << EventTrackingRegions::eventName(synchronousEventRegion.key);
 
             for (auto rect : synchronousEventRegion.value.rects()) {
                 ts << "\n";

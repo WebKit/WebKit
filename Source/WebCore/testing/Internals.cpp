@@ -2410,7 +2410,25 @@ ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& e
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    return document->page()->touchEventRectsForEventForTesting(eventName);
+    std::array<EventTrackingRegions::Event, 4> touchEvents = { {
+        EventTrackingRegions::Event::Touchstart,
+        EventTrackingRegions::Event::Touchmove,
+        EventTrackingRegions::Event::Touchend,
+        EventTrackingRegions::Event::Touchforcechange,
+    } };
+
+    std::optional<EventTrackingRegions::Event> touchEvent;
+    for (auto event : touchEvents) {
+        if (eventName == EventTrackingRegions::eventName(event)) {
+            touchEvent = event;
+            break;
+        }
+    }
+
+    if (!touchEvent)
+        return Exception { InvalidAccessError };
+
+    return document->page()->touchEventRectsForEventForTesting(touchEvent.value());
 }
 
 ExceptionOr<Ref<DOMRectList>> Internals::passiveTouchEventListenerRects()

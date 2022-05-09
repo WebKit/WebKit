@@ -31,6 +31,7 @@
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
 #include "EpochTimeStamp.h"
+#include "EventTrackingRegions.h"
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
 #include "IDLTypes.h"

@@ -449,7 +449,7 @@ bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTracking
     decoder >> asynchronousDispatchRegion;
     if (!asynchronousDispatchRegion)
         return false;
-    HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
+    EventTrackingRegions::EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
     if (!decoder.decode(eventSpecificSynchronousDispatchRegions))
         return false;
     eventTrackingRegions.asynchronousDispatchRegion = WTFMove(*asynchronousDispatchRegion);

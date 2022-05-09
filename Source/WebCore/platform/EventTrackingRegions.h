@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Region.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -39,23 +40,71 @@ enum class TrackingType : uint8_t {
 };
 
 struct EventTrackingRegions {
+    enum class Event : uint8_t {
+        Mousedown,
+        Mousemove,
+        Mouseup,
+        Mousewheel,
+        Pointerdown,
+        Pointerenter,
+        Pointerleave,
+        Pointermove,
+        Pointerout,
+        Pointerover,
+        Pointerup,
+        Touchend,
+        Touchforcechange,
+        Touchmove,
+        Touchstart,
+        Wheel,
+    };
+
+    WEBCORE_EXPORT static ASCIILiteral eventName(Event);
+
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
 
     // Regions for which events must be sent before performing the default behavior.
     // The key is the Event Name with an active handler.
-    HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
+    using EventSpecificSynchronousDispatchRegions = HashMap<Event, Region, WTF::IntHash<Event>, WTF::StrongEnumHashTraits<Event>>;
+    EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
 
     bool isEmpty() const;
 
     void translate(IntSize);
-    void uniteSynchronousRegion(const String& eventName, const Region&);
+    void uniteSynchronousRegion(Event, const Region&);
     void unite(const EventTrackingRegions&);
 
-    TrackingType trackingTypeForPoint(const String& eventName, const IntPoint&);
+    TrackingType trackingTypeForPoint(Event, const IntPoint&);
 };
 
 bool operator==(const EventTrackingRegions&, const EventTrackingRegions&);
 inline bool operator!=(const EventTrackingRegions& a, const EventTrackingRegions& b) { return !(a == b); }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::EventTrackingRegions::Event> {
+    using values = EnumValues<
+        WebCore::EventTrackingRegions::Event,
+        WebCore::EventTrackingRegions::Event::Mousedown,
+        WebCore::EventTrackingRegions::Event::Mousemove,
+        WebCore::EventTrackingRegions::Event::Mouseup,
+        WebCore::EventTrackingRegions::Event::Mousewheel,
+        WebCore::EventTrackingRegions::Event::Pointerdown,
+        WebCore::EventTrackingRegions::Event::Pointerenter,
+        WebCore::EventTrackingRegions::Event::Pointerleave,
+        WebCore::EventTrackingRegions::Event::Pointermove,
+        WebCore::EventTrackingRegions::Event::Pointerout,
+        WebCore::EventTrackingRegions::Event::Pointerover,
+        WebCore::EventTrackingRegions::Event::Pointerup,
+        WebCore::EventTrackingRegions::Event::Touchend,
+        WebCore::EventTrackingRegions::Event::Touchforcechange,
+        WebCore::EventTrackingRegions::Event::Touchmove,
+        WebCore::EventTrackingRegions::Event::Touchstart,
+        WebCore::EventTrackingRegions::Event::Wheel
+    >;
+};
+
+} // namespace WTF
