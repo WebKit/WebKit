@@ -1,3 +1,14 @@
+2022-05-09  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r291817): NativeImage passed to RemoteResourceCacheProxy::recordNativeImageUse may be null
+        https://bugs.webkit.org/show_bug.cgi?id=239649
+        rdar://92018859
+
+        Reviewed by Dean Jackson.
+
+        * system-preview/svg-image-expected.html: Added.
+        * system-preview/svg-image.html: Added.
+
 2022-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WinCairo][WK1] accessibility/aria-combobox-control-owns-elements.html is crashing after 250325@main

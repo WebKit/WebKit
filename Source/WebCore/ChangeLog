@@ -1,3 +1,19 @@
+2022-05-09  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r291817): NativeImage passed to RemoteResourceCacheProxy::recordNativeImageUse may be null
+        https://bugs.webkit.org/show_bug.cgi?id=239649
+        rdar://92018859
+
+        Reviewed by Dean Jackson.
+
+        Test: system-preview/svg-image.html
+
+        In the case of an <img> pointing to an SVG resource, the nativeImage() is null. We need to handle this case
+        properly (filed bug 239673), but for now we can at least not crash.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawSystemImage):
+
 2022-05-09  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioCaptureSource::settingsDidChange should not reconfigure the audio unit if CoreAudioCaptureSource is not started
