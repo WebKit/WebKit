@@ -1,3 +1,15 @@
+2022-05-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Create reports for long process launch times
+        https://bugs.webkit.org/show_bug.cgi?id=240127
+
+        Unreviewed, fix typo.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::connect):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        * UIProcess/AuxiliaryProcessProxy.h:
+
 2022-05-09  Kate Cheney  <katherine_cheney@apple.com>
 
         Image controls menu button is not appearing for multi-page PDFs
