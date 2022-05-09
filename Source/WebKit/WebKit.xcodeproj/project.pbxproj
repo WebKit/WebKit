@@ -5693,6 +5693,9 @@
 		83F1A0781F96E7710045B94E /* WebSWOriginTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginTable.h; sourceTree = "<group>"; };
 		83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedStringHashTableReadOnly.cpp; sourceTree = "<group>"; };
 		83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedStringHashTableReadOnly.h; sourceTree = "<group>"; };
+		84120B2928258B82002988E2 /* iOS.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iOS.modulemap; sourceTree = "<group>"; };
+		84120B2A28258B82002988E2 /* OSX.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OSX.modulemap; sourceTree = "<group>"; };
+		84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MacCatalyst.modulemap; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
@@ -7611,6 +7614,7 @@
 				A16E66012581930800EE1749 /* MediaFormatReaderPlugIn */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
+				84120B2828258B82002988E2 /* Modules */,
 				BC032DC310F438260058C15A /* UIProcess */,
 				BC032D5C10F436D50058C15A /* WebProcess */,
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
@@ -11127,6 +11131,16 @@
 				5C2C6FA727C96FF900CCDA9E /* WKURLSessionTaskDelegate.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		84120B2828258B82002988E2 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				84120B2928258B82002988E2 /* iOS.modulemap */,
+				84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */,
+				84120B2A28258B82002988E2 /* OSX.modulemap */,
+			);
+			path = Modules;
 			sourceTree = "<group>";
 		};
 		919793FE23DBC47400257892 /* Cocoa */ = {

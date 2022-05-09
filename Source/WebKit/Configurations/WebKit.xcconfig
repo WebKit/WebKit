@@ -30,9 +30,10 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 INFOPLIST_FILE = Info.plist;
 
 DEFINES_MODULE = YES;
-MODULEMAP_FILE = $(MODULEMAP_FILE_$(WK_COCOA_TOUCH));
-MODULEMAP_FILE_cocoatouch = Modules/iOS.modulemap;
-MODULEMAP_FILE_ = Modules/OSX.modulemap;
+MODULEMAP_FILE = $(MODULEMAP_FILE_$(WK_COCOA_TOUCH)_$(WK_IS_CATALYST));
+MODULEMAP_FILE_cocoatouch_NO = Modules/iOS.modulemap;
+MODULEMAP_FILE_cocoatouch_YES = Modules/MacCatalyst.modulemap;
+MODULEMAP_FILE__NO = Modules/OSX.modulemap;
 
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WEBKIT_FRAMEWORKS_DIR);
 
