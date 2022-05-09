@@ -44,6 +44,7 @@
 #include "SharedWorkerGlobalScope.h"
 #include "SharedWorkerThread.h"
 #include "WorkerFetchResult.h"
+#include "WorkerInitializationData.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 

@@ -27,6 +27,7 @@
 #include "SharedWorkerThread.h"
 
 #include "Logging.h"
+#include "ServiceWorker.h"
 #include "SharedWorkerGlobalScope.h"
 #include "WorkerObjectProxy.h"
 

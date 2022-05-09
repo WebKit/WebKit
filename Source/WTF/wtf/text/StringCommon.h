@@ -30,6 +30,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/NotFound.h>
 #include <wtf/UnalignedAccess.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WTF {
 

@@ -30,6 +30,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
+#include <WebCore/WorkerInitializationData.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {

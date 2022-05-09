@@ -43,6 +43,7 @@
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
 #include <WebCore/UserAgent.h>
@@ -115,7 +116,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
         initializationData.userAgent = m_userAgent;
 
     if (!initializationData.clientIdentifier)
-        initializationData.clientIdentifier = ScriptExecutionContextIdentifier::generate();
+        initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier::generate();
 
     page->setupForRemoteWorker(workerFetchResult.lastRequestURL, origin.topOrigin, workerFetchResult.referrerPolicy);
     auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());

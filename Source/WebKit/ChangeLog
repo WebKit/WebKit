@@ -1,3 +1,11 @@
+2022-05-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fixes after r293562
+
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp:
+        (WebKit::WebSharedWorkerContextManagerConnection::launchSharedWorker):
+
 2022-05-08  Said Abou-Hallawa  <said@apple.com>
 
         [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled

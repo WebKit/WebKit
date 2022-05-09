@@ -1,3 +1,9 @@
+2022-05-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fixes after r293562
+
+        * wtf/text/StringCommon.h:
+
 2022-05-06  Megan Gardner  <megan_gardner@apple.com>
 
         Fix flakey test by using the old API on old systems.
