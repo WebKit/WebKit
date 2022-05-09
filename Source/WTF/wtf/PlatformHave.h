@@ -1084,6 +1084,11 @@
 #define HAVE_CORE_LOCATION_WEBSITE_IDENTIFIERS 1
 #endif
 
+#if !defined(HAVE_TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION) \
+    && PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
+#define HAVE_TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION 1
+#endif
+
 #if PLATFORM(COCOA)
 #define HAVE_CORE_LOCATION 1
 // kCLAuthorizationStatusAuthorizedWhenInUse is only available on macOS as part of the internal SDK.

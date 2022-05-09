@@ -1,3 +1,41 @@
+2022-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Double tapping on YouTube video causes playback to pause instead of seek
+        https://bugs.webkit.org/show_bug.cgi?id=240222
+        rdar://92637636
+
+        Reviewed by Aditya Keerthi and Kate Cheney.
+
+        On some recent versions of iOS, `UITextInteractionAssistant` installs its own context menu interaction by
+        default. This makes UIKit introduce a `_UIRelationshipGestureRecognizer` to the gesture recognizer graph when
+        using WKWebView when the text interaction assistant has been activated in order to implement the asynchronous
+        context menu configuration API.
+
+        Currently, we add a direct failure requirement from the immediately resettable deferring gesture to this new
+        UIKit relationship gesture. This is problematic, since the context menu interaction will automatically add
+        failure requirements to other long press gestures on the web view, such as the image analysis gestures that
+        trigger Live Text analysis when long pressing on images with text. As a result, the set of immediately
+        resettable gestures is now connected to the set of delayed resettable gestures after the first tap when
+        performing a double tap gesture. Since the `UIWebTouchEventsGestureRecognizer` is a part of this immediate reset
+        subgraph, this means that the touch event gesture recognizer doesn't get reset until about 320 ms after a tap
+        when the text interaction assistant has been activated, due to this new context menu interaction.
+
+        On YouTube.com, this manifests in a double-tap on the main video player being broken since a double tap gesture
+        only dispatches `touchstart` and `touchend` on the first tap, and YouTube's script only seeks forwards or
+        backwards if it observes two `touchstart` events that are close to each other within 350 ms.
+
+        To fix this, we simply teach the deferring gesture subgraph partitioning logic in
+        `-deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:` to funnel the relationship gesture (i.e.
+        `-gestureRecognizerForFailureRelationships`) of the text interaction assistant's context menu interaction into
+        the delayed reset subgraph instead of the immediate reset subgraph.
+
+        Test: fast/events/touch/ios/touch-events-when-double-tapping-after-selecting-text.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer shouldDeferGestureRecognizer:]):
+
 2022-05-09  Per Arne Vollan  <pvollan@apple.com>
 
         Create reports for long process launch times

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+touchEventCount = 0;
+
+function logTouch(event) {
+    document.getElementById("output").textContent += `Handled ${event.type}\n`;
+    touchEventCount++;
+}
+
+addEventListener("load", async () => {
+    let target = document.getElementById("target");
+    target.addEventListener("touchstart", logTouch);
+    target.addEventListener("touchend", logTouch);
+
+    await UIHelper.longPressElement(document.getElementById("text"));
+    await UIHelper.doubleTapElement(target);
+    await shouldBecomeEqual("touchEventCount", "4");
+
+    finishJSTest();
+});
+</script>
+<style>
+body, html {
+    margin: 0;
+}
+
+#text {
+    display: inline-block;
+    font-size: 24px;
+}
+
+#target {
+    width: 100%;
+    height: 200px;
+    color: white;
+    background-color: tomato;
+    margin-top: 50px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<p id="text">Select me</p>
+<div id="target">Then double tap here</div>
+<pre id="output"></pre>
+</body>
+</html>

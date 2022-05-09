@@ -8491,6 +8491,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
+#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
+        if (gesture == [_textInteractionAssistant contextMenuInteraction].gestureRecognizerForFailureRelationships)
+            return YES;
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
         if (gesture.delegate == [_dragInteraction _initiationDriver])
             return YES;
