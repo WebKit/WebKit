@@ -132,6 +132,7 @@ my $latestImport;
 my $runningAllTests;
 my $timeout;
 my $skippedOnly;
+my $noProgress;
 
 my $test262Dir;
 my $webkitTest262Dir = abs_path("$Bin/../../../JSTests/test262");
@@ -176,7 +177,7 @@ sub processCLI {
         'f|features=s@' => \@features,
         'c|config=s' => \$configFile,
         'i|ignore-config' => \$ignoreConfig,
-        's|save' => \$saveExpectations,
+        'save' => \$saveExpectations,
         'e|expectations=s' => \$specifiedExpectationsFile,
         'x|ignore-expectations' => \$ignoreExpectations,
         'F|failing-files' => \$failingOnly,
@@ -185,6 +186,7 @@ sub processCLI {
         'r|results=s' => \$specifiedResultsFile,
         'timeout=i' => \$timeout,
         'S|skipped-files' => \$skippedOnly,
+        'no-progress' => \$noProgress,
     );
 
     if ($help) {
@@ -355,6 +357,9 @@ sub main {
         }
     }
 
+    my $numFiles = scalar(@files);
+    my $completedFiles = 0;
+
     my $pm = Parallel::ForkManager->new($maxProcesses);
     my $select = IO::Select->new();
 
@@ -423,8 +428,12 @@ sub main {
             $activeChildren--;
             my $file = shift @files;
             if ($file) {
+                $completedFiles++;
                 chomp $file;
                 print $readyChild "$file\n";
+                if (!$noProgress) {
+                    print "[$completedFiles/$numFiles]\r";
+                }
                 $activeChildren++;
             } elsif (!$activeChildren) {
                 last FILES;
@@ -1338,7 +1347,7 @@ Filter test on list of features (only runs tests in feature list).
 
 Specify one or more specific test262 directory of test to run, relative to the root test262 directory. For example, --test-only 'test/built-ins/Number/prototype'
 
-=item B<--save, -s>
+=item B<--save>
 
 Overwrites the test262-expectations.yaml file with the current list of test262 files and test results.
 
@@ -1365,6 +1374,10 @@ Runs all test files that are skipped according to the config.yaml file.
 =item B<--stats>
 
 Calculate conformance statistics from results/results.yaml file or a supplied results file (--results). Saves results in results/summary.txt and results/summary.yaml.
+
+=item B<--no-progress>
+
+Don't show progress while running tests.
 
 =item B<--results, -r>
 
