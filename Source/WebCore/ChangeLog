@@ -1,3 +1,21 @@
+2022-05-09  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        ASSERT in WebCore::RenderTreeUpdater::updateRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=240237
+
+        Reviewed by Antti Koivisto.
+
+        There are instances where calling findRenderingRoots() in RenderTreeUpdater::commit will
+        returns two rendering roots, with one of them being an ancestor of the other.
+
+        Calling updateRenderTree on the ancestor rendering root could end up removing
+        the renderer of the descendant rendering root.
+
+        This patch  merges findRenderingRoots() to RenderTreeUpdater::commit() which, and now we will
+        ignore the nested root if there is no longer a renderer when it is being processed.
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+
 2022-05-09  Tyler Wilcock  <tyler_w@apple.com>
 
         AXLogger::streamAXCoreObject is missing a null check for AccessibilityObject dynamicDowncast
