@@ -540,9 +540,32 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph
         state.strokeThickness(), state.dropShadow().offset, state.dropShadow().color, fontSmoothing));
 }
 
-void CairoOperationRecorder::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
+void CairoOperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    // FIXME: Not implemented.
+    struct DrawImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
+        virtual ~DrawImageBuffer() = default;
+
+        void execute(PaintingOperationReplay& replayer) override
+        {
+            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+        }
+
+        void dump(TextStream& ts) override
+        {
+            ts << indent << "DrawImageBuffer<>\n";
+        }
+    };
+
+    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
+
+    auto nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return;
+
+    auto& state = this->state();
+    append(createCommand<DrawImageBuffer>(nativeImage->platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
 void CairoOperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const FloatRect& srcRect, Filter& filter, FilterResults& results)
