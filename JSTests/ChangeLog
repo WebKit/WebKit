@@ -1,3 +1,9 @@
+2022-05-09  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed test gardening.
+
+        * test262/expectations.yaml:
+
 2022-05-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Temporal.Duration#toString should never ignore fractionalSecondDigits

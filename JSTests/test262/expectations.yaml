@@ -1317,6 +1317,9 @@ test/intl402/Locale/likely-subtags-grandfathered.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/intl402/NumberFormat/constructor-roundingIncrement-invalid.js:
+  default: 'Test262Error: "maximumFractionDigits" is not equal to "minimumFractionDigits" Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "maximumFractionDigits" is not equal to "minimumFractionDigits" Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js:
   default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":3,"minimumFractionDigits":1} is ١٫٠٠; expected ١٫٠.'
   strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"useGrouping":false,"roundingPriority":"lessPrecision","minimumSignificantDigits":3,"minimumFractionDigits":1} is ١٫٠٠; expected ١٫٠.'
