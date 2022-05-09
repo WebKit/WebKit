@@ -1,3 +1,38 @@
+2022-05-09  Tim Nguyen  <ntim@apple.com>
+
+        Implement CSS :modal pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=240109
+
+        Reviewed by Simon Fraser.
+
+        Test: imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html
+
+        Renames :-internal-modal-dialog to :modal and adds :has() invalidation support.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesModalPseudoClass):
+        (WebCore::matchesModalDialogPseudoClass): Deleted.
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/dialog.css:
+        (dialog:modal):
+        (dialog:-internal-modal-dialog): Deleted.
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::JSC_DEFINE_JIT_OPERATION):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::removedFromAncestor):
+        (WebCore::HTMLDialogElement::setIsModal):
+        * html/HTMLDialogElement.h:
+
 2022-05-09  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         ASSERT in WebCore::RenderTreeUpdater::updateRenderTree

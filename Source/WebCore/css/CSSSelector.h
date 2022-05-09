@@ -185,7 +185,7 @@ namespace WebCore {
 #if ENABLE(ATTACHMENT_ELEMENT)
             PseudoClassHasAttachment,
 #endif
-            PseudoClassModalDialog,
+            PseudoClassModal,
         };
 
         enum PseudoElementType {

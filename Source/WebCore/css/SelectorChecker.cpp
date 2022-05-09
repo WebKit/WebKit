@@ -1132,8 +1132,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return hasAttachment(element);
 #endif
 
-        case CSSSelector::PseudoClassModalDialog:
-            return matchesModalDialogPseudoClass(element);
+        case CSSSelector::PseudoClassModal:
+            return matchesModalPseudoClass(element);
 
         case CSSSelector::PseudoClassUnknown:
             ASSERT_NOT_REACHED();

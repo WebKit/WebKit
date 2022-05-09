@@ -1,4 +1,3 @@
--internal-modal-dialog
 -khtml-drag
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
@@ -50,6 +49,7 @@ last-child
 last-of-type
 link
 matches
+modal
 no-button
 not
 nth-child

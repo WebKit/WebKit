@@ -16,7 +16,7 @@ dialog[open] {
     display: block;
 }
 
-dialog:-internal-modal-dialog {
+dialog:modal {
     position: fixed;
     overflow: auto;
     inset-block-start: 0;

@@ -1,3 +1,16 @@
+2022-05-09  Tim Nguyen  <ntim@apple.com>
+
+        Implement CSS :modal pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=240109
+
+        Reviewed by Simon Fraser.
+
+        Add and extend tests for :modal pseudo-class.
+
+        * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal.html:
+
 2022-05-06  Rob Buis  <rbuis@igalia.com>
 
         Use correct document as root for lazy image observer
