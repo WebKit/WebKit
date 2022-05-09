@@ -278,7 +278,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
+bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents() const
 {
     return true;
 }
@@ -338,7 +338,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
+bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents() const
 {
     const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());
     if (input && !input->isDisabledOrReadOnly())

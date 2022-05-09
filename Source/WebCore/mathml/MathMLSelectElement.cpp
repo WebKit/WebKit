@@ -225,7 +225,7 @@ void MathMLSelectElement::defaultEventHandler(Event& event)
     MathMLRowElement::defaultEventHandler(event);
 }
 
-bool MathMLSelectElement::willRespondToMouseClickEvents()
+bool MathMLSelectElement::willRespondToMouseClickEvents() const
 {
     return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle" || MathMLRowElement::willRespondToMouseClickEvents();
 }

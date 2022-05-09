@@ -377,7 +377,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
     HTMLDivElement::defaultEventHandler(mouseEvent);
 }
 
-bool SliderThumbElement::willRespondToMouseMoveEvents()
+bool SliderThumbElement::willRespondToMouseMoveEvents() const
 {
     const auto input = hostInput();
     if (input && !input->isDisabledFormControl() && m_inDragMode)
@@ -386,7 +386,7 @@ bool SliderThumbElement::willRespondToMouseMoveEvents()
     return HTMLDivElement::willRespondToMouseMoveEvents();
 }
 
-bool SliderThumbElement::willRespondToMouseClickEvents()
+bool SliderThumbElement::willRespondToMouseClickEvents() const
 {
     const auto input = hostInput();
     if (input && !input->isDisabledFormControl())
@@ -394,7 +394,6 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
 
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
-
 
 void SliderThumbElement::willDetachRenderers()
 {

@@ -531,7 +531,7 @@ bool HTMLSelectElement::isRequiredFormControl() const
     return isRequired();
 }
 
-bool HTMLSelectElement::willRespondToMouseClickEvents()
+bool HTMLSelectElement::willRespondToMouseClickEvents() const
 {
 #if PLATFORM(IOS_FAMILY)
     return !isDisabledFormControl();

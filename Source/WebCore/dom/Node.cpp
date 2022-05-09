@@ -2520,7 +2520,7 @@ void Node::defaultEventHandler(Event& event)
     }
 }
 
-bool Node::willRespondToMouseMoveEvents()
+bool Node::willRespondToMouseMoveEvents() const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if !PLATFORM(IOS_FAMILY)
@@ -2533,7 +2533,7 @@ bool Node::willRespondToMouseMoveEvents()
     return hasEventListeners(eventNames.mousemoveEvent) || hasEventListeners(eventNames.mouseoverEvent) || hasEventListeners(eventNames.mouseoutEvent);
 }
 
-bool Node::willRespondToTouchEvents()
+bool Node::willRespondToTouchEvents() const
 {
     auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
@@ -2541,7 +2541,7 @@ bool Node::willRespondToTouchEvents()
     });
 }
 
-bool Node::willRespondToMouseClickEvents()
+bool Node::willRespondToMouseClickEvents() const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if PLATFORM(IOS_FAMILY)
@@ -2561,7 +2561,7 @@ bool Node::willRespondToMouseClickEvents()
 #endif
 }
 
-bool Node::willRespondToMouseWheelEvents()
+bool Node::willRespondToMouseWheelEvents() const
 {
     return hasEventListeners(eventNames().mousewheelEvent);
 }

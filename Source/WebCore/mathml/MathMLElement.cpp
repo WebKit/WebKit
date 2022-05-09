@@ -180,7 +180,7 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
     return is<MathMLElement>(child);
 }
 
-bool MathMLElement::willRespondToMouseClickEvents()
+bool MathMLElement::willRespondToMouseClickEvents() const
 {
     return isLink() || StyledElement::willRespondToMouseClickEvents();
 }

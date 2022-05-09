@@ -459,10 +459,10 @@ public:
     NodeListsNodeData* nodeLists();
     void clearNodeLists();
 
-    virtual bool willRespondToMouseMoveEvents();
-    virtual bool willRespondToMouseClickEvents();
-    virtual bool willRespondToMouseWheelEvents();
-    virtual bool willRespondToTouchEvents();
+    virtual bool willRespondToMouseMoveEvents() const;
+    virtual bool willRespondToMouseClickEvents() const;
+    virtual bool willRespondToMouseWheelEvents() const;
+    virtual bool willRespondToTouchEvents() const;
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 

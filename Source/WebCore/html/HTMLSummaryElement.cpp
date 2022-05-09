@@ -156,7 +156,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-bool HTMLSummaryElement::willRespondToMouseClickEvents()
+bool HTMLSummaryElement::willRespondToMouseClickEvents() const
 {
     if (isActiveSummary() && renderer())
         return true;

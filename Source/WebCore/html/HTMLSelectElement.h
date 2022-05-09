@@ -142,7 +142,7 @@ private:
     void reset() final;
 
     void defaultEventHandler(Event&) final;
-    bool willRespondToMouseClickEvents() final;
+    bool willRespondToMouseClickEvents() const final;
 
     void dispatchChangeEventForMenuList();
 

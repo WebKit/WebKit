@@ -752,13 +752,13 @@ void TextFieldInputType::focusAndSelectSpinButtonOwner()
     input->select();
 }
 
-bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents()
+bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents() const
 {
     ASSERT(element());
     return !element()->isDisabledOrReadOnly();
 }
 
-bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents()
+bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents() const
 {
     ASSERT(element());
     return shouldSpinButtonRespondToMouseEvents() && element()->focused();

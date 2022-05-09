@@ -108,8 +108,8 @@ private:
 
     // SpinButtonElement::SpinButtonOwner functions.
     void focusAndSelectSpinButtonOwner() final;
-    bool shouldSpinButtonRespondToMouseEvents() final;
-    bool shouldSpinButtonRespondToWheelEvents() final;
+    bool shouldSpinButtonRespondToMouseEvents() const final;
+    bool shouldSpinButtonRespondToWheelEvents() const final;
     void spinButtonStepDown() final;
     void spinButtonStepUp() final;
 

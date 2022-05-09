@@ -98,7 +98,7 @@ public:
 
     void defaultEventHandler(Event&) override;
 #if !PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() const override;
 #endif
 
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
@@ -119,7 +119,7 @@ public:
 
     void defaultEventHandler(Event&) override;
 #if !PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() const override;
 #endif
 
 private:

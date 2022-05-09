@@ -995,17 +995,17 @@ void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSProperty
         style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(*color));
 }
 
-bool HTMLElement::willRespondToMouseMoveEvents()
+bool HTMLElement::willRespondToMouseMoveEvents() const
 {
     return !isDisabledFormControl() && Element::willRespondToMouseMoveEvents();
 }
 
-bool HTMLElement::willRespondToMouseWheelEvents()
+bool HTMLElement::willRespondToMouseWheelEvents() const
 {
     return !isDisabledFormControl() && Element::willRespondToMouseWheelEvents();
 }
 
-bool HTMLElement::willRespondToMouseClickEvents()
+bool HTMLElement::willRespondToMouseClickEvents() const
 {
     return !isDisabledFormControl() && Element::willRespondToMouseClickEvents();
 }

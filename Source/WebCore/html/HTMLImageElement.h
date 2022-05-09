@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);
 
 #if PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseClickEvents() const override;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

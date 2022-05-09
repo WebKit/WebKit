@@ -45,8 +45,8 @@ public:
     public:
         virtual ~SpinButtonOwner() = default;
         virtual void focusAndSelectSpinButtonOwner() = 0;
-        virtual bool shouldSpinButtonRespondToMouseEvents() = 0;
-        virtual bool shouldSpinButtonRespondToWheelEvents() = 0;
+        virtual bool shouldSpinButtonRespondToMouseEvents() const = 0;
+        virtual bool shouldSpinButtonRespondToWheelEvents() const = 0;
         virtual void spinButtonStepDown() = 0;
         virtual void spinButtonStepUp() = 0;
     };
@@ -61,8 +61,8 @@ public:
 
     void step(int amount);
     
-    bool willRespondToMouseMoveEvents() override;
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseMoveEvents() const override;
+    bool willRespondToMouseClickEvents() const override;
 
     void forwardEvent(Event&);
 
@@ -80,7 +80,7 @@ private:
     void stopRepeatingTimer();
     void repeatingTimerFired();
     void setHovered(bool, Style::InvalidationScope, HitTestRequest) override;
-    bool shouldRespondToMouseEvents();
+    bool shouldRespondToMouseEvents() const;
     bool isMouseFocusable() const override { return false; }
 
     SpinButtonOwner* m_spinButtonOwner;
