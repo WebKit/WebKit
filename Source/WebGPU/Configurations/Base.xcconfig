@@ -22,7 +22,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+#include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
 #include "SDKVariant.xcconfig"
+#include "WebKitTargetConditionals.xcconfig"
 
 CODE_SIGN_IDENTITY = -;
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
