@@ -24,6 +24,7 @@ import getpass
 import os
 import requests
 import sys
+import time
 
 from .command import Command
 from requests.auth import HTTPBasicAuth
@@ -54,9 +55,12 @@ class Setup(Command):
             username,
             forked_name,
         ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
+
         if response.status_code == 200:
-            log.info("User already owns a fork of '{}'!".format(repository.name))
-            return result
+            parent_name = response.json().get('parent', {}).get('full_name', None)
+            if parent_name == '{}/{}'.format(repository.owner, repository.name):
+                log.info("User already owns a fork of '{}'!".format(parent_name))
+                return result
 
         if repository.owner == username or args.defaults or Terminal.choose(
             "Create a private fork of '{}' belonging to '{}'".format(forked_name, username),
@@ -90,6 +94,26 @@ class Setup(Command):
             if response.status_code not in (200, 202):
                 sys.stderr.write("Fork created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(set_name, username, forked_name))
                 return 1
+
+        response = None
+        attempts = 0
+        while response and response.status_code != 200:
+            if attempts > 3:
+                sys.stderr.write("Waiting on '{}' belonging to '{}' took to long\n".format(forked_name, username))
+                sys.stderr.write("Wait until '{}/{}/{}' is accessible and then re-run setup\n".format(
+                    '/'.join(repository.url.split('/')[:3]),
+                    username, forked_name,
+                ))
+                return 1
+            if response:
+                log.warning("Waiting for '{}' belonging to '{}'...".format(forked_name, username))
+                time.sleep(10)
+            attempts += 1
+            response = requests.get('{}/repos/{}/{}'.format(
+                repository.api_url,
+                username,
+                forked_name,
+            ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
 
         log.info("Created a private fork of '{}' belonging to '{}'!".format(forked_name, username))
         return result
