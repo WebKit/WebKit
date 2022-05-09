@@ -1,3 +1,20 @@
+2022-05-09  Tyler Wilcock  <tyler_w@apple.com>
+
+        AXLogger::streamAXCoreObject is missing a null check for AccessibilityObject dynamicDowncast
+        https://bugs.webkit.org/show_bug.cgi?id=240228
+
+        Reviewed by Andres Gonzalez.
+
+        When checking if an object has display:contents, we do:
+
+        if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject->hasDisplayContents())
+
+        Which does not have a nullcheck for when the dynamicDowncast fails (i.e. because
+        the object is not an AccessibilityObject).
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::streamAXCoreObject):
+
 2022-05-09  Kate Cheney  <katherine_cheney@apple.com>
 
         Image controls menu button is not appearing for multi-page PDFs

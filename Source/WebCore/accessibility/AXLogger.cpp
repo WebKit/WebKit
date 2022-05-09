@@ -592,7 +592,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     }
 
     if (options & AXStreamOptions::DisplayContents) {
-        if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject->hasDisplayContents())
+        if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())
             stream.dumpProperty("hasDisplayContents", true);
     }
 
