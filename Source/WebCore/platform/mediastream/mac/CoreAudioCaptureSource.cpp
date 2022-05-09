@@ -827,6 +827,8 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
 
     if (shouldReconfigure)
         unit.reconfigure();
+
+    m_currentSettings = std::nullopt;
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
@@ -865,7 +867,7 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
         settings.setVolume(volume());
-        settings.setSampleRate(unit().actualSampleRate());
+        settings.setSampleRate(unit().isRenderingAudio() ? unit().actualSampleRate() : sampleRate());
         settings.setDeviceId(hashedId());
         settings.setLabel(name());
         settings.setEchoCancellation(echoCancellation());
@@ -884,6 +886,11 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
 
 void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
+    if (!m_isReadyToStart) {
+        m_currentSettings = std::nullopt;
+        return;
+    }
+
     bool shouldReconfigure = false;
     if (settings.contains(RealtimeMediaSourceSettings::Flag::EchoCancellation)) {
         unit().setEnableEchoCancellation(echoCancellation());

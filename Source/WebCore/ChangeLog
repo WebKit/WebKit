@@ -1,3 +1,20 @@
+2022-05-09  Youenn Fablet  <youenn@apple.com>
+
+        CoreAudioCaptureSource::settingsDidChange should not reconfigure the audio unit if CoreAudioCaptureSource is not started
+        https://bugs.webkit.org/show_bug.cgi?id=240059
+
+        Reviewed by Eric Carlson.
+
+        We should only ask to reconfigure when source settings change if the source is actually started.
+        Otherwise, we can wait for the source to start to actually set the unit values and reconfigure if needed.
+        To make sure to correctly expose settings, we reset them in CoreAudioCaptureSource::settingsDidChange and in
+        CoreAudioCaptureSource::initializeToStartProducingData.
+        We also only use the audio unit sample rate if it is rendering audio, otherwise we can change the sample rate at will.
+
+        Manually tested.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+
 2022-05-09  Miguel Gomez  <magomez@igalia.com>
 
         [Nicosia] Canvas animations don't work with threaded rendering

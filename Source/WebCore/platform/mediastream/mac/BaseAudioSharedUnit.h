@@ -81,6 +81,7 @@ public:
 
     void devicesChanged(const Vector<CaptureDevice>&);
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
+    bool isRenderingAudio() const { return m_isRenderingAudio; }
 
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
