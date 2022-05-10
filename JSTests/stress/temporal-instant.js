@@ -229,6 +229,10 @@ shouldThrow(() => new Temporal.Instant('abc123'), SyntaxError);
     // truncates to minute
     [i1, i2, i3].forEach((i) => shouldBe(i.toString({ smallestUnit: 'minute' }), '1976-11-18T15:23Z'));
 
+    // ...as opposed to rounding first
+    shouldBe(i3.round('minute').toString(), '1976-11-18T15:24:00Z');
+    shouldBe(i3.round({ smallestUnit: 'minute' }).toString(), '1976-11-18T15:24:00Z');
+
     // other smallestUnits are aliases for fractional digits
     shouldBe(i3.toString({ smallestUnit: 'second' }), i3.toString({ fractionalSecondDigits: 0 }));
     shouldBe(i3.toString({ smallestUnit: 'millisecond' }), i3.toString({ fractionalSecondDigits: 3 }));

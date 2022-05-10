@@ -948,18 +948,6 @@ test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js:
 test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/Duration/prototype/round/roundto-invalid-string.js:
-  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted-string.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Duration/prototype/round/smallestunit-string-shorthand-string.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Duration/prototype/round/smallestunit.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/Duration/prototype/round/timezone-string-leap-second.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -1038,9 +1026,6 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Duration/prototype/total/relativeto-undefined-throw-on-calendar-units.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js:
   default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
@@ -1053,27 +1038,12 @@ test/built-ins/Temporal/Duration/prototype/total/timezone-string-leap-second.js:
 test/built-ins/Temporal/Duration/prototype/total/timezone-wrong-type.js:
   default: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: symbol is not a valid object and does not convert to a string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Duration/prototype/total/unit-disallowed-units-string.js:
-  default: 'Test262Error: "era" should not be allowed as an argument to total Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" should not be allowed as an argument to total Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Duration/prototype/total/unit-string-shorthand-string.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
+  default: 'TypeError: Right hand side of instanceof is not an object'
+  strict mode: 'TypeError: Right hand side of instanceof is not an object'
 test/built-ins/Temporal/Instant/prototype/round/rounding-direction.js:
   default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
   strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
-test/built-ins/Temporal/Instant/prototype/round/roundto-invalid-string.js:
-  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/Instant/prototype/round/smallestunit-plurals-accepted.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Instant/prototype/round/smallestunit-string-shorthand.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
@@ -1170,12 +1140,6 @@ test/built-ins/Temporal/PlainTime/prototype/equals/leap-second.js:
 test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/round/roundto-invalid-string.js:
-  default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-string-shorthand.js:
-  default: 'TypeError: options argument is not an object or undefined'
-  strict mode: 'TypeError: options argument is not an object or undefined'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-cast.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'

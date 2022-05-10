@@ -284,6 +284,7 @@ shouldBe(Temporal.PlainTime.from("20:34").calendar instanceof Temporal.Calendar,
 
 {
     let time = Temporal.PlainTime.from('19:39:09.068346205');
+    shouldBe(String(time.round('hour')), `20:00:00`);
     shouldBe(String(time.round({ smallestUnit: 'hour' })), `20:00:00`);
     shouldBe(String(time.round({ roundingIncrement: 30, smallestUnit: 'minute' })), `19:30:00`);
     shouldBe(String(time.round({ roundingIncrement: 30, smallestUnit: 'minute', roundingMode: 'ceil' })), `20:00:00`);

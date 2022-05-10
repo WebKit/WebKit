@@ -462,26 +462,39 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto smallest = temporalSmallestUnit(globalObject, options, { });
-    RETURN_IF_EXCEPTION(scope, { });
-
+    JSObject* options = nullptr;
+    std::optional<TemporalUnit> smallest;
+    std::optional<TemporalUnit> largest;
     TemporalUnit defaultLargestUnit = largestSubduration(m_duration);
-    auto largest = temporalLargestUnit(globalObject, options, { }, defaultLargestUnit);
-    RETURN_IF_EXCEPTION(scope, { });
+    if (optionsValue.isString()) {
+        auto string = optionsValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
 
-    if (!smallest && !largest) {
-        throwRangeError(globalObject, scope, "Cannot round without a smallestUnit or largestUnit option"_s);
-        return { };
+        smallest = temporalUnitType(string);
+        if (!smallest) {
+            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            return { };
+        }
+    } else {
+        options = intlGetOptionsObject(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        smallest = temporalSmallestUnit(globalObject, options, { });
+        RETURN_IF_EXCEPTION(scope, { });
+
+        largest = temporalLargestUnit(globalObject, options, { }, defaultLargestUnit);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (!smallest && !largest) {
+            throwRangeError(globalObject, scope, "Cannot round without a smallestUnit or largestUnit option"_s);
+            return { };
+        }
+
+        if (smallest && largest && smallest.value() < largest.value()) {
+            throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
+            return { };
+        }
     }
-
-    if (smallest && largest && smallest.value() < largest.value()) {
-        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
-        return { };
-    }
-
     TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
     TemporalUnit largestUnit = largest.value_or(std::min(defaultLargestUnit, smallestUnit));
 
@@ -512,11 +525,17 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, 0);
+    String unitString;
+    if (optionsValue.isString()) {
+        unitString = optionsValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, 0);
+    } else {
+        JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, 0);
 
-    String unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, { }, { });
-    RETURN_IF_EXCEPTION(scope, 0);
+        unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, { }, { });
+        RETURN_IF_EXCEPTION(scope, 0);
+    }
 
     auto unitType = temporalUnitType(unitString);
     if (!unitType) {

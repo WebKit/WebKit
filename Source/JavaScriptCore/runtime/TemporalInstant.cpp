@@ -362,17 +362,35 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
+    JSObject* options = nullptr;
+    std::optional<TemporalUnit> smallest;
+    if (optionsValue.isString()) {
+        auto string = optionsValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
 
-    auto smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
-    RETURN_IF_EXCEPTION(scope, { });
+        smallest = temporalUnitType(string);
+        if (!smallest) {
+            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            return { };
+        }
 
-    if (!smallest) {
-        throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);
-        return { };
+        if (smallest.value() <= TemporalUnit::Day) {
+            throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
+            return { };
+        }
+    } else {
+        options = intlGetOptionsObject(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (!smallest) {
+            throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);
+            return { };
+        }
     }
-    TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
+    TemporalUnit smallestUnit = smallest.value();
 
     RoundingMode roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });

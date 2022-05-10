@@ -203,6 +203,7 @@ shouldThrow(() => Temporal.Duration.from('P1M').round({ largestUnit: 'seconds' }
 shouldThrow(() => Temporal.Duration.from('P1W').round({ largestUnit: 'seconds' }), RangeError);
 shouldThrow(() => Temporal.Duration.from('P1D').round({ largestUnit: 'months' }), RangeError);
 shouldThrow(() => Temporal.Duration.from('P1D').round({ largestUnit: 'weeks' }), RangeError);
+shouldBe(posAbsolute.round('day').toString(), 'P1D');
 shouldBe(posAbsolute.round({ largestUnit: 'day' }).toString(), 'P1DT2H3M4.005006007S');
 shouldBe(posAbsolute.round({ largestUnit: 'auto' }).toString(), 'P1DT2H3M4.005006007S');
 shouldBe(posAbsolute.round({ smallestUnit: 'day' }).toString(), 'P1D');
@@ -229,6 +230,7 @@ shouldThrow(() => Temporal.Duration.from('P1M').total({ unit: 'seconds' }), Rang
 shouldThrow(() => Temporal.Duration.from('P1W').total({ unit: 'seconds' }), RangeError);
 shouldThrow(() => Temporal.Duration.from('P1D').total({ unit: 'months' }), RangeError);
 shouldThrow(() => Temporal.Duration.from('P1D').total({ unit: 'weeks' }), RangeError);
+shouldBe(posAbsolute.total('days'), 1.0854630209028588);
 shouldBe(posAbsolute.total({ unit: 'days' }), 1.0854630209028588);
 shouldBe(posAbsolute.total({ unit: 'hours' }), 26.051112501668612);
 shouldBe(posAbsolute.total({ unit: 'minutes' }), 1563.0667501001167);
