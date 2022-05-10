@@ -74,6 +74,7 @@ public:
     std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 #endif
     void disable();
+    bool isDisabled() const { return m_isDisabled; }
 
 private:
     bool wait(const Function<void(IPC::Semaphore&)>&);

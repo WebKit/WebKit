@@ -58,6 +58,7 @@ RemoteVideoFrameObjectHeapProxyProcessor::~RemoteVideoFrameObjectHeapProxyProces
 
 void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
+    m_sharedVideoFrameWriter.disable();
     {
         Locker lock(m_connectionLock);
         m_connectionID = { };
@@ -133,6 +134,9 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
 {
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
 
+    if (m_sharedVideoFrameWriter.isDisabled())
+        m_sharedVideoFrameWriter = { };
+
     auto nativePixelBuffer = videoFrame.pixelBuffer();
     auto colorSpace = createCGColorSpaceForCVPixelBuffer(nativePixelBuffer);
     auto buffer = m_sharedVideoFrameWriter.writeBuffer(nativePixelBuffer,
@@ -141,7 +145,12 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
     if (!buffer)
         return nullptr;
 
-    connection.send(Messages::RemoteVideoFrameObjectHeap::ConvertBuffer { WTFMove(*buffer) }, 0);
+    auto result = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertBuffer { *buffer }, Messages::RemoteVideoFrameObjectHeap::ConvertBuffer::Reply { }, 0, GPUProcessConnection::defaultTimeout);
+    if (!result) {
+        m_sharedVideoFrameWriter.disable();
+        return nullptr;
+    }
+
     m_conversionSemaphore.wait();
 
     auto pixelBuffer = WTFMove(m_convertedBuffer);

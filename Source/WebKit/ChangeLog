@@ -1,3 +1,30 @@
+2022-05-10  Youenn Fablet  <youenn@apple.com>
+
+        RemoteVideoFrameObjectHeapProxyProcessor binary semaphore usage might trigger deadlocks in case of GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=240161
+        <rdar://problem/92849827>
+
+        Reviewed by Eric Carlson.
+
+        In case of GPUProcess crash when waiting for a converted buffer, we would never call the semaphore signal method.
+        This would hang the main thread since this code path is main thread only.
+        To prevent this, we use synchronous IPC to send the buffer conversion order.
+        Once it is done, we use the binary semaphore to synchronize the main thread with the work queue on which we are receiving the converted buffer.
+        It is ok to use a binary semaphore at that point since we know the web process has or is processing the converted buffer IPC messages.
+        We also make sure to recreate the SharedVideoFrameWriter in case it was disabled due the GPUProcess connection being closed.
+
+        Covered by existing tests, in particular LayoutTests/webrtc/captureCanvas-webrtc.html.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::RemoteVideoFrameObjectHeap::convertBuffer):
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        (WebKit::RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage):
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+        (WebKit::SharedVideoFrameWriter::isDisabled const):
+
 2022-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust some viewport behaviors when multitasking mode is enabled

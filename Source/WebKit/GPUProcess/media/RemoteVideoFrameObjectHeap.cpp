@@ -31,6 +31,7 @@
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
+#include <wtf/Scope.h>
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
@@ -136,8 +137,10 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
     completionHandler(WTFMove(pixelBuffer));
 }
 
-void RemoteVideoFrameObjectHeap::convertBuffer(SharedVideoFrame::Buffer&& buffer)
+void RemoteVideoFrameObjectHeap::convertBuffer(SharedVideoFrame::Buffer&& buffer, CompletionHandler<void()>&& callback)
 {
+    auto scope = makeScopeExit([&callback] { callback(); });
+
     auto pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(buffer));
     if (!pixelBuffer) {
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
