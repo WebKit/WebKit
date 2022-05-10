@@ -71,7 +71,7 @@ class FilteredCommand(Command):
         parser.add_argument(
             'args', nargs='*',
             type=str, default=None,
-            help='Arguments to be passed to tbe native source-code management tool',
+            help='Arguments to be passed to the native source-code management tool',
         )
         parser.add_argument(
             '--identifier', '-i',

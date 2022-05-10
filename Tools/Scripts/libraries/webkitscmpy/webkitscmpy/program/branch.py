@@ -24,6 +24,7 @@ import re
 import sys
 
 from .command import Command
+from .commit import Commit
 
 from webkitbugspy import Tracker
 from webkitcorepy import run, string_utils, Terminal
@@ -131,13 +132,7 @@ class Branch(Command):
 
         if issue:
             args._title = issue.title
-            args._bug_urls = [issue.link]
-            types = [type(issue.tracker)]
-            for related in issue.references:
-                if type(related.tracker) in types:
-                    continue
-                args._bug_urls.append(related.link)
-                types.append(type(related.tracker))
+            args._bug_urls = Commit.bug_urls(issue)
 
         args.issue = cls.normalize_branch_name(args.issue)
 

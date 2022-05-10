@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,10 +21,16 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import logging
+import os
 import unittest
 
+from mock import patch
 from datetime import datetime
-from webkitscmpy import Commit, Contributor
+from webkitbugspy import bugzilla, mocks as bmocks
+from webkitcorepy import OutputCapture, testing
+from webkitcorepy.mocks import Environment
+from webkitscmpy import Contributor, Commit, program, mocks
 
 
 class TestCommit(unittest.TestCase):
@@ -298,3 +304,89 @@ PRINTED
                 message='Message'
             ),
         )
+
+
+class TestDoCommit(testing.PathTestCase):
+    basepath = 'mock/repository'
+    BUGZILLA = 'https://bugs.example.com'
+
+    def setUp(self):
+        super(TestDoCommit, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
+
+    def test_svn(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path), patch(
+                'webkitbugspy.Tracker._trackers', []):
+            self.assertEqual(1, program.main(
+                args=('commit',),
+                path=self.path,
+            ))
+        self.assertEqual(captured.root.log.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Can only 'commit' on a native Git repository\n")
+
+    def test_none(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(), patch(
+                'webkitbugspy.Tracker._trackers', []):
+            self.assertEqual(1, program.main(
+                args=('commit',),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), "Can only 'commit' on a native Git repository\n")
+
+    def test_commit(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('commit',),
+                path=self.path,
+            ))
+            self.assertDictEqual(repo.staged, {})
+            self.assertEqual(repo.head.hash, 'c28f53f7fabd7bd9535af890cb7dc473cb342999')
+            self.assertEqual(
+                '[Testing] Creating commits\n'
+                'Reviewed by Jonathan Bedard\n\n'
+                ' * added.txt\n',
+                repo.head.message,
+            )
+
+        self.assertEqual(
+            '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
+            '')
+        self.assertEqual(captured.stdout.getvalue(), "")
+        self.assertEqual(captured.stderr.getvalue(), "")
+
+    def test_commit_with_bug(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('commit', '-i', '3', ),
+                path=self.path,
+            ))
+            self.assertDictEqual(repo.staged, {})
+            self.assertEqual(repo.head.hash, '0cc822a8ca16698e13363f917e3d9dad387141a4')
+            self.assertEqual(
+                'Example issue 2\n'
+                'https://bugs.example.com/show_bug.cgi?id=3\n'
+                'Reviewed by Jonathan Bedard\n\n'
+                ' * added.txt\n',
+                repo.head.message,
+            )
+
+        self.assertEqual(
+            '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
+            '')
+        self.assertEqual(captured.stdout.getvalue(), "")
+        self.assertEqual(captured.stderr.getvalue(), "")

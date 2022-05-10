@@ -1,3 +1,24 @@
+2022-05-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [GitHub] `git commit` generates a nicely formatted commit log but is missing bug information
+        https://bugs.webkit.org/show_bug.cgi?id=240254
+        <rdar://93033766 >
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py: Add "commit" program.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.main): Invoke Commit.bug_urls.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.parser): Typo fix in log message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/commit.py: Added.
+        (Commit.parser):
+        (Commit.bug_urls): Extract a list of bug URLs from an issue.
+        (Commit.main): Extract commit message information from issue.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py:
+
 2022-05-09  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Don't index perspective/transform-origin-* in computed styles
