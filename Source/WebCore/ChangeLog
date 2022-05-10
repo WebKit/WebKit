@@ -1,3 +1,26 @@
+2022-05-10  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [Filters] FilterImages can be leaked
+        https://bugs.webkit.org/show_bug.cgi?id=240274
+
+        Reviewed by Simon Fraser.
+
+        When a FilterEffect is dynamically updated we clear its result FilterImage.
+        We also need to clear all the result FilterImages of all the FilterEffects
+        recursively which takes this changing FilterEffect as an input.
+
+        Clearing the result FilterImage of the changing FilterEffect happens by
+        removing the entry from FilterResults::m_results.
+
+        Clearing the FilterImages of the dependent FilterEffects happens by using 
+        FilterResults::m_resultReferences.
+
+        What is missing is removing the FilterImage entry itself from
+        FilterResults::m_resultReferences.        
+
+        * platform/graphics/filters/FilterResults.h:
+        (WebCore::FilterResults::clearEffectResult):
+
 2022-05-10  Tim Nguyen  <ntim@apple.com>
 
         Fix inertness of pseudo-elements

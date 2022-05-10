@@ -63,6 +63,8 @@ public:
 
         for (auto& reference : m_resultReferences.get(result))
             clearEffectResult(reference);
+        
+        m_resultReferences.remove(result);
     }
 
 private:
