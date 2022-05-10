@@ -236,8 +236,7 @@ PASS page-break-before
 PASS page-break-inside
 PASS paint-order
 PASS perspective
-FAIL perspective-origin-x assert_not_equals: Should have the initial value. got disallowed value ""
-FAIL perspective-origin-y assert_not_equals: Should have the initial value. got disallowed value ""
+PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS print-color-adjust
@@ -312,9 +311,7 @@ PASS top
 PASS touch-action
 PASS transform
 PASS transform-box
-FAIL transform-origin-x assert_not_equals: Should have the initial value. got disallowed value ""
-FAIL transform-origin-y assert_not_equals: Should have the initial value. got disallowed value ""
-FAIL transform-origin-z assert_not_equals: Should have the initial value. got disallowed value ""
+PASS transform-origin
 PASS transform-style
 PASS transition-delay
 PASS transition-duration

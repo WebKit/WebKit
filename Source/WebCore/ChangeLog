@@ -1,3 +1,35 @@
+2022-05-09  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Don't index perspective/transform-origin-* in computed styles
+        https://bugs.webkit.org/show_bug.cgi?id=239670
+
+        Reviewed by Darin Adler.
+
+        'perspective-origin' and 'transform-origin' are shorthands in WebKit.
+        The longhands are 'perspective-origin-x/y' and 'transform-origin-x/y/z'.
+        But these aren't standard properties, so they serialize to empty string
+        in computed styles. However, they were still indexed.
+
+        This patch stops indexing these longhands, so they won't appear when
+        iterating a computed style. Also, the shorthands will now be indexed.
+
+        Test: fast/css/getComputedStyle/computed-style.html
+              fast/css/getComputedStyle/computed-style-without-renderer.html
+              imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
+              imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer.html
+              imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+              imported/w3c/web-platform-tests/css/cssom/serialize-all-longhands.html
+              svg/css/getComputedStyle-basic.xhtml
+
+        * css/CSSProperties.json:
+        Add "computable" flag.
+
+        * css/makeprop.pl:
+        (skippedFromComputedStyle):
+        (addProperty):
+        Let "computable" flag override default logic for indexing or not in
+        computed styles.
+
 2022-05-09  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Support ray() shape in offset-path

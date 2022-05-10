@@ -296,6 +296,8 @@ rect: style.getPropertyValue(paint-order) : normal
 rect: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(perspective) : none
 rect: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(perspective-origin) : 150px 75px
+rect: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 rect: style.getPropertyValue(pointer-events) : auto
 rect: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(position) : static
@@ -372,6 +374,8 @@ rect: style.getPropertyValue(top) : auto
 rect: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(transform) : none
 rect: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(transform-origin) : 0px 0px
+rect: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
 rect: style.getPropertyValue(transform-style) : flat
 rect: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(transition-delay) : 0s
@@ -806,6 +810,8 @@ g: style.getPropertyValue(paint-order) : normal
 g: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(perspective) : none
 g: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(perspective-origin) : 150px 75px
+g: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 g: style.getPropertyValue(pointer-events) : auto
 g: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(position) : static
@@ -882,6 +888,8 @@ g: style.getPropertyValue(top) : auto
 g: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(transform) : none
 g: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(transform-origin) : 0px 0px
+g: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
 g: style.getPropertyValue(transform-style) : flat
 g: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(transition-delay) : 0s

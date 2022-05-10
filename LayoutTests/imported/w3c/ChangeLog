@@ -1,3 +1,21 @@
+2022-05-09  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Don't index perspective/transform-origin-* in computed styles
+        https://bugs.webkit.org/show_bug.cgi?id=239670
+
+        Reviewed by Darin Adler.
+
+        Update some test expectations.
+
+        Add serialize-all-longhands.html, it still fails due to
+        https://webkit.org/b/239965 and https://webkit.org/b/239989.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * web-platform-tests/css/cssom/serialize-all-longhands-expected.txt: Added.
+        * web-platform-tests/css/cssom/serialize-all-longhands.html: Added.
+
 2022-05-09  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS :modal pseudo class

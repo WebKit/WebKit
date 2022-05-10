@@ -285,6 +285,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'auto-functions': self.validate_boolean,
             'color-property': self.validate_boolean,
             'comment': self.validate_string,
+            'computable': self.validate_boolean,
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,

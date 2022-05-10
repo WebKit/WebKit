@@ -61,7 +61,7 @@ die "We've reached more than 1024 CSS properties, please make sure to update CSS
 my %defines = map { $_ => 1 } split(/ /, $defines);
 
 my @names;
-my @internalProprerties;
+my @internalProperties;
 my %runtimeFlags;
 my %settingsFlags;
 my $numPredefinedProperties = 2;
@@ -94,6 +94,7 @@ my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
     "animatable" => 1, # Defined in Source/WebCore/style/StyleBuilderConverter.h
     "auto-functions" => 1,
+    "computable" => 1,
     "conditional-converter" => 1,
     "converter" => 1,
     "custom" => 1,
@@ -198,28 +199,23 @@ sub removeInactiveCodegenProperties($$)
 sub skippedFromComputedStyle
 {
   my $name = shift;
+  my $options = $propertiesWithStyleBuilderOptions{$name};
 
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) and not isLogical($name)) {
+  if (grep { $_ eq $name } @internalProperties) {
+    die "$name can't be computable since it's internal" if $options->{"computable"};
     return 1;
   }
 
-  if (grep { $_ eq $name } @internalProprerties) {
-    return 1;
-  }
+  return !$options->{"computable"} if exists($options->{"computable"});
 
-  # For convenience, "all" is not defined with the full list of longhands.
-  # Its only listed longhand is itself, so it wouldn't match the condition below.
-  # Then we have to handle it especially.
-  return 1 if $name eq "all";
+  return 1 if exists($options->{"skip-builder"}) and not isLogical($name);
 
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
-    my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
+  if (exists($options->{"longhands"})) {
+    my @longhands = @{$options->{"longhands"}};
     if (scalar @longhands != 1) {
       # Skip properties if they have a non-internal longhand property.
       foreach my $longhand (@longhands) {
-        if (!skippedFromComputedStyle($longhand)) {
-          return 1;
-        }
+        return 1 if !skippedFromComputedStyle($longhand);
       }
     }
   }
@@ -312,7 +308,7 @@ sub addProperty($$)
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
                 } elsif ($codegenOptionName eq "internal-only") {
                     # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands.
-                    push @internalProprerties, $name
+                    push @internalProperties, $name
                 } elsif ($codegenOptionName eq "runtime-flag") {
                     $runtimeFlags{$name} = $codegenProperties->{"runtime-flag"};
                 } elsif ($codegenOptionName eq "settings-flag") {
@@ -484,7 +480,7 @@ bool isInternalCSSProperty(const CSSPropertyID id)
     switch (id) {
 EOF
 
-foreach my $name (sort @internalProprerties) {
+foreach my $name (sort @internalProperties) {
   print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
 }
 
@@ -1732,7 +1728,7 @@ sub cssPropertyToIDLAttribute($$$)
 
 my %namesAndAliasesToName;
 foreach my $name (@names) {
-    if (grep { $_ eq $name } @internalProprerties) {
+    if (grep { $_ eq $name } @internalProperties) {
         next;
     }
     $namesAndAliasesToName{$name} = $name;

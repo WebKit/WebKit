@@ -1,3 +1,22 @@
+2022-05-09  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Don't index perspective/transform-origin-* in computed styles
+        https://bugs.webkit.org/show_bug.cgi?id=239670
+
+        Reviewed by Darin Adler.
+
+        Update test expectations.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2022-05-09  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Support ray() shape in offset-path

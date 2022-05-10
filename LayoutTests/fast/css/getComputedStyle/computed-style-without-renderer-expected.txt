@@ -148,6 +148,7 @@ page-break-before: auto
 page-break-inside: auto
 paint-order: normal
 perspective: none
+perspective-origin: 50% 50%
 pointer-events: auto
 position: static
 print-color-adjust: economy
@@ -186,6 +187,7 @@ text-shadow: none
 text-transform: none
 top: auto
 transform: none
+transform-origin: 50% 50%
 transform-style: flat
 transition-delay: 0s
 transition-duration: 0s

@@ -239,8 +239,7 @@ PASS page-break-before
 PASS page-break-inside
 PASS paint-order
 PASS perspective
-PASS perspective-origin-x
-PASS perspective-origin-y
+PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS print-color-adjust
@@ -317,9 +316,7 @@ PASS top
 PASS touch-action
 PASS transform
 PASS transform-box
-PASS transform-origin-x
-PASS transform-origin-y
-PASS transform-origin-z
+PASS transform-origin
 PASS transform-style
 PASS transition-delay
 PASS transition-duration

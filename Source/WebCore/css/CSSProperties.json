@@ -176,6 +176,14 @@
         "The name of the flag on Settings (e.g. \"CSSOMViewSmoothScrolling\")",
         "that conditionally enables the property.",
         "",
+        "* computable:",
+        "Whether the property should be indexed on computed styles.",
+        "If omitted, the property will be computable by default,",
+        "except if it has \"skip-builder\" and is not logical,",
+        "or if it's a shorthand with multiple indexed longhands.",
+        "Internal properties (\"internal-only\") are never computable,",
+        "and setting this flag to true is an error.",
+        "",
         "2. Lesser known capabilities of this file format",
         "",
         "Conditional CSS keyword value:",
@@ -886,6 +894,7 @@
         },
         "all": {
             "codegen-properties": {
+                "computable": false,
                 "longhands": [
                     "all"
                 ]
@@ -6720,6 +6729,7 @@
                 "aliases": [
                     "-webkit-perspective-origin-x"
                 ],
+                "computable": false,
                 "converter": "PositionComponentX"
             },
             "specification": {
@@ -6732,6 +6742,7 @@
                 "aliases": [
                     "-webkit-perspective-origin-y"
                 ],
+                "computable": false,
                 "converter": "PositionComponentY"
             },
             "specification": {
@@ -7192,6 +7203,7 @@
                 "aliases": [
                     "-webkit-transform-origin-x"
                 ],
+                "computable": false,
                 "converter": "PositionComponentX"
             },
             "specification": {
@@ -7204,6 +7216,7 @@
                 "aliases": [
                     "-webkit-transform-origin-y"
                 ],
+                "computable": false,
                 "converter": "PositionComponentY"
             },
             "specification": {
@@ -7216,6 +7229,7 @@
                 "aliases": [
                     "-webkit-transform-origin-z"
                 ],
+                "computable": false,
                 "converter": "ComputedLength<float>"
             },
             "specification": {
