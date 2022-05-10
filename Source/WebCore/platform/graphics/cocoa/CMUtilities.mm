@@ -223,7 +223,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlo
         auto err = PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, samples.size(), 0, &rawBlockBuffer);
         if (err != kCMBlockBufferNoErr || !rawBlockBuffer)
             return makeUnexpected("CMBlockBufferCreateEmpty failed");
-        completeBlockBuffers = rawBlockBuffer;
+        completeBlockBuffers = adoptCF(rawBlockBuffer);
     }
 
     Vector<CMSampleTimingInfo> packetTimings;

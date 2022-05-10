@@ -1,3 +1,14 @@
+2022-05-09  Jean-Yves Avenard  <jya@apple.com>
+
+        com.apple.WebKit.GPU leaks CMBlockBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=240267
+        rdar://92655222
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/cocoa/CMUtilities.mm:
+        (WebCore::toCMSampleBuffer): adopt newly created CMBlockBuffer rather than increase the refcount.
+
 2022-05-09  Rob Buis  <rbuis@igalia.com>
 
         Check if node is connected after calling mergeWithNeighboringLists
