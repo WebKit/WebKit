@@ -118,7 +118,7 @@ inline double JSValue::toIntegerWithoutRounding(JSGlobalObject* globalObject) co
     if (isInt32())
         return asInt32();
     double d = toNumber(globalObject);
-    return (std::isnan(d) || !d) ? 0.0 : d;
+    return std::isnan(d) ? 0.0 : d + 0.0;
 }
 
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
