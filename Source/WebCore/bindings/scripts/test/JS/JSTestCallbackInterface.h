@@ -33,9 +33,9 @@ namespace WebCore {
 
 class JSTestCallbackInterface final : public TestCallbackInterface {
 public:
-    static Ref<JSTestCallbackInterface> create(JSC::VM& vm, JSC::JSObject* callback)
+    static Ref<JSTestCallbackInterface> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackInterface(vm, callback));
+        return adoptRef(*new JSTestCallbackInterface(callback, globalObject));
     }
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
@@ -57,7 +57,7 @@ public:
     CallbackResult<typename IDLDOMString::ImplementationType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
 
 private:
-    JSTestCallbackInterface(JSC::VM&, JSC::JSObject* callback);
+    JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };

@@ -13,7 +13,7 @@
           // Make request from remote frame, this frame will be gone by the time the Geolocation
           // object attempts to invoke the callback.
           window.parent.navigator.geolocation.getCurrentPosition(function() {
-              parent.testFailed('Success callback invoked');
+              parent.testPassed('Success callback invoked');
               parent.finishJSTest();
           }, function() {
               parent.testFailed('Error callback invoked unexpectedly');

@@ -63,7 +63,7 @@ template<> TestInheritedDictionary2 convertDictionary<TestInheritedDictionary2>(
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!callbackMemberValue.isUndefined()) {
-        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue);
+        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue stringMemberValue;

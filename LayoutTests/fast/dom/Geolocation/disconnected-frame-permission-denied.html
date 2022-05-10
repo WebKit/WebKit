@@ -15,13 +15,17 @@ if (window.testRunner) {
 } else
     debug('This test can not be run without the testRunner');
 
-window.successCallbackInvoked = false;
+
+var error;
 function onIframeLoaded() {
     iframeGeolocation = iframe.contentWindow.navigator.geolocation;
     iframeGeolocation.getCurrentPosition(function() {
-        window.successCallbackInvoked = true;
+       testFailed('Success callback invoked unexpectedly');
+       finishJSTest();
     }, function(e) {
-        window.secondPositionError = e;
+        error = e;
+        shouldBe('error.code', 'error.PERMISSION_DENIED');
+        shouldBe('error.message', '"User denied Geolocation"');
         debug('');
         iframe.src = 'data:text/html,This frame should be visible when the test completes';
     });
@@ -30,18 +34,16 @@ function onIframeLoaded() {
 function onIframeUnloaded() {
     // Make another request, with permission already denied.
     iframeGeolocation.getCurrentPosition(function () {
-        window.successCallbackInvoked = true;
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();        
     }, function(e) {
-        window.firstPositionError = e;
+        testFailed('Error callback invoked');
+        finishJSTest();
     });
     setTimeout(function() {
-        shouldBe("successCallbackInvoked", "false");
-        shouldBe("firstPositionError.code", "GeolocationPositionError.PERMISSION_DENIED");
-        shouldBe("firstPositionError.message", "'User denied Geolocation'");
-        shouldBe("secondPositionError.code", "GeolocationPositionError.PERMISSION_DENIED");
-        shouldBe("secondPositionError.message", "'User denied Geolocation'");
+        testPassed('No callbacks invoked');
         finishJSTest();
-    }, 1000);
+    }, 100);
 }
 
 var iframe = document.createElement('iframe');

@@ -17,19 +17,19 @@ function onIframeLoaded() {
     iframe.src = 'data:text/html,This frame should be visible when the test completes';
 }
 
-window.successCallbackInvoked = false;
+var error;
 function onIframeUnloaded() {
     iframeGeolocation.getCurrentPosition(function () {
-        window.successCallbackInvoked = true;
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();        
     }, function(e) {
-        window.positionError = e;
+        testFailed('Error callback invoked');
+        finishJSTest();
     });
     setTimeout(function() {
-        shouldBe("successCallbackInvoked", "false");
-        shouldBe("positionError.code", "GeolocationPositionError.POSITION_UNAVAILABLE");
-        shouldBe("positionError.message", "'Geolocation cannot be used in frameless documents'");
+        testPassed('No callbacks invoked');
         finishJSTest();
-    }, 1000);
+    }, 100);
 }
 
 var iframe = document.createElement('iframe');

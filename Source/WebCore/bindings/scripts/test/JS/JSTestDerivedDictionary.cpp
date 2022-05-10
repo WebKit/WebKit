@@ -65,7 +65,7 @@ template<> TestDerivedDictionary convertDictionary<TestDerivedDictionary>(JSGlob
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!callbackMemberValue.isUndefined()) {
-        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue);
+        result.callbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue partialBooleanMemberValue;
@@ -100,7 +100,7 @@ template<> TestDerivedDictionary convertDictionary<TestDerivedDictionary>(JSGlob
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!partialCallbackMemberValue.isUndefined()) {
-        result.partialCallbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, partialCallbackMemberValue);
+        result.partialCallbackMember = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, partialCallbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue partialRequiredLongMemberValue;

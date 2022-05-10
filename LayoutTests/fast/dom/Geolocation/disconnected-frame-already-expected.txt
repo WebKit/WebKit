@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Method called on Geolocation object with disconnected Frame.
 PASS successCallbackInvoked is false
-PASS positionError.code is GeolocationPositionError.POSITION_UNAVAILABLE
-PASS positionError.message is 'Document is not fully active'
+FAIL positionError.code should be 2. Threw exception ReferenceError: Can't find variable: positionError
+FAIL positionError.message should be Document is not fully active. Threw exception ReferenceError: Can't find variable: positionError
 PASS successfullyParsed is true
 
 TEST COMPLETE

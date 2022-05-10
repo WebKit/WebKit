@@ -349,9 +349,6 @@ http/tests/intersection-observer [ Skip ]
 imported/w3c/web-platform-tests/intersection-observer [ Skip ]
 intersection-observer [ Skip ]
 
-fast/dom/callback-function-detached-frame-intersection-observer.html [ Skip ]
-fast/dom/callback-function-detached-frame-resize-observer.html [ Skip ]
-
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/disconnected-image-loading-lazy.html [ Skip ]
