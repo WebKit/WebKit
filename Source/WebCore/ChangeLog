@@ -1,3 +1,13 @@
+2022-05-09  Alan Bujtas  <zalan@apple.com>
+
+        Do not use the cached renderer's parent in handleFragmentedFlowStateChange lambda
+        https://bugs.webkit.org/show_bug.cgi?id=240266
+
+        Reviewed by Simon Fraser.
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::normalizeTreeAfterStyleChange):
+
 2022-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust some viewport behaviors when multitasking mode is enabled

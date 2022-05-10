@@ -591,8 +591,6 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     if (!renderer.parent())
         return;
 
-    auto& parent = *renderer.parent();
-
     bool wasFloating = oldStyle.isFloating();
     bool wasOutOfFlowPositioned = oldStyle.hasOutOfFlowPosition();
     bool isFloating = renderer.style().isFloating();
@@ -604,7 +602,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             return;
         // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
         // trigger insertions into the multicolumn flow.
-        if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow)) {
+        if (auto* enclosingFragmentedFlow = renderer.parent()->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow)) {
             auto movingIntoMulticolumn = [&] {
                 if (wasOutOfFlowPositioned && !isOutOfFlowPositioned)
                     return true;
@@ -643,6 +641,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
         }
     };
 
+    auto& parent = *renderer.parent();
     if (is<RenderBlock>(parent))
         noLongerAffectsParent = (!wasFloating && isFloating) || (!wasOutOfFlowPositioned && isOutOfFlowPositioned);
 
