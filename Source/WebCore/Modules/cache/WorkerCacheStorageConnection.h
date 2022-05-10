@@ -37,7 +37,7 @@ class WorkerLoaderProxy;
 
 class WorkerCacheStorageConnection final : public CacheStorageConnection {
 public:
-    static Ref<WorkerCacheStorageConnection> create(WorkerGlobalScope&);
+    static Ref<WorkerCacheStorageConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerCacheStorageConnection(scope)); }
     ~WorkerCacheStorageConnection();
 
     void clearPendingRequests();
@@ -72,7 +72,7 @@ private:
 
     WorkerGlobalScope& m_scope;
 
-    RefPtr<CacheStorageConnection> m_mainThreadConnection;
+    Ref<CacheStorageConnection> m_mainThreadConnection;
 
     HashMap<uint64_t, DOMCacheEngine::CacheIdentifierCallback> m_openAndRemoveCachePendingRequests;
     HashMap<uint64_t, DOMCacheEngine::CacheInfosCallback> m_retrieveCachesPendingRequests;

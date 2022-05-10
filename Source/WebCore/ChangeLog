@@ -1,3 +1,24 @@
+2022-05-10  Youenn Fablet  <youenn@apple.com>
+
+        Create a stopped CacheStorageConnection for workers in case of detached documents
+        https://bugs.webkit.org/show_bug.cgi?id=240224
+        <rdar://problem/92853663>
+
+        Reviewed by Chris Dumez.
+
+        A worker might not always have a main thread connection as its document may be detached.
+        In that case, we now create a StoppedCacheStorageConnection that will always return Error::Stopped to any callback.
+
+        Covered by existing tests.
+
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::StoppedCacheStorageConnection::create):
+        (WebCore::createMainThreadConnection):
+        (WebCore::WorkerCacheStorageConnection::WorkerCacheStorageConnection):
+        (WebCore::WorkerCacheStorageConnection::~WorkerCacheStorageConnection):
+        (WebCore::WorkerCacheStorageConnection::create): Deleted.
+        * Modules/cache/WorkerCacheStorageConnection.h:
+
 2022-05-09  Jean-Yves Avenard  <jya@apple.com>
 
         com.apple.WebKit.GPU leaks CMBlockBuffer

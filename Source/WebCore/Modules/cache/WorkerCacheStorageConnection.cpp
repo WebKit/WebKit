@@ -31,6 +31,7 @@
 #include "CacheStorageProvider.h"
 #include "ClientOrigin.h"
 #include "Document.h"
+#include "Logging.h"
 #include "Page.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -113,25 +114,43 @@ static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<Cross
     return recordsFromRecordsData(WTFMove(recordsData.value()));
 }
 
-Ref<WorkerCacheStorageConnection> WorkerCacheStorageConnection::create(WorkerGlobalScope& scope)
+class StoppedCacheStorageConnection final : public CacheStorageConnection {
+public:
+    static Ref<CacheStorageConnection> create() { return adoptRef(*new StoppedCacheStorageConnection); }
+
+private:
+    void open(const ClientOrigin&, const String&, DOMCacheEngine::CacheIdentifierCallback&& callback) final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void remove(uint64_t, DOMCacheEngine::CacheIdentifierCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void retrieveRecords(uint64_t, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void batchDeleteOperation(uint64_t, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void batchPutOperation(uint64_t, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void reference(uint64_t)  final { }
+    void dereference(uint64_t)  final { }
+};
+
+static Ref<CacheStorageConnection> createMainThreadConnection(WorkerGlobalScope& scope)
 {
-    auto connection = adoptRef(*new WorkerCacheStorageConnection(scope));
-    callOnMainThreadAndWait([workerThread = Ref { scope.thread() }, connection = connection.ptr()]() mutable {
-        connection->m_mainThreadConnection = workerThread->workerLoaderProxy().createCacheStorageConnection();
+    RefPtr<CacheStorageConnection> mainThreadConnection;
+    callOnMainThreadAndWait([workerThread = Ref { scope.thread() }, &mainThreadConnection]() mutable {
+        mainThreadConnection = workerThread->workerLoaderProxy().createCacheStorageConnection();
+        if (!mainThreadConnection) {
+            RELEASE_LOG_INFO(ServiceWorker, "Creating stopped WorkerCacheStorageConnection");
+            mainThreadConnection = StoppedCacheStorageConnection::create();
+        }
     });
-    ASSERT(connection->m_mainThreadConnection);
-    return connection;
+    return mainThreadConnection.releaseNonNull();
 }
 
 WorkerCacheStorageConnection::WorkerCacheStorageConnection(WorkerGlobalScope& scope)
     : m_scope(scope)
+    , m_mainThreadConnection(createMainThreadConnection(scope))
 {
 }
 
 WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
 {
-    if (m_mainThreadConnection)
-        callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
+    callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
 }
 
 void WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
