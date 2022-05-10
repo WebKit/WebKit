@@ -487,7 +487,10 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
     // This is a bit more lenient on the year string than ES5 specifies:
     // instead of restricting to 4 digits (or 6 digits with mandatory +/-),
     // it accepts any integer value. Consider this an implementation fallback.
+    bool hasNegativeYear = *currentPosition == '-';
     if (!parseInt(currentPosition, &postParsePosition, 10, &year))
+        return nullptr;
+    if (!year && hasNegativeYear)
         return nullptr;
 
     // Check for presence of -MM portion.

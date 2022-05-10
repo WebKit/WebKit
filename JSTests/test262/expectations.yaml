@@ -609,12 +609,6 @@ test/built-ins/Array/prototype/Symbol.unscopables/array-grouping.js:
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
-test/built-ins/Date/parse/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
-test/built-ins/Date/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected SameValue(«-62159440500000», «NaN») to be true'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -1068,15 +1062,6 @@ test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js
 test/built-ins/Temporal/Duration/prototype/total/unit-string-shorthand-string.js:
   default: 'TypeError: options argument is not an object or undefined'
   strict mode: 'TypeError: options argument is not an object or undefined'
-test/built-ins/Temporal/Instant/compare/year-zero.js:
-  default: 'Test262Error: minus zero is invalid extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: minus zero is invalid extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/from/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/equals/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/round/rounding-direction.js:
   default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
   strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
@@ -1092,9 +1077,6 @@ test/built-ins/Temporal/Instant/prototype/round/smallestunit-string-shorthand.js
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
-test/built-ins/Temporal/Instant/prototype/since/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/toJSON/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1119,9 +1101,6 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offs
 test/built-ins/Temporal/Instant/prototype/toString/year-format.js:
   default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
   strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
-test/built-ins/Temporal/Instant/prototype/until/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/compare/argument-cast.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1137,9 +1116,6 @@ test/built-ins/Temporal/PlainTime/compare/leap-second.js:
 test/built-ins/Temporal/PlainTime/compare/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/compare/year-zero.js:
-  default: 'Test262Error: Cannot use minus zero as extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Cannot use minus zero as extended year (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/from/argument-object-leap-second.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1179,9 +1155,6 @@ test/built-ins/Temporal/PlainTime/from/overflow-wrong-type.js:
 test/built-ins/Temporal/PlainTime/from/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/from/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-cast.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1197,9 +1170,6 @@ test/built-ins/Temporal/PlainTime/prototype/equals/leap-second.js:
 test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/equals/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/round/roundto-invalid-string.js:
   default: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: "era" is not a valid value for smallest unit Expected a RangeError but got a TypeError'
@@ -1227,9 +1197,6 @@ test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js:
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js:
   default: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
   strict mode: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-cast.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'
@@ -1245,9 +1212,6 @@ test/built-ins/Temporal/PlainTime/prototype/until/leap-second.js:
 test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
   default: 'TypeError: "hour" field is missing'
   strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/until/year-zero.js:
-  default: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: PlainDateTime'
   strict mode: 'Test262Error: PlainDateTime'

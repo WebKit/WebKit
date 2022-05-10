@@ -862,6 +862,8 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
                 return std::nullopt;
         }
         year = parseDecimalInt32(buffer.position(), 6) * yearFactor;
+        if (!year && yearFactor < 0)
+            return std::nullopt;
         buffer.advanceBy(6);
     } else {
         if (buffer.lengthRemaining() < 4)
