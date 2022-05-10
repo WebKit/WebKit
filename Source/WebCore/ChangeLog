@@ -1,3 +1,16 @@
+2022-05-09  Rob Buis  <rbuis@igalia.com>
+
+        Check if node is connected after calling mergeWithNeighboringLists
+        https://bugs.webkit.org/show_bug.cgi?id=240234
+
+        Reviewed by Wenson Hsieh.
+
+        Check if node is connected after calling mergeWithNeighboringLists since
+        DOM mutations can change the DOM tree.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+
 2022-05-09  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Don't index perspective/transform-origin-* in computed styles
