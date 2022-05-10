@@ -2105,6 +2105,10 @@ public:
     void shouldAllowImageMarkup(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+    void setIsInMultitaskingMode(bool);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

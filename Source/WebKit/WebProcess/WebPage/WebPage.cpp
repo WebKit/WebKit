@@ -542,6 +542,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if HAVE(TOUCH_BAR)
     , m_requiresUserActionForEditingControlsManager(parameters.requiresUserActionForEditingControlsManager)
 #endif
+#if HAVE(MULTITASKING_MODE)
+    , m_isInMultitaskingMode(parameters.isInMultitaskingMode)
+#endif
 #if ENABLE(META_VIEWPORT)
     , m_forceAlwaysUserScalable(parameters.ignoresViewportScaleLimits)
 #endif
@@ -6702,6 +6705,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     
     bool viewportChanged = false;
 
+    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(usesMultitaskingModeViewportBehaviors());
+
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
     if (m_viewportConfiguration.setContentsSize(coreFrame->view()->contentsSize()))
         viewportChanged = true;
@@ -8111,6 +8116,19 @@ void WebPage::shouldAllowImageMarkup(const ElementContext& context, CompletionHa
 }
 
 #endif
+
+#if HAVE(MULTITASKING_MODE)
+
+void WebPage::setIsInMultitaskingMode(bool value)
+{
+    if (m_isInMultitaskingMode == value)
+        return;
+
+    m_isInMultitaskingMode = value;
+    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(usesMultitaskingModeViewportBehaviors());
+}
+
+#endif // HAVE(MULTITASKING_MODE)
 
 } // namespace WebKit
 

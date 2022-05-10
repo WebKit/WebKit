@@ -190,6 +190,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << requiresUserActionForEditingControlsManager;
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+    encoder << isInMultitaskingMode;
+#endif
+
     encoder << contentSecurityPolicyModeForExtension;
 }
 
@@ -598,6 +602,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
 #if HAVE(TOUCH_BAR)
     if (!decoder.decode(parameters.requiresUserActionForEditingControlsManager))
+        return std::nullopt;
+#endif
+
+#if HAVE(MULTITASKING_MODE)
+    if (!decoder.decode(parameters.isInMultitaskingMode))
         return std::nullopt;
 #endif
 

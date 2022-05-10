@@ -688,4 +688,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ModelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
     ModelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, WebCore::ResourceError error)
 #endif
+
+#if HAVE(MULTITASKING_MODE)
+    SetIsInMultitaskingMode(bool isInMultitaskingMode)
+#endif
 }

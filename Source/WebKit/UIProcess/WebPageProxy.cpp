@@ -8514,6 +8514,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.requiresUserActionForEditingControlsManager = m_configuration->requiresUserActionForEditingControlsManager();
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+    parameters.isInMultitaskingMode = pageClient().isInMultitaskingMode();
+#endif
+
     return parameters;
 }
 
@@ -11387,6 +11391,15 @@ void WebPageProxy::cancelVideoExtractionInElementFullScreen()
 void WebPageProxy::shouldAllowImageMarkup(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
 {
     sendWithAsyncReply(Messages::WebPage::ShouldAllowImageMarkup(context), WTFMove(completion));
+}
+
+#endif
+
+#if HAVE(MULTITASKING_MODE)
+
+void WebPageProxy::setIsInMultitaskingMode(bool isInMultitaskingMode)
+{
+    send(Messages::WebPage::SetIsInMultitaskingMode(isInMultitaskingMode));
 }
 
 #endif

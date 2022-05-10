@@ -1542,6 +1542,10 @@ public:
     void shouldAllowImageMarkup(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&) const;
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+    void setIsInMultitaskingMode(bool);
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1790,6 +1794,10 @@ private:
 #endif
 
     void endPrintingImmediately();
+
+#if ENABLE(META_VIEWPORT)
+    bool usesMultitaskingModeViewportBehaviors() const;
+#endif
 
 #if HAVE(APP_ACCENT_COLORS)
     void setAccentColor(WebCore::Color);
@@ -2257,6 +2265,10 @@ private:
     bool m_isNeverRichlyEditableForTouchBar { false };
 #endif
     OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
+
+#if HAVE(MULTITASKING_MODE)
+    bool m_isInMultitaskingMode { false };
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
     bool m_waitingForContextMenuToShow { false };

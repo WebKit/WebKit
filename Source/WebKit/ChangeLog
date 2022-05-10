@@ -1,3 +1,78 @@
+2022-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust some viewport behaviors when multitasking mode is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=240151
+        rdar://87157773
+
+        Reviewed by Tim Horton.
+
+        Make some adjustments to viewport behaviors when multitasking mode is enabled. See the comments below for more
+        details. There are no changes in behavior when multitasking mode is disabled; tests for the new behaviors in
+        multitasking mode will be added in a subsequent patch.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Add plumbing to inform the web process when "multitasking mode" state changes; we use this bit in WebPage to
+        determine whether or not we should use multitasking mode viewport behaviors (see below).
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _registerForNotifications]):
+        (-[WKWebView didMoveToWindow]):
+        (-[WKWebView _multitaskingModeDidChange:]):
+
+        Send IPC to WebPage in these two places, to keep "multitasking mode" state in sync with the native view.
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+
+        Make a minor adjustment here to ignore `oldWebViewWidthInContentViewCoordinates` when computing a target scale
+        to zoom to when performing animated resize, in multitasking mode. This is required to prevent us from zooming
+        in excessively when the width of the view increases, since we'd otherwise attempt to keep the same content in
+        the page visible by zooming in (for instance, if an image covers most of the visual viewport at a lower view
+        width, this `min()` logic would cause us to zoom in, such that the image would still cover most of the viewport
+        at a larger width). This behavior is undesirable in multitasking mode.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setIsInMultitaskingMode):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::setIsInMultitaskingMode):
+
+        Add plumbing to set the `m_isInMultitaskingMode` flag on WebPage, and update the viewport configuration flag to
+        prefer horizontal scrolling below 980pt.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::scaleAfterViewportWidthChange):
+
+        Refactor a bit of code here (without changing any behaviors), to make it a bit clearer:
+
+        -   Rename `userHasChangedPageScaleFactor` to `scaleToFitContent` to better describe how this flag affects the
+            adjusted target scale during dynamic resize.
+
+        -   Make the log messages specific to both branches, and also log the adjusted viewport scale instead of the
+            (currently unused) given `scale` in the non-`scaleToFitContent` codepath.
+
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
+        Make another "multitasking mode viewport behavior" adjustment here by maintaining the initial scale (only if the
+        viewport was already at initial scale) when performing dynamic viewport size updates. By default, we currently
+        adjust the scale such that the same content is still visible at the new viewport size; however, when allowing
+        horizontal scrolling, this causes us to zoom in excessively when making the window width larger. Instead, when
+        multitasking mode is enabled, we should try to preserve initial scale when changing window size, such that only
+        the horizontal scroll amount changes.
+
+        (WebKit::WebPage::usesMultitaskingModeViewportBehaviors const):
+
+        Add a helper method to encapsulate whether or not multitasking mode viewport behaviors should be used; this
+        should be true only when both desktop-class viewport behaviors are active, *and* multitasking mode is also
+        active.
+
 2022-05-09  Ben Nham  <nham@apple.com>
 
         Allow log streaming from webpushd

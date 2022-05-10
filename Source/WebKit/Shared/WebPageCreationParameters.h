@@ -266,6 +266,8 @@ struct WebPageCreationParameters {
     bool requiresUserActionForEditingControlsManager { false };
 #endif
 
+    bool isInMultitaskingMode { false };
+
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 };
 

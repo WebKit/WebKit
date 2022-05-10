@@ -1,3 +1,26 @@
+2022-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust some viewport behaviors when multitasking mode is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=240151
+        rdar://87157773
+
+        Reviewed by Tim Horton.
+
+        Add a new ViewportConfiguration flag to prefer horizontal scrolling over shrinking to fit when the view layout
+        size falls under the current "default desktop webpage" of 980pt. See WebKit changes for more details.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+        (WebCore::ViewportConfiguration::webpageParameters):
+        (WebCore::ViewportConfiguration::imageDocumentParameters):
+
+        Pull the magic value representing the "assumed width of most desktop webpages" (980) out into a named constant,
+        `defaultDesktopViewportWidth`, so that we can consult it when computing the initial scale.
+
+        (WebCore::ViewportConfiguration::description const):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::setPrefersHorizontalScrollingBelowDesktopViewportWidths):
+
 2022-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Const-ify Node::willRespondTo*Events()
