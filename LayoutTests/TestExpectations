@@ -5074,23 +5074,15 @@ webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-tra
 webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html [ ImageOnlyFailure ]
 webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003.html [ ImageOnlyFailure ]
 
-# CSS motion path that depends on ray(), currently not implemented.
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-001.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-002.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-003.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-004.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-005.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-006.html [ ImageOnlyFailure ]
+# CSS motion path ray test failing due to getting wrong size from containing block.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-008.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-009.html [ ImageOnlyFailure ]
+
+# CSS motion path needs to implement contain for ray: https://bugs.webkit.org/show_bug.cgi?id=240259.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-001.html [ ImageOnlyFailure ]
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-002.html [ ImageOnlyFailure ]
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html [ ImageOnlyFailure ]
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ ImageOnlyFailure ]
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-005.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFailure ]
 
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]

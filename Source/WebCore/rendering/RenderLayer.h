@@ -509,6 +509,7 @@ public:
         return m_enclosingPaginationLayer.get();
     }
 
+    void setReferenceBoxForPathOperations();
     void updateTransform();
     
 #if ENABLE(CSS_COMPOSITING)

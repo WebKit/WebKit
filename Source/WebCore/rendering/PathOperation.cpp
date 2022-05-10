@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PathOperation.h"
 
+#include "GeometryUtilities.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -48,4 +49,36 @@ const SVGElement* ReferencePathOperation::element() const
 {
     return m_element.get();
 }
+
+double RayPathOperation::lengthForPath() const
+{
+    auto boundingBox = m_containingBlockBoundingRect;
+    auto distances = distanceOfPointToSidesOfRect(boundingBox, m_position);
+    
+    switch (m_size) {
+    case Size::ClosestSide:
+        return std::min( { distances.top(), distances.bottom(), distances.left(), distances.right() } );
+    case Size::FarthestSide:
+        return std::max( { distances.top(), distances.bottom(), distances.left(), distances.right() } );
+    case Size::FarthestCorner:
+        return std::sqrt(std::pow(std::max(distances.left(), distances.right()), 2) + std::pow(std::max(distances.top(), distances.bottom()), 2));
+    case Size::ClosestCorner:
+        return std::sqrt(std::pow(std::min(distances.left(), distances.right()), 2) + std::pow(std::min(distances.top(), distances.bottom()), 2));
+    case Size::Sides:
+        return lengthOfRayIntersectionWithBoundingBox(boundingBox, std::make_pair(m_position, m_angle));
+    }
+}
+
+const Path RayPathOperation::pathForReferenceRect() const
+{
+    Path path;
+    if (m_containingBlockBoundingRect.isZero())
+        return path;
+    auto length = lengthForPath();
+    auto radians = deg2rad(toPositiveAngle(m_angle) - 90);
+    auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
+    path.addLineTo(point);
+    return path;
+}
+
 } // namespace WebCore

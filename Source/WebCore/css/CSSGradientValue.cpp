@@ -30,6 +30,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "ColorInterpolation.h"
+#include "GeometryUtilities.h"
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
@@ -815,9 +816,7 @@ static void endPointsFromAngle(float angleDeg, const FloatSize& size, FloatPoint
     if (type == CSSPrefixedLinearGradient)
         angleDeg = 90 - angleDeg;
 
-    angleDeg = fmodf(angleDeg, 360);
-    if (angleDeg < 0)
-        angleDeg += 360;
+    angleDeg = toPositiveAngle(angleDeg);
 
     if (!angleDeg) {
         firstPoint.set(0, size.height());

@@ -268,4 +268,74 @@ RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad& quad,
     return { center, { width, height }, angle };
 }
 
+float toPositiveAngle(float angle)
+{
+    angle = fmod(angle, 360);
+    while (angle < 0)
+        angle += 360.0;
+    return angle;
+}
+
+// Compute acute angle from vertical axis
+static float toRelatedAcuteAngle(float angle)
+{
+    angle = toPositiveAngle(angle);
+    if (angle < 90)
+        return angle;
+    if (angle > 90 || angle < 180)
+        return std::abs(180 - angle);
+    return std::abs(360 - angle);
+}
+
+RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect& boundingRect, const FloatPoint& position)
+{
+    // Compute distance to each side of the containing box
+    double top = std::abs(position.y());
+    double bottom = std::abs(position.y() - boundingRect.height());
+    double left = std::abs(position.x());
+    double right = std::abs(position.x() - boundingRect.width());
+    return RectEdges<double>(top, right, bottom, left);
+}
+
+double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+{
+    auto length = lengthOfPointToSideOfIntersection(boundingRect, ray);
+    auto angleOfTriangle = angleOfPointToSideOfIntersection(boundingRect, ray);
+    // Given a length and angle of a right triangle, calculate the hypotenuse, which corresponds to
+    // the length from the given point to the intersecting point on the box
+    return length / cos(deg2rad(angleOfTriangle));
+}
+
+// Get the side of box the ray intersects with
+static BoxSide intersectionSide(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+{
+    auto position = ray.first;
+    auto angleInRadians = deg2rad(ray.second);
+    auto distances = distanceOfPointToSidesOfRect(boundingRect, position);
+    // Get possible intersection sides
+    auto s1 = cos(angleInRadians) >= 0 ? distances.top() : distances.bottom();
+    auto s2 = sin(angleInRadians) >= 0 ? distances.right() : distances.left();
+    auto vertical = cos(angleInRadians) >= 0 ? BoxSide::Top : BoxSide::Bottom;
+    auto horizontal = sin(angleInRadians) >= 0 ? BoxSide::Right : BoxSide::Left;
+    auto acuteAngle = deg2rad(toRelatedAcuteAngle(ray.second));
+    return sin(acuteAngle) * s1  > cos(acuteAngle) * s2 ? horizontal : vertical;
+}
+
+double lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+{
+    auto position = ray.first;
+    if (position.x() < 0 || position.x() > boundingRect.width() || position.y() < 0 || position.y() > boundingRect.height())
+        return 0;
+    auto distances = distanceOfPointToSidesOfRect(boundingRect, position);
+    return distances.at(intersectionSide(boundingRect, ray));
+}
+
+float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+{
+    auto angle = ray.second;
+    auto side = intersectionSide(boundingRect, ray);
+    angle = toRelatedAcuteAngle(toPositiveAngle(angle));
+    return side == BoxSide::Top || side == BoxSide::Bottom ? angle : 90 - angle;
+}
+
 }

@@ -196,6 +196,17 @@ public:
         return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
     }
 
+    const Path pathForReferenceRect() const;
+    double lengthForPath() const;
+    
+    void setContainingBlockReferenceRect(const FloatRect& boundingRect)
+    {
+        m_containingBlockBoundingRect = boundingRect;
+    }
+    void setStartingPosition(const FloatPoint& position)
+    {
+        m_position = position;
+    }
 private:
     bool operator==(const PathOperation& other) const override
     {
@@ -216,9 +227,11 @@ private:
     {
     }
 
-    float m_angle;
+    float m_angle { 0 };
     Size m_size;
-    bool m_isContaining;
+    bool m_isContaining { false };
+    FloatRect m_containingBlockBoundingRect;
+    FloatPoint m_position;
 };
 
 } // namespace WebCore

@@ -1569,8 +1569,7 @@ static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const 
     case PathOperation::Box:
         return downcast<BoxPathOperation>(operation).getPath();
     case PathOperation::Ray:
-        // FIXME: implement ray- https://bugs.webkit.org/show_bug.cgi?id=233344
-        return std::nullopt;
+        return downcast<RayPathOperation>(operation).pathForReferenceRect();
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

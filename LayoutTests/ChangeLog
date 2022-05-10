@@ -1,3 +1,12 @@
+2022-05-09  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Support ray() shape in offset-path
+        https://bugs.webkit.org/show_bug.cgi?id=233344
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2022-05-09  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS :modal pseudo class

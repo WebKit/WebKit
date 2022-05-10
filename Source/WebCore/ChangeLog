@@ -1,3 +1,37 @@
+2022-05-09  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Support ray() shape in offset-path
+        https://bugs.webkit.org/show_bug.cgi?id=233344
+
+        Reviewed by Simon Fraser.
+
+        Add support for rendering ray path. Involves getting containing block and offset
+        of the element from the containing block. Using the size of the containing block
+        and offset, calculate the length of the ray and create a Line path using the length
+        and angle. Calculating closest/farthest-side and closest/farthest-corner are simple 
+        but calculating side requires some explanation. First, we get the two possible sides of 
+        the containing block the ray could be intersecting with, based on the angle. To calculate 
+        which side is being intersected, if tan(theta) * top/bottom is outside of the containing 
+        block, this means that the ray is intersecting with the other side. Finally, we calculate 
+        the acute angle based on which side we intersected with. Using the length and angle, we 
+        calculate the length of the hypotenuse, which corresponds with the length of the start point
+        of the ray to its intersection with a side of the containing block. Test 7 is still failing 
+        due to getting incorrect width of containing block (doesn't happen when animating the path
+        for some reason). Will implement contain in another patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/PathOperation.cpp:
+        (WebCore::toPositiveAngle):
+        (WebCore::RayPathOperation::getLengthForPath const):
+        (WebCore::RayPathOperation::pathForReferenceRect const):
+        * rendering/PathOperation.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setReferenceBoxForPathOperations):
+        (WebCore::RenderLayer::updateTransform):
+        * rendering/RenderLayer.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::getPathFromPathOperation):
+
 2022-05-09  Alan Bujtas  <zalan@apple.com>
 
         Do not use the cached renderer's parent in handleFragmentedFlowStateChange lambda
