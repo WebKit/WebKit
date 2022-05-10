@@ -29,8 +29,8 @@ function xhrPromise(url) {
     });
 }
 
-var origin = new URL("<?php echo strpos(WP_HOST, "webkit.org") !== false ? "https://svn.webkit.org" : WP_HOME; ?>/");
-var loadCSSProperties = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/css/CSSProperties.json", origin));
+var origin = new URL("https://raw.githubusercontent.com/");
+var loadCSSProperties = xhrPromise(new URL("/WebKit/WebKit/main/Source/WebCore/css/CSSProperties.json", origin));
 
 </script>
 

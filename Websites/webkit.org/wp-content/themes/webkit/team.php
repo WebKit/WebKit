@@ -118,7 +118,7 @@ li em {
 
 <script>
 
-var svnTrunkUrl = 'https://svn.webkit.org/repository/webkit/trunk/';
+var gitHubMainURL = 'https://raw.githubusercontent.com/WebKit/WebKit/main/';
 var domainAffiliations = {
     'apple.com': 'Apple',
     'adobe.com': 'Adobe',
@@ -263,7 +263,7 @@ xhr.onload = function () {
     populateContributorList(contributors, 'contributor');
 };
 xhr.onerror = function () { document.getElementById('team').textContent = 'There was an issue loading data for the WebKit Team. not obtain contributors.json'; };
-xhr.open('GET', svnTrunkUrl + 'metadata/contributors.json');
+xhr.open('GET', gitHubMainURL + 'metadata/contributors.json');
 xhr.send();
 
 </script>

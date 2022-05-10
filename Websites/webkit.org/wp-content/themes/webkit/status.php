@@ -28,9 +28,9 @@ function xhrPromise(url) {
         xhrRequest.send();
     });
 }
-var origin = new URL("<?php echo strpos(WP_HOST, "webkit.org") !== false ? "https://svn.webkit.org" : WP_HOME; ?>/");
-var loadJavaScriptCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/JavaScriptCore/features.json", origin));
-var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/features.json", origin));
+var origin = new URL("https://raw.githubusercontent.com/");
+var loadJavaScriptCoreFeatures = xhrPromise(new URL("/WebKit/WebKit/main/Source/JavaScriptCore/features.json", origin));
+var loadWebCoreFeatures = xhrPromise(new URL("/WebKit/WebKit/main/Source/WebCore/features.json", origin));
 </script>
 
 <style>

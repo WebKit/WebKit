@@ -1,3 +1,15 @@
+2022-05-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit.org] Replace svn.webkit.org with GitHub
+        https://bugs.webkit.org/show_bug.cgi?id=240093
+        <rdar://problem/92760014>
+
+        Reviewed by Ryan Haddad, Aakash Jain and Dewei Zhu.
+
+        * wp-content/themes/webkit/css-status.php: Replace svn.webkit.org with raw.githubusercontent.com.
+        * wp-content/themes/webkit/status.php: Ditto.
+        * wp-content/themes/webkit/team.php: Ditto.
+
 2022-04-15  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit.org] Remove leading r from archive revisions (Follow-up fix)
