@@ -215,7 +215,7 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
-StyleRule::StyleRule(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
+StyleRule::StyleRule(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
     : StyleRuleBase(StyleRuleType::Style, hasDocumentSecurityOrigin)
     , m_properties(WTFMove(properties))
     , m_selectorList(WTFMove(selectors))
@@ -233,7 +233,7 @@ StyleRule::StyleRule(const StyleRule& o)
 
 StyleRule::~StyleRule() = default;
 
-Ref<StyleRule> StyleRule::create(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
+Ref<StyleRule> StyleRule::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
 {
     return adoptRef(*new StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors)));
 }
@@ -241,11 +241,6 @@ Ref<StyleRule> StyleRule::create(Ref<StylePropertiesBase>&& properties, bool has
 Ref<StyleRule> StyleRule::copy() const
 {
     return adoptRef(*new StyleRule(*this));
-}
-
-const StyleProperties& StyleRule::properties() const
-{
-    return downcast<StyleProperties>(m_properties.get());
 }
 
 MutableStyleProperties& StyleRule::mutableProperties()

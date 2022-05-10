@@ -96,13 +96,13 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 class StyleRule final : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
-    static Ref<StyleRule> create(Ref<StylePropertiesBase>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     Ref<StyleRule> copy() const;
     ~StyleRule();
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
 
-    const StyleProperties& properties() const;
+    const StyleProperties& properties() const { return m_properties.get(); }
     MutableStyleProperties& mutableProperties();
 
     bool isSplitRule() const { return m_isSplitRule; }
@@ -124,12 +124,12 @@ public:
     static unsigned averageSizeInBytes();
 
 private:
-    StyleRule(Ref<StylePropertiesBase>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
 
     static Ref<StyleRule> createForSplitting(const Vector<const CSSSelector*>&, Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin);
 
-    mutable Ref<StylePropertiesBase> m_properties;
+    mutable Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
 
 #if ENABLE(CSS_SELECTOR_JIT)

@@ -1,3 +1,29 @@
+2022-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the unneeded StylePropertiesBase after Bug 240244
+        https://bugs.webkit.org/show_bug.cgi?id=240282
+
+        Reviewed by Antti Koivisto.
+
+        Now that we have removed the abandoned CSSDeferredParser, we no longer need the
+        StylePropertiesBase class. This patch removes this layer to simplify the code.
+
+        * css/StyleProperties.h:
+        (WebCore::StyleProperties::type const):
+        (WebCore::StyleProperties::cssParserMode const):
+        (WebCore::StyleProperties::StyleProperties):
+        (WebCore::StyleProperties::deref const):
+        (isType):
+        (WebCore::StylePropertiesBase::type const): Deleted.
+        (WebCore::StylePropertiesBase::cssParserMode const): Deleted.
+        (WebCore::StylePropertiesBase::StylePropertiesBase): Deleted.
+        (WebCore::StylePropertiesBase::deref const): Deleted.
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::properties const): Deleted.
+        * css/StyleRule.h:
+
 2022-05-10  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [Filters] FilterImages can be leaked

@@ -45,39 +45,15 @@ class StyleSheetContents;
 
 enum StylePropertiesType { ImmutablePropertiesType, MutablePropertiesType };
 
-class StylePropertiesBase : public RefCounted<StylePropertiesBase> {
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleProperties);
+class StyleProperties : public RefCounted<StyleProperties> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleProperties);
+    friend class PropertyReference;
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
     void deref() const;
 
-    StylePropertiesType type() const { return static_cast<StylePropertiesType>(m_type); }
-
-    CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
-
-protected:
-    StylePropertiesBase(CSSParserMode cssParserMode, StylePropertiesType type)
-        : m_cssParserMode(cssParserMode)
-        , m_type(type)
-        , m_arraySize(0)
-    { }
-
-    StylePropertiesBase(CSSParserMode cssParserMode, unsigned immutableArraySize)
-        : m_cssParserMode(cssParserMode)
-        , m_type(ImmutablePropertiesType)
-        , m_arraySize(immutableArraySize)
-    { }
-
-    unsigned m_cssParserMode : 3;
-    mutable unsigned m_type : 2;
-    unsigned m_arraySize : 27;
-};
-
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleProperties);
-class StyleProperties : public StylePropertiesBase {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleProperties);
-    friend class PropertyReference;
-public:
     class PropertyReference {
     public:
         PropertyReference(const StylePropertyMetadata& metadata, const CSSValue* value)
@@ -107,6 +83,8 @@ public:
         const CSSValue* m_value;
     };
 
+    StylePropertiesType type() const { return static_cast<StylePropertiesType>(m_type); }
+
     unsigned propertyCount() const;
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned) const;
@@ -126,6 +104,8 @@ public:
     bool customPropertyIsImportant(const String& propertyName) const;
 
     Ref<MutableStyleProperties> copyBlockProperties() const;
+
+    CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     WEBCORE_EXPORT Ref<MutableStyleProperties> mutableCopy() const;
     Ref<ImmutableStyleProperties> immutableCopyIfNeeded() const;
@@ -150,15 +130,23 @@ public:
 
 protected:
     StyleProperties(CSSParserMode cssParserMode, StylePropertiesType type)
-        : StylePropertiesBase(cssParserMode, type)
+        : m_cssParserMode(cssParserMode)
+        , m_type(type)
+        , m_arraySize(0)
     { }
 
     StyleProperties(CSSParserMode cssParserMode, unsigned immutableArraySize)
-        : StylePropertiesBase(cssParserMode, immutableArraySize)
+        : m_cssParserMode(cssParserMode)
+        , m_type(ImmutablePropertiesType)
+        , m_arraySize(immutableArraySize)
     { }
 
     int findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(const String& propertyName) const;
+
+    unsigned m_cssParserMode : 3;
+    mutable unsigned m_type : 2;
+    unsigned m_arraySize : 27;
 
 private:
     String getGridShorthandValue(const StylePropertyShorthand&) const;
@@ -305,7 +293,7 @@ inline unsigned StyleProperties::propertyCount() const
     return downcast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
-inline void StylePropertiesBase::deref() const
+inline void StyleProperties::deref() const
 {
     if (!derefBase())
         return;
@@ -314,6 +302,8 @@ inline void StylePropertiesBase::deref() const
         delete downcast<MutableStyleProperties>(this);
     else if (is<ImmutableStyleProperties>(*this))
         delete downcast<ImmutableStyleProperties>(this);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
@@ -332,15 +322,11 @@ inline int StyleProperties::findCustomPropertyIndex(const String& propertyName) 
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleProperties)
-    static bool isType(const WebCore::StylePropertiesBase&) { return true; }
-SPECIALIZE_TYPE_TRAITS_END()
-
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MutableStyleProperties)
-    static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() == WebCore::MutablePropertiesType; }
+    static bool isType(const WebCore::StyleProperties& set) { return set.type() == WebCore::MutablePropertiesType; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
-    static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() == WebCore::ImmutablePropertiesType; }
+    static bool isType(const WebCore::StyleProperties& set) { return set.type() == WebCore::ImmutablePropertiesType; }
 SPECIALIZE_TYPE_TRAITS_END()
 
