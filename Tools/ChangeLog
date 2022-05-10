@@ -1,5 +1,16 @@
 2022-05-10  Jonathan Bedard  <jbedard@apple.com>
 
+        Patch is merged via merge-queue, but bugzilla is not closed
+        https://bugs.webkit.org/show_bug.cgi?id=240155
+        <rdar://problem/93045114>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (UpdatePullRequest): Allow subsequent steps to run if we fail to update a PR.
+
+2022-05-10  Jonathan Bedard  <jbedard@apple.com>
+
         [GitHub] `git commit` generates a nicely formatted commit log but is missing bug information
         https://bugs.webkit.org/show_bug.cgi?id=240254
         <rdar://93033766 >

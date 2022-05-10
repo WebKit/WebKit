@@ -5121,7 +5121,7 @@ class PushPullRequestBranch(shell.ShellCommand):
 
 class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     name = 'update-pull-request'
-    haltOnFailure = True
+    haltOnFailure = False
     command = ['git', 'log', '-1', '--no-decorate']
     ESCAPE_TABLE = {
         '"': '&quot;',
