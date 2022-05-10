@@ -1004,9 +1004,83 @@ or any function called by GenerateIsReachable cannot have thread unsafe side eff
 such as incrementing or decrementing the reference count of a `RefCounted` object
 or creating a new `WeakPtr` from `CanMakeWeakPtr` since these WTF classes' mutation operations are not thread safe.
 
-FIXME: Discuss Active DOM objects
+## Active DOM Objects
 
-## Referencing Counting of DOM Nodes
+Visit children and opaque roots are great way to express lifecycle relationships between JS wrappers
+but there are cases in which a JS wrapper needs to be kept alive without any relation to other objects.
+Consider [`XMLHttpRequest`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest).
+In the following example, JavaScript loses all references to the `XMLHttpRequest` object and its event listener
+but when a new response gets received, an event will be dispatched on the object,
+re-introducing a new JavaScript reference to the object.
+That is, the object survives garbage collection's
+[mark and sweep cycles](https://en.wikipedia.org/wiki/Tracing_garbage_collection#Basic_algorithm)
+without having any ties to other ["root" objects](https://en.wikipedia.org/wiki/Tracing_garbage_collection#Reachability_of_an_object).
+
+```js
+function fetchURL(url, callback)
+{
+    const request = new XMLHttpRequest();
+    request.addEventListener("load", callback);
+    request.open("GET", url);
+    request.send();
+}
+```
+
+In WebKit, we consider such an object to have a *pending activity*.
+Expressing the presence of such a pending activity is a primary use case of
+[`ActiveDOMObject`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h).
+
+By making an object inherit from [`ActiveDOMObject`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h)
+and [annotating IDL as such](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/xml/XMLHttpRequest.idl#L42),
+WebKit will [automatically generate `isReachableFromOpaqueRoot` function](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/bindings/scripts/CodeGeneratorJS.pm#L5029)
+which returns true whenever `ActiveDOMObject::hasPendingActivity` returns true
+even though the garbage collector may not have encountered any particular opaque root to speak of in this instance.
+
+In the case of [`XMLHttpRequest`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/xml/XMLHttpRequest.h),
+`hasPendingActivity` [will return true](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/xml/XMLHttpRequest.cpp#L1195)
+so long as there is still an active network activity associated with the object.
+Once the resource is fully fetched or failed, it ceases to have a pending activity.
+This way, JS wrapper of `XMLHttpRequest` is kept alive so long as there is an active network activity.
+
+There is one other related use case of active DOM objects,
+and that's when a document enters the [back-forward cache](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/history/BackForwardCache.h)
+and when the entire [page](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/Page.h) has to pause
+for [other reasons](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L45).
+
+When this happens, each active DOM object associated with the document
+[gets suspended](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L70).
+Each active DOM object can use this opportunity to prepare itself to pause whatever pending activity;
+for example, `XMLHttpRequest` [will stop dispatching `progress` event](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/xml/XMLHttpRequest.cpp#L1157)
+and media elements [will stop playback](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/html/HTMLMediaElement.cpp#L6008).
+When a document gets out of the back-forward cache or resumes for other reasons,
+each active DOM object [gets resumed](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L71).
+Here, each object has the opportunity to resurrect the previously pending activity once again.
+
+### Creating a Pending Activity
+
+There are a few ways to create a pending activity on an [active DOM objects](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h).
+
+When the relevant Web standards says to [queue a task](https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-task) to do some work,
+one of the following member functions of [`ActiveDOMObject`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h) should be used:
+ * [`queueTaskKeepingObjectAlive`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L106)
+ * [`queueCancellableTaskKeepingObjectAlive`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L114)
+ * [`queueTaskToDispatchEvent`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L124)
+ * [`queueCancellableTaskToDispatchEvent`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L130)
+These functions will automatically create a pending activity until a newly enqueued task is executed.
+
+Alternatively, [`makePendingActivity`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L97)
+can be used to create a [pending activity token](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/ActiveDOMObject.h#L78)
+for an active DOM object.
+This will keep a pending activity on the active DOM object until all tokens are dead.
+
+Finally, when there is a complex condition under which a pending activity exists,
+an active DOM object can override [`virtualHasPendingActivity`](https://github.com/WebKit/WebKit/blob/64cdede660d9eaea128fd151281f4715851c4fe2/Source/WebCore/dom/ActiveDOMObject.h#L147)
+member function and return true whilst such a condition holds.
+Note that `virtualHasPendingActivity` should return true so long as there is a possibility of dispatching an event or invoke JavaScript in any way in the future.
+In other words, a pending activity should exist while an object is doing some work in C++ well before any event dispatching is scheduled.
+Anytime there is no pending activity, JS wrappers of the object can get deleted by the garbage collector.
+
+## Reference Counting of DOM Nodes
 
 [`Node`](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h) is a reference counted object but with a twist.
 It has a [separate boolean flag](https://github.com/WebKit/WebKit/blob/297c01a143f649b34544f0cb7a555decf6ecbbfd/Source/WebCore/dom/Node.h#L832)
