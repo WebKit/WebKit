@@ -7878,18 +7878,23 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent
 {
-    if (![self respondsToSelector:@selector(_dataOwnerForPaste)]) {
-        // FIXME: Remove this once the relevant bots have fix for <rdar://problem/73852335>.
+    auto specifiedType = [&] {
+        if (intent == WebKit::PasteboardAccessIntent::Read)
+            return coreDataOwnerType(self._dataOwnerForPaste);
+
+        if (intent == WebKit::PasteboardAccessIntent::Write)
+            return coreDataOwnerType(self._dataOwnerForCopy);
+
+        ASSERT_NOT_REACHED();
         return WebCore::DataOwnerType::Undefined;
-    }
+    }();
 
-    if (intent == WebKit::PasteboardAccessIntent::Read)
-        return coreDataOwnerType(self._dataOwnerForPaste);
+    if (specifiedType != WebCore::DataOwnerType::Undefined)
+        return specifiedType;
 
-    if (intent == WebKit::PasteboardAccessIntent::Write)
-        return coreDataOwnerType(self._dataOwnerForCopy);
+    if ([[PAL::getMCProfileConnectionClass() sharedConnection] isURLManaged:[_webView URL]])
+        return WebCore::DataOwnerType::Enterprise;
 
-    ASSERT_NOT_REACHED();
     return WebCore::DataOwnerType::Undefined;
 }
 

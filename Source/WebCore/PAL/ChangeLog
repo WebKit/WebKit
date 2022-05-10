@@ -1,3 +1,62 @@
+2022-05-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r292888. rdar://problem/80059355
+
+    [iOS] [WK2] Managed pasteboard should function for all managed domains
+    https://bugs.webkit.org/show_bug.cgi?id=239319
+    rdar://80059355
+    
+    Reviewed by Kate Cheney.
+    
+    Source/WebCore/PAL:
+    
+    Add an SPI method on `MCProfileConnection`.
+    
+    * pal/spi/ios/ManagedConfigurationSPI.h:
+    
+    Source/WebKit:
+    
+    Unless a WebKit client has specified a data owner for the web view that is not _UIDataOwnerUndefined, fall back
+    to _UIDataOwnerEnterprise when the current domain of the WKWebView is managed (that is, `-[MCProfileConnection
+    isURLManaged:]` returns YES for the web view's current URL). This allows managed pasteboard to work for all
+    WebKit clients, if the current URL is managed.
+    
+    Test: UIPasteboardTests.PerformAsDataOwnerWithManagedURL
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    
+    Drive-by fix: move the staged declarations of `-_dataOwnerForCopy` and `-_dataOwnerForPaste` out of the IPI
+    section, and into the non-internal SDK section.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _dataOwnerForPasteboard:]):
+    
+    Tools:
+    
+    Add a new API test to verify that we fall back to consulting `-[MCProfileConnection isURLManaged:]` when
+    determining the data owner for copy and paste, unless a data owner is already explicitly set on a view in the
+    responder chain (specifically, the WKWebView).
+    
+    * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+    (+[TestUIPasteboard _performAsDataOwner:block:]):
+    (-[TestMCProfileConnection isURLManaged:]):
+    (TestWebKitAPI::TEST):
+    
+    Canonical link: https://commits.webkit.org/249658@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292888 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] [WK2] Managed pasteboard should function for all managed domains
+            https://bugs.webkit.org/show_bug.cgi?id=239319
+            rdar://80059355
+
+            Reviewed by Kate Cheney.
+
+            Add an SPI method on `MCProfileConnection`.
+
+            * pal/spi/ios/ManagedConfigurationSPI.h:
+
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290997. rdar://problem/79950080
