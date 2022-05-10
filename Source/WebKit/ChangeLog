@@ -1,3 +1,17 @@
+2022-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove abandoned CSSDeferredParser implementation and feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=240244
+
+        Reviewed by Antti Koivisto.
+
+        This patch rolls out the abandoned CSSDeferredParser implementation added in Bug 165743.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDeferredCSSParserEnabled): Deleted.
+        (WKPreferencesGetDeferredCSSParserEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2022-05-10  Youenn Fablet  <youenn@apple.com>
 
         RemoteVideoFrameObjectHeapProxyProcessor binary semaphore usage might trigger deadlocks in case of GPUProcess crash

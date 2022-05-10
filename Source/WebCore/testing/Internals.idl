@@ -378,11 +378,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Node ensureUserAgentShadowRoot(Element host);
     Node shadowRoot(Element host);
 
-    // CSS Deferred Parsing Testing.
-    long deferredStyleRulesCount(StyleSheet sheet);
-    long deferredGroupRulesCount(StyleSheet sheet);
-    long deferredKeyframesRulesCount(StyleSheet sheet);
-
     DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
     undefined setShadowPseudoId(Element element, [AtomString] DOMString id);

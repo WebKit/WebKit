@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class CSSDeferredParser;
 class CSSStyleDeclaration;
 class CachedResource;
 class Color;
@@ -44,7 +43,7 @@ class StyledElement;
 class StylePropertyShorthand;
 class StyleSheetContents;
 
-enum StylePropertiesType { ImmutablePropertiesType, MutablePropertiesType, DeferredPropertiesType };
+enum StylePropertiesType { ImmutablePropertiesType, MutablePropertiesType };
 
 class StylePropertiesBase : public RefCounted<StylePropertiesBase> {
 public:
@@ -281,20 +280,6 @@ private:
     friend class StyleProperties;
 };
 
-class DeferredStyleProperties final : public StylePropertiesBase {
-public:
-    WEBCORE_EXPORT ~DeferredStyleProperties();
-    static Ref<DeferredStyleProperties> create(const CSSParserTokenRange&, CSSDeferredParser&);
-
-    Ref<ImmutableStyleProperties> parseDeferredProperties();
-    
-private:
-    DeferredStyleProperties(const CSSParserTokenRange&, CSSDeferredParser&);
-    
-    Vector<CSSParserToken> m_tokens;
-    Ref<CSSDeferredParser> m_parser;
-};
-
 inline ImmutableStyleProperties::PropertyReference ImmutableStyleProperties::propertyAt(unsigned index) const
 {
     return PropertyReference(metadataArray()[index], valueArray()[index].get());
@@ -329,8 +314,6 @@ inline void StylePropertiesBase::deref() const
         delete downcast<MutableStyleProperties>(this);
     else if (is<ImmutableStyleProperties>(*this))
         delete downcast<ImmutableStyleProperties>(this);
-    else
-        delete downcast<DeferredStyleProperties>(this);
 }
 
 inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
@@ -350,7 +333,7 @@ inline int StyleProperties::findCustomPropertyIndex(const String& propertyName) 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleProperties)
-    static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() != WebCore::DeferredPropertiesType; }
+    static bool isType(const WebCore::StylePropertiesBase&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MutableStyleProperties)
@@ -359,9 +342,5 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
     static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() == WebCore::ImmutablePropertiesType; }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DeferredStyleProperties)
-    static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() == WebCore::DeferredPropertiesType; }
 SPECIALIZE_TYPE_TRAITS_END()
 

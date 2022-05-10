@@ -1,3 +1,87 @@
+2022-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove abandoned CSSDeferredParser implementation and feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=240244
+
+        Reviewed by Antti Koivisto.
+
+        This patch rolls out the abandoned CSSDeferredParser implementation added in Bug 165743.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::keyframes const):
+        (WebCore::StyleRuleKeyframes::wrapperAppendKeyframe):
+        (WebCore::StyleRuleKeyframes::wrapperRemoveKeyframe):
+        (WebCore::StyleRuleKeyframes::findKeyframeIndex const):
+        (WebCore::StyleRuleKeyframes::parseDeferredRulesIfNeeded const): Deleted.
+        * css/CSSKeyframesRule.h:
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::MutableStyleProperties):
+        (WebCore::StyleProperties::PropertyReference::cssText const):
+        (WebCore::DeferredStyleProperties::create): Deleted.
+        (WebCore::DeferredStyleProperties::DeferredStyleProperties): Deleted.
+        (WebCore::DeferredStyleProperties::parseDeferredProperties): Deleted.
+        * css/StyleProperties.h:
+        (WebCore::StylePropertiesBase::deref const):
+        (isType):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::properties const):
+        (WebCore::StyleRuleGroup::childRules const):
+        (WebCore::StyleRuleGroup::wrapperInsertRule):
+        (WebCore::StyleRuleGroup::wrapperRemoveRule):
+        (WebCore::DeferredStyleGroupRuleList::DeferredStyleGroupRuleList): Deleted.
+        (WebCore::DeferredStyleGroupRuleList::parseDeferredRules): Deleted.
+        (WebCore::DeferredStyleGroupRuleList::parseDeferredKeyframes): Deleted.
+        (WebCore::StyleRuleGroup::parseDeferredRulesIfNeeded const): Deleted.
+        * css/StyleRule.h:
+        (WebCore::StyleRule::propertiesWithoutDeferredParsing const): Deleted.
+        (WebCore::StyleRuleGroup::childRulesWithoutDeferredParsing const): Deleted.
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseString):
+        (WebCore::traverseRulesInVector):
+        (WebCore::StyleSheetContents::traverseSubresources const):
+        * css/parser/CSSDeferredParser.cpp: Removed.
+        * css/parser/CSSDeferredParser.h: Removed.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        (WebCore::add):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::CSSParserImpl):
+        (WebCore::CSSParserImpl::parseStyleSheet):
+        (WebCore::CSSParserImpl::consumeMediaRule):
+        (WebCore::CSSParserImpl::consumeSupportsRule):
+        (WebCore::CSSParserImpl::consumeKeyframesRule):
+        (WebCore::CSSParserImpl::consumeLayerRule):
+        (WebCore::CSSParserImpl::consumeContainerRule):
+        (WebCore::CSSParserImpl::consumeStyleRule):
+        (WebCore::CSSParserImpl::createDeferredStyleProperties): Deleted.
+        (WebCore::CSSParserImpl::parseDeferredDeclaration): Deleted.
+        (WebCore::CSSParserImpl::parseDeferredRuleList): Deleted.
+        (WebCore::CSSParserImpl::parseDeferredKeyframeList): Deleted.
+        (WebCore::CSSParserImpl::adoptTokenizerEscapedStrings): Deleted.
+        * css/parser/CSSParserImpl.h:
+        (WebCore::CSSParserImpl::tokenizer const):
+        (WebCore::CSSParserImpl::deferredParser const): Deleted.
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::shouldDirtyAllStyle):
+        * testing/Internals.cpp:
+        (WebCore::deferredStyleRulesCountForList): Deleted.
+        (WebCore::Internals::deferredStyleRulesCount): Deleted.
+        (WebCore::deferredGroupRulesCountForList): Deleted.
+        (WebCore::Internals::deferredGroupRulesCount): Deleted.
+        (WebCore::deferredKeyframesRulesCountForList): Deleted.
+        (WebCore::Internals::deferredKeyframesRulesCount): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-05-10  Youenn Fablet  <youenn@apple.com>
 
         Create a stopped CacheStorageConnection for workers in case of detached documents

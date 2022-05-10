@@ -248,11 +248,6 @@ public:
     const AtomString& shadowPseudoId(Element&);
     void setShadowPseudoId(Element&, const AtomString&);
 
-    // CSS Deferred Parsing Testing
-    unsigned deferredStyleRulesCount(StyleSheet&);
-    unsigned deferredGroupRulesCount(StyleSheet&);
-    unsigned deferredKeyframesRulesCount(StyleSheet&);
-
     // DOMTimers throttling testing.
     ExceptionOr<bool> isTimerThrottled(int timeoutId);
     String requestAnimationFrameThrottlingReasons() const;

@@ -311,10 +311,6 @@ WK_EXPORT void WKPreferencesSetContentChangeObserverEnabled(WKPreferencesRef, bo
 WK_EXPORT bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetDeferredCSSParserEnabled(WKPreferencesRef, bool);
-WK_EXPORT bool WKPreferencesGetDeferredCSSParserEnabled(WKPreferencesRef);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetUseGiantTiles(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetUseGiantTiles(WKPreferencesRef);
 

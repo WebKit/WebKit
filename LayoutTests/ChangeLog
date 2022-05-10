@@ -1,3 +1,34 @@
+2022-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove abandoned CSSDeferredParser implementation and feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=240244
+
+        Reviewed by Antti Koivisto.
+
+        This patch rolls out the abandoned CSSDeferredParser implementation added in Bug 165743.
+
+        * fast/css/deferred-parsing/dynamic-external-style-expected.txt: Removed.
+        * fast/css/deferred-parsing/dynamic-external-style.html: Removed.
+        * fast/css/deferred-parsing/dynamic-style-in-document-expected.txt: Removed.
+        * fast/css/deferred-parsing/dynamic-style-in-document.html: Removed.
+        * fast/css/deferred-parsing/hover-test-expected.txt: Removed.
+        * fast/css/deferred-parsing/hover-test.html: Removed.
+        * fast/css/deferred-parsing/keyframes-rule-expected.txt: Removed.
+        * fast/css/deferred-parsing/keyframes-rule.html: Removed.
+        * fast/css/deferred-parsing/media-print-expected.txt: Removed.
+        * fast/css/deferred-parsing/media-print.html: Removed.
+        * fast/css/deferred-parsing/nth-of-type-expected.txt: Removed.
+        * fast/css/deferred-parsing/nth-of-type.html: Removed.
+        * fast/css/deferred-parsing/resources/basic-sheet.css: Removed.
+        * fast/css/deferred-parsing/simple-external-style-expected.txt: Removed.
+        * fast/css/deferred-parsing/simple-external-style.html: Removed.
+        * fast/css/deferred-parsing/simple-style-in-document-expected.txt: Removed.
+        * fast/css/deferred-parsing/simple-style-in-document.html: Removed.
+        * fast/css/deferred-parsing/supports-rule-expected.txt: Removed.
+        * fast/css/deferred-parsing/supports-rule.html: Removed.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2022-05-09  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Don't index perspective/transform-origin-* in computed styles

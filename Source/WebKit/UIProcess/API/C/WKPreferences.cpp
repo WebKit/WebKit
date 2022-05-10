@@ -1235,16 +1235,6 @@ bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->contentChangeObserverEnabled();
 }
 
-void WKPreferencesSetDeferredCSSParserEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setDeferredCSSParserEnabled(flag);
-}
-
-bool WKPreferencesGetDeferredCSSParserEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->deferredCSSParserEnabled();
-}
-
 void WKPreferencesSetUseGiantTiles(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setUseGiantTiles(flag);

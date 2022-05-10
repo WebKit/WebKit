@@ -104,7 +104,6 @@ public:
 
     const StyleProperties& properties() const;
     MutableStyleProperties& mutableProperties();
-    const StyleProperties* propertiesWithoutDeferredParsing() const;
 
     bool isSplitRule() const { return m_isSplitRule; }
     void markAsSplitRule() { m_isSplitRule = true; }
@@ -226,51 +225,30 @@ private:
     CSSSelectorList m_selectorList;
 };
 
-class DeferredStyleGroupRuleList final {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    DeferredStyleGroupRuleList(const CSSParserTokenRange&, CSSDeferredParser&);
-    ~DeferredStyleGroupRuleList();
-    
-    void parseDeferredRules(Vector<RefPtr<StyleRuleBase>>&);
-    void parseDeferredKeyframes(StyleRuleKeyframes&);
-
-private:
-    Vector<CSSParserToken> m_tokens;
-    Ref<CSSDeferredParser> m_parser;
-};
-    
 class StyleRuleGroup : public StyleRuleBase {
 public:
     const Vector<RefPtr<StyleRuleBase>>& childRules() const;
-    const Vector<RefPtr<StyleRuleBase>>* childRulesWithoutDeferredParsing() const;
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
     
 protected:
     StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleGroup(StyleRuleType, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleGroup(const StyleRuleGroup&);
     
 private:
-    void parseDeferredRulesIfNeeded() const;
-
     mutable Vector<RefPtr<StyleRuleBase>> m_childRules;
-    mutable std::unique_ptr<DeferredStyleGroupRuleList> m_deferredRules;
 };
 
 class StyleRuleMedia final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleMedia> create(Ref<MediaQuerySet>&&, Vector<RefPtr<StyleRuleBase>>&&);
-    static Ref<StyleRuleMedia> create(Ref<MediaQuerySet>&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleMedia> copy() const;
 
     MediaQuerySet& mediaQueries() const { return m_mediaQueries; }
 
 private:
     StyleRuleMedia(Ref<MediaQuerySet>&&, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleMedia(Ref<MediaQuerySet>&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleMedia(const StyleRuleMedia&);
 
     Ref<MediaQuerySet> m_mediaQueries;
@@ -279,7 +257,6 @@ private:
 class StyleRuleSupports final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
-    static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleSupports> copy() const { return adoptRef(*new StyleRuleSupports(*this)); }
 
     String conditionText() const { return m_conditionText; }
@@ -287,7 +264,6 @@ public:
 
 private:
     StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleSupports(const StyleRuleSupports&);
 
     String m_conditionText;
@@ -298,7 +274,6 @@ class StyleRuleLayer final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleLayer> createStatement(Vector<CascadeLayerName>&&);
     static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
-    static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleLayer> copy() const { return adoptRef(*new StyleRuleLayer(*this)); }
 
     bool isStatement() const { return type() == StyleRuleType::LayerStatement; }
@@ -309,7 +284,6 @@ public:
 private:
     StyleRuleLayer(Vector<CascadeLayerName>&&);
     StyleRuleLayer(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleLayer(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleLayer(const StyleRuleLayer&);
 
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
@@ -318,14 +292,12 @@ private:
 class StyleRuleContainer final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleContainer> create(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
-    static Ref<StyleRuleContainer> create(FilteredContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
 
     const FilteredContainerQuery& filteredQuery() const { return m_filteredQuery; }
 
 private:
     StyleRuleContainer(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleContainer(FilteredContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleContainer(const StyleRuleContainer&);
 
     FilteredContainerQuery m_filteredQuery;
@@ -398,16 +370,6 @@ inline CompiledSelector& StyleRule::compiledSelectorForListIndex(unsigned index)
 }
 
 #endif
-
-inline const StyleProperties* StyleRule::propertiesWithoutDeferredParsing() const
-{
-    return m_properties->type() != DeferredPropertiesType ? &downcast<StyleProperties>(m_properties.get()) : nullptr;
-}
-
-inline const Vector<RefPtr<StyleRuleBase>>* StyleRuleGroup::childRulesWithoutDeferredParsing() const
-{
-    return !m_deferredRules ? &m_childRules : nullptr;
-}
 
 } // namespace WebCore
 

@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "CSSDeferredParser.h"
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyNames.h"
@@ -68,7 +67,7 @@ class MutableStyleProperties;
 class CSSParserImpl {
     WTF_MAKE_NONCOPYABLE(CSSParserImpl);
 public:
-    CSSParserImpl(const CSSParserContext&, const String&, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr, CSSParser::RuleParsing = CSSParser::RuleParsing::Normal);
+    CSSParserImpl(const CSSParserContext&, const String&, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr);
 
     enum AllowedRulesType {
         // As per css-syntax, css-cascade and css-namespaces, @charset rules
@@ -91,7 +90,7 @@ public:
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType);
-    static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&, CSSParser::RuleParsing);
+    static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
 
     static Vector<double> parseKeyframeKeyList(const String&);
@@ -102,16 +101,10 @@ public:
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
     static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents*, CSSParserObserver&);
 
-    static Ref<ImmutableStyleProperties> parseDeferredDeclaration(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*);
-    static void parseDeferredRuleList(CSSParserTokenRange, CSSDeferredParser&, Vector<RefPtr<StyleRuleBase>>&);
-    static void parseDeferredKeyframeList(CSSParserTokenRange, CSSDeferredParser&, StyleRuleKeyframes&);
-
     CSSTokenizer* tokenizer() const { return m_tokenizer.get(); };
-    CSSDeferredParser* deferredParser() const { return m_deferredParser.get(); }
 
 private:
     CSSParserImpl(const CSSParserContext&, StyleSheetContents*);
-    CSSParserImpl(CSSDeferredParser&);
 
     enum RuleListType {
         TopLevelRuleList,
@@ -151,21 +144,12 @@ private:
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
-    Ref<DeferredStyleProperties> createDeferredStyleProperties(const CSSParserTokenRange& propertyRange);
-    
-    void adoptTokenizerEscapedStrings();
-
     // FIXME: Can we build StylePropertySets directly?
     // FIXME: Investigate using a smaller inline buffer
     ParsedPropertyVector m_parsedProperties;
     const CSSParserContext& m_context;
 
     RefPtr<StyleSheetContents> m_styleSheet;
-
-    // For deferred property parsing.
-    RefPtr<CSSDeferredParser> m_deferredParser;
-    
-    // For normal parsing.
     std::unique_ptr<CSSTokenizer> m_tokenizer;
 
     // For the inspector

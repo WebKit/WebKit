@@ -391,14 +391,14 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
         return false;
     }
 
-    CSSParser(parserContext()).parseSheet(*this, sheetText, CSSParser::RuleParsing::Deferred);
+    CSSParser(parserContext()).parseSheet(*this, sheetText);
     return true;
 }
 
 bool StyleSheetContents::parseString(const String& sheetText)
 {
     CSSParser p(parserContext());
-    p.parseSheet(*this, sheetText, parserContext().mode != UASheetMode ? CSSParser::RuleParsing::Deferred : CSSParser::RuleParsing::Normal);
+    p.parseSheet(*this, sheetText);
     return true;
 }
 
@@ -476,8 +476,7 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
             return true;
         if (!rule->isGroupRule())
             continue;
-        auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
-        if (childRules && traverseRulesInVector(*childRules, handler))
+        if (traverseRulesInVector(downcast<StyleRuleGroup>(*rule).childRules(), handler))
             return true;
     }
     return false;
@@ -499,10 +498,8 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
 {
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
-        case StyleRuleType::Style: {
-            auto* properties = downcast<StyleRule>(rule).propertiesWithoutDeferredParsing();
-            return properties && properties->traverseSubresources(handler);
-        }
+        case StyleRuleType::Style:
+            return downcast<StyleRule>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
             return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:

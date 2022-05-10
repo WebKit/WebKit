@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 - 2010  Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -63,8 +63,7 @@ public:
     WEBCORE_EXPORT explicit CSSParser(const CSSParserContext&);
     WEBCORE_EXPORT ~CSSParser();
 
-    enum class RuleParsing { Normal, Deferred };
-    void parseSheet(StyleSheetContents&, const String&, RuleParsing = RuleParsing::Normal);
+    void parseSheet(StyleSheetContents&, const String&);
     
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     

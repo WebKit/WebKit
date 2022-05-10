@@ -579,16 +579,6 @@ DefaultTextEncodingName:
     WebCore:
       default: '{ }'
 
-DeferredCSSParserEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 DeviceHeight:
   type: uint32_t
   defaultValue:
