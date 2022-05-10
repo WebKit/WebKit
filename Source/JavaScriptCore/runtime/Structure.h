@@ -69,6 +69,10 @@ struct DumpContext;
 struct HashTable;
 struct HashTableValue;
 
+namespace Integrity {
+class Analyzer;
+}
+
 // The out-of-line property storage capacity to use when first allocating out-of-line
 // storage. Note that all objects start out without having any out-of-line storage;
 // this comes into play only on the first property store that exhausts inline storage.
@@ -990,6 +994,7 @@ private:
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
+    friend class Integrity::Analyzer;
 };
 
 } // namespace JSC

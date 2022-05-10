@@ -21,6 +21,7 @@
 #include "JSCContext.h"
 
 #include "APICast.h"
+#include "IntegrityInlines.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextInternal.h"
 #include "JSCContextPrivate.h"

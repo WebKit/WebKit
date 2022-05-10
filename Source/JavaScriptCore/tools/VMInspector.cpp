@@ -38,6 +38,8 @@
 
 namespace JSC {
 
+VM* VMInspector::m_recentVM { nullptr };
+
 VMInspector& VMInspector::instance()
 {
     static VMInspector* manager;
@@ -51,29 +53,54 @@ VMInspector& VMInspector::instance()
 void VMInspector::add(VM* vm)
 {
     Locker locker { m_lock };
+    m_recentVM = vm;
     m_vmList.append(vm);
 }
 
 void VMInspector::remove(VM* vm)
 {
     Locker locker { m_lock };
+    if (m_recentVM == vm)
+        m_recentVM = nullptr;
     m_vmList.remove(vm);
 }
 
 #if ENABLE(JIT)
-static bool ensureIsSafeToLock(Lock& lock)
+static bool ensureIsSafeToLock(Lock& lock) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     static constexpr unsigned maxRetries = 2;
     unsigned tryCount = 0;
     while (tryCount++ <= maxRetries) {
-        if (lock.tryLock()) {
-            lock.unlock();
+        if (lock.tryLock())
             return true;
-        }
     }
     return false;
 }
 #endif // ENABLE(JIT)
+
+bool VMInspector::isValidVMSlow(VM* vm)
+{
+    bool found = false;
+    forEachVM([&] (VM& nextVM) {
+        if (vm == &nextVM) {
+            m_recentVM = vm;
+            found = true;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return found;
+}
+
+void VMInspector::dumpVMs()
+{
+    unsigned i = 0;
+    WTFLogAlways("Registered VMs:");
+    forEachVM([&] (VM& nextVM) {
+        WTFLogAlways("  [%u] VM %p", i++, &nextVM);
+        return IterationStatus::Continue;
+    });
+}
 
 void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
 {
@@ -82,32 +109,21 @@ void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
     inspector.iterate(func);
 }
 
-auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Error>
+WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Error>
 {
 #if ENABLE(JIT)
-    bool found = false;
-    bool hasTimeout = false;
-    iterate([&] (VM&) -> IterationStatus {
-        auto& allocator = ExecutableAllocator::singleton();
-        auto& lock = allocator.getLock();
+    auto& allocator = ExecutableAllocator::singleton();
+    auto& lock = allocator.getLock();
 
-        bool isSafeToLock = ensureIsSafeToLock(lock);
-        if (!isSafeToLock) {
-            hasTimeout = true;
-            return IterationStatus::Continue; // Skip this VM.
-        }
-
-        Locker executableAllocatorLocker { lock };
-        if (allocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
-            found = true;
-            return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    });
-
-    if (!found && hasTimeout)
+    bool isSafeToLock = ensureIsSafeToLock(lock);
+    if (!isSafeToLock)
         return makeUnexpected(Error::TimedOut);
-    return found;
+
+    Locker executableAllocatorLocker { AdoptLock, lock };
+    if (allocator.isValidExecutableMemory(executableAllocatorLocker, machinePC))
+        return true;
+
+    return false;
 #else
     UNUSED_PARAM(machinePC);
     return false;
@@ -119,7 +135,10 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
 #if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;
     bool hasTimeout = false;
-    iterate([&] (VM& vm) {
+    iterate([&] (VM& vm) WTF_IGNORES_THREAD_SAFETY_ANALYSIS {
+        if (!vm.isInService())
+            return IterationStatus::Continue;
+
         if (!vm.currentThreadIsHoldingAPILock())
             return IterationStatus::Continue;
 
@@ -141,7 +160,7 @@ auto VMInspector::codeBlockForMachinePC(void* machinePC) -> Expected<CodeBlock*,
             return IterationStatus::Continue; // Skip this VM.
         }
 
-        Locker locker { codeBlockSetLock };
+        Locker locker { AdoptLock, codeBlockSetLock };
         vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
             JITCode* jitCode = cb->jitCode().get();
             if (!jitCode) {

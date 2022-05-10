@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,12 @@
 #pragma once
 
 #include "Integrity.h"
+#include "JSCJSValue.h"
+#include "StructureID.h"
 #include "VM.h"
+#include "VMInspector.h"
+#include <wtf/Atomics.h>
+#include <wtf/Gigacage.h>
 
 namespace JSC {
 namespace Integrity {
@@ -61,6 +66,16 @@ ALWAYS_INLINE bool Random::shouldAudit(VM& vm)
     return true;
 }
 
+template<AuditLevel auditLevel>
+ALWAYS_INLINE void auditCell(VM& vm, JSValue value)
+{
+    if constexpr (auditLevel == AuditLevel::None)
+        return;
+
+    if (value.isCell())
+        auditCell<auditLevel>(vm, value.asCell());
+}
+
 ALWAYS_INLINE void auditCellMinimally(VM& vm, JSCell* cell)
 {
     if (UNLIKELY(Gigacage::contains(cell)))
@@ -73,6 +88,14 @@ ALWAYS_INLINE void auditCellRandomly(VM& vm, JSCell* cell)
         auditCellFully(vm, cell);
 }
 
+ALWAYS_INLINE void auditCellFully(VM& vm, JSCell* cell)
+{
+#if USE(JSVALUE64)
+    doAudit(vm, cell);
+#else
+    auditCellMinimally(vm, cell);
+#endif
+}
 
 ALWAYS_INLINE void auditStructureID(StructureID structureID)
 {
@@ -80,7 +103,26 @@ ALWAYS_INLINE void auditStructureID(StructureID structureID)
 #if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
     ASSERT(static_cast<uintptr_t>(structureID.bits()) <= structureHeapAddressSize + StructureID::nukedStructureIDBit);
 #endif
+#if ENABLE(EXTRA_INTEGRITY_CHECKS) || ASSERT_ENABLED
+    Structure* structure = structureID.tryDecode();
+    IA_ASSERT(structure, "structureID.bits 0x%x", structureID.bits());
+    // structure should be pointing to readable memory. Force a read.
+    WTF::opaque(*bitwise_cast<uintptr_t*>(structure));
+#endif
 }
+
+#if USE(JSVALUE64)
+
+JS_EXPORT_PRIVATE VM* doAuditSlow(VM*);
+
+ALWAYS_INLINE VM* doAudit(VM* vm)
+{
+    if (UNLIKELY(!VMInspector::isValidVM(vm)))
+        return doAuditSlow(vm);
+    return vm;
+}
+
+#endif // USE(JSVALUE64)
 
 } // namespace Integrity
 } // namespace JSC

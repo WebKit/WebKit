@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,86 +25,16 @@
 
 #pragma once
 
-#include "CellSize.h"
+#include "Integrity.h"
 #include "VMInspector.h"
-#include <wtf/Assertions.h>
 
 namespace JSC {
 
-#define AUDIT_CONDITION(x) (x), #x
-#define AUDIT_VERIFY(action, verifier, cond, ...) do { \
-        if (action == VerifierAction::ReleaseAssert) \
-            RELEASE_ASSERT(cond, __VA_ARGS__); \
-        else if (!verifier(AUDIT_CONDITION(cond), __VA_ARGS__)) \
-            return false; \
-    } while (false)
-
-template<VMInspector::VerifierAction action, VMInspector::VerifyFunctor verifier>
-bool VMInspector::verifyCellSize(JSCell* cell, size_t allocatorCellSize)
+#if USE(JSVALUE64)
+ALWAYS_INLINE bool VMInspector::verifyCell(VM& vm, JSCell* cell)
 {
-    Structure* structure = cell->structure();
-    const ClassInfo* classInfo = structure->classInfoForCells();
-    JSType cellType = cell->type();
-    AUDIT_VERIFY(action, verifier, cellType == structure->m_blob.type(), cell, cellType, structure->m_blob.type());
-
-    size_t size = cellSize(cell);
-    AUDIT_VERIFY(action, verifier, size <= allocatorCellSize, cell, cellType, size, allocatorCellSize, classInfo->staticClassSize);
-    if (isDynamicallySizedType(cellType))
-        AUDIT_VERIFY(action, verifier, size >= classInfo->staticClassSize, cell, cellType, size, classInfo->staticClassSize);
-
-    return true;
+    return Integrity::verifyCell(vm, cell);
 }
-
-template<VMInspector::VerifierAction action, VMInspector::VerifyFunctor verifier>
-bool VMInspector::verifyCell(VM& vm, JSCell* cell)
-{
-    size_t allocatorCellSize = 0;
-    if (cell->isPreciseAllocation()) {
-        PreciseAllocation& preciseAllocation = cell->preciseAllocation();
-        AUDIT_VERIFY(action, verifier, &preciseAllocation.vm() == &vm, cell, cell->type(), &preciseAllocation.vm(), &vm);
-
-        bool isValidPreciseAllocation = false;
-        for (auto* i : vm.heap.objectSpace().preciseAllocations()) {
-            if (i == &preciseAllocation) {
-                isValidPreciseAllocation = true;
-                break;
-            }
-        }
-        AUDIT_VERIFY(action, verifier, isValidPreciseAllocation, cell, cell->type());
-
-        allocatorCellSize = preciseAllocation.cellSize();
-    } else {
-        MarkedBlock& block = cell->markedBlock();
-        MarkedBlock::Handle& blockHandle = block.handle();
-        AUDIT_VERIFY(action, verifier, &block.vm() == &vm, cell, cell->type(), &block.vm(), &vm);
-
-        uintptr_t blockStartAddress = reinterpret_cast<uintptr_t>(blockHandle.start());
-        AUDIT_VERIFY(action, verifier, blockHandle.contains(cell), cell, cell->type(), blockStartAddress, blockHandle.end());
-
-        uintptr_t cellAddress = reinterpret_cast<uintptr_t>(cell);
-        uintptr_t cellOffset = cellAddress - blockStartAddress;
-        allocatorCellSize = block.cellSize();
-        bool cellIsProperlyAligned = !(cellOffset % allocatorCellSize);
-        AUDIT_VERIFY(action, verifier, cellIsProperlyAligned, cell, cell->type(), allocatorCellSize);
-    }
-
-    auto cellType = cell->type();
-    if (cell->type() != JSImmutableButterflyType)
-        AUDIT_VERIFY(action, verifier, !Gigacage::contains(cell), cell, cellType);
-
-    if (!verifyCellSize<action, verifier>(cell, allocatorCellSize))
-        return false;
-
-    if (Gigacage::isEnabled(Gigacage::JSValue) && cell->isObject()) {
-        JSObject* object = asObject(cell);
-        const Butterfly* butterfly = object->butterfly();
-        AUDIT_VERIFY(action, verifier, !butterfly || Gigacage::isCaged(Gigacage::JSValue, butterfly), cell, cell->type(), butterfly);
-    }
-
-    return true;
-}
-
-#undef AUDIT_VERIFY
-#undef AUDIT_CONDITION
+#endif
 
 } // namespace JSC

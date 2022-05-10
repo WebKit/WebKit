@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,8 @@
 #endif
 
 #if JSC_OBJC_API_ENABLED
+
+using JSC::Integrity::audit;
 
 NSString * const JSPropertyDescriptorWritableKey = @"writable";
 NSString * const JSPropertyDescriptorEnumerableKey = @"enumerable";
@@ -970,11 +972,11 @@ JSValueRef ObjcContainerConvertor::convert(id object)
 
     auto it = m_objectMap.find(object);
     if (it != m_objectMap.end())
-        return it->value;
+        return audit(it->value);
 
     ObjcContainerConvertor::Task task = objectToValueWithoutCopy(m_context, object);
     add(task);
-    return task.js;
+    return audit(task.js);
 }
 
 void ObjcContainerConvertor::add(ObjcContainerConvertor::Task task)
@@ -1004,7 +1006,7 @@ inline bool isNSBoolean(id object)
 
 static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context, id object)
 {
-    JSGlobalContextRef contextRef = [context JSGlobalContextRef];
+    JSGlobalContextRef contextRef = audit([context JSGlobalContextRef]);
 
     if (!object)
         return { object, JSValueMakeUndefined(contextRef), ContainerNone };
@@ -1056,7 +1058,7 @@ JSValueRef objectToValue(JSContext *context, id object)
 
     ObjcContainerConvertor::Task task = objectToValueWithoutCopy(context, object);
     if (task.type == ContainerNone)
-        return task.js;
+        return audit(task.js);
 
     JSC::JSLockHolder locker(toJS(contextRef));
     ObjcContainerConvertor convertor(context);
@@ -1087,7 +1089,7 @@ JSValueRef objectToValue(JSContext *context, id object)
         }
     } while (!convertor.isWorkListEmpty());
 
-    return task.js;
+    return audit(task.js);
 }
 
 JSValueRef valueInternalValue(JSValue * value)

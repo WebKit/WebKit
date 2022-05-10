@@ -443,6 +443,9 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
     }
     Locker locker { AdoptLock, inspector.getLock() };
     inspector.iterate([&] (VM& vm) {
+        if (!vm.isInService())
+            return IterationStatus::Continue;
+
         if (!vm.heap.m_verifier)
             return IterationStatus::Continue;
         

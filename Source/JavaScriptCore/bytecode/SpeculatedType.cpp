@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "DateInstance.h"
 #include "DirectArguments.h"
+#include "Integrity.h"
 #include "JSArray.h"
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
@@ -564,30 +565,17 @@ SpeculatedType speculationFromStructure(Structure* structure)
     return filteredResult;
 }
 
-ALWAYS_INLINE static bool isSanePointer(const void* pointer)
-{
-    // FIXME: rdar://69036888: remove this when no longer needed.
-#if CPU(ADDRESS64)
-    uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
-    uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));
-    uintptr_t nonCanonicalPointerBits = pointerAsInt >> OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
-    return !nonCanonicalPointerBits && canonicalPointerBits;
-#else
-    UNUSED_PARAM(pointer);
-    return true;
-#endif
-}
-
 SpeculatedType speculationFromCell(JSCell* cell)
 {
-    if (UNLIKELY(!isSanePointer(cell))) {
+    // FIXME: rdar://69036888: remove isSanePointer checks when no longer needed.
+    if (UNLIKELY(!Integrity::isSanePointer(cell))) {
         ASSERT_NOT_REACHED();
         return SpecNone;
     }
     if (cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);
         if (const StringImpl* impl = string->tryGetValueImpl()) {
-            if (UNLIKELY(!isSanePointer(impl))) {
+            if (UNLIKELY(!Integrity::isSanePointer(impl))) {
                 ASSERT_NOT_REACHED();
                 return SpecNone;
             }
@@ -598,7 +586,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
     }
     // FIXME: rdar://69036888: undo this when no longer needed.
     auto* structure = cell->structureID().tryDecode();
-    if (UNLIKELY(!isSanePointer(structure))) {
+    if (UNLIKELY(!Integrity::isSanePointer(structure))) {
         ASSERT_NOT_REACHED();
         return SpecNone;
     }

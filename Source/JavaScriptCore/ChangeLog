@@ -1,3 +1,124 @@
+2022-05-10  Mark Lam  <mark.lam@apple.com>
+
+        Add optional Integrity checks at JSC API boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=240264
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Defined ENABLE_EXTRA_INTEGRITY_CHECKS in Integrity.h.  JSC developers can enable
+           this for their local build if they want to enable more prolific Integrity audits.
+           This is disabled by default.
+
+           This feature is currently only supported for USE(JSVALUE64) targets.
+
+        The following changes only take effect if ENABLE(EXTRA_INTEGRITY_CHECKS) is enabled.
+        Otherwise, these are no-ops.
+
+        2. Added Integrity audits to all toJS and toRef conversion functions in APICast.h.
+           This will help us detect if bad values are passed across the API boundary.
+
+        3. Added some Integrity audits in JSValue.mm where the APICast ones were insufficient.
+
+        The following changes are in effect even when ENABLE(EXTRA_INTEGRITY_CHECKS) is
+        disabled.  Some of these were made to support ENABLE(EXTRA_INTEGRITY_CHECKS), and
+        some are just clean up in related code that I had to touch along the way.
+
+        4. Moved isSanePointer() to Integrity.h so that it can be used in more places.
+
+        5. Changed VM registration with the VMInspector so that it's registered earlier
+           and removed later.  Integrity audits may need to audit VM pointers while the
+           VM is being constructed and destructed.
+
+        6. Added VM::m_isInService to track when the VM is fully constructed or about to
+           be destructed since the VM is now registered with the VMInspector differently
+           (see (4) above).  Applied this check in places that need it.
+
+        7. Fixed VMInspector::isValidExecutableMemory() to check the ExecutableAllocator
+           directly without iterating VMs (which is completely unnecessary).
+
+        8. Fixed VMInspector::isValidExecutableMemory() and VMInspector::codeBlockForMachinePC()
+           to use AdoptLock.  This fixes a race condition where the lock can be contended
+           after ensureIsSafeToLock() succeeds.
+
+        9. Added VMInspector::isValidVM() to check if a VM pointer is registered or not.
+           VMInspector caches the most recently added or found VM so that isValidVM()
+           can just check the cache for its fast path.
+
+        10. Moved the implementation of VMInspector::verifyCell() to Integrity::analyzeCell()
+            and add more checks to it.  VMInspector::verifyCell() now calls Integrity::verifyCell()
+            which uses Integrity::analyzeCell() to do the real cell analysis.
+
+        11. Also strengten Integrity::auditStructureID() so that it will check if a
+            Structure's memory has been released.  This change is enabled on Debug builds
+            by default as well as when ENABLE(EXTRA_INTEGRITY_CHECKS).  It is disabled
+            on Release builds.
+
+        * API/APICast.h:
+        (toJS):
+        (toJSForGC):
+        (uncheckedToJS):
+        (toRef):
+        (toGlobalRef):
+        * API/JSContext.mm:
+        * API/JSContextRef.cpp:
+        * API/JSScript.mm:
+        * API/JSValue.mm:
+        (ObjcContainerConvertor::convert):
+        (objectToValueWithoutCopy):
+        (objectToValue):
+        * API/JSVirtualMachine.mm:
+        * API/JSWeakPrivate.cpp:
+        * API/glib/JSCContext.cpp:
+        * API/glib/JSCWrapperMap.cpp:
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromCell):
+        (JSC::isSanePointer): Deleted.
+        * heap/HeapFinalizerCallback.cpp:
+        * heap/WeakSet.h:
+        * runtime/Structure.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::isInService const):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::checkIfRecorded):
+        * tools/Integrity.cpp:
+        (JSC::Integrity::Random::reloadAndCheckShouldAuditSlow):
+        (JSC::Integrity::auditCellMinimallySlow):
+        (JSC::Integrity::doAudit):
+        (JSC::Integrity::Analyzer::analyzeVM):
+        (JSC::Integrity::Analyzer::analyzeCell):
+        (JSC::Integrity::doAuditSlow):
+        (JSC::Integrity::verifyCell):
+        (): Deleted.
+        (JSC::Integrity::auditCellFully): Deleted.
+        * tools/Integrity.h:
+        (JSC::isSanePointer):
+        (JSC::Integrity::auditCell):
+        (JSC::Integrity::audit):
+        * tools/IntegrityInlines.h:
+        (JSC::Integrity::auditCell):
+        (JSC::Integrity::auditCellFully):
+        (JSC::Integrity::auditStructureID):
+        (JSC::Integrity::doAudit):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::add):
+        (JSC::VMInspector::remove):
+        (JSC::VMInspector::isValidVMSlow):
+        (JSC::VMInspector::dumpVMs):
+        (JSC::VMInspector::isValidExecutableMemory):
+        (JSC::VMInspector::codeBlockForMachinePC):
+        (JSC::ensureIsSafeToLock): Deleted.
+        * tools/VMInspector.h:
+        (JSC::VMInspector::isValidVM):
+        (): Deleted.
+        (JSC::VMInspector::unusedVerifier): Deleted.
+        * tools/VMInspectorInlines.h:
+        (JSC::VMInspector::verifyCell):
+        (JSC::VMInspector::verifyCellSize): Deleted.
+
 2022-05-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, address Darin's feedback on r250361.

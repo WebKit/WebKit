@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "CachedTypes.h"
 #import "CodeCache.h"
 #import "Identifier.h"
+#import "IntegrityInlines.h"
 #import "JSContextInternal.h"
 #import "JSScriptSourceProvider.h"
 #import "JSSourceCode.h"

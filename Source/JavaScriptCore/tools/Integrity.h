@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,37 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
-#include "StructureID.h"
-#include <wtf/Gigacage.h>
+#include <wtf/Assertions.h>
 #include <wtf/Lock.h>
+
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
+#if USE(JSVALUE32)
+#define ENABLE_EXTRA_INTEGRITY_CHECKS 0 // Not supported.
+#else
+// Force ENABLE_EXTRA_INTEGRITY_CHECKS to 1 for your local build if you want
+// more prolific audits to be enabled.
+#define ENABLE_EXTRA_INTEGRITY_CHECKS 0
+#endif
+
+// From API/JSBase.h
+typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSValue* JSObjectRef;
 
 namespace JSC {
 
 class JSCell;
+class JSGlobalObject;
+class JSObject;
+class JSValue;
+class Structure;
+class StructureID;
 class VM;
 
 namespace Integrity {
@@ -67,10 +90,53 @@ private:
     static constexpr int numberOfTriggerBits = (sizeof(m_triggerBits) * CHAR_BIT) - 1;
 };
 
+ALWAYS_INLINE static bool isSanePointer(const void* pointer)
+{
+#if CPU(ADDRESS64)
+    uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
+    uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));
+    uintptr_t nonCanonicalPointerBits = pointerAsInt >> OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+    return !nonCanonicalPointerBits && canonicalPointerBits;
+#else
+    UNUSED_PARAM(pointer);
+    return true;
+#endif
+}
+
+#if USE(JSVALUE64)
+
+class Analyzer {
+public:
+    enum Action { LogOnly, LogAndCrash };
+
+    static bool analyzeVM(VM&, Action);
+    static bool analyzeCell(VM&, JSCell*, Action);
+    static bool analyzeCell(JSCell*, Action);
+};
+
+JS_EXPORT_PRIVATE JSContextRef doAudit(JSContextRef);
+JS_EXPORT_PRIVATE JSGlobalContextRef doAudit(JSGlobalContextRef);
+JS_EXPORT_PRIVATE JSObjectRef doAudit(JSObjectRef);
+JS_EXPORT_PRIVATE JSValueRef doAudit(JSValueRef);
+
+JS_EXPORT_PRIVATE JSValue doAudit(JSValue);
+JS_EXPORT_PRIVATE JSCell* doAudit(JSCell*);
+JS_EXPORT_PRIVATE JSCell* doAudit(VM&, JSCell*);
+JS_EXPORT_PRIVATE JSObject* doAudit(JSObject*);
+JS_EXPORT_PRIVATE JSGlobalObject* doAudit(JSGlobalObject*);
+
+VM* doAudit(VM*); // see IntegrityInlines.h
+
+// These are used for debugging queries, and will not crash.
+JS_EXPORT_PRIVATE bool verifyCell(JSCell*);
+JS_EXPORT_PRIVATE bool verifyCell(VM&, JSCell*);
+
+#endif // USE(JSVALUE64)
+
 ALWAYS_INLINE void auditCellRandomly(VM&, JSCell*);
 ALWAYS_INLINE void auditCellMinimally(VM&, JSCell*);
 JS_EXPORT_PRIVATE void auditCellMinimallySlow(VM&, JSCell*);
-JS_EXPORT_PRIVATE void auditCellFully(VM&, JSCell*);
+ALWAYS_INLINE void auditCellFully(VM&, JSCell*);
 
 template<AuditLevel = AuditLevel::Random, typename T>
 ALWAYS_INLINE void auditCell(VM&, T) { }
@@ -78,29 +144,72 @@ ALWAYS_INLINE void auditCell(VM&, T) { }
 template<AuditLevel auditLevel = DefaultAuditLevel>
 ALWAYS_INLINE void auditCell(VM& vm, JSCell* cell)
 {
-    switch (auditLevel) {
-    case AuditLevel::None:
+    static_assert(auditLevel == AuditLevel::None || auditLevel == AuditLevel::Minimal || auditLevel == AuditLevel::Full || auditLevel == AuditLevel::Random);
+
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(cell);
+    if constexpr (auditLevel == AuditLevel::None)
         return;
-    case AuditLevel::Minimal:
+    if constexpr (auditLevel == AuditLevel::Minimal)
         return auditCellMinimally(vm, cell);
-    case AuditLevel::Full:
+    if constexpr (auditLevel == AuditLevel::Full)
         return auditCellFully(vm, cell);
-    case AuditLevel::Random:
+    if constexpr (auditLevel == AuditLevel::Random)
         return auditCellRandomly(vm, cell);
-    }
 }
 
 template<AuditLevel auditLevel = DefaultAuditLevel>
-ALWAYS_INLINE void auditCell(VM& vm, JSValue value)
-{
-    if (auditLevel == AuditLevel::None)
-        return;
-
-    if (value.isCell())
-        auditCell<auditLevel>(vm, value.asCell());
-}
+ALWAYS_INLINE void auditCell(VM&, JSValue);
 
 ALWAYS_INLINE void auditStructureID(StructureID);
+
+#if ENABLE(EXTRA_INTEGRITY_CHECKS) && USE(JSVALUE64)
+template<typename T> ALWAYS_INLINE T audit(T value) { return doAudit(value); }
+#else
+template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
+#endif
+
+#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
+
+#define IA_LOG(assertion, format, ...) do { \
+        WTFLogAlways("Integrity ERROR: %s @ %s:%d\n", #assertion, __FILE__, __LINE__); \
+        WTFLogAlways("    " format, ##__VA_ARGS__); \
+    } while (false)
+
+#define IA_ASSERT_WITH_ACTION(assertion, action, ...) do { \
+        if (UNLIKELY(!(assertion))) { \
+            IA_LOG(assertion, __VA_ARGS__); \
+            WTFReportBacktraceWithPrefix("    "); \
+            action; \
+        } \
+    } while (false)
+
+#define IA_ASSERT(assertion, ...) \
+    IA_ASSERT_WITH_ACTION(assertion, { \
+        RELEASE_ASSERT((assertion), ##__VA_ARGS__); \
+    }, ## __VA_ARGS__)
+
+#else // not (COMPILER(MSVC) || !VA_OPT_SUPPORTED)
+
+#define IA_LOG(assertion, format, ...) do { \
+        WTFLogAlways("Integrity ERROR: %s @ %s:%d\n", #assertion, __FILE__, __LINE__); \
+        WTFLogAlways("    " format __VA_OPT__(,) __VA_ARGS__); \
+    } while (false)
+
+#define IA_ASSERT_WITH_ACTION(assertion, action, ...) do { \
+        if (UNLIKELY(!(assertion))) { \
+            IA_LOG(assertion, __VA_ARGS__); \
+            WTFReportBacktraceWithPrefix("    "); \
+            action; \
+        } \
+    } while (false)
+
+#define IA_ASSERT(assertion, ...) \
+    IA_ASSERT_WITH_ACTION(assertion, { \
+        RELEASE_ASSERT((assertion) __VA_OPT__(,) __VA_ARGS__); \
+    } __VA_OPT__(,) __VA_ARGS__)
+
+#endif // COMPILER(MSVC) || !VA_OPT_SUPPORTED
 
 } // namespace Integrity
 

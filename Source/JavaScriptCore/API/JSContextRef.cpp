@@ -30,6 +30,7 @@
 #include "APICast.h"
 #include "CallFrame.h"
 #include "InitializeThreading.h"
+#include "IntegrityInlines.h"
 #include "JSAPIGlobalObject.h"
 #include "JSAPIWrapperObject.h"
 #include "JSCallbackObject.h"

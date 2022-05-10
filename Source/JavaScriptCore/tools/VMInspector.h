@@ -48,6 +48,10 @@ public:
 
     void add(VM*);
     void remove(VM*);
+    ALWAYS_INLINE static bool isValidVM(VM* vm)
+    {
+        return vm == m_recentVM ? true : isValidVMSlow(vm);
+    }
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
@@ -61,6 +65,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE static void forEachVM(Function<IterationStatus(VM&)>&&);
+    JS_EXPORT_PRIVATE static void dumpVMs();
 
     Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);
@@ -80,20 +85,16 @@ public:
     JS_EXPORT_PRIVATE static void dumpCellMemoryToStream(JSCell*, PrintStream&);
     JS_EXPORT_PRIVATE static void dumpSubspaceHashes(VM*);
 
-    enum VerifierAction { ReleaseAssert, Custom };
-
-    using VerifyFunctor = bool(bool condition, const char* description, ...);
-    static bool unusedVerifier(bool, const char*, ...) { return false; }
-
-    template<VerifierAction, VerifyFunctor = unusedVerifier>
-    static bool verifyCellSize(JSCell*, size_t allocatorCellSize);
-
-    template<VerifierAction, VerifyFunctor = unusedVerifier>
+#if USE(JSVALUE64)
     static bool verifyCell(VM&, JSCell*);
+#endif
 
 private:
+    JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
+
     Lock m_lock;
     DoublyLinkedList<VM> m_vmList WTF_GUARDED_BY_LOCK(m_lock);
+    JS_EXPORT_PRIVATE static VM* m_recentVM;
 };
 
 } // namespace JSC

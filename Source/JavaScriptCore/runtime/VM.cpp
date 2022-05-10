@@ -241,6 +241,8 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     if (UNLIKELY(vmCreationShouldCrash))
         CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
 
+    VMInspector::instance().add(this);
+
     interpreter = new Interpreter(*this);
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(Thread::current());
@@ -401,10 +403,12 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         jitSizeStatistics = makeUnique<JITSizeStatistics>();
 #endif
 
-    VMInspector::instance().add(this);
-
     if (!g_jscConfig.disabledFreezingForTesting)
         Config::permanentlyFreeze();
+
+    // We must set this at the end only after the VM is fully initialized.
+    WTF::storeStoreFence();
+    m_isInService = true;
 }
 
 static ReadWriteLock s_destructionLock;
@@ -427,7 +431,8 @@ VM::~VM()
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);
     m_traps.willDestroyVM();
-    VMInspector::instance().remove(this);
+    m_isInService = false;
+    WTF::storeStoreFence();
 
     // Never GC, ever again.
     heap.incrementDeferralDepth();
@@ -455,7 +460,9 @@ VM::~VM()
     heap.lastChanceToFinalize();
 
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
-    
+
+    VMInspector::instance().remove(this);
+
     delete interpreter;
 #ifndef NDEBUG
     interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);
