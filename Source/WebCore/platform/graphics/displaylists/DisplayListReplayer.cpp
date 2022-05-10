@@ -107,13 +107,11 @@ inline static std::optional<RenderingResourceIdentifier> applySetStateItem(Graph
     return std::nullopt;
 }
 
-template<class T>
-inline static std::optional<RenderingResourceIdentifier> applyFontItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applyDrawGlyphs(GraphicsContext& context, const ResourceHeap& resourceHeap, DrawGlyphs& drawGlyphsItem)
 {
-    auto& fontItem = item.get<T>();
-    auto resourceIdentifier = fontItem.fontIdentifier();
+    auto resourceIdentifier = drawGlyphsItem.fontIdentifier();
     if (auto* font = resourceHeap.getFont(resourceIdentifier)) {
-        fontItem.apply(context, *font);
+        drawGlyphsItem.apply(context, *font);
         return std::nullopt;
     }
     return resourceIdentifier;
@@ -121,43 +119,42 @@ inline static std::optional<RenderingResourceIdentifier> applyFontItem(GraphicsC
 
 std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> Replayer::applyItem(ItemHandle item)
 {
-    if (item.is<DrawImageBuffer>()) {
-        if (auto missingCachedResourceIdentifier = applyImageBufferItem<DrawImageBuffer>(m_context, m_resourceHeap, item))
-            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { std::nullopt, std::nullopt };
-    }
-
-    if (item.is<ClipToImageBuffer>()) {
+    switch (item.type()) {
+    case ItemType::ClipToImageBuffer:
         if (auto missingCachedResourceIdentifier = applyImageBufferItem<ClipToImageBuffer>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
-    }
 
-    if (item.is<DrawNativeImage>()) {
+    case ItemType::DrawGlyphs:
+        if (auto missingCachedResourceIdentifier = applyDrawGlyphs(m_context, m_resourceHeap, item.get<DrawGlyphs>()))
+            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
+        return { std::nullopt, std::nullopt };
+
+    case ItemType::DrawImageBuffer:
+        if (auto missingCachedResourceIdentifier = applyImageBufferItem<DrawImageBuffer>(m_context, m_resourceHeap, item))
+            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
+        return { std::nullopt, std::nullopt };
+
+    case ItemType::DrawNativeImage:
         if (auto missingCachedResourceIdentifier = applyNativeImageItem<DrawNativeImage>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
-    }
 
-    if (item.is<DrawGlyphs>()) {
-        if (auto missingCachedResourceIdentifier = applyFontItem<DrawGlyphs>(m_context, m_resourceHeap, item))
-            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { std::nullopt, std::nullopt };
-    }
-
-    if (item.is<DrawPattern>()) {
+    case ItemType::DrawPattern:
         if (auto missingCachedResourceIdentifier = applySourceImageItem<DrawPattern>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
-    }
 
-    if (item.is<SetState>()) {
+    case ItemType::SetState:
         if (auto missingCachedResourceIdentifier = applySetStateItem(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
+
+    default:
+        item.apply(m_context);
+        return { std::nullopt, std::nullopt };
     }
 
-    item.apply(m_context);
     return { std::nullopt, std::nullopt };
 }
 
