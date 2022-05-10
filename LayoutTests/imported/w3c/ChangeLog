@@ -1,3 +1,17 @@
+2022-05-10  Tim Nguyen  <ntim@apple.com>
+
+        Fix inertness of pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=239831
+
+        Reviewed by Antti Koivisto.
+
+        When we adjust style for a pseudo-element, `m_element` and `document().activeModalDialog()` are both null. So we accidentally reset inertness to false in those cases.
+
+        Fix this by making checking for m_element's existence too.
+
+        * web-platform-tests/inert/inert-pseudo-element-hittest-expected.txt: Added.
+        * web-platform-tests/inert/inert-pseudo-element-hittest.html: Added.
+
 2022-05-09  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Don't index perspective/transform-origin-* in computed styles
