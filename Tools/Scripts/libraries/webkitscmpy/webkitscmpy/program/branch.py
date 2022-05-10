@@ -118,10 +118,15 @@ class Branch(Command):
 
         if not issue and Tracker.instance():
             if ' ' in args.issue:
+                if getattr(Tracker.instance(), 'credentials'):
+                    Tracker.instance().credentials(required=True, validate=True)
                 issue = Tracker.instance().create(
                     title=args.issue,
                     description=Terminal.input('Issue description: '),
                 )
+                if not issue:
+                    sys.stderr.write('Failed to create new issue\n')
+                    return 1
                 print("Created '{}'".format(issue))
                 if issue and issue.title and not redact:
                     args.issue = cls.to_branch_name(issue.title)
