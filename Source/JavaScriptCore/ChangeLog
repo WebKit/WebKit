@@ -1,3 +1,15 @@
+2022-05-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Temporal] Years 0-999 should be canonically represented with 4 digits, not 6
+        https://bugs.webkit.org/show_bug.cgi?id=240294
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements the spec change of https://github.com/tc39/proposal-temporal/issues/2082:
+        The range for 4-digit years in ISO8601 date strings should be 0-9999, not 1000-9999.
+
+        * runtime/TemporalInstant.cpp:
+
 2022-05-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Upstream TypedArray.prototype.fill speedup from bun

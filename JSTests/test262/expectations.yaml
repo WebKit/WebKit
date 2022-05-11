@@ -1050,9 +1050,6 @@ test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
 test/built-ins/Temporal/Instant/prototype/toJSON/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/toJSON/year-format.js:
-  default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
-  strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/rounding-direction.js:
   default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
   strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
@@ -1068,9 +1065,6 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.j
 test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js:
   default: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
   strict mode: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
-test/built-ins/Temporal/Instant/prototype/toString/year-format.js:
-  default: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
-  strict mode: 'Test262Error: year 0 formatted as 4-digit Expected SameValue(«+000000-07-01T21:30:36Z», «0000-07-01T21:30:36Z») to be true'
 test/built-ins/Temporal/PlainTime/compare/argument-cast.js:
   default: 'TypeError: "microsecond" field is missing'
   strict mode: 'TypeError: "microsecond" field is missing'

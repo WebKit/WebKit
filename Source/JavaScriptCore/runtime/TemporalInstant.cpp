@@ -457,10 +457,10 @@ String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZon
     GregorianDateTime gregorianDateTime { static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
     StringBuilder builder;
 
-    // If the year is outside the bounds of 1000 and 9999 inclusive we want to
+    // If the year is outside the bounds of 0 and 9999 inclusive we want to
     // use the extended year format (PadISOYear).
     unsigned yearLength = 4;
-    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 1000) {
+    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 0) {
         builder.append(gregorianDateTime.year() < 0 ? '-' : '+');
         yearLength = 6;
     }
