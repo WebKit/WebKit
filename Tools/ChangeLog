@@ -1,3 +1,16 @@
+2022-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Webpage Translation] Avoid removing elements with no children during text manipulation
+        https://bugs.webkit.org/show_bug.cgi?id=240287
+        rdar://91882797
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Fail quickly for invalid bugzilla credentials

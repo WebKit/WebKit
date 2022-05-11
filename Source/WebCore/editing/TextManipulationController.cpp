@@ -791,10 +791,14 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto content = iterator.currentContent();
         ASSERT(content.node);
 
+        bool isReplacedOrTextContent = content.isReplacedContent || content.isTextContent;
+        if (!isReplacedOrTextContent && is<ContainerNode>(*content.node) && !content.node->hasChildNodes() && content.text.isEmpty())
+            continue;
+
         lastChildOfCommonAncestorInRange = content.node;
         nodesToRemove.add(*content.node);
 
-        if (!content.isReplacedContent && !content.isTextContent)
+        if (!isReplacedOrTextContent)
             continue;
 
         Vector<ManipulationToken> tokensInCurrentNode;
