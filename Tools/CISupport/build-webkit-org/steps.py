@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -170,6 +170,26 @@ class CleanUpGitIndexLock(shell.ShellCommand):
     def evaluateCommand(self, cmd):
         self.build.buildFinished(['Git issue, retrying build'], RETRY)
         return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)
+
+
+class CheckOutSpecificRevision(shell.ShellCommand):
+    name = 'checkout-specific-revision'
+    descriptionDone = ['Checked out required revision']
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(CheckOutSpecificRevision, self).__init__(logEnviron=False, **kwargs)
+
+    def doStepIf(self, step):
+        return self.getProperty('user_provided_git_hash', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def start(self):
+        self.setCommand(['git', 'checkout', self.getProperty('user_provided_git_hash')])
+        return shell.ShellCommand.start(self)
 
 
 class InstallWin32Dependencies(shell.Compile):
@@ -1283,7 +1303,7 @@ class ShowIdentifier(shell.ShellCommand):
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
-        revision = self.getProperty('got_revision')
+        revision = self.getProperty('user_provided_git_hash', None) or self.getProperty('got_revision')
         self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 
@@ -1300,7 +1320,12 @@ class ShowIdentifier(shell.ShellCommand):
                 identifier = identifier.replace('trunk', 'main')
             self.setProperty('identifier', identifier)
             self.setProperty('archive_revision', identifier)
-            step = self.getLastBuildStepByName(CheckOutSource.name)
+
+            if self.getProperty('user_provided_git_hash'):
+                step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
+            else:
+                step = self.getLastBuildStepByName(CheckOutSource.name)
+
             if not step:
                 step = self
             step.addURL('Updated to {}'.format(identifier), self.url_for_identifier(identifier))
