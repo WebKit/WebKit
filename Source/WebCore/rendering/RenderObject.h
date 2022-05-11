@@ -96,7 +96,7 @@ class PseudoElementRequest;
 }
 
 // Base class for all rendering tree objects.
-class RenderObject : public CachedImageClient, public CanMakeWeakPtr<RenderObject> {
+class RenderObject : public CachedImageClient {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;

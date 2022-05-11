@@ -316,6 +316,7 @@ set(WTF_PUBLIC_HEADERS
     WTFConfig.h
     WTFSemaphore.h
     WallTime.h
+    WeakHashCountedSet.h
     WeakHashMap.h
     WeakHashSet.h
     WeakPtr.h
