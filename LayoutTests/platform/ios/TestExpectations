@@ -3599,7 +3599,7 @@ webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
-webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
+webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
 
 webkit.org/b/240104 fast/text/international/system-language/navigator-language/navigator-language-fr.html [ Pass Failure ]
 
