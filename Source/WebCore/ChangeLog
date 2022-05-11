@@ -1,3 +1,23 @@
+2022-05-11  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a canvas-drawImage specific method to get a NativeImage from a video element
+        https://bugs.webkit.org/show_bug.cgi?id=240275
+
+        Reviewed by Eric Carlson.
+
+        Introduce shouldGetNativeImageForCanvasDrawing in HTMLVideoElement/MediaPlayer/MediaPlayerPrivate.
+        If returning true, we call videoFrameForCurrentTime when drawing a video to canvas.
+        Otherwise, we directly use video.paintCurrentFrameInContext code path.
+        This allows skipping a code path where videoFrameForCurrentTime is less efficient than video.paintCurrentFrameInContext.
+
+        Covered by existing canvas tests.
+
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
 2022-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         Remove the unneeded StylePropertiesBase after Bug 240244

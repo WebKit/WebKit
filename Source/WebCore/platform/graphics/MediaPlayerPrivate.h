@@ -185,6 +185,7 @@ public:
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime() { return nullptr; }
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;
+    virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
     virtual void setPreload(MediaPlayer::Preload) { }
 

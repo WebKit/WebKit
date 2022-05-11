@@ -319,6 +319,14 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     return player()->hasVideo() && player()->hasAvailableVideoFrame();
 }
 
+bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
+{
+    if (!player())
+        return false;
+
+    return player()->shouldGetNativeImageForCanvasDrawing();
+}
+
 RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
 {
     if (!player())

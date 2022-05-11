@@ -79,6 +79,7 @@ public:
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
+    bool shouldGetNativeImageForCanvasDrawing() const;
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
     std::optional<DestinationColorSpace> colorSpace() const;
 
