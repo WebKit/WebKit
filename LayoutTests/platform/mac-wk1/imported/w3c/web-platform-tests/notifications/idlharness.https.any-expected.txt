@@ -32,7 +32,7 @@ FAIL Notification interface: attribute timestamp assert_true: The prototype obje
 FAIL Notification interface: attribute renotify assert_true: The prototype object must have a property "renotify" expected true got false
 FAIL Notification interface: attribute silent assert_true: The prototype object must have a property "silent" expected true got false
 FAIL Notification interface: attribute requireInteraction assert_true: The prototype object must have a property "requireInteraction" expected true got false
-FAIL Notification interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
+PASS Notification interface: attribute data
 FAIL Notification interface: attribute actions assert_true: The prototype object must have a property "actions" expected true got false
 PASS Notification interface: operation close()
 PASS Notification must be primary interface of notification
@@ -58,7 +58,7 @@ FAIL Notification interface: notification must inherit property "timestamp" with
 FAIL Notification interface: notification must inherit property "renotify" with the proper type assert_inherits: property "renotify" not found in prototype chain
 FAIL Notification interface: notification must inherit property "silent" with the proper type assert_inherits: property "silent" not found in prototype chain
 FAIL Notification interface: notification must inherit property "requireInteraction" with the proper type assert_inherits: property "requireInteraction" not found in prototype chain
-FAIL Notification interface: notification must inherit property "data" with the proper type assert_inherits: property "data" not found in prototype chain
+PASS Notification interface: notification must inherit property "data" with the proper type
 FAIL Notification interface: notification must inherit property "actions" with the proper type assert_inherits: property "actions" not found in prototype chain
 PASS Notification interface: notification must inherit property "close()" with the proper type
 PASS NotificationEvent interface: existence and properties of interface object
