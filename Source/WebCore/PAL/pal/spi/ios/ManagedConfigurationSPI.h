@@ -56,12 +56,9 @@ typedef enum MCRestrictedBoolType {
 @interface MCProfileConnection : NSObject
 @end
 
-@class NSURL;
-
 @interface MCProfileConnection ()
 + (MCProfileConnection *)sharedConnection;
 - (MCRestrictedBoolType)effectiveBoolValueForSetting:(NSString *)feature;
-- (BOOL)isURLManaged:(NSURL *)url;
 @end
 
 #endif
