@@ -106,6 +106,7 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
     {
         auto environmentVariables = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectoryURL.fileSystemRepresentation);
+        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_LIBRARY_PATH", currentExecutableDirectoryURL.fileSystemRepresentation);
         xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
     }
     {
