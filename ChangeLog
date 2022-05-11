@@ -1,3 +1,13 @@
+2022-05-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove Subversion references from ReadMe
+        https://bugs.webkit.org/show_bug.cgi?id=240316
+        <rdar://problem/93127701>
+
+        Reviewed by Geoffrey Garen.
+
+        * ReadMe.md:
+
 2022-05-06  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed, add github info to contributors.json.
