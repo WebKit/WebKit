@@ -1,3 +1,9 @@
+2022-05-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, add github info to contributors.json.
+
+        * metadata/contributors.json:
+
 2022-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Introduction.md: Explain active DOM objects
