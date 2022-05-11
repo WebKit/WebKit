@@ -1,3 +1,45 @@
+2022-05-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r293736. rdar://problem/80891555
+
+    StorageMap::removeItem may fail to remove item from map
+    https://bugs.webkit.org/show_bug.cgi?id=239982
+    rdar://80891555
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    We may have updated m_impl, but we don't update iterator for removal. In this case, item is not removed from
+    map, but currentSize is updated. The mismatch between currentSize and actual size of the map may lead to
+    underflow and overflow in currentSize when item is added or removed later.
+    
+    Test: storage/domstorage/sessionstorage/window-open-remove-item.html
+    
+    * storage/StorageMap.cpp:
+    (WebCore::StorageMap::removeItem):
+    
+    LayoutTests:
+    
+    * storage/domstorage/sessionstorage/resources/window-open-remove-item.html: Added.
+    * storage/domstorage/sessionstorage/window-open-remove-item-expected.txt: Added.
+    * storage/domstorage/sessionstorage/window-open-remove-item.html: Added.
+    
+    Canonical link: https://commits.webkit.org/250224@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293736 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-03  Sihui Liu  <sihui_liu@apple.com>
+
+            StorageMap::removeItem may fail to remove item from map
+            https://bugs.webkit.org/show_bug.cgi?id=239982
+            rdar://80891555
+
+            Reviewed by Chris Dumez.
+
+            * storage/domstorage/sessionstorage/resources/window-open-remove-item.html: Added.
+            * storage/domstorage/sessionstorage/window-open-remove-item-expected.txt: Added.
+            * storage/domstorage/sessionstorage/window-open-remove-item.html: Added.
+
 2022-04-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290630. rdar://problem/89442583

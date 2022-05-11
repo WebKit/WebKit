@@ -138,7 +138,7 @@ void StorageMap::removeItem(const String& key, String& oldValue)
     if (m_impl->refCount() > 1)
         m_impl = m_impl->copy();
 
-    m_impl->map.remove(iter);
+    m_impl->map.remove(key);
     m_impl->currentSize = newSize;
     invalidateIterator();
 }
