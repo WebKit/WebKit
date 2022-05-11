@@ -225,7 +225,7 @@
             iokit-external-method
         )
         (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 17
                 40
@@ -233,7 +233,7 @@
 #endif
         )
         (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
             (iokit-method-number
                 0
                 1

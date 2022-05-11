@@ -373,42 +373,10 @@
             (deny (with telemetry)
                 iokit-async-external-method
                 iokit-external-trap)
-            (allow iokit-async-external-method
-                    (iokit-method-number
-                        40
-                    )
-            )
+            (allow iokit-async-external-method)
             (deny (with telemetry) (with message "IOSurfaceRootUserClient")
                 iokit-external-method)
-            (allow iokit-external-method
-                (iokit-method-number
-                    0
-                    1
-                    2
-                    3
-                    5
-                    9
-                    10
-                    11
-                    12
-                    13
-                    14
-                    15
-                    20
-                    21
-                    23
-                    27
-                    31
-                    32
-                    34
-                    35
-                    36
-                    38
-                    39
-                    40
-                    41
-                )
-            )
+            (allow iokit-external-method)
         )
     )
 )
