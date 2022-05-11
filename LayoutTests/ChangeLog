@@ -1,5 +1,14 @@
 2022-05-11  Karl Rackler  <rackler@apple.com>
 
+        [Gardening][ macOS Debug wk2 ] fast/css/variables/test-suite/168.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=239822
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk2/TestExpectations:
+
+2022-05-11  Karl Rackler  <rackler@apple.com>
+
         [Gardening][ iOS ][ macOS Debug wk1 ] webaudio/AudioBuffer/huge-buffer.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=240081
 
