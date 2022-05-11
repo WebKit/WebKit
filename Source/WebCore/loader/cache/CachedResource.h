@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CacheValidation.h"
+#include "CachedResourceClient.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceError.h"
 #include "ResourceLoadPriority.h"
@@ -37,6 +38,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashCountedSet.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -138,8 +141,8 @@ public:
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
-    bool hasClients() const { return !m_clients.isEmpty() || !m_clientsAwaitingCallback.isEmpty(); }
-    bool hasClient(CachedResourceClient& client) { return m_clients.contains(&client) || m_clientsAwaitingCallback.contains(&client); }
+    bool hasClients() const { return m_clients.computeSize() || m_clientsAwaitingCallback.computeSize(); }
+    bool hasClient(const CachedResourceClient& client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
     bool deleteIfPossible();
 
     enum class PreloadResult : uint8_t {
@@ -157,7 +160,7 @@ public:
     virtual void allClientsRemoved();
     void destroyDecodedDataIfNeeded();
 
-    unsigned numberOfClients() const { return m_clients.size(); }
+    unsigned numberOfClients() const { return m_clients.computeSize(); }
 
     Status status() const { return static_cast<Status>(m_status); }
     void setStatus(Status status)
@@ -334,7 +337,7 @@ protected:
     DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
-    HashCountedSet<CachedResourceClient*> m_clients;
+    WeakHashCountedSet<CachedResourceClient> m_clients;
     std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
     RefPtr<SubresourceLoader> m_loader;
     RefPtr<FragmentedSharedBuffer> m_data;
@@ -346,7 +349,7 @@ private:
     WallTime m_responseTimestamp;
     ResourceLoaderIdentifier m_identifierForLoadWithoutResourceLoader;
 
-    HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
+    WeakHashMap<CachedResourceClient, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
 
     // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
