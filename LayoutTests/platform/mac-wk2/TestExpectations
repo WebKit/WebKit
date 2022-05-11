@@ -1715,11 +1715,5 @@ webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gestu
 
 webkit.org/b/239634 [ arm64 ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Failure ]
 
-<<<<<<< HEAD
-webkit.org/b/239818 [ Debug ] fast/css/identical-logical-height-decl.html [ Pass ImageOnlyFailure ]
-=======
-webkit.org/b/239818 [ Debug ] fast/css/variables/test-suite/168.html [ Pass ImageOnlyFailure ]
->>>>>>> 6d3bdd661e49 ([Gardening][ macOS Debug wk2 ] fast/css/identical-logical-height-decl.html is a flaky image failure)
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
