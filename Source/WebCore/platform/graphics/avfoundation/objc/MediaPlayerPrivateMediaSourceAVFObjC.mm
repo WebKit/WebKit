@@ -1429,7 +1429,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime cur
     metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
 
     m_videoFrameMetadata = metadata;
-    m_player->onNewVideoFrameMetadata(WTFMove(metadata));
+    m_player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()

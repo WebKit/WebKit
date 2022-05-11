@@ -288,7 +288,7 @@ public:
     virtual void mediaPlayerQueueTaskOnEventLoop(Function<void()>&& task) { callOnMainThread(WTFMove(task)); }
 
 #if PLATFORM(COCOA)
-    virtual void mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&&) { }
+    virtual void mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&) { }
 #endif
 
     virtual bool mediaPlayerPrefersSandboxedParsing() const { return false; }
@@ -591,7 +591,7 @@ public:
     void removeVideoTrack(VideoTrackPrivate&);
 
 #if PLATFORM(COCOA)
-    void onNewVideoFrameMetadata(VideoFrameMetadata&&);
+    void onNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
 #endif
 
     bool requiresTextTrackRepresentation() const;

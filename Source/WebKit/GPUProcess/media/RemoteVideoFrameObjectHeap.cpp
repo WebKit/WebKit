@@ -35,6 +35,7 @@
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/ColorSpaceCG.h>
 #include <WebCore/PixelBufferConformerCV.h>
 #include <WebCore/VideoFrameCV.h>
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -137,20 +138,29 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
     completionHandler(WTFMove(pixelBuffer));
 }
 
-void RemoteVideoFrameObjectHeap::convertBuffer(SharedVideoFrame::Buffer&& buffer, CompletionHandler<void()>&& callback)
+void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, CompletionHandler<void(WebCore::DestinationColorSpace)>&& callback)
 {
-    auto scope = makeScopeExit([&callback] { callback(); });
+    DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
+    auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
 
-    auto pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(buffer));
-    if (!pixelBuffer) {
+    RefPtr<VideoFrame> frame;
+    if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
+        frame = get(WTFMove(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
+    else
+        frame = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame));
+
+    if (!frame) {
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
         return;
     }
 
+    RetainPtr<CVPixelBufferRef> buffer = frame->pixelBuffer();
+    destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
+
     createPixelConformerIfNeeded();
-    auto convertedBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
+    auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
     if (!convertedBuffer) {
-        RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertBuffer conformer failed");
+        RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
         return;
     }

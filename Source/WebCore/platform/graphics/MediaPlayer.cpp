@@ -1785,9 +1785,9 @@ void MediaPlayer::playerContentBoxRectChanged(const LayoutRect& rect)
 }
 
 #if PLATFORM(COCOA)
-void MediaPlayer::onNewVideoFrameMetadata(VideoFrameMetadata&& metadata)
+void MediaPlayer::onNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    client().mediaPlayerOnNewVideoFrameMetadata(WTFMove(metadata));
+    client().mediaPlayerOnNewVideoFrameMetadata(WTFMove(metadata), WTFMove(buffer));
 }
 #endif
 

@@ -137,15 +137,14 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
     if (m_sharedVideoFrameWriter.isDisabled())
         m_sharedVideoFrameWriter = { };
 
-    auto nativePixelBuffer = videoFrame.pixelBuffer();
-    auto colorSpace = createCGColorSpaceForCVPixelBuffer(nativePixelBuffer);
-    auto buffer = m_sharedVideoFrameWriter.writeBuffer(nativePixelBuffer,
+    auto frame = m_sharedVideoFrameWriter.write(videoFrame,
         [&](auto& semaphore) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto& handle) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { handle }, 0); });
-    if (!buffer)
+    if (!frame)
         return nullptr;
 
-    auto result = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertBuffer { *buffer }, Messages::RemoteVideoFrameObjectHeap::ConvertBuffer::Reply { }, 0, GPUProcessConnection::defaultTimeout);
+    DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
+    auto result = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { *frame }, Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer::Reply { destinationColorSpace }, 0, GPUProcessConnection::defaultTimeout);
     if (!result) {
         m_sharedVideoFrameWriter.disable();
         return nullptr;
@@ -154,7 +153,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
     m_conversionSemaphore.wait();
 
     auto pixelBuffer = WTFMove(m_convertedBuffer);
-    return pixelBuffer ? NativeImage::create(PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(WTFMove(pixelBuffer), colorSpace.get())) : nullptr;
+    return pixelBuffer ? NativeImage::create(PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(WTFMove(pixelBuffer), destinationColorSpace.platformColorSpace())) : nullptr;
 }
 
 }

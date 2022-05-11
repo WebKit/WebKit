@@ -1473,7 +1473,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkNewVideoFrameMetadata()
     if (!updateLastPixelBuffer() && !m_videoFrameMetadata)
         return;
 
-    player()->onNewVideoFrameMetadata(WTFMove(*m_videoFrameMetadata));
+    player()->onNewVideoFrameMetadata(WTFMove(*m_videoFrameMetadata), m_lastPixelBuffer.get());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::stopVideoFrameMetadataGathering()

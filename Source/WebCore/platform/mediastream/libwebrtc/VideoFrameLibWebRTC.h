@@ -44,7 +44,7 @@ public:
     using ConversionCallback = Function<RetainPtr<CVPixelBufferRef>(webrtc::VideoFrameBuffer&)>;
     static Ref<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer() { return m_buffer; }
+    rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer() const { return m_buffer; }
 
 private:
     VideoFrameLibWebRTC(MediaTime, bool isMirrored, Rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);

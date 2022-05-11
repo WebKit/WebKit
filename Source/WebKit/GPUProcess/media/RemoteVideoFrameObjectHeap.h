@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/VideoFrame.h>
 
 #if PLATFORM(COCOA)
@@ -65,7 +66,7 @@ private:
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&, bool canSendIOSurface);
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
-    void convertBuffer(SharedVideoFrame::Buffer&&, CompletionHandler<void()>&&);
+    void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 #endif

@@ -1,5 +1,34 @@
 2022-05-11  Youenn Fablet  <youenn@apple.com>
 
+        MediaPlayerPrivateRemote::nativeImageForCurrentTime should not use IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=240226
+        <rdar://problem/92969905>
+
+        Reviewed by Eric Carlson.
+
+        On GPUProcess side, when receiving notification of a new frame, create a remote frame
+        in RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata
+        and send it to MediaPlayerPrivateRemote::pushVideoFrameMetadata on WebProcess side.
+        When being asked to create a NativeImage, MediaPlayerPrivateRemote can use that remote image
+        to get a NativeImage using its videoFrameObjectHeapProxy.
+        If the remote video frame is not available, get it through videoFrameForCurrentTime and convert it in the same way.
+        This creates in that case a double IPC. We should probably remove these two IPCs and use VideoFrame as much as we can in follow-up patches.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+
+2022-05-11  Youenn Fablet  <youenn@apple.com>
+
         Introduce a canvas-drawImage specific method to get a NativeImage from a video element
         https://bugs.webkit.org/show_bug.cgi?id=240275
 

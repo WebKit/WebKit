@@ -93,7 +93,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata);
+    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
 #endif
 }
 
