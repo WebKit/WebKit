@@ -54,7 +54,7 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 {
     m_stdDeviationX->setBaseValInternal(x);
     m_stdDeviationY->setBaseValInternal(y);
-    setSVGResourcesInAncestorChainAreDirty();
+    updateSVGRendererForElementChange();
 }
 
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -89,7 +89,7 @@ void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

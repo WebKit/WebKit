@@ -98,7 +98,7 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 
@@ -112,7 +112,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    setSVGResourcesInAncestorChainAreDirty();
+    updateSVGRendererForElementChange();
 }
 
 RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

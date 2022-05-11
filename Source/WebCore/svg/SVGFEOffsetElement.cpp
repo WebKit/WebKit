@@ -72,7 +72,7 @@ void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

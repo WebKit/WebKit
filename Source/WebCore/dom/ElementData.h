@@ -125,13 +125,12 @@ private:
     mutable uint32_t m_arraySizeAndFlags;
 
     static const uint32_t s_arraySize = 27;
-    static const uint32_t s_flagCount = 6;
+    static const uint32_t s_flagCount = 5;
     static const uint32_t s_flagIsUnique = 1;
     static const uint32_t s_flagHasNameAttribute = 1 << 1;
     static const uint32_t s_flagPresentationalHintStyleIsDirty = 1 << 2;
     static const uint32_t s_flagStyleAttributeIsDirty = 1 << 3;
     static const uint32_t s_flagAnimatedSVGAttributesAreDirty = 1 << 4;
-    static const uint32_t s_flagSVGResourcesInAncestorChainAreDirty = 1 << 5;
     static const uint32_t s_flagsMask = (1 << s_flagCount) - 1;
     // FIXME: could the SVG specific flags go to some SVG class?
 
@@ -161,9 +160,6 @@ protected:
 
     bool animatedSVGAttributesAreDirty() const { return m_arraySizeAndFlags & s_flagAnimatedSVGAttributesAreDirty; }
     void setAnimatedSVGAttributesAreDirty(bool dirty) const { updateFlag(s_flagAnimatedSVGAttributesAreDirty, dirty); }
-
-    bool svgResourcesInAncestorChainAreDirty() const { return m_arraySizeAndFlags & s_flagSVGResourcesInAncestorChainAreDirty; }
-    void setSVGResourcesInAncestorChainAreDirty(bool dirty) const { updateFlag(s_flagSVGResourcesInAncestorChainAreDirty, dirty); }
 
     mutable RefPtr<StyleProperties> m_inlineStyle;
     mutable SpaceSplitString m_classNames;

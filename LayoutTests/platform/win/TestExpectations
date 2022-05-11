@@ -3845,6 +3845,8 @@ http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout 
 http/tests/security/contentSecurityPolicy/block-favicon.html [ Failure Pass ]
 http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Crash Pass ]
 svg/animations/animations-paused-in-background-page.html [ Timeout Pass ]
+svg/animations/animations-paused-when-inserted-in-hidden-document.html [ Skip ]
+svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 # FIXME: create bugs to track the following failures:
 accessibility/add-children-pseudo-element.html [ Failure ]

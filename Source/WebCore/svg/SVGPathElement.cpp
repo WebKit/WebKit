@@ -72,7 +72,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
         if (auto* renderer = this->renderer())
             static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
 
         return;
     }

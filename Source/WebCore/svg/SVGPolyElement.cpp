@@ -60,7 +60,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         if (auto* renderer = this->renderer())
             static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

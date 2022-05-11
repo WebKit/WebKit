@@ -165,7 +165,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             if (auto targetClone = this->targetClone())
                 transferSizeAttributesToTargetClone(*targetClone);
         }
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

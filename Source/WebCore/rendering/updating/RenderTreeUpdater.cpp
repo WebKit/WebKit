@@ -42,6 +42,7 @@
 #include "RenderInline.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
+#include "RenderSVGResource.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -185,9 +186,6 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         if (elementUpdate)
             updateElementRenderer(element, *elementUpdate);
 
-        if (is<SVGElement>(element))
-            downcast<SVGElement>(element).invalidateSVGResourcesInAncestorChainIfNeeded();
-
         storePreviousRenderer(element);
 
         bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
@@ -298,6 +296,12 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)
 {
+    if (elementUpdate.updateSVGRenderer && element.renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
+
+    if (!elementUpdate.style)
+        return;
+
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     ContentChangeObserver::StyleChangeScope observingScope(m_document, element);
 #endif

@@ -93,13 +93,13 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::startOffsetAttr)
             updateRelativeLengthsInformation();
 
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         buildPendingResource();
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

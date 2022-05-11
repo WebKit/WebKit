@@ -205,6 +205,7 @@ class RenderView;
 class RequestAnimationFrameCallback;
 class ResizeObserver;
 class SVGDocumentExtensions;
+class SVGElement;
 class SVGSVGElement;
 class SVGUseElement;
 class SWClientConnection;
@@ -1356,6 +1357,7 @@ public:
     void setIsResolvingTreeStyle(bool);
 
     void updateTextRenderer(Text&, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText);
+    void updateSVGRenderer(SVGElement&);
 
     // Return a Locale for the default locale if the argument is null or empty.
     Locale& getCachedLocale(const AtomString& locale = nullAtom());
@@ -1806,6 +1808,8 @@ private:
     void addToDocumentsMap();
     void removeFromDocumentsMap();
 
+    Style::Update& ensurePendingRenderTreeUpdate();
+
     NotificationClient* notificationClient() final;
 
     const Ref<const Settings> m_settings;
@@ -1888,7 +1892,7 @@ private:
     
     Timer m_styleRecalcTimer;
 
-    std::unique_ptr<Style::Update> m_pendingRenderTreeTextUpdate;
+    std::unique_ptr<Style::Update> m_pendingRenderTreeUpdate;
 
     Element* m_cssTarget { nullptr };
 

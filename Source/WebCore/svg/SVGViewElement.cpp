@@ -62,7 +62,7 @@ void SVGViewElement::svgAttributeChanged(const QualifiedName& attrName)
         if (!m_targetElement)
             return;
         m_targetElement->inheritViewAttributes(*this);
-        m_targetElement->setSVGResourcesInAncestorChainAreDirty();
+        m_targetElement->updateSVGRendererForElementChange();
         return;
     }
 

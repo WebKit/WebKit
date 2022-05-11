@@ -37,6 +37,7 @@ class Document;
 class Element;
 class Node;
 class RenderStyle;
+class SVGElement;
 class Text;
 
 namespace Style {
@@ -45,6 +46,7 @@ struct ElementUpdate {
     std::unique_ptr<RenderStyle> style;
     Change change { Change::None };
     bool recompositeLayer { false };
+    bool updateSVGRenderer { false };
 };
 
 struct TextUpdate {
@@ -76,6 +78,7 @@ public:
     void addElement(Element&, Element* parent, ElementUpdate&&);
     void addText(Text&, Element* parent, TextUpdate&&);
     void addText(Text&, TextUpdate&&);
+    void addSVGRendererUpdate(SVGElement&);
 
 private:
     void addPossibleRoot(Element*);

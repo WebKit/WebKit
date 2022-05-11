@@ -137,7 +137,7 @@ void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
 
 void SVGSVGElement::updateCurrentTranslate()
 {
-    setSVGResourcesInAncestorChainAreDirty();
+    updateSVGRendererForElementChange();
     if (parentNode() == &document() && document().renderView())
         document().renderView()->repaint();
 }
@@ -224,14 +224,14 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
                     renderer->view().setNeedsLayout(MarkOnlyThis);
             }
         }
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
         if (auto* renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

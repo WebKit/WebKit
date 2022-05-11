@@ -184,7 +184,7 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
             m_specifiedTextLength = m_textLength->baseVal()->value();
 
         InstanceInvalidationGuard guard(*this);
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

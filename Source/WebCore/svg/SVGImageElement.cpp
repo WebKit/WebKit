@@ -101,13 +101,13 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
             if (auto* renderer = this->renderer()) {
                 if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
                     return;
-                setSVGResourcesInAncestorChainAreDirty();
+                updateSVGRendererForElementChange();
             }
         } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
             setPresentationalHintStyleIsDirty();
         else {
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
-            setSVGResourcesInAncestorChainAreDirty();
+            updateSVGRendererForElementChange();
         }
         return;
     }

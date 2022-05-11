@@ -769,7 +769,7 @@ void Document::removedLastRef()
         m_fullscreenManager->clear();
 #endif
         m_associatedFormControls.clear();
-        m_pendingRenderTreeTextUpdate = { };
+        m_pendingRenderTreeUpdate = { };
 
         m_fontLoader->stopLoadingAndClearFonts();
 
@@ -2092,7 +2092,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
-        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeTextUpdate));
+        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
         auto styleUpdate = resolver.resolve();
 
         while (resolver.hasUnresolvedQueryContainers() && styleUpdate) {
@@ -2154,12 +2154,27 @@ void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, uns
     if (!hasLivingRenderTree())
         return;
 
-    if (!m_pendingRenderTreeTextUpdate)
-        m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
+    ensurePendingRenderTreeUpdate().addText(text, { offsetOfReplacedText, lengthOfReplacedText, std::nullopt });
+}
 
-    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, std::nullopt });
+void Document::updateSVGRenderer(SVGElement& element)
+{
+    if (!hasLivingRenderTree())
+        return;
+
+    ensurePendingRenderTreeUpdate().addSVGRendererUpdate(element);
+}
+
+Style::Update& Document::ensurePendingRenderTreeUpdate()
+{
+    ASSERT(hasLivingRenderTree());
+
+    if (!m_pendingRenderTreeUpdate)
+        m_pendingRenderTreeUpdate = makeUnique<Style::Update>(*this);
 
     scheduleRenderingUpdate({ });
+
+    return *m_pendingRenderTreeUpdate;
 }
 
 bool Document::needsStyleRecalc() const
@@ -2173,7 +2188,7 @@ bool Document::needsStyleRecalc() const
     if (childNeedsStyleRecalc())
         return true;
 
-    if (m_pendingRenderTreeTextUpdate)
+    if (m_pendingRenderTreeUpdate)
         return true;
 
     if (styleScope().hasPendingUpdate())
@@ -2593,6 +2608,8 @@ void Document::destroyRenderTree()
 
     if (view())
         view()->willDestroyRenderTree();
+
+    m_pendingRenderTreeUpdate = { };
 
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);

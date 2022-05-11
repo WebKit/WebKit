@@ -84,8 +84,7 @@ public:
 
     inline void setAnimatedSVGAttributesAreDirty();
     inline void setPresentationalHintStyleIsDirty();
-    void setSVGResourcesInAncestorChainAreDirty();
-    void invalidateSVGResourcesInAncestorChainIfNeeded();
+    void updateSVGRendererForElementChange();
 
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement>& instances() const;

@@ -883,20 +883,9 @@ void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& nam
         addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
 
-void SVGElement::setSVGResourcesInAncestorChainAreDirty()
+void SVGElement::updateSVGRendererForElementChange()
 {
-    ensureUniqueElementData().setSVGResourcesInAncestorChainAreDirty(true);
-    invalidateStyle();
-}
-
-void SVGElement::invalidateSVGResourcesInAncestorChainIfNeeded()
-{
-    if (!elementData() || !elementData()->svgResourcesInAncestorChainAreDirty())
-        return;
-
-    if (auto renderer = this->renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-    elementData()->setSVGResourcesInAncestorChainAreDirty(false);
+    document().updateSVGRenderer(*this);
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)

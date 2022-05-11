@@ -145,7 +145,7 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 
         if (auto renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
 
         return;
     }

@@ -107,7 +107,7 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
             if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*renderer))
                 textAncestor->setNeedsPositioningValuesUpdate();
         }
-        setSVGResourcesInAncestorChainAreDirty();
+        updateSVGRendererForElementChange();
         return;
     }
 

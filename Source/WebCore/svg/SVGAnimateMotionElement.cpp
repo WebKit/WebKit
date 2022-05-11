@@ -253,7 +253,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     auto updateTargetElement = [](SVGElement& element) {
         if (auto renderer = element.renderer())
             renderer->setNeedsTransformUpdate();
-        element.setSVGResourcesInAncestorChainAreDirty();
+        element.updateSVGRendererForElementChange();
     };
 
     updateTargetElement(*targetElement);
