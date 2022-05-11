@@ -151,7 +151,10 @@ void ResourceResponse::setCertificateInfo(CertificateInfo&& certificateInfo)
 
 String ResourceResponse::platformSuggestedFilename() const
 {
-    return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition)).toString();
+    StringView contentDisposition = filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
+    if (contentDisposition.is8Bit())
+        return String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
+    return contentDisposition.toString();
 }
 
 bool ResourceResponse::shouldRedirect()

@@ -1,3 +1,22 @@
+2022-05-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        [WinCairo] Support file downloads
+        https://bugs.webkit.org/show_bug.cgi?id=240293
+
+        Reviewed by Fujii Hironori.
+
+        Hooked up Curl calls to Download callbacks. Added basic support for
+        file downloads in Curl.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::cancel):
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveData):
+        (WebKit::NetworkDataTaskCurl::curlDidComplete):
+        (WebKit::NetworkDataTaskCurl::deleteDownloadFile):
+        (WebKit::NetworkDataTaskCurl::curlDidFailWithError):
+        (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2022-05-11  Michael Saboff  <msaboff@apple.com>
 
         Need to add DYLD_LIBRARY_PATH for XPC services

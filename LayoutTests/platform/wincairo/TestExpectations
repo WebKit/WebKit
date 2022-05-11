@@ -54,23 +54,15 @@ fast/dom/DeviceOrientation [ Skip ]
 fast/dom/DeviceMotion [ Skip ]
 fast/dom/Window/window-properties-device-orientation.html [ Skip ]
 
-# DOWNLOAD_ATTRIBUTE is disabled
-fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
-fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
+# Unexpected suggested file name.
+fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Failure ]
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
 
 # ENABLE_INPUT_TYPE_* are disabled.
 # See: webkit.org/b/29359
@@ -765,6 +757,9 @@ http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 http/tests/cache/partitioned-cache.html [ Failure ]
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
+# Second link click interrupts current download
+http/tests/download/anchor-load-after-download.html [ Skip ]
+
 http/tests/cache-storage [ Skip ]
 http/tests/canvas [ Skip ]
 http/tests/contentdispositionattachmentsandbox [ Skip ]
@@ -788,7 +783,6 @@ http/tests/cookies/sync-xhr-set-cookie-invalidates-cache.html [ Pass Failure ]
 http/tests/css/cross-fade-reload.html [ Timeout Pass ]
 
 http/tests/dom [ Skip ]
-http/tests/download [ Skip ]
 http/tests/eventsource [ Skip ]
 http/tests/events/touch/ios [ Skip ]
 http/tests/fileapi [ Skip ]

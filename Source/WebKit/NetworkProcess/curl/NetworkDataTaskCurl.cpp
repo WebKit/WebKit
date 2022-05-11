@@ -26,8 +26,12 @@
 #include "config.h"
 #include "NetworkDataTaskCurl.h"
 
+#include "APIError.h"
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
+#include "DataReference.h"
+#include "Download.h"
+#include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
 #include "PrivateRelayed.h"
 #include <WebCore/AuthenticationChallenge.h>
@@ -42,6 +46,7 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -108,6 +113,9 @@ void NetworkDataTaskCurl::cancel()
 
     if (m_curlRequest)
         m_curlRequest->cancel();
+
+    if (isDownload())
+        deleteDownloadFile();
 }
 
 void NetworkDataTaskCurl::invalidateAndCancel()
@@ -180,6 +188,23 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& b
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
+    if (isDownload()) {
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        RELEASE_ASSERT(download);
+        uint64_t bytesWritten = 0;
+        for (auto& segment : buffer) {
+            if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
+                download->didFail(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
+                invalidateAndCancel();
+                return;
+            }
+
+            bytesWritten += segment.segment->size();
+        }
+        download->didReceiveData(bytesWritten, 0, 0);
+        return;
+    }
+
     m_client->didReceiveData(buffer);
 }
 
@@ -188,7 +213,25 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
+    if (isDownload()) {
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        RELEASE_ASSERT(download);
+        FileSystem::closeFile(m_downloadDestinationFile);
+        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
+        download->didFinish();
+        return;
+    }
+
     m_client->didCompleteWithError({ }, WTFMove(networkLoadMetrics));
+}
+
+void NetworkDataTaskCurl::deleteDownloadFile()
+{
+    if (FileSystem::isHandleValid(m_downloadDestinationFile)) {
+        FileSystem::closeFile(m_downloadDestinationFile);
+        FileSystem::deleteFile(m_pendingDownloadLocation);
+        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
+    }
 }
 
 void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceError&& resourceError, CertificateInfo&& certificateInfo)
@@ -198,6 +241,14 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
 
     if (resourceError.isSSLCertVerificationError()) {
         tryServerTrustEvaluation(AuthenticationChallenge(request.resourceRequest().url(), certificateInfo, resourceError));
+        return;
+    }
+
+    if (isDownload()) {
+        deleteDownloadFile();
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        RELEASE_ASSERT(download);
+        download->didFail(resourceError, IPC::DataReference());
         return;
     }
 
@@ -238,6 +289,24 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
         case PolicyAction::Ignore:
             invalidateAndCancel();
             break;
+        case PolicyAction::Download: {
+            m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
+            if (!FileSystem::isHandleValid(m_downloadDestinationFile)) {
+                if (m_client)
+                    m_client->didCompleteWithError(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()));
+                invalidateAndCancel();
+                return;
+            }
+
+            auto& downloadManager = m_session->networkProcess().downloadManager();
+            auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
+            auto* downloadPtr = download.get();
+            downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
+            downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+            if (m_curlRequest)
+                m_curlRequest->completeDidReceiveResponse();
+            break;
+        }
         default:
             notImplemented();
             break;

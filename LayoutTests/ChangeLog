@@ -1,3 +1,12 @@
+2022-05-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        [WinCairo] Support file downloads
+        https://bugs.webkit.org/show_bug.cgi?id=240293
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo/TestExpectations: enable downloads tests.
+
 2022-05-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r291788): MotionMark Suits subtest is 9% regressed
