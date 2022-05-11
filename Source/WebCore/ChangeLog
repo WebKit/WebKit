@@ -1,5 +1,19 @@
 2022-05-11  Youenn Fablet  <youenn@apple.com>
 
+        Add a webshare quirk for youtube
+        https://bugs.webkit.org/show_bug.cgi?id=240303
+        <rdar://93042649>
+
+        Reviewed by Tim Horton.
+
+        Manually tested.
+
+        * page/Quirks.cpp:
+        (WebCore::isYouTubeDocument):
+        (WebCore::Quirks::shouldDisableWebSharePolicy const):
+
+2022-05-11  Youenn Fablet  <youenn@apple.com>
+
         MediaPlayerPrivateRemote::nativeImageForCurrentTime should not use IOSurfaces
         https://bugs.webkit.org/show_bug.cgi?id=240226
         <rdar://problem/92969905>

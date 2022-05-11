@@ -90,6 +90,11 @@ static bool isTwitterDocument(Document& document)
     return RegistrableDomain(document.url()).string() == "twitter.com";
 }
 
+static bool isYouTubeDocument(Document& document)
+{
+    return RegistrableDomain(document.url()).string() == "youtube.com";
+}
+
 Quirks::Quirks(Document& document)
     : m_document(document)
 {
@@ -1459,7 +1464,7 @@ bool Quirks::shouldDisableWebSharePolicy() const
         return false;
 
     if (!m_shouldDisableWebSharePolicy)
-        m_shouldDisableWebSharePolicy = isTwitterDocument(*m_document);
+        m_shouldDisableWebSharePolicy = isTwitterDocument(*m_document) || isYouTubeDocument(*m_document);
 
     return *m_shouldDisableWebSharePolicy;
 }
