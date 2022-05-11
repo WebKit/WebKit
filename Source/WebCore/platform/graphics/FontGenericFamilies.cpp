@@ -46,8 +46,9 @@ static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const St
 
 static inline bool computeUserPrefersSimplified()
 {
-    const Vector<String>& preferredLanguages = userPreferredLanguages();
-    for (auto& language : preferredLanguages) {
+    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
+    // which may cause the matching below to fail.
+    for (auto& language : userPreferredLanguages()) {
         if (equalLettersIgnoringASCIICase(language, "zh-tw"_s))
             return false;
         if (equalLettersIgnoringASCIICase(language, "zh-cn"_s))

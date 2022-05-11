@@ -2263,7 +2263,7 @@ void Internals::advanceToNextMisspelling()
 
 Vector<String> Internals::userPreferredLanguages() const
 {
-    return WTF::userPreferredLanguages();
+    return WTF::userPreferredLanguages(ShouldMinimizeLanguages::No);
 }
 
 void Internals::setUserPreferredLanguages(const Vector<String>& languages)

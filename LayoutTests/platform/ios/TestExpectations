@@ -3584,6 +3584,8 @@ webkit.org/b/239564 fast/forms/select-list-box-with-height.html [ Failure ]
 webkit.org/b/239564 fast/forms/control-restrict-line-height.html [ Failure ]
 webkit.org/b/239564 tables/mozilla/bugs/bug2479-3.html [ Failure ]
 
+webkit.org/b/240268 fast/text/international/generic-font-family-language-traditional.html [ ImageOnlyFailure ]
+
 webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
 
 webkit.org/b/239567 tables/mozilla/bugs/bug26178.html [ Pass Failure ]
@@ -3600,8 +3602,6 @@ webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
 webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
-
-webkit.org/b/240104 fast/text/international/system-language/navigator-language/navigator-language-fr.html [ Pass Failure ]
 
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 

@@ -19,8 +19,8 @@
 
                 test('internals.userPreferredLanguages returns a non-empty array', languages.length);
 
-                languages.unshift("first-language");
-                languages.push("last-language");
+                languages.unshift("fr-LU");
+                languages.push("de-LU");
                 internals.setUserPreferredLanguages(languages);
 
                 var newLanguages = internals.userPreferredLanguages();

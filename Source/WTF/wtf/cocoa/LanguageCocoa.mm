@@ -32,6 +32,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/NSLocaleSPI.h>
+#import <wtf/text/TextStream.h>
 #import <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -71,6 +72,16 @@ RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef languages)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     return (__bridge CFArrayRef)[NSLocale minimizedLanguagesFromLanguages:(__bridge NSArray<NSString *> *)languages];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
+}
+
+void overrideUserPreferredLanguages(const Vector<String>& override)
+{
+    LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
+    NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+    auto newArguments = adoptNS([existingArguments mutableCopy]);
+    [newArguments setValue:createNSArray(override).get() forKey:@"AppleLanguages"];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
+    languageDidChange();
 }
 
 }

@@ -70,6 +70,8 @@ FontDescription::FontDescription()
 
 static AtomString computeSpecializedChineseLocale()
 {
+    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
+    // which may cause the matching below to fail.
     for (auto& language : userPreferredLanguages()) {
         if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
             return AtomString { language };

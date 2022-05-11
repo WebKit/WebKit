@@ -13,10 +13,7 @@ shouldBe(Intl.getCanonicalLocales(new Intl.DateTimeFormat().resolvedOptions().lo
 shouldBe(Intl.getCanonicalLocales(new Intl.NumberFormat().resolvedOptions().locale)[0], new Intl.NumberFormat().resolvedOptions().locale);
 shouldBe(Intl.getCanonicalLocales(new Intl.Collator().resolvedOptions().locale)[0], new Intl.NumberFormat().resolvedOptions().locale);
 
-// Any language name with less than two characters is considered invalid, so we use "a" here.
-// "i-klingon" is grandfathered, and is canonicalized "tlh".
-// It should not be part of any available locale sets, so we know it came from here.
-$vm.setUserPreferredLanguages([ "a", "*", "en_US.utf8", "i-klingon", "en-US" ]);
-shouldBe(new Intl.DateTimeFormat().resolvedOptions().locale, 'tlh');
-shouldBe(new Intl.NumberFormat().resolvedOptions().locale, 'tlh');
-shouldBe(new Intl.Collator().resolvedOptions().locale, 'tlh');
+$vm.setUserPreferredLanguages([ "fr-FR" ]);
+shouldBe(new Intl.DateTimeFormat().resolvedOptions().locale, 'fr-FR');
+shouldBe(new Intl.NumberFormat().resolvedOptions().locale, 'fr-FR');
+shouldBe(new Intl.Collator().resolvedOptions().locale, 'fr-FR');

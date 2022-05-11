@@ -113,16 +113,6 @@ Vector<String> userPreferredLanguagesOverride()
     return preferredLanguagesOverride();
 }
 
-void overrideUserPreferredLanguages(const Vector<String>& override)
-{
-    LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
-    {
-        Locker locker { preferredLanguagesOverrideLock };
-        preferredLanguagesOverride() = override;
-    }
-    languageDidChange();
-}
-
 Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     {
@@ -145,6 +135,16 @@ Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLang
 }
 
 #if !PLATFORM(COCOA)
+
+void overrideUserPreferredLanguages(const Vector<String>& override)
+{
+    LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
+    {
+        Locker locker { preferredLanguagesOverrideLock };
+        preferredLanguagesOverride() = override;
+    }
+    languageDidChange();
+}
 
 static String canonicalLanguageIdentifier(const String& languageCode)
 {

@@ -2266,6 +2266,8 @@ webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ F
 
 webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
 
+webkit.org/b/240268 fast/text/international/generic-font-family-language-traditional.html [ ImageOnlyFailure ]
+
 # <model> tests involving the ready promise can only work on Monterey and up
 [ BigSur ] model-element/model-element-ready.html [ Skip ]
 
