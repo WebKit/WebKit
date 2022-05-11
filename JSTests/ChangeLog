@@ -1,3 +1,15 @@
+2022-05-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upstream TypedArray.prototype.fill speedup from bun
+        https://bugs.webkit.org/show_bug.cgi?id=239891
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/typed-array-fill.js: Added.
+        * stress/typed-array-fill-complicated.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+
 2022-05-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Temporal round and total methods should accept string param

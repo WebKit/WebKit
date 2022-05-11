@@ -1,3 +1,33 @@
+2022-05-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upstream TypedArray.prototype.fill speedup from bun
+        https://bugs.webkit.org/show_bug.cgi?id=239891
+
+        Reviewed by Saam Barati.
+
+        This patch imports bun's improvement in TypedArray#fill[1], bun is MIT licensed.
+        We use memset and its variant to fill TypedArray if possible.
+        Microbenchmarks show 5x improvement.
+
+                                         ToT                     Patched
+
+            typed-array-fill     1092.0348+-6.2496     ^    221.3430+-9.1261        ^ definitely 4.9337x faster
+
+        [1]: https://github.com/Jarred-Sumner/WebKit/commit/b06577c1f1de19d2ef3d4a87d14ea41909ddf5fc
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+
 2022-05-10  Mark Lam  <mark.lam@apple.com>
 
         Add optional Integrity checks at JSC API boundaries.
