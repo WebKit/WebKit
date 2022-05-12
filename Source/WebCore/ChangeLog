@@ -1,3 +1,17 @@
+2022-05-09  Miguel Gomez  <magomez@igalia.com>
+
+        [Nicosia] Canvas animations don't work with threaded rendering
+        https://bugs.webkit.org/show_bug.cgi?id=227760
+        <rdar://problem/80588913>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Implement Nicosia::CairoOperationRecorder::draImageBuffer(), which is required in order to paint
+        canvas contents into a GraphicsContext.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::drawImageBuffer):
+
 2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Fix deprecations for ERB.new in GenerateSettings.rb
