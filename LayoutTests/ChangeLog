@@ -1,3 +1,12 @@
+2022-05-12  Karl Rackler  <rackler@apple.com>
+
+        [ iOS ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html is a consistent failure
+        https://bugs.webkit.org/show_bug.cgi?id=240348
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
 2022-05-12  Youenn Fablet  <youenn@apple.com>
 
         Add a better mock for audio units used by CoreAudioSharedUnit
