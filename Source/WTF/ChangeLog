@@ -1,3 +1,13 @@
+2022-05-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Mail compose: right clicking an image attachment selects it
+        https://bugs.webkit.org/show_bug.cgi?id=240315
+        rdar://45454933
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h:
+
 2022-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         Remove abandoned CSSDeferredParser implementation and feature flag
