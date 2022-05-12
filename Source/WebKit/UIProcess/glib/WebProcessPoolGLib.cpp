@@ -32,9 +32,12 @@
 #include "MemoryPressureMonitor.h"
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
-#include <JavaScriptCore/RemoteInspector.h>
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/FileSystem.h>
+
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspector.h>
+#endif
 
 #if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
@@ -119,7 +122,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.applicationID = String::fromLatin1(g_application_get_application_id(app));
     parameters.applicationName = String::fromLatin1(g_get_application_name());
 
+#if ENABLE(REMOTE_INSPECTOR)
     parameters.inspectorServerAddress = Inspector::RemoteInspector::inspectorServerAddress();
+#endif
 
 #if USE(ATSPI)
     static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");

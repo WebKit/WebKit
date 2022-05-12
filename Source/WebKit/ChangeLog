@@ -1,3 +1,19 @@
+2022-05-12  Olivier Blin  <olivier.blin@softathome.com>
+
+        REGRESSION(r291038) [GTK][WPE] Fix build without remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=240305
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-05-12  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Fix a compile error due to InspectorResourceURLSchemeHandler

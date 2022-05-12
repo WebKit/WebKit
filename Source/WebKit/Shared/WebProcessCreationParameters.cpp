@@ -208,7 +208,9 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(GLIB)
     encoder << applicationID;
     encoder << applicationName;
+#if ENABLE(REMOTE_INSPECTOR)
     encoder << inspectorServerAddress;
+#endif
 #endif
 
 #if USE(ATSPI)
@@ -558,11 +560,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.applicationName))
         return false;
 
+#if ENABLE(REMOTE_INSPECTOR)
     std::optional<CString> inspectorServerAddress;
     decoder >> inspectorServerAddress;
     if (!inspectorServerAddress)
         return false;
     parameters.inspectorServerAddress = WTFMove(*inspectorServerAddress);
+#endif
 #endif
 
 #if USE(ATSPI)
