@@ -134,11 +134,14 @@ void StorageMap::removeItem(const String& key, String& oldValue)
     oldValue = iter->value;
     newSize = newSize - iter->key.sizeInBytes() - oldValue.sizeInBytes();
 
-    // Implement copy-on-write semantics.
-    if (m_impl->refCount() > 1)
+    if (m_impl->hasOneRef())
+        m_impl->map.remove(iter);
+    else {
+        // Implement copy-on-write semantics.
         m_impl = m_impl->copy();
+        m_impl->map.remove(key);
+    }
 
-    m_impl->map.remove(key);
     m_impl->currentSize = newSize;
     invalidateIterator();
 }
