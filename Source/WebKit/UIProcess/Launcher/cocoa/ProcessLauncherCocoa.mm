@@ -272,6 +272,7 @@ void ProcessLauncher::launchProcess()
         processLauncher->m_xpcConnection = nullptr;
 
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
+        processLauncher->deref();
     };
 
     auto eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), eventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {

@@ -1,3 +1,21 @@
+2022-05-11  Basuke Suzuki  <basuke@mac.com>
+
+        [Cocoa] ProcessLauncher instance was not released well on the error case.
+        https://bugs.webkit.org/show_bug.cgi?id=240321
+
+        Reviewed by NOBODY (OOPS!).
+
+        It's very rare case but when xpc is failing to establish the connection to the sub process, the error handler is
+        called after executing xpc_connection_send_message_with_reply() and ProcessLauncher is failing its responsibility.
+        At the end the owner of ProcessLauncher is terminated and releases the ownership of ProcessLauncher at the destructor
+        of AuxiliaryProcessProxy.
+
+        But just before calling xpc_connection_send_message_with_reply(), the process is ref()ed. There's no chance to deref()
+        the instance because the callback of  xpc_connection_send_message_with_reply() won't be called if error happens.
+
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2022-05-11  Per Arne Vollan  <pvollan@apple.com>
 
         [WP] Remove obsolete message filters
