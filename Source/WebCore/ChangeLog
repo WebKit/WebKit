@@ -1,3 +1,29 @@
+2022-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Add a better mock for audio units used by CoreAudioSharedUnit
+        https://bugs.webkit.org/show_bug.cgi?id=240231
+
+        Reviewed by Eric Carlson.
+
+        Move CoreAudioSharedUnit to its own file, CoreAudioSharedUnit.h/CoreAudioSharedUnit.cpp.
+        Introduce an internal unit to abstract out CoreAudioSharedUnit from actual CoreAudio units.
+        Implement a CoreAudio based internal unit in CoreAudioSharedUnit.cpp.
+        Implement a Mock based internal unit in MockAudioSharedUnit.h/MockAudioSharedUnit.mm.
+        Add inputput/ouput sample rate validation (debug assert and release error returned).
+        Add a test that uses this validation.
+
+        Test: fast/mediastream/audio-unit-reconfigure.html
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        * platform/mediastream/mac/CoreAudioSharedUnit.cpp: Added.
+        * platform/mediastream/mac/CoreAudioSharedUnit.h: Added.
+        * platform/mediastream/mac/MockAudioSharedUnit.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+
 2022-05-12  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Serialize computed '-webkit-text-combine: none'

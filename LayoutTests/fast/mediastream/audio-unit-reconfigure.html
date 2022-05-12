@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+ </head>
+<body>
+<video id="video1" autoplay playsInline controls></video>
+<video id="video2" autoplay playsInline controls></video>
+<script>
+promise_test(async (test) => {
+    const context = new AudioContext();
+    const oscillator = context.createOscillator();
+    const streamDestination = context.createMediaStreamDestination();
+    oscillator.connect(streamDestination);
+    video1.srcObject = streamDestination.stream;
+    // video1 will be played through VPIO will fix the rate to a single value.
+    await video1.play();
+    oscillator.start();
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 48000 }});
+    stream.getAudioTracks()[0].onended = () => assert_not_reached("should not end");
+    await new Promise(resolve => setTimeout(resolve, 100));
+    stream.getAudioTracks()[0].stop();
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 44100 }});
+    stream2.getAudioTracks()[0].onended = () => assert_not_reached("should not end");
+    await new Promise(resolve => setTimeout(resolve, 100));
+}, "Reconfigure audio sample rate");
+
+promise_test(async (test) => {
+    const context = new AudioContext();
+    const oscillator = context.createOscillator();
+    const streamDestination = context.createMediaStreamDestination();
+    oscillator.connect(streamDestination);
+    video1.srcObject = streamDestination.stream;
+    await video1.play();
+    oscillator.start();
+
+    const defaultAudioConstraints = {
+        sampleRate: 48000,
+        sampleSize: 16,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true
+    };
+    const musicModeAudioConstraints = {
+        sampleRate: 48000,
+        sampleSize: 16,
+        channelCount: 2,
+        echoCancellation: false,
+        noiseSuppression: false
+    };
+
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: defaultAudioConstraints });
+    video2.srcObject = stream1;
+    await video2.play();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // By stopping the capture audio track, the VPIO unit will go in render only mode as it needs to play video 1.
+    stream1.getAudioTracks()[0].stop();
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: musicModeAudioConstraints });
+    stream2.getAudioTracks()[0].onended = () => log.innerHTML += 'track ended';
+    await new Promise(resolve => setTimeout(resolve, 1000));
+}, "Reconfigure audio unit when being in render-only mode");
+</script>
+</body>
+</html>

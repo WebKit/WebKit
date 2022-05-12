@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,72 +27,15 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "BaseAudioSharedUnit.h"
-#include <CoreAudio/CoreAudioTypes.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
-
-OBJC_CLASS AVAudioPCMBuffer;
-typedef struct OpaqueCMClock* CMClockRef;
-typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+#include "CoreAudioSharedUnit.h"
 
 namespace WebCore {
 
-class WebAudioBufferList;
-class WebAudioSourceProviderCocoa;
+namespace MockAudioSharedUnit {
 
-class MockAudioSharedUnit final : public BaseAudioSharedUnit {
-public:
-    WEBCORE_EXPORT static MockAudioSharedUnit& singleton();
-    MockAudioSharedUnit();
+CoreAudioSharedUnit& singleton();
 
-    void setDeviceID(const String& deviceID) { setCaptureDevice(String { deviceID }, 0); }
-
-private:
-    bool hasAudioUnit() const final;
-    void captureDeviceChanged() final;
-    OSStatus reconfigureAudioUnit() final;
-    void resetSampleRate() final;
-
-    void cleanupAudioUnit() final;
-    OSStatus startInternal() final;
-    void stopInternal() final;
-    bool isProducingData() const final;
-
-    void delaySamples(Seconds) final;
-
-    void start();
-    CapabilityValueOrRange sampleRateCapacities() const final { return CapabilityValueOrRange(44100, 48000); }
-
-    void tick();
-
-    void render(MonotonicTime);
-    void emitSampleBuffers(uint32_t frameCount);
-    void reconfigure();
-
-    static Seconds renderInterval() { return 20_ms; }
-
-    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
-
-    uint32_t m_maximiumFrameCount;
-    uint64_t m_samplesEmitted { 0 };
-    uint64_t m_samplesRendered { 0 };
-
-    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
-    AudioStreamBasicDescription m_streamFormat;
-
-    Vector<float> m_bipBopBuffer;
-    bool m_hasAudioUnit { false };
-    bool m_isProducingData { false };
-
-    RunLoop::Timer<MockAudioSharedUnit> m_timer;
-    MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
-    MonotonicTime m_delayUntil;
-
-    Ref<WorkQueue> m_workQueue;
-    unsigned m_channelCount { 2 };
-};
+}
 
 } // namespace WebCore
 

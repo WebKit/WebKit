@@ -1,3 +1,13 @@
+2022-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Add a better mock for audio units used by CoreAudioSharedUnit
+        https://bugs.webkit.org/show_bug.cgi?id=240231
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/audio-unit-reconfigure-expected.txt: Added.
+        * fast/mediastream/audio-unit-reconfigure.html: Added.
+
 2022-05-11  John Cunningham  <johncunningham@apple.com>
 
         [GPU Process] webrtc/vp8-then-h264-gpu-process-crash.html flaky fails after turning DOM in GPUP on by default
