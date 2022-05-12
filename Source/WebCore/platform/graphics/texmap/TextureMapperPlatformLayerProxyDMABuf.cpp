@@ -247,20 +247,30 @@ std::unique_ptr<TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData
 {
     using EGLImageData = TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData;
 
-    EGLDisplay eglDisplay = PlatformDisplay::sharedDisplayForCompositing().eglDisplay();
+    auto& platformDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    EGLDisplay eglDisplay = platformDisplay.eglDisplay();
 
     EGLImageKHR image[DMABufFormat::c_maxPlanes];
     for (unsigned i = 0; i < object.format.numPlanes; ++i) {
-        std::initializer_list<EGLint> attributes {
+        Vector<EGLint> attributes;
+        attributes.reserveInitialCapacity(12 + 4 + 1);
+        attributes.uncheckedAppend(Span<const EGLint>({
             EGL_WIDTH, EGLint(object.format.planeWidth(i, object.width)),
             EGL_HEIGHT, EGLint(object.format.planeHeight(i, object.height)),
             EGL_LINUX_DRM_FOURCC_EXT, EGLint(object.format.planes[i].fourcc),
             EGL_DMA_BUF_PLANE0_FD_EXT, object.fd[i].value(),
             EGL_DMA_BUF_PLANE0_OFFSET_EXT, EGLint(object.offset[i]),
             EGL_DMA_BUF_PLANE0_PITCH_EXT, EGLint(object.stride[i]),
-            EGL_NONE,
-        };
-        image[i] = createImageKHR()(eglDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, std::data(attributes));
+        }));
+        if (platformDisplay.eglExtensions().EXT_image_dma_buf_import_modifiers) {
+            attributes.uncheckedAppend(Span<const EGLint>({
+                EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLint>(object.modifier[i] >> 32),
+                EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLint>(object.modifier[i] & 0xffffffff),
+            }));
+        }
+        attributes.uncheckedAppend(EGL_NONE);
+
+        image[i] = createImageKHR()(eglDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.data());
     }
 
     auto imageData = makeUnique<EGLImageData>();

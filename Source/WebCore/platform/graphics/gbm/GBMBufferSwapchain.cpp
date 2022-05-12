@@ -158,8 +158,7 @@ DMABufObject GBMBufferSwapchain::Buffer::createDMABufObject(uintptr_t handle) co
         object.fd[i] = UnixFileDescriptor { gbm_bo_get_fd(m_planes[i].bo), UnixFileDescriptor::Adopt };
         object.offset[i] = 0;
         object.stride[i] = m_planes[i].stride;
-        // TODO: these should be the plane-specific modifiers. We don't use them yet.
-        object.modifier[i] = 0;
+        object.modifier[i] = gbm_bo_get_modifier(m_planes[i].bo);
     }
 
     return object;

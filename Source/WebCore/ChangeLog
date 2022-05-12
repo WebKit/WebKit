@@ -1,3 +1,45 @@
+2022-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Respect and use the DMABuf modifier values
+        https://bugs.webkit.org/show_bug.cgi?id=240276
+
+        Reviewed by Chris Lord.
+
+        When wrapping DMABuf objects in EGLImages, the modifier values should be
+        respected and used to properly and completely describe the DMABuf.
+
+        This should be applied in two places. First one is GraphicsContextGLGBM
+        where the DMABuf is used to back the ANGLE-handled EGLImage. Second one
+        is TextureMapperPlatformLayerProxyDMABuf, during construction of the
+        DMABufLayer object used to present the DMABuf inside the composition
+        engine.
+
+        In both cases this primarily relies on the presence of the
+        EGL_EXT_image_dma_buf_import_modifiers extension. For the first case
+        detection of this extension is done through ANGLE and its state stored
+        on the GraphicsContextGLGBM object during context initialization. For
+        the second case this state is stored on the PlatformDisplay object
+        after it's retrieved during the EGLDisplay initialization.
+
+        If detected, the DMABuf modifier value is included in the attributes
+        array used for the EGLImage creation call. The actual modifier value is
+        retrieved from the gbm_bo object, leaving it to libgbm to assess the
+        best possible formatting of the DMAbuf resource.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::initializeEGLDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        (WebCore::PlatformDisplay::eglExtensions const):
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp:
+        (WebCore::GBMBufferSwapchain::Buffer::createDMABufObject const):
+        * platform/graphics/gbm/GraphicsContextGLGBM.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        (WebCore::GraphicsContextGLGBM::platformInitializeContext):
+        * platform/graphics/gbm/GraphicsContextGLGBM.h:
+        (WebCore::GraphicsContextGLGBM::eglExtensions):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::createEGLImageData):
+
 2022-05-12  Alan Bujtas  <zalan@apple.com>
 
         TextBoxPainter::paintBackground should bail out early when nothing to paint

@@ -100,17 +100,27 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
         auto result = contextSwapchain.images.ensure(contextSwapchain.drawBO->handle(),
             [&] {
                 auto dmabufObject = contextSwapchain.drawBO->createDMABufObject(0);
+                bool importModifiers = static_cast<GraphicsContextGLGBM&>(*this).eglExtensions().EXT_image_dma_buf_import_modifiers;
 
-                std::initializer_list<EGLint> attributes {
+                Vector<EGLint> attributes;
+                attributes.reserveInitialCapacity(12 + 4 + 1);
+                attributes.uncheckedAppend(Span<const EGLint>({
                     EGL_WIDTH, EGLint(dmabufObject.format.planeWidth(0, dmabufObject.width)),
                     EGL_HEIGHT, EGLint(dmabufObject.format.planeHeight(0, dmabufObject.height)),
                     EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(dmabufObject.format.planes[0].fourcc),
                     EGL_DMA_BUF_PLANE0_FD_EXT, dmabufObject.fd[0].value(),
                     EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLint>(dmabufObject.stride[0]),
                     EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
-                    EGL_NONE,
-                };
-                return EGL_CreateImageKHR(contextSwapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, std::data(attributes));
+                }));
+                if (importModifiers) {
+                    attributes.uncheckedAppend(Span<const EGLint>({
+                        EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLint>(dmabufObject.modifier[0] >> 32),
+                        EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLint>(dmabufObject.modifier[0] & 0xffffffff),
+                    }));
+                }
+                attributes.uncheckedAppend(EGL_NONE);
+
+                return EGL_CreateImageKHR(contextSwapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, attributes.data());
             });
 
         GL_BindTexture(textureTarget, m_texture);
@@ -296,6 +306,10 @@ bool GraphicsContextGLGBM::platformInitializeContext()
         LOG(WebGL, "ANGLE makeContextCurrent failed.");
         return false;
     }
+
+    if (strstr(displayExtensions, "EGL_EXT_image_dma_buf_import_modifiers"))
+        m_eglExtensions.EXT_image_dma_buf_import_modifiers = true;
+
     LOG(WebGL, "Got EGLContext");
     return true;
 }

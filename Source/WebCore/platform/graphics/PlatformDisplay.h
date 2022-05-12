@@ -86,6 +86,11 @@ public:
 #if USE(EGL)
     EGLDisplay eglDisplay() const;
     bool eglCheckVersion(int major, int minor) const;
+
+    struct EGLExtensions {
+        bool EXT_image_dma_buf_import_modifiers { false };
+    };
+    const EGLExtensions& eglExtensions() const { return m_eglExtensions; }
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -145,6 +150,7 @@ private:
     bool m_eglDisplayInitialized { false };
     int m_eglMajorVersion { 0 };
     int m_eglMinorVersion { 0 };
+    EGLExtensions m_eglExtensions;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

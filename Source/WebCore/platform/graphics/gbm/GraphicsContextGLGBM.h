@@ -85,10 +85,16 @@ public:
 
     Swapchain& swapchain() { return m_swapchain; }
 
+    struct EGLExtensions {
+        bool EXT_image_dma_buf_import_modifiers { false };
+    };
+    const EGLExtensions& eglExtensions() { return m_eglExtensions; }
+
 protected:
     GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
 
 private:
+    EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
 
 #if USE(NICOSIA)
