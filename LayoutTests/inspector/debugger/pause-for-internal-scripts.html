@@ -4,11 +4,29 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/log-pause-location.js"></script>
 <script>
-function entryConsoleLog() {
+
+let internalObject = { test: function() {} };
+
+if (window.internals) {
+    internalObject = window.internals.evaluateInWorldIgnoringException("testPauseForInternalScripts", `
+        //# sourceURL=__InjectedScript_TestPauseForInternalScripts.js
+        let InternalObject = class InternalObject {
+            test(invocationNumber) {
+                let a = 6;
+                let b = 7;
+                let answer = a * b;
+            }
+        };
+
+        new InternalObject;
+    `);
+}
+
+function entryInternalObject() {
     debugger;
-    console.log(window);
-    console.log(console);
-    console.log("string");
+    internalObject.test(1);
+    internalObject.test(2);
+    internalObject.test(3);
 }
 
 // ---------
@@ -21,31 +39,31 @@ function test()
 
     addSteppingTestCase({
         name: "Debugger.setPauseForInternalScripts.Disabled",
-        description: "Should not be able to step into console.log statements which use the Internal InjectedScript.",
-        expression: "setTimeout(entryConsoleLog)",
+        description: "Should not be able to step into statements which use internal injected scripts.",
+        expression: "setTimeout(entryInternalObject)",
         // Call out directly to the backend since there is no other way to wait on the command result if changing via the setting.
         setup: async () => { return DebuggerAgent.setPauseForInternalScripts(false); },
         steps: [
             "over",
-                "in", // console.log(window)
-                "in", // console.log(console)
-                "in", // console.log("string")
+                "in", // internalObject.test(1)
+                "in", // internalObject.test(2)
+                "in", // internalObject.test(3)
             "resume",
         ]
     });
 
     addSteppingTestCase({
         name: "Debugger.setPauseForInternalScripts.Enabled",
-        description: "Should be able to step over console.log statements which use the Internal InjectedScript.",
-        expression: "setTimeout(entryConsoleLog)",
+        description: "Should be able to step into statements which use internal injected scripts.",
+        expression: "setTimeout(entryInternalObject)",
         // Call out directly to the backend since there is no other way to wait on the command result if changing via the setting.
         setup: async () => { return DebuggerAgent.setPauseForInternalScripts(true); },
         teardown: async () => { return DebuggerAgent.setPauseForInternalScripts(false); },
         steps: [
             "over",
-                "in", // console.log(window)
-                "in", // [Somewhere inside console.log(window)]
-                "in", // [Somewhere inside console.log(window)]
+                "in", // internalObject.test(1)
+                "in", // [Somewhere inside internalObject.test(1)]
+                "in", // [Somewhere inside internalObject.test(1)]
             "resume",
         ]
     });
@@ -57,6 +75,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Checking whether console.log can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.</p>
+<p>Checking whether injected (internal) scripts can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.</p>
 </body>
 </html>

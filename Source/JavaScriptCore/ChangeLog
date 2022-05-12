@@ -1,3 +1,90 @@
+2022-05-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins
+        https://bugs.webkit.org/show_bug.cgi?id=152294
+
+        Reviewed by Devin Rousso.
+
+        Covered by existing tests, and new test cases in `LayoutTests/inspector/injected-script/observable.html`
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Build InjectedScriptSource.js as a builtin, not as a plain header file containing its source code.
+
+        * Scripts/wkbuiltins/builtins_model.py:
+        (BuiltinFunction.fromString):
+        (BuiltinsCollection._parse_functions):
+        - InspectorInjectedScript contains unbalanced curly brackets inside quotes. The generation of builtins is now
+        hardened against this. Previously all curly brackets were counted, which meant that the source code would be cut
+        off earlier than the actual end of the function.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        - CommandLineAPIModuleSource.js uses destructuring to get the `RemoteObject` and `CommandLineAPI` classes at
+        instantiation. We need to treat this destructure as a single parameter, otherwise debug assertions will catch
+        the discrepancy between parameter counts.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/LinkTimeConstant.h:
+        - Add symbols that we need to have a private version of, and for some of those symbols make them link-time constants.
+
+        * builtins/IteratorHelpers.js:
+        (globalPrivate.builtinSetIterable):
+        (globalPrivate.builtinMapIterable):
+        - Add reusable helpers for getting builtin iterators for Maps and Sets. This is done with private symbols that
+        represent the same function that the iterator would have returned. We create a new wrapper object to allow usage
+        to follow the same pattern at dealing with an unwrapped iterable object.
+        
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        (Inspector::InjectedScriptManager::injectedScriptFor):
+        (Inspector::InjectedScriptManager::injectedScriptSource): Deleted.
+        * inspector/InjectedScriptManager.h:
+        - Use the new link-time constant for the Injected Script creation function.
+
+        * inspector/InjectedScriptModule.cpp:
+        (Inspector::InjectedScriptModule::ensureInjected):
+        * inspector/InjectedScriptModule.h:
+        - Injected modules are now provided as a JSFunction, not raw source code.
+
+        * inspector/InjectedScriptSource.js:
+        - Use private symbols throughout to ensure we get non-observable, non-overridden versions of functions and values.
+        - In many cases, this is a 1:1 mapping where the new symbol is just prefixed with an `@`.
+        - For pushing values to arrays, use `@arrayPush`, the builtin way of pushing a value into an array.
+        - For the `Symbol` constructor, just use the existing `@createPrivateSymbol` instead of exposing a private
+        version of the `Symbol` constructor..
+        - `Symbol.toStringTag` is converted to `@@toStringTag`, the private version of that symbol.
+        - `Math.max` in `RemoteObject.prototype._generatePreview` now uses a helper function that performs a comparison
+        instead of exposing both Math and Math.max as private builtins.
+        - Create objects as prototype-less using the new builtin helper @createPrototypelessObject, which can also take
+        arguments that are key value pairs for near-parity with normal Object creation via `{}`.
+        - Create arrays as prototype-less using the new builtin helper @createPrototypelessArray, which can also take
+        arguments which are entries to put into the array.
+        - For spreading arguments (for the console commandline functions) we should create a new prototypeless array to
+        spread instead of spreading the raw arguments to avoid interacting with a potentially modified iterator.
+
+        * parser/Parser.h:
+        (JSC::parse):
+        - Add the line number to builtin compilation logging to help identify where sometimes ambiguous errors occurred.
+
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/StringPrototype.cpp:
+        - Expose necessary functions/constructors via their private name for use in InjectedScriptSource.js and
+        CommandLineAPIModuleSource.js
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        - Add a link-time constant for the String constructor.
+        - Add helpers for JSON parsing/serialization.
+
 2022-05-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Temporal] Years 0-999 should be canonically represented with 4 digits, not 6

@@ -9,7 +9,5 @@ PASS: Should find External Script.
 PASS: Should find Inline Script Tag Script.
 PASS: Should find Inline Attribute Event Listener Script.
 PASS: Should find Eval Script.
-PASS: Should find Inspector InjectedScriptSource Script.
-PASS: Should find Inspector CommandLineAPISource Script.
 PASS: Should not receive any unexpected scripts.
 

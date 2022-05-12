@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js
+// @internal
 
-(function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId, injectedScript, {RemoteObject, CommandLineAPI}, CommandLineAPIHost) {
+function injectModule(InjectedScriptHost, inspectedGlobalObject, injectedScriptId, injectedScript, {RemoteObject, CommandLineAPI}, CommandLineAPIHost)
+{
 
-// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overridden built-ins
+// FIXME: <webkit.org/b/239774> Injected script should use WebCore built-ins.
 
 injectedScript._inspectObject = function(object) {
     if (arguments.length === 0)
@@ -70,12 +71,12 @@ CommandLineAPI.methods["copy"] = function(object) {
     else if (injectedScript.isPrimitiveValue(object))
         string = "" + object;
     else if (typeof object === "symbol")
-        string = inspectedGlobalObject.String(object);
+        string = @String(object);
     else if (typeof object === "function")
         string = "" + object;
     else {
         try {
-            string = inspectedGlobalObject.JSON.stringify(object, null, "  ");
+            string = @jsonStringify(object, "  ");
         } catch {
             string = "" + object;
         }
@@ -89,23 +90,28 @@ CommandLineAPI.methods["getEventListeners"] = function(target) {
 };
 
 function normalizeEventTypes(types) {
-    if (types === undefined)
-        types = ["mouse", "key", "touch", "control", "abort", "blur", "change", "devicemotion", "deviceorientation", "error", "focus", "load", "reset", "resize", "scroll", "search", "select", "submit", "unload"];
+    if (types === @undefined)
+        types = @createArrayWithoutPrototype("mouse", "key", "touch", "control", "abort", "blur", "change", "devicemotion", "deviceorientation", "error", "focus", "load", "reset", "resize", "scroll", "search", "select", "submit", "unload");
     else if (typeof types === "string")
-        types = [types];
+        types = @createArrayWithoutPrototype(types);
 
-    let result = [];
+    let result = new @Set;
+    function addTypesToResult() {
+        for (let i = 0; i < arguments.length; ++i)
+            result.@add(arguments[i]);
+    }
+
     for (let i = 0; i < types.length; i++) {
         if (types[i] === "mouse")
-            result.push("click", "dblclick", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "mousewheel");
+            addTypesToResult("click", "dblclick", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "mousewheel");
         else if (types[i] === "key")
-            result.push("keydown", "keypress", "keyup", "textInput");
+            addTypesToResult("keydown", "keypress", "keyup", "textInput");
         else if (types[i] === "touch")
-            result.push("touchcancel", "touchend", "touchmove", "touchstart");
+            addTypesToResult("touchcancel", "touchend", "touchmove", "touchstart");
         else if (types[i] === "control")
-            result.push("blur", "change", "focus", "reset", "resize", "scroll", "select", "submit", "zoom");
+            addTypesToResult("blur", "change", "focus", "reset", "resize", "scroll", "select", "submit", "zoom");
         else
-            result.push(types[i]);
+            result.@add(types[i]);
     }
     return result;
 }
@@ -118,19 +124,17 @@ function logEvent(event)
 CommandLineAPI.methods["monitorEvents"] = function(object, types) {
     if (!object || !object.addEventListener || !object.removeEventListener)
         return;
-    types = normalizeEventTypes(types);
-    for (let i = 0; i < types.length; ++i) {
-        object.removeEventListener(types[i], logEvent, false);
-        object.addEventListener(types[i], logEvent, false);
+    for (let type of @builtinSetIterable(normalizeEventTypes(types))) {
+        object.removeEventListener(type, logEvent, false);
+        object.addEventListener(type, logEvent, false);
     }
 };
 
 CommandLineAPI.methods["unmonitorEvents"] = function(object, types) {
     if (!object || !object.addEventListener || !object.removeEventListener)
         return;
-    types = normalizeEventTypes(types);
-    for (let i = 0; i < types.length; ++i)
-        object.removeEventListener(types[i], logEvent, false);
+    for (let type of @builtinSetIterable(normalizeEventTypes(types)))
+        object.removeEventListener(type, logEvent, false);
 };
 
 if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
@@ -158,9 +162,10 @@ if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
     };
 
     CommandLineAPI.methods["$$"] = function(selector, start) {
+        // Don't return a prototypeless array here so that developers can use the results as a normal Array.
         if (canQuerySelectorOnNode(start))
-            return inspectedGlobalObject.Array.from(start.querySelectorAll(selector));
-        return inspectedGlobalObject.Array.from(inspectedGlobalObject.document.querySelectorAll(selector));
+            return @Array.@from(start.querySelectorAll(selector));
+        return @Array.@from(inspectedGlobalObject.document.querySelectorAll(selector));
     };
 
     CommandLineAPI.methods["$x"] = function(xpath, context) {
@@ -175,10 +180,11 @@ if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
             return result.booleanValue;
         }
 
-        let nodes = [];
+        // Don't return a prototypeless array here so that developers can use the results as a normal Array.
+        let nodes = new @Array;
         let node = null;
         while (node = result.iterateNext())
-            nodes.push(node);
+            @arrayPush(nodes, node);
         return nodes;
     };
 }
@@ -186,4 +192,4 @@ if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
 for (let name in CommandLineAPI.methods)
     CommandLineAPI.methods[name].toString = function() { return "function " + name + "() { [Command Line API] }"; };
 
-})
+}

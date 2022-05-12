@@ -75,8 +75,7 @@ protected:
     HashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
 
 private:
-    String injectedScriptSource();
-    Expected<JSC::JSObject*, NakedPtr<JSC::Exception>> createInjectedScript(const String& source, JSC::JSGlobalObject*, int id);
+    Expected<JSC::JSObject*, NakedPtr<JSC::Exception>> createInjectedScript(JSC::JSGlobalObject*, int id);
 
     InspectorEnvironment& m_environment;
     Ref<InjectedScriptHost> m_injectedScriptHost;

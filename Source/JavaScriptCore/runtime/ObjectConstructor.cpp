@@ -99,9 +99,19 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, objectPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getPrototypeOfPrivateName(), objectConstructorGetPrototypeOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyDescriptorPrivateName(), objectConstructorGetOwnPropertyDescriptor, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyNamesPrivateName(), objectConstructorGetOwnPropertyNames, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertySymbolsPrivateName(), objectConstructorGetOwnPropertySymbols, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPrivateName(), objectConstructorKeys, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().definePropertyPrivateName(), objectConstructorDefineProperty, static_cast<unsigned>(PropertyAttribute::DontEnum), 3);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().createPrivateName(), objectConstructorCreate, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    if (Options::useHasOwn())
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().valuesPrivateName(), objectConstructorValues, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+
+    if (Options::useHasOwn()) {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwn, objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasOwnPrivateName(), objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    }
 }
 
 // ES 19.1.1.1 Object([value])

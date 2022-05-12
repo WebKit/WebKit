@@ -19,14 +19,11 @@ function test()
     //   - inline <script> (this) starting on line 5
     //   - inline body onload event listener attribute on <body> line below
     //   - eval source above on line 7
-    //   - inspector internal scripts InjectedScriptSource.js CommandLineAPIModuleSource.js
 
     let foundExternalScript = false;
     let foundInlineScriptTagScript = false;
     let foundInlineAttributeEventListenerScript = false;
     let foundEvalScript = false;
-    let foundInjectedScriptSourceScript = false;
-    let foundCommandLineAPISourceScript = false;
     let foundUnexpectedScript = false;
 
     function isExternalScript(params) {
@@ -42,19 +39,11 @@ function test()
     }
 
     function isInlineAttributeEventListenerScript(params) {
-        return isInlineScript(params) && params.startLine >= 100; // Estimate of <body> below.
+        return isInlineScript(params) && params.startLine >= 99; // Estimate of <body> below.
     }
 
     function isEvalScript(params) {
         return params.sourceURL === "eval.js";
-    }
-
-    function isInjectedScriptSourceScript(params) {
-        return params.sourceURL.startsWith("__InjectedScript_") && params.sourceURL.endsWith(".js");
-    }
-
-    function isCommandLineAPISourceScript(params) {
-        return params.sourceURL.indexOf("CommandLineAPIModuleSource") !== -1;
     }
 
     suite.addTestCase({
@@ -79,10 +68,6 @@ function test()
                         foundInlineAttributeEventListenerScript = true;
                     else if (!foundEvalScript && isEvalScript(params))
                         foundEvalScript = true;
-                    else if (!foundCommandLineAPISourceScript && isCommandLineAPISourceScript(params))
-                        foundCommandLineAPISourceScript = true;
-                    else if (!foundInjectedScriptSourceScript && isInjectedScriptSourceScript(params))
-                        foundInjectedScriptSourceScript = true;
                     else {
                         ProtocolTest.log("UNEXPECTED SCRIPT: " + JSON.stringify(messageObject));
                         foundUnexpectedScript = true;
@@ -93,8 +78,6 @@ function test()
                 ProtocolTest.expectThat(foundInlineScriptTagScript, "Should find Inline Script Tag Script.");
                 ProtocolTest.expectThat(foundInlineAttributeEventListenerScript, "Should find Inline Attribute Event Listener Script.");
                 ProtocolTest.expectThat(foundEvalScript, "Should find Eval Script.");
-                ProtocolTest.expectThat(foundInjectedScriptSourceScript, "Should find Inspector InjectedScriptSource Script.");
-                ProtocolTest.expectThat(foundCommandLineAPISourceScript, "Should find Inspector CommandLineAPISource Script.");
                 ProtocolTest.expectThat(!foundUnexpectedScript, "Should not receive any unexpected scripts.");
 
                 resolve();

@@ -106,6 +106,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     {
         unsigned i = parametersStart + 1;
         unsigned commas = 0;
+        bool insideCurlyBrackets = false;
         bool sawOneParam = false;
         bool hasRestParam = false;
         while (true) {
@@ -113,7 +114,13 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             if (characters[i] == ')')
                 break;
 
-            if (characters[i] == ',')
+            if (characters[i] == '}')
+                insideCurlyBrackets = false;
+            else if (characters[i] == '{' || insideCurlyBrackets) {
+                insideCurlyBrackets = true;
+                ++i;
+                continue;
+            } else if (characters[i] == ',')
                 ++commas;
             else if (!Lexer<LChar>::isWhiteSpace(characters[i]))
                 sawOneParam = true;

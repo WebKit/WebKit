@@ -42,11 +42,27 @@ function test()
 
     // To avoid flakiness print only events that we always expect.
     const eventAllowlist = new Set(["RenderingFrame", "ConsoleProfile", "EventDispatch", "FunctionCall"]);
+
+    // The inspector injected script call frame(s) have different line numbers between release and debug builds. We only
+    // want to filter those values for those specific call frames in order to ensure other line/column numbers remain stable.
+    let functionNameLength = 0;
+    let urlLength = 0;
+
     function replacer(key, value) {
+        if (key === "functionName") {
+            functionNameLength = value.length;
+            return value;
+        }
+        
         if (key === "children" && this.startTime)
             return value.filter(e => eventAllowlist.has(e.type));
         if (key === "startTime" || key === "endTime" || key === "scriptId" || key === "frameId")
             return "<filtered>";
+        if ((key === "lineNumber" || key === "columnNumber") && !functionNameLength && !urlLength)
+            return "<filtered>";
+
+        if (key === "url")
+            urlLength = value.length;
         if (key === "url" || key === "scriptName")
             return value.replace(/^.+LayoutTests\/inspector\//, "");
         return value;

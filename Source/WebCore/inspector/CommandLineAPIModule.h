@@ -33,7 +33,7 @@ class CommandLineAPIModule final : public Inspector::InjectedScriptModule {
 public:
     CommandLineAPIModule();
 
-    String source() const override;
+    JSC::JSFunction* injectModuleFunction(JSC::JSGlobalObject*) const override;
     JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::JSGlobalObject*) const override;
 
     static void injectIfNeeded(Inspector::InjectedScriptManager*, const Inspector::InjectedScript&);

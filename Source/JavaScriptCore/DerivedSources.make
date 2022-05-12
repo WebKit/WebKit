@@ -68,7 +68,6 @@ JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
 
 .PHONY : all
 all : \
-    InjectedScriptSource.h \
     Lexer.lut.h \
     KeywordLookup.h \
     RegExpJitTables.h \
@@ -138,6 +137,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/TypedArrayConstructor.js \
     $(JavaScriptCore)/builtins/TypedArrayPrototype.js \
     $(JavaScriptCore)/builtins/WebAssembly.js \
+    $(JavaScriptCore)/inspector/InjectedScriptSource.js \
 #
 
 # The combined output file depends on the contents of builtins and generator scripts, so
@@ -367,12 +367,6 @@ inspector/InspectorBackendCommands.js : CombinedDomains.json $(INSPECTOR_GENERAT
 	@echo Pre-processing InspectorBackendCommands...
 	$(PERL) $(JavaScriptCore)/inspector/scripts/codegen/preprocess.pl --input inspector/InspectorBackendCommands.js.in --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --output inspector/InspectorBackendCommands.js
 	$(DELETE) inspector/InspectorBackendCommands.js.in
-
-InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
-	echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ./InjectedScriptSource.min.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js >> ./InjectedScriptSource.min.js
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
-	$(DELETE) InjectedScriptSource.min.js
 
 AIR_OPCODE_FILES = \
     AirOpcode.h \

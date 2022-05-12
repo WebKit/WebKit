@@ -52,6 +52,7 @@ functionIsAsyncRegExp = re.compile(r"(async)?\s*function", re.MULTILINE | re.DOT
 functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
 functionOverriddenNameRegExp = re.compile(r".*^@overriddenName=(\".+\")$", re.MULTILINE | re.DOTALL)
 functionParameterFinder = re.compile(r"^(?:async\s+)?function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
+functionParametersSplitter = re.compile(r",\s*(?![^{}]*\})", re.MULTILINE | re.DOTALL)
 
 multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.DOTALL)
 singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.DOTALL)
@@ -145,7 +146,7 @@ class BuiltinFunction:
         is_naked_constructor = functionNakedConstructorRegExp.match(function_source) != None
         if is_naked_constructor:
             is_constructor = True
-        parameters = [s.strip() for s in functionParameterFinder.findall(function_source)[0].split(',')]
+        parameters = [s.strip() for s in functionParametersSplitter.split(functionParameterFinder.findall(function_source)[0])]
         if len(parameters[0]) == 0:
             parameters = []
 
@@ -303,21 +304,55 @@ class BuiltinsCollection:
         functionBounds = []
         start = 0
         end = 0
+
         for match in matches:
             start = match.start()
             if start < end:
                 continue
             end = match.end()
             while text[end] != '{':
-                end = end + 1
+                end += 1
             depth = 1
-            end = end + 1
+            isEscapingCharacter = False
+            currentStringStartCharacter = None
             while depth > 0:
-                if text[end] == '{':
-                    depth = depth + 1
-                elif text[end] == '}':
-                    depth = depth - 1
-                end = end + 1
+                end += 1
+                currentCharacter = text[end]
+
+                if isEscapingCharacter:
+                    isEscapingCharacter = False
+                    continue
+
+                if currentCharacter in "`'\"":
+                    if currentStringStartCharacter is None:
+                        currentStringStartCharacter = currentCharacter
+                    elif currentCharacter == currentStringStartCharacter:
+                        currentStringStartCharacter = None
+                    continue
+
+                if currentCharacter == '\\' and currentStringStartCharacter is not None:
+                    isEscapingCharacter = True
+                    continue
+
+                # FIXME: <webkit.org/b/239817> Regular expressions containing unbalanced quotation marks (like the one
+                # found in `StringPrototype.js`'s `createHTML`) can confuse the state of tracking our being
+                # inside/outside a string. To work around this, just reset our string state at the end of each line
+                # (unless we are inside a template string). This will work unless a regular expression contains
+                # unbalanced curly brackets or a closing curly bracket we care about is on the same line as the earlier
+                # regular expression with an unbalanced quote.
+                if currentCharacter == '\n' and currentStringStartCharacter != '`':
+                    currentStringStartCharacter = None
+                    continue
+
+                if currentStringStartCharacter is not None:
+                    continue
+
+                if currentCharacter == '{':
+                    depth += 1
+                elif currentCharacter == '}':
+                    depth -= 1
+
+            end += 1
             functionBounds.append((start, end))
 
         functionStrings = [text[start:end].strip() for (start, end) in functionBounds]

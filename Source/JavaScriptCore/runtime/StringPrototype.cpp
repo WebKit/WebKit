@@ -164,6 +164,9 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, stringProtoFuncIterator, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().substrPrivateName(), stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().endsWithPrivateName(), stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+
     // The constructor will be added later, after StringConstructor has been built
 }
 

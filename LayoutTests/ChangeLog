@@ -1,3 +1,28 @@
+2022-05-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins
+        https://bugs.webkit.org/show_bug.cgi?id=152294
+
+        Reviewed by Devin Rousso.
+
+        * inspector/injected-script/observable-expected.txt:
+        * inspector/injected-script/observable.html:
+        - Add several more test cases for overriding functions and entire objects.
+
+        * inspector/debugger/pause-for-internal-scripts-expected.txt:
+        * inspector/debugger/pause-for-internal-scripts.html:
+        - Changed to test a custom internal script snippet since the inspector injected script is now a builtin.
+
+        * inspector/debugger/scriptParsed-expected.txt:
+        * inspector/debugger/scriptParsed.html:
+        - The inspector injected script (and modules) will no longer appear as scripts in Web Inspector.
+
+        * inspector/model/remote-object/error-expected.txt:
+        * inspector/timeline/line-column.html:
+        * inspector/timeline/line-column-expected.txt:
+        * platform/gtk/inspector/timeline/line-column-expected.txt:
+        - Inspector injected script line numbers are different between release and debug builds, so filter those out.
+
 2022-05-11  Yury Semikhatsky  <yurys@chromium.org>
 
         [WinCairo] Support file downloads

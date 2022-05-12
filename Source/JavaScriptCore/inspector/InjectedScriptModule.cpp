@@ -74,13 +74,12 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         if (stack.size() > 0)
             stack[0].computeLineAndColumn(line, column);
         WTFLogAlways("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), line, column);
-        WTFLogAlways("%s\n", source().utf8().data());
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!hasInjectedModuleResult.value().isBoolean() || !hasInjectedModuleResult.value().asBoolean()) {
         Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());
-        function.appendArgument(source());
+        function.appendArgument(JSC::JSValue(injectModuleFunction(injectedScript.globalObject())));
         function.appendArgument(host(injectedScriptManager, injectedScript.globalObject()));
         auto injectModuleResult = injectedScript.callFunctionWithEvalEnabled(function);
         if (!injectModuleResult) {
@@ -92,7 +91,6 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
             if (stack.size() > 0)
                 stack[0].computeLineAndColumn(line, column);
             WTFLogAlways("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), line, column);
-            WTFLogAlways("%s\n", source().utf8().data());
             RELEASE_ASSERT_NOT_REACHED();
         }
     }

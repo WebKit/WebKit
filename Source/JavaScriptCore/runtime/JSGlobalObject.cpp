@@ -275,6 +275,8 @@ FOR_EACH_LAZY_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 static JSC_DECLARE_HOST_FUNCTION(makeBoundFunction);
 static JSC_DECLARE_HOST_FUNCTION(hasOwnLengthProperty);
 static JSC_DECLARE_HOST_FUNCTION(createPrivateSymbol);
+static JSC_DECLARE_HOST_FUNCTION(jsonParse);
+static JSC_DECLARE_HOST_FUNCTION(jsonStringify);
 static JSC_DECLARE_HOST_FUNCTION(enableSuperSampler);
 static JSC_DECLARE_HOST_FUNCTION(disableSuperSampler);
 static JSC_DECLARE_HOST_FUNCTION(enqueueJob);
@@ -359,6 +361,23 @@ JSC_DEFINE_HOST_FUNCTION(createPrivateSymbol, (JSGlobalObject* globalObject, Cal
 {
     VM& vm = globalObject->vm();
     return JSValue::encode(Symbol::create(vm, PrivateSymbolImpl::createNullSymbol().get()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsonParse, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto json = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return JSValue::encode(JSONParse(globalObject, json));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsonStringify, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto result = JSONStringify(globalObject, callFrame->argument(0), callFrame->argument(1));
+    return JSValue::encode(jsString(vm, result));
 }
 
 #if ASSERT_ENABLED
@@ -1074,9 +1093,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_promiseConstructor.set(vm, this, promiseConstructor);
     m_internalPromiseConstructor.set(vm, this, internalPromiseConstructor);
+    m_stringConstructor.set(vm, this, stringConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Promise)].set(vm, this, promiseConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::InternalPromise)].set(vm, this, internalPromiseConstructor);
-    
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::String)].set(vm, this, stringConstructor);
+
     m_evalErrorStructure.initLater(
         [] (LazyClassStructure::Initializer& init) {
             init.global->initializeErrorConstructor<ErrorType::EvalError>(init);
@@ -1551,6 +1572,14 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     // PrivateSymbols / PrivateNames
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createPrivateSymbol)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), createPrivateSymbol));
+        });
+
+    // JSON helpers
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::jsonParse)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, String(), jsonParse));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::jsonStringify)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, String(), jsonStringify));
         });
 
     // ShadowRealms
@@ -2184,6 +2213,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_functionConstructor);
     visitor.append(thisObject->m_promiseConstructor);
     visitor.append(thisObject->m_internalPromiseConstructor);
+    visitor.append(thisObject->m_stringConstructor);
 
     thisObject->m_defaultCollator.visit(visitor);
     thisObject->m_collatorStructure.visit(visitor);

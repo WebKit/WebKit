@@ -124,6 +124,7 @@ class SetIteratorPrototype;
 class SetPrototype;
 class SourceCode;
 class SourceOrigin;
+class StringConstructor;
 class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
 struct ActivationStackNode;
@@ -320,6 +321,7 @@ public:
     WriteBarrier<FunctionConstructor> m_functionConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
+    WriteBarrier<StringConstructor> m_stringConstructor;
 
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;

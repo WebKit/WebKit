@@ -1,3 +1,30 @@
+2022-05-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins
+        https://bugs.webkit.org/show_bug.cgi?id=152294
+
+        Reviewed by Devin Rousso.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Build CommandLineAPIModuleSource.js as a builtin, not as a plain header file containing its source code.
+
+        * inspector/CommandLineAPIModule.cpp:
+        (WebCore::CommandLineAPIModule::injectModuleFunction const):
+        (WebCore::CommandLineAPIModule::source const): Deleted.
+        * inspector/CommandLineAPIModule.h:
+        - Provide a JSFunction for module injection instead of raw source code.
+
+        * inspector/CommandLineAPIModuleSource.js:
+        - Similar to JavaScriptCore/inspector/InjectedScriptSource.js, use private names for properties and functions
+        throughout to get non-user-overridden builtins.
+        - In `normalizeEventTypes` use a Set instead of an array, since we are processing user-provided types that may
+        be repeated. This means that we need to iterate over all the types to insert them in the set, but since
+        `@arrayPush` doesn't support pushing multiple values at the same time this is no more work than using an Array.
+
 2022-05-11  Yury Semikhatsky  <yurys@chromium.org>
 
         [WinCairo] Support file downloads

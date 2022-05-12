@@ -192,6 +192,17 @@ namespace JSC {
     macro(createRemoteFunction) \
     macro(isRemoteFunction) \
     macro(arraySort) \
+    macro(jsonParse) \
+    macro(jsonStringify) \
+    macro(String) \
+    macro(substr) \
+    macro(endsWith) \
+    macro(getOwnPropertyDescriptor) \
+    macro(getOwnPropertyNames) \
+    macro(getOwnPropertySymbols) \
+    macro(hasOwn) \
+    macro(indexOf) \
+    macro(pop) \
 
 
 namespace Symbols {

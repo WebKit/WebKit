@@ -1445,7 +1445,6 @@
 		A513E5BE185BFACC007E95AD /* InjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5B9185BFACC007E95AD /* InjectedScriptHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5BB185BFACC007E95AD /* JSInjectedScriptHost.h */; };
 		A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5BD185BFACC007E95AD /* JSInjectedScriptHostPrototype.h */; };
-		A513E5C7185F9446007E95AD /* InjectedScriptSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5C6185F9436007E95AD /* InjectedScriptSource.h */; };
 		A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5C9185F9624007E95AD /* InjectedScriptManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A514B2C3185A684400F3C7CB /* InjectedScriptBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A514B2C1185A684400F3C7CB /* InjectedScriptBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A52C95FF2159D432007D8AC0 /* InspectorTargetAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A555FF3D2159D41E00FCD826 /* InspectorTargetAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3751,6 +3750,7 @@
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
+		2E3AF00D28171AC000371A25 /* ShadowRealmPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ShadowRealmPrototype.js; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmTypeDefinitionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmTypeDefinitionInlines.h; sourceTree = "<group>"; };
 		31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDateConstructor.h; sourceTree = "<group>"; };
@@ -4707,7 +4707,6 @@
 		A513E5BC185BFACC007E95AD /* JSInjectedScriptHostPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInjectedScriptHostPrototype.cpp; sourceTree = "<group>"; };
 		A513E5BD185BFACC007E95AD /* JSInjectedScriptHostPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInjectedScriptHostPrototype.h; sourceTree = "<group>"; };
 		A513E5C3185F92C9007E95AD /* InjectedScriptSource.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = InjectedScriptSource.js; sourceTree = "<group>"; };
-		A513E5C6185F9436007E95AD /* InjectedScriptSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptSource.h; sourceTree = "<group>"; };
 		A513E5C8185F9624007E95AD /* InjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptManager.cpp; sourceTree = "<group>"; };
 		A513E5C9185F9624007E95AD /* InjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptManager.h; sourceTree = "<group>"; };
 		A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptBase.cpp; sourceTree = "<group>"; };
@@ -7284,7 +7283,6 @@
 				996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */,
 				70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
-				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
 				A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */,
 				A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */,
 				A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */,
@@ -9363,6 +9361,7 @@
 				84925A9C22B30CC800D1DFFF /* RegExpStringIteratorPrototype.js */,
 				534D9BF82363C55D0054524D /* SetIteratorPrototype.js */,
 				7035587D1C418419004BD7BF /* SetPrototype.js */,
+				2E3AF00D28171AC000371A25 /* ShadowRealmPrototype.js */,
 				7CF9BC601B65D9B1009DB1EF /* StringConstructor.js */,
 				7CF9BC611B65D9B1009DB1EF /* StringIteratorPrototype.js */,
 				A1E0451B1C25B4B100BB663C /* StringPrototype.js */,
@@ -10452,7 +10451,6 @@
 				A513E5BE185BFACC007E95AD /* InjectedScriptHost.h in Headers */,
 				A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */,
 				A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */,
-				A513E5C7185F9446007E95AD /* InjectedScriptSource.h in Headers */,
 				9959E9321BD18279001AA413 /* inline-and-minify-stylesheets-and-scripts.py in Headers */,
 				7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */,
 				148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */,
@@ -12380,7 +12378,6 @@
 				536B317A1F71C5990037FC33 /* UnifiedSource107.cpp in Sources */,
 				536B31271F71C5990037FC33 /* UnifiedSource108.cpp in Sources */,
 				536B312C1F71C5990037FC33 /* UnifiedSource109.cpp in Sources */,
-				E31135CA281B5B0300C1A4A9 /* ZydisFormatterBase.c in Sources */,
 				536B31741F71C5990037FC33 /* UnifiedSource110.cpp in Sources */,
 				536B31771F71C5990037FC33 /* UnifiedSource111.cpp in Sources */,
 				536B31801F71C5990037FC33 /* UnifiedSource112.cpp in Sources */,
@@ -12409,7 +12406,6 @@
 				536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */,
 				535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */,
 				530A66BC1FA3E78B0026A545 /* UnifiedSource137.cpp in Sources */,
-				E31135CB281B5B0500C1A4A9 /* ZydisFormatterIntel.c in Sources */,
 				530A66BD1FA3E78B0026A545 /* UnifiedSource138.cpp in Sources */,
 				530A66BE1FA3E78B0026A545 /* UnifiedSource139.cpp in Sources */,
 				530A66BF1FA3E78B0026A545 /* UnifiedSource140.cpp in Sources */,
@@ -12420,7 +12416,6 @@
 				530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */,
 				538F15F2268FBC7B00D601C4 /* UnifiedSource146.cpp in Sources */,
 				538F15EE268FBBB600D601C4 /* UnifiedSource147.cpp in Sources */,
-				E31135C9281B5B0000C1A4A9 /* ZydisFormatterATT.c in Sources */,
 				538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */,
 				538F15F0268FBBB600D601C4 /* UnifiedSource149.cpp in Sources */,
 				538F15EB268FBBB600D601C4 /* UnifiedSource150.cpp in Sources */,
@@ -12430,6 +12425,9 @@
 				538F15EA268FBBB600D601C4 /* UnifiedSource154.cpp in Sources */,
 				538F15EF268FBBB600D601C4 /* UnifiedSource155.cpp in Sources */,
 				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
+				E31135C9281B5B0000C1A4A9 /* ZydisFormatterATT.c in Sources */,
+				E31135CA281B5B0300C1A4A9 /* ZydisFormatterBase.c in Sources */,
+				E31135CB281B5B0500C1A4A9 /* ZydisFormatterIntel.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

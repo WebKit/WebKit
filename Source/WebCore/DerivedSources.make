@@ -2219,16 +2219,6 @@ ifneq ($(NO_SUPPLEMENTAL_FILES),1)
 -include $(JS_DOM_HEADERS:.h=.dep)
 endif
 
-# Inspector interfaces
-
-all : CommandLineAPIModuleSource.h
-
-CommandLineAPIModuleSource.h : $(WebCore)/inspector/CommandLineAPIModuleSource.js
-	echo "//# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js" > CommandLineAPIModuleSource.min.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $(WebCore)/inspector/CommandLineAPIModuleSource.js >> CommandLineAPIModuleSource.min.js
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
-	$(DELETE) CommandLineAPIModuleSource.min.js
-
 # WebCore JS Builtins
 
 WebCore_BUILTINS_SOURCES = \
@@ -2252,6 +2242,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/dom/TextDecoderStream.js \
     $(WebCore)/dom/TextEncoderStream.js \
     $(WebCore)/bindings/js/JSDOMBindingInternals.js \
+    $(WebCore)/inspector/CommandLineAPIModuleSource.js \
 #
 
 BUILTINS_GENERATOR_SCRIPTS = \

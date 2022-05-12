@@ -2221,7 +2221,7 @@ std::unique_ptr<ParsedNode> parse(
             if (!result) {
                 ASSERT(error.isValid());
                 if (error.type() != ParserError::StackOverflow)
-                    dataLogLn("Unexpected error compiling builtin: ", error.message());
+                    dataLogLn("Unexpected error compiling builtin: ", error.message(), " on line ", error.line(), ".");
             }
         }
     } else {
