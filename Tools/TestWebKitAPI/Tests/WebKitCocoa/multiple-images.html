@@ -27,6 +27,16 @@
                 document.body.appendChild(image);
             }
 
+            async function appendAndLoadSubframe(source)
+            {
+                const frame = document.createElement("iframe");
+                frame.src = source;
+                await new Promise(resolve => {
+                    frame.addEventListener("load", resolve);
+                    document.body.appendChild(frame);
+                });
+            }
+
             function hideAllImages()
             {
                 Array.from(document.images).forEach(image => image.style.setProperty("display", "none"));

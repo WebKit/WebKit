@@ -1,3 +1,23 @@
+2022-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ImageAnalysisQueue should extract and analyze images inside of subframes
+        https://bugs.webkit.org/show_bug.cgi?id=240328
+        rdar://93134975
+
+        Reviewed by Tim Horton.
+
+        Teach `ImageAnalysisQueue` to recursively find all images on the page (including images in of subframe content)
+        and queue them for analysis. To do this, we refactor `enqueueAllImages` to call into a new recursive helper
+        method, `enqueueAllImagesRecursive`, to look for more candidate image elements that exist inside frame owner
+        elements (e.g. `iframe`).
+
+        Test: ImageAnalysisTests.AnalyzeImagesInSubframes
+
+        * page/ImageAnalysisQueue.cpp:
+        (WebCore::ImageAnalysisQueue::enqueueAllImages):
+        (WebCore::ImageAnalysisQueue::enqueueAllImagesRecursive):
+        * page/ImageAnalysisQueue.h:
+
 2022-05-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins

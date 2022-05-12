@@ -97,8 +97,18 @@ void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& iden
         m_identifier = identifier;
     }
 
+    enqueueAllImagesRecursive(document);
+}
+
+void ImageAnalysisQueue::enqueueAllImagesRecursive(Document& document)
+{
     for (auto& image : descendantsOfType<HTMLImageElement>(document))
         enqueueIfNeeded(image);
+
+    for (auto& frameOwner : descendantsOfType<HTMLFrameOwnerElement>(document)) {
+        if (RefPtr contentDocument = frameOwner.contentDocument())
+            enqueueAllImagesRecursive(*contentDocument);
+    }
 }
 
 void ImageAnalysisQueue::resumeProcessing()
