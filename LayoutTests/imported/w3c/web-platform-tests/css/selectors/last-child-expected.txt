@@ -1,0 +1,13 @@
+Whitespace nodes should be ignored.
+There is a prior child element.
+A comment node should be ignored.
+Non-whitespace text node should be ignored.
+.
+The first child should not be matched.
+
+PASS Whitespace nodes should be ignored.
+PASS There is a prior child element.
+PASS A comment node should be ignored.
+PASS Non-whitespace text node should be ignored.
+PASS The first child should not be matched.
+

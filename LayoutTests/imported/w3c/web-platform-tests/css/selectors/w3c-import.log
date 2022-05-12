@@ -67,6 +67,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-style-04-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-style-04-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-style-04.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-letter-flag-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-letter-flag-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-letter-flag-001.html
@@ -76,6 +77,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-line-bidi-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-line-bidi-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-line-bidi-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-of-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/floating-first-letter-05d0-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/floating-first-letter-05d0.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/floating-first-letter-feff-expected.html
@@ -132,6 +134,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-018.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-001.html
@@ -209,6 +212,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-visited-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-visited-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-visited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/last-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/last-of-type.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/missing-right-token.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/nesting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/nesting-parsing.html
@@ -228,6 +233,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/of-type-selectors-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/of-type-selectors-ref.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/of-type-selectors.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/only-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/pseudo-enabled-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/remove-hovered-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/remove-hovered-element-ref.html
