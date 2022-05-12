@@ -3296,6 +3296,8 @@
       "emails" : [
          "jfernandez@igalia.com"
       ],
+      "expertise" : "Layout, CSS",
+      "github" : "javifernandez",
       "name" : "Javier Fernandez",
       "nicks" : [
          "lajava"
