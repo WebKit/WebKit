@@ -99,13 +99,16 @@ private:
 
     dispatch_queue_t captureQueue();
 
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    RetainPtr<SCContentSharingSession> m_contentSharingSession;
+#endif
+
     std::optional<Content> m_content;
     RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RetainPtr<SCContentFilter> m_contentFilter;
     RetainPtr<SCStream> m_contentStream;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;
-    RetainPtr<SCContentSharingSession> m_contentSharingSession;
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
     BlockPtr<void(SCStream *, CMSampleBufferRef)> m_frameAvailableHandler;
     CaptureDevice m_captureDevice;
@@ -116,7 +119,6 @@ private:
     uint32_t m_height { 0 };
     float m_frameRate { 0 };
     bool m_isRunning { false };
-    bool m_useNewAPI { false };
     static bool m_enabled;
 };
 

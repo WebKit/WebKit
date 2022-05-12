@@ -1,3 +1,13 @@
+2022-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Remove support for deprecated ScreenCaptureKit API
+        https://bugs.webkit.org/show_bug.cgi?id=239511
+        <rdar://problem/91973817>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/mac/ScreenCaptureKitSPI.h:
+
 2022-05-06  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Seeking into a xHE-AAC track backed by a SourceBuffer can stall playback

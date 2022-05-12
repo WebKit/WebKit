@@ -1,3 +1,27 @@
+2022-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Remove support for deprecated ScreenCaptureKit API
+        https://bugs.webkit.org/show_bug.cgi?id=239511
+        <rdar://problem/91973817>
+
+        Reviewed by Youenn Fablet.
+
+        Tested manually.
+
+        * platform/mediastream/mac/ScreenCaptureKitCaptureSource.h:
+        * platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm:
+        (-[WebCoreScreenCaptureKitHelper stream:didOutputSampleBuffer:ofType:]):
+        (WebCore::ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource):
+        (WebCore::ScreenCaptureKitCaptureSource::stop):
+        (WebCore::ScreenCaptureKitCaptureSource::streamConfiguration):
+        (WebCore::ScreenCaptureKitCaptureSource::startContentStream):
+        (WebCore::ScreenCaptureKitCaptureSource::updateStreamConfiguration):
+        (WebCore::ScreenCaptureKitCaptureSource::streamDidOutputSampleBuffer):
+        * platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm:
+        (-[WebDisplayMediaPromptHelper sessionDidEnd:]):
+        (WebCore::ScreenCaptureKitSharingSessionManager::sessionDidEnd):
+        (WebCore::ScreenCaptureKitSharingSessionManager::takeSharingSessionForFilter):
+
 2022-05-12  Loïc Le Page  <llepage@igalia.com>
 
         [GStreamer][VideoCapture] Add support for capturing encoded video streams from a webcam

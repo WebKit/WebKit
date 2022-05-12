@@ -93,6 +93,11 @@ using namespace WebCore;
     auto index = _sessions.find(RetainPtr { session });
     if (index == notFound)
         return;
+
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+        if (_callback)
+            _callback->sessionDidEnd(session);
+    });
 }
 
 - (void)sessionDidChangeContent:(SCContentSharingSession *)session
@@ -174,13 +179,14 @@ void ScreenCaptureKitSharingSessionManager::sessionDidEnd(RetainPtr<SCContentSha
 {
     ASSERT(isMainThread());
 
+    [m_promptHelper stopObservingSession:session.get()];
+
     auto index = m_pendingCaptureSessions.findIf([session](auto pendingSession) {
         return [pendingSession isEqual:session.get()];
     });
     if (index == notFound)
         return;
 
-    [m_promptHelper stopObservingSession:session.get()];
     m_pendingCaptureSessions.remove(index);
 }
 
@@ -277,6 +283,7 @@ RetainPtr<SCContentSharingSession> ScreenCaptureKitSharingSessionManager::takeSh
 
     RetainPtr<SCContentSharingSession> session = m_pendingCaptureSessions[index];
     m_pendingCaptureSessions.remove(index);
+    [m_promptHelper stopObservingSession:session.get()];
 
     return session;
 }
