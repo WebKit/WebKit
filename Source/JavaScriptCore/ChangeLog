@@ -1,3 +1,34 @@
+2022-05-08  Saam Barati  <sbarati@apple.com>
+
+        Better handle clobbered registers in O0 register allocation
+        https://bugs.webkit.org/show_bug.cgi?id=240205
+        <rdar://87220688>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes Air's O0 register allocator better handle clobbered
+        registers. We now model both early and late clobber directly, and use
+        this to perform a basic interference analysis when allocating a register
+        to a Tmp. An early clobber interferes with any Use in an instruction, and
+        any early Defs. A late clobber interferes with any Defs in an instruction,
+        and any late Uses. What this enables is an early Use can be allocated
+        to a register that is only late clobbered. And a result can be allocated 
+        to a register that is only early clobbered.
+        
+        Prior to this, the algorithm had a bug where a Use may be allocated to
+        a register that is early clobbered.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::buildLiveRanges):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::alloc):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::freeDeadTmpsIfNeeded):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::assignTmp):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::prepareForGeneration):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+        * b3/air/testair.cpp:
+        * jit/RegisterSet.h:
+
 2022-05-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins
