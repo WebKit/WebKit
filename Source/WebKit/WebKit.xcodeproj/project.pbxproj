@@ -16147,7 +16147,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == maccatalyst || \"${WK_PLATFORM_NAME}\" == iosmac ]]; then\n    exit 0\nfi\n\nFEATURE_FLAGS_PLIST_SOURCE=\"${SRCROOT}/FeatureFlags/WebKit.plist\"\nFEATURE_FLAGS_PLIST_DESTINATION=\"${DSTROOT}/System/Library/FeatureFlags/Domain/WebKit.plist\"\necho \"copying feature flags plist\"\nmkdir -p \"$(dirname \"${FEATURE_FLAGS_PLIST_DESTINATION}\")\"\necho plutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\nplutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\n";
+			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == maccatalyst || \"${WK_PLATFORM_NAME}\" == iosmac || \"${WK_PLATFORM_NAME}\" == macosx ]]; then\n    exit 0\nfi\n\nFEATURE_FLAGS_PLIST_SOURCE=\"${SRCROOT}/FeatureFlags/WebKit.plist\"\nFEATURE_FLAGS_PLIST_DESTINATION=\"${DSTROOT}/System/Library/FeatureFlags/Domain/WebKit.plist\"\necho \"copying feature flags plist\"\nmkdir -p \"$(dirname \"${FEATURE_FLAGS_PLIST_DESTINATION}\")\"\necho plutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\nplutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\n";
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;

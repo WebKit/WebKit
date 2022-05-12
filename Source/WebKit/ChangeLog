@@ -1,3 +1,16 @@
+2022-05-12  Tim Horton  <timothy_horton@apple.com>
+
+        Don't install WebKit feature flags plist on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=240350
+        <rdar://problem/93183882>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        We don't need it on macOS (and won't need it at all soon), and
+        the script is currently installing to the wrong place for some kinds
+        of macOS builds. So, just skip it.
+
 2022-05-12  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK][WPE] Do not return pointer to disposed timezone string
