@@ -378,6 +378,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 
 
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
+    name = 'archive-minified-built-product'
     command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
@@ -414,6 +415,7 @@ class ExtractBuiltProduct(shell.ShellCommand):
 
 
 class UploadBuiltProduct(transfer.FileUpload):
+    name = 'upload-built-product'
     workersrc = WithProperties("WebKitBuild/%(configuration)s.zip")
     masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")
     haltOnFailure = True
@@ -427,6 +429,7 @@ class UploadBuiltProduct(transfer.FileUpload):
 
 
 class UploadMinifiedBuiltProduct(UploadBuiltProduct):
+    name = 'upload-minified-built-product'
     workersrc = WithProperties("WebKitBuild/minified-%(configuration)s.zip")
     masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(archive_revision)s.zip")
 
