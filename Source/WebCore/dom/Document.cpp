@@ -2886,6 +2886,16 @@ Ref<DocumentParser> Document::createParser()
     return XMLDocumentParser::create(*this, view());
 }
 
+bool Document::hasHighlight() const
+{
+    return (m_highlightRegister && !m_highlightRegister->isEmpty())
+        || (m_fragmentHighlightRegister && !m_fragmentHighlightRegister->isEmpty()) 
+#if ENABLE(APP_HIGHLIGHTS)
+        || (m_appHighlightRegister && !m_appHighlightRegister->isEmpty())
+#endif
+    ;
+}
+
 HighlightRegister& Document::highlightRegister()
 {
     if (!m_highlightRegister)

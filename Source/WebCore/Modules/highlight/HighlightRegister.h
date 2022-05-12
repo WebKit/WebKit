@@ -45,7 +45,7 @@ public:
     void setFromMapLike(AtomString&&, Ref<Highlight>&&);
     void clear();
     bool remove(const AtomString&);
-    
+    bool isEmpty() const { return map().isEmpty(); }    
 
     HighlightVisibility highlightsVisibility() const { return m_highlightVisibility; }
 #if ENABLE(APP_HIGHLIGHTS)

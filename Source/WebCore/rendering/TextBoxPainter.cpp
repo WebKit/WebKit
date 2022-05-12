@@ -26,6 +26,7 @@
 #include "TextBoxPainter.h"
 
 #include "CompositionHighlight.h"
+#include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventRegion.h"
 #include "GraphicsContext.h"
@@ -124,7 +125,28 @@ MarkedText TextBoxPainter::createMarkedTextFromSelectionInBox()
 
 void TextBoxPainter::paintBackground()
 {
-    if (m_containsComposition && !m_useCustomUnderlines)
+    auto shouldPaintCompositionBackground = m_containsComposition && !m_useCustomUnderlines;
+#if ENABLE(TEXT_SELECTION)
+    auto hasSelectionWithNonCustomUnderline = m_haveSelection && !m_useCustomUnderlines;
+#endif
+
+    auto shouldPaintBackground = [&] {
+#if ENABLE(TEXT_SELECTION)
+        if (hasSelectionWithNonCustomUnderline)
+            return true;
+#endif
+        if (shouldPaintCompositionBackground)
+            return true;
+        if (m_document.markers().hasMarkers())
+            return true;
+        if (m_document.hasHighlight())
+            return true;
+        return false;
+    };
+    if (!shouldPaintBackground())
+        return;
+
+    if (shouldPaintCompositionBackground)
         paintCompositionBackground();
 
     Vector<MarkedText> markedTexts;
@@ -132,7 +154,7 @@ void TextBoxPainter::paintBackground()
     markedTexts.appendVector(MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Background));
 
 #if ENABLE(TEXT_SELECTION)
-    if (m_haveSelection && !m_useCustomUnderlines && !m_paintInfo.context().paintingDisabled()) {
+    if (hasSelectionWithNonCustomUnderline && !m_paintInfo.context().paintingDisabled()) {
         auto selectionMarkedText = createMarkedTextFromSelectionInBox();
         if (!selectionMarkedText.isEmpty())
             markedTexts.append(WTFMove(selectionMarkedText));

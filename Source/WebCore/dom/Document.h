@@ -1630,6 +1630,7 @@ public:
     WEBCORE_EXPORT TextManipulationController& textManipulationController();
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
 
+    bool hasHighlight() const;
     HighlightRegister* highlightRegisterIfExists() { return m_highlightRegister.get(); }
     HighlightRegister& highlightRegister();
     void updateHighlightPositions();
