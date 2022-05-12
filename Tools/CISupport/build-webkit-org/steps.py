@@ -347,6 +347,12 @@ class CompileWebKit(shell.Compile):
             log = yield self.addLog(logName)
         log.addStdout(message)
 
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'):
+            self.build.addStepsAfterCurrentStep([ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)])
+        return rc
+
 
 class CompileLLINTCLoop(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
@@ -1174,16 +1180,20 @@ class TransferToS3(master.MasterShellCommand):
     command = ["python3", "../Shared/transfer-archive-to-s3", "--revision", revision, "--identifier", identifier, "--archive", archive]
     haltOnFailure = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, terminate_build=False, **kwargs):
         kwargs['command'] = self.command
         kwargs['logEnviron'] = False
+        self.terminate_build = terminate_build
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def start(self):
         return master.MasterShellCommand.start(self)
 
     def finished(self, result):
-        return master.MasterShellCommand.finished(self, result)
+        rc = master.MasterShellCommand.finished(self, result)
+        if self.terminate_build and self.getProperty('user_provided_git_hash'):
+            self.build.buildFinished([f"Uploaded archive with hash {self.getProperty('user_provided_git_hash', '')[:8]}"], SUCCESS)
+        return rc
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME
