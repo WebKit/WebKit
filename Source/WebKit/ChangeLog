@@ -1,3 +1,19 @@
+2022-05-12  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/92617943
+
+    2022-05-12  Tim Horton  <timothy_horton@apple.com>
+
+        Don't install WebKit feature flags plist on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=240350
+        <rdar://problem/93183882>
+
+        * WebKit.xcodeproj/project.pbxproj:
+        We don't need it on macOS (and won't need it at all soon), and
+        the script is currently installing to the wrong place for some kinds
+        of macOS builds. So, just skip it.
+
+
 2022-05-12  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r294072. rdar://problem/93058432
