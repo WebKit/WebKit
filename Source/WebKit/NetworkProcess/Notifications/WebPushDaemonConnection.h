@@ -28,6 +28,7 @@
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 
 #include "DaemonConnection.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
 
 namespace WebKit {
@@ -47,9 +48,10 @@ struct ConnectionTraits {
 class Connection : public Daemon::ConnectionToMachService<ConnectionTraits> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Connection(CString&& machServiceName, NetworkNotificationManager&);
+    Connection(CString&& machServiceName, NetworkNotificationManager&, WebPushDaemonConnectionConfiguration&&);
 
     void debugMessage(const String&);
+    void setConfiguration(WebPushDaemonConnectionConfiguration&&);
 
 private:
     void newConnectionWasInitialized() const final;
@@ -62,6 +64,7 @@ private:
     NetworkSession& networkSession() const;
 
     NetworkNotificationManager& m_notificationManager;
+    WebPushDaemonConnectionConfiguration m_configuration;
 
     template<MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;

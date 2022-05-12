@@ -34,9 +34,10 @@
 
 namespace WebKit::WebPushD {
 
-Connection::Connection(CString&& machServiceName, NetworkNotificationManager& manager)
+Connection::Connection(CString&& machServiceName, NetworkNotificationManager& manager, WebPushDaemonConnectionConfiguration&& configuration)
     : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
     , m_notificationManager(manager)
+    , m_configuration(WTFMove(configuration))
 {
     LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName().data());
 }

@@ -96,11 +96,14 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"webpushd" isDirectory:NO];
 }
 
-static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation)
+enum LaunchOnlyOnce : BOOL { No, Yes };
+
+static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
     return @{
         @"Label" : @"org.webkit.webpushtestdaemon",
-        @"LaunchOnlyOnce" : @YES,
+        @"LaunchOnlyOnce" : @(static_cast<BOOL>(launchOnlyOnce)),
+        @"ThrottleInterval" : @(1),
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
         @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
         @"MachServices" : @{ @"org.webkit.webpushtestdaemon.service" : @YES },
@@ -126,7 +129,7 @@ static bool shouldSetupWebPushD()
     return shouldSetup;
 }
 
-static NSURL *setUpTestWebPushD()
+static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
 {
     if (!shouldSetupWebPushD())
         return nil;
@@ -140,9 +143,15 @@ static NSURL *setUpTestWebPushD()
 
     killFirstInstanceOfDaemon(@"webpushd");
 
-    registerPlistWithLaunchD(testWebPushDaemonPList(tempDir), tempDir);
+    registerPlistWithLaunchD(testWebPushDaemonPList(tempDir, launchOnlyOnce), tempDir);
 
     return tempDir;
+}
+
+// Only works if the test daemon was registered with LaunchOnlyOnce::No.
+static BOOL restartTestWebPushD()
+{
+    return restartService(@"org.webkit.webpushtestdaemon", @"webpushd");
 }
 
 static void cleanUpTestWebPushD(NSURL *tempDir)
@@ -385,11 +394,11 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 
 class WebPushDTest : public ::testing::Test {
 protected:
-    WebPushDTest()
+    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
     {
         [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-        m_tempDirectory = retainPtr(setUpTestWebPushD());
+        m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
 
         auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
@@ -498,6 +507,14 @@ protected:
 class WebPushDInjectedPushTest : public WebPushDTest {
 protected:
     void runTest(NSString *expectedMessage, NSDictionary *pushUserInfo);
+};
+
+class WebPushDMultipleLaunchTest : public WebPushDTest {
+public:
+    WebPushDMultipleLaunchTest()
+        : WebPushDTest(LaunchOnlyOnce::No)
+    {
+    }
 };
 
 void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *pushUserInfo)
@@ -1152,6 +1169,59 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
 
+    message = nil;
+    gotMessage = false;
+    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqual:[NSNull null]]);
+}
+
+TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
+{
+    static constexpr auto htmlSource = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    let postNoteMessage = window.webkit.messageHandlers.note.postMessage.bind(window.webkit.messageHandlers.note);
+    let getPushManager =
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => navigator.serviceWorker.ready)
+            .then(registration => registration.pushManager);
+
+    function getSubscription()
+    {
+        getPushManager
+            .then(pushManager => pushManager.getSubscription())
+            .then(subscription => subscription ? subscription.toJSON() : null)
+            .then(postNoteMessage)
+            .catch(e => postNoteMessage(e.toString()));
+    }
+
+    postNoteMessage('Ready');
+    </script>
+    )HTML"_s;
+
+    __block RetainPtr<id> message = nil;
+    __block bool gotMessage = false;
+    [m_notificationMessageHandler setMessageHandler:^(id receivedMessage) {
+        message = receivedMessage;
+        gotMessage = true;
+    }];
+
+    loadRequest(htmlSource, ""_s);
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqualToString:@"Ready"]);
+
+    message = nil;
+    gotMessage = false;
+    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqual:[NSNull null]]);
+
+    ASSERT_TRUE(restartTestWebPushD());
+
+    // Make sure that getSubscription works after killing webpushd. Previously, this didn't work and
+    // would fail with an AbortError because we didn't re-send the connection configuration after
+    // the daemon relaunched.
     message = nil;
     gotMessage = false;
     [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];

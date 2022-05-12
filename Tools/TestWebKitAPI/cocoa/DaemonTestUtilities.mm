@@ -178,6 +178,29 @@ void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
     [task waitUntilExit];
 }
 
+#if PLATFORM(IOS)
+
+BOOL restartService(NSString *, NSString *daemonExecutableName)
+{
+    killFirstInstanceOfDaemon(daemonExecutableName);
+    sleep(1);
+    return YES;
+}
+
+#else
+
+BOOL restartService(NSString *serviceName, NSString *)
+{
+    auto task = adoptNS([[NSTask alloc] init]);
+    [task setLaunchPath:@"/bin/launchctl"];
+    [task setArguments:@[@"kickstart", @"-k", @"-p", [NSString stringWithFormat:@"gui/%u/%@", geteuid(), serviceName]]];
+    [task launch];
+    [task waitUntilExit];
+    return [task terminationStatus] == EXIT_SUCCESS;
+}
+
+#endif
+
 } // namespace TestWebKitAPI
 
 NS_ASSUME_NONNULL_END
