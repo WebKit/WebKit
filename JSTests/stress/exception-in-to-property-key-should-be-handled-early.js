@@ -1,4 +1,3 @@
-//@ skip if $architecture == "arm"
 var propertyKey = {
     toString() {
         throw new Error("propertyKey.toString is called.");

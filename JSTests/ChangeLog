@@ -1,3 +1,16 @@
+2022-05-12  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unskip no longer failing test
+        https://bugs.webkit.org/show_bug.cgi?id=240346
+
+        Unreviewed gardening.
+
+        Test no longer fails on ARM. No good explanation for why it was only
+        failing in bytecode-cache mode. Also not sure which subsequent commit
+        fixed it.
+
+        * stress/exception-in-to-property-key-should-be-handled-early.js:
+
 2022-05-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Temporal] Years 0-999 should be canonically represented with 4 digits, not 6
