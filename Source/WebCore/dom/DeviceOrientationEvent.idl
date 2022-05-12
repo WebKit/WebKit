@@ -48,7 +48,7 @@
                                     optional unrestricted double? compassAccuracy = null);
 #else
     readonly attribute boolean? absolute;
-    undefined initDeviceOrientationEvent(optional DOMString type = "",
+    undefined initDeviceOrientationEvent(optional [AtomString] DOMString type = "",
                                     optional boolean bubbles = false,
                                     optional boolean cancelable = false,
                                     optional unrestricted double? alpha = null,

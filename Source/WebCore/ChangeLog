@@ -1,3 +1,12 @@
+2022-05-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed, build fix after r293816
+        https://bugs.webkit.org/show_bug.cgi?id=240330
+
+        Build was broken when ENABLE_ORIENTATION_EVENTS=ON
+
+        * dom/DeviceOrientationEvent.idl:
+
 2022-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Some RenderStyle::diff() optimizations
