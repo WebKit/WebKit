@@ -4870,13 +4870,19 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     return node->parentOrShadowHostElement();
 }
 
-void Document::setCSSTarget(Element* targetNode)
+void Document::setCSSTarget(Element* newTarget)
 {
+    if (m_cssTarget == newTarget)
+        return;
+
+    std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
     if (m_cssTarget)
-        m_cssTarget->invalidateStyleForSubtree();
-    m_cssTarget = targetNode;
-    if (targetNode)
-        targetNode->invalidateStyleForSubtree();
+        emplace(oldInvalidation, *m_cssTarget, { { CSSSelector::PseudoClassTarget, false } });
+
+    std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
+    if (newTarget)
+        emplace(newInvalidation, *newTarget, { { CSSSelector::PseudoClassTarget, true } });
+    m_cssTarget = newTarget;
 }
 
 void Document::registerNodeListForInvalidation(LiveNodeList& list)

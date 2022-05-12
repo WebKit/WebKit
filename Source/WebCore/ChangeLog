@@ -1,3 +1,15 @@
+2022-05-12  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :target pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=240329
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/css/selectors/invalidation/target-pseudo-in-has.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSTarget):
+
 2022-05-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, build fix after r293816

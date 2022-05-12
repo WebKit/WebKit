@@ -1,5 +1,17 @@
 2022-05-12  Tim Nguyen  <ntim@apple.com>
 
+        [:has() pseudo-class] Support invalidation for :target pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=240329
+
+        Reviewed by Antti Koivisto.
+
+        Extend current test to cover more cases, and mark it as passing.
+
+        * web-platform-tests/css/selectors/invalidation/target-pseudo-in-has-expected.txt:
+        * web-platform-tests/css/selectors/invalidation/target-pseudo-in-has.html:
+
+2022-05-12  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/selectors WPT from revision 4653e9128742e2c2609e76f04f4084cdc10ffead
         https://bugs.webkit.org/show_bug.cgi?id=240332
 
