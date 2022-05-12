@@ -68,7 +68,16 @@ GstElement* GStreamerVideoCapturer::createSource()
 GstElement* GStreamerVideoCapturer::createConverter()
 {
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
-    return makeGStreamerBin("videoscale ! videoconvert ! videorate drop-only=1 average-period=1", true);
+    auto bin = makeGStreamerBin("capsfilter caps=\"video/x-raw\" name=mimetype-filter ! decodebin3 ! videoscale ! videoconvert ! videorate drop-only=1 average-period=1 name=videorate", false);
+
+    m_videoSrcMIMETypeFilter = adoptGRef(gst_bin_get_by_name(GST_BIN(bin), "mimetype-filter"));
+    auto videorate = adoptGRef(gst_bin_get_by_name(GST_BIN(bin), "videorate"));
+
+    RELEASE_ASSERT(gst_element_add_pad(bin, gst_ghost_pad_new("sink", GST_PAD(m_videoSrcMIMETypeFilter->sinkpads->data))));
+    RELEASE_ASSERT(gst_element_add_pad(bin, gst_ghost_pad_new("src", GST_PAD(videorate->srcpads->data))));
+
+    adjustVideoSrcMIMEType();
+    return bin;
 }
 
 GstVideoInfo GStreamerVideoCapturer::getBestFormat()
@@ -100,6 +109,8 @@ bool GStreamerVideoCapturer::setSize(int width, int height)
     GST_INFO_OBJECT(m_pipeline.get(), "Setting size to %dx%d", width, height);
     m_caps = adoptGRef(gst_caps_copy(m_caps.get()));
     gst_caps_set_simple(m_caps.get(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr);
+
+    adjustVideoSrcMIMEType();
 
     if (!m_capsfilter)
         return false;
@@ -133,6 +144,8 @@ bool GStreamerVideoCapturer::setFrameRate(double frameRate)
     m_caps = adoptGRef(gst_caps_copy(m_caps.get()));
     gst_caps_set_simple(m_caps.get(), "framerate", GST_TYPE_FRACTION, numerator, denominator, nullptr);
 
+    adjustVideoSrcMIMEType();
+
     if (!m_capsfilter)
         return false;
 
@@ -140,6 +153,160 @@ bool GStreamerVideoCapturer::setFrameRate(double frameRate)
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
 
     return true;
+}
+
+static std::optional<int> getMaxIntValueFromStructure(const GstStructure* structure, const char* fieldName)
+{
+    const GValue* value = gst_structure_get_value(structure, fieldName);
+    if (!value)
+        return std::nullopt;
+
+    int maxInt = -G_MAXINT;
+    if (G_VALUE_HOLDS_INT(value))
+        maxInt = g_value_get_int(value);
+    else if (GST_VALUE_HOLDS_INT_RANGE(value))
+        maxInt = gst_value_get_int_range_max(value);
+    else if (GST_VALUE_HOLDS_ARRAY(value)) {
+        const guint size = gst_value_array_get_size(value);
+        for (guint i = 0; i < size; ++i) {
+            const GValue* item = gst_value_array_get_value(value, i);
+            if (G_VALUE_HOLDS_INT(item)) {
+                int val = g_value_get_int(item);
+                if (val > maxInt)
+                    maxInt = val;
+            }
+        }
+    } else if (GST_VALUE_HOLDS_LIST(value)) {
+        const guint size = gst_value_list_get_size(value);
+        for (guint i = 0; i < size; ++i) {
+            const GValue* item = gst_value_list_get_value(value, i);
+            if (G_VALUE_HOLDS_INT(item)) {
+                int val = g_value_get_int(item);
+                if (val > maxInt)
+                    maxInt = val;
+            }
+        }
+    }
+
+    return (maxInt > -G_MAXINT) ? std::make_optional<>(maxInt) : std::nullopt;
+}
+
+static std::optional<double> getMaxFractionValueFromStructure(const GstStructure* structure, const char* fieldName)
+{
+    const GValue* value = gst_structure_get_value(structure, fieldName);
+    if (!value)
+        return std::nullopt;
+
+    double maxFraction = -G_MAXDOUBLE;
+    if (GST_VALUE_HOLDS_FRACTION(value)) {
+        gst_util_fraction_to_double(gst_value_get_fraction_numerator(value),
+            gst_value_get_fraction_denominator(value), &maxFraction);
+    } else if (GST_VALUE_HOLDS_FRACTION_RANGE(value)) {
+        const GValue* fractionValue = gst_value_get_fraction_range_max(value);
+        gst_util_fraction_to_double(gst_value_get_fraction_numerator(fractionValue),
+            gst_value_get_fraction_denominator(fractionValue), &maxFraction);
+    } else if (GST_VALUE_HOLDS_ARRAY(value)) {
+        const guint size = gst_value_array_get_size(value);
+        for (guint i = 0; i < size; ++i) {
+            const GValue* item = gst_value_array_get_value(value, i);
+            if (GST_VALUE_HOLDS_FRACTION(item)) {
+                double val = -G_MAXDOUBLE;
+                gst_util_fraction_to_double(gst_value_get_fraction_numerator(item),
+                    gst_value_get_fraction_denominator(item), &val);
+                if (val > maxFraction)
+                    maxFraction = val;
+            }
+        }
+    } else if (GST_VALUE_HOLDS_LIST(value)) {
+        const guint size = gst_value_list_get_size(value);
+        for (guint i = 0; i < size; ++i) {
+            const GValue* item = gst_value_list_get_value(value, i);
+            if (GST_VALUE_HOLDS_FRACTION(item)) {
+                double val = -G_MAXDOUBLE;
+                gst_util_fraction_to_double(gst_value_get_fraction_numerator(item),
+                    gst_value_get_fraction_denominator(item), &val);
+                if (val > maxFraction)
+                    maxFraction = val;
+            }
+        }
+    }
+
+    return (maxFraction > -G_MAXDOUBLE) ? std::make_optional<>(maxFraction) : std::nullopt;
+}
+
+void GStreamerVideoCapturer::adjustVideoSrcMIMEType()
+{
+    if (!m_videoSrcMIMETypeFilter)
+        return;
+
+    struct MimeTypeSelector {
+        const char* mimeType = "video/x-raw";
+
+        int maxWidth = 0;
+        int maxHeight = 0;
+        double maxFrameRate = 0;
+
+        struct {
+            int width = 0;
+            int height = 0;
+            double frameRate = 0;
+        } stopCondition;
+    } selector;
+
+    // If nothing has been specified by the user, we target at least an arbitrary resolution of 1920x1080@24fps.
+    const GstStructure* capsStruct = gst_caps_get_structure(m_caps.get(), 0);
+    if (!gst_structure_get_int(capsStruct, "width", &selector.stopCondition.width))
+        selector.stopCondition.width = 1920;
+
+    if (!gst_structure_get_int(capsStruct, "height", &selector.stopCondition.height))
+        selector.stopCondition.height = 1080;
+
+    int numerator = 0;
+    int denominator = 1;
+    if (gst_structure_get_fraction(capsStruct, "framerate", &numerator, &denominator))
+        gst_util_fraction_to_double(numerator, denominator, &selector.stopCondition.frameRate);
+    else
+        selector.stopCondition.frameRate = 24;
+
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Searching best video capture device mime type for resolution %dx%d@%.3f",
+        selector.stopCondition.width, selector.stopCondition.height, selector.stopCondition.frameRate);
+
+    auto deviceCaps = adoptGRef(gst_device_get_caps(m_device.get()));
+    gst_caps_foreach(deviceCaps.get(),
+        reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, MimeTypeSelector* selector) -> gboolean {
+            auto width = getMaxIntValueFromStructure(structure, "width");
+            if (!width.has_value())
+                return TRUE;
+
+            auto height = getMaxIntValueFromStructure(structure, "height");
+            if (!height.has_value())
+                return TRUE;
+
+            auto frameRate = getMaxFractionValueFromStructure(structure, "framerate");
+            if (!frameRate.has_value())
+                return TRUE;
+
+            if (*width >= selector->stopCondition.width && *height >= selector->stopCondition.height
+                && *frameRate >= selector->stopCondition.frameRate) {
+                selector->mimeType = gst_structure_get_name(structure);
+                return FALSE;
+            }
+
+            if (*width >= selector->maxWidth && *height >= selector->maxHeight && *frameRate >= selector->maxFrameRate) {
+                selector->maxWidth = *width;
+                selector->maxHeight = *height;
+                selector->maxFrameRate = *frameRate;
+                selector->mimeType = gst_structure_get_name(structure);
+            }
+
+            return TRUE;
+        }),
+        &selector);
+
+    GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device mime type to %s", selector.mimeType);
+
+    auto caps = adoptGRef(gst_caps_new_empty_simple(selector.mimeType));
+    g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 }
 
 } // namespace WebCore

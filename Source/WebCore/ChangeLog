@@ -1,3 +1,24 @@
+2022-05-12  Loïc Le Page  <llepage@igalia.com>
+
+        [GStreamer][VideoCapture] Add support for capturing encoded video streams from a webcam
+        https://bugs.webkit.org/show_bug.cgi?id=240229
+
+        Reviewed by Philippe Normand.
+
+        Takes into account encoded video streams produced by a webcam for
+        video capture.
+
+        Manually tested (requires a webcam with encoded video streams).
+
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::generatePresets):
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        (WebCore::GStreamerVideoCapturer::createConverter):
+        (WebCore::GStreamerVideoCapturer::setSize):
+        (WebCore::GStreamerVideoCapturer::setFrameRate):
+        (WebCore::GStreamerVideoCapturer::adjustVideoSrcMIMEType):
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h:
+
 2022-05-12  Youenn Fablet  <youenn@apple.com>
 
         Add a better mock for audio units used by CoreAudioSharedUnit

@@ -50,6 +50,8 @@ public:
 
 private:
     std::optional<NodeAndFD> m_nodeAndFd;
+    GRefPtr<GstElement> m_videoSrcMIMETypeFilter;
+    void adjustVideoSrcMIMEType();
 };
 
 } // namespace WebCore

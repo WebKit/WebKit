@@ -264,10 +264,6 @@ void GStreamerVideoCaptureSource::generatePresets()
     for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
         GstStructure* str = gst_caps_get_structure(caps.get(), i);
 
-        // Only accept raw video for now.
-        if (!gst_structure_has_name(str, "video/x-raw"))
-            continue;
-
         int32_t width, height;
         if (!gst_structure_get(str, "width", G_TYPE_INT, &width, "height", G_TYPE_INT, &height, nullptr)) {
             GST_INFO("Could not find discret height and width values in %" GST_PTR_FORMAT, str);
