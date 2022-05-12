@@ -648,7 +648,8 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.htm"_s), { });
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { });
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.html"_s), { });
-    
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://example.com/.webkit.org/in/path/test.html"_s), { });
+
     auto unlessDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*webkit.org\"]}}]"_s);
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"_s), { });
