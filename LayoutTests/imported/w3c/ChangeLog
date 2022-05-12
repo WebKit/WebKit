@@ -1,3 +1,14 @@
+2022-05-12  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Serialize computed '-webkit-text-combine: none'
+        https://bugs.webkit.org/show_bug.cgi?id=239989
+
+        Reviewed by Tim Nguyen.
+
+        Update some test expectations.
+
+        * web-platform-tests/css/cssom/serialize-all-longhands-expected.txt:
+
 2022-05-12  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :target pseudo-class

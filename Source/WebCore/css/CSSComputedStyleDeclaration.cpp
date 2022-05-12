@@ -3969,7 +3969,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitTextCombine:
             if (style.textCombine() == TextCombine::All)
                 return CSSPrimitiveValue::createIdentifier(CSSValueHorizontal);
-            return nullptr;
+            return cssValuePool.createValue(style.textCombine());
         case CSSPropertyTextCombineUpright:
             return cssValuePool.createValue(style.textCombine());
         case CSSPropertyWebkitTextOrientation:
