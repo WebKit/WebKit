@@ -1,3 +1,12 @@
+2022-05-11  John Cunningham  <johncunningham@apple.com>
+
+        [GPU Process] webrtc/vp8-then-h264-gpu-process-crash.html flaky fails after turning DOM in GPUP on by default
+        https://bugs.webkit.org/show_bug.cgi?id=236926
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wpe/TestExpectations:
+
 2022-05-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden JSC built-ins
