@@ -29,6 +29,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIPageConfiguration.h"
+#include "InspectorResourceURLSchemeHandler.h"
 #include "WebInspectorUIProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
