@@ -1,3 +1,24 @@
+2022-05-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK][WPE] Do not return pointer to disposed timezone string
+        https://bugs.webkit.org/show_bug.cgi?id=240327
+
+        Reviewed by Michael Catanzaro.
+
+        Store time zone name in CString to avoid returning pointer to a temp string which was
+        disposed before returning from webkit_web_context_get_time_zone_override.
+
+        No new tests. Covered by existing unit tests.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_get_time_zone_override):
+        (webkit_web_context_set_time_zone_override): Deleted this function as the time zone can
+        only be overridden during context construction.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+
 2022-05-12  Olivier Blin  <olivier.blin@softathome.com>
 
         REGRESSION(r291038) [GTK][WPE] Fix build without remote inspector

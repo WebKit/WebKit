@@ -248,7 +248,7 @@ struct _WebKitWebContextPrivate {
 
     WebKitMemoryPressureSettings* memoryPressureSettings;
 
-    String timeZoneOverride;
+    CString timeZoneOverride;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -393,8 +393,9 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         break;
     }
     case PROP_TIME_ZONE_OVERRIDE: {
-        if (const auto* override = g_value_get_string(value))
-            webkit_web_context_set_time_zone_override(context, override);
+        const auto* timeZone = g_value_get_string(value);
+        if (isTimeZoneValid(timeZone))
+            context->priv->timeZoneOverride = timeZone;
         break;
     }
     default:
@@ -425,7 +426,7 @@ static void webkitWebContextConstructed(GObject* object)
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration.setTimeZoneOverride(priv->timeZoneOverride);
+    configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
 
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
@@ -1871,24 +1872,6 @@ gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebCo
 #endif
 
 /**
- * webkit_web_context_set_time_zone_override:
- * @context: a #WebKitWebContext
- * @time_zone_override: value to set
- *
- * Set the #WebKitWebContext:time-zone-override property. Refer to the IANA database for valid
- * specifiers, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
- *
- * Since: 2.38
- */
-void webkit_web_context_set_time_zone_override(WebKitWebContext* context, const gchar* timeZoneOverride)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-    g_return_if_fail(isTimeZoneValid(timeZoneOverride));
-
-    context->priv->timeZoneOverride = String::fromUTF8(timeZoneOverride);
-}
-
-/**
  * webkit_web_context_get_time_zone_override:
  * @context: a #WebKitWebContext
  *
@@ -1900,7 +1883,7 @@ const gchar* webkit_web_context_get_time_zone_override(WebKitWebContext* context
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
-    return context->priv->timeZoneOverride.utf8().data();
+    return context->priv->timeZoneOverride.data();
 }
 
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
