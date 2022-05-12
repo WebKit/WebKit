@@ -1,3 +1,44 @@
+2022-05-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293937. rdar://problem/92524485
+
+    [WebGPU] Fix build on downlevel OSes in Apple's build system
+    https://bugs.webkit.org/show_bug.cgi?id=240159
+    <rdar://problem/92524485>
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Some variables from WebKitTargetConditionals.xcconfig and
+    PlatformSupport.xcconfig are used, so we have to make sure
+    we include them. Also refactor the INSTALL_PATH variable a
+    bit.
+    
+    * Configurations/Base.xcconfig:
+    * Configurations/WebGPU.xcconfig:
+    * Configurations/WebKitTargetConditionals.xcconfig: Added.
+    * WebGPU.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293937 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [WebGPU] Fix build on downlevel OSes in Apple's build system
+            https://bugs.webkit.org/show_bug.cgi?id=240159
+            <rdar://problem/92524485>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Some variables from WebKitTargetConditionals.xcconfig and
+            PlatformSupport.xcconfig are used, so we have to make sure
+            we include them. Also refactor the INSTALL_PATH variable a
+            bit.
+
+            * Configurations/Base.xcconfig:
+            * Configurations/WebGPU.xcconfig:
+            * Configurations/WebKitTargetConditionals.xcconfig: Added.
+            * WebGPU.xcodeproj/project.pbxproj:
+
 2022-05-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Device creation should not always fail if supported features are requested
