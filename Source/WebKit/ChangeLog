@@ -1,3 +1,16 @@
+2022-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r293861
+        https://bugs.webkit.org/show_bug.cgi?id=239977
+        <rdar://93208265>
+
+        Apparently it is still needed on trunk
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+
 2022-05-12  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Include backup state in authenticatorData
