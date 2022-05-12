@@ -1,3 +1,18 @@
+2022-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r281791): [iOS] WKWebView cannot load local .log file
+        https://bugs.webkit.org/show_bug.cgi?id=239591
+        <rdar://problem/92442408>
+
+        Reviewed by Geoffrey Garen.
+
+        The refactoring in Bug 229414 did not retain the old behavior on iOS where local
+        files (which do not get a MIME type assigned by CFNetwork) passed through the
+        same 'preferredMIMETypeForFileExtensionFromUTType' logic we use on macOS.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+
 2022-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Make if-domain and unless-domain regexes only look at URL hosts
