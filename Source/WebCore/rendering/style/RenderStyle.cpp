@@ -741,6 +741,10 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
     if (!arePointingToEqualData(first.boxReflect, second.boxReflect))
         return true;
 
+    // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
+    if (!arePointingToEqualData(first.counterDirectives, second.counterDirectives))
+        return true;
+
     if (first.multiCol != second.multiCol)
         return true;
 
@@ -814,6 +818,12 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
 
     if (first.effectiveContainment().contains(Containment::Size) != second.effectiveContainment().contains(Containment::Size)
         || first.effectiveContainment().contains(Containment::InlineSize) != second.effectiveContainment().contains(Containment::InlineSize))
+        return true;
+
+    if (first.scrollPadding != second.scrollPadding)
+        return true;
+
+    if (first.scrollSnapType != second.scrollSnapType)
         return true;
 
     return false;
@@ -904,11 +914,34 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             return true;
     }
 
-    if (m_surroundData->margin != other.m_surroundData->margin)
-        return true;
+    if (m_surroundData.ptr() != other.m_surroundData.ptr()) {
+        if (m_surroundData->margin != other.m_surroundData->margin)
+            return true;
 
-    if (m_surroundData->padding != other.m_surroundData->padding)
-        return true;
+        if (m_surroundData->padding != other.m_surroundData->padding)
+            return true;
+
+        // If our border widths change, then we need to layout. Other changes to borders only necessitate a repaint.
+        if (borderLeftWidth() != other.borderLeftWidth()
+            || borderTopWidth() != other.borderTopWidth()
+            || borderBottomWidth() != other.borderBottomWidth()
+            || borderRightWidth() != other.borderRightWidth())
+            return true;
+
+        if (position() != PositionType::Static) {
+            if (m_surroundData->offset != other.m_surroundData->offset) {
+                // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
+                // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
+                // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
+                if (position() != PositionType::Absolute)
+                    return true;
+
+                // Optimize for the case where a positioned layer is moving but not changing size.
+                if (!positionChangeIsMovementOnly(m_surroundData->offset, other.m_surroundData->offset, m_boxData->width()))
+                    return true;
+            }
+        }
+    }
 
     // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
     if (changeAffectsVisualOverflow(other))
@@ -985,38 +1018,13 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.overflowY != other.m_nonInheritedFlags.overflowY)
         return true;
 
-    // If our border widths change, then we need to layout.  Other changes to borders
-    // only necessitate a repaint.
-    if (borderLeftWidth() != other.borderLeftWidth()
-        || borderTopWidth() != other.borderTopWidth()
-        || borderBottomWidth() != other.borderBottomWidth()
-        || borderRightWidth() != other.borderRightWidth())
-        return true;
-
-    // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
-    if (!arePointingToEqualData(m_rareNonInheritedData->counterDirectives, other.m_rareNonInheritedData->counterDirectives))
-        return true;
-
     if ((visibility() == Visibility::Collapse) != (other.visibility() == Visibility::Collapse))
         return true;
-
-    if (position() != PositionType::Static) {
-        if (m_surroundData->offset != other.m_surroundData->offset) {
-            // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
-            // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
-            // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
-            if (position() != PositionType::Absolute)
-                return true;
-
-            // Optimize for the case where a positioned layer is moving but not changing size.
-            if (!positionChangeIsMovementOnly(m_surroundData->offset, other.m_surroundData->offset, m_boxData->width()))
-                return true;
-        }
-    }
 
     bool hasFirstLineStyle = hasPseudoStyle(PseudoId::FirstLine);
     if (hasFirstLineStyle != other.hasPseudoStyle(PseudoId::FirstLine))
         return true;
+
     if (hasFirstLineStyle) {
         auto* firstLineStyle = getCachedPseudoStyle(PseudoId::FirstLine);
         if (!firstLineStyle)
@@ -1028,9 +1036,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         if (*firstLineStyle != *otherFirstLineStyle)
             return true;
     }
-
-    if (scrollPadding() != other.scrollPadding() || scrollSnapType() != other.scrollSnapType())
-        return true;
 
     return false;
 }
@@ -1083,13 +1088,17 @@ static bool rareNonInheritedDataChangeRequiresLayerRepaint(const StyleRareNonInh
 bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
     // Style::Resolver has ensured that zIndex is non-auto only if it's applicable.
-    if (m_boxData->usedZIndex() != other.m_boxData->usedZIndex() || m_boxData->hasAutoUsedZIndex() != other.m_boxData->hasAutoUsedZIndex())
-        return true;
+    if (m_boxData.ptr() != other.m_boxData.ptr()) {
+        if (m_boxData->usedZIndex() != other.m_boxData->usedZIndex() || m_boxData->hasAutoUsedZIndex() != other.m_boxData->hasAutoUsedZIndex())
+            return true;
+    }
 
     if (position() != PositionType::Static) {
-        if (m_visualData->clip != other.m_visualData->clip || m_visualData->hasClip != other.m_visualData->hasClip) {
-            changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::ClipRect);
-            return true;
+        if (m_visualData.ptr() != other.m_visualData.ptr()) {
+            if (m_visualData->clip != other.m_visualData->clip || m_visualData->hasClip != other.m_visualData->hasClip) {
+                changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::ClipRect);
+                return true;
+            }
         }
     }
 
@@ -1198,15 +1207,23 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
 
-    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
-
     if (m_inheritedFlags.visibility != other.m_inheritedFlags.visibility
         || m_inheritedFlags.printColorAdjust != other.m_inheritedFlags.printColorAdjust
         || m_inheritedFlags.insideLink != other.m_inheritedFlags.insideLink
-        || m_inheritedFlags.insideDefaultButton != other.m_inheritedFlags.insideDefaultButton
-        || m_surroundData->border != other.m_surroundData->border
-        || !m_backgroundData->isEquivalentForPainting(*other.m_backgroundData, currentColorDiffers))
+        || m_inheritedFlags.insideDefaultButton != other.m_inheritedFlags.insideDefaultButton)
         return true;
+
+
+    if (m_backgroundData.ptr() != other.m_backgroundData.ptr()) {
+        bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
+        if (!m_backgroundData->isEquivalentForPainting(*other.m_backgroundData, currentColorDiffers))
+            return true;
+    }
+
+    if (m_surroundData.ptr() != other.m_surroundData.ptr()) {
+        if (m_surroundData->border != other.m_surroundData->border)
+            return true;
+    }
 
     if (m_rareNonInheritedData.ptr() != other.m_rareNonInheritedData.ptr()
         && rareNonInheritedDataChangeRequiresRepaint(*m_rareNonInheritedData, *other.m_rareNonInheritedData, changedContextSensitiveProperties))

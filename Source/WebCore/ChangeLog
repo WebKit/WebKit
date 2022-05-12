@@ -1,3 +1,28 @@
+2022-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Some RenderStyle::diff() optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=240323
+
+        Reviewed by Alan Bujtas.
+
+        Some LengthBox operator== stuff was showing up on profiles, which we can avoid by
+        first testing m_surroundData pointer equality.
+        
+        scrollPadding and scrollSnapType live in rareNonInheritedData, so we can move their
+        comparisons into rareNonInheritedDataChangeRequiresLayout().
+        
+        changeRequiresRepaint() can check for m_backgroundData and m_surroundData pointer
+        equality before doing more expensive tests.
+        
+        These changes reduce the time in RenderStyle::diff() in the MotionMark Design
+        subtest by ~40%.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+
 2022-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         ImageAnalysisQueue should extract and analyze images inside of subframes
