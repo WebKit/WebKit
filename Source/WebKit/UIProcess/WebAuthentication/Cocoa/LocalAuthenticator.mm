@@ -75,11 +75,6 @@ using CBOR = cbor::CBORValue;
 
 namespace LocalAuthenticatorInternal {
 
-// See https://www.w3.org/TR/webauthn/#flags.
-const uint8_t makeCredentialFlags = userPresenceFlag | userVerifiedFlag | attestedCredentialDataIncludedFlag; // UP, UV and AT are set.
-const uint8_t otherMakeCredentialFlags = userPresenceFlag | attestedCredentialDataIncludedFlag; // UP and AT are set.
-const uint8_t getAssertionFlags = userPresenceFlag | userVerifiedFlag; // UP and UV are set.
-const uint8_t otherGetAssertionFlags = userPresenceFlag; // UP is set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;
@@ -99,6 +94,18 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
             result.add(base64EncodeToString(credentialDescriptor.id.data(), credentialDescriptor.id.length()));
     }
     return result;
+}
+
+static inline uint8_t authDataFlags(ClientDataType type, LocalConnection::UserVerification verification, bool synchronizable)
+{
+    auto flags = userPresenceFlag;
+    if (verification != LocalConnection::UserVerification::Presence)
+        flags |= userVerifiedFlag;
+    if (type == ClientDataType::Create)
+        flags |= attestedCredentialDataIncludedFlag;
+    if (synchronizable)
+        flags |= backupEligibilityFlag | backupStateFlag;
+    return flags;
 }
 
 static inline Vector<uint8_t> aaguidVector()
@@ -451,7 +458,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
 
-    auto flags = verification == LocalConnection::UserVerification::Presence ? otherMakeCredentialFlags : makeCredentialFlags;
+    auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery());
     // Step 12.
     // Skip Apple Attestation for none attestation.
     if (creationOptions.attestation == AttestationConveyancePreference::None) {
@@ -622,7 +629,8 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
     // Step 10.
     auto requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
-    auto authData = buildAuthData(requestOptions.rpId, verification == LocalConnection::UserVerification::Presence ? otherGetAssertionFlags : getAssertionFlags, counter, { });
+    auto flags = authDataFlags(ClientDataType::Get, verification, response->synchronizable());
+    auto authData = buildAuthData(requestOptions.rpId, flags, counter, { });
 
     // Step 11.
     RetainPtr<CFDataRef> signature;
