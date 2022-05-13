@@ -133,6 +133,7 @@ public:
     bool needsHDRPixelDepthQuirk() const;
     
     bool needsAkamaiMediaPlayerQuirk(const HTMLVideoElement&) const;
+    bool needsFlightAwareSerializationQuirk() const;
 
     bool needsBlackFullscreenBackgroundQuirk() const;
 
@@ -194,6 +195,7 @@ private:
     mutable std::optional<bool> m_shouldBypassAsyncScriptDeferring;
     mutable std::optional<bool> m_needsVP9FullRangeFlagQuirk;
     mutable std::optional<bool> m_needsHDRPixelDepthQuirk;
+    mutable std::optional<bool> m_needsFlightAwareSerializationQuirk;
     mutable std::optional<bool> m_needsBlackFullscreenBackgroundQuirk;
     mutable std::optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
     mutable std::optional<bool> m_requiresUserGestureToLoadInPictureInPicture;

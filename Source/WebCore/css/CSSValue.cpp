@@ -246,7 +246,7 @@ bool CSSValue::isCSSLocalURL(StringView relativeURL)
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
-String CSSValue::cssText() const
+String CSSValue::cssText(Document* document) const
 {
     switch (classType()) {
     case AspectRatioClass:
@@ -278,7 +278,7 @@ String CSSValue::cssText() const
     case FontVariationClass:
         return downcast<CSSFontVariationValue>(*this).customCSSText();
     case FunctionClass:
-        return downcast<CSSFunctionValue>(*this).customCSSText();
+        return downcast<CSSFunctionValue>(*this).customCSSText(document);
     case LinearGradientClass:
         return downcast<CSSLinearGradientValue>(*this).customCSSText();
     case RadialGradientClass:
@@ -300,7 +300,7 @@ String CSSValue::cssText() const
     case GridTemplateAreasClass:
         return downcast<CSSGridTemplateAreasValue>(*this).customCSSText();
     case PrimitiveClass:
-        return downcast<CSSPrimitiveValue>(*this).customCSSText();
+        return downcast<CSSPrimitiveValue>(*this).customCSSText(document);
     case ReflectClass:
         return downcast<CSSReflectValue>(*this).customCSSText();
     case ShadowClass:
@@ -314,7 +314,7 @@ String CSSValue::cssText() const
     case UnicodeRangeClass:
         return downcast<CSSUnicodeRangeValue>(*this).customCSSText();
     case ValueListClass:
-        return downcast<CSSValueList>(*this).customCSSText();
+        return downcast<CSSValueList>(*this).customCSSText(document);
     case ValuePairClass:
         return downcast<CSSValuePair>(*this).customCSSText();
     case LineBoxContainClass:

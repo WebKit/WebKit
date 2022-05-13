@@ -190,7 +190,7 @@ public:
 
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
-    String customCSSText() const;
+    String customCSSText(Document* = nullptr) const;
 
     bool equals(const CSSPrimitiveValue&) const;
 

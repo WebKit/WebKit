@@ -174,7 +174,7 @@ bool StyleProperties::shorthandHasVariableReference(CSSPropertyID propertyID, St
     return false;
 }
 
-String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
+String StyleProperties::getPropertyValue(CSSPropertyID propertyID, Document* document) const
 {
     if (auto value = getPropertyCSSValue(propertyID)) {
         switch (propertyID) {
@@ -188,7 +188,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
                 return makeString(downcast<CSSPrimitiveValue>(*value).doubleValue() / 100);
             FALLTHROUGH;
         default:
-            return value->cssText();
+            return value->cssText(document);
         }
     }
 

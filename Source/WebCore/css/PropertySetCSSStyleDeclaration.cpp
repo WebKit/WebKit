@@ -26,8 +26,11 @@
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "CustomElementReactionQueue.h"
+#include "DOMWindow.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMGlobalObject.h"
+#include "JSDOMWindowBase.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StyleProperties.h"
@@ -299,7 +302,16 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSS
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
 {
-    String value = m_propertySet->getPropertyValue(propertyID);
+    Document* doc = nullptr;
+    JSDOMObject* wrap = wrapper();
+    if (wrap) {
+        JSDOMGlobalObject* global = wrap->globalObject();
+        if (global) {
+            DOMWindow& window = activeDOMWindow(*global);
+            doc = window.document();
+        }
+    }
+    String value = m_propertySet->getPropertyValue(propertyID, doc);
 
     if (!value.isEmpty())
         return value;

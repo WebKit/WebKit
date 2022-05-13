@@ -1,3 +1,38 @@
+2022-05-12  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Quirk Flightaware.com to use the older number serialization path.
+        https://bugs.webkit.org/show_bug.cgi?id=240320
+
+        Reviewed by Simon Fraser.
+
+        Ensures that serialization of matrix() CSS properties uses the older serialization (which
+        matches ECMA script serialization) since this site expects these to be comparable as strings.
+
+        No new tests, since this is a site-specific quirk.
+
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::customCSSText const):
+        * css/CSSFunctionValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue const):
+        (WebCore::CSSPrimitiveValue::customCSSText const):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText const):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCSSText const):
+        * css/CSSValueList.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        * css/StyleProperties.h:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsFlightAwareSerializationQuirk const):
+        * page/Quirks.h:
+
 2022-05-12  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Remove document focus requirement for conditional mediation requests

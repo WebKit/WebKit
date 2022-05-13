@@ -42,6 +42,7 @@
 #include "Length.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
+#include "Quirks.h"
 #include "Rect.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
@@ -1227,6 +1228,8 @@ NEVER_INLINE String CSSPrimitiveValue::formatInfiniteOrNanValue(StringView suffi
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
 {
+    if (m_cachedCSSTextUsesLegacyPrecision)
+        return formatIntegerValue(suffix);
     if (std::isnan(m_value.num) || std::isinf(m_value.num))
         return formatInfiniteOrNanValue(suffix);
     return makeString(FormattedCSSNumber::create(m_value.num), suffix);
@@ -1514,17 +1517,20 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     return String();
 }
 
-String CSSPrimitiveValue::customCSSText() const
+String CSSPrimitiveValue::customCSSText(Document* document) const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
     // name if it was specified) - check what spec says about this
 
     CSSTextCache& cssTextCache = WebCore::cssTextCache();
 
-    if (m_hasCachedCSSText) {
+    bool needsQuirk = document && document->quirks().needsFlightAwareSerializationQuirk();
+
+    if (m_hasCachedCSSText && m_cachedCSSTextUsesLegacyPrecision == needsQuirk) {
         ASSERT(cssTextCache.contains(this));
         return cssTextCache.get(this);
     }
+    m_cachedCSSTextUsesLegacyPrecision = needsQuirk;
 
     String text = formatNumberForCustomCSSText();
 

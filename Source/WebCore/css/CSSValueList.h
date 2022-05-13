@@ -66,7 +66,7 @@ public:
     bool hasValue(CSSValue*) const;
     Ref<CSSValueList> copy();
 
-    String customCSSText() const;
+    String customCSSText(Document* = nullptr) const;
     bool equals(const CSSValueList&) const;
     bool equals(const CSSValue&) const;
 

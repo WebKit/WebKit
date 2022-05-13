@@ -1337,6 +1337,18 @@ bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
 #endif
 }
 
+// FIXME: remove this once rdar://92531240 has been fixed.
+bool Quirks::needsFlightAwareSerializationQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsFlightAwareSerializationQuirk)
+        m_needsFlightAwareSerializationQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "flightaware.com"_s);
+
+    return *m_needsFlightAwareSerializationQuirk;
+}
+
 bool Quirks::needsBlackFullscreenBackgroundQuirk() const
 {
     // MLB.com sets a black background-color on the :backdrop pseudo element, which WebKit does not yet support. This
