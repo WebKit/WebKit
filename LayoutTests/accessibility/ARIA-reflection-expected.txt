@@ -67,11 +67,32 @@ PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-colspan", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaControlsElements < - > aria-controls
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-controls", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaCurrent < - > aria-current
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
 PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-current", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaDescribedByElements < - > aria-describedby
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-describedby", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaDetailsElements < - > aria-details
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-details", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 Test ariaDisabled < - > aria-disabled
@@ -93,6 +114,13 @@ PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
 PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-expanded", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaFlowToElements < - > aria-flowto
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-flowto", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 Test ariaHasPopup < - > aria-haspopup
@@ -128,6 +156,13 @@ PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
 PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-label", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaLabelledByElements < - > aria-labelledby
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-labelledby", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 Test ariaLevel < - > aria-level
@@ -170,6 +205,13 @@ PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
 PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-orientation", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaOwnsElements < - > aria-owns
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-owns", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 Test ariaPlaceholder < - > aria-placeholder
@@ -292,7 +334,7 @@ element.setAttribute("aria-valuetext", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 
-PASS count is 40
+PASS count is 46
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -105,6 +105,7 @@ enum TestConfidence { "high", "kinda-low" };
     [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
     [Reflect] attribute boolean reflectedBooleanAttr;
     [Reflect] attribute Element reflectedElementAttr;
+    [Reflect] attribute FrozenArray<Element> reflectedElementsArrayAttr;
     [Reflect, URL] attribute DOMString reflectedURLAttr;
     [Reflect, URL] attribute USVString reflectedUSVURLAttr;
     [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;

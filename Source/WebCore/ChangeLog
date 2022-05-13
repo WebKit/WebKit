@@ -1,3 +1,42 @@
+2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        ARIA reflection for FrozenArray<Element> attributes
+        https://bugs.webkit.org/show_bug.cgi?id=239853
+        <rdar://problem/92797836>
+
+        Reviewed by Chris Dumez.
+
+        Implement ARIA reflection for attributes that refer to a list of Elements:
+        aria-controls, aria-describedby, aria-details, aria-flowto,
+        aria-labelledby and aria-owns.
+        For the properties names this patch uses "Elements" suffix:
+        ariaControlsElements, ariaDescribedByElements, ariaDescribedByElements,
+        ariaFlowToElements, ariaLabelledByElements, ariaOwnsElements
+        this matches Chromium implementation and AOM explainer, but not AOM spec:
+        https://github.com/w3c/aria/issues/1732
+
+        * accessibility/AriaAttributes.idl: Add the new properties under
+        AriaReflectionForElementReferencesEnabled runtime flag.
+        * bindings/scripts/CodeGenerator.pm:
+        (GetterExpression): Add function for FrozenArray<Element> properties.
+        (SetterExpression): Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Add tests.
+        (WebCore::JSTestObjDOMConstructor::construct):
+        (WebCore::jsTestObj_reflectedElementsArrayAttrGetter):
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        (WebCore::setJSTestObj_reflectedElementsArrayAttrSetter):
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/TestObj.idl: Add example attribute.
+        * dom/Element.cpp:
+        (WebCore::isElementsArrayReflectionAttribute): New utility method to
+        identify the attributes that refer to a list of Elements.
+        (WebCore::Element::attributeChanged): Include check for elements
+        array.
+        (WebCore::Element::getElementsArrayAttribute const): Implement getter.
+        (WebCore::Element::setElementsArrayAttribute): Implement setter.
+        * dom/Element.h: Remove FIXME in ExplicitlySetAttrElementsMap as now
+        it stores more than one element. Add headers for getter and setter.
+
 2022-05-12  Matt Woodrow  <mattwoodrow@apple.com>
 
         Quirk Flightaware.com to use the older number serialization path.

@@ -1,3 +1,15 @@
+2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        ARIA reflection for FrozenArray<Element> attributes
+        https://bugs.webkit.org/show_bug.cgi?id=239853
+        <rdar://problem/92797836>
+
+        Reviewed by Chris Dumez.
+
+        Update expectations with the new PASS lines.
+
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative-expected.txt:
+
 2022-05-12  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Serialize computed '-webkit-text-combine: none'

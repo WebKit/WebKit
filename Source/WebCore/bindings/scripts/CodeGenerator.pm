@@ -1110,6 +1110,8 @@ sub GetterExpression
         $functionName = "getUnsignedIntegralAttribute";
     } elsif ($attributeType->name eq "Element") {
         $functionName = "getElementAttribute";
+    } elsif ($attributeType->name eq "FrozenArray" && scalar @{$attributeType->subtypes} == 1 && @{$attributeType->subtypes}[0]->name eq "Element") {
+        $functionName = "getElementsArrayAttribute";
     } else {
         if ($contentAttributeName eq "WebCore::HTMLNames::idAttr") {
             $functionName = "getIdAttribute";
@@ -1149,6 +1151,8 @@ sub SetterExpression
         $functionName = "setUnsignedIntegralAttribute";
     } elsif ($attributeType->name eq "Element") {
         $functionName = "setElementAttribute";
+    } elsif ($attributeType->name eq "FrozenArray" && scalar @{$attributeType->subtypes} == 1 && @{$attributeType->subtypes}[0]->name eq "Element") {
+        $functionName = "setElementsArrayAttribute";
     } elsif ($generator->IsSVGAnimatedType($attributeType)) {
         $functionName = "setAttribute";
     } else {

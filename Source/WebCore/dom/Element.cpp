@@ -1906,6 +1906,16 @@ static inline bool isElementReflectionAttribute(const QualifiedName& name)
     return name == HTMLNames::aria_activedescendantAttr || name == HTMLNames::aria_errormessageAttr;
 }
 
+static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
+{
+    return name == HTMLNames::aria_controlsAttr
+        || name == HTMLNames::aria_describedbyAttr
+        || name == HTMLNames::aria_detailsAttr
+        || name == HTMLNames::aria_flowtoAttr
+        || name == HTMLNames::aria_labelledbyAttr
+        || name == HTMLNames::aria_ownsAttr;
+}
+
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
@@ -1942,7 +1952,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             }
         } else if (name == HTMLNames::partAttr)
             partAttributeChanged(newValue);
-        else if (document().settings().ariaReflectionForElementReferencesEnabled() && isElementReflectionAttribute(name)) {
+        else if (document().settings().ariaReflectionForElementReferencesEnabled() && (isElementReflectionAttribute(name) || isElementsArrayReflectionAttribute(name))) {
             if (auto* map = explicitlySetAttrElementsMapIfExists())
                 map->remove(name);
         } else if (name == HTMLNames::exportpartsAttr) {
@@ -2021,6 +2031,70 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
         setAttribute(attributeName, emptyAtom());
 
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element>> { element });
+}
+
+std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
+{
+    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+    ASSERT(isElementsArrayReflectionAttribute(attributeName));
+
+    if (auto* map = explicitlySetAttrElementsMapIfExists()) {
+        if (auto it = map->find(attributeName); it != map->end()) {
+            return compactMap(it->value, [&](auto& element) -> std::optional<RefPtr<Element>> {
+                if (element && isDescendantOrShadowDescendantOf(element->rootNode()))
+                    return element.get();
+                return std::nullopt;
+            });
+        }
+    }
+
+    auto attr = attributeName;
+    if (attr == HTMLNames::aria_labelledbyAttr && !hasAttribute(HTMLNames::aria_labelledbyAttr) && hasAttribute(HTMLNames::aria_labeledbyAttr))
+        attr = HTMLNames::aria_labeledbyAttr;
+
+    if (!hasAttribute(attr))
+        return std::nullopt;
+
+    SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
+    Vector<RefPtr<Element>> elements;
+    for (unsigned i = 0; i < ids.size(); ++i) {
+        if (auto* element = treeScope().getElementById(ids[i]))
+            elements.append(element);
+    }
+    return elements;
+}
+
+void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& elements)
+{
+    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
+    ASSERT(isElementsArrayReflectionAttribute(attributeName));
+
+    if (!elements) {
+        if (auto* map = explicitlySetAttrElementsMapIfExists())
+            map->remove(attributeName);
+        removeAttribute(attributeName);
+        return;
+    }
+
+    Vector<WeakPtr<Element>> newElements;
+    newElements.reserveInitialCapacity(elements->size());
+    StringBuilder value;
+    for (auto element : elements.value()) {
+        newElements.uncheckedAppend(element);
+        if (value.isEmpty() && newElements.size() > 1)
+            continue;
+
+        auto id = element->getIdAttribute();
+        if (!id.isNull() && &rootNode() == &element->rootNode() && treeScope().getElementById(id) == element) {
+            if (!value.isEmpty())
+                value.append(' ');
+            value.append(id);
+        } else
+            value.clear();
+    }
+    setAttribute(attributeName, value.toAtomString());
+
+    explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
 }
 
 template <typename CharacterType>
