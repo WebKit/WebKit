@@ -666,7 +666,6 @@ webkit.org/b/237502 fast/dom/Range/getClientRects.html [ Failure ]
 webkit.org/b/237502 fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-big-line.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-break.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-edge.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
@@ -905,12 +904,10 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html 
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-page-cache.html [ Crash ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Crash ]
 webkit.org/b/235885 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
-webkit.org/b/235885 inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Timeout ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
@@ -925,7 +922,6 @@ webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
 webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
 webkit.org/b/235885 webrtc/h264-packetization-mode.html [ Timeout Failure ]
 webkit.org/b/235885 webrtc/libwebrtc/setLocalDescriptionCrash.html [ Failure ]
-webkit.org/b/235885 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
 webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
 webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute2.html [ Timeout ]
 webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Timeout ]
@@ -942,7 +938,6 @@ webkit.org/b/235885 webrtc/video-mute.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Failure ]
 webkit.org/b/235885 webrtc/video-replace-track.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
-webkit.org/b/235885 webrtc/video-unmute.html [ Crash ]
 webkit.org/b/235885 webrtc/video-vp8-videorange.html [ Timeout ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
@@ -1008,6 +1003,11 @@ webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 #////////////////////////////////////////////////////////////////////////////////////////
 # MathML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
 
 webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/227122 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
@@ -2035,7 +2035,6 @@ webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
-webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 
@@ -2132,7 +2131,6 @@ webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ Image
 webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
-webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
@@ -2143,23 +2141,13 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout
 
 # The GTK+ test harness doesn't have support for overriding preferred languages.
 webkit.org/b/152618 fast/text/international/system-language/declarative-language.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en-GB.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-419.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-ES.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-MX.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-hi.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ja.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html [ Failure ]
-webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html [ Failure ]
 
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
@@ -2262,7 +2250,6 @@ webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure
 webkit.org/b/177937 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
-webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
 webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
 
 # Imported css-text test suite from WPT.
@@ -2323,7 +2310,6 @@ webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html 
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
-webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
 webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
@@ -2333,7 +2319,6 @@ webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
 webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure ]
 
 webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
 webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
@@ -2431,6 +2416,7 @@ webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-d
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ ImageOnlyFailure Pass ]
 webkit.org/b/224114 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Failure Pass ]
+webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
 webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Failure Pass ]
 
 webkit.org/b/127743 media/video-restricted-no-preload-auto.html [ Failure ]

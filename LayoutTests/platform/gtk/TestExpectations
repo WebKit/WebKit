@@ -113,6 +113,10 @@ http/tests/cookies/same-site [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
+fast/text/zero-width-characters-complex-script.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -812,8 +816,6 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
-webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-003.xht [ ImageOnlyFailure ]
-webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-005.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-010.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-012.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vlr-in-htb-020.xht [ ImageOnlyFailure ]
@@ -923,7 +925,6 @@ webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Failure ]
 
 webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html [ Crash ]
 
-webkit.org/b/196799 imported/blink/fast/css/first-letter-crash-document-disposal.html [ Crash ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
 
@@ -1052,7 +1053,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
-webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
 
@@ -1211,8 +1211,6 @@ webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeo
 webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout ]
 
-webkit.org/b/156109 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout ]
-webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Timeout ]
 
 webkit.org/b/163779 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
 
