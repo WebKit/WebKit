@@ -127,10 +127,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#endif
-
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "PlatformTouchEventIOS.h"
 #endif
@@ -3281,17 +3277,8 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     if (mouseEvent.scrollbar() || view->scrollbarAtPoint(event.position()))
         return false;
 
-    bool allowSelection = true;
-#if PLATFORM(COCOA)
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PreventImageSelectionOnContextualMenuClickInEditablePage)) {
-        auto* page = m_frame.page();
-        allowSelection = page && (!page->isEditable() || !is<HTMLImageElement>(mouseEvent.hitTestResult().targetElement()));
-    }
-#endif
-
     if (m_frame.editor().behavior().shouldSelectOnContextualMenuClick()
-        && !m_frame.selection().contains(viewportPos)
-        && allowSelection) {
+        && !m_frame.selection().contains(viewportPos)) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestContextualWordOrLinkFromHitTestResult(mouseEvent.hitTestResult(), shouldAppendTrailingWhitespace(mouseEvent, m_frame));
     }

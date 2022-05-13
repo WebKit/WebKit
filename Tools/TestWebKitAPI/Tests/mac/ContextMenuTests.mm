@@ -33,7 +33,6 @@
 #import "Utilities.h"
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 @interface NSMenu (ContextMenuTests)
 - (NSMenuItem *)itemWithIdentifier:(NSString *)identifier;
@@ -82,45 +81,6 @@ TEST(ContextMenuTests, ProposedMenuContainsSpellingMenu)
     EXPECT_NOT_NULL([spellingSubmenu itemWithIdentifier:_WKMenuItemIdentifierCheckSpelling]);
     EXPECT_NOT_NULL([spellingSubmenu itemWithIdentifier:_WKMenuItemIdentifierCheckSpellingWhileTyping]);
     EXPECT_NOT_NULL([spellingSubmenu itemWithIdentifier:_WKMenuItemIdentifierCheckGrammarWithSpelling]);
-}
-
-NSString *imageWithContextMenuHandler = @""
-    "<script>"
-    "    addEventListener('contextmenu', () => contextmenuSeen = true);"
-    "</script>"
-    "<img src='large-red-square.png'>";
-
-static void rightClick(RetainPtr<TestWKWebView> webView)
-{
-    [webView mouseDownAtPoint:NSMakePoint(100, 100) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
-    [webView mouseUpAtPoint:NSMakePoint(100, 100) withFlags:0 eventType:NSEventTypeRightMouseUp];
-}
-
-TEST(ContextMenuTests, ContextMenuForEditableWebViewDoesNotSelectImage)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration _setAttachmentElementEnabled:YES];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView _setEditable:YES];
-
-    [webView synchronouslyLoadHTMLString:imageWithContextMenuHandler];
-
-    auto uiDelegate = adoptNS([[TestUIDelegate alloc] init]);
-    [webView setUIDelegate:uiDelegate.get()];
-
-    __block bool done = false;
-    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
-        completion(nil);
-        done = true;
-    }];
-
-    rightClick(webView);
-    Util::run(&done);
-
-    rightClick(webView);
-    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.contextmenuSeen"] boolValue]);
-    NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.getSelection().isCollapsed"];
-    EXPECT_TRUE([result boolValue]);
 }
 
 } // namespace TestWebKitAPI

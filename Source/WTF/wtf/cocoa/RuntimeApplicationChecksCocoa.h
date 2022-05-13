@@ -72,7 +72,6 @@ enum class SDKAlignedBehavior {
     NullOriginForNonSpecialSchemedURLs,
     ObservesClassProperty,
     PictureInPictureMediaPlayback,
-    PreventImageSelectionOnContextualMenuClickInEditablePage,
     ProcessSwapOnCrossSiteNavigation,
     RequiresUserGestureToLoadVideo,
     RestrictsBaseURLSchemes,
