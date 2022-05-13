@@ -54,6 +54,8 @@ private:
     void resumeProcessingSoon();
     void resumeProcessing();
 
+    void enqueueAllImagesRecursive(Document&);
+
     enum class Priority : bool { Low, High };
     struct Task {
         WeakPtr<HTMLImageElement> element;

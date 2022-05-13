@@ -1,5 +1,64 @@
 2022-05-12  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r294088. rdar://problem/93134975
+
+    ImageAnalysisQueue should extract and analyze images inside of subframes
+    https://bugs.webkit.org/show_bug.cgi?id=240328
+    rdar://93134975
+    
+    Reviewed by Tim Horton.
+    
+    Teach `ImageAnalysisQueue` to recursively find all images on the page (including images in of subframe content)
+    and queue them for analysis. To do this, we refactor `enqueueAllImages` to call into a new recursive helper
+    method, `enqueueAllImagesRecursive`, to look for more candidate image elements that exist inside frame owner
+    elements (e.g. `iframe`).
+    
+    Test: ImageAnalysisTests.AnalyzeImagesInSubframes
+    
+    * page/ImageAnalysisQueue.cpp:
+    (WebCore::ImageAnalysisQueue::enqueueAllImages):
+    (WebCore::ImageAnalysisQueue::enqueueAllImagesRecursive):
+    * page/ImageAnalysisQueue.h:
+    ImageAnalysisQueue should extract and analyze images inside of subframes
+    https://bugs.webkit.org/show_bug.cgi?id=240328
+    rdar://93134975
+    
+    Reviewed by Tim Horton.
+    
+    Add an API test to verify that we extract and analyze images inside of subframes, in addition to images in the
+    main frame.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/multiple-images.html:
+    
+    Canonical link: https://commits.webkit.org/250478@main
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294088 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            ImageAnalysisQueue should extract and analyze images inside of subframes
+            https://bugs.webkit.org/show_bug.cgi?id=240328
+            rdar://93134975
+
+            Reviewed by Tim Horton.
+
+            Teach `ImageAnalysisQueue` to recursively find all images on the page (including images in of subframe content)
+            and queue them for analysis. To do this, we refactor `enqueueAllImages` to call into a new recursive helper
+            method, `enqueueAllImagesRecursive`, to look for more candidate image elements that exist inside frame owner
+            elements (e.g. `iframe`).
+
+            Test: ImageAnalysisTests.AnalyzeImagesInSubframes
+
+            * page/ImageAnalysisQueue.cpp:
+            (WebCore::ImageAnalysisQueue::enqueueAllImages):
+            (WebCore::ImageAnalysisQueue::enqueueAllImagesRecursive):
+            * page/ImageAnalysisQueue.h:
+
+2022-05-12  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r293968. rdar://problem/92892014
 
     [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled

@@ -255,6 +255,23 @@ TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
         EXPECT_WK_STREQ(overlayText, @"Foo bar");
 }
 
+TEST(ImageAnalysisTests, AnalyzeImagesInSubframes)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
+    __block bool doneInsertingFrame = false;
+    [webView callAsyncJavaScript:@"appendAndLoadSubframe(source)" arguments:@{ @"source" : @"multiple-images.html" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        doneInsertingFrame = true;
+    }];
+    Util::run(&doneInsertingFrame);
+
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:10];
+}
+
 TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
 {
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
