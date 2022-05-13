@@ -292,6 +292,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         if (!imageBuffer)
             return;
         auto backendSize = imageBuffer->backendSize();
+        auto logicalSize = imageBuffer->logicalSize();
         auto resultSize = preserveResolution == PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
         auto bitmap = ShareableBitmap::create(resultSize, { imageBuffer->colorSpace() });
         if (!bitmap)
@@ -299,7 +300,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return;
-        context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { CompositeOperator::Copy });
+        context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, logicalSize }, { CompositeOperator::Copy });
         bitmap->createHandle(handle);
     }();
     completionHandler(WTFMove(handle));

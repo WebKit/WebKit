@@ -1,3 +1,64 @@
+2022-05-12  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293968. rdar://problem/92892014
+
+    [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled
+    https://bugs.webkit.org/show_bug.cgi?id=240203
+    rdar://92892014
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    takeSnapshots() depends on the snapshot ImageBuffer::resolutionScale() to
+    set the size of the TextIndicatorData image. r293825 scaled the size of
+    the ImageBuffer before creation and moved the scaling to the GraphicsContext.
+    So we have correct scaled pixels but the resolutionScale is 1. So we get
+    enlarged incorrect image.
+    
+    The fix is to revert r293825 and fix the iOS snapshot without having to
+    change snapshotFrameRectWithClip().
+    
+    * page/FrameSnapshotting.cpp:
+    (WebCore::snapshotFrameRectWithClip):
+    
+    Source/WebKit:
+    
+    In getShareableBitmapForImageBufferWithQualifiedIdentifier(), we used to
+    pass the backendSize as the srcRect and the backendSize as the destRect
+    to GraphicsContext::drawImageBuffer(). The backendSize is the logicalSize
+    scaled by the resolutionScale. But in ImageBufferCGBackend::draw() we
+    scale the srcRect by the resolutionScale one more time. This double-
+    scaled srcRect draws a srcRect whose size = backendSize * resolutionScale
+    to a destRect whose size = backendSize. And this results in shrinking the
+    desired snapshot image by 1 / resolutionScale.
+    
+    * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+    (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293968 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-08  Said Abou-Hallawa  <said@apple.com>
+
+            [macOS] REGRESSION (r293825): Find highlight snapshots are incorrectly scaled
+            https://bugs.webkit.org/show_bug.cgi?id=240203
+            rdar://92892014
+
+            Reviewed by Tim Horton.
+
+            In getShareableBitmapForImageBufferWithQualifiedIdentifier(), we used to
+            pass the backendSize as the srcRect and the backendSize as the destRect
+            to GraphicsContext::drawImageBuffer(). The backendSize is the logicalSize
+            scaled by the resolutionScale. But in ImageBufferCGBackend::draw() we
+            scale the srcRect by the resolutionScale one more time. This double-
+            scaled srcRect draws a srcRect whose size = backendSize * resolutionScale
+            to a destRect whose size = backendSize. And this results in shrinking the
+            desired snapshot image by 1 / resolutionScale.
+
+            * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+            (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+
 2022-05-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r294126. rdar://problem/93208265
