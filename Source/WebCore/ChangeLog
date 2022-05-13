@@ -1,3 +1,28 @@
+2022-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Linux][GBM] Provide utility function for construction of eglCreateImage attributes data
+        https://bugs.webkit.org/show_bug.cgi?id=240373
+
+        Reviewed by Chris Lord.
+
+        Provide DMABufEGLUtilities::constructEGLCreateImageAttributes() helper
+        function that unifies the construction of the EGLImage creation
+        attributes. For a given DMABufObject and plane index, a Vector of EGLint
+        attributes for a single-plane EGLImage object is returned, optionally
+        including the modifier value if requested (when the EGL implementation,
+        through the necessary extensions, supports modifiers).
+
+        The new function replaces duplicated code in GraphicsContextGLGBM and
+        TextureMapperPlatformLayerProxyDMABuf.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/gbm/DMABufEGLUtilities.h: Added.
+        (WebCore::DMABufEGLUtilities::constructEGLCreateImageAttributes):
+        * platform/graphics/gbm/GraphicsContextGLGBM.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::createEGLImageData):
+
 2022-05-13  Youenn Fablet  <youenn@apple.com>
 
         Remove WorkerLoaderProxy::postTaskForModeToWorkerOrWorkletGlobalScope
