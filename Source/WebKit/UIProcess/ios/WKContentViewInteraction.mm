@@ -10825,7 +10825,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (identifier.length)
-        return WebKit::requestImageAnalysisWithIdentifier(self.imageAnalyzer, identifier, cgImage.get(), WTFMove(completion));
+        return WebKit::requestImageAnalysisWithIdentifier(self.imageAnalyzer, imageURL, identifier, cgImage.get(), WTFMove(completion));
 #else
     UNUSED_PARAM(identifier);
 #endif

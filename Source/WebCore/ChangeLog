@@ -1,3 +1,32 @@
+2022-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ImageAnalysisQueue should reanalyze image elements whose image sources have changed
+        https://bugs.webkit.org/show_bug.cgi?id=240371
+        rdar://93175651
+
+        Reviewed by Tim Horton.
+
+        Currently, ImageAnalysisQueue maintains the set of all image elements that have been queued for analysis, and
+        avoids re-queueing such image elements. However, on some websites, this leads to stale analysis results being
+        shown in certain image elements that have changed image sources (and subsequently finished loaded the new image).
+        To address this, we introduce a mechanism to remember the latest image URL for image elements that have been
+        analyzed using the analysis queue; we only avoid reanalyzing these same image elements if the source URL is the
+        same as the source URL when we last analyzed it.
+
+        This allows us (for instance) to handle the scenario where a single image element periodically cycles between
+        different `src` attribute values.
+
+        Test: ImageAnalysisTests.AnalyzeImageAfterChangingSource
+
+        * page/ImageAnalysisQueue.cpp:
+        (WebCore::ImageAnalysisQueue::enqueueIfNeeded):
+
+        Also avoid trying to prematurely analyze images whose cached images only contain the null image. This caused
+        empty results to sometimes be incorrectly cached for some image elements, if analysis is triggered too early.
+
+        (WebCore::ImageAnalysisQueue::resumeProcessing):
+        * page/ImageAnalysisQueue.h:
+
 2022-05-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build broken in debug mode

@@ -1,3 +1,17 @@
+2022-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ImageAnalysisQueue should reanalyze image elements whose image sources have changed
+        https://bugs.webkit.org/show_bug.cgi?id=240371
+        rdar://93175651
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the scenario by verifying that the same image element is reanalyzed after setting
+        the `src` to a different image URL.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-13  Alex Christensen  <achristensen@webkit.org>
 
         Disable MediaLoading.CaptivePortalHLS API test

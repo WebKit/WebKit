@@ -64,10 +64,35 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
+    auto* image = cachedImage->image();
+    if (!image || image->isNull())
+        return;
+
     if (renderer.size().width() < minimumWidthForAnalysis || renderer.size().height() < minimumHeightForAnalysis)
         return;
 
-    if (!m_queuedElements.add(element).isNewEntry)
+    bool shouldAddToQueue = [&] {
+        auto url = cachedImage->url();
+        auto iterator = m_queuedElements.find(element);
+        if (iterator == m_queuedElements.end()) {
+            m_queuedElements.add(element, url);
+            return true;
+        }
+
+        if (iterator->value == url)
+            return false;
+
+        iterator->value = url;
+
+        for (auto& entry : m_queue) {
+            if (entry.element == &element)
+                return false;
+        }
+
+        return true;
+    }();
+
+    if (!shouldAddToQueue)
         return;
 
     Ref view = renderer.view().frameView();
@@ -123,6 +148,10 @@ void ImageAnalysisQueue::resumeProcessing()
 
         m_pendingRequestCount++;
         m_page->resetTextRecognitionResult(*element);
+
+        if (auto* image = element->cachedImage(); image && !image->errorOccurred())
+            m_queuedElements.set(*element, image->url());
+
         auto allowSnapshots = m_identifier.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
         m_page->chrome().client().requestTextRecognition(*element, { m_identifier, allowSnapshots }, [this, page = m_page] (auto&&) {
             if (!page || page->imageAnalysisQueueIfExists() != this)

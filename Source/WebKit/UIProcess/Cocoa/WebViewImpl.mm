@@ -266,7 +266,7 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (!identifier.isEmpty())
-        return requestImageAnalysisWithIdentifier(ensureImageAnalyzer(), identifier, cgImage.get(), WTFMove(completion));
+        return requestImageAnalysisWithIdentifier(ensureImageAnalyzer(), imageURL, identifier, cgImage.get(), WTFMove(completion));
 #else
     UNUSED_PARAM(identifier);
 #endif

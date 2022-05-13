@@ -60,7 +60,7 @@ RetainPtr<CocoaImageAnalyzer> createImageAnalyzer();
 RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, NSURL *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
 
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForCroppedImageResult(CGImageRef, const String& sourceMIMEType);

@@ -1,3 +1,21 @@
+2022-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ImageAnalysisQueue should reanalyze image elements whose image sources have changed
+        https://bugs.webkit.org/show_bug.cgi?id=240371
+        rdar://93175651
+
+        Reviewed by Tim Horton.
+
+        To aid with debugging similar issues in the future, plumb the image URL through to
+        `requestImageAnalysisWithIdentifier`, which (if an engineering default is specified) will additionally reveal
+        the URL in system logs.
+
+        * Platform/cocoa/ImageAnalysisUtilities.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestTextRecognition):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestTextRecognition:imageData:identifier:completionHandler:]):
+
 2022-05-13  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Multiple visible find highlights when searching for text after beginning a "find from selection"

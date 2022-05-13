@@ -29,7 +29,8 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/PriorityQueue.h>
-#include <wtf/WeakHashSet.h>
+#include <wtf/URL.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -69,7 +70,7 @@ private:
     String m_identifier;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
-    WeakHashSet<HTMLImageElement> m_queuedElements;
+    WeakHashMap<HTMLImageElement, URL> m_queuedElements;
     PriorityQueue<Task, firstIsHigherPriority> m_queue;
     unsigned m_pendingRequestCount { 0 };
     unsigned m_currentTaskNumber { 0 };

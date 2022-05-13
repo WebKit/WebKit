@@ -272,6 +272,19 @@ TEST(ImageAnalysisTests, AnalyzeImagesInSubframes)
     [webView waitForImageAnalysisRequests:10];
 }
 
+TEST(ImageAnalysisTests, AnalyzeImageAfterChangingSource)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"image"];
+    [webView _startImageAnalysis:nil];
+    [webView waitForImageAnalysisRequests:1];
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('img').src = 'icon.png'"];
+    [webView waitForImageAnalysisRequests:2];
+}
+
 TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
 {
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
