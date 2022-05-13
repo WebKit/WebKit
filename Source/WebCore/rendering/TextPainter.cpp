@@ -27,6 +27,7 @@
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "HTMLParserIdioms.h"
+#include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
@@ -226,9 +227,40 @@ void TextPainter::clearGlyphDisplayLists()
 #endif
 }
 
+static bool forceUseGlyphDisplayListForTesting = false;
+
 bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
 {
-    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && paintInfo.enclosingSelfPaintingLayer()->paintingFrequently();
+    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && (paintInfo.enclosingSelfPaintingLayer()->paintingFrequently() || forceUseGlyphDisplayListForTesting);
+}
+
+void TextPainter::setForceUseGlyphDisplayListForTesting(bool enabled)
+{
+    forceUseGlyphDisplayListForTesting = enabled;
+}
+
+String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, DisplayList::AsTextFlags flags)
+{
+    if (!textNode.renderer())
+        return String();
+
+    StringBuilder builder;
+
+    for (auto textBox : InlineIterator::textBoxesFor(*textNode.renderer())) {
+        DisplayList::DisplayList* displayList = nullptr;
+        if (auto* legacyInlineBox = textBox.legacyInlineBox())
+            displayList = TextPainter::glyphDisplayListIfExists(*legacyInlineBox);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        else
+            displayList = TextPainter::glyphDisplayListIfExists(*textBox.inlineBox());
+#endif
+        if (displayList) {
+            builder.append(displayList->asText(flags));
+            builder.append('\n');
+        }
+    }
+
+    return builder.toString();
 }
 
 } // namespace WebCore

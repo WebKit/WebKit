@@ -215,6 +215,7 @@
 #include "StyleSheetContents.h"
 #include "SystemSoundManager.h"
 #include "TextIterator.h"
+#include "TextPainter.h"
 #include "TextPlaceholderElement.h"
 #include "TextRecognitionOptions.h"
 #include "ThreadableBlobRegistry.h"
@@ -642,6 +643,8 @@ void Internals::resetToConsistentState(Page& page)
     auto& sessionManager = reinterpret_cast<MediaSessionManagerGLib&>(PlatformMediaSessionManager::sharedManager());
     sessionManager.setDBusNotificationsEnabled(false);
 #endif
+
+    TextPainter::setForceUseGlyphDisplayListForTesting(false);
 }
 
 Internals::Internals(Document& document)
@@ -3278,6 +3281,32 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
         return Exception { InvalidAccessError };
 
     return layer->backing()->replayDisplayListAsText(displayListFlags);
+}
+
+void Internals::setForceUseGlyphDisplayListForTesting(bool enabled)
+{
+    TextPainter::setForceUseGlyphDisplayListForTesting(enabled);
+}
+
+ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, unsigned short flags)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView())
+        return Exception { InvalidAccessError };
+
+    if (!is<Text>(node))
+        return Exception { InvalidAccessError };
+
+    node.document().updateLayoutIgnorePendingStylesheets();
+
+    if (!node.renderer())
+        return Exception { InvalidAccessError };
+
+    DisplayList::AsTextFlags displayListFlags = 0;
+    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
+        displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
+
+    return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(downcast<Text>(node), displayListFlags);
 }
 
 ExceptionOr<void> Internals::garbageCollectDocumentResources() const

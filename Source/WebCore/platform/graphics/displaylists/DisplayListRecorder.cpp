@@ -51,6 +51,7 @@ Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialCl
     , m_initialScale(initialCTM.xScale())
     , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
 {
+    ASSERT(!state.changes());
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
 
