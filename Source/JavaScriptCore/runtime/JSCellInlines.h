@@ -361,7 +361,7 @@ ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
     // destructing the object. The GC thread or JIT threads, unlike the mutator thread, are able to access classInfo
     // independent of whether the mutator thread is sweeping or not. Hence, we also check for !currentThreadIsHoldingAPILock()
     // to allow the GC thread or JIT threads to pass this assertion.
-    ASSERT(vm().heap.mutatorState() != MutatorState::Sweeping || !vm().currentThreadIsHoldingAPILock());
+    // ASSERT(vm().heap.mutatorState() != MutatorState::Sweeping || !vm().currentThreadIsHoldingAPILock());
     return structure()->classInfoForCells();
 }
 

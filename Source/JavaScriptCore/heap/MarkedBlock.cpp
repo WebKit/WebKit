@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
+#include "wtf/RawPointer.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -463,6 +464,44 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
 
     // The template arguments don't matter because the first one is false.
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
+}
+
+void MarkedBlock::Handle::sweepInParallel()
+{
+    // SweepingScope sweepingScope(*heap());
+    
+    m_weakSet.sweep();
+    
+    bool needsDestruction = m_attributes.destruction == NeedsDestruction
+        && m_directory->isDestructible(NoLockingNecessary, this);
+
+    if (needsDestruction)
+        return;
+
+    if (m_isFreeListed) {
+        dataLog("FATAL(p): ", RawPointer(this), "->sweep: block is free-listed.\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    if (isAllocated()) {
+        dataLog("FATAL(p): ", RawPointer(this), "->sweep: block is allocated.\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    if (space()->isMarking())
+        blockFooter().m_lock.lock();
+    
+    subspace()->didBeginSweepingToFreeList(this);
+    
+    EmptyMode emptyMode = this->emptyMode();
+    ScribbleMode scribbleMode = this->scribbleMode();
+    NewlyAllocatedMode newlyAllocatedMode = this->newlyAllocatedMode();
+    MarksMode marksMode = this->marksMode();
+
+    dataLogLn("*****Sweeping ", RawPointer(atomAt(0)));
+
+    // The template arguments don't matter because the first one is false.
+    specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(nullptr, emptyMode, SweepOnly, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
 bool MarkedBlock::Handle::isFreeListedCell(const void* target) const

@@ -30,6 +30,7 @@
 #include "HeapInlines.h"
 #include "MarkedBlock.h"
 #include "VM.h"
+#include "wtf/RawPointer.h"
 
 namespace JSC {
 
@@ -42,9 +43,10 @@ void IncrementalSweeper::scheduleTimer()
     setTimeUntilFire(sweepTimeSlice * sweepTimeMultiplier);
 }
 
-IncrementalSweeper::IncrementalSweeper(Heap* heap)
+IncrementalSweeper::IncrementalSweeper(Heap* heap, IncrementalSweeperThreadType sweeperThreadType)
     : Base(heap->vm())
     , m_currentDirectory(nullptr)
+    , m_sweeperThreadType(sweeperThreadType)
 {
 }
 
@@ -65,6 +67,7 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
     }
 
     if (m_shouldFreeFastMallocMemoryAfterSweeping) {
+        RELEASE_ASSERT(m_sweeperThreadType == SweepAloneWithWorldStopped);
         WTF::releaseFastMallocFreeMemory();
         m_shouldFreeFastMallocMemoryAfterSweeping = false;
     }
@@ -73,6 +76,9 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
 
 bool IncrementalSweeper::sweepNextBlock(VM& vm)
 {
+    if (m_sweeperThreadType != SweepAloneWithWorldStopped)
+        return sweepNextBlockInParallel(vm);
+
     vm.heap.stopIfNecessary();
 
     MarkedBlock::Handle* block = nullptr;
@@ -93,8 +99,32 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
     return vm.heap.sweepNextLogicallyEmptyWeakBlock();
 }
 
+bool IncrementalSweeper::sweepNextBlockInParallel(VM&)
+{
+    dataLogLn("Sweeping block?");
+    RELEASE_ASSERT(m_sweeperThreadType == SweepInParallel);
+    MarkedBlock::Handle* block = nullptr;
+    
+    for (; m_currentDirectory; m_currentDirectory = m_currentDirectory->nextDirectory()) {
+        if (m_currentDirectory->needsDestruction())
+            continue;
+        block = m_currentDirectory->findBlockToSweep();
+        if (block)
+            break;
+    }
+    
+    if (!block)
+        return false;
+    dataLogLn("Sweeping block ", RawPointer(block->atomAt(0)));
+    
+    block->sweep(nullptr);
+
+    return true;
+}
+
 void IncrementalSweeper::startSweeping(Heap& heap)
 {
+    dataLogLn("Start sweeping, parallel? ", m_sweeperThreadType == SweepInParallel);
     scheduleTimer();
     m_currentDirectory = heap.objectSpace().firstDirectory();
 }

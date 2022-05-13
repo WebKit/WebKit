@@ -796,6 +796,8 @@ private:
     // them at the end.
     Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
     Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
+    Vector<RefPtr<IncrementalSweeper>> m_parallelSweepers;
+    Vector<IncrementalSweeper*> m_availableParallelSweepers WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
     
     HandleSet m_handleSet;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;

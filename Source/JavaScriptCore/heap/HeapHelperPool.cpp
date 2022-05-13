@@ -44,7 +44,7 @@ ParallelHelperPool& heapHelperPool()
             const char* threadName = "Heap Helper Thread";
 #endif
             helperPool = new ParallelHelperPool(threadName);
-            helperPool->ensureThreads(Options::numberOfGCMarkers() - 1);
+            helperPool->ensureThreads(Options::numberOfGCMarkers() - 1 + 1);
         });
     return *helperPool;
 }

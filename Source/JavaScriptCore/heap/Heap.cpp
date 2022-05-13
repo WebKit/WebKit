@@ -84,6 +84,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/ListDump.h>
 #include <wtf/RAMSize.h>
+#include <wtf/RawPointer.h>
 #include <wtf/Scope.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/Threading.h>
@@ -291,7 +292,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     // schedule the timer if we've never done a collection.
     , m_fullActivityCallback(GCActivityCallback::tryCreateFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
-    , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
+    , m_sweeper(adoptRef(*new IncrementalSweeper(this, IncrementalSweeper::SweepAloneWithWorldStopped)))
     , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
@@ -376,12 +377,19 @@ Heap::Heap(VM& vm, HeapType heapType)
 {
     m_worldState.store(0);
 
-    for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
+    auto numberOfParallelThreads = heapHelperPool().numberOfThreads();
+    for (unsigned i = 0; i < numberOfParallelThreads - 1; ++i) {
         std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toCString("P", i + 1));
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
         m_availableParallelSlotVisitors.append(visitor.get());
         m_parallelSlotVisitors.append(WTFMove(visitor));
+    }
+
+    for (unsigned i = numberOfParallelThreads - 1; i < numberOfParallelThreads; ++i) {
+        RefPtr<IncrementalSweeper> sweeper = adoptRef(*new IncrementalSweeper(this, IncrementalSweeper::SweepInParallel));
+        m_availableParallelSweepers.append(sweeper.get());
+        m_parallelSweepers.append(WTFMove(sweeper));
     }
     
     if (Options::useConcurrentGC()) {
@@ -1379,23 +1387,37 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
 
     m_helperClient.setFunction(
         [this] () {
-            SlotVisitor* visitor;
+            SlotVisitor* visitor = nullptr;
+            IncrementalSweeper* sweeper = nullptr;
             {
                 Locker locker { m_parallelSlotVisitorLock };
-                RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
-                visitor = m_availableParallelSlotVisitors.takeLast();
+                if (!m_availableParallelSweepers.isEmpty())
+                    sweeper = m_availableParallelSweepers.takeLast();
+                else {
+                    RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
+                    visitor = m_availableParallelSlotVisitors.takeLast();
+                }
             }
 
             Thread::registerGCThread(GCThreadType::Helper);
 
-            {
+            if (visitor) {
                 ParallelModeEnabler parallelModeEnabler(*visitor);
                 visitor->drainFromShared(SlotVisitor::HelperDrain);
+            } else {
+                sweeper->startSweeping(*this);
+                while (sweeper->isScheduled())
+                    sweeper->doWork(vm());
             }
+
+            dataLogLn("Done: ", RawPointer(visitor), " ", RawPointer(sweeper));
 
             {
                 Locker locker { m_parallelSlotVisitorLock };
-                m_availableParallelSlotVisitors.append(visitor);
+                if (visitor)
+                    m_availableParallelSlotVisitors.append(visitor);
+                else
+                    m_availableParallelSweepers.append(sweeper);
             }
         });
 
