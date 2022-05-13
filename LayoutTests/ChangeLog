@@ -1,5 +1,17 @@
 2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening, follow-up to r294142
+
+        Remove wrongly generated baselines. Parent directoy has the same name
+        as baseline and that ends up in an Exception error while running the
+        layout-tests.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt/location_hash-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/getresponseheader.any-expected.txt/getresponseheader.any-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker-expected.txt/getresponseheader.any.worker-expected.txt: Removed.
+
+2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB][WPE] Unreviewed test gardening, move test image failures to GLIB
 
         * platform/glib/TestExpectations:
