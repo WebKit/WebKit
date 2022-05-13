@@ -417,23 +417,21 @@ void WebPage::savePageState(HistoryItem& historyItem)
     historyItem.setContentSize(m_viewportConfiguration.contentsSize());
 }
 
-static double scaleAfterViewportWidthChange(double currentScale, bool userHasChangedPageScaleFactor, const ViewportConfiguration& viewportConfiguration, float unobscuredWidthInScrollViewCoordinates, const IntSize& newContentSize, const IntSize& oldContentSize, float visibleHorizontalFraction)
+static double scaleAfterViewportWidthChange(double currentScale, bool scaleToFitContent, const ViewportConfiguration& viewportConfiguration, float unobscuredWidthInScrollViewCoordinates, const IntSize& newContentSize, const IntSize& oldContentSize, float visibleHorizontalFraction)
 {
     double scale;
-    if (!userHasChangedPageScaleFactor)
+    if (!scaleToFitContent) {
         scale = viewportConfiguration.initialScale();
-    else
-        scale = std::max(std::min(currentScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
-
-    LOG(VisibleRects, "scaleAfterViewportWidthChange getting scale %.2f", scale);
-
-    if (userHasChangedPageScaleFactor) {
-        // When the content size changes, we keep the same relative horizontal content width in view, otherwise we would
-        // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
-        double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
-        double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
-        scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
+        LOG(VisibleRects, "scaleAfterViewportWidthChange using initial scale: %.2f", scale);
+        return scale;
     }
+
+    // When the content size changes, we keep the same relative horizontal content width in view, otherwise we would
+    // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
+    double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
+    double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
+    scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
+    LOG(VisibleRects, "scaleAfterViewportWidthChange scaling content to fit: %.2f", scale);
     return scale;
 }
 
@@ -3651,6 +3649,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     FrameView& frameView = *m_page->mainFrame().view();
     IntSize oldContentSize = frameView.contentsSize();
     float oldPageScaleFactor = m_page->pageScaleFactor();
+    bool wasAtInitialScale = areEssentiallyEqualAsFloat(oldPageScaleFactor, m_viewportConfiguration.initialScale());
 
     m_dynamicSizeUpdateHistory.add(std::make_pair(oldContentSize, oldPageScaleFactor), frameView.scrollPosition());
 
@@ -3698,7 +3697,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     IntSize newContentSize = frameView.contentsSize();
 
-    double scale = scaleAfterViewportWidthChange(targetScale, m_userHasChangedPageScaleFactor, m_viewportConfiguration, targetUnobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
+    bool scaleToFitContent = (!usesMultitaskingModeViewportBehaviors() || !wasAtInitialScale) && m_userHasChangedPageScaleFactor;
+    double scale = scaleAfterViewportWidthChange(targetScale, scaleToFitContent, m_viewportConfiguration, targetUnobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
     FloatRect newUnobscuredContentRect = targetUnobscuredRect;
     FloatRect newExposedContentRect = targetExposedContentRect;
 
@@ -3985,6 +3985,15 @@ bool WebPage::shouldIgnoreMetaViewport() const
             return true;
     }
     return m_page->settings().shouldIgnoreMetaViewport();
+}
+
+bool WebPage::usesMultitaskingModeViewportBehaviors() const
+{
+#if HAVE(MULTITASKING_MODE)
+    return shouldIgnoreMetaViewport() && m_isInMultitaskingMode;
+#else
+    return false;
+#endif
 }
 
 void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)

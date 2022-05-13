@@ -128,6 +128,8 @@ public:
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
     double layoutSizeScaleFactor() const { return m_layoutSizeScaleFactor; }
 
+    void setPrefersHorizontalScrollingBelowDesktopViewportWidths(bool value) { m_prefersHorizontalScrollingBelowDesktopViewportWidths = value; }
+
     WEBCORE_EXPORT IntSize layoutSize() const;
     WEBCORE_EXPORT int layoutWidth() const;
     WEBCORE_EXPORT int layoutHeight() const;
@@ -209,6 +211,7 @@ private:
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
     bool m_isKnownToLayOutWiderThanViewport { false };
+    bool m_prefersHorizontalScrollingBelowDesktopViewportWidths { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConfiguration::Parameters&);

@@ -2101,6 +2101,10 @@ public:
     void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelVideoExtractionInElementFullScreen();
 
+#if HAVE(MULTITASKING_MODE)
+    void setIsInMultitaskingMode(bool);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

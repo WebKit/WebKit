@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+constexpr double defaultDesktopViewportWidth = 980;
+
 #if ASSERT_ENABLED
 static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& configuration)
 {
@@ -281,8 +283,12 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
             initialScale = m_viewLayoutSize.width() / m_configuration.width;
         else if (shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints())
             initialScale = effectiveLayoutSizeScaleFactor();
-        else if (width > 0)
-            initialScale = m_viewLayoutSize.width() / width;
+        else if (width > 0) {
+            auto shrinkToFitWidth = m_viewLayoutSize.width();
+            if (m_prefersHorizontalScrollingBelowDesktopViewportWidths)
+                shrinkToFitWidth = std::max<float>(shrinkToFitWidth, std::min(width, defaultDesktopViewportWidth));
+            initialScale = shrinkToFitWidth / width;
+        }
     }
 
     // Prevent the initial scale from shrinking to a height smaller than our view's minimum height.
@@ -389,7 +395,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
 {
     Parameters parameters;
-    parameters.width = 980;
+    parameters.width = defaultDesktopViewportWidth;
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
     parameters.allowsShrinkToFit = true;
@@ -420,7 +426,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters(
 ViewportConfiguration::Parameters ViewportConfiguration::imageDocumentParameters()
 {
     Parameters parameters;
-    parameters.width = 980;
+    parameters.width = defaultDesktopViewportWidth;
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
     parameters.allowsShrinkToFit = false;
@@ -724,6 +730,7 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("minimum effective device width (for view)", m_minimumEffectiveDeviceWidthForView);
     ts.dumpProperty("minimum effective device width (for shrink-to-fit)", m_minimumEffectiveDeviceWidthForShrinkToFit);
     ts.dumpProperty("known to lay out wider than viewport", m_isKnownToLayOutWiderThanViewport ? "true" : "false");
+    ts.dumpProperty("prefers horizontal scrolling", m_prefersHorizontalScrollingBelowDesktopViewportWidths ? "true" : "false");
     
     ts.endGroup();
 

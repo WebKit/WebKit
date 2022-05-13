@@ -195,6 +195,10 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityGrayscaleStatusDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
+
+#if HAVE(MULTITASKING_MODE)
+    [center addObserver:self selector:@selector(_multitaskingModeDidChange:) name:self.multitaskingModeChangedNotificationName object:nil];
+#endif
 }
 
 - (BOOL)_isShowingVideoPictureInPicture
@@ -1554,6 +1558,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
     [self _presentCaptivePortalModeAlertIfNeeded];
+#if HAVE(MULTITASKING_MODE)
+    if (_page->hasRunningProcess() && self.window)
+        _page->setIsInMultitaskingMode(self._isInMultitaskingMode);
+#endif
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque
@@ -2723,6 +2731,21 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+
+- (void)_multitaskingModeDidChange:(NSNotification *)notification
+{
+    if (dynamic_objc_cast<UIWindowScene>(notification.object) != self.window.windowScene)
+        return;
+
+    if (!_page || !_page->hasRunningProcess())
+        return;
+
+    _page->setIsInMultitaskingMode(self._isInMultitaskingMode);
+}
+
+#endif // HAVE(MULTITASKING_MODE)
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)
@@ -3222,7 +3245,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
     // Compute the new scale to keep the current content width in the scrollview.
     CGFloat oldWebViewWidthInContentViewCoordinates = oldUnobscuredContentRect.width();
-    _animatedResizeOriginalContentWidth = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
+    _animatedResizeOriginalContentWidth = [&] {
+#if HAVE(MULTITASKING_MODE)
+        if (self._isInMultitaskingMode)
+            return contentSizeInContentViewCoordinates.width;
+#endif
+        return std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
+    }();
     CGFloat targetScale = newViewLayoutSize.width() / _animatedResizeOriginalContentWidth;
     CGFloat resizeAnimationViewAnimationScale = targetScale / contentZoomScale(self);
     [_resizeAnimationView setTransform:CGAffineTransformMakeScale(resizeAnimationViewAnimationScale, resizeAnimationViewAnimationScale)];

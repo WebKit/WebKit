@@ -8515,6 +8515,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.requiresUserActionForEditingControlsManager = m_configuration->requiresUserActionForEditingControlsManager();
 #endif
 
+#if HAVE(MULTITASKING_MODE)
+    parameters.isInMultitaskingMode = pageClient().isInMultitaskingMode();
+#endif
+
     return parameters;
 }
 
@@ -11382,6 +11386,15 @@ void WebPageProxy::cancelVideoExtractionInElementFullScreen()
     m_hasPendingElementFullScreenVideoExtraction = false;
     pageClient().cancelElementFullscreenVideoExtraction();
 }
+
+#if HAVE(MULTITASKING_MODE)
+
+void WebPageProxy::setIsInMultitaskingMode(bool isInMultitaskingMode)
+{
+    send(Messages::WebPage::SetIsInMultitaskingMode(isInMultitaskingMode));
+}
+
+#endif
 
 } // namespace WebKit
 
