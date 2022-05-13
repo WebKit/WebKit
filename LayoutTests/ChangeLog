@@ -1,5 +1,12 @@
 2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][WPE] Unreviewed test gardening, move test image failures to GLIB
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening, update baselines
 
         * platform/glib/TestExpectations:
