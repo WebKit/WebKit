@@ -21,7 +21,7 @@ layer at (0,0) size 785x2495
             RenderText at (5,5) size 27x17
               text run at (5,5) width 27: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (10,64) size 200x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (10,64) size 200x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 184x18
             RenderText at (84,0) size 16x17
               text run at (84,0) width 16: "Hi"
@@ -38,7 +38,7 @@ layer at (0,0) size 785x2495
             RenderText at (5,5) size 27x17
               text run at (5,5) width 27: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,30) size 100x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (110,30) size 100x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 84x18
             RenderText at (34,0) size 16x17
               text run at (34,0) width 16: "Hi"
@@ -57,7 +57,7 @@ layer at (0,0) size 785x2495
               RenderText at (5,5) size 27x17
                 text run at (5,5) width 27: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,30) size 32x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (110,30) size 32x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 16x18
             RenderText at (0,0) size 16x17
               text run at (0,0) width 16: "Hi"
@@ -76,7 +76,7 @@ layer at (0,0) size 785x2495
               RenderText at (5,5) size 27x17
                 text run at (5,5) width 27: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,30) size 100x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (110,30) size 100x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 84x18
             RenderText at (34,0) size 16x17
               text run at (34,0) width 16: "Hi"

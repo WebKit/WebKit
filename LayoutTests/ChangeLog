@@ -1,3 +1,44 @@
+2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening, update baselines
+
+        * platform/glib/TestExpectations:
+        * platform/glib/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5520-brdr-b-01-e-expected.txt.
+        * platform/glib/fast/text/international/bidi-layout-across-linebreak-expected.txt: Renamed from LayoutTests/platform/gtk/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+        * platform/glib/fast/text/international/hindi-spacing-expected.txt: Renamed from LayoutTests/platform/gtk/fast/text/international/hindi-spacing-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/css2.1/20110323/replaced-elements-001-expected.txt:
+        * platform/wpe/css2.1/t0805-c5518-brdr-t-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Removed.
+        * platform/wpe/css3/flexbox/button-expected.txt:
+        * platform/wpe/fast/block/float/float-avoidance-expected.txt:
+        * platform/wpe/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/wpe/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/wpe/fast/css-generated-content/initial-letter-basic-expected.txt:
+        * platform/wpe/fast/css-generated-content/initial-letter-border-padding-expected.txt:
+        * platform/wpe/fast/css-generated-content/initial-letter-raised-expected.txt:
+        * platform/wpe/fast/css-generated-content/initial-letter-sunken-expected.txt:
+        * platform/wpe/fast/css/continuationCrash-expected.txt:
+        * platform/wpe/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/wpe/fast/css/rtl-ordering-expected.txt:
+        * platform/wpe/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/wpe/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wpe/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/wpe/fast/html/details-replace-summary-child-expected.txt:
+        * platform/wpe/fast/html/details-replace-text-expected.txt:
+        * platform/wpe/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/wpe/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-button-expected.txt:
+        * platform/wpe/fast/table/003-expected.txt:
+        * platform/wpe/fast/table/append-cells2-expected.txt:
+        * platform/wpe/fast/table/remove-td-display-none-expected.txt:
+        * platform/wpe/fast/text/emoji-expected.txt:
+        * platform/wpe/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/wpe/fast/text/international/bidi-override-expected.txt:
+        * platform/wpe/fast/text/international/hindi-spacing-expected.txt: Removed.
+        * platform/wpe/fast/text/orientation-sideways-expected.txt:
+
 2022-05-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, fix missing test results.

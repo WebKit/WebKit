@@ -1858,9 +1858,6 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html [ ImageOnlyFailure ]
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFailure ]
 
-accessibility/dialog-properties.html [ Skip ]
-accessibility/ignored-aria-role-description.html [ Skip ]
-
 # These tests require platform support.
 media/media-allowed-codecs.html
 media/media-allowed-containers.html

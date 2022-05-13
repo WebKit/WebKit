@@ -424,6 +424,9 @@ accessibility/embedded-image-description.html [ Skip ]
 # Not supported. Skipped also in mac-wk1 and win ports.
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
+accessibility/dialog-properties.html [ Skip ]
+accessibility/ignored-aria-role-description.html [ Skip ]
+
 webkit.org/b/229261 accessibility/element-line-rects-and-text.html [ Missing ]
 
 webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
