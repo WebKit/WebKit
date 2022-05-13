@@ -146,8 +146,6 @@ public:
     virtual void clearAppBoundSession() { }
 #endif
 
-    virtual bool webPushDaemonUsesMockBundlesForTesting() const { return false; }
-
     void storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
     virtual void donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&) { }
     void handlePrivateClickMeasurementConversion(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest, String&& attributedBundleIdentifier);

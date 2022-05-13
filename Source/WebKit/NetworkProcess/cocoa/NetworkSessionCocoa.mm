@@ -1332,7 +1332,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
     m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = parameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting;
-    m_webPushDaemonUsesMockBundlesForTesting = parameters.webPushDaemonConnectionConfiguration.useMockBundlesForTesting;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_resourceLoadStatistics && !parameters.resourceLoadStatisticsParameters.appBoundDomains.isEmpty())

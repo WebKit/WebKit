@@ -1,3 +1,79 @@
+2022-05-12  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r294084. rdar://problem/93036066
+
+    Re-send connection configuration if webpushd dies
+    https://bugs.webkit.org/show_bug.cgi?id=240286
+    
+    Reviewed by Geoffrey Garen.
+    
+    If webpushd dies, all future communication with it from NetworkProcess fails because we
+    don't re-send the connection configuration to the daemon after the connection is
+    interrupted. This manifests itself as an "invalid sender" AbortError from various
+    PushManager methods because webpushd doesn't know the bundle identifier of the UIProcess it
+    is working on behalf of.
+    
+    To fix this, I moved the responsibility for sending the configuration from
+    NetworkNotificationManager to WebPushD::Connection, and WebPushD::Connection re-sends the
+    configuration every time a new XPC connection is created.
+    
+    Covered by a new API test.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/NetworkSession.cpp:
+    (WebKit::NetworkSession::NetworkSession):
+    * NetworkProcess/NetworkSession.h:
+    (WebKit::NetworkSession::webPushDaemonUsesMockBundlesForTesting const): Deleted.
+    * NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm:
+    (WebKit::WebPushD::Connection::newConnectionWasInitialized const):
+    * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+    (WebKit::NetworkNotificationManager::NetworkNotificationManager):
+    (WebKit::NetworkNotificationManager::sendMessage const):
+    (WebKit::NetworkNotificationManager::sendMessageWithReply const):
+    (WebKit::NetworkNotificationManager::maybeSendConnectionConfiguration const): Deleted.
+    * NetworkProcess/Notifications/NetworkNotificationManager.h:
+    * NetworkProcess/Notifications/WebPushDaemonConnection.cpp:
+    (WebKit::WebPushD::Connection::Connection):
+    * NetworkProcess/Notifications/WebPushDaemonConnection.h:
+    * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+    (TestWebKitAPI::testWebPushDaemonPList):
+    (TestWebKitAPI::setUpTestWebPushD):
+    (TestWebKitAPI::restartTestWebPushD):
+    (TestWebKitAPI::WebPushDTest::WebPushDTest):
+    * TestWebKitAPI/cocoa/DaemonTestUtilities.h:
+    * TestWebKitAPI/cocoa/DaemonTestUtilities.mm:
+    (TestWebKitAPI::restartService):
+    
+    Canonical link: https://commits.webkit.org/250475@main
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294084 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-10  Ben Nham  <nham@apple.com>
+
+            Re-send connection configuration if webpushd dies
+            https://bugs.webkit.org/show_bug.cgi?id=240286
+
+            Reviewed by Geoffrey Garen.
+
+            Add a test to make sure that we re-send the connection configuration after webpushd dies.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+            (TestWebKitAPI::testWebPushDaemonPList):
+            (TestWebKitAPI::setUpTestWebPushD):
+            (TestWebKitAPI::restartTestWebPushD):
+            (TestWebKitAPI::WebPushDTest::WebPushDTest):
+            * TestWebKitAPI/cocoa/DaemonTestUtilities.h:
+            * TestWebKitAPI/cocoa/DaemonTestUtilities.mm:
+            (TestWebKitAPI::restartService):
+
 2022-05-06  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Forward environment to `git commit`

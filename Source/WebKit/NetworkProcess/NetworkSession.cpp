@@ -144,7 +144,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_overrideServiceWorkerRegistrationCountTestingValue(parameters.overrideServiceWorkerRegistrationCountTestingValue)
     , m_storageManager(createNetworkStorageManager(networkProcess.parentProcessConnection(), parameters))
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
-    , m_notificationManager(*this, parameters.webPushMachServiceName)
+, m_notificationManager(*this, parameters.webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration { parameters.webPushDaemonConnectionConfiguration })
 #endif
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     , m_shouldAcceptInsecureCertificatesForWebSockets(parameters.shouldAcceptInsecureCertificatesForWebSockets)

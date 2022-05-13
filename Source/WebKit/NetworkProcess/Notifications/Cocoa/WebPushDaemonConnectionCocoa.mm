@@ -52,7 +52,9 @@ void Connection::newConnectionWasInitialized() const
     if (networkSession().sessionID().isEphemeral())
         return;
 
-    // FIXME: Track connection state
+    Daemon::Encoder encoder;
+    encoder.encode(m_configuration);
+    Daemon::Connection::send(dictionaryFromMessage(WebPushD::MessageType::UpdateConnectionConfiguration, encoder.takeBuffer()).get());
 }
 
 namespace MessageInfo {

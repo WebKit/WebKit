@@ -29,6 +29,7 @@
 
 #include "NotificationManagerMessageHandler.h"
 #include "WebPushDaemonConnection.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotificationDirection.h>
@@ -66,7 +67,7 @@ public:
     void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
 
 private:
-    NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);
+    NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&);
 
     void requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&&) final;
     void showNotification(IPC::Connection&, const WebCore::NotificationData&) final;
@@ -74,11 +75,8 @@ private:
     void clearNotifications(const Vector<UUID>& notificationIDs) final;
     void didDestroyNotification(const UUID& notificationID) final;
 
-    void maybeSendConnectionConfiguration() const;
-
     NetworkSession& m_networkSession;
     std::unique_ptr<WebPushD::Connection> m_connection;
-    mutable bool m_sentConnectionConfiguration { false };
 
     template<WebPushD::MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;
