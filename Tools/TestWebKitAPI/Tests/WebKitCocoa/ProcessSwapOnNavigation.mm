@@ -220,6 +220,11 @@ static bool captivePortalModeAfterChange;
     didPerformClientRedirect = true;
 }
 
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    [webView reload];
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView
