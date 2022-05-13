@@ -381,11 +381,7 @@ class LLDBDebuggerInstance:
 
         self.debugger = lldb.SBDebugger.Create()
         self.debugger.SetAsync(False)
-        architecture = self.architecture
-        if not architecture:
-            architecture = self._get_first_file_architecture()
-
-        self.target = self.debugger.CreateTargetWithFileAndArch(str(self.binary_path), architecture)
+        self.target = self.debugger.CreateTargetWithFileAndArch(str(self.binary_path), self.architecture)
         if not self.target:
             print("Failed to make target for " + self.binary_path)
 
@@ -396,20 +392,6 @@ class LLDBDebuggerInstance:
     def __del__(self):
         if lldb:
             lldb.SBDebugger.Destroy(self.debugger)
-
-    def _get_first_file_architecture(self):
-        p = re.compile(r'shared library +(\w+)$')
-        file_result = subprocess.check_output(["file", self.binary_path], encoding='UTF-8').split('\n')
-        arches = []
-        for line in file_result:
-            match = p.search(line)
-            if match:
-                arches.append(match.group(1))
-
-        if len(arches) > 0:
-            return arches[0]
-
-        return lldb.LLDB_ARCH_DEFAULT
 
     def layout_for_classname(self, classname):
         types = self.module.FindTypes(classname)

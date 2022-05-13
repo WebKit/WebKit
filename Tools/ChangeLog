@@ -1,3 +1,21 @@
+2022-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use None for architecture when dump-class-layout does not have `-a` option
+        https://bugs.webkit.org/show_bug.cgi?id=240395
+
+        Reviewed by Saam Barati and Simon Fraser.
+
+        We can pass None to architecture, then SBDebugger::CreateTargetWithFileAndArch
+        will call CreateTarget with nullptr architecture string. Then, TargetList constructs
+        ArchSpec based on currently selected platform automatically and it covers most of cases.
+        I tried it, and it worked with watchOS, macOS, iOS so far.
+        So, we should just pass None to CreateTargetWithFileAndArch by default.
+
+        * lldb/lldb_dump_class_layout.py:
+        (LLDBDebuggerInstance.__init__):
+        (LLDBDebuggerInstance.__del__):
+        (LLDBDebuggerInstance._get_first_file_architecture): Deleted.
+
 2022-05-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r294113.
