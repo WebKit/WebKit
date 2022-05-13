@@ -1242,7 +1242,10 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     auto* frame = document().frame();
     if (!frame)
         return { };
-    
+
+    if (isDisabledOrReadOnly())
+        return Exception { InvalidStateError, "Input showPicker() cannot be used on immutable controls."_s };
+
     // In cross-origin iframes it should throw a "SecurityError" DOMException except on file and color. In same-origin iframes it should work fine.
     // https://github.com/whatwg/html/issues/6909#issuecomment-917138991
     if (!m_inputType->allowsShowPickerAcrossFrames()) {
