@@ -63,9 +63,10 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, bool isMainResourceLoa
             updatedType = (__bridge CFStringRef)quickLookType.get();
         else if (auto extension = filePathExtension(response))
             updatedType = preferredMIMETypeForFileExtensionFromUTType(extension.get());
-        if (updatedType && (!type || CFStringCompare(type, updatedType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo))
+        if (updatedType && (!type || CFStringCompare(type, updatedType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
             CFURLResponseSetMIMEType(response, updatedType.get());
-        return;
+            return;
+        }
     }
 #endif // USE(QUICK_LOOK)
     if (!type)
