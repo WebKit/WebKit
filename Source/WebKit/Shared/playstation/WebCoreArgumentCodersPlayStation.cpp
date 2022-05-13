@@ -32,12 +32,12 @@ namespace IPC {
 
 using namespace WebCore;
 
-void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Font>& font)
+void ArgumentCoder<Font>::encodePlatformData(Encoder& encoder, const Font& font)
 {
     ASSERT_NOT_REACHED();
 }
 
-std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
+std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder& decoder)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

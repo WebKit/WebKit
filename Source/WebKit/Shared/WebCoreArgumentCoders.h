@@ -398,15 +398,11 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::Font>> {
-    static void encode(Encoder&, const RefPtr<WebCore::Font>&);
-    static std::optional<RefPtr<WebCore::Font>> decode(Decoder&);
-};
 
-template<> struct ArgumentCoder<Ref<WebCore::Font>> {
-    static void encode(Encoder&, const Ref<WebCore::Font>&);
+template<> struct ArgumentCoder<WebCore::Font> {
+    static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const Ref<WebCore::Font>&);
+    static void encodePlatformData(Encoder&, const WebCore::Font&);
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
 };
 
@@ -776,9 +772,9 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<Ref<WebCore::SystemImage>> {
+template<> struct ArgumentCoder<WebCore::SystemImage> {
     template<typename Encoder>
-    static void encode(Encoder&, const Ref<WebCore::SystemImage>&);
+    static void encode(Encoder&, const WebCore::SystemImage&);
     static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
 };
 

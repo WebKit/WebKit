@@ -1074,44 +1074,19 @@ static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Imag
     return decodeImage(decoder, image);
 }
 
-void ArgumentCoder<RefPtr<Font>>::encode(Encoder& encoder, const RefPtr<Font>& font)
+void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
-    encoder << !!font;
-    if (font)
-        encoder << Ref { *font };
-}
-
-std::optional<RefPtr<Font>> ArgumentCoder<RefPtr<Font>>::decode(Decoder& decoder)
-{
-    std::optional<bool> hasFont;
-    decoder >> hasFont;
-    if (!hasFont)
-        return std::nullopt;
-
-    if (!hasFont.value())
-        return std::make_optional(nullptr);
-
-    std::optional<Ref<Font>> font;
-    decoder >> font;
-    if (!font)
-        return std::nullopt;
-
-    return { WTFMove(*font) };
-}
-
-void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)
-{
-    encoder << font->origin();
-    encoder << (font->isInterstitial() ? Font::Interstitial::Yes : Font::Interstitial::No);
-    encoder << font->visibility();
-    encoder << (font->isTextOrientationFallback() ? Font::OrientationFallback::Yes : Font::OrientationFallback::No);
-    encoder << font->renderingResourceIdentifier();
+    encoder << font.origin();
+    encoder << (font.isInterstitial() ? Font::Interstitial::Yes : Font::Interstitial::No);
+    encoder << font.visibility();
+    encoder << (font.isTextOrientationFallback() ? Font::OrientationFallback::Yes : Font::OrientationFallback::No);
+    encoder << font.renderingResourceIdentifier();
     // Intentionally don't encode m_isBrokenIdeographFallback because it doesn't affect drawGlyphs().
 
     encodePlatformData(encoder, font);
 }
 
-std::optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
+std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
 {
     std::optional<Font::Origin> origin;
     decoder >> origin;
@@ -3160,23 +3135,23 @@ std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decod
 }
 
 template<typename Encoder>
-void ArgumentCoder<Ref<SystemImage>>::encode(Encoder& encoder, const Ref<SystemImage>& systemImage)
+void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& systemImage)
 {
-    encoder << systemImage->systemImageType();
+    encoder << systemImage.systemImageType();
 
-    switch (systemImage->systemImageType()) {
+    switch (systemImage.systemImageType()) {
 #if ENABLE(APPLE_PAY)
     case SystemImageType::ApplePayButton:
-        downcast<ApplePayButtonSystemImage>(systemImage.get()).encode(encoder);
+        downcast<ApplePayButtonSystemImage>(systemImage).encode(encoder);
         return;
 
     case SystemImageType::ApplePayLogo:
-        downcast<ApplePayLogoSystemImage>(systemImage.get()).encode(encoder);
+        downcast<ApplePayLogoSystemImage>(systemImage).encode(encoder);
         return;
 #endif
 #if USE(SYSTEM_PREVIEW)
     case SystemImageType::ARKitBadge:
-        downcast<ARKitBadgeSystemImage>(systemImage.get()).encode(encoder);
+        downcast<ARKitBadgeSystemImage>(systemImage).encode(encoder);
         return;
 #endif
     }
@@ -3185,11 +3160,11 @@ void ArgumentCoder<Ref<SystemImage>>::encode(Encoder& encoder, const Ref<SystemI
 }
 
 template
-void ArgumentCoder<Ref<SystemImage>>::encode<Encoder>(Encoder&, const Ref<SystemImage>&);
+void ArgumentCoder<SystemImage>::encode<Encoder>(Encoder&, const SystemImage&);
 template
-void ArgumentCoder<Ref<SystemImage>>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Ref<SystemImage>&);
+void ArgumentCoder<SystemImage>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const SystemImage&);
 
-std::optional<Ref<SystemImage>> ArgumentCoder<Ref<SystemImage>>::decode(Decoder& decoder)
+std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& decoder)
 {
     std::optional<SystemImageType> systemImageType;
     decoder >> systemImageType;

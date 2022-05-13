@@ -346,7 +346,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
 };
 
 template<typename T> struct ArgumentCoder<RefPtr<T>> {
-    template<typename U = T>
+    template<typename Encoder, typename U = T>
     static void encode(Encoder& encoder, const RefPtr<U>& object)
     {
         if (object)
@@ -355,7 +355,7 @@ template<typename T> struct ArgumentCoder<RefPtr<T>> {
             encoder << false;
     }
 
-    template<typename U = T>
+    template<typename Decoder, typename U = T>
     static std::optional<RefPtr<U>> decode(Decoder& decoder)
     {
         auto hasObject = decoder.template decode<bool>();
@@ -366,7 +366,25 @@ template<typename T> struct ArgumentCoder<RefPtr<T>> {
         // Decoders of U held with RefPtr do not return std::optional<U> but
         // std::optional<RefPtr<U>>. We cannot use `decoder.template decode<U>()`
         // Currently expect "modern decoder" -like decode function.
-        return U::decode(decoder);
+        return ArgumentCoder<U>::decode(decoder);
+    }
+};
+
+template<typename T> struct ArgumentCoder<Ref<T>> {
+    template<typename Encoder, typename U = T>
+    static void encode(Encoder& encoder, const Ref<U>& object)
+    {
+        encoder << object.get();
+    }
+
+    template<typename Decoder, typename U = T>
+    static std::optional<Ref<U>> decode(Decoder& decoder)
+    {
+        // Decoders of U held with Ref do not return std::optional<U> but
+        // std::optional<Ref<U>>.
+        // We cannot use `decoder.template decode<U>()`
+        // Currently expect "modern decoder" -like decode function.
+        return ArgumentCoder<U>::decode(decoder);
     }
 };
 

@@ -224,12 +224,12 @@ bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, Dictionary
     return false;
 }
 
-void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
+void ArgumentCoder<Font>::encodePlatformData(Encoder&, const Font&)
 {
     ASSERT_NOT_REACHED();
 }
 
-std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
+std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

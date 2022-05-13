@@ -1,3 +1,53 @@
+2022-05-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC cannot encode, decode Ref<>, causing duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=240160
+
+        Reviewed by Antti Koivisto.
+
+        Consider reference counted type T:
+        Encoding is of signature `encode(const T&)`
+        Decoding is of signature `std::optional<Ref<T>> decode()`
+        This is usable for both `RefPtr` and `Ref` use-cases.
+
+        Add `Ref<T>` encoder that is polymorphic to `T`.
+        This way clients do not need to write encoders for
+        `Ref<T>`, `RefPtr<T>`. They just need one encoder, for `T`.
+
+        When clients do not need to write `RefPtr<T>`, they make less
+        bugs. These will be corrected in future patches.
+
+        Having `Ref<T>` encoders allows clients to use `Vector<Ref<T>>` encoding
+        via `Vector<U>` encoder, and they would not need to duplicate that
+        logic, making less bugs. These will be corrected in future patches.
+
+        Remove most `IPC::ArgumentCoder<Ref<..>>` in favor of `IPC::ArgumentCoder<..>`.
+        In the cases where removal was done, remove also redundant
+        `IPC::ArgumentCoder<RefPtr<..>>`.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<RefPtr<T>>::decode):
+        (IPC::ArgumentCoder<Ref<T>>::encode):
+        (IPC::ArgumentCoder<Ref<T>>::decode):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::Font>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::Font>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::Font>::encode):
+        (IPC::ArgumentCoder<Font>::decode):
+        (IPC::ArgumentCoder<SystemImage>::encode):
+        (IPC::ArgumentCoder<SystemImage>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/playstation/WebCoreArgumentCodersPlayStation.cpp:
+        (IPC::ArgumentCoder<Font>::encodePlatformData):
+        (IPC::ArgumentCoder<Font>::decodePlatformData):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<Font>::encodePlatformData):
+        (IPC::ArgumentCoder<Font>::decodePlatformData):
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (IPC::ArgumentCoder<Font>::encodePlatformData):
+        (IPC::ArgumentCoder<Font>::decodePlatformData):
+
 2022-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Add UI-side layers for optionally indicating interaction regions

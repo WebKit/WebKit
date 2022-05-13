@@ -50,9 +50,9 @@ template<> struct ArgumentCoder<LOGFONT> {
     }
 };
 
-void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Font>& font)
+void ArgumentCoder<Font>::encodePlatformData(Encoder& encoder, const Font& font)
 {
-    const auto& platformData = font->platformData();
+    const auto& platformData = font.platformData();
     encoder << platformData.size();
     encoder << platformData.syntheticBold();
     encoder << platformData.syntheticOblique();
@@ -69,7 +69,7 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Fo
     encoder << logFont;
 }
 
-std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
+std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder& decoder)
 {
     std::optional<float> size;
     decoder >> size;
