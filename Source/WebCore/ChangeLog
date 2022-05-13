@@ -1,3 +1,13 @@
+2022-05-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build broken in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=240378
+
+        Unreviewed non-unified build fixes.
+
+        * contentextensions/ContentExtensionCompiler.cpp: Add missing wtf/CrossThreadCopier.h header.
+        * workers/service/ServiceWorkerClients.cpp: Add missing Logging.h header.
+
 2022-05-13  Tim Nguyen  <ntim@apple.com>
 
         [css-ui] Remove caret/progress-bar-value/listitem values from appearance property

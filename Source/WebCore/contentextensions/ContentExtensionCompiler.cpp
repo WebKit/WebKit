@@ -40,6 +40,7 @@
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URLFilterParser.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

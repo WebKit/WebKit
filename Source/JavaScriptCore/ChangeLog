@@ -1,3 +1,12 @@
+2022-05-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build broken in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=240378
+
+        Unreviewed non-unified build fixes.
+
+        * heap/StructureAlignedMemoryAllocator.cpp: Include <sys/mman.h> if needed.
+
 2022-05-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         TemporalPlainTime::toTemporalTimeRecord shouldn't require all properties to be provided
