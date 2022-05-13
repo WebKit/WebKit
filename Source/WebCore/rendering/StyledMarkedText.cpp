@@ -110,7 +110,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     return styledMarkedText;
 }
 
-static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
+StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);

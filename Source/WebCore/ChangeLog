@@ -1,3 +1,22 @@
+2022-05-12  Alan Bujtas  <zalan@apple.com>
+
+        TextBoxPainter::paintForeground: painting text with no marking/decoration should be simple
+        https://bugs.webkit.org/show_bug.cgi?id=240319
+
+        Reviewed by Simon Fraser.
+
+        Let's have a fast codepath for regular, simple text painting.
+
+        * rendering/StyledMarkedText.cpp:
+        (WebCore::StyledMarkedText::computeStyleForUnmarkedMarkedText):
+        (WebCore::computeStyleForUnmarkedMarkedText): Deleted.
+        * rendering/StyledMarkedText.h:
+        (WebCore::StyledMarkedText::StyledMarkedText):
+        (WebCore::StyledMarkedText::style):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintBackground):
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations):
+
 2022-05-12  Sihui Liu  <sihui_liu@apple.com>
 
         StorageMap::removeItem may fail to remove item from map

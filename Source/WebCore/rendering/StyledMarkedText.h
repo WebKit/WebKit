@@ -36,11 +36,6 @@ class RenderText;
 class RenderedDocumentMarker;
 
 struct StyledMarkedText : MarkedText {
-    StyledMarkedText(const MarkedText& marker)
-        : MarkedText { marker }
-    {
-    }
-
     struct Style {
         Color backgroundColor;
         TextPaintStyle textStyles;
@@ -49,12 +44,24 @@ struct StyledMarkedText : MarkedText {
         float alpha { 1 };
     };
 
+    StyledMarkedText(const MarkedText& marker)
+        : MarkedText { marker }
+    {
+    }
+
+    StyledMarkedText(const MarkedText& marker, Style style)
+        : MarkedText { marker }
+        , style(style)
+    {
+    }
+
     Style style;
 
     static Vector<StyledMarkedText> subdivideAndResolve(const Vector<MarkedText>&, const RenderText&, bool isFirstLine, const PaintInfo&);
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualBackground(const Vector<StyledMarkedText>&);
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualForeground(const Vector<StyledMarkedText>&);
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>&);
+    static Style computeStyleForUnmarkedMarkedText(const RenderText&, const RenderStyle&, bool isFirstLine, const PaintInfo&);
 };
 
 }

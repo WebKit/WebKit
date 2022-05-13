@@ -171,7 +171,29 @@ void TextBoxPainter::paintBackground()
 
 void TextBoxPainter::paintForegroundAndDecorations()
 {
-    bool shouldPaintSelectionForeground = m_haveSelection && !m_useCustomUnderlines;
+    auto shouldPaintSelectionForeground = m_haveSelection && !m_useCustomUnderlines;
+    auto hasTextDecoration = !m_style.textDecorationsInEffect().isEmpty();
+    auto hasHighlightDecoration = m_document.hasHighlight() && !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
+    auto hasDecoration = hasTextDecoration || hasHighlightDecoration;
+
+    auto contentMayNeedStyledMarkedText = [&] {
+        if (hasDecoration)
+            return true;
+        if (shouldPaintSelectionForeground)
+            return true;
+        if (m_document.markers().hasMarkers())
+            return true;
+        if (m_document.hasHighlight())
+            return true;
+        return false;
+    };
+    if (!contentMayNeedStyledMarkedText()) {
+        auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+        paintForeground({ MarkedText { m_selectableRange.clamp(textBox().start()), m_selectableRange.clamp(textBox().end()), MarkedText::Unmarked },
+            StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo) });
+        return;
+    }
+
     Vector<MarkedText> markedTexts;
     if (m_paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
@@ -208,10 +230,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
         });
     }
 
-    auto textDecorations = m_style.textDecorationsInEffect();
-    bool highlightDecorations = !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
-    bool lineDecorations = !textDecorations.isEmpty();
-    if ((lineDecorations || highlightDecorations) && m_paintInfo.phase != PaintPhase::Selection) {
+    if (hasDecoration && m_paintInfo.phase != PaintPhase::Selection) {
         TextRun textRun = textBox().createTextRun();
         unsigned length = m_selectableRange.truncation.value_or(textRun.length());
         unsigned selectionStart = 0;
