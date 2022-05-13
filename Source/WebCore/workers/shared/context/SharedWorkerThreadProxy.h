@@ -60,6 +60,8 @@ public:
 private:
     WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
 
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
+
     // WorkerObjectProxy.
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
@@ -71,7 +73,6 @@ private:
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 
     // WorkerDebuggerProxy.
     void postMessageToDebugger(const String&) final;

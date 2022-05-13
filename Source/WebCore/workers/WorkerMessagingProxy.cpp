@@ -249,16 +249,6 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDat
     return document.page()->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
-bool WorkerMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
-{
-    if (m_askedToTerminate)
-        return false;
-
-    ASSERT(m_workerThread);
-    m_workerThread->runLoop().postTaskForMode(WTFMove(task), mode);
-    return true;
-}
-
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext&) {

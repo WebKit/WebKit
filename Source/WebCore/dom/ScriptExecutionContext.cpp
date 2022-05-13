@@ -678,6 +678,18 @@ bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identif
     return true;
 }
 
+bool ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier identifier, Task&& task, const String& mode)
+{
+    Locker locker { allScriptExecutionContextsMapLock };
+    auto* context = dynamicDowncast<WorkerOrWorkletGlobalScope>(allScriptExecutionContextsMap().get(identifier));
+
+    if (!context)
+        return false;
+
+    context->postTaskForMode(WTFMove(task), mode);
+    return true;
+}
+
 bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentifier identifier, Task&& task)
 {
     ScriptExecutionContext* context = nullptr;

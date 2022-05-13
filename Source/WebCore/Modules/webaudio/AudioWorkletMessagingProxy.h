@@ -61,7 +61,6 @@ private:
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 
     bool isAudioWorkletMessagingProxy() const final { return true; }
 

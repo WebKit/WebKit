@@ -44,10 +44,6 @@ public:
     explicit WorkerMessagingProxy(Worker&);
     virtual ~WorkerMessagingProxy();
 
-    // Implementation of WorkerLoaderProxy.
-    // This method is used in the main thread to post task back to the worker thread.
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
-
 private:
     // Implementations of WorkerGlobalScopeProxy.
     // (Only use these functions in the worker object thread.)

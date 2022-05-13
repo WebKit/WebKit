@@ -73,7 +73,7 @@ public:
     class Peer : public WebSocketChannelClient {
         WTF_MAKE_NONCOPYABLE(Peer); WTF_MAKE_FAST_ALLOCATED;
     public:
-        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerLoaderProxy&, ScriptExecutionContext&, const String& taskMode, SocketProvider&);
+        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&);
         ~Peer();
 
         ConnectStatus connect(const URL&, const String& protocol);
@@ -99,9 +99,9 @@ public:
 
     private:
         Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
-        WorkerLoaderProxy& m_loaderProxy;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
         String m_taskMode;
+        ScriptExecutionContextIdentifier m_workerContextIdentifier;
     };
 
     using RefCounted<WorkerThreadableWebSocketChannel>::ref;
@@ -119,7 +119,7 @@ private:
             return adoptRef(*new Bridge(WTFMove(workerClientWrapper), WTFMove(workerGlobalScope), taskMode, WTFMove(provider)));
         }
         ~Bridge();
-        void initialize();
+        void initialize(WorkerGlobalScope&);
         void connect(const URL&, const String& protocol);
         ThreadableWebSocketChannel::SendResult send(CString&&);
         ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
@@ -140,7 +140,7 @@ private:
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, Ref<ThreadableWebSocketChannelClientWrapper>&&);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadInitialize(ScriptExecutionContext&, WorkerLoaderProxy&, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode, Ref<SocketProvider>&&);
+        static void mainThreadInitialize(ScriptExecutionContext&, WorkerThread&, ScriptExecutionContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode, Ref<SocketProvider>&&);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();
