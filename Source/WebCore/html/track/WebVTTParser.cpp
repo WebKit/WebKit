@@ -279,7 +279,7 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
             m_client.newRegionsParsed();
         if (!m_styleSheets.isEmpty())
             m_client.newStyleSheetsParsed();
-        if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"))
+        if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"_s))
             m_currentId = AtomString { m_previousLine };
         
         return state;
@@ -298,7 +298,7 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
 WebVTTParser::ParseState WebVTTParser::checkAndRecoverCue(const String& line)
 {
     // parse cue timings and settings
-    if (line.contains("-->")) {
+    if (line.contains("-->"_s)) {
         ParseState state = recoverCue(line);
         if (state != BadCue)
             return state;
@@ -318,7 +318,7 @@ WebVTTParser::ParseState WebVTTParser::collectStyleSheet(const String& line)
 
 bool WebVTTParser::checkAndCreateRegion(StringView line)
 {
-    if (m_previousLine.contains("-->"))
+    if (m_previousLine.contains("-->"_s))
         return false;
     // line starts with the substring "REGION" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
@@ -332,7 +332,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
 
 bool WebVTTParser::checkAndStoreRegion(StringView line)
 {
-    if (!line.isEmpty() && !line.contains("-->"))
+    if (!line.isEmpty() && !line.contains("-->"_s))
         return false;
 
     if (!m_currentRegion->id().isEmpty()) {
@@ -347,12 +347,12 @@ bool WebVTTParser::checkAndStoreRegion(StringView line)
 
 bool WebVTTParser::checkStyleSheet(StringView line)
 {
-    if (m_previousLine.contains("-->"))
+    if (m_previousLine.contains("-->"_s))
         return false;
     // line starts with the substring "STYLE" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these charecters it is invalid.
-    if (line.startsWith("STYLE") && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
+    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
         return true;
 
     return false;
@@ -360,7 +360,7 @@ bool WebVTTParser::checkStyleSheet(StringView line)
 
 bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
 {
-    if (!line.isEmpty() && !line.contains("-->"))
+    if (!line.isEmpty() && !line.contains("-->"_s))
         return false;
     
     auto styleSheetText = m_currentSourceStyleSheet.toString();
@@ -415,7 +415,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
 
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
-    if (line.contains("-->"))
+    if (line.contains("-->"_s))
         return collectTimingsAndSettings(line);
     m_currentId = AtomString { line };
     return TimingsAndSettings;
@@ -463,7 +463,7 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
         return Id;
     }
     // Step 35.
-    if (line.contains("-->")) {
+    if (line.contains("-->"_s)) {
         // Step 39-40.
         createNewCue();
 
@@ -490,7 +490,7 @@ WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
 {
     if (line.isEmpty())
         return Id;
-    if (line.contains("-->"))
+    if (line.contains("-->"_s))
         return recoverCue(line);
     return BadCue;
 }

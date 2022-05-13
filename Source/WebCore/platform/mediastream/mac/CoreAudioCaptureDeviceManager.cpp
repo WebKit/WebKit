@@ -162,12 +162,12 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
         return false;
     }
 
-    if (device.label().startsWith("VPAUAggregateAudioDevice")) {
+    if (device.label().startsWith("VPAUAggregateAudioDevice"_s)) {
         RELEASE_LOG(WebRTC, "Ignoring output VPAUAggregateAudioDevice device");
         return false;
     }
 
-    if (device.label().contains("WebexMediaAudioDevice")) {
+    if (device.label().contains("WebexMediaAudioDevice"_s)) {
         RELEASE_LOG(WebRTC, "Ignoring webex audio device");
         return false;
     }

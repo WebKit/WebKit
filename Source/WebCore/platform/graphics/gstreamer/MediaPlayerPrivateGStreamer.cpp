@@ -2763,7 +2763,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         auto classifiers = elementClass.split('/');
 
         // Collect processing time metrics for video decoders and converters.
-        if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"))
+        if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
             webkitGstTraceProcessingTimeForElement(element);
 
         if (classifiers.contains("Decoder"_s) && classifiers.contains("Video"_s)) {

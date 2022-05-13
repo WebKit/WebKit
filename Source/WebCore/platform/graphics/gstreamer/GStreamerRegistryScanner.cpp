@@ -178,7 +178,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
             auto* factory = reinterpret_cast<GstElementFactory*>(factories->data);
             auto metadata = String::fromLatin1(gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS));
             auto components = metadata.split('/');
-            if (components.contains("Hardware")) {
+            if (components.contains("Hardware"_s)) {
                 isUsingHardware = true;
                 break;
             }

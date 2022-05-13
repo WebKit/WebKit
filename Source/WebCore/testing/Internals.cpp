@@ -1602,7 +1602,7 @@ bool Internals::isSupportingVP9VTB() const
 void Internals::isVP9VTBDeccoderUsed(RTCPeerConnection& connection, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     connection.gatherDecoderImplementationName([promise = WTFMove(promise)](auto&& name) mutable {
-        promise.resolve(name.contains("VideoToolBox"));
+        promise.resolve(name.contains("VideoToolBox"_s));
     });
 }
 

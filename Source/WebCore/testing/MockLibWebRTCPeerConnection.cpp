@@ -346,8 +346,8 @@ void MockLibWebRTCPeerConnection::SetRemoteDescription(std::unique_ptr<webrtc::S
         sessionDescription->ToString(&sdp);
 
         m_isInitiator = false;
-        m_isReceivingAudio = sdp.find("m=audio") != std::string::npos;
-        m_isReceivingVideo = sdp.find("m=video") != std::string::npos;
+        m_isReceivingAudio = sdp.find("m=audio"_s) != std::string::npos;
+        m_isReceivingVideo = sdp.find("m=video"_s) != std::string::npos;
     }
 }
 

@@ -519,7 +519,7 @@ bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element
         return true;
     if (m_shouldPreserveMSOList) {
         auto style = element.getAttribute(styleAttr);
-        return style.startsWith("mso-list:") || style.contains(";mso-list:") || style.contains("\nmso-list:");
+        return style.startsWith("mso-list:"_s) || style.contains(";mso-list:"_s) || style.contains("\nmso-list:"_s);
     }
     return false;
 }
@@ -757,14 +757,14 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
         auto& textChild = downcast<Text>(*firstChild);
         auto& styleContent = textChild.data();
 
-        const auto msoStyleDefinitionsStart = styleContent.find("/* Style Definitions */");
-        const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */");
-        const auto lastListItem = styleContent.reverseFind("\n@list");
+        const auto msoStyleDefinitionsStart = styleContent.find("/* Style Definitions */"_s);
+        const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */"_s);
+        const auto lastListItem = styleContent.reverseFind("\n@list"_s);
         if (msoListDefinitionsStart == notFound || lastListItem == notFound)
             return false;
         const auto start = msoStyleDefinitionsStart != notFound && msoStyleDefinitionsStart < msoListDefinitionsStart ? msoStyleDefinitionsStart : msoListDefinitionsStart;
 
-        const auto msoListDefinitionsEnd = styleContent.find(";}\n", lastListItem);
+        const auto msoListDefinitionsEnd = styleContent.find(";}\n"_s, lastListItem);
         if (msoListDefinitionsEnd == notFound || start >= msoListDefinitionsEnd)
             return false;
 
@@ -998,8 +998,8 @@ static bool shouldPreserveMSOLists(StringView markup)
     if (tagClose == notFound)
         return false;
     auto tag = markup.left(tagClose);
-    return tag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\"")
-        && tag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\"");
+    return tag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\""_s)
+        && tag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\""_s);
 }
 
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, MSOListQuirks msoListQuirks, const String& originalMarkup)

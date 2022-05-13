@@ -140,9 +140,9 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
         String areaName = name;
         bool startSide = isStartSide(side);
         if (!nameIsAreaName) {
-            size_t suffix = name.find("-start");
+            size_t suffix = name.find("-start"_s);
             if (suffix == notFound) {
-                suffix = name.find("-end");
+                suffix = name.find("-end"_s);
                 ASSERT(suffix != notFound);
                 startSide = false;
             } else

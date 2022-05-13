@@ -361,7 +361,7 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
                 if (linkElement.styleSheetIsLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSetName.isEmpty()) {
-                        if (!linkElement.attributeWithoutSynchronization(relAttr).contains("alternate"))
+                        if (!linkElement.attributeWithoutSynchronization(relAttr).contains("alternate"_s))
                             m_preferredStylesheetSetName = title;
                     }
                     continue;
@@ -389,14 +389,14 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set. Otherwise, just ignore
                     // this sheet.
-                    if (is<HTMLStyleElement>(element) || !rel.contains("alternate"))
+                    if (is<HTMLStyleElement>(element) || !rel.contains("alternate"_s))
                         m_preferredStylesheetSetName = title;
                 }
                 if (title != m_preferredStylesheetSetName)
                     sheet = nullptr;
             }
 
-            if (rel.contains("alternate") && title.isEmpty())
+            if (rel.contains("alternate"_s) && title.isEmpty())
                 sheet = nullptr;
 
             if (sheet)

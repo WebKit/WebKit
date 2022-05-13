@@ -247,7 +247,7 @@ static const String ObservedDomainsTableSchemaV1Alternate()
 
 static bool needsNewCreateTableSchema(const String& schema)
 {
-    return schema.contains("REFERENCES TopLevelDomains");
+    return schema.contains("REFERENCES TopLevelDomains"_s);
 }
 
 const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& ResourceLoadStatisticsDatabaseStore::expectedTableAndIndexQueries()
@@ -789,7 +789,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const Str
             return;
     }
     
-    if (statement.contains("REPLACE")) {
+    if (statement.contains("REPLACE"_s)) {
         if (insertRelationshipStatement->bindDouble(2, WallTime::now().secondsSinceEpoch().value()) != SQLITE_OK) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();

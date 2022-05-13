@@ -3536,7 +3536,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             else {
                 information.elementType = InputType::Text;
                 if (!information.formAction.isEmpty()
-                    && (element.getNameAttribute().contains("search") || element.getIdAttribute().contains("search") || element.attributeWithoutSynchronization(HTMLNames::titleAttr).contains("search")))
+                    && (element.getNameAttribute().contains("search"_s) || element.getIdAttribute().contains("search"_s) || element.attributeWithoutSynchronization(HTMLNames::titleAttr).contains("search"_s)))
                     information.elementType = InputType::Search;
             }
         }

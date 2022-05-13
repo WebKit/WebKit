@@ -162,10 +162,11 @@ public:
 
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
-    size_t find(const LChar* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
+    size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_impl ? m_impl->find(literal, start) : notFound; }
 
     // Find the last instance of a single character or string.
     size_t reverseFind(UChar character, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
+    size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
     size_t reverseFind(StringView, unsigned start = MaxLength) const;
 
     WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
@@ -174,7 +175,7 @@ public:
     WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const;
 
     bool contains(UChar character) const { return find(character) != notFound; }
-    bool contains(const LChar* string) const { return find(string) != notFound; }
+    bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
     bool contains(StringView) const;
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     bool contains(CodeUnitMatchFunction matchFunction) const { return find(matchFunction, 0) != notFound; }

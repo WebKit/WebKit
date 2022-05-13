@@ -432,7 +432,7 @@ public:
     size_t find(UChar character, unsigned start = 0);
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction, unsigned start = 0);
-    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned start = 0);
+    ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) { return find(literal.characters8(), literal.length(), start); }
     WTF_EXPORT_PRIVATE size_t find(StringView);
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start);
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
@@ -440,6 +440,7 @@ public:
 
     WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned start = MaxLength);
     WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = MaxLength);
+    ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) { return reverseFind(literal.characters8(), literal.length(), start); }
 
     WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
     WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(StringView) const;
@@ -494,6 +495,9 @@ private:
     template<typename> static size_t allocationSize(Checked<size_t> tailElementCount);
     template<typename> static size_t maxInternalLength();
     template<typename> static size_t tailOffset();
+
+    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned length, unsigned start);
+    WTF_EXPORT_PRIVATE size_t reverseFind(const LChar*, unsigned length, unsigned start);
 
     bool requiresCopy() const;
     template<typename T> const T* tailPointer() const;

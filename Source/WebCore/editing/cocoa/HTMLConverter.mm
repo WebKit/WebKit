@@ -1031,19 +1031,19 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
     String fontLigatures = _caches->propertyValueForNode(element, CSSPropertyFontVariantLigatures);
     if (fontLigatures.length()) {
-        if (fontLigatures.contains("normal"))
+        if (fontLigatures.contains("normal"_s))
             ;   // default: whatever the system decides to do
-        else if (fontLigatures.contains("common-ligatures"))
+        else if (fontLigatures.contains("common-ligatures"_s))
             [attrs setObject:@1 forKey:NSLigatureAttributeName];   // explicitly enabled
-        else if (fontLigatures.contains("no-common-ligatures"))
+        else if (fontLigatures.contains("no-common-ligatures"_s))
             [attrs setObject:@0 forKey:NSLigatureAttributeName];  // explicitly disabled
     }
 
     String textDecoration = _caches->propertyValueForNode(element, CSSPropertyTextDecorationLine);
     if (textDecoration.length()) {
-        if (textDecoration.contains("underline"))
+        if (textDecoration.contains("underline"_s))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (textDecoration.contains("line-through"))
+        if (textDecoration.contains("line-through"_s))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
     }
 
