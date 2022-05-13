@@ -587,7 +587,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/natural-size-orientation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-multiple-targets.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-to-different-origin-frame.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-bom.html [ Skip ]

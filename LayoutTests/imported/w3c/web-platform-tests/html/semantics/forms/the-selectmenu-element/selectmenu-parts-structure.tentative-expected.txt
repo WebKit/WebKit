@@ -12,10 +12,11 @@ button1
 button2
 button0
 
+
 FAIL HTMLOptionElements (and not other element types) should receive option controller code assert_equals: expected (string) "one" but got (undefined) undefined
 FAIL To receive option part controller code, an option must be a descendant of the listbox part in a flat tree traversal assert_equals: expected (string) "one" but got (undefined) undefined
-FAIL To receive button part controller code, an element labeled as a button must not be a descendant of the listbox part in a flat tree traversal assert_false: expected false got undefined
-FAIL To receive listbox part controller code, an element labeled as a listbox must not be a descendant of the button part in a flat tree traversal assert_false: expected false got undefined
+FAIL To receive button part controller code, an element labeled as a button must not be a descendant of the listbox part in a flat tree traversal promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL To receive listbox part controller code, an element labeled as a listbox must not be a descendant of the button part in a flat tree traversal promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Button controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
 FAIL Listbox controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
 FAIL selected-value controller code should be applied in flat tree traversal order regardless of dynamic insertion order assert_false: expected false got undefined
@@ -25,4 +26,6 @@ FAIL Ensure that controller code is applied when slot and part attributes are di
 FAIL Ensure that controller code is synchronously applied assert_equals: Initial value should be the first option expected (string) "one" but got (undefined) undefined
 FAIL Controller code should be updated when nested parts are removed assert_equals: expected (string) "one" but got (undefined) undefined
 FAIL Moving a selectmenu between documents should keep controller code active assert_equals: expected (string) "one" but got (undefined) undefined
+FAIL New parts should be detected even when in the subtree of an inserted node assert_true: New button should receive controller code expected true got undefined
+FAIL Part removals should be detected even when in the subtree of a removed node assert_false: Removed button should no longer have controller code expected false got undefined
 

@@ -1,0 +1,47 @@
+OPEN FILE PANEL
+
+PASS input[type=button] showPicker() requires a user gesture
+PASS input[type=checkbox] showPicker() requires a user gesture
+PASS input[type=color] showPicker() requires a user gesture
+PASS input[type=date] showPicker() requires a user gesture
+PASS input[type=datetime-local] showPicker() requires a user gesture
+PASS input[type=email] showPicker() requires a user gesture
+PASS input[type=file] showPicker() requires a user gesture
+PASS input[type=hidden] showPicker() requires a user gesture
+PASS input[type=image] showPicker() requires a user gesture
+PASS input[type=month] showPicker() requires a user gesture
+PASS input[type=number] showPicker() requires a user gesture
+PASS input[type=password] showPicker() requires a user gesture
+PASS input[type=radio] showPicker() requires a user gesture
+PASS input[type=range] showPicker() requires a user gesture
+PASS input[type=reset] showPicker() requires a user gesture
+PASS input[type=search] showPicker() requires a user gesture
+PASS input[type=submit] showPicker() requires a user gesture
+PASS input[type=tel] showPicker() requires a user gesture
+PASS input[type=text] showPicker() requires a user gesture
+PASS input[type=time] showPicker() requires a user gesture
+PASS input[type=url] showPicker() requires a user gesture
+PASS input[type=week] showPicker() requires a user gesture
+PASS input[type=button] showPicker() does not throw when user activation is active
+PASS input[type=checkbox] showPicker() does not throw when user activation is active
+PASS input[type=color] showPicker() does not throw when user activation is active
+PASS input[type=date] showPicker() does not throw when user activation is active
+PASS input[type=datetime-local] showPicker() does not throw when user activation is active
+PASS input[type=email] showPicker() does not throw when user activation is active
+PASS input[type=file] showPicker() does not throw when user activation is active
+PASS input[type=hidden] showPicker() does not throw when user activation is active
+PASS input[type=image] showPicker() does not throw when user activation is active
+PASS input[type=month] showPicker() does not throw when user activation is active
+PASS input[type=number] showPicker() does not throw when user activation is active
+PASS input[type=password] showPicker() does not throw when user activation is active
+PASS input[type=radio] showPicker() does not throw when user activation is active
+PASS input[type=range] showPicker() does not throw when user activation is active
+PASS input[type=reset] showPicker() does not throw when user activation is active
+PASS input[type=search] showPicker() does not throw when user activation is active
+PASS input[type=submit] showPicker() does not throw when user activation is active
+PASS input[type=tel] showPicker() does not throw when user activation is active
+PASS input[type=text] showPicker() does not throw when user activation is active
+PASS input[type=time] showPicker() does not throw when user activation is active
+PASS input[type=url] showPicker() does not throw when user activation is active
+PASS input[type=week] showPicker() does not throw when user activation is active
+

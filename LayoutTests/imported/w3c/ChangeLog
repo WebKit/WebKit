@@ -1,3 +1,84 @@
+2022-05-13  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/html/semantics/forms tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=240301
+
+        Reviewed by Tim Nguyen.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/23e7602b7784c758397308183f414bb99e0c622b
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/forms/beforeinput.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/beforeinput.tentative.html: Added.
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html:
+        * web-platform-tests/html/semantics/forms/constraints/support/validator.js:
+        (validator.run_test):
+        (validator.test_support_type): Deleted.
+        * web-platform-tests/html/semantics/forms/form-submission-0/enctypes-helper.js:
+        * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl.html:
+        * web-platform-tests/html/semantics/forms/form-submission-0/multipart-formdata.window.js:
+        * web-platform-tests/html/semantics/forms/form-submission-0/resources/getactionurl-iframe.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/text-plain.window.js:
+        * web-platform-tests/html/semantics/forms/form-submission-0/urlencoded2.window.js:
+        * web-platform-tests/html/semantics/forms/textfieldselection/select-event-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/select-event.html: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText-expected.txt: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html: Removed.
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/cloning-steps-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/cloning-steps.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local-trailing-zeros-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local-trailing-zeros.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-untrusted-key-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/input-untrusted-key-event.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/input-whitespace-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/input-whitespace.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/invalid-datalist-options-crash.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/large-step-crash.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/show-picker-disabled-readonly-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/show-picker-disabled-readonly.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/show-picker-user-gesture-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/show-picker-user-gesture.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html.
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-label-element/proxy-modifier-click-to-associated-element.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-ask-for-reset.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-form-state-restore.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-form-submission.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-labels.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-many-options.tentative-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-many-options.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-nested.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed-ref.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative-expected.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-not-displayed.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-focusable.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position-with-zoom.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-required-attribute.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-shadow-root-replacement.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-value-selectedOption.tentative.html:
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/support/cat.png: Removed.
+        * web-platform-tests/html/semantics/forms/the-selectmenu-element/support/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/w3c-import.log:
+
 2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         ARIA reflection for FrozenArray<Element> attributes

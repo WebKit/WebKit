@@ -23,7 +23,7 @@ PASS change state from hidden to button
 PASS change state from text to hidden
 PASS change state from text to search
 PASS change state from text to tel
-FAIL change state from text to url assert_equals: selectionStart should be unchanged expected 2 but got 6
+PASS change state from text to url
 PASS change state from text to email
 PASS change state from text to password
 FAIL change state from text to datetime-local assert_implements: Support for input type datetime-local is required for this test. undefined
@@ -44,7 +44,7 @@ PASS change state from text to button
 PASS change state from search to hidden
 PASS change state from search to text
 PASS change state from search to tel
-FAIL change state from search to url assert_equals: selectionStart should be unchanged expected 2 but got 6
+PASS change state from search to url
 PASS change state from search to email
 PASS change state from search to password
 FAIL change state from search to datetime-local assert_implements: Support for input type datetime-local is required for this test. undefined
@@ -65,7 +65,7 @@ PASS change state from search to button
 PASS change state from tel to hidden
 PASS change state from tel to text
 PASS change state from tel to search
-FAIL change state from tel to url assert_equals: selectionStart should be unchanged expected 2 but got 6
+PASS change state from tel to url
 PASS change state from tel to email
 PASS change state from tel to password
 FAIL change state from tel to datetime-local assert_implements: Support for input type datetime-local is required for this test. undefined
@@ -129,7 +129,7 @@ PASS change state from password to hidden
 PASS change state from password to text
 PASS change state from password to search
 PASS change state from password to tel
-FAIL change state from password to url assert_equals: selectionStart should be unchanged expected 2 but got 6
+PASS change state from password to url
 PASS change state from password to email
 FAIL change state from password to datetime-local assert_implements: Support for input type datetime-local is required for this test. undefined
 FAIL change state from password to date assert_implements: Support for input type date is required for this test. undefined

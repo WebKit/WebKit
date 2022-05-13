@@ -1,3 +1,36 @@
+2022-05-13  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/html/semantics/forms tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=240301
+
+        Reviewed by Tim Nguyen.
+
+        * TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-trailing-zeros-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/notifications/idlharness.https.any-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * tests-options.json:
+
 2022-05-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening, follow-up to r294148

@@ -1,4 +1,4 @@
 
 
-FAIL Navigating to URL with a data scheme Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS Verifies that a form element's target can be a data url.
 

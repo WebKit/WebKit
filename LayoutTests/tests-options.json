@@ -3149,6 +3149,9 @@
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/beforeinput.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html": [
         "slow"
     ],
@@ -3159,6 +3162,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-pointer.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-user-gesture.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html": [
