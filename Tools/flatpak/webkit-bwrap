@@ -88,12 +88,14 @@ def main(args: list) -> int:
     if coredumps_dir:
         try_bind_mounts[coredumps_dir] = coredumps_dir
 
+    bwrap_args = ["bwrap", ]
+
     xdg_runtime_dir = environ.get("XDG_RUNTIME_DIR")
     if xdg_runtime_dir:
-        pw_socket = os.path.join(xdg_runtime_dir, "pipewire-0")
-        try_bind_mounts[pw_socket] = pw_socket
+        pipewire_runtime_dir = "/host/xdg-runtime"
+        bwrap_args.extend(("--ro-bind-try", xdg_runtime_dir, pipewire_runtime_dir,
+                           "--setenv", "PIPEWIRE_RUNTIME_DIR", pipewire_runtime_dir))
 
-    bwrap_args = ["bwrap", ]
     for dst, src in bind_mounts.items():
         bwrap_args.extend(("--bind", src, dst))
 
