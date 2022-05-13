@@ -54,6 +54,8 @@ webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005
 
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
+http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
+
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 

@@ -1,3 +1,12 @@
+2022-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening, fix missing test results.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt/location_hash-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/getresponseheader.any-expected.txt/getresponseheader.any-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/xhr/getresponseheader.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker-expected.txt/getresponseheader.any.worker-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker-expected.txt.
+        * platform/gtk/TestExpectations:
+
 2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         ARIA reflection for FrozenArray<Element> attributes
