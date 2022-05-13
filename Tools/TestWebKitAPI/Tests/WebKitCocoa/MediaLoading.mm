@@ -216,7 +216,7 @@ constexpr auto hlsPlayTestHTML ="<script>"
 "</script>"
 "<body onload='createVideoElement()'></body>"_s;
 
-TEST(MediaLoading, CaptivePortalHLS)
+TEST(MediaLoading, DISABLED_CaptivePortalHLS)
 {
     HTTPServer server({
         { "/"_s, { hlsPlayTestHTML } },
