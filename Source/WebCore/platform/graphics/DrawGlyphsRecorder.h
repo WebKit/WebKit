@@ -55,9 +55,8 @@ class DrawGlyphsRecorder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DrawGlyphsRecorder);
 public:
-    enum class DeconstructDrawGlyphs : bool { No, Yes };
     enum class DeriveFontFromContext : bool { No, Yes };
-    explicit DrawGlyphsRecorder(GraphicsContext&, float scaleFactor = 1, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No, DeriveFontFromContext = DeriveFontFromContext::No);
+    explicit DrawGlyphsRecorder(GraphicsContext&, float scaleFactor = 1, DeriveFontFromContext = DeriveFontFromContext::No);
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
@@ -69,8 +68,6 @@ public:
     void recordDrawGlyphs(CGRenderingStateRef, CGGStateRef, const CGAffineTransform*, const CGGlyph[], const CGPoint positions[], size_t count);
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
 #endif
-
-    DeconstructDrawGlyphs deconstructDrawGlyphs() const { return m_deconstructDrawGlyphs; }
 
 private:
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
@@ -104,15 +101,16 @@ private:
 #endif
 
     GraphicsContext& m_owner;
-    DeconstructDrawGlyphs m_deconstructDrawGlyphs;
-    DeriveFontFromContext m_deriveFontFromContext;
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
     UniqueRef<GraphicsContext> m_internalContext;
 #endif
 
     const Font* m_originalFont { nullptr };
+
+    const DeriveFontFromContext m_deriveFontFromContext;
     FontSmoothingMode m_smoothingMode { FontSmoothingMode::AutoSmoothing };
+
     AffineTransform m_originalTextMatrix;
 
     struct State {

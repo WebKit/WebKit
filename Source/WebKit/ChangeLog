@@ -1,3 +1,25 @@
+2022-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify the usage of DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=240363
+
+        Reviewed by Myles Maxfield.
+
+        Move the DeconstructDrawGlyphs switch from inside DrawGlyphsRecorder to
+        DisplayList::Recorder, so that DrawGlyphsRecorder is only ever used when deconstructing
+        glyphs.
+        
+        Also, ensure that the only time that glyph deconstruction is enabled is when
+        recording display lists via RemoteDisplayListRecorderProxy. There's no reason for
+        paintAttachmentText() to need glyph deconstruction.
+
+        This is a small perf improvement on the MotionMark Design subtest.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy):
+        (WebKit::m_renderingBackend):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-05-12  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         -Wunused-result in WebCoreSupport/WebContextMenuClient.cpp

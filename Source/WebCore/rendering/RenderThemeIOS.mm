@@ -1919,7 +1919,7 @@ static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& 
 
 static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
 {
-    DrawGlyphsRecorder recorder(context, 1, DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
+    DrawGlyphsRecorder recorder(context, 1, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
 
     for (const auto& line : info.lines)
         recorder.drawNativeText(line.font.get(), CTFontGetSize(line.font.get()), line.line.get(), line.rect);

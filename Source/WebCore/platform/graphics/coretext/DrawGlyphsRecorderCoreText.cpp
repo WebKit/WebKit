@@ -86,11 +86,10 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeconstructDrawGlyphs deconstructDrawGlyphs, DeriveFontFromContext deriveFontFromContext)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeriveFontFromContext deriveFontFromContext)
     : m_owner(owner)
-    , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
-    , m_deriveFontFromContext(deriveFontFromContext)
     , m_internalContext(createInternalContext())
+    , m_deriveFontFromContext(deriveFontFromContext)
 {
     m_internalContext->applyDeviceScaleFactor(scaleFactor);
 }
@@ -398,20 +397,11 @@ void DrawGlyphsRecorder::drawBySplittingIntoOTSVGAndNonOTSVGRuns(const Font& fon
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    if (m_deconstructDrawGlyphs == DeconstructDrawGlyphs::No) {
-        m_owner.drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
-        return;
-    }
-
-    ASSERT(m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes);
-
     drawBySplittingIntoOTSVGAndNonOTSVGRuns(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
 void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLineRef line, CGRect lineRect)
 {
-    ASSERT(m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes);
-
     GraphicsContextStateSaver saver(m_owner);
 
     m_owner.translate(lineRect.origin.x, lineRect.origin.y + lineRect.size.height);

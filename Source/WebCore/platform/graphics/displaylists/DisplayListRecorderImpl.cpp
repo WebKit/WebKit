@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace DisplayList {
 
-RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DeconstructDrawGlyphs deconstructDrawGlyphs)
     : Recorder(state, initialClip, initialCTM, deconstructDrawGlyphs)
     , m_displayList(displayList)
 {

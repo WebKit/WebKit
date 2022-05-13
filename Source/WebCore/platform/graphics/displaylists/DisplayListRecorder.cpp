@@ -46,7 +46,7 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DeconstructDrawGlyphs deconstructDrawGlyphs)
     : GraphicsContext(state)
     , m_initialScale(initialCTM.xScale())
     , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
@@ -163,17 +163,22 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
 
 void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    if (!m_drawGlyphsRecorder)
-        m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, m_deconstructDrawGlyphs);
+    if (m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes) {
+        if (!m_drawGlyphsRecorder)
+            m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale);
 
-    m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+        m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+        return;
+    }
+
+    drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
-void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(const_cast<Font&>(font));
-    recordDrawGlyphs(font, glyphs, advances, count, localAnchor, smoothingMode);
+    recordDrawGlyphs(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
 }
 
 void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
