@@ -1,3 +1,13 @@
+2022-05-13  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        -Wreturn-type warning in PathOperation.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=240383
+
+        Reviewed by Chris Dumez.
+
+        * rendering/PathOperation.cpp:
+        (WebCore::RayPathOperation::lengthForPath const):
+
 2022-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Add UI-side layers for optionally indicating interaction regions

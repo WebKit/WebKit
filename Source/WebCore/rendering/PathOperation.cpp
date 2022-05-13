@@ -67,6 +67,7 @@ double RayPathOperation::lengthForPath() const
     case Size::Sides:
         return lengthOfRayIntersectionWithBoundingBox(boundingBox, std::make_pair(m_position, m_angle));
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 const Path RayPathOperation::pathForReferenceRect() const
