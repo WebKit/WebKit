@@ -296,7 +296,9 @@ void DocumentWriter::end()
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
     // so we'll add a protective refcount
+IGNORE_GCC_WARNINGS_BEGIN("stringop-overflow")
     Ref<Frame> protect(*m_frame);
+IGNORE_GCC_WARNINGS_END
 
     if (!m_parser)
         return;
