@@ -293,15 +293,11 @@ bool InteractionRegionOverlay::updateRegion()
 
 static Vector<Path> pathsForRegion(const InteractionRegion& region)
 {
-    static constexpr float padding = 3;
     static constexpr float radius = 4;
 
     Vector<FloatRect> rects;
-    for (auto rect : region.rectsInContentCoordinates) {
-        if (region.isInline)
-            rect.inflate(padding);
+    for (auto rect : region.rectsInContentCoordinates)
         rects.append(rect);
-    }
     return PathUtilities::pathsWithShrinkWrappedRects(rects, std::max(region.borderRadius, radius));
 }
 

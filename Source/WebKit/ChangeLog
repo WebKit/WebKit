@@ -1,3 +1,36 @@
+2022-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add UI-side layers for optionally indicating interaction regions
+        https://bugs.webkit.org/show_bug.cgi?id=240372
+        <rdar://problem/87170289>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::applyHierarchyUpdates):
+        Allow RemoteLayerTreeInteractionRegionLayers to add and maintain layers for interaction regions.
+
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.h: Added.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm: Added.
+        (configureLayerForInteractionRegion):
+        (WebKit::interactionRegionForLayer):
+        (WebKit::isInteractionRegionLayer):
+        (WebKit::setInteractionRegion):
+        Box WebCore::InteractionRegion in a Objective-C object and store it on the layer.
+        Use this as a key to indicate that a given layer is an interaction region.
+
+        (WebKit::appendInteractionRegionLayersForLayer):
+        Make sure that interaction region layers are always at the end of the layer's sublayers array.
+
+        (WebKit::updateLayersForInteractionRegions):
+        Add new layers for interaction regions.
+        Maintain the same layer for regions that cover the same area.
+        Add a green wash if the default `WKInteractionRegionDebugFill` is set.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify the usage of DrawGlyphsRecorder

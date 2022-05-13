@@ -1313,6 +1313,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             LOG_WITH_STREAM(EventRegions, stream << "  needs editable event region: " << (document().mayHaveEditableElements() && page().shouldBuildEditableRegion()));
         }
 #endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        needsTraverseDescendants |= page().shouldBuildInteractionRegions();
+#endif
+
         if (!needsTraverseDescendants)
             return;
     }

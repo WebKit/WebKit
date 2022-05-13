@@ -29,6 +29,7 @@
 #import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
+#import "RemoteLayerTreeInteractionRegionLayers.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
@@ -291,6 +292,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 #endif
 #endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged)
+        updateLayersForInteractionRegions(layer, properties);
+#endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 }
 
 void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
@@ -351,7 +357,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
     }
 #endif
 
-    node.layer().sublayers = createNSArray(properties.children, [&] (auto& child) -> CALayer * {
+    auto sublayers = createNSArray(properties.children, [&] (auto& child) -> CALayer * {
         auto* childNode = relatedLayers.get(child);
         ASSERT(childNode);
         if (!childNode)
@@ -360,7 +366,13 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
         ASSERT(!childNode->uiView());
 #endif
         return childNode->layer();
-    }).get();
+    });
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    appendInteractionRegionLayersForLayer(sublayers.get(), node.layer());
+#endif
+
+    node.layer().sublayers = sublayers.get();
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

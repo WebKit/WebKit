@@ -1789,6 +1789,11 @@ bool RenderLayerBacking::maintainsEventRegion() const
     if (renderer().document().hasWheelEventHandlers())
         return true;
 #endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (renderer().page().shouldBuildInteractionRegions())
+        return true;
+#endif
+
     if (m_owningLayer.isRenderViewLayer())
         return false;
 
@@ -1837,19 +1842,26 @@ void RenderLayerBacking::updateEventRegion()
 #endif
         auto eventRegionContext = eventRegion.makeContext();
         auto layerOffset = graphicsLayer.scrollOffset() - roundedIntSize(graphicsLayer.offsetFromRenderer());
+        auto layerBounds = enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size()));
 
         if (visibleToHitTesting) {
             if (&graphicsLayer == m_scrolledContentsLayer) {
                 // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
                 // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
-                eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), renderer().style());
+                eventRegionContext.unite(layerBounds, renderer().style());
             }
         }
 
         if (m_owningLayer.isRenderViewLayer() && (&graphicsLayer == m_graphicsLayer || &graphicsLayer == m_foregroundLayer)) {
             // Event handlers on the root cover the entire layer.
-            eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), renderer().style());
+            eventRegionContext.unite(layerBounds, renderer().style());
         }
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        // FIXME: We should collect editable regions per-layer instead of keeping them all on the root.
+        if (renderer().page().shouldBuildInteractionRegions() && m_owningLayer.isRenderViewLayer() && (&graphicsLayer == m_graphicsLayer))
+            eventRegion.computeInteractionRegions(renderer().page(), layerBounds);
+#endif
 
         auto dirtyRect = enclosingIntRect(FloatRect(FloatPoint(graphicsLayer.offsetFromRenderer()), graphicsLayer.size()));
         paintIntoLayer(&graphicsLayer, nullContext, dirtyRect, { }, &eventRegionContext);

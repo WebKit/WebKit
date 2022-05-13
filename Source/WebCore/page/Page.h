@@ -900,6 +900,10 @@ public:
 
     WEBCORE_EXPORT Vector<Ref<Element>> editableElementsInRect(const FloatRect&) const;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    bool shouldBuildInteractionRegions() const;
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
 #endif

@@ -38,7 +38,6 @@ class Page;
 
 struct InteractionRegion {
     Vector<FloatRect> rectsInContentCoordinates;
-    bool isInline { false };
     bool hasLightBackground { false };
     float borderRadius { 0 };
     
@@ -48,13 +47,19 @@ struct InteractionRegion {
     template<class Decoder> static std::optional<InteractionRegion> decode(Decoder&);
 };
 
+inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
+{
+    return a.rectsInContentCoordinates == b.rectsInContentCoordinates
+        && a.hasLightBackground == b.hasLightBackground
+        && a.borderRadius == b.borderRadius;
+}
+
 WEBCORE_EXPORT Vector<InteractionRegion> interactionRegions(Page&, FloatRect rectInContentCoordinates);
 
 template<class Encoder>
 void InteractionRegion::encode(Encoder& encoder) const
 {
     encoder << rectsInContentCoordinates;
-    encoder << isInline;
     encoder << hasLightBackground;
     encoder << borderRadius;
 }
@@ -65,11 +70,6 @@ std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
     std::optional<Vector<FloatRect>> rectsInContentCoordinates;
     decoder >> rectsInContentCoordinates;
     if (!rectsInContentCoordinates)
-        return std::nullopt;
-    
-    std::optional<bool> isInline;
-    decoder >> isInline;
-    if (!isInline)
         return std::nullopt;
     
     std::optional<bool> hasLightBackground;
@@ -84,7 +84,6 @@ std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
 
     return { {
         WTFMove(*rectsInContentCoordinates),
-        WTFMove(*isInline),
         WTFMove(*hasLightBackground),
         WTFMove(*borderRadius)
     } };
