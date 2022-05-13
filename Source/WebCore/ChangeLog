@@ -1,5 +1,51 @@
 2022-05-12  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r294122. rdar://problem/93191958
+
+    [WebAuthn] Include backup state in authenticatorData
+    https://bugs.webkit.org/show_bug.cgi?id=240353
+    rdar://problem/93191958
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Add flags for credential backup state: https://github.com/w3c/webauthn/pull/1695
+    
+    * Modules/webauthn/WebAuthenticationConstants.h:
+    
+    Source/WebKit:
+    
+    This patch adds support for backup state flags, which will be added to
+    the Web Authentication spec soon via https://github.com/w3c/webauthn/pull/1695
+    
+    These flags are set whenever a credential is "backup eligible" and "backed up"
+    hinting to RPs that the credential is "durable" and may persist through device
+    restores. This is useful for RPs that may choose to offer to remove the user
+    password if a credental is in this state.
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticatorInternal::authDataFlags):
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+    (WebKit::LocalAuthenticator::continueGetAssertionAfterUserVerification):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294122 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-12  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Include backup state in authenticatorData
+            https://bugs.webkit.org/show_bug.cgi?id=240353
+            rdar://problem/93191958
+
+            Reviewed by Brent Fulgham.
+
+            Add flags for credential backup state: https://github.com/w3c/webauthn/pull/1695
+
+            * Modules/webauthn/WebAuthenticationConstants.h:
+
+2022-05-12  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r294088. rdar://problem/93134975
 
     ImageAnalysisQueue should extract and analyze images inside of subframes
