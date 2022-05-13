@@ -1,3 +1,18 @@
+2022-05-12  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Remove document focus requirement for conditional mediation requests
+        https://bugs.webkit.org/show_bug.cgi?id=240361
+        rdar://problem/93201070
+
+        Reviewed by Brent Fulgham.
+
+        This is necessary so conditional mediation requests work when you open a page in
+        a new tab. Conditional mediation requests do not support security keys and the
+        request will be aborted if conditional mediation is not available.
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::get):
+
 2022-05-12  Alan Bujtas  <zalan@apple.com>
 
         TextBoxPainter::paintForeground: painting text with no marking/decoration should be simple
