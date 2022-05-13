@@ -635,8 +635,8 @@ float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
     return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
 
-WTF_EXPORT_PRIVATE const StaticString nullStringData { nullptr };
-WTF_EXPORT_PRIVATE const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
+const StaticString nullStringData { nullptr };
+const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
 
 } // namespace WTF
 

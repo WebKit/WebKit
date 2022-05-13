@@ -32,8 +32,8 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData { nullptr };
-WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
+const StaticAtomString nullAtomData { nullptr };
+const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
 
 template<AtomString::CaseConvertType type>
 ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
