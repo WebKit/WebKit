@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -106,6 +106,8 @@ class PrepareChangeLog(AbstractStep):
         return final_entry + "\n"
 
     def run(self, state):
+        if not self._options.update_changelogs and self.cached_lookup(state, "has_local_commit"):
+            return
         if self.cached_lookup(state, "changelogs"):
             self._ensure_bug_url(state)
             if not self._options.update_changelogs:

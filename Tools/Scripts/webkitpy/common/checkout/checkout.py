@@ -1,4 +1,5 @@
 # Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (c) 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -36,6 +37,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.checkout.scm import Git
 
 if sys.version_info > (3, 0):
     from functools import reduce
@@ -133,6 +135,9 @@ class Checkout(object):
 
     def commit_message_for_this_commit(self, git_commit, changed_files=None, return_stderr=False):
         changelog_paths = self.modified_changelogs(git_commit, changed_files)
+        if not len(changelog_paths) and isinstance(self._scm, Git):
+            if self._scm.merge_base(None) != self._scm.rev_parse('HEAD'):
+                return self._scm.commit_message_for_local_commit(git_commit or 'HEAD')
         if not len(changelog_paths):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n %s" % urls.contribution_guidelines)

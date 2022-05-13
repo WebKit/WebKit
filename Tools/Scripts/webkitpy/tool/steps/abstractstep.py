@@ -28,6 +28,7 @@
 
 import sys
 
+from webkitpy.common.checkout.scm import Git
 from webkitpy.tool.steps.options import Options
 
 
@@ -51,6 +52,7 @@ class AbstractStep(object):
         "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, changed_files=self._changed_files(state)),
         # Absolute path to ChangeLog files.
         "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit, changed_files=self._changed_files(state)),
+        "has_local_commit": lambda self, state: self._tool.scm().merge_base(None) != self._tool.scm().rev_parse('HEAD') if isinstance(self._tool.scm(), Git) else False
     }
 
     def cached_lookup(self, state, key, promise=None):
