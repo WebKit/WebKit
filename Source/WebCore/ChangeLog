@@ -1,3 +1,20 @@
+2022-05-13  Alejandro G. Castro  <alex@igalia.com>
+
+
+        [GTK][WPE] Remove leftover for WINDOWS support in GraphicsContextGLGBM
+        https://bugs.webkit.org/show_bug.cgi?id=240314
+
+        GBM is a Linux technology we would need another sharing buffers
+        technology to add support in Windows. This is leftover from the
+        code copied originally.
+
+        Reviewed by Žan Doberšek.
+
+        No new tests, we are just removing some compilation option.
+
+        * platform/graphics/gbm/GraphicsContextGLGBM.cpp:
+        (WebCore::GraphicsContextGLGBM::platformInitializeContext):
+
 2022-05-13  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes
