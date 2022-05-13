@@ -2671,6 +2671,17 @@
    },
    {
       "emails" : [
+         "gezalore@gmail.com",
+         "glore@igalia.com"
+      ],
+      "github" : "gezalore",
+      "name" : "Geza Lore",
+      "nicks" : [
+         "gezalore"
+      ]
+   },
+   {
+      "emails" : [
          "girish@forwardbias.in",
          "ramakrishnan.girish@gmail.com"
       ],
