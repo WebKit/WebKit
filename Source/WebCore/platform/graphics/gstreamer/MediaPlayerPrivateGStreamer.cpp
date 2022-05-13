@@ -3081,8 +3081,13 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
 
-    auto* features = gst_caps_get_features(caps, 0);
-    if (gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_DMABUF)) {
+    // Currently we have to cover two ways of detecting a DMABuf memory. The most reliable is by detecting
+    // the memory:DMABuf feature on the GstCaps object. All sensible decoders yielding DMABufs specify this.
+    // For all other decoders, another option is peeking the zero-index GstMemory and testing whether it's
+    // a DMABuf memory, i.e. allocated by a DMABuf-capable allocator. If it is, we can proceed the same way.
+    bool isDMABufMemory = gst_caps_features_contains(gst_caps_get_features(caps, 0), GST_CAPS_FEATURE_MEMORY_DMABUF)
+        || gst_is_dmabuf_memory(gst_buffer_peek_memory(buffer, 0));
+    if (isDMABufMemory) {
         // In case of a hardware decoder that's yielding dmabuf memory, we can take the relevant data and
         // push it into the composition process.
 

@@ -1,5 +1,26 @@
 2022-05-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GStreamer] Properly handle DMABuf-containing GstBuffers with missing DMABuf GstCaps feature
+        https://bugs.webkit.org/show_bug.cgi?id=240374
+
+        Reviewed by Chris Lord.
+
+        To detect DMABuf-backed GstBuffers, for now we relied on the appropriate
+        feature being present on the related GstCaps object. This doesn't cover
+        every decoder which for one reason or another isn't specifying their
+        caps like this.
+
+        For those cases, we have to do a weaker but sufficient check on the
+        base GstMemory object contained in the GstBuffer, namely test that it
+        comes from a DMABuf-capable allocator, through using the
+        gst_is_dmabuf_memory() function. When true, we can proceed on handling
+        the buffer and its contained DMABuf object.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor):
+
+2022-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
         [Linux][GBM] Provide utility function for construction of eglCreateImage attributes data
         https://bugs.webkit.org/show_bug.cgi?id=240373
 
