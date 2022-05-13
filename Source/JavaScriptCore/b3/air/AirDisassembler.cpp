@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,13 +71,16 @@ void Disassembler::addInst(Inst* inst, MacroAssembler::Label start, MacroAssembl
 
 void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst)
 {
+    void* codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) +  linkBuffer.size();
+
     auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
         RELEASE_ASSERT(startLabel.isSet());
         RELEASE_ASSERT(endLabel.isSet());
         CodeLocationLabel<DisassemblyPtrTag> start = linkBuffer.locationOf<DisassemblyPtrTag>(startLabel);
         CodeLocationLabel<DisassemblyPtrTag> end = linkBuffer.locationOf<DisassemblyPtrTag>(endLabel);
         RELEASE_ASSERT(end.dataLocation<uintptr_t>() >= start.dataLocation<uintptr_t>());
-        disassemble(start, end.dataLocation<uintptr_t>() - start.dataLocation<uintptr_t>(), asmPrefix, out);
+        disassemble(start, end.dataLocation<uintptr_t>() - start.dataLocation<uintptr_t>(), codeStart, codeEnd, asmPrefix, out);
     };
 
     for (BasicBlock* block : m_blocks) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,6 +84,8 @@ private:
     Vector<MacroAssembler::Label> m_labelForBytecodeIndexInSlowPath;
     MacroAssembler::Label m_endOfSlowPath;
     MacroAssembler::Label m_endOfCode;
+    void* m_codeStart { nullptr };
+    void* m_codeEnd { nullptr };
 };
 
 } // namespace JSC

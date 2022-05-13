@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 
 #include "A64DOpcode.h"
 
+#include "Disassembler.h"
+#include "ExecutableAllocator.h"
+#include "GPRInfo.h"
+#include "LLIntPCRanges.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -185,6 +189,28 @@ const char* A64DOpcode::format()
 {
     bufferPrintf("   .long  %08x", m_opcode);
     return m_formatBuffer;
+}
+
+void A64DOpcode::appendPCRelativeOffset(uint32_t* pc, int32_t immediate)
+{
+    uint32_t* targetPC = pc + immediate;
+    constexpr size_t bufferSize = 101;
+    char buffer[bufferSize];
+    const char* targetInfo = buffer;
+    if (!m_startPC)
+        targetInfo = "";
+    else if (targetPC >= m_startPC && targetPC < m_endPC)
+        snprintf(buffer, bufferSize - 1, " -> <%u>", static_cast<unsigned>((targetPC - m_startPC) * sizeof(uint32_t)));
+    else if (const char* thunkLabel = labelForThunk(targetPC))
+        snprintf(buffer, bufferSize - 1, " -> <thunk: %s>", thunkLabel);
+    else if (isJITPC(targetPC))
+        targetInfo = " -> <JIT PC>";
+    else if (LLInt::isLLIntPC(targetPC))
+        targetInfo = " -> <LLInt PC>";
+    else
+        targetInfo = " -> <unknown>";
+
+    bufferPrintf("0x%" PRIxPTR "%s", bitwise_cast<uintptr_t>(targetPC),  targetInfo);
 }
 
 void A64DOpcode::appendRegisterName(unsigned registerNumber, bool is64Bit)
@@ -412,7 +438,7 @@ const char* A64DOpcodeCompareAndBranchImmediate::format()
 
 const char* A64DOpcodeConditionalBranchImmediate::format()
 {
-    bufferPrintf("   b.%-5.5s", conditionName(condition()));
+    bufferPrintf("   b.%-7.7s", conditionName(condition()));
     appendPCRelativeOffset(m_currentPC, static_cast<int32_t>(immediate19()));
     return m_formatBuffer;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -705,7 +705,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: generateConsistencyCheck");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: generateConsistencyCheck");
 }
 
 void JIT::emitConsistencyCheck()

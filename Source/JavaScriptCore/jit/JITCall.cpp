@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::returnFromBaselineGenerator(VM&)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
 }
 
 template<typename Op>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, cons
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, tag, "LLInt %s thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -109,7 +109,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpToPrologue(OpcodeID opcod
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, tag, "LLInt %s jump to prologue thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s jump to prologue thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -119,7 +119,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(LLIntC
     assertIsTaggedWith<OperationPtrTag>(target);
     jit.farJump(CCallHelpers::TrustedImmPtr(target), OperationPtrTag);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, tag, "LLInt %s return point thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s return point thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -419,7 +419,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
     jit.farJump(GPRInfo::regT5, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, PtrTag tag, const char* name)
@@ -431,7 +431,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, 
     jit.farJump(GPRInfo::wasmScratchGPR1, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt %s wasm call gate thunk", name);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s wasm call gate thunk", name);
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool untag)
@@ -445,7 +445,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool
     jit.farJump(GPRInfo::argumentGPR7, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LLInt tail call gate thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt tail call gate thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> loopOSREntryGateThunk()
@@ -536,7 +536,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
     jit.farJump(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "tag thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
@@ -551,7 +551,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
     jit.farJump(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "untag thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "untag thunk");
 }
 
 #endif // CPU(ARM64E)

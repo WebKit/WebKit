@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -478,7 +478,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: valueIsFalsey");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: valueIsFalsey");
 }
 
 void JIT::emit_op_jeq_null(const JSInstruction* currentInstruction)
@@ -664,7 +664,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: valueIsTruthy");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: valueIsTruthy");
 }
 
 #if USE(JSVALUE64)
@@ -734,7 +734,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationThrow));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_throw_handler");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_throw_handler");
 }
 
 #if USE(JSVALUE64)
@@ -1323,7 +1323,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     if (Options::useDFGJIT())
         patchBuffer.link(operationOptimizeCall, FunctionPtr<OperationPtrTag>(operationOptimize));
 #endif
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
 }
 
 void JIT::emit_op_get_scope(const JSInstruction* currentInstruction)
@@ -1568,7 +1568,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationHandleTraps));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
 }
 
 void JIT::emit_op_new_regexp(const JSInstruction* currentInstruction)

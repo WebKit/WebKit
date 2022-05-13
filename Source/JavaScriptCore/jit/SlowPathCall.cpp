@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +94,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(call, FunctionPtr<OperationPtrTag>(slowPathFunction));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "SlowPathCall");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SlowPathCall");
 }
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,7 +161,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_val_callSlowOperationT
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_val_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_val_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
@@ -255,7 +255,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_private_name_callSlowOper
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_private_name_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_private_name_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
@@ -477,7 +477,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_val_callSlowOperationT
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_val_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_val_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
@@ -577,7 +577,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_private_name_callSlowOper
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_private_name_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_private_name_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_put_getter_by_id(const JSInstruction* currentInstruction)
@@ -754,7 +754,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_id_callSlowOperationTh
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_id_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_id_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
@@ -865,7 +865,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_val_callSlowOperationT
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_val_prepareCall");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_val_prepareCall");
 }
 
 void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
@@ -1090,7 +1090,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_callSlowOperationTh
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
@@ -1190,7 +1190,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_with_this_callSlowO
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_with_this_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_with_this_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
@@ -1298,7 +1298,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_id_callSlowOperationTh
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_id_callSlowOperationThenCheckException");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_id_callSlowOperationThenCheckException");
 }
 
 void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
@@ -1688,7 +1688,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(slow_op_resolve_scopeGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm)
@@ -1726,7 +1726,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationResolveScopeForBaseline));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
 }
 
 void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
@@ -1904,7 +1904,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& vm)
@@ -1957,7 +1957,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationGetFromScope));
     auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
     patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
 }
 
 void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
@@ -2156,7 +2156,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationPutToScope));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
 }
 
 void JIT::emit_op_get_from_arguments(const JSInstruction* currentInstruction)

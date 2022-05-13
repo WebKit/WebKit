@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,6 +106,8 @@ private:
     MacroAssembler::Label m_endOfGenerate;
     MacroAssembler::Label m_endOfBacktrack;
     MacroAssembler::Label m_endOfCode;
+    void* m_codeStart { nullptr };
+    void* m_codeEnd { nullptr };
     unsigned m_indentLevel { 0 };
 };
 

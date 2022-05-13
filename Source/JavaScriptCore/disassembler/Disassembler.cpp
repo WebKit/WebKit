@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,12 @@
 
 namespace JSC {
 
-void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
+using ThunkLabelMap = HashMap<void*, CString>;
+LazyNeverDestroyed<ThunkLabelMap> thunkLabelMap;
+
+void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
 {
-    if (tryToDisassemble(codePtr, size, prefix, out))
+    if (tryToDisassemble(codePtr, size, codeStart, codeEnd, prefix, out))
         return;
     
     out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.untaggedExecutableAddress(), codePtr.untaggedExecutableAddress<char*>() + size);
@@ -65,6 +68,8 @@ public:
     char* header { nullptr };
     MacroAssemblerCodeRef<DisassemblyPtrTag> codeRef;
     size_t size { 0 };
+    void* codeStart { nullptr };
+    void* codeEnd { nullptr };
     const char* prefix { nullptr };
 };
 
@@ -105,7 +110,7 @@ private:
             }
 
             dataLog(task->header);
-            disassemble(task->codeRef.code(), task->size, task->prefix, WTF::dataFile());
+            disassemble(task->codeRef.code(), task->size, task->codeStart, task->codeEnd, task->prefix, WTF::dataFile());
         }
     }
     
@@ -131,12 +136,14 @@ AsynchronousDisassembler& asynchronousDisassembler()
 } // anonymous namespace
 
 void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>& codeRef, size_t size, const char* prefix)
+    const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>& codeRef, size_t size, void* codeStart, void* codeEnd, const char* prefix)
 {
     std::unique_ptr<DisassemblyTask> task = makeUnique<DisassemblyTask>();
     task->header = strdup(header.data()); // Yuck! We need this because CString does racy refcounting.
     task->codeRef = codeRef;
     task->size = size;
+    task->codeStart = codeStart;
+    task->codeEnd = codeEnd;
     task->prefix = prefix;
     
     asynchronousDisassembler().enqueue(WTFMove(task));
@@ -148,6 +155,29 @@ void waitForAsynchronousDisassembly()
         return;
     
     asynchronousDisassembler().waitUntilEmpty();
+}
+
+static ThunkLabelMap& ensureThunkLabelMap()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        thunkLabelMap.construct();
+    });
+    return thunkLabelMap.get();
+}
+
+void registerThunkLabel(void* thunkAddress, CString&& label)
+{
+    ensureThunkLabelMap().add(thunkAddress, WTFMove(label));
+}
+
+const char* labelForThunk(void* thunkAddress)
+{
+    auto& map = ensureThunkLabelMap();
+    auto it = map.find(thunkAddress);
+    if (it == map.end())
+        return nullptr;
+    return it->value.data();
 }
 
 } // namespace JSC

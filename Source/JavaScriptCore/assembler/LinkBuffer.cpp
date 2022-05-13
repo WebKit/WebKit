@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,23 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     out.printf("Generated JIT code for ");
     va_list argList;
     va_start(argList, format);
-    out.vprintf(format, argList);
+
+    if (m_isThunk) {
+        va_list preflightArgs;
+        va_copy(preflightArgs, argList);
+        size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
+        va_end(preflightArgs);
+
+        char* buffer = 0;
+        CString label = CString::newUninitialized(stringLength + 1, buffer);
+        vsnprintf(buffer, stringLength + 1, format, argList);
+        buffer[stringLength] = '\0';
+        out.printf("%s", buffer);
+
+        registerThunkLabel(result.code().untaggedExecutableAddress(), WTFMove(label));
+    } else
+        out.vprintf(format, argList);
+
     va_end(argList);
     out.printf(":\n");
 
@@ -90,14 +106,17 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         return result;
     }
     
+    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
+    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
+
     if (Options::asyncDisassembly()) {
         CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
-        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, "    ");
+        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, codeStart, codeEnd, "    ");
         return result;
     }
     
     dataLog(header);
-    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, "    ", WTF::dataFile());
+    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", WTF::dataFile());
     
     return result;
 }

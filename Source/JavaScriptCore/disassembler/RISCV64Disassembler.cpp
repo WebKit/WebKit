@@ -633,7 +633,7 @@ CString disassembleOpcode(uint32_t *pc)
 
 } // namespace RISCV64Disassembler
 
-bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
+bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, void*, void*, const char* prefix, PrintStream& out)
 {
     uint32_t* currentPC = codePtr.untaggedExecutableAddress<uint32_t*>();
     size_t byteCount = size;

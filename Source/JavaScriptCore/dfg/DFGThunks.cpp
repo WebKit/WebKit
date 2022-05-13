@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     
     patchBuffer.link(functionCall, FunctionPtr<OperationPtrTag>(operationCompileOSRExit));
 
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR exit generation thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DFG OSR exit generation thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
@@ -175,7 +175,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
     jit.farJump(GPRInfo::regT1, GPRInfo::callFrameRegister);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::DFGOSREntry);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR entry thunk");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DFG OSR entry thunk");
 }
 
 } } // namespace JSC::DFG

@@ -1,3 +1,173 @@
+2022-05-13  Mark Lam  <mark.lam@apple.com>
+
+        Enhance the ARM64Disassembler to print pc indices and better branch target labels.
+        https://bugs.webkit.org/show_bug.cgi?id=240370
+
+        Reviewed by Saam Barati.
+
+        Disassemblies used to look like this:
+
+             0x10e480ff8:    ldurb    w17, [x0, #7]
+             0x10e480ffc:    cmp      w17, #0
+             0x10e481000:    b.hi   0x10e48103c
+             0x10e481004:    stur     x0, [fp, #-72]
+             ...
+             0x10e481040:    movk     x3, #0xfffe, lsl #48
+             0x10e481044:    b        0x10e4814f4
+             0x10e481048:    nop      
+
+        With this patch, it will now look like this:
+
+               <748> 0x10e120aec:    ldurb    w17, [x0, #7]
+               <752> 0x10e120af0:    cmp      w17, #0
+               <756> 0x10e120af4:    b.hi     0x10e120b30 -> <816>
+               <760> 0x10e120af8:    stur     x0, [fp, #-80]
+               ...
+               <820> 0x10e120b34:    movk     x3, #0xfffe, lsl #48
+               <824> 0x10e120b38:    b        0x10e120fc8 -> <1992>
+               <828> 0x10e120b3c:    nop      
+
+        1. Each instruction pc is now prefixed with a pc index i.e. the offset of the
+           pc address from the start of the compilation unit e.g. <756>.
+
+        2. Relative branches now show the branch target as a pc index (effectively, an
+           internal label in this compilation unit) in addition to the pc address e.g.
+           the "-> <816>" in:
+               <756> 0x10e120af4:    b.hi     0x10e120b30 -> <816>
+
+           Also fixed a formatting bug where the space between relative branch instructions
+           and their target pc was short 2 spaces.
+
+        3. If the relative branch target is a known thunk, the disassembler will now
+           print the thunk label e.g.
+
+               <828> 0x10e12033c:    bl       0x10e0f0a00 -> <thunk: get_from_scope thunk>
+              <1476> 0x10e120dc4:    cbnz     x16, 0x10e104100 -> <thunk: handleExceptionWithCallFrameRollback>
+              <2368> 0x10e121140:    b        0x10e10c000 -> <thunk: DFG OSR exit generation thunk>
+
+           Introduced a FINALIZE_THUNK macro that will be used instead of FINALIZE_CODE in
+           thunk generators.  By doing so, thunk labels will automatically be registered
+           with the disassembler, and will be used for the above look up.
+
+           Thunk label registration is only done if disassembly is enabled.
+
+        4. If the branch target is neither an internal label nor a thunk, then the
+           disassembler will print some useful info about it to the best of its
+           knowledge e.g.
+
+               <168> 0x10e1002e8:    b        0x10e120b60 -> <JIT PC>
+               <168> 0x10e1002e8:    b        0x10e120b60 -> <LLInt PC>
+               <168> 0x10e1002e8:    b        0x10e120b60 -> <unknown>
+
+        5. The disassemble() function now takes 2 additional arguments: codeStart, and
+           codeEnd.  These are needed so that the disassembler can compute the pc index
+           for each instruction, as well as determine if a branch target is internal to
+           this compilation unit, or pointing out of it.
+
+        This feature is currently only supported for the ARM64 disassembler.
+
+        Printing of JIT operation labels (via movz + movk + indirect branch) is not yet
+        supported.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::setIsThunk):
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::dump):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcode::appendPCRelativeOffset):
+        (JSC::ARM64Disassembler::A64DOpcodeConditionalBranchImmediate::format):
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcode::A64DOpcode):
+        (JSC::ARM64Disassembler::A64DOpcode::appendPCRelativeOffset): Deleted.
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/CapstoneDisassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/Disassembler.cpp:
+        (JSC::disassemble):
+        (JSC::disassembleAsynchronously):
+        (JSC::ensureThunkLabelMap):
+        (JSC::registerThunkLabel):
+        (JSC::labelForThunk):
+        * disassembler/Disassembler.h:
+        (JSC::tryToDisassemble):
+        * disassembler/RISCV64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/X86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::consistencyCheckGenerator):
+        * jit/JITCall.cpp:
+        (JSC::JIT::returnFromBaselineGenerator):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dump):
+        (JSC::JITDisassembler::dumpDisassembly):
+        * jit/JITDisassembler.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::valueIsFalseyGenerator):
+        (JSC::JIT::valueIsTruthyGenerator):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_del_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_del_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_by_id_with_this_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::generateOpResolveScopeThunk):
+        (JSC::JIT::slow_op_resolve_scopeGenerator):
+        (JSC::JIT::generateOpGetFromScopeThunk):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerator.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::handleExceptionWithCallFrameRollbackGenerator):
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        (JSC::checkExceptionGenerator):
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::stringGetByValGenerator):
+        (JSC::boundFunctionCallGenerator):
+        (JSC::remoteFunctionCallGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        * yarr/YarrDisassembler.cpp:
+        (JSC::Yarr::YarrDisassembler::dump):
+        (JSC::Yarr::YarrDisassembler::dumpDisassembly):
+        * yarr/YarrDisassembler.h:
+
 2022-05-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build broken in debug mode

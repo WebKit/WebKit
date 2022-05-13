@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,15 +33,24 @@
 
 namespace JSC {
 
-bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
+bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
 {
-    A64DOpcode arm64Opcode;
-
     uint32_t* currentPC = codePtr.untaggedExecutableAddress<uint32_t*>();
     size_t byteCount = size;
 
+    uint32_t* armCodeStart = bitwise_cast<uint32_t*>(codeStart);
+    uint32_t* armCodeEnd = bitwise_cast<uint32_t*>(codeEnd);
+    A64DOpcode arm64Opcode(armCodeStart, armCodeEnd);
+
+    unsigned pcOffset = (currentPC - armCodeStart) * sizeof(uint32_t);
+    char pcInfo[25];
     while (byteCount) {
-        out.printf("%s%#16llx: %s\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)), arm64Opcode.disassemble(currentPC));
+        if (codeStart)
+            snprintf(pcInfo, sizeof(pcInfo) - 1, "<%u> %#llx", pcOffset, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)));
+        else
+            snprintf(pcInfo, sizeof(pcInfo) - 1, "%#llx", static_cast<unsigned long long>(bitwise_cast<uintptr_t>(currentPC)));
+        out.printf("%s%24s: %s\n", prefix, pcInfo, arm64Opcode.disassemble(currentPC));
+        pcOffset += sizeof(uint32_t);
         currentPC++;
         byteCount -= sizeof(uint32_t);
     }
