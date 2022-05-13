@@ -23,6 +23,7 @@
 
 #include "BaseTarget.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
+#include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AppleFeatures.xcconfig"
 
 PRODUCT_NAME = WebKit;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
