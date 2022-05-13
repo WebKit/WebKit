@@ -47,6 +47,14 @@ public
         RELAXED_DIFF_HEADER_FORMATS.any? { |format| line =~ format }
     end
 
+    def self.message_header?(line)
+        MESSAGE_HEADER_FORMATS.any? { |format| line =~ format }
+    end
+
+    def self.message_footer?(line)
+        MESSAGE_FOOTER_FORMATS.any? { |format| line =~ format }
+    end
+
 private
     DIFF_HEADER_FORMATS = [
         /^Index: (.*)\r?$/,
@@ -57,6 +65,16 @@ private
     RELAXED_DIFF_HEADER_FORMATS = [
         /^Index:/,
         /^diff/
+    ]
+
+    MESSAGE_HEADER_FORMATS = [
+        /^Subject: \[PATCH ?(\d+\/\d+)?\] (.+)/
+    ]
+
+    BUG_URL_RE = / (Need the bug URL \(OOPS!\).)|(\S+:\/\/\S+)/
+
+    MESSAGE_FOOTER_FORMATS = [
+        /^---/
     ]
 
     RENAME_FROM = /^rename from (.*)/
@@ -777,7 +795,9 @@ EOF
         end
 
         def self.parse(string)
+            commitMessageLength = 0
             haveSeenDiffHeader = false
+            subject = ''
             linesForDiffs = []
             line_array = string.lines.to_a
             line_array.each_with_index do |line, index|
@@ -787,8 +807,38 @@ EOF
                 elsif (!haveSeenDiffHeader && line =~ /^--- / && line_array[index + 1] =~ /^\+\+\+ /)
                     linesForDiffs << []
                     haveSeenDiffHeader = false
+                elsif (PrettyPatch.message_header?(line))
+                    haveSeenDiffHeader = false
+                    parsingSubject = true
+                    commitMessageLength = 1
+                    linesForDiffs << []
+                    linesForDiffs.last << '+++ COMMIT_MESSAGE'
+                    if line[MESSAGE_HEADER_FORMATS[0], 1]
+                        linesForDiffs.last[-1] += ' (' + line[MESSAGE_HEADER_FORMATS[0], 1] + ')'
+                    end
+                    linesForDiffs.last << '@@ -0,0 +1,1 @@'
+                    subject = line[MESSAGE_HEADER_FORMATS[0], 2]
+                elsif (!subject.empty? && line.strip.empty?)
+                    subject.split(BUG_URL_RE).each { |mtch|
+                        if !mtch.strip.empty?
+                            commitMessageLength += 1
+                            linesForDiffs.last << '+' + mtch
+                        end
+                    }
+                    subject = ''
+                elsif (!subject.empty?)
+                    subject += line
+                elsif (commitMessageLength != 0 && PrettyPatch.message_footer?(line))
+                    linesForDiffs.last[1] = '@@ -0,0 +1,' + commitMessageLength.to_s + ' @@'
+                    commitMessageLength = 0
                 end
-                linesForDiffs.last << line unless linesForDiffs.last.nil?
+
+                if (subject.empty? && commitMessageLength != 0)
+                    commitMessageLength += 1
+                    linesForDiffs.last << '+' + line unless linesForDiffs.last.nil?
+                elsif (subject.empty? && haveSeenDiffHeader)
+                    linesForDiffs.last << line unless linesForDiffs.last.nil?
+                end
             end
 
             linesForDiffs.collect { |lines| FileDiff.new(lines) }
