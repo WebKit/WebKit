@@ -1,3 +1,17 @@
+2022-05-13  Anjali Kumar  <anjalik_22@apple.com>
+
+        Web Inspector: [Meta] Implement Timelines Film Strip
+        https://bugs.webkit.org/show_bug.cgi?id=239350
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        * inspector/timeline/resources/timeline-event-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.TimelineEvent.captureTimelineWithScript):
+        (TestPage.registerInitializer):
+        * inspector/timeline/timeline-event-screenshots-expected.txt: Added.
+        * inspector/timeline/timeline-event-screenshots.html: Added.
+        * inspector/timeline/timeline-recording-expected.txt:
+
 2022-05-13  Tim Nguyen  <ntim@apple.com>
 
         Clean up some html/semantics/forms/ test expectations

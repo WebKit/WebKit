@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testRequestScreenshots() {
+    document.getElementById("test").style.width = "200px";
+
+    savePageData({invalidatedLayout: true});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.FireScreenshots");
+
+    suite.addTestCase({
+        name: "TimelineEvent.FireScreenshots.requestScreenshots",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Screenshots];
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testRequestScreenshots()`,
+                timelineType: WI.TimelineRecord.Type.Screenshots,
+            });
+            InspectorTest.assert(pageRecordingData.invalidatedLayout);
+
+            let recording = WI.timelineManager.activeRecording;
+            let screenshotTimeline = recording.timelines.get(WI.TimelineRecord.Type.Screenshots);
+            let records = screenshotTimeline.records;
+            InspectorTest.expectGreaterThan(records.length, 0, "Should have at least 1 Screenshot record.");
+
+            InspectorTest.expectGreaterThan(records[0].imageData.length, 0, "Screenshot record should contain image data.");
+            InspectorTest.expectGreaterThan(records[0].width, 0, "Screenshot record width should be non-zero.");
+            InspectorTest.expectGreaterThan(records[0].height, 0, "Screenshot record height should be non-zero.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+<style>
+#test {
+    width: 100px;
+    height: 100px;
+    background-color: darkseagreen;
+}
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests 'Screenshot' Timeline event records.</p>
+    <div id="test"></div>
+</body>
+</html>

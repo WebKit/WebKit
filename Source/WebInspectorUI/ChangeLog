@@ -1,3 +1,91 @@
+2022-05-13  Anjali Kumar  <anjalik_22@apple.com>
+
+        Web Inspector: [Meta] Implement Timelines Film Strip
+        https://bugs.webkit.org/show_bug.cgi?id=239350
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        Add the ability to see screenshots taken of the viewport within the Timelines tab. The purpose of the 
+        screenshots is to provide more context to the other data presented within the Timelines tab, so that 
+        developers can improve the efficiency of their page loading times. They can see what is painting on their 
+        pages in addition to when the paints are occuring.
+
+        The screenshots presented are taken immediately after each composite. They are designed to be layered 
+        on top of one another as opposed to being presented in a non-overlapping fashion in order to provide developers
+        with the exact screenshot that occured during a particular point in time on the timeline. This allows developers
+        to zoom in and pinpoint the exact moment the page looked like that particularly rendered screenshot.
+
+        When a screenshot is clicked on, the details section opens up to an enlarged view of that particular image.
+        Developers can utilize this to view each screenshot in greater detail.
+
+        This feature is named "Screenshots" (one word), as in the UI we currently have existing strings for "Capture 
+        Screenshot" and "Could not capture screenshot".
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.defaultTimelineTypes):
+        (WI.TimelineManager.prototype._processRecord):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        * UserInterface/Images/IdentifierIcons.svg:
+        * UserInterface/Main.html:
+        * UserInterface/Models/Instrument.js:
+        (WI.Instrument.createForTimelineType):
+        * UserInterface/Models/ScreenshotsInstrument.js: Added.
+        (WI.ScreenshotsInstrument):
+        (WI.ScreenshotsInstrument.supported):
+        (WI.ScreenshotsInstrument.prototype.get timelineRecordType):
+        * UserInterface/Models/ScreenshotsTimelineRecord.js: Added.
+        (WI.ScreenshotsTimelineRecord):
+        (WI.ScreenshotsTimelineRecord.async fromJSON):
+        (WI.ScreenshotsTimelineRecord.prototype.toJSON):
+        (WI.ScreenshotsTimelineRecord.prototype.get imageData):
+        (WI.ScreenshotsTimelineRecord.prototype.get width):
+        (WI.ScreenshotsTimelineRecord.prototype.get height):
+        * UserInterface/Models/TimelineRecord.js:
+        (WI.TimelineRecord.async fromJSON):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.prototype.addRecord):
+        * UserInterface/Test.html:
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        * UserInterface/Views/ScreenshotsTimelineOverviewGraph.css: Added.
+        (body .sidebar > .panel.navigation.timeline > .timelines-content li.item.screenshots,):
+        (.timeline-overview-graph.screenshots > img):
+        (.timeline-overview-graph.screenshots > img.selected):
+        * UserInterface/Views/ScreenshotsTimelineOverviewGraph.js: Added.
+        (WI.ScreenshotsTimelineOverviewGraph):
+        (WI.ScreenshotsTimelineOverviewGraph.prototype.get height):
+        (WI.ScreenshotsTimelineOverviewGraph.prototype.layout):
+        (WI.ScreenshotsTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WI.ScreenshotsTimelineOverviewGraph.prototype._visibleRecords):
+        * UserInterface/Views/ScreenshotsTimelineView.css: Added.
+        (.timeline-view.screenshots):
+        (.timeline-view.screenshots > img):
+        (.timeline-view.screenshots > img.selected):
+        * UserInterface/Views/ScreenshotsTimelineView.js: Added.
+        (WI.ScreenshotsTimelineView):
+        (WI.ScreenshotsTimelineView.prototype.reset):
+        (WI.ScreenshotsTimelineView.prototype.clear):
+        (WI.ScreenshotsTimelineView.prototype.get showsFilterBar):
+        (WI.ScreenshotsTimelineView.prototype.layout):
+        (WI.ScreenshotsTimelineView.prototype.selectRecord):
+        (WI.ScreenshotsTimelineView.prototype._selectTimelineRecord):
+        (WI.ScreenshotsTimelineView.prototype._visibleRecords):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/TimelineIcons.css:
+        (.screenshots-icon .icon):
+        (@media (prefers-color-scheme: dark) .screenshots-icon .icon):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph.createForTimeline):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForTimelineType):
+        (WI.TimelineTabContentView.genericClassNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForRecord):
+        (WI.TimelineTabContentView.displayNameForRecord):
+
 2022-05-03  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Importing a timeline leaves timeline overview non-scrollable/non-zoomable until windows is resized

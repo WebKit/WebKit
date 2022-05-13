@@ -35,6 +35,7 @@ Export Data:
   "endTime": "<filtered>",
   "discontinuities": [],
   "instrumentTypes": [
+    "timeline-record-type-screenshots",
     "timeline-record-type-network",
     "timeline-record-type-layout",
     "timeline-record-type-script",

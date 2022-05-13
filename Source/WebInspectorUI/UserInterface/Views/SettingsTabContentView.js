@@ -400,6 +400,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
 
+        let timelinesGroup = experimentalSettingsView.addGroup(WI.UIString("Timelines:"));
+        timelinesGroup.addSetting(WI.settings.experimentalShowScreenshotsTimeline, WI.UIString("Show Screenshots"));
+
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", (event) => {
@@ -415,6 +418,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 this.classList.toggle("hidden", Array.from(initialValues).every(([setting, initialValue]) => setting.value === initialValue));
             }, reloadInspectorContainerElement);
         }
+
+        listenForChange(WI.settings.experimentalShowScreenshotsTimeline);
 
         if (hasCSSDomain) {
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);

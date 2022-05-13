@@ -32,6 +32,17 @@
                 --outline: hsl(357, 77%, 59%);
             }
 
+            .light.pink {
+                --fill: hsl(360, 64%, 75%);
+                --stroke: hsl(360, 54%, 62%);
+                --outline: hsl(360, 54%, 62%);
+            }
+
+            .dark.pink {
+                --fill: hsl(359, 69%, 25%);
+                --outline: hsl(357, 77%, 59%);
+            }
+
             .light.green {
                 --fill: hsl(118, 43%, 55%);
                 --stroke: hsl(118, 33%, 42%);
@@ -131,6 +142,12 @@
         <path d="M 9.05 7.389 L 12.375 5.5 L 12.375 10.5 L 9.05 8.611 L 9.05 9.5 C 9.05 10.052 8.602 10.5 8.05 10.5 L 4.25 10.5 C 3.698 10.5 3.25 10.052 3.25 9.5 L 3.25 6.5 C 3.25 5.948 3.698 5.5 4.25 5.5 L 8.05 5.5 C 8.602 5.5 9.05 5.948 9.05 6.5 L 9.05 7.389 Z" fill="white"/>
     </symbol>
 
+    <symbol id="screenshot" viewBox="0 0 16 16">
+        <path d="M10.5,4.94 L10.1875,4.26205342 C10.1875,4.26205342 9.92668194,3.69 9.5625,3.69 L6.4375,3.69 C6.07272974,3.69 5.8125,4.2620534 5.8125,4.2620534 L5.5,4.94 L4.48858987,4.94 C4.48858987,4.94 3.3125,5.03898711 3.3125,6.19 L3.3125,10.565 C3.3125,11.7160129 4.48858987,11.815 4.48858987,11.815 L11.4375,11.815 C11.4375,11.815 12.6875,11.7160129 12.6875,10.565 L12.6875,6.19 C12.6875,5.03898711 11.4375,4.94 11.4375,4.94 L10.5,4.94 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+        <path d="M8,10.565 C9.38071187,10.565 10.5,9.44571188 10.5,8.065 C10.5,6.68428812 9.38071187,5.565 8,5.565 C6.61928812,5.565 5.5,6.68428812 5.5,8.065 C5.5,9.44571188 6.61928812,10.565 8,10.565 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+        <path d="M8,9.315 C8.69035594,9.315 9.25,8.75535594 9.25,8.065 C9.25,7.37464406 8.69035594,6.815 8,6.815 C7.30964406,6.815 6.75,7.37464406 6.75,8.065 C6.75,8.75535594 7.30964406,9.315 8,9.315 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+    </symbol>
+
     <symbol id="barchart" viewBox="0 0 16 16">
         <rect stroke-linejoin="round" fill="white" x="9.5" y="4" width="3" height="8" stroke="var(--stroke)"/>
         <rect stroke-linejoin="round" fill="white" x="3.5" y="9" width="3" height="3" stroke="var(--stroke)"/>
@@ -165,6 +182,8 @@
     <g id="MemoryInstrument-dark" class="dark brown"><use href="#circle"/><use href="#cpu"/></g>
     <g id="RenderingFramesInstrument-light" class="light red"><use href="#circle"/><use href="#barchart"/></g>
     <g id="RenderingFramesInstrument-dark" class="dark red"><use href="#circle"/><use href="#barchart"/></g>
+    <g id="ScreenshotsInstrument-light" class="light pink"><use href="#circle"/><use href="#screenshot"/></g>
+    <g id="ScreenshotsInstrument-dark" class="dark pink"><use href="#circle"/><use href="#screenshot"/></g>
     <g id="ScriptsInstrument-light" class="light purple"><use href="#circle"/><use href="#script"/></g>
     <g id="ScriptsInstrument-dark" class="dark purple"><use href="#circle"/><use href="#script"/></g>
     <g id="Thread-light" class="light blue"><use href="#circle"/><use href="#threads"/></g>

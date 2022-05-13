@@ -1,0 +1,13 @@
+Tests 'Screenshot' Timeline event records.
+
+
+== Running test suite: TimelineEvent.FireScreenshots
+-- Running test case: TimelineEvent.FireScreenshots.requestScreenshots
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should have at least 1 Screenshot record.
+PASS: Screenshot record should contain image data.
+PASS: Screenshot record width should be non-zero.
+PASS: Screenshot record height should be non-zero.
+

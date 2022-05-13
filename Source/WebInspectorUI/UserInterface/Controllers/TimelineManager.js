@@ -117,12 +117,15 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             ];
         }
 
-        let defaultTypes = [
-            WI.TimelineRecord.Type.Network,
-            WI.TimelineRecord.Type.Layout,
-            WI.TimelineRecord.Type.Script,
-            WI.TimelineRecord.Type.RenderingFrame,
-        ];
+        let defaultTypes = [];
+
+        if (WI.ScreenshotsInstrument.supported())
+            defaultTypes.push(WI.TimelineRecord.Type.Screenshots);
+
+        defaultTypes.push(WI.TimelineRecord.Type.Network);
+        defaultTypes.push(WI.TimelineRecord.Type.Layout);
+        defaultTypes.push(WI.TimelineRecord.Type.Script);
+        defaultTypes.push(WI.TimelineRecord.Type.RenderingFrame);
 
         if (WI.CPUInstrument.supported())
             defaultTypes.push(WI.TimelineRecord.Type.CPU);
@@ -986,6 +989,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
 
+        case InspectorBackend.Enum.Timeline.EventType.Screenshot:
+            console.assert(isNaN(endTime));
+
+            return new WI.ScreenshotsTimelineRecord(startTime, recordPayload.data.imageData, recordPayload.data.width, recordPayload.data.height);
+
         default:
             console.error("Missing handling of Timeline Event Type: " + recordPayload.type);
         }
@@ -1343,6 +1351,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                     break;
                 case WI.TimelineRecord.Type.CPU:
                     instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.CPU);
+                    break;
+                case WI.TimelineRecord.Type.Screenshots:
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Screenshot);
                     break;
                 case WI.TimelineRecord.Type.Memory:
                     instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Memory);

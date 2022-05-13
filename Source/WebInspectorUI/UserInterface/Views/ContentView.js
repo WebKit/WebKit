@@ -100,6 +100,9 @@ WI.ContentView = class ContentView extends WI.View
 
             if (timelineType === WI.TimelineRecord.Type.Media)
                 return new WI.MediaTimelineView(representedObject, extraArguments);
+            
+            if (timelineType === WI.TimelineRecord.Type.Screenshots)
+                return new WI.ScreenshotsTimelineView(representedObject, extraArguments);
         }
 
         if (representedObject instanceof WI.JavaScriptBreakpoint || representedObject instanceof WI.IssueMessage) {

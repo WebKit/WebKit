@@ -1,3 +1,26 @@
+2022-05-13  Anjali Kumar  <anjalik_22@apple.com>
+
+        Web Inspector: [Meta] Implement Timelines Film Strip
+        https://bugs.webkit.org/show_bug.cgi?id=239350
+
+        Reviewed by Devin Rousso and Patrick Angle.
+
+        Test: inspector/timeline/timeline-event-screenshots.html
+
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createScreenshotData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didComposite):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::toggleInstruments):
+        (WebCore::InspectorTimelineAgent::captureScreenshot):
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::createRecordEntry):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/agents/InspectorTimelineAgent.h:
+
 2022-05-13  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         -Wstringop-overflow warning in DocumentWriter.cpp

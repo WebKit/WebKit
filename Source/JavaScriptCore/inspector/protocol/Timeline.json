@@ -30,7 +30,8 @@
                 "RequestAnimationFrame",
                 "CancelAnimationFrame",
                 "FireAnimationFrame",
-                "ObserverCallback"
+                "ObserverCallback",
+                "Screenshot"
             ]
         },
         {
@@ -43,7 +44,8 @@
                 "CPU",
                 "Memory",
                 "Heap",
-                "Animation"
+                "Animation",
+                "Screenshot"
             ]
         },
         {

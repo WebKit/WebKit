@@ -55,6 +55,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <JavaScriptCore/ScriptArguments.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Stopwatch.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -423,15 +424,24 @@ void InspectorTimelineAgent::didComposite()
     if (m_startedComposite)
         didCompleteCurrentRecord(TimelineRecordType::Composite);
     m_startedComposite = false;
+
+    if (m_instruments.contains(Protocol::Timeline::Instrument::Screenshot))
+        captureScreenshot();
 }
 
 void InspectorTimelineAgent::willPaint(Frame& frame)
 {
+    if (m_isCapturingScreenshot)
+        return;
+
     pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Paint, true, &frame);
 }
 
 void InspectorTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
 {
+    if (m_isCapturingScreenshot)
+        return;
+
     if (m_recordStack.isEmpty())
         return;
 
@@ -578,6 +588,9 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
         case Protocol::Timeline::Instrument::Animation:
             toggleAnimationInstrument(state);
             break;
+        case Protocol::Timeline::Instrument::Screenshot: {
+            break;
+        }
         }
     }
 }
@@ -646,6 +659,20 @@ void InspectorTimelineAgent::toggleAnimationInstrument(InstrumentState state)
             animationAgent->startTracking();
         else
             animationAgent->stopTracking();
+    }
+}
+
+void InspectorTimelineAgent::captureScreenshot()
+{
+    SetForScope isTakingScreenshot(m_isCapturingScreenshot, true);
+
+    auto snapshotStartTime = timestamp();
+    auto& frame = m_inspectedPage.mainFrame();
+    auto viewportRect = m_inspectedPage.mainFrame().view()->unobscuredContentRect();
+    if (auto snapshot = snapshotFrameRect(frame, viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() })) {
+        auto snapshotRecord = TimelineRecordFactory::createScreenshotData(snapshot->toDataURL("image/png"_s), viewportRect.width(), viewportRect.height());
+        pushCurrentRecord(WTFMove(snapshotRecord), TimelineRecordType::Screenshot, false, &frame, snapshotStartTime);
+        didCompleteCurrentRecord(TimelineRecordType::Screenshot);
     }
 }
 
@@ -737,6 +764,9 @@ static Protocol::Timeline::EventType toProtocol(TimelineRecordType type)
 
     case TimelineRecordType::ObserverCallback:
         return Protocol::Timeline::EventType::ObserverCallback;
+
+    case TimelineRecordType::Screenshot:
+        return Protocol::Timeline::EventType::Screenshot;
     }
 
     return Protocol::Timeline::EventType::TimeStamp;
@@ -813,16 +843,16 @@ void InspectorTimelineAgent::sendEvent(Ref<JSON::Object>&& event)
     m_frontendDispatcher->eventRecorded(WTFMove(recordChecked));
 }
 
-InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame, std::optional<double> startTime)
 {
-    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
+    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
     setFrameIdentifier(&record.get(), frame);
     return TimelineRecordEntry(WTFMove(record), WTFMove(data), JSON::Array::create(), type);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::pushCurrentRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame, std::optional<double> startTime)
 {
-    pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame));
+    pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame, startTime));
 }
 
 } // namespace WebCore

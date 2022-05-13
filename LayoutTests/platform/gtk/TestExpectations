@@ -1199,6 +1199,8 @@ webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
 webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ] # Timeout
 
+webkit.org/b/240349 inspector/timeline/timeline-event-screenshots.html [ Skip ]
+
 webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout ]
 
 webkit.org/b/144690 editing/spelling/context-menu-suggestions-multiword-selection.html [ Timeout ]

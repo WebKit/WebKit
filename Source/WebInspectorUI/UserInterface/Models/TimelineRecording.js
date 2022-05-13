@@ -339,7 +339,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             || record.type === WI.TimelineRecord.Type.RenderingFrame
             || record.type === WI.TimelineRecord.Type.CPU
             || record.type === WI.TimelineRecord.Type.Memory
-            || record.type === WI.TimelineRecord.Type.HeapAllocations)
+            || record.type === WI.TimelineRecord.Type.HeapAllocations
+            || record.type === WI.TimelineRecord.Type.Screenshots)
             return;
 
         if (!WI.TimelineRecording.sourceCodeTimelinesSupported())

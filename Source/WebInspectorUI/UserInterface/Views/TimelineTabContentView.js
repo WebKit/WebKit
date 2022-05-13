@@ -132,6 +132,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             if (InspectorBackend.hasDomain("Animation"))
                 return WI.UIString("Media & Animations");
             return WI.UIString("Media");
+        case WI.TimelineRecord.Type.Screenshots:
+            return WI.UIString("Screenshots");
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -158,6 +160,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return "rendering-frame-icon";
         case WI.TimelineRecord.Type.Media:
             return "media-icon";
+        case WI.TimelineRecord.Type.Screenshots:
+            return "screenshots-icon";
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -184,6 +188,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return "rendering-frame";
         case WI.TimelineRecord.Type.Media:
             return "media";
+        case WI.TimelineRecord.Type.Screenshots:
+            return "screenshots";
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -266,6 +272,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
         case WI.TimelineRecord.Type.CPU:
         case WI.TimelineRecord.Type.Memory:
+        case WI.TimelineRecord.Type.Screenshots:
             // Not used. Fall through to error just in case.
 
         default:
@@ -302,6 +309,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return timelineRecord.displayName;
         case WI.TimelineRecord.Type.CPU:
         case WI.TimelineRecord.Type.Memory:
+        case WI.TimelineRecord.Type.Screenshots:
             // Not used. Fall through to error just in case.
         default:
             console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
