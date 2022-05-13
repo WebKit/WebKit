@@ -2650,16 +2650,6 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
     return result;
 }
 
-bool AccessibilityRenderObject::shouldNotifyActiveDescendant() const
-{
-    // We want to notify that the combo box has changed its active descendant,
-    // but we do not want to change the focus, because focus should remain with the combo box.
-    if (isComboBox())
-        return true;
-    
-    return shouldFocusActiveDescendant();
-}
-
 bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
 {
     switch (ariaRoleAttribute()) {
@@ -2691,65 +2681,11 @@ bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
 
 AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
 {
-    if (!m_renderer)
-        return nullptr;
-    
-    const AtomString& activeDescendantAttrStr = getAttribute(aria_activedescendantAttr);
-    if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
-        return nullptr;
-    Element* element = this->element();
-    if (!element)
-        return nullptr;
-    
-    Element* target = element->treeScope().getElementById(activeDescendantAttrStr);
-    if (!target)
-        return nullptr;
-    
-    if (AXObjectCache* cache = axObjectCache()) {
-        AccessibilityObject* obj = cache->getOrCreate(target);
-        if (obj && obj->isAccessibilityRenderObject())
-            // an activedescendant is only useful if it has a renderer, because that's what's needed to post the notification
-            return obj;
-    }
-    
+    auto activeDescendants = ariaElementsFromAttribute(aria_activedescendantAttr);
+    ASSERT(activeDescendants.size() <= 1);
+    if (!activeDescendants.isEmpty())
+        return downcast<AccessibilityObject>(activeDescendants[0].get());
     return nullptr;
-}
-
-RenderObject* AccessibilityRenderObject::targetElementForActiveDescendant(const QualifiedName& attributeName, AccessibilityObject* activeDescendant) const
-{
-    auto objects = ariaElementsFromAttribute(attributeName);
-    for (const auto& object : objects) {
-        if (activeDescendant->isDescendantOfObject(object.get()))
-            return object->renderer();
-    }
-
-    return nullptr;
-}
-
-void AccessibilityRenderObject::handleActiveDescendantChanged()
-{
-    Element* element = downcast<Element>(renderer()->node());
-    if (!element)
-        return;
-    if (!renderer()->frame().selection().isFocusedAndActive() || renderer()->document().focusedElement() != element)
-        return;
-
-    auto* activeDescendant = this->activeDescendant();
-    if (activeDescendant && shouldNotifyActiveDescendant()) {
-        auto* targetRenderer = renderer();
-        
-#if PLATFORM(COCOA)
-        // If the combobox's activeDescendant is inside another object, the target element should be that parent.
-        if (isComboBox()) {
-            if (auto* ariaOwner = targetElementForActiveDescendant(aria_ownsAttr, activeDescendant))
-                targetRenderer = ariaOwner;
-            else if (auto* ariaController = targetElementForActiveDescendant(aria_controlsAttr, activeDescendant))
-                targetRenderer = ariaController;
-        }
-#endif
-    
-        renderer()->document().axObjectCache()->postNotification(targetRenderer, AXObjectCache::AXActiveDescendantChanged);
-    }
 }
 
 bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer) const

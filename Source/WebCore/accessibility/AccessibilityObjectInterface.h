@@ -1266,7 +1266,6 @@ public:
     virtual void tabChildren(AccessibilityChildrenVector&) = 0;
     virtual bool shouldFocusActiveDescendant() const = 0;
     virtual AXCoreObject* activeDescendant() const = 0;
-    virtual void handleActiveDescendantChanged() = 0;
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
     virtual AXCoreObject* firstAnonymousBlockChild() const = 0;
@@ -1614,6 +1613,20 @@ T* findAncestor(const T& object, bool includeSelf, const F& matches)
             return parent;
     }
 
+    return nullptr;
+}
+
+template<typename T>
+T* findRelatedObjectInAncestry(const T& object, const QualifiedName& relationAttribute, const T& descendant)
+{
+    auto relatedObjects = object.ariaElementsFromAttribute(relationAttribute);
+    for (const auto& object : relatedObjects) {
+        auto* ancestor = findAncestor(descendant, false, [&object] (const auto& ancestor) {
+            return object.get() == &ancestor;
+        });
+        if (ancestor)
+            return ancestor;
+    }
     return nullptr;
 }
 

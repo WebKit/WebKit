@@ -536,7 +536,6 @@ public:
     void tabChildren(AccessibilityChildrenVector&) override { }
     bool shouldFocusActiveDescendant() const override { return false; }
     AccessibilityObject* activeDescendant() const override { return nullptr; }
-    void handleActiveDescendantChanged() override { }
     AccessibilityObject* firstAnonymousBlockChild() const override;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
@@ -786,6 +785,8 @@ public:
     String documentEncoding() const override;
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
+    AccessibilityChildrenVector ariaElementsFromAttribute(const QualifiedName&) const;
+    AccessibilityChildrenVector ariaElementsReferencedByAttribute(const QualifiedName&) const;
 protected:
     AccessibilityObject() = default;
 
@@ -812,8 +813,6 @@ protected:
 
     static bool isARIAInput(AccessibilityRole);
 
-    AccessibilityChildrenVector ariaElementsFromAttribute(const QualifiedName&) const;
-    AccessibilityChildrenVector ariaElementsReferencedByAttribute(const QualifiedName&) const;
     virtual bool exposesTitleUIElement() const { return true; }
     FloatRect unobscuredContentRect() const override;
     AccessibilityObject* radioGroupAncestor() const;

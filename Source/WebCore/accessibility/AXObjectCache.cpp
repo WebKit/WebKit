@@ -1800,10 +1800,33 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
     }
 }
 
-void AXObjectCache::handleActiveDescendantChanged(Node* node)
+void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (AccessibilityObject* obj = getOrCreate(node))
-        obj->handleActiveDescendantChanged();
+    if (!document().frame()->selection().isFocusedAndActive() || document().focusedElement() != &element)
+        return;
+
+    auto* object = getOrCreate(&element);
+    if (!object)
+        return;
+
+    auto* activeDescendant = object->activeDescendant();
+    // We want to notify that the combo box has changed its active descendant,
+    // but we do not want to change the focus, because focus should remain with the combo box.
+    if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
+        auto target = object;
+
+#if PLATFORM(COCOA)
+        // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
+        if (object->isComboBox()) {
+            if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, aria_ownsAttr, *activeDescendant))
+                target = ownedObject;
+            else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, aria_controlsAttr, *activeDescendant))
+                target = controlledObject;
+        }
+#endif
+
+        postNotification(target, &document(), AXActiveDescendantChanged);
+    }
 }
 
 void AXObjectCache::handleRoleChange(AccessibilityObject* axObject)
@@ -1878,7 +1901,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         return;
 
     if (attrName == aria_activedescendantAttr)
-        handleActiveDescendantChanged(element);
+        handleActiveDescendantChanged(*element);
     else if (attrName == aria_busyAttr)
         postNotification(element, AXObjectCache::AXElementBusyChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)

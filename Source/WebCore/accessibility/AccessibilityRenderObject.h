@@ -151,9 +151,7 @@ public:
     void visibleChildren(AccessibilityChildrenVector&) override;
     void tabChildren(AccessibilityChildrenVector&) override;
     bool shouldFocusActiveDescendant() const override;
-    bool shouldNotifyActiveDescendant() const;
     AccessibilityObject* activeDescendant() const override;
-    void handleActiveDescendantChanged() override;
 
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
@@ -282,7 +280,6 @@ private:
     String applePayButtonDescription() const;
 #endif
 
-    RenderObject* targetElementForActiveDescendant(const QualifiedName&, AccessibilityObject*) const;
     bool canHavePlainText() const;
     // Special handling of click point for links.
     IntPoint linkClickPoint();

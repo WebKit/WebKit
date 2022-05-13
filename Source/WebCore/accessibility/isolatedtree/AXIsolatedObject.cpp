@@ -2183,11 +2183,6 @@ AXCoreObject* AXIsolatedObject::activeDescendant() const
     return nullptr;
 }
 
-void AXIsolatedObject::handleActiveDescendantChanged()
-{
-    ASSERT_NOT_REACHED();
-}
-
 OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
 {
     auto value = m_propertyMap.get(AXPropertyName::AncestorFlags);

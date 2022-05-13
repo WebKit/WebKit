@@ -612,7 +612,6 @@ private:
     void detachFromParent() override;
     bool shouldFocusActiveDescendant() const override;
     AXCoreObject* activeDescendant() const override;
-    void handleActiveDescendantChanged() override;
 
     OptionSet<AXAncestorFlag> ancestorFlags() const;
 
