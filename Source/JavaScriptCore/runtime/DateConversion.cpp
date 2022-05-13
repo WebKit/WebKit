@@ -25,6 +25,7 @@
 #include "config.h"
 #include "DateConversion.h"
 
+#include "JSDateMath.h"
 #include <wtf/Assertions.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>
