@@ -1,3 +1,18 @@
+2022-05-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        TemporalPlainTime::toTemporalTimeRecord shouldn't require all properties to be provided
+        https://bugs.webkit.org/show_bug.cgi?id=240394
+
+        Reviewed by Yusuke Suzuki and Darin Adler.
+
+        Following the spec correction of https://github.com/tc39/proposal-temporal/pull/1862, this patch
+        fixes our Temporal.PlainTime implementation to require that *one* property be provided, not *all* of them.
+
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::fromDurationLike):
+        * runtime/TemporalPlainTime.cpp:
+        (JSC::toTemporalTimeRecord):
+
 2022-05-13  Anjali Kumar  <anjalik_22@apple.com>
 
         Web Inspector: [Meta] Implement Timelines Film Strip

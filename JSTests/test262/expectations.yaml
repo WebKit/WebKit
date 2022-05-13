@@ -1065,27 +1065,12 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.j
 test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js:
   default: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
   strict mode: 'RangeError: argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string'
-test/built-ins/Temporal/PlainTime/compare/argument-cast.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/compare/leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/compare/plaintime-propertybag-no-time-units.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/from/argument-object-leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/argument-object.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/from/argument-plaindatetime.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar)')"
@@ -1098,78 +1083,30 @@ test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
 test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/from/leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/options-undefined.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/overflow-constrain.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/overflow-reject.js:
-  default: 'Test262Error: Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
-test/built-ins/Temporal/PlainTime/from/overflow-undefined.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/overflow-wrong-type.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/from/plaintime-propertybag-no-time-units.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/equals/argument-cast.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/equals/leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/equals/plaintime-propertybag-no-time-units.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/since/argument-cast.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/since/leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/since/plaintime-propertybag-no-time-units.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js:
   default: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
   strict mode: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js:
   default: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
   strict mode: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
-test/built-ins/Temporal/PlainTime/prototype/until/argument-cast.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
   default: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: 2021-12 is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/until/leap-second.js:
-  default: 'TypeError: "microsecond" field is missing'
-  strict mode: 'TypeError: "microsecond" field is missing'
-test/built-ins/Temporal/PlainTime/prototype/until/plaintime-propertybag-no-time-units.js:
-  default: 'TypeError: "hour" field is missing'
-  strict mode: 'TypeError: "hour" field is missing'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: PlainDateTime'
   strict mode: 'Test262Error: PlainDateTime'

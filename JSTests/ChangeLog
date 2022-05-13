@@ -1,3 +1,13 @@
+2022-05-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        TemporalPlainTime::toTemporalTimeRecord shouldn't require all properties to be provided
+        https://bugs.webkit.org/show_bug.cgi?id=240394
+
+        Reviewed by Yusuke Suzuki and Darin Adler.
+
+        * stress/temporal-plaintime.js:
+        * test262/expectations.yaml: Mark 32 test cases as passing.
+
 2022-05-12  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Unskip no longer failing test

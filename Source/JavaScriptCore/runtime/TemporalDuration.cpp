@@ -94,10 +94,8 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
         JSValue value = durationLike->get(globalObject, temporalUnitPluralPropertyName(vm, unit));
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (value.isUndefined()) {
-            result[unit] = 0;
+        if (value.isUndefined())
             continue;
-        }
 
         hasRelevantProperty = true;
         result[unit] = value.toIntegerWithoutRounding(globalObject);

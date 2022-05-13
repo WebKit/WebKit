@@ -156,23 +156,17 @@ shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30[u-ca=japanese]')), 
       nanosecond: 205
     });
     shouldBe(String(time), `19:39:09.068346205`);
-
-    // This is spec bug. Currently this throws an error. But possibly this should not throw an error.
-    // Tracked in https://github.com/tc39/proposal-temporal/issues/1803.
-    shouldThrow(() => {
-        Temporal.PlainTime.from({ hour: 19, minute: 39, second: 9 });
-    }, TypeError);
 }
 {
     // Different overflow modes
-    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: 60, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'constrain' })), `15:59:00`);
-    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: -1, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'constrain' })), `15:00:00`);
+    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: 60 }, { overflow: 'constrain' })), `15:59:00`);
+    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: -1 }, { overflow: 'constrain' })), `15:00:00`);
 }
 shouldThrow(() => {
-    Temporal.PlainTime.from({ hour: 15, minute: 60, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'reject' });
+    Temporal.PlainTime.from({ hour: 15, minute: 60 }, { overflow: 'reject' });
 }, RangeError);
 shouldThrow(() => {
-    Temporal.PlainTime.from({ hour: 15, minute: -1, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'reject' });
+    Temporal.PlainTime.from({ hour: 15, minute: -1 }, { overflow: 'reject' });
 }, RangeError);
 
 shouldThrow(() => { new Temporal.PlainTime(-1); }, RangeError);
