@@ -475,9 +475,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ListboxPart:
         m_value.valueID = CSSValueListbox;
         break;
-    case ListItemPart:
-        m_value.valueID = CSSValueListitem;
-        break;
     case MediaPlayButtonPart:
         m_value.valueID = CSSValueMediaPlayButton;
         break;
@@ -532,9 +529,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ProgressBarPart:
         m_value.valueID = CSSValueProgressBar;
         break;
-    case ProgressBarValuePart:
-        m_value.valueID = CSSValueProgressBarValue;
-        break;
     case SliderHorizontalPart:
         m_value.valueID = CSSValueSliderHorizontal;
         break;
@@ -546,9 +540,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         break;
     case SliderThumbVerticalPart:
         m_value.valueID = CSSValueSliderthumbVertical;
-        break;
-    case CaretPart:
-        m_value.valueID = CSSValueCaret;
         break;
     case SearchFieldPart:
         m_value.valueID = CSSValueSearchfield;

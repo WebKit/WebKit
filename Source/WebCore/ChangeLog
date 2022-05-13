@@ -1,3 +1,19 @@
+2022-05-13  Tim Nguyen  <ntim@apple.com>
+
+        [css-ui] Remove caret/progress-bar-value/listitem values from appearance property
+        https://bugs.webkit.org/show_bug.cgi?id=240390
+
+        Reviewed by Aditya Keerthi.
+
+        Test: imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.cpp:
+        (WebCore::operator<<):
+        * platform/ThemeTypes.h:
+
 2022-05-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Move handling of active descendant changed notifications out of AccessibilityRenderObject.

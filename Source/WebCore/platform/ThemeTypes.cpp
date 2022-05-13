@@ -43,7 +43,6 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
     case DefaultButtonPart: ts << "default-button-part"; break;
     case InnerSpinButtonPart: ts << "inner-spin-button-part"; break;
     case ListboxPart: ts << "listbox-part"; break;
-    case ListItemPart: ts << "list-item-part"; break;
     case MediaControlsDarkBarBackgroundPart: ts << "media-controls-dark-bar-background-part"; break;
     case MediaControlsLightBarBackgroundPart: ts << "media-controls-light-bar-background-part"; break;
     case MediaFullScreenVolumeSliderPart: ts << "media-full-screen-volume-slider-part"; break;
@@ -58,12 +57,10 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
     case MenulistButtonPart: ts << "menulist-button-part"; break;
     case MeterPart: ts << "meter-part"; break;
     case ProgressBarPart: ts << "progress-bar-part"; break;
-    case ProgressBarValuePart: ts << "progress-bar-value-part"; break;
     case SliderHorizontalPart: ts << "slider-horizontal-part"; break;
     case SliderVerticalPart: ts << "slider-vertical-part"; break;
     case SliderThumbHorizontalPart: ts << "slider-thumb-horizontal-part"; break;
     case SliderThumbVerticalPart: ts << "slider-thumb-vertical-part"; break;
-    case CaretPart: ts << "caret-part"; break;
     case SearchFieldPart: ts << "search-field-part"; break;
     case SearchFieldDecorationPart: ts << "search-field-decoration-part"; break;
     case SearchFieldResultsDecorationPart: ts << "search-field-results-decoration-part"; break;

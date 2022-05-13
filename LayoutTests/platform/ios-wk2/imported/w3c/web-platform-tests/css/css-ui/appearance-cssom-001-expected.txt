@@ -26,7 +26,7 @@ PASS -webkit-appearance: button-arrow-previous (invalid)
 PASS -webkit-appearance: button-arrow-up (invalid)
 PASS -webkit-appearance: button-focus (invalid)
 FAIL -webkit-appearance: caps-lock-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caps-lock-indicator"
-FAIL -webkit-appearance: caret (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caret"
+PASS -webkit-appearance: caret (invalid)
 PASS -webkit-appearance: checkbox-container (invalid)
 PASS -webkit-appearance: checkbox-label (invalid)
 PASS -webkit-appearance: checkmenuitem (invalid)
@@ -39,7 +39,7 @@ PASS -webkit-appearance: groupbox (invalid)
 PASS -webkit-appearance: image-controls-button (invalid)
 FAIL -webkit-appearance: inner-spin-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "inner-spin-button"
 FAIL -webkit-appearance: list-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "list-button"
-FAIL -webkit-appearance: listitem (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "listitem"
+PASS -webkit-appearance: listitem (invalid)
 PASS -webkit-appearance: media-controls-background (invalid)
 FAIL -webkit-appearance: media-controls-dark-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-dark-bar-background"
 PASS -webkit-appearance: media-controls-fullscreen-background (invalid)
@@ -78,7 +78,7 @@ PASS -webkit-appearance: menuseparator (invalid)
 PASS -webkit-appearance: meterbar (invalid)
 PASS -webkit-appearance: meterchunk (invalid)
 PASS -webkit-appearance: number-input (invalid)
-FAIL -webkit-appearance: progress-bar-value (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "progress-bar-value"
+PASS -webkit-appearance: progress-bar-value (invalid)
 PASS -webkit-appearance: progressbar (invalid)
 PASS -webkit-appearance: progressbar-vertical (invalid)
 PASS -webkit-appearance: progresschunk (invalid)
@@ -189,7 +189,7 @@ PASS appearance: button-arrow-previous (invalid)
 PASS appearance: button-arrow-up (invalid)
 PASS appearance: button-focus (invalid)
 FAIL appearance: caps-lock-indicator (invalid) assert_equals: style.appearance expected "" but got "caps-lock-indicator"
-FAIL appearance: caret (invalid) assert_equals: style.appearance expected "" but got "caret"
+PASS appearance: caret (invalid)
 PASS appearance: checkbox-container (invalid)
 PASS appearance: checkbox-label (invalid)
 PASS appearance: checkmenuitem (invalid)
@@ -202,7 +202,7 @@ PASS appearance: groupbox (invalid)
 PASS appearance: image-controls-button (invalid)
 FAIL appearance: inner-spin-button (invalid) assert_equals: style.appearance expected "" but got "inner-spin-button"
 FAIL appearance: list-button (invalid) assert_equals: style.appearance expected "" but got "list-button"
-FAIL appearance: listitem (invalid) assert_equals: style.appearance expected "" but got "listitem"
+PASS appearance: listitem (invalid)
 PASS appearance: media-controls-background (invalid)
 FAIL appearance: media-controls-dark-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-dark-bar-background"
 PASS appearance: media-controls-fullscreen-background (invalid)
@@ -241,7 +241,7 @@ PASS appearance: menuseparator (invalid)
 PASS appearance: meterbar (invalid)
 PASS appearance: meterchunk (invalid)
 PASS appearance: number-input (invalid)
-FAIL appearance: progress-bar-value (invalid) assert_equals: style.appearance expected "" but got "progress-bar-value"
+PASS appearance: progress-bar-value (invalid)
 PASS appearance: progressbar (invalid)
 PASS appearance: progressbar-vertical (invalid)
 PASS appearance: progresschunk (invalid)

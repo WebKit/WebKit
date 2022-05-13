@@ -842,7 +842,6 @@ button
 default-button
 inner-spin-button
 listbox
-listitem
 media-controls-dark-bar-background
 media-controls-light-bar-background
 media-fullscreen-volume-slider
@@ -857,12 +856,10 @@ menulist
 menulist-button
 meter
 progress-bar
-progress-bar-value
 slider-horizontal
 slider-vertical
 sliderthumb-horizontal
 sliderthumb-vertical
-caret
 searchfield
 searchfield-decoration
 searchfield-results-decoration
