@@ -146,7 +146,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
         return nodes;
     }
 
-    if (auto* nodes = assignedNodes(); nodes) {
+    if (auto* nodes = assignedNodes()) {
         return compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
             return nodeWeakPtr.get();
         });

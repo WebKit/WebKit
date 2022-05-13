@@ -1,5 +1,15 @@
 2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        Remove unneeded check in HTMLSlotElement::assignedNodes()
+        https://bugs.webkit.org/show_bug.cgi?id=240340
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::assignedNodes const):
+
+2022-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
         ARIA reflection for FrozenArray<Element> attributes
         https://bugs.webkit.org/show_bug.cgi?id=239853
         <rdar://problem/92797836>
