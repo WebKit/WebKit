@@ -372,6 +372,8 @@ class Git(SCM, SVNRepository):
 
         if git_index:
             command += ['--cached']
+        elif git_commit:
+            command += [merge_base]
         elif merge_base != head:
             command += ['HEAD...{}'.format(merge_base)]
 

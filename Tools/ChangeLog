@@ -1,3 +1,14 @@
+2022-05-14  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        [webkit-patch] Include commit messages in patches (Follow-up) 
+        https://bugs.webkit.org/show_bug.cgi?id=240256
+        <rdar://problem/92982358>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.create_patch): Prefer commit specified by user.
+
 2022-05-13  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] Apply patches commit messages
