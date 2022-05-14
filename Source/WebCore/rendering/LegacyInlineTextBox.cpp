@@ -397,7 +397,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
 
-    TextBoxPainter textBoxPainter(*this, paintInfo, paintOffset);
+    LegacyTextBoxPainter textBoxPainter(*this, paintInfo, paintOffset);
     textBoxPainter.paint();
 }
 

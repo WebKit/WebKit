@@ -1,3 +1,92 @@
+2022-05-14  Antti Koivisto  <antti@apple.com>
+
+        Template TextBoxPainter on line layout path
+        https://bugs.webkit.org/show_bug.cgi?id=240416
+
+        Reviewed by Alan Bujtas.
+
+        Painting currently goes via a line layout path agnostic iterator.
+        This is inefficient since we always know what sort of layout we are painting.
+
+        * layout/integration/inline/InlineIteratorBox.cpp:
+        (WebCore::InlineIterator::Box::visualRect const):
+        * layout/integration/inline/InlineIteratorBox.h:
+        (WebCore::InlineIterator::Box::containingBlock const):
+        (WebCore::InlineIterator::Box::visualRect const): Deleted.
+        * layout/integration/inline/InlineIteratorBoxLegacyPath.h:
+        (WebCore::InlineIterator::BoxLegacyPath::containingBlock const):
+        (WebCore::InlineIterator::BoxLegacyPath::direction const):
+        (WebCore::InlineIterator::BoxLegacyPath::isFirstLine const):
+        * layout/integration/inline/InlineIteratorBoxModernPath.h:
+        (WebCore::InlineIterator::BoxModernPath::containingBlock const):
+        (WebCore::InlineIterator::BoxModernPath::direction const):
+        (WebCore::InlineIterator::BoxModernPath::isFirstLine const):
+        (WebCore::InlineIterator::BoxModernPath::renderText const):
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        * rendering/InlineBoxPainter.cpp:
+        (WebCore::InlineBoxPainter::paintMask):
+        (WebCore::InlineBoxPainter::paintDecorations):
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::paint):
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::LegacyTextBoxPainter::LegacyTextBoxPainter):
+        (WebCore::ModernTextBoxPainter::ModernTextBoxPainter):
+        (WebCore::TextBoxPainter<TextBoxPath>::TextBoxPainter):
+        (WebCore::TextBoxPainter<TextBoxPath>::~TextBoxPainter):
+        (WebCore::TextBoxPainter<TextBoxPath>::makeIterator const):
+        (WebCore::TextBoxPainter<TextBoxPath>::paint):
+        (WebCore::TextBoxPainter<TextBoxPath>::createMarkedTextFromSelectionInBox):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintBackground):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintCompositionBackground):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintForeground):
+        (WebCore::TextBoxPainter<TextBoxPath>::createDecorationPainter):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintBackgroundDecorations):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintForegroundDecorations):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintCompositionUnderlines):
+        (WebCore::TextBoxPainter<TextBoxPath>::textPosition):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintCompositionUnderline):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarkers):
+        (WebCore::LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds):
+        (WebCore::TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker):
+        (WebCore::TextBoxPainter<TextBoxPath>::computePaintRect):
+        (WebCore::calculateDocumentMarkerBounds):
+        (WebCore::TextBoxPainter<TextBoxPath>::computeHaveSelection const):
+        (WebCore::TextBoxPainter<TextBoxPath>::fontCascade const):
+        (WebCore::TextBoxPainter<TextBoxPath>::textOriginFromPaintRect const):
+        (WebCore::TextBoxPainter<TextBoxPath>::debugTextShadow const):
+        (WebCore::TextBoxPainter::TextBoxPainter): Deleted.
+        (WebCore::TextBoxPainter::~TextBoxPainter): Deleted.
+        (WebCore::TextBoxPainter::paint): Deleted.
+        (WebCore::TextBoxPainter::createMarkedTextFromSelectionInBox): Deleted.
+        (WebCore::TextBoxPainter::paintBackground): Deleted.
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations): Deleted.
+        (WebCore::TextBoxPainter::paintCompositionBackground): Deleted.
+        (WebCore::TextBoxPainter::paintForeground): Deleted.
+        (WebCore::TextBoxPainter::createDecorationPainter): Deleted.
+        (WebCore::TextBoxPainter::paintBackgroundDecorations): Deleted.
+        (WebCore::TextBoxPainter::paintForegroundDecorations): Deleted.
+        (WebCore::TextBoxPainter::paintCompositionUnderlines): Deleted.
+        (WebCore::textPosition): Deleted.
+        (WebCore::TextBoxPainter::paintCompositionUnderline): Deleted.
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarkers): Deleted.
+        (WebCore::TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds): Deleted.
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarker): Deleted.
+        (WebCore::TextBoxPainter::computePaintRect): Deleted.
+        (WebCore::TextBoxPainter::calculateDocumentMarkerBounds): Deleted.
+        (WebCore::TextBoxPainter::computeHaveSelection const): Deleted.
+        (WebCore::TextBoxPainter::fontCascade const): Deleted.
+        (WebCore::TextBoxPainter::textOriginFromPaintRect const): Deleted.
+        (WebCore::TextBoxPainter::debugTextShadow const): Deleted.
+        * rendering/TextBoxPainter.h:
+        (WebCore::TextBoxPainter::textBox const):
+
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
         [FFC][Integration] Add "fixed sized/all default value" flex layout

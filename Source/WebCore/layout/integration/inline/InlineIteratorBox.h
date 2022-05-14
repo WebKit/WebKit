@@ -60,7 +60,7 @@ public:
     bool isInlineBox() const;
     bool isRootInlineBox() const;
 
-    FloatRect visualRect(float formattingRootSizeInBlockDirection) const;
+    FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
 
     float logicalTop() const { return isHorizontal() ? visualRectIgnoringBlockDirection().y() : visualRectIgnoringBlockDirection().x(); }
@@ -85,6 +85,7 @@ public:
     RenderObject::HighlightState selectionState() const;
 
     const RenderObject& renderer() const;
+    const RenderBlockFlow& containingBlock() const;
     const RenderStyle& style() const;
 
     // FIXME: Remove. For intermediate porting steps only.
@@ -100,17 +101,16 @@ public:
 
     LineBoxIterator lineBox() const;
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    const BoxModernPath& modernPath() const;
+#endif
+    const BoxLegacyPath& legacyPath() const;
+
 protected:
     friend class BoxIterator;
     friend class InlineBoxIterator;
     friend class LeafBoxIterator;
     friend class TextBoxIterator;
-
-    // To help with debugging.
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const BoxModernPath& modernPath() const;
-#endif
-    const BoxLegacyPath& legacyPath() const;
 
     PathVariant m_pathVariant;
 };
@@ -184,19 +184,6 @@ inline bool Box::isRootInlineBox() const
     });
 }
 
-inline FloatRect Box::visualRect(float formattingRootSizeInBlockDirection) const
-{
-    auto visualRect = visualRectIgnoringBlockDirection();
-    if (!style().isFlippedBlocksWritingMode())
-        return visualRect;
-
-    if (style().isHorizontalWritingMode())
-        visualRect.setY(formattingRootSizeInBlockDirection - visualRect.maxY());
-    else
-        visualRect.setX(formattingRootSizeInBlockDirection - visualRect.maxX());
-    return visualRect;
-}
-
 inline FloatRect Box::visualRectIgnoringBlockDirection() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
@@ -243,6 +230,13 @@ inline const RenderObject& Box::renderer() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderObject& {
         return path.renderer();
+    });
+}
+
+inline const RenderBlockFlow& Box::containingBlock() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderBlockFlow& {
+        return path.containingBlock();
     });
 }
 

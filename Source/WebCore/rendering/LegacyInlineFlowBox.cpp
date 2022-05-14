@@ -926,7 +926,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 
-    auto documentMarkerBounds = TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(textBox);
+    auto documentMarkerBounds = LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(textBox);
     documentMarkerBounds.move(textBox.logicalLeft(), textBox.logicalTop());
     logicalVisualOverflow = unionRect(logicalVisualOverflow, LayoutRect(documentMarkerBounds));
 
