@@ -377,8 +377,6 @@ NSString * nsStringNilIfEmpty(const String&);
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 bool codePointCompareLessThan(const String&, const String&);
 
-template<typename CharacterType> void appendNumber(Vector<CharacterType>&, unsigned char number);
-
 // Shared global empty and null string.
 struct StaticString {
     constexpr StaticString(StringImpl::StaticStringImpl* pointer)
@@ -545,29 +543,6 @@ inline bool codePointCompareLessThan(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl()) < 0;
 }
 
-template<typename CharacterType>
-inline void appendNumber(Vector<CharacterType>& vector, unsigned char number)
-{
-    int numberLength = number > 99 ? 3 : (number > 9 ? 2 : 1);
-    size_t vectorSize = vector.size();
-    vector.grow(vectorSize + numberLength);
-
-    switch (numberLength) {
-    case 3:
-        vector[vectorSize + 2] = number % 10 + '0';
-        number /= 10;
-        FALLTHROUGH;
-
-    case 2:
-        vector[vectorSize + 1] = number % 10 + '0';
-        number /= 10;
-        FALLTHROUGH;
-
-    case 1:
-        vector[vectorSize] = number % 10 + '0';
-    }
-}
-
 inline String String::fromUTF8(const Vector<LChar>& characters)
 {
     if (characters.isEmpty())
@@ -633,7 +608,6 @@ inline String operator"" _str(const char* characters, size_t)
 using WTF::HashTranslatorASCIILiteral;
 using WTF::KeepTrailingZeros;
 using WTF::String;
-using WTF::appendNumber;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;
 using WTF::emptyString;
