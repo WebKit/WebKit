@@ -57,10 +57,11 @@ static constexpr size_t smallTreeThreshold = 8;
 // FIXME: see webkit.org/b/230964
 #define CAN_USE_FIRST_LINE_STYLE_RESOLVE 1
 
-static RenderStyle rootBoxStyle(const RenderStyle& style)
+static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
 {
-    auto clonedStyle = RenderStyle::clone(style);
-    clonedStyle.setEffectiveDisplay(DisplayType::Block);
+    auto clonedStyle = RenderStyle::clone(rootRenderer.style());
+    if (is<RenderBlockFlow>(rootRenderer))
+        clonedStyle.setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 }
 
@@ -71,7 +72,8 @@ static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& roo
     if (rootRenderer.style() == firstLineStyle)
         return { };
     auto clonedStyle = RenderStyle::clonePtr(firstLineStyle);
-    clonedStyle->setEffectiveDisplay(DisplayType::Block);
+    if (is<RenderBlockFlow>(rootRenderer))
+        clonedStyle->setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 #else
     UNUSED_PARAM(rootRenderer);
@@ -81,7 +83,7 @@ static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& roo
 
 BoxTree::BoxTree(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(rootRenderer.style()), rootBoxFirstLineStyle(rootRenderer))
+    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(rootRenderer), rootBoxFirstLineStyle(rootRenderer))
 {
     if (rootRenderer.isAnonymous())
         m_root.setIsAnonymous();
@@ -217,7 +219,7 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     };
 
     if (&layoutBox == &rootLayoutBox())
-        layoutBox.updateStyle(rootBoxStyle(style), rootBoxFirstLineStyle(downcast<RenderBlockFlow>(renderer)));
+        layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), rootBoxFirstLineStyle(downcast<RenderBlock>(renderer)));
     else
         layoutBox.updateStyle(style, firstLineStyle());
 
