@@ -1,5 +1,22 @@
 2022-05-13  Tim Horton  <timothy_horton@apple.com>
 
+        ApplePayLogoSystemImage needlessly loads PassKit in WebKit child processes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=240404
+        <rdar://93070349>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::systemDirectoryPath):
+        Move the implementation of systemDirectoryPath() from WebKit2.
+
+        systemDirectoryPath() provides the correct path to /System
+        in the simulator, for consumption by APIs (like NSURL) that do not
+        adjust to the simulator-rooted path themselves.
+
+2022-05-13  Tim Horton  <timothy_horton@apple.com>
+
         Add UI-side layers for optionally indicating interaction regions
         https://bugs.webkit.org/show_bug.cgi?id=240372
         <rdar://problem/87170289>

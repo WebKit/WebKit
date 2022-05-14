@@ -1,3 +1,19 @@
+2022-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        ApplePayLogoSystemImage needlessly loads PassKit in WebKit child processes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=240404
+        <rdar://93070349>
+
+        Reviewed by Chris Dumez.
+
+        * Modules/applepay/ApplePayLogoSystemImage.mm:
+        (WebCore::passKitBundle):
+        Adopt systemDirectoryPath instead of unnecessarily loading PassKit just
+        to find its bundle path (the previous implementation made use of the fact
+        that `dlopen` internally adjusts the search path to look in the simulator
+        root, but also resulted in wasted time loading and initializing PassKit
+        and its dependencies).
+
 2022-05-13  Tim Nguyen  <ntim@apple.com>
 
         [css-ui] Unexpose appearance property values already handled by appearance: auto

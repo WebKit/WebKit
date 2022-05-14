@@ -38,6 +38,7 @@
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>
+#import <wtf/FileSystem.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
@@ -99,20 +100,6 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 #endif
     return launchOptions.processType == ProcessLauncher::ProcessType::Network;
 #endif
-}
-
-static NSString *systemDirectoryPath()
-{
-    static NeverDestroyed<RetainPtr<NSString>> path = adoptNS([^{
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-        char *simulatorRoot = getenv("SIMULATOR_ROOT");
-        return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
-#else
-        return @"/System/";
-#endif
-    }() copy]);
-
-    return path.get().get();
 }
 
 void ProcessLauncher::launchProcess()
@@ -220,7 +207,7 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:systemDirectoryPath()];
+    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
     if (isWebKitDevelopmentBuild) {
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);

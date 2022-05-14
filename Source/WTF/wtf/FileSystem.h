@@ -204,6 +204,7 @@ WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix);
+WTF_EXPORT_PRIVATE NSString *systemDirectoryPath();
 
 // Allow reading cloud files with no local copy.
 enum class PolicyScope : uint8_t { Process, Thread };

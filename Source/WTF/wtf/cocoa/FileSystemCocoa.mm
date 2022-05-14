@@ -236,5 +236,19 @@ bool excludeFromBackup(const String& path)
     return true;
 }
 
+NSString *systemDirectoryPath()
+{
+    static NeverDestroyed<RetainPtr<NSString>> path = ^{
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        char *simulatorRoot = getenv("SIMULATOR_ROOT");
+        return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
+#else
+        return @"/System/";
+#endif
+    }();
+
+    return path.get().get();
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF
