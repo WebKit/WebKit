@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+struct EventNames;
+
 enum class TrackingType : uint8_t {
     NotTracking = 0,
     Asynchronous = 1,
@@ -40,7 +42,7 @@ enum class TrackingType : uint8_t {
 };
 
 struct EventTrackingRegions {
-    enum class Event : uint8_t {
+    enum class EventType : uint8_t {
         Mousedown,
         Mousemove,
         Mouseup,
@@ -59,23 +61,24 @@ struct EventTrackingRegions {
         Wheel,
     };
 
-    WEBCORE_EXPORT static ASCIILiteral eventName(Event);
+    WEBCORE_EXPORT static ASCIILiteral eventName(EventType);
+    WEBCORE_EXPORT static const AtomString& eventNameAtomString(const EventNames&, EventType);
 
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
 
     // Regions for which events must be sent before performing the default behavior.
-    // The key is the Event Name with an active handler.
-    using EventSpecificSynchronousDispatchRegions = HashMap<Event, Region, WTF::IntHash<Event>, WTF::StrongEnumHashTraits<Event>>;
+    // The key is the EventType with an active handler.
+    using EventSpecificSynchronousDispatchRegions = HashMap<EventType, Region, WTF::IntHash<EventType>, WTF::StrongEnumHashTraits<EventType>>;
     EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
 
     bool isEmpty() const;
 
     void translate(IntSize);
-    void uniteSynchronousRegion(Event, const Region&);
+    void uniteSynchronousRegion(EventType, const Region&);
     void unite(const EventTrackingRegions&);
 
-    TrackingType trackingTypeForPoint(Event, const IntPoint&);
+    TrackingType trackingTypeForPoint(EventType, const IntPoint&);
 };
 
 bool operator==(const EventTrackingRegions&, const EventTrackingRegions&);
@@ -85,25 +88,25 @@ inline bool operator!=(const EventTrackingRegions& a, const EventTrackingRegions
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::EventTrackingRegions::Event> {
+template<> struct EnumTraits<WebCore::EventTrackingRegions::EventType> {
     using values = EnumValues<
-        WebCore::EventTrackingRegions::Event,
-        WebCore::EventTrackingRegions::Event::Mousedown,
-        WebCore::EventTrackingRegions::Event::Mousemove,
-        WebCore::EventTrackingRegions::Event::Mouseup,
-        WebCore::EventTrackingRegions::Event::Mousewheel,
-        WebCore::EventTrackingRegions::Event::Pointerdown,
-        WebCore::EventTrackingRegions::Event::Pointerenter,
-        WebCore::EventTrackingRegions::Event::Pointerleave,
-        WebCore::EventTrackingRegions::Event::Pointermove,
-        WebCore::EventTrackingRegions::Event::Pointerout,
-        WebCore::EventTrackingRegions::Event::Pointerover,
-        WebCore::EventTrackingRegions::Event::Pointerup,
-        WebCore::EventTrackingRegions::Event::Touchend,
-        WebCore::EventTrackingRegions::Event::Touchforcechange,
-        WebCore::EventTrackingRegions::Event::Touchmove,
-        WebCore::EventTrackingRegions::Event::Touchstart,
-        WebCore::EventTrackingRegions::Event::Wheel
+        WebCore::EventTrackingRegions::EventType,
+        WebCore::EventTrackingRegions::EventType::Mousedown,
+        WebCore::EventTrackingRegions::EventType::Mousemove,
+        WebCore::EventTrackingRegions::EventType::Mouseup,
+        WebCore::EventTrackingRegions::EventType::Mousewheel,
+        WebCore::EventTrackingRegions::EventType::Pointerdown,
+        WebCore::EventTrackingRegions::EventType::Pointerenter,
+        WebCore::EventTrackingRegions::EventType::Pointerleave,
+        WebCore::EventTrackingRegions::EventType::Pointermove,
+        WebCore::EventTrackingRegions::EventType::Pointerout,
+        WebCore::EventTrackingRegions::EventType::Pointerover,
+        WebCore::EventTrackingRegions::EventType::Pointerup,
+        WebCore::EventTrackingRegions::EventType::Touchend,
+        WebCore::EventTrackingRegions::EventType::Touchforcechange,
+        WebCore::EventTrackingRegions::EventType::Touchmove,
+        WebCore::EventTrackingRegions::EventType::Touchstart,
+        WebCore::EventTrackingRegions::EventType::Wheel
     >;
 };
 

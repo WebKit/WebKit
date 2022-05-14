@@ -3067,28 +3067,28 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     for (auto& touchPoint : touchStartEvent.touchPoints()) {
         IntPoint location = touchPoint.location();
-        auto updateTrackingType = [this, location](TrackingType& trackingType, EventTrackingRegions::Event event) {
+        auto updateTrackingType = [this, location](TrackingType& trackingType, EventTrackingRegions::EventType eventType) {
             if (trackingType == TrackingType::Synchronous)
                 return;
 
-            TrackingType trackingTypeForLocation = m_scrollingCoordinatorProxy->eventTrackingTypeForPoint(event, location);
+            TrackingType trackingTypeForLocation = m_scrollingCoordinatorProxy->eventTrackingTypeForPoint(eventType, location);
 
             trackingType = mergeTrackingTypes(trackingType, trackingTypeForLocation);
         };
-        updateTrackingType(m_touchAndPointerEventTracking.touchForceChangedTracking, EventTrackingRegions::Event::Touchforcechange);
-        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::Event::Touchstart);
-        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::Event::Touchmove);
-        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::Event::Touchend);
-        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::Event::Pointerover);
-        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::Event::Pointerenter);
-        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::Event::Pointerdown);
-        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::Event::Pointermove);
-        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::Event::Pointerup);
-        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::Event::Pointerout);
-        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::Event::Pointerleave);
-        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::Event::Mousedown);
-        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::Event::Mousemove);
-        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::Event::Mouseup);
+        updateTrackingType(m_touchAndPointerEventTracking.touchForceChangedTracking, EventTrackingRegions::EventType::Touchforcechange);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::EventType::Touchstart);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::EventType::Touchmove);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::EventType::Touchend);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::EventType::Pointerover);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::EventType::Pointerenter);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::EventType::Pointerdown);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::EventType::Pointermove);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::EventType::Pointerup);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::EventType::Pointerout);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::EventType::Pointerleave);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, EventTrackingRegions::EventType::Mousedown);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, EventTrackingRegions::EventType::Mousemove);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, EventTrackingRegions::EventType::Mouseup);
     }
 #else
     UNUSED_PARAM(touchStartEvent);

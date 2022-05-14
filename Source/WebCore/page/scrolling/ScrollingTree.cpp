@@ -95,8 +95,8 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
         IntPoint roundedPosition = roundedIntPoint(position);
 
         // Event regions are affected by page scale, so no need to map through scale.
-        bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::Event::Wheel, roundedPosition) == TrackingType::Synchronous
-            || m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::Event::Mousewheel, roundedPosition) == TrackingType::Synchronous;
+        bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Wheel, roundedPosition) == TrackingType::Synchronous
+            || m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Mousewheel, roundedPosition) == TrackingType::Synchronous;
         LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
         if (isSynchronousDispatchRegion)
@@ -541,10 +541,10 @@ std::optional<WheelScrollGestureState> ScrollingTree::gestureState()
     return m_treeState.gestureState;
 }
 
-TrackingType ScrollingTree::eventTrackingTypeForPoint(EventTrackingRegions::Event event, IntPoint p)
+TrackingType ScrollingTree::eventTrackingTypeForPoint(EventTrackingRegions::EventType eventType, IntPoint p)
 {
     Locker locker { m_treeStateLock };
-    return m_treeState.eventTrackingRegions.trackingTypeForPoint(event, p);
+    return m_treeState.eventTrackingRegions.trackingTypeForPoint(eventType, p);
 }
 
 // Can be called from the main thread.

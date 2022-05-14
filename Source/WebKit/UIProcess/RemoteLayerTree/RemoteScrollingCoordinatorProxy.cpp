@@ -195,9 +195,9 @@ void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMo
     m_scrollingTree->handleMouseEvent(event);
 }
 
-TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::Event event, IntPoint p) const
+TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType eventType, IntPoint p) const
 {
-    return m_scrollingTree->eventTrackingTypeForPoint(event, p);
+    return m_scrollingTree->eventTrackingTypeForPoint(eventType, p);
 }
 
 void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale)

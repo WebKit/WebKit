@@ -177,15 +177,15 @@ static void drawRightAlignedText(const String& text, GraphicsContext& context, c
 
 void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, GraphicsContext& context, const IntRect&)
 {
-    static constexpr std::pair<EventTrackingRegions::Event, SRGBA<uint8_t>> colorMappings[] = {
-        { EventTrackingRegions::Event::Mousedown, { 80, 245, 80, 50 } },
-        { EventTrackingRegions::Event::Mousemove, { 245, 245, 80, 50 } },
-        { EventTrackingRegions::Event::Mouseup, { 80, 245, 176, 50 } },
-        { EventTrackingRegions::Event::Touchend, { 191, 63, 127, 50 } },
-        { EventTrackingRegions::Event::Touchforcechange, { 63, 63, 191, 50 } },
-        { EventTrackingRegions::Event::Touchmove, { 80, 204, 245, 50 } },
-        { EventTrackingRegions::Event::Touchstart, { 191, 191, 63, 50 } },
-        { EventTrackingRegions::Event::Wheel, { 255, 128, 0, 50 } },
+    static constexpr std::pair<EventTrackingRegions::EventType, SRGBA<uint8_t>> colorMappings[] = {
+        { EventTrackingRegions::EventType::Mousedown, { 80, 245, 80, 50 } },
+        { EventTrackingRegions::EventType::Mousemove, { 245, 245, 80, 50 } },
+        { EventTrackingRegions::EventType::Mouseup, { 80, 245, 176, 50 } },
+        { EventTrackingRegions::EventType::Touchend, { 191, 63, 127, 50 } },
+        { EventTrackingRegions::EventType::Touchforcechange, { 63, 63, 191, 50 } },
+        { EventTrackingRegions::EventType::Touchmove, { 80, 204, 245, 50 } },
+        { EventTrackingRegions::EventType::Touchstart, { 191, 191, 63, 50 } },
+        { EventTrackingRegions::EventType::Wheel, { 255, 128, 0, 50 } },
     };
     constexpr SortedArrayMap colors { colorMappings };
     constexpr auto defaultColor = Color::black.colorWithAlphaByte(64);
@@ -212,20 +212,20 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     };
 
 #if ENABLE(TOUCH_EVENTS)
-    auto drawEventLegend = [&](EventTrackingRegions::Event event) {
-        drawLegend(colors.get(event), EventTrackingRegions::eventName(event));
+    auto drawEventLegend = [&](EventTrackingRegions::EventType eventType) {
+        drawLegend(colors.get(eventType), EventTrackingRegions::eventName(eventType));
     };
-    drawEventLegend(EventTrackingRegions::Event::Touchstart);
-    drawEventLegend(EventTrackingRegions::Event::Touchmove);
-    drawEventLegend(EventTrackingRegions::Event::Touchend);
-    drawEventLegend(EventTrackingRegions::Event::Touchforcechange);
+    drawEventLegend(EventTrackingRegions::EventType::Touchstart);
+    drawEventLegend(EventTrackingRegions::EventType::Touchmove);
+    drawEventLegend(EventTrackingRegions::EventType::Touchend);
+    drawEventLegend(EventTrackingRegions::EventType::Touchforcechange);
     drawLegend(m_color, "passive listeners"_s);
-    drawEventLegend(EventTrackingRegions::Event::Mousedown);
-    drawEventLegend(EventTrackingRegions::Event::Mousemove);
-    drawEventLegend(EventTrackingRegions::Event::Mouseup);
+    drawEventLegend(EventTrackingRegions::EventType::Mousedown);
+    drawEventLegend(EventTrackingRegions::EventType::Mousemove);
+    drawEventLegend(EventTrackingRegions::EventType::Mouseup);
 #else
     // On desktop platforms, the "wheel" region includes the non-fast scrollable region.
-    drawLegend(colors.get(EventTrackingRegions::Event::Wheel), "non-fast region"_s);
+    drawLegend(colors.get(EventTrackingRegions::EventType::Wheel), "non-fast region"_s);
 #endif
 
     for (auto& region : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions)

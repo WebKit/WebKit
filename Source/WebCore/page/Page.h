@@ -361,7 +361,7 @@ public:
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
     WEBCORE_EXPORT Ref<DOMRectList> nonFastScrollableRectsForTesting();
 
-    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(EventTrackingRegions::Event);
+    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(EventTrackingRegions::EventType);
     WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRectsForTesting();
 
     WEBCORE_EXPORT void settingsDidChange();

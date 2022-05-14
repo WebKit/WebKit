@@ -2319,14 +2319,14 @@ ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& e
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    std::array<EventTrackingRegions::Event, 4> touchEvents = { {
-        EventTrackingRegions::Event::Touchstart,
-        EventTrackingRegions::Event::Touchmove,
-        EventTrackingRegions::Event::Touchend,
-        EventTrackingRegions::Event::Touchforcechange,
+    std::array<EventTrackingRegions::EventType, 4> touchEvents = { {
+        EventTrackingRegions::EventType::Touchstart,
+        EventTrackingRegions::EventType::Touchmove,
+        EventTrackingRegions::EventType::Touchend,
+        EventTrackingRegions::EventType::Touchforcechange,
     } };
 
-    std::optional<EventTrackingRegions::Event> touchEvent;
+    std::optional<EventTrackingRegions::EventType> touchEvent;
     for (auto event : touchEvents) {
         if (eventName == EventTrackingRegions::eventName(event)) {
             touchEvent = event;
