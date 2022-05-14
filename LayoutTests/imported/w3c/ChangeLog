@@ -1,5 +1,23 @@
 2022-05-13  Tim Nguyen  <ntim@apple.com>
 
+        [css-ui] Unexpose appearance property values already handled by appearance: auto
+        https://bugs.webkit.org/show_bug.cgi?id=240384
+
+        Reviewed by Aditya Keerthi.
+
+        These are only used internally, and are handled by appearance: auto in the UA sheets:
+        - caps-lock-indicator
+        - color-well
+        - list-button
+        - searchfield-decoration
+        - searchfield-results-decoration
+        - searchfield-results-button
+        - searchfield-cancel-button
+
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
+2022-05-13  Tim Nguyen  <ntim@apple.com>
+
         [css-ui] Remove caret/progress-bar-value/listitem values from appearance property
         https://bugs.webkit.org/show_bug.cgi?id=240390
 

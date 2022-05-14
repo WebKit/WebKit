@@ -751,7 +751,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
     case CSSPropertyAppearance:
-        return (valueID >= CSSValueCheckbox && valueID <= CSSValueCapsLockIndicator) || valueID == CSSValueNone || valueID == CSSValueAuto;
+        return (valueID >= CSSValueCheckbox && valueID <= CSSValueTextfield) || valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyBackfaceVisibility:
         return valueID == CSSValueVisible || valueID == CSSValueHidden;
 #if ENABLE(CSS_COMPOSITING)

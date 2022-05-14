@@ -62,11 +62,6 @@ enum ControlPart {
     SliderThumbHorizontalPart,
     SliderThumbVerticalPart,
     SearchFieldPart,
-    SearchFieldDecorationPart,
-    SearchFieldResultsDecorationPart,
-    SearchFieldResultsButtonPart,
-    SearchFieldCancelButtonPart,
-    TextFieldPart,
     RelevancyLevelIndicatorPart,
     ContinuousCapacityLevelIndicatorPart,
     DiscreteCapacityLevelIndicatorPart,
@@ -74,23 +69,27 @@ enum ControlPart {
 #if ENABLE(APPLE_PAY)
     ApplePayButtonPart,
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
-    ColorWellPart,
-#endif
-#if ENABLE(DATALIST_ELEMENT)
-    ListButtonPart,
-#endif
-    TextAreaPart,
 #if ENABLE(ATTACHMENT_ELEMENT)
     AttachmentPart,
     BorderlessAttachmentPart,
 #endif
-    CapsLockIndicatorPart,
+    TextAreaPart,
+    TextFieldPart,
     // Internal-only Values
-#if ENABLE(SERVICE_CONTROLS)
-    ImageControlsButtonPart
+    CapsLockIndicatorPart,
+#if ENABLE(INPUT_TYPE_COLOR)
+    ColorWellPart,
 #endif
-    
+#if ENABLE(SERVICE_CONTROLS)
+    ImageControlsButtonPart,
+#endif
+#if ENABLE(DATALIST_ELEMENT)
+    ListButtonPart,
+#endif
+    SearchFieldDecorationPart,
+    SearchFieldResultsDecorationPart,
+    SearchFieldResultsButtonPart,
+    SearchFieldCancelButtonPart
 };
 
 #if ENABLE(SERVICE_CONTROLS)

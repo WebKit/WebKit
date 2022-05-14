@@ -861,11 +861,6 @@ slider-vertical
 sliderthumb-horizontal
 sliderthumb-vertical
 searchfield
-searchfield-decoration
-searchfield-results-decoration
-searchfield-results-button
-searchfield-cancel-button
-textfield
 relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
@@ -873,18 +868,12 @@ rating-level-indicator
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif
-#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
-color-well
-#endif
-#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
-list-button
-#endif
-textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment
 borderless-attachment
 #endif
-caps-lock-indicator
+textarea
+textfield
 
 //
 // CSS_PROP_BORDER_IMAGE

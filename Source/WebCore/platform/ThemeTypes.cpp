@@ -90,7 +90,7 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
 #endif
     case CapsLockIndicatorPart: ts << "caps-lock-indicator-part"; break;
     }
-    
+
     return ts;
 }
 

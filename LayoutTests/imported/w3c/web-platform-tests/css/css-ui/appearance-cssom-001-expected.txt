@@ -25,12 +25,12 @@ PASS -webkit-appearance: button-arrow-next (invalid)
 PASS -webkit-appearance: button-arrow-previous (invalid)
 PASS -webkit-appearance: button-arrow-up (invalid)
 PASS -webkit-appearance: button-focus (invalid)
-FAIL -webkit-appearance: caps-lock-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caps-lock-indicator"
+PASS -webkit-appearance: caps-lock-indicator (invalid)
 PASS -webkit-appearance: caret (invalid)
 PASS -webkit-appearance: checkbox-container (invalid)
 PASS -webkit-appearance: checkbox-label (invalid)
 PASS -webkit-appearance: checkmenuitem (invalid)
-FAIL -webkit-appearance: color-well (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "color-well"
+PASS -webkit-appearance: color-well (invalid)
 FAIL -webkit-appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "continuous-capacity-level-indicator"
 FAIL -webkit-appearance: default-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "default-button"
 FAIL -webkit-appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "discrete-capacity-level-indicator"
@@ -38,7 +38,7 @@ PASS -webkit-appearance: dualbutton (invalid)
 PASS -webkit-appearance: groupbox (invalid)
 PASS -webkit-appearance: image-controls-button (invalid)
 FAIL -webkit-appearance: inner-spin-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "inner-spin-button"
-FAIL -webkit-appearance: list-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "list-button"
+PASS -webkit-appearance: list-button (invalid)
 PASS -webkit-appearance: listitem (invalid)
 PASS -webkit-appearance: media-controls-background (invalid)
 FAIL -webkit-appearance: media-controls-dark-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-dark-bar-background"
@@ -107,10 +107,10 @@ PASS -webkit-appearance: scrollbarthumb-horizontal (invalid)
 PASS -webkit-appearance: scrollbarthumb-vertical (invalid)
 PASS -webkit-appearance: scrollbartrack-horizontal (invalid)
 PASS -webkit-appearance: scrollbartrack-vertical (invalid)
-FAIL -webkit-appearance: searchfield-cancel-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-cancel-button"
-FAIL -webkit-appearance: searchfield-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-decoration"
-FAIL -webkit-appearance: searchfield-results-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-button"
-FAIL -webkit-appearance: searchfield-results-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-decoration"
+PASS -webkit-appearance: searchfield-cancel-button (invalid)
+PASS -webkit-appearance: searchfield-decoration (invalid)
+PASS -webkit-appearance: searchfield-results-button (invalid)
+PASS -webkit-appearance: searchfield-results-decoration (invalid)
 PASS -webkit-appearance: separator (invalid)
 PASS -webkit-appearance: sheet (invalid)
 FAIL -webkit-appearance: slider-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "slider-vertical"
@@ -188,12 +188,12 @@ PASS appearance: button-arrow-next (invalid)
 PASS appearance: button-arrow-previous (invalid)
 PASS appearance: button-arrow-up (invalid)
 PASS appearance: button-focus (invalid)
-FAIL appearance: caps-lock-indicator (invalid) assert_equals: style.appearance expected "" but got "caps-lock-indicator"
+PASS appearance: caps-lock-indicator (invalid)
 PASS appearance: caret (invalid)
 PASS appearance: checkbox-container (invalid)
 PASS appearance: checkbox-label (invalid)
 PASS appearance: checkmenuitem (invalid)
-FAIL appearance: color-well (invalid) assert_equals: style.appearance expected "" but got "color-well"
+PASS appearance: color-well (invalid)
 FAIL appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.appearance expected "" but got "continuous-capacity-level-indicator"
 FAIL appearance: default-button (invalid) assert_equals: style.appearance expected "" but got "default-button"
 FAIL appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.appearance expected "" but got "discrete-capacity-level-indicator"
@@ -201,7 +201,7 @@ PASS appearance: dualbutton (invalid)
 PASS appearance: groupbox (invalid)
 PASS appearance: image-controls-button (invalid)
 FAIL appearance: inner-spin-button (invalid) assert_equals: style.appearance expected "" but got "inner-spin-button"
-FAIL appearance: list-button (invalid) assert_equals: style.appearance expected "" but got "list-button"
+PASS appearance: list-button (invalid)
 PASS appearance: listitem (invalid)
 PASS appearance: media-controls-background (invalid)
 FAIL appearance: media-controls-dark-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-dark-bar-background"
@@ -270,10 +270,10 @@ PASS appearance: scrollbarthumb-horizontal (invalid)
 PASS appearance: scrollbarthumb-vertical (invalid)
 PASS appearance: scrollbartrack-horizontal (invalid)
 PASS appearance: scrollbartrack-vertical (invalid)
-FAIL appearance: searchfield-cancel-button (invalid) assert_equals: style.appearance expected "" but got "searchfield-cancel-button"
-FAIL appearance: searchfield-decoration (invalid) assert_equals: style.appearance expected "" but got "searchfield-decoration"
-FAIL appearance: searchfield-results-button (invalid) assert_equals: style.appearance expected "" but got "searchfield-results-button"
-FAIL appearance: searchfield-results-decoration (invalid) assert_equals: style.appearance expected "" but got "searchfield-results-decoration"
+PASS appearance: searchfield-cancel-button (invalid)
+PASS appearance: searchfield-decoration (invalid)
+PASS appearance: searchfield-results-button (invalid)
+PASS appearance: searchfield-results-decoration (invalid)
 PASS appearance: separator (invalid)
 PASS appearance: sheet (invalid)
 FAIL appearance: slider-vertical (invalid) assert_equals: style.appearance expected "" but got "slider-vertical"
