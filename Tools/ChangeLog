@@ -1,5 +1,19 @@
 2022-05-13  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkit-patch] Apply patches commit messages
+        https://bugs.webkit.org/show_bug.cgi?id=240402
+        <rdar://93272455>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout):
+        (filter_patch_content): Insert reviewer to git patch as we're applying it.
+        (apply_patch): If a patch has a commit subject, it contains commit messages
+        and we should apply those commit messages.
+
+2022-05-13  Jonathan Bedard  <jbedard@apple.com>
+
         [webkit-patch] Include commit messages in patches
         https://bugs.webkit.org/show_bug.cgi?id=240256
         <rdar://92982358>

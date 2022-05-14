@@ -27,9 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 
-from webkitcorepy import StringIO
+from webkitcorepy import StringIO, string_utils
 
 from webkitpy.common.config import urls
 from webkitpy.common.checkout.changelog import ChangeLog, parse_bug_id_from_changelog
@@ -47,6 +48,27 @@ if sys.version_info > (3, 0):
 # FIXME: Move a bunch of ChangeLog-specific processing from SCM to this object.
 # NOTE: All paths returned from this class should be absolute.
 class Checkout(object):
+    COMMIT_SUBJECT_RE = re.compile(b'Subject: \[PATCH ?(\d+\/\d+)?] (.+)')
+    FILTER_BRANCH_PROGRAM = '''import re
+import sys
+
+lines = [l for l in sys.stdin]
+for s in re.split(r' (Need the bug URL \(OOPS!\).)|(\S+:\/\/\S+)', lines[0].rstrip()):
+    if s and s != ' ':
+        print(s)
+for l in lines[1:]:
+    sys.stdout.write(l)
+'''
+
+    @classmethod
+    def filter_patch_content(cls, content, reviewer=None):
+        new_content = b''
+        for line in string_utils.encode(content).splitlines():
+            if b'Reviewed by NOBODY (OOPS!).' == line and reviewer:
+                line = b'Reviewed by ' + string_utils.encode(reviewer) + b'.'
+            new_content += line + b'\n'
+        return new_content
+
     def __init__(self, scm, executive=None, filesystem=None):
         self._scm = scm
         # FIXME: We shouldn't be grabbing at private members on scm.
@@ -164,14 +186,27 @@ class Checkout(object):
             pass  # We might not have ChangeLogs.
 
     def apply_patch(self, patch):
-        # It's possible that the patch was not made from the root directory.
-        # We should detect and handle that case.
         # FIXME: Move _scm.script_path here once we get rid of all the dependencies.
         # --force (continue after errors) is the common case, so we always use it.
-        args = [self.script_path('svn-apply'), "--force"]
-        if patch.reviewer():
-            args += ['--reviewer', patch.reviewer().full_name]
-        self._executive.run_command(args, input=patch.contents(), cwd=self._scm.checkout_root)
+        from webkitpy.common.checkout.scm import Git
+
+        encoded_patch = string_utils.encode(patch.contents())
+        num_commits = len(self.COMMIT_SUBJECT_RE.findall(encoded_patch))
+        if isinstance(self._scm, Git) and num_commits:
+            self._executive.run_command(
+                ['git', 'am'],
+                input=self.filter_patch_content(encoded_patch, reviewer=patch.reviewer().full_name if patch.reviewer() else None),
+                cwd=self._scm.checkout_root,
+            )
+            self._executive.run_command(
+                ['git', 'filter-branch', '-f', '--msg-filter', '{} -c "{}"'.format(sys.executable, self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~{}'.format(num_commits)],
+                cwd=self._scm.checkout_root,
+            )
+        else:
+            args = [self.script_path('svn-apply'), "--force"]
+            if patch.reviewer():
+                args += ['--reviewer', patch.reviewer().full_name]
+            self._executive.run_command(args, input=patch.contents(), cwd=self._scm.checkout_root)
 
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)
