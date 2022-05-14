@@ -118,8 +118,17 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
-void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&)
+void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
+    auto& formattingState = this->formattingState();
+    auto mainAxisPosition = constraints.horizontal().logicalLeft;
+    auto crossAxisPosition = constraints.logicalTop();
+    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+        auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
+
+        flexItemGeometry.setLogicalTopLeft({ mainAxisPosition, crossAxisPosition });
+        mainAxisPosition = BoxGeometry::borderBoxRect(flexItemGeometry).right();
+    }
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

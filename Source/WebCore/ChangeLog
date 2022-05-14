@@ -1,3 +1,15 @@
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
+        [FFC][Integration] Add "fixed sized/all default value" flex layout
+        https://bugs.webkit.org/show_bug.cgi?id=240414
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for the simplest possible flex layout (fixed size, no-wrap, no-reversed etc).
+
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntegration):
+
 2022-05-14  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebCore::IOSurface refers to unused context size
