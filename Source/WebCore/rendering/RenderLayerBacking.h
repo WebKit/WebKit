@@ -283,10 +283,10 @@ public:
     
     // For testing only.
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
-    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
+    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
-    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
+    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
 private:
     friend class PaintedContentsInfo;

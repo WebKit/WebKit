@@ -1,3 +1,36 @@
+2022-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an OptionSet<> for DisplayList::AsTextFlags
+        https://bugs.webkit.org/show_bug.cgi?id=240415
+
+        Reviewed by Alan Bujtas.
+
+        Simple adoption of OptionSet<DisplayList::AsTextFlag> in place of DisplayList::AsTextFlags.
+
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::displayListAsText const):
+        (WebCore::GraphicsLayer::replayDisplayListAsText const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::displayListAsText const):
+        (WebCore::GraphicsLayerCA::replayDisplayListAsText const):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shouldDumpForFlags):
+        (WebCore::DisplayList::DisplayList::asText const):
+        * platform/graphics/displaylists/DisplayList.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::displayListAsText const):
+        (WebCore::RenderLayerBacking::replayDisplayListAsText const):
+        * rendering/RenderLayerBacking.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::cachedGlyphDisplayListsForTextNodeAsText):
+        * rendering/TextPainter.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::displayListForElement):
+        (WebCore::Internals::replayDisplayListForElement):
+        (WebCore::Internals::cachedGlyphDisplayListsForTextNode):
+
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
         [Repaint] Border ignores currentColor change when hovering

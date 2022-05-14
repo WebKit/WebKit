@@ -233,12 +233,12 @@ private:
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
     bool allowsBackingStoreDetaching() const override { return m_allowsBackingStoreDetaching; }
 
-    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const override;
+    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
 
     WEBCORE_EXPORT String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const override;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool) override;
-    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const override;
+    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     WEBCORE_EXPORT void setIsDescendentOfSeparatedPortal(bool) override;

@@ -4028,7 +4028,7 @@ void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
     noteLayerPropertyChanged(DebugIndicatorsChanged);
 }
 
-String GraphicsLayerCA::displayListAsText(DisplayList::AsTextFlags flags) const
+String GraphicsLayerCA::displayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     if (!m_displayList)
         return String();
@@ -4055,7 +4055,7 @@ void GraphicsLayerCA::setIsTrackingDisplayListReplay(bool isTracking)
         layerDisplayListMap().remove(this);
 }
 
-String GraphicsLayerCA::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
+String GraphicsLayerCA::replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     auto it = layerDisplayListMap().find(this);
     if (it != layerDisplayListMap().end()) {

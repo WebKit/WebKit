@@ -46,12 +46,11 @@ namespace WebCore {
 
 namespace DisplayList {
 
-enum AsTextFlag {
-    None                            = 0,
+enum class AsTextFlag : uint8_t {
     IncludesPlatformOperations      = 1 << 0,
+    IncludesResourceIdentifiers     = 1 << 1,
+    DecomposesDrawGlyphs            = 1 << 2,
 };
-
-typedef unsigned AsTextFlags;
 
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
@@ -72,7 +71,7 @@ public:
     WEBCORE_EXPORT bool isEmpty() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;
 
-    String asText(AsTextFlags) const;
+    String asText(OptionSet<AsTextFlag>) const;
 
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
@@ -125,7 +124,7 @@ private:
         m_resourceHeap.add(font.renderingResourceIdentifier(), Ref { font });
     }
 
-    static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
+    static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);
 
     LocalResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;

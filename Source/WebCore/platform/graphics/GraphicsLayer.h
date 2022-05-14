@@ -66,7 +66,7 @@ class TimingFunction;
 class TransformationMatrix;
 
 namespace DisplayList {
-typedef unsigned AsTextFlags;
+enum class AsTextFlag : uint8_t;
 }
 
 // Base class for animation values (also used for transitions). Here to
@@ -615,13 +615,13 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
 
     // For testing.
-    virtual String displayListAsText(DisplayList::AsTextFlags) const { return String(); }
+    virtual String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
 
     virtual String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return String(); }
 
     virtual void setIsTrackingDisplayListReplay(bool isTracking) { m_isTrackingDisplayListReplay = isTracking; }
     virtual bool isTrackingDisplayListReplay() const { return m_isTrackingDisplayListReplay; }
-    virtual String replayDisplayListAsText(DisplayList::AsTextFlags) const { return String(); }
+    virtual String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
 
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;

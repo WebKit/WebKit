@@ -83,11 +83,11 @@ void DisplayList::clear()
     m_resourceHeap.clear();
 }
 
-bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
+bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle item)
 {
     switch (item.type()) {
     case ItemType::SetState:
-        if (!(flags & AsTextFlag::IncludesPlatformOperations)) {
+        if (!flags.contains(AsTextFlag::IncludesPlatformOperations)) {
             const auto& stateItem = item.get<SetState>();
             // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
             if (stateItem.state().changes() == GraphicsContextState::Change::ShouldSubpixelQuantizeFonts)
@@ -97,7 +97,7 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
 #if USE(CG)
     case ItemType::ApplyFillPattern:
     case ItemType::ApplyStrokePattern:
-        if (!(flags & AsTextFlag::IncludesPlatformOperations))
+        if (!flags.contains(AsTextFlag::IncludesPlatformOperations))
             return false;
         break;
 #endif
@@ -107,7 +107,7 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
     return true;
 }
 
-String DisplayList::asText(AsTextFlags flags) const
+String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     for (auto displayListItem : *this) {

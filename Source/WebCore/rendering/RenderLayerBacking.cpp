@@ -367,7 +367,7 @@ void RenderLayerBacking::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
         m_graphicsLayer->setNeedsDisplay();
 }
 
-String RenderLayerBacking::displayListAsText(DisplayList::AsTextFlags flags) const
+String RenderLayerBacking::displayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     return m_graphicsLayer->displayListAsText(flags);
 }
@@ -377,7 +377,7 @@ void RenderLayerBacking::setIsTrackingDisplayListReplay(bool isTrackingReplay)
     m_graphicsLayer->setIsTrackingDisplayListReplay(isTrackingReplay);
 }
 
-String RenderLayerBacking::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
+String RenderLayerBacking::replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     return m_graphicsLayer->replayDisplayListAsText(flags);
 }

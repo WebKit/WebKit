@@ -239,7 +239,7 @@ void TextPainter::setForceUseGlyphDisplayListForTesting(bool enabled)
     forceUseGlyphDisplayListForTesting = enabled;
 }
 
-String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, DisplayList::AsTextFlags flags)
+String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, OptionSet<DisplayList::AsTextFlag> flags)
 {
     if (!textNode.renderer())
         return String();

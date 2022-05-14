@@ -57,10 +57,6 @@ struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
 
-namespace DisplayList {
-using AsTextFlags = unsigned;
-}
-
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
 public:
