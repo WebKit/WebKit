@@ -1,5 +1,23 @@
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
+        Changing text color and removing line-clamp on hover causes text to disappear permanently
+        https://bugs.webkit.org/show_bug.cgi?id=240410
+
+        Reviewed by Simon Fraser.
+
+        Invalidate the flex items' line layout path when line-clamp property value changes.
+
+        While the line clamp property is set on the flex box, it is "forced on" the flex items' inline content.
+        (i.e. the property is not inherited, it is propagated to the flex children)
+        It means dynamic value change only runs on the flex box renderer.
+
+        Test: fast/block/dynamic-line-clamp-empty-content.html
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::styleWillChange):
+
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
         Unreviewed win build fix.
 
         * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:

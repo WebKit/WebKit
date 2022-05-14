@@ -1,5 +1,15 @@
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
+        Changing text color and removing line-clamp on hover causes text to disappear permanently
+        https://bugs.webkit.org/show_bug.cgi?id=240410
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/dynamic-line-clamp-empty-content-expected.html: Added.
+        * fast/block/dynamic-line-clamp-empty-content.html: Added.
+
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
         [Repaint] Border ignores currentColor change when hovering
         https://bugs.webkit.org/show_bug.cgi?id=240401
 
