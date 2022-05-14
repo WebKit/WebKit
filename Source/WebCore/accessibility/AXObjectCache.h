@@ -192,7 +192,8 @@ public:
     void deferMenuListValueChange(Element*);
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleScrollbarUpdate(ScrollView*);
-    
+
+    bool isRetrievingCurrentModalNode() { return m_isRetrievingCurrentModalNode; }
     Node* modalNode();
 
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
@@ -508,6 +509,7 @@ private:
     // If that changes to require only one aria-modal we could change this to a WeakHashSet, or discard the set completely.
     ListHashSet<Element*> m_modalElementsSet;
     bool m_modalNodesInitialized { false };
+    bool m_isRetrievingCurrentModalNode { false };
 
     Timer m_performCacheUpdateTimer;
 
