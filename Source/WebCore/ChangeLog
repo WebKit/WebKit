@@ -1,3 +1,14 @@
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
+        Unreviewed win build fix.
+
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:
+        (WebCore::LayoutIntegration::flexBoxLogicalBorder):
+        (WebCore::LayoutIntegration::flexBoxLogicalPadding):
+        (WebCore::LayoutIntegration::FlexLayout::updateFormattingRootGeometryAndInvalidate):
+        (WebCore::LayoutIntegration::logicalBorder): Deleted.
+        (WebCore::LayoutIntegration::logicalPadding): Deleted.
+
 2022-05-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Rename EventTrackingRegions::Event to EventTrackingRegions::EventType

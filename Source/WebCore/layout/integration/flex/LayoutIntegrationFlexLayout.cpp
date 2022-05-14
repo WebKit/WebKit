@@ -46,7 +46,7 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
 }
 
 // FIXME: Merge these with the other integration layout functions.
-static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
     UNUSED_PARAM(writingMode);
@@ -59,7 +59,7 @@ static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, 
     return { { borderLeft, borderRight }, { borderTop, borderBottom } };
 }
 
-static inline Layout::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+static inline Layout::Edges flexBoxLogicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
     UNUSED_PARAM(writingMode);
@@ -81,8 +81,8 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
         auto writingMode = flexBoxRenderer.style().writingMode();
 
         root.setContentBoxWidth(writingMode == WritingMode::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
-        root.setPadding(logicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
-        root.setBorder(logicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
+        root.setPadding(flexBoxLogicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
+        root.setBorder(flexBoxLogicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
         root.setHorizontalMargin({ });
         root.setVerticalMargin({ });
     };
