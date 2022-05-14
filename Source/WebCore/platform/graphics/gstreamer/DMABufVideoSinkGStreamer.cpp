@@ -22,7 +22,7 @@
 #if ENABLE(VIDEO)
 
 #include "GStreamerCommon.h"
-#include "GStreamerVideoSinkCommon.h"
+#include "VideoSinkElementGStreamer.h"
 #include <gst/allocators/gstdmabuf.h>
 #include <mutex>
 #include <wtf/glib/WTFGType.h>
@@ -36,8 +36,7 @@ enum {
 };
 
 struct _WebKitDMABufVideoSinkPrivate {
-    GRefPtr<GstElement> appSink;
-    MediaPlayerPrivateGStreamer* mediaPlayerPrivate;
+    GRefPtr<GstElement> sink;
 };
 
 GST_DEBUG_CATEGORY_STATIC(webkit_dmabuf_video_sink_debug);
@@ -79,11 +78,9 @@ static void webKitDMABufVideoSinkConstructed(GObject* object)
 
     WebKitDMABufVideoSink* sink = WEBKIT_DMABUF_VIDEO_SINK(object);
 
-    sink->priv->appSink = makeGStreamerElement("appsink", "webkit-dmabuf-video-appsink");
+    sink->priv->sink = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_VIDEO_SINK_ELEMENT, nullptr));
     ASSERT(sink->priv->appSink);
-    g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
-
-    gst_bin_add(GST_BIN_CAST(sink), sink->priv->appSink.get());
+    gst_bin_add(GST_BIN_CAST(sink), sink->priv->sink.get());
 
     // This sink handles dmabuf data or raw data of any format in the supported format list.
     // The dmabuf and raw data types are the two types of data we can handle via this sink (in combination with functionality in
@@ -94,7 +91,7 @@ static void webKitDMABufVideoSinkConstructed(GObject* object)
         GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_MEMORY_DMABUF, GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST));
     static GstStaticCaps s_fallbackCaps = GST_STATIC_CAPS(GST_VIDEO_CAPS_MAKE(GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST));
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
+    auto caps = adoptGRef(gst_caps_new_empty());
     {
         if (forcedFallbackCapsFormat()) {
             caps = gst_caps_new_simple("video/x-raw",
@@ -104,25 +101,10 @@ static void webKitDMABufVideoSinkConstructed(GObject* object)
             gst_caps_append(caps.get(), gst_static_caps_get(&s_fallbackCaps));
         }
     }
-    g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
+    webKitVideoSinkElementSetCaps(WEBKIT_VIDEO_SINK_ELEMENT(sink->priv->sink.get()), WTFMove(caps));
 
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sink->priv->appSink.get(), "sink"));
+    auto pad = adoptGRef(gst_element_get_static_pad(sink->priv->sink.get(), "sink"));
     gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
-}
-
-void webKitDMABufVideoSinkFinalize(GObject* object)
-{
-    ASSERT(isMainThread());
-
-    WebKitDMABufVideoSink* sink = WEBKIT_DMABUF_VIDEO_SINK(object);
-    WebKitDMABufVideoSinkPrivate* priv = sink->priv;
-
-    if (priv->mediaPlayerPrivate)
-        g_signal_handlers_disconnect_by_data(priv->appSink.get(), priv->mediaPlayerPrivate);
-
-    GST_DEBUG_OBJECT(object, "WebKitDMABufVideoSink finalized.");
-
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
 static void webKitDMABufVideoSinkGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* paramSpec)
@@ -133,7 +115,7 @@ static void webKitDMABufVideoSinkGetProperty(GObject* object, guint propertyId, 
     case PROP_STATS:
         if (webkitGstCheckVersion(1, 18, 0)) {
             GUniqueOutPtr<GstStructure> stats;
-            g_object_get(sink->priv->appSink.get(), "stats", &stats.outPtr(), nullptr);
+            g_object_get(sink->priv->sink.get(), "stats", &stats.outPtr(), nullptr);
             gst_value_set_structure(value, stats.get());
         }
         break;
@@ -150,7 +132,6 @@ static void webkit_dmabuf_video_sink_class_init(WebKitDMABufVideoSinkClass* klas
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
 
     objectClass->constructed = webKitDMABufVideoSinkConstructed;
-    objectClass->finalize = webKitDMABufVideoSinkFinalize;
     objectClass->get_property = webKitDMABufVideoSinkGetProperty;
 
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
@@ -179,10 +160,7 @@ bool webKitDMABufVideoSinkProbePlatform()
 
 void webKitDMABufVideoSinkSetMediaPlayerPrivate(WebKitDMABufVideoSink* sink, MediaPlayerPrivateGStreamer* player)
 {
-    WebKitDMABufVideoSinkPrivate* priv = sink->priv;
-
-    priv->mediaPlayerPrivate = player;
-    webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), priv->mediaPlayerPrivate);
+    webKitVideoSinkElementSetMediaPlayerPrivate(WEBKIT_VIDEO_SINK_ELEMENT(sink->priv->sink.get()), player);
 }
 
 #endif // ENABLE(VIDEO)

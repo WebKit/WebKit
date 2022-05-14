@@ -23,8 +23,8 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include "GStreamerCommon.h"
-#include "GStreamerVideoSinkCommon.h"
 #include "PlatformDisplay.h"
+#include "VideoSinkElementGStreamer.h"
 #include <gst/gl/gl.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -43,8 +43,7 @@ enum {
 };
 
 struct _WebKitGLVideoSinkPrivate {
-    GRefPtr<GstElement> appSink;
-    MediaPlayerPrivateGStreamer* mediaPlayerPrivate;
+    GRefPtr<GstElement> sink;
 };
 
 GST_DEBUG_CATEGORY_STATIC(webkit_gl_video_sink_debug);
@@ -66,9 +65,8 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(sink), GST_ELEMENT_FLAG_SINK);
     gst_bin_set_suppressed_flags(GST_BIN_CAST(sink), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
 
-    sink->priv->appSink = makeGStreamerElement("appsink", "webkit-gl-video-appsink");
-    ASSERT(sink->priv->appSink);
-    g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
+    sink->priv->sink = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_VIDEO_SINK_ELEMENT, nullptr));
+    ASSERT(sink->priv->sink);
 
     auto* imxVideoConvertG2D =
         []() -> GstElement*
@@ -86,7 +84,7 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     ASSERT(upload);
     ASSERT(colorconvert);
-    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->sink.get(), nullptr);
 
     // Workaround until we can depend on GStreamer 1.16.2.
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
@@ -108,13 +106,13 @@ static void webKitGLVideoSinkConstructed(GObject* object)
         caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) RGBA"));
     }
     gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
-    g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
+    webKitVideoSinkElementSetCaps(WEBKIT_VIDEO_SINK_ELEMENT(sink->priv->sink.get()), WTFMove(caps));
 
     if (imxVideoConvertG2D)
         gst_element_link(imxVideoConvertG2D, upload);
     gst_element_link(upload, colorconvert);
 
-    gst_element_link(colorconvert, sink->priv->appSink.get());
+    gst_element_link(colorconvert, sink->priv->sink.get());
 
     GstElement* sinkElement =
         [&] {
@@ -124,21 +122,6 @@ static void webKitGLVideoSinkConstructed(GObject* object)
         }();
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sinkElement, "sink"));
     gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
-}
-
-void webKitGLVideoSinkFinalize(GObject* object)
-{
-    ASSERT(isMainThread());
-
-    WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
-    WebKitGLVideoSinkPrivate* priv = sink->priv;
-
-    if (priv->mediaPlayerPrivate)
-        g_signal_handlers_disconnect_by_data(priv->appSink.get(), priv->mediaPlayerPrivate);
-
-    GST_DEBUG_OBJECT(object, "WebKitGLVideoSink finalized.");
-
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
 std::optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
@@ -207,7 +190,7 @@ static void webKitGLVideoSinkGetProperty(GObject* object, guint propertyId, GVal
     case PROP_STATS:
         if (webkitGstCheckVersion(1, 18, 0)) {
             GUniqueOutPtr<GstStructure> stats;
-            g_object_get(sink->priv->appSink.get(), "stats", &stats.outPtr(), nullptr);
+            g_object_get(sink->priv->sink.get(), "stats", &stats.outPtr(), nullptr);
             gst_value_set_structure(value, stats.get());
         }
         break;
@@ -224,7 +207,6 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
 
     objectClass->constructed = webKitGLVideoSinkConstructed;
-    objectClass->finalize = webKitGLVideoSinkFinalize;
     objectClass->get_property = webKitGLVideoSinkGetProperty;
 
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
@@ -238,10 +220,7 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
 
 void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayerPrivateGStreamer* player)
 {
-    WebKitGLVideoSinkPrivate* priv = sink->priv;
-
-    priv->mediaPlayerPrivate = player;
-    webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), priv->mediaPlayerPrivate);
+    webKitVideoSinkElementSetMediaPlayerPrivate(WEBKIT_VIDEO_SINK_ELEMENT(sink->priv->sink.get()), player);
 }
 
 bool webKitGLVideoSinkProbePlatform()

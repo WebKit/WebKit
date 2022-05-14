@@ -43,7 +43,7 @@
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
-#include "VideoSinkGStreamer.h"
+#include "LegacyVideoSinkGStreamer.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include "AudioTrackPrivateGStreamer.h"
@@ -2986,7 +2986,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
             if (!proxy.isActive())
                 return;
 
-            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
+            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingLegacyVideoSink);
             if (frameHolder->hasDMABuf()) {
                 auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
                 auto holePunchClient = makeUnique<GStreamerDMABufHolePunchClient>(WTFMove(frameHolder), m_wpeVideoPlaneDisplayDmaBuf.get());
@@ -3004,7 +3004,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
             if (!proxy.isActive())
                 return;
 
-            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
+            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingLegacyVideoSink);
             internalCompositingOperation(proxy, WTFMove(frameHolder));
         };
 #endif // USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
@@ -3296,9 +3296,15 @@ void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagLi
     GST_DEBUG_OBJECT(pipeline(), "Updating orientation from %" GST_PTR_FORMAT, tagList);
     setVideoSourceOrientation(getVideoOrientation(tagList));
 
+    FloatSize oldSize(m_videoSize);
+
     // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_videoSourceOrientation.usesWidthAsHeight())
         m_videoSize = m_videoSize.transposedSize();
+
+    // Avoid useless roundtrip to the main thread.
+    if (oldSize == m_videoSize)
+        return;
 
     callOnMainThreadAndWait([this] {
         m_player->sizeChanged();
@@ -3437,7 +3443,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
     }
 
 #if USE(TEXTURE_MAPPER_GL)
-    if (m_isUsingFallbackVideoSink) {
+    if (m_isUsingLegacyVideoSink) {
         Locker locker { m_drawLock };
         auto proxyOperation =
             [this](TextureMapperPlatformLayerProxyGL& proxy)
@@ -3483,7 +3489,7 @@ void MediaPlayerPrivateGStreamer::cancelRepaint(bool destroying)
     //
     // This function is also used when destroying the player (destroying parameter is true), to release the gstreamer thread from
     // m_drawCondition and to ensure that new triggerRepaint calls won't wait on m_drawCondition.
-    if (m_isUsingFallbackVideoSink) {
+    if (m_isUsingLegacyVideoSink) {
         Locker locker { m_drawLock };
         m_drawTimer.stop();
         m_isBeingDestroyed = destroying;
@@ -3621,7 +3627,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
 {
     UNUSED_PARAM(context);
 
-    if (m_isUsingFallbackVideoSink)
+    if (m_isUsingLegacyVideoSink)
         return false;
 
     Locker sampleLocker { m_sampleMutex };
@@ -3822,8 +3828,8 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 #endif
 
     if (!m_videoSink) {
-        m_isUsingFallbackVideoSink = true;
-        m_videoSink = webkitVideoSinkNew();
+        m_isUsingLegacyVideoSink = true;
+        m_videoSink = webkitLegacyVideoSinkNew();
         g_signal_connect_swapped(m_videoSink.get(), "repaint-requested", G_CALLBACK(repaintCallback), this);
         g_signal_connect_swapped(m_videoSink.get(), "repaint-cancelled", G_CALLBACK(repaintCancelledCallback), this);
     }

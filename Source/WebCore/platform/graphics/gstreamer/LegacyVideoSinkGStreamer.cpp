@@ -21,13 +21,13 @@
 
 /*
  *
- * WebKitVideoSink is a GStreamer sink element that triggers
+ * WebKitLegacyVideoSink is a GStreamer sink element that triggers
  * repaints in the WebKit GStreamer media player for the
  * current video buffer.
  */
 
 #include "config.h"
-#include "VideoSinkGStreamer.h"
+#include "LegacyVideoSinkGStreamer.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 #include "GStreamerCommon.h"
@@ -48,13 +48,13 @@ using namespace WebCore;
 #define GST_CAPS_FORMAT "{ xRGB, ARGB }"
 #endif
 
-#define WEBKIT_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, GST_CAPS_FORMAT) ";" GST_VIDEO_CAPS_MAKE(GST_CAPS_FORMAT)
+#define WEBKIT_LEGACY_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, GST_CAPS_FORMAT) ";" GST_VIDEO_CAPS_MAKE(GST_CAPS_FORMAT)
 
-static GstStaticPadTemplate s_sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS(WEBKIT_VIDEO_SINK_PAD_CAPS));
+static GstStaticPadTemplate s_sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS(WEBKIT_LEGACY_VIDEO_SINK_PAD_CAPS));
 
 
-GST_DEBUG_CATEGORY_STATIC(webkitVideoSinkDebug);
-#define GST_CAT_DEFAULT webkitVideoSinkDebug
+GST_DEBUG_CATEGORY_STATIC(webkitLegacyVideoSinkDebug);
+#define GST_CAT_DEFAULT webkitLegacyVideoSinkDebug
 
 enum {
     REPAINT_REQUESTED,
@@ -64,8 +64,8 @@ enum {
 
 static guint webkitVideoSinkSignals[LAST_SIGNAL] = { 0, };
 
-static void webkitVideoSinkRepaintRequested(WebKitVideoSink*, GstSample*);
-static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink*, GstBuffer*);
+static void webkitVideoSinkRepaintRequested(WebKitLegacyVideoSink*, GstSample*);
+static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitLegacyVideoSink*, GstBuffer*);
 
 class VideoRenderRequestScheduler {
 public:
@@ -88,7 +88,7 @@ public:
         m_sample = nullptr;
     }
 
-    bool requestRender(WebKitVideoSink* sink, GstBuffer* buffer)
+    bool requestRender(WebKitLegacyVideoSink* sink, GstBuffer* buffer)
     {
         GRefPtr<GstSample> sample;
         {
@@ -124,13 +124,13 @@ private:
     bool m_unlocked { false };
 };
 
-struct _WebKitVideoSinkPrivate {
-    _WebKitVideoSinkPrivate()
+struct _WebKitLegacyVideoSinkPrivate {
+    _WebKitLegacyVideoSinkPrivate()
     {
         gst_video_info_init(&info);
     }
 
-    ~_WebKitVideoSinkPrivate()
+    ~_WebKitLegacyVideoSinkPrivate()
     {
         if (currentCaps)
             gst_caps_unref(currentCaps);
@@ -141,27 +141,27 @@ struct _WebKitVideoSinkPrivate {
     GstCaps* currentCaps { nullptr };
 };
 
-#define webkit_video_sink_parent_class parent_class
-WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitVideoSink, webkit_video_sink, GST_TYPE_VIDEO_SINK, GST_DEBUG_CATEGORY_INIT(webkitVideoSinkDebug, "webkitsink", 0, "webkit video sink"))
+#define webkit_legacy_video_sink_parent_class parent_class
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitLegacyVideoSink, webkit_legacy_video_sink, GST_TYPE_VIDEO_SINK, GST_DEBUG_CATEGORY_INIT(webkitLegacyVideoSinkDebug, "webkitlegacyvideosink", 0, "webkit video sink"))
 
 static void webkitVideoSinkConstructed(GObject* object)
 {
     g_object_set(GST_BASE_SINK(object), "enable-last-sample", FALSE, nullptr);
 }
 
-static void webkitVideoSinkRepaintRequested(WebKitVideoSink* sink, GstSample* sample)
+static void webkitVideoSinkRepaintRequested(WebKitLegacyVideoSink* sink, GstSample* sample)
 {
     g_signal_emit(sink, webkitVideoSinkSignals[REPAINT_REQUESTED], 0, sample);
 }
 
-static void webkitVideoSinkRepaintCancelled(WebKitVideoSink* sink)
+static void webkitVideoSinkRepaintCancelled(WebKitLegacyVideoSink* sink)
 {
     g_signal_emit(sink, webkitVideoSinkSignals[REPAINT_CANCELLED], 0);
 }
 
-static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, GstBuffer* buffer)
+static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitLegacyVideoSink* sink, GstBuffer* buffer)
 {
-    WebKitVideoSinkPrivate* priv = sink->priv;
+    WebKitLegacyVideoSinkPrivate* priv = sink->priv;
     GRefPtr<GstSample> sample = adoptGRef(gst_sample_new(buffer, priv->currentCaps, nullptr, nullptr));
 
     // The video info structure is valid only if the sink handled an allocation query.
@@ -174,23 +174,23 @@ static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, Gs
 
 static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buffer)
 {
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
+    WebKitLegacyVideoSink* sink = WEBKIT_LEGACY_VIDEO_SINK(baseSink);
     return sink->priv->scheduler.requestRender(sink, buffer) ? GST_FLOW_OK : GST_FLOW_ERROR;
 }
 
 static gboolean webkitVideoSinkUnlock(GstBaseSink* baseSink)
 {
-    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+    WebKitLegacyVideoSinkPrivate* priv = WEBKIT_LEGACY_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.stop();
-    webkitVideoSinkRepaintCancelled(WEBKIT_VIDEO_SINK(baseSink));
+    webkitVideoSinkRepaintCancelled(WEBKIT_LEGACY_VIDEO_SINK(baseSink));
 
     return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock, (baseSink), TRUE);
 }
 
 static gboolean webkitVideoSinkUnlockStop(GstBaseSink* baseSink)
 {
-    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+    WebKitLegacyVideoSinkPrivate* priv = WEBKIT_LEGACY_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.start();
 
@@ -199,10 +199,10 @@ static gboolean webkitVideoSinkUnlockStop(GstBaseSink* baseSink)
 
 static gboolean webkitVideoSinkStop(GstBaseSink* baseSink)
 {
-    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+    WebKitLegacyVideoSinkPrivate* priv = WEBKIT_LEGACY_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.stop();
-    webkitVideoSinkRepaintCancelled(WEBKIT_VIDEO_SINK(baseSink));
+    webkitVideoSinkRepaintCancelled(WEBKIT_LEGACY_VIDEO_SINK(baseSink));
     if (priv->currentCaps) {
         gst_caps_unref(priv->currentCaps);
         priv->currentCaps = nullptr;
@@ -213,7 +213,7 @@ static gboolean webkitVideoSinkStop(GstBaseSink* baseSink)
 
 static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
 {
-    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+    WebKitLegacyVideoSinkPrivate* priv = WEBKIT_LEGACY_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.start();
 
@@ -222,8 +222,8 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
 
 static gboolean webkitVideoSinkSetCaps(GstBaseSink* baseSink, GstCaps* caps)
 {
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
-    WebKitVideoSinkPrivate* priv = sink->priv;
+    WebKitLegacyVideoSink* sink = WEBKIT_LEGACY_VIDEO_SINK(baseSink);
+    WebKitLegacyVideoSinkPrivate* priv = sink->priv;
 
     GST_DEBUG_OBJECT(sink, "Current caps %" GST_PTR_FORMAT ", setting caps %" GST_PTR_FORMAT, priv->currentCaps, caps);
 
@@ -246,7 +246,7 @@ static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery
     if (!caps)
         return FALSE;
 
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
+    WebKitLegacyVideoSink* sink = WEBKIT_LEGACY_VIDEO_SINK(baseSink);
     if (!gst_video_info_from_caps(&sink->priv->info, caps))
         return FALSE;
 
@@ -260,7 +260,7 @@ static gboolean webkitVideoSinkEvent(GstBaseSink* baseSink, GstEvent* event)
 {
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_FLUSH_START: {
-        WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
+        WebKitLegacyVideoSink* sink = WEBKIT_LEGACY_VIDEO_SINK(baseSink);
         sink->priv->scheduler.drain();
 
         GST_DEBUG_OBJECT(sink, "Flush-start, releasing m_sample");
@@ -271,7 +271,7 @@ static gboolean webkitVideoSinkEvent(GstBaseSink* baseSink, GstEvent* event)
     }
 }
 
-static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
+static void webkit_legacy_video_sink_class_init(WebKitLegacyVideoSinkClass* klass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
     GstBaseSinkClass* baseSinkClass = GST_BASE_SINK_CLASS(klass);
@@ -315,9 +315,9 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
 }
 
 
-GstElement* webkitVideoSinkNew()
+GstElement* webkitLegacyVideoSinkNew()
 {
-    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, nullptr));
+    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_LEGACY_VIDEO_SINK, nullptr));
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

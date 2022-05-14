@@ -31,12 +31,12 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/GRefPtrGStreamer.cpp
         platform/graphics/gstreamer/GStreamerAudioMixer.cpp
         platform/graphics/gstreamer/GStreamerCommon.cpp
-        platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
         platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
         platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp
-        platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
+        platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
         platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
         platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
+        platform/graphics/gstreamer/LegacyVideoSinkGStreamer.cpp
         platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaSampleGStreamer.cpp
@@ -46,7 +46,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
         platform/graphics/gstreamer/VideoFrameGStreamer.cpp
         platform/graphics/gstreamer/VideoFrameMetadataGStreamer.cpp
-        platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+        platform/graphics/gstreamer/VideoSinkElementGStreamer.cpp
         platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/WebKitAudioSinkGStreamer.cpp
         platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp

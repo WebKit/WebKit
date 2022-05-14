@@ -1,3 +1,74 @@
+2022-05-14  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] Refactor video rendering to a new element
+        https://bugs.webkit.org/show_bug.cgi?id=240306
+
+        Reviewed by NOBODY (OOPS!).
+
+        This new sink being based on GstVideoSink we now have processing latency, max lateness and
+        QoS properly configured. The sink now also advises upstream elements that they have to add a
+        video meta to the buffers.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp:
+        (webKitDMABufVideoSinkConstructed):
+        (webKitDMABufVideoSinkGetProperty):
+        (webkit_dmabuf_video_sink_class_init):
+        (webKitDMABufVideoSinkSetMediaPlayerPrivate):
+        (webKitDMABufVideoSinkFinalize): Deleted.
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkConstructed):
+        (webKitGLVideoSinkGetProperty):
+        (webkit_gl_video_sink_class_init):
+        (webKitGLVideoSinkSetMediaPlayerPrivate):
+        (webKitGLVideoSinkFinalize): Deleted.
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp: Removed.
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.h: Removed.
+        * platform/graphics/gstreamer/LegacyVideoSinkGStreamer.cpp: Renamed from Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp.
+        (VideoRenderRequestScheduler::start):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::drain):
+        (VideoRenderRequestScheduler::requestRender):
+        (_WebKitLegacyVideoSinkPrivate::_WebKitLegacyVideoSinkPrivate):
+        (_WebKitLegacyVideoSinkPrivate::~_WebKitLegacyVideoSinkPrivate):
+        (webkitVideoSinkConstructed):
+        (webkitVideoSinkRepaintRequested):
+        (webkitVideoSinkRepaintCancelled):
+        (webkitVideoSinkRequestRender):
+        (webkitVideoSinkRender):
+        (webkitVideoSinkUnlock):
+        (webkitVideoSinkUnlockStop):
+        (webkitVideoSinkStop):
+        (webkitVideoSinkStart):
+        (webkitVideoSinkSetCaps):
+        (webkitVideoSinkProposeAllocation):
+        (webkitVideoSinkEvent):
+        (webkit_legacy_video_sink_class_init):
+        (webkitLegacyVideoSinkNew):
+        * platform/graphics/gstreamer/LegacyVideoSinkGStreamer.h: Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::updateVideoOrientation):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/VideoSinkElementGStreamer.cpp: Added.
+        (sinkProposeAllocation):
+        (sinkShowFrame):
+        (sinkQuery):
+        (sinkEvent):
+        (sinkSetCaps):
+        (sinkGetCaps):
+        (sinkGetTimes):
+        (sinkConstructed):
+        (webkit_video_sink_element_class_init):
+        (webKitVideoSinkElementSetMediaPlayerPrivate):
+        (webKitVideoSinkElementSetCaps):
+        * platform/graphics/gstreamer/VideoSinkElementGStreamer.h: Added.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h: Removed.
+
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
         [FFC][Integration] Add updateFormattingRootGeometryAndInvalidate/updateRenderers

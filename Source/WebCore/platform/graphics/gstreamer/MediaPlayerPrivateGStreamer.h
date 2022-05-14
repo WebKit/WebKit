@@ -372,7 +372,7 @@ protected:
     GRefPtr<GstSample> m_sample;
 
     mutable FloatSize m_videoSize;
-    bool m_isUsingFallbackVideoSink { false };
+    bool m_isUsingLegacyVideoSink { false };
     bool m_canRenderingBeAccelerated { false };
 
     bool m_isBeingDestroyed WTF_GUARDED_BY_LOCK(m_drawLock) { false };
