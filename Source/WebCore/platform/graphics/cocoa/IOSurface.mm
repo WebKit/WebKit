@@ -45,20 +45,16 @@ namespace WebCore {
 
 std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
 {
-    return IOSurface::create(pool, size, size, colorSpace, pixelFormat);
-}
-
-std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
-{
-    std::unique_ptr<IOSurface> cachedSurface;
-    if (pool && (cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat))) {
-        cachedSurface->setContextSize(contextSize);
-        LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
-        return cachedSurface;
+    if (pool) {
+        if (auto cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat)) {
+            cachedSurface->releaseGraphicsContext();
+            LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
+            return cachedSurface;
+        }
     }
 
     bool success = false;
-    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat, success));
+    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat, success));
     if (!success) {
         LOG(IOSurface, "IOSurface::create failed to create %dx%d surface", size.width(), size.height());
         return nullptr;
@@ -174,14 +170,11 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 
 }
 
-IOSurface::IOSurface(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format format, bool& success)
+IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Format format, bool& success)
     : m_colorSpace(colorSpace)
     , m_size(size)
-    , m_contextSize(contextSize)
 {
     ASSERT(!success);
-    ASSERT(contextSize.width() <= size.width());
-    ASSERT(contextSize.height() <= size.height());
     ASSERT(!size.isEmpty());
 
     NSDictionary *options;
@@ -314,17 +307,6 @@ RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surfac
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
 }
 
-void IOSurface::setContextSize(IntSize contextSize)
-{
-    if (contextSize == m_contextSize)
-        return;
-
-    // Release the graphics context and update the context size. Next time the graphics context is
-    // accessed, we will construct it again with the right size.
-    releaseGraphicsContext();
-    m_contextSize = contextSize;
-}
-
 CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
 {
     if (m_cgContext)
@@ -353,7 +335,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         break;
     }
     
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {

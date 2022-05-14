@@ -1,3 +1,16 @@
+2022-05-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebCore::IOSurface refers to unused context size
+        https://bugs.webkit.org/show_bug.cgi?id=240385
+
+        Reviewed by Simon Fraser.
+
+        Adjust after removing the IOSurface context size parameter.
+        All call sites passed the surface size.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+
 2022-05-08  Jean-Yves Avenard  <jya@apple.com>
 
         SharedBuffer should be copied and then attributed back to WebContent

@@ -101,8 +101,6 @@ public:
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Format = Format::BGRA);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, IntSize contextSize, const DestinationColorSpace&, Format = Format::BGRA);
-
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, const DestinationColorSpace&);
@@ -167,15 +165,11 @@ public:
     void migrateColorSpaceToProperties();
 
 private:
-    IOSurface(IntSize, IntSize contextSize, const DestinationColorSpace&, Format, bool& success);
+    IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, const DestinationColorSpace&);
-
-    IntSize contextSize() const { return m_contextSize; }
-    void setContextSize(IntSize);
 
     DestinationColorSpace m_colorSpace;
     IntSize m_size;
-    IntSize m_contextSize;
     size_t m_totalBytes;
 
     std::unique_ptr<GraphicsContext> m_graphicsContext;
