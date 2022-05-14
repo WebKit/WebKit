@@ -368,7 +368,6 @@ private:
     void handleDynamicFloatPositionChange();
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
-    bool hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const;
 
     void updateFillImages(const FillLayer*, const FillLayer&);
     void updateImage(StyleImage*, StyleImage*);

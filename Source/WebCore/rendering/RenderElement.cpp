@@ -301,20 +301,17 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, Optio
     return diff;
 }
 
-inline bool RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const
-{
-    for (auto& child : childrenOfType<RenderObject>(*this)) {
-        if (is<RenderText>(child) && !downcast<RenderText>(child).isAllCollapsibleWhitespace())
-            return true;
-        if (child.style().hasOutline() || child.style().hasBorder())
-            return true;
-    }
-    return false;
-}
 
 inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff) const
 {
-    return diff == StyleDifference::Repaint || (diff == StyleDifference::RepaintIfTextOrBorderOrOutline && hasImmediateNonWhitespaceTextChildOrBorderOrOutline());
+    auto hasImmediateNonWhitespaceTextChild = [&] {
+        for (auto& child : childrenOfType<RenderText>(*this)) {
+            if (!child.isAllCollapsibleWhitespace())
+                return true;
+        }
+        return false;
+    };
+    return diff == StyleDifference::Repaint || (diff == StyleDifference::RepaintIfText && hasImmediateNonWhitespaceTextChild());
 }
 
 void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer& newLayers)

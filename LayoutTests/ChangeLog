@@ -1,3 +1,15 @@
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
+        [Repaint] Border ignores currentColor change when hovering
+        https://bugs.webkit.org/show_bug.cgi?id=240401
+
+        Reviewed by Antti Koivisto.
+
+        * fast/repaint/repaint-current-color-border-on-hover-expected.txt: Added.
+        * fast/repaint/repaint-current-color-border-on-hover.html: Added.
+        * fast/repaint/repaint-pseudo-border-on-hover-expected.txt: Added.
+        * fast/repaint/repaint-pseudo-border-on-hover.html: Added.
+
 2022-05-13  Tim Nguyen  <ntim@apple.com>
 
         [css-ui] Unexpose appearance property values already handled by appearance: auto

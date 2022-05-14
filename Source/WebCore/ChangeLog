@@ -1,5 +1,39 @@
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
+        [Repaint] Border ignores currentColor change when hovering
+        https://bugs.webkit.org/show_bug.cgi?id=240401
+
+        Reviewed by Antti Koivisto.
+
+        This patch triggers repaint when currentColor is applied on border.
+
+        It most likely got broken at r150259 (9 years ago!) when StyleDifferenceRepaintIfText was introduced.
+        StyleDifferenceRepaintIfText is a "conditional repaint" diff value which only triggers repaint if the renderer has some text content.
+
+        Later, r156619 addressed some of the "content with border/outline is not painting" fallout by extending
+        StyleDifferenceRepaintIfText to RepaintIfTextOrBorderOrOutline.
+        RepaintIfTextOrBorderOrOutline turns "conditional repaints" to real repaints if, in addition to text, the content has outline/border.
+        However the fix was neither complete nor proper (it patched the repaint logic by changing hasImmediateNonWhitespaceTextChildOrBorderOrOutline 
+        instead of computing the correct diff value -unconditional Repaint).
+
+        Fast-forward to 2020, r267528 ensured that content with outline is no longer a "conditional repaint".
+        It also made some of the code introduced in r156619 redundant (see hasImmediateNonWhitespaceTextChildOrBorderOrOutline).
+
+        This patch expands on r267528 by introducing isEquivalentForPainting for the border data. It ensures that we
+        compute (unconditional) Repaint diff value, if the border uses currentColor.
+
+        Tests: fast/repaint/repaint-current-color-border-on-hover.html
+               fast/repaint/repaint-pseudo-border-on-hover.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline const):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::isEquivalentForPainting const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
         [FFC][Integration] Add updateFormattingRootGeometryAndInvalidate/updateRenderers
         https://bugs.webkit.org/show_bug.cgi?id=240413
 

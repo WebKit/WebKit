@@ -958,7 +958,7 @@ TextStream& operator<<(TextStream& ts, StyleDifference diff)
     case StyleDifference::Equal: ts << "equal"; break;
     case StyleDifference::RecompositeLayer: ts << "recomposite layer"; break;
     case StyleDifference::Repaint: ts << "repaint"; break;
-    case StyleDifference::RepaintIfTextOrBorderOrOutline: ts << "repaint if text or border or outline"; break;
+    case StyleDifference::RepaintIfText: ts << "repaint if text"; break;
     case StyleDifference::RepaintLayer: ts << "repaint layer"; break;
     case StyleDifference::LayoutPositionedMovementOnly: ts << "layout positioned movement only"; break;
     case StyleDifference::SimplifiedLayout: ts << "simplified layout"; break;

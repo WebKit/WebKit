@@ -652,7 +652,7 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     case StyleDifference::RecompositeLayer:
         return true;
     case StyleDifference::Repaint:
-    case StyleDifference::RepaintIfTextOrBorderOrOutline:
+    case StyleDifference::RepaintIfText:
     case StyleDifference::RepaintLayer:
         // FIXME: We could do a more focused style check by matching RendererStyle::changeRequiresRepaint&co.
         return canUseForStyle(blockContainer, IncludeReasons::First).isEmpty();

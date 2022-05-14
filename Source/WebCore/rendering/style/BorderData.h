@@ -107,6 +107,8 @@ public:
         return FloatBoxExtent(borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth());
     }
 
+    bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
+
     bool operator==(const BorderData& o) const
     {
         return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom && m_image == o.m_image

@@ -1214,14 +1214,14 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         return true;
 
 
+    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
     if (m_backgroundData.ptr() != other.m_backgroundData.ptr()) {
-        bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
         if (!m_backgroundData->isEquivalentForPainting(*other.m_backgroundData, currentColorDiffers))
             return true;
     }
 
     if (m_surroundData.ptr() != other.m_surroundData.ptr()) {
-        if (m_surroundData->border != other.m_surroundData->border)
+        if (!m_surroundData->border.isEquivalentForPainting(other.m_surroundData->border, currentColorDiffers))
             return true;
     }
 
@@ -1241,7 +1241,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
+bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
     if (m_inheritedData->color != other.m_inheritedData->color
         || m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
@@ -1309,8 +1309,8 @@ StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDiffe
     if (changeRequiresRepaint(other, changedContextSensitiveProperties))
         return StyleDifference::Repaint;
 
-    if (changeRequiresRepaintIfTextOrBorderOrOutline(other, changedContextSensitiveProperties))
-        return StyleDifference::RepaintIfTextOrBorderOrOutline;
+    if (changeRequiresRepaintIfText(other, changedContextSensitiveProperties))
+        return StyleDifference::RepaintIfText;
 
     // FIXME: RecompositeLayer should also behave as a priority bit (e.g when the style change requires layout, we know that
     // the content also needs repaint and it will eventually get repainted,

@@ -27,9 +27,22 @@
 #include "BorderData.h"
 
 #include "OutlineValue.h"
+#include "RenderStyle.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+bool BorderData::isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const
+{
+    if (*this != other)
+        return false;
+
+    if (!currentColorDiffers)
+        return true;
+
+    auto borderHasCurrentColor = RenderStyle::isCurrentColor(m_top.color()) || RenderStyle::isCurrentColor(m_right.color()) || RenderStyle::isCurrentColor(m_bottom.color()) || RenderStyle::isCurrentColor(m_left.color());
+    return !borderHasCurrentColor;
+}
 
 TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
 {
