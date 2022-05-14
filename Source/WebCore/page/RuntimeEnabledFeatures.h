@@ -159,9 +159,6 @@ public:
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
 
-    void setCSSDisplayContentsAXSupportEnabled(bool isEnabled) { m_CSSDisplayContentsAXSupportEnabled = isEnabled; }
-    bool cssDisplayContentsAXSupportEnabled() const { return m_CSSDisplayContentsAXSupportEnabled; }
-
     void setCSSLogicalEnabled(bool isEnabled) { m_CSSLogicalEnabled = isEnabled; }
     bool cssLogicalEnabled() const { return m_CSSLogicalEnabled; }
 
@@ -329,7 +326,6 @@ private:
 
     bool m_isReadableByteStreamAPIEnabled { false };
 
-    bool m_CSSDisplayContentsAXSupportEnabled { false };
     bool m_CSSLogicalEnabled { false };
 
     // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /

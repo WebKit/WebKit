@@ -1,3 +1,19 @@
+2022-05-14  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Remove CSSDisplayContentsAXSupportEnabled flag
+        https://bugs.webkit.org/show_bug.cgi?id=240409
+
+        Reviewed by Chris Fleizach.
+
+        We added initial support without using this flag and will continue to
+        fix bugs as we find them, making this flag unnecessary.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences cssDisplayContentsAXSupportEnabled]): Deleted.
+        (-[WebPreferences setCSSDisplayContentsAXSupportEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2022-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Remove the viewportFitEnabled WKPreference now that it is always on 
