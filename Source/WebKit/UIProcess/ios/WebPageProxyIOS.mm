@@ -1058,7 +1058,7 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     return pageCount;
 }
 
-uint64_t WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& completionHandler)
+uint64_t WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });

@@ -931,11 +931,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         _pdfPrintCompletionSemaphore = makeUnique<BinarySemaphore>();
 
     // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
-    _pdfPrintCallbackID = _page->drawToPDFiOS(frameID, printInfo, pageCount, [retainedSelf = retainPtr(self)](const IPC::SharedBufferCopy& pdfData) {
-        if (pdfData.isEmpty())
+    _pdfPrintCallbackID = _page->drawToPDFiOS(frameID, printInfo, pageCount, [retainedSelf = retainPtr(self)](RefPtr<WebCore::SharedBuffer>&& pdfData) {
+        if (!pdfData || pdfData->isEmpty())
             retainedSelf->_printedDocument = nullptr;
         else {
-            auto data = pdfData.buffer()->createCFData();
+            auto data = pdfData->createCFData();
             auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
             retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
         }

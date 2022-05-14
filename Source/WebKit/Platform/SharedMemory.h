@@ -46,6 +46,7 @@ class Encoder;
 namespace WebCore {
 class SharedBuffer;
 class FragmentedSharedBuffer;
+class ProcessIdentity;
 }
 
 #if OS(DARWIN)
@@ -62,7 +63,8 @@ class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     enum class Protection {
         ReadOnly,
-        ReadWrite
+        ReadWrite,
+        CopyOnWrite
     };
 
     class Handle {
@@ -81,6 +83,7 @@ public:
 
         // Take ownership of the memory for jetsam purposes.
         void takeOwnershipOfMemory(MemoryLedger) const;
+        void transferOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
 
         void clear();
 

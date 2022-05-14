@@ -24,7 +24,7 @@
 
 messages -> ServiceWorkerDownloadTask NotRefCounted {
     DidFail(WebCore::ResourceError error)
-    DidReceiveData(IPC::SharedBufferCopy data, int64_t encodedDataLength)
+    DidReceiveData(IPC::SharedBufferReference data, int64_t encodedDataLength)
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish()
 }

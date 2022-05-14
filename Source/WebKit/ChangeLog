@@ -1,3 +1,191 @@
+2022-05-08  Jean-Yves Avenard  <jya@apple.com>
+
+        SharedBuffer should be copied and then attributed back to WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=240223
+        rdar://91006582
+
+        Reviewed by Jer Noble.
+
+        Ideally, when mapping an IPCHandle we would prefer to use Copy On Write.
+        However, there's no support for COW with explicitly-owned memory such as
+        those created with VM_FLAGS_PURGABLE flag.
+        As such, when calling mach_vm_map with copy=true argument is set the
+        entire page will be copied.
+        It is therefore more performant to manually create a new buffer and copy
+        the actual content.
+        The memory can then be blamed on a particular process.
+
+        Rework FragmentedSharedBuffer/SharedBuffer IPC's serializer to perform
+        a copy, partially reverting changes made in bug 233401.
+
+        We replace the unnecessary use of SharedMemory::IPCHandle and directly
+        send SharedBuffer in clipboard and PDF related methods.
+        Rename SharedBufferCopy to SharedBufferReference to more accurately
+        describe what it does.
+
+        Make new use of the SharedBufferReference class, replacing the use of IPCHandle
+        in RemoteSourceBufferProxy and RemoteMediaResourceManager.
+
+        Rename SharedBufferReference::buffer() into
+        SharedBufferReference::unsafeBuffer() to give better clarity that accessing
+        SharedBuffer and SharedMemory should be treated with care.
+
+        SharedBuffer sent from trusted processes such as network process should
+        prefer the use of SharedBufferReference over directly using IPCHandle or
+        SharedBuffer, it makes optimisation easier and avoid duplicating code.
+
+        No observable change, covered by existing tests.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::remoteMediaResourceManager):
+        * GPUProcess/media/RemoteCDMInstanceProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::createDecoder):
+        (WebKit::RemoteImageDecoderAVFProxy::setData):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in:
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        (WebKit::RemoteMediaResourceManager::RemoteMediaResourceManager):
+        (WebKit::RemoteMediaResourceManager::dataReceived):
+        * GPUProcess/media/RemoteMediaResourceManager.h:
+        * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::append):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBuffer):
+        (WebKit::NetworkResourceLoader::dataReceivedThroughContentFilter):
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp:
+        (WebKit::ServiceWorkerDownloadTask::didReceiveData):
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::loadBodyFromPreloader):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in:
+        * Platform/IPC/SharedBufferCopy.cpp: Removed.
+        * Platform/IPC/SharedBufferCopy.h: Removed.
+        * Platform/IPC/SharedBufferReference.cpp: Added.
+        (IPC::SharedBufferReference::encode const):
+        (IPC::SharedBufferReference::decode):
+        (IPC::SharedBufferReference::unsafeBuffer const):
+        (IPC::SharedBufferReference::data const):
+        (IPC::SharedBufferReference::bufferWithOwner const):
+        * Platform/IPC/SharedBufferReference.h: Added.
+        (IPC::SharedBufferReference::SharedBufferReference):
+        (IPC::SharedBufferReference::size const):
+        (IPC::SharedBufferReference::isEmpty const):
+        (IPC::SharedBufferReference::isNull const):
+        * Platform/SharedMemory.cpp:
+        (WebKit::transferOwnershipOfMemory const):
+        * Platform/SharedMemory.h:
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::changeOwnershipOfMemory):
+        (WebKit::SharedMemory::Handle::takeOwnershipOfMemory const):
+        (WebKit::SharedMemory::Handle::transferOwnershipOfMemory const):
+        (WebKit::machProtection):
+        (WebKit::SharedMemory::map):
+        * Scripts/process-entitlements.sh:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::createBackendHandle const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeSharedBuffer):
+        (IPC::decodeSharedBuffer):
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::CompletionHandler<void):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+        (WebKit::WebPageProxy::drawToPDF):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::readBuffer):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::drawToPDFiOS):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::setData):
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+        (WebKit::RemoteMediaResourceProxy::dataReceived):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::append):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachmentIdentifier):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::readBufferFromClipboard):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsMHTMLData):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::getAccessibilityTreeData):
+        (WebKit::WebPage::drawToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+        (WebKit::WebPage::didGetLoadDecisionForIcon):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+        (WebKit::WebPage::performActionOnElement):
+        (WebKit::WebPage::drawToPDFiOS):
+        (WebKit::WebPage::didFinishLoadForQuickLookDocumentInMainFrame):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::consumeAudioComponentRegistrations):
+
 2022-05-13  Tim Horton  <timothy_horton@apple.com>
 
         ApplePayLogoSystemImage needlessly loads PassKit in WebKit child processes on iOS
@@ -916,7 +1104,7 @@
         Reviewed by Yusuke Suzuki.
 
         We have reports that it can take a long time to launch WebKit processes in some cases. This is the time 
-        it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens 
+        it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens
         in order to help diagnose the issue.
         
         * UIProcess/AuxiliaryProcessProxy.cpp:

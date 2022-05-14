@@ -588,7 +588,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
                 }
             }
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , [&] (IPC::SharedBufferCopy& buffer) {
+            , [&] (IPC::SharedBufferReference& buffer) {
                 ASSERT_NOT_REACHED();
             }
 #endif
@@ -606,7 +606,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
         } else
             layer.opaque = m_isOpaque;
-        auto data = std::get<IPC::SharedBufferCopy>(*m_displayListBufferHandle).buffer()->createCFData();
+        auto data = std::get<IPC::SharedBufferReference>(*m_displayListBufferHandle).buffer()->createCFData();
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get() replayForTesting:replayCGDisplayListsIntoBackingStore];
         return;
     }
