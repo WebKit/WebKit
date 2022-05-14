@@ -1,5 +1,26 @@
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
+        [FFC][Integration] Add updateFormattingRootGeometryAndInvalidate/updateRenderers
+        https://bugs.webkit.org/show_bug.cgi?id=240413
+
+        Reviewed by Antti Koivisto.
+
+        Make sure that the layout box/renderer geometries are all up-to-date.
+
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:
+        (WebCore::LayoutIntegration::logicalBorder):
+        (WebCore::LayoutIntegration::logicalPadding):
+        (WebCore::LayoutIntegration::FlexLayout::updateFormattingRootGeometryAndInvalidate):
+        (WebCore::LayoutIntegration::FlexLayout::layout):
+        (WebCore::LayoutIntegration::FlexLayout::updateRenderers const):
+        * layout/integration/flex/LayoutIntegrationFlexLayout.h:
+        (WebCore::LayoutIntegration::FlexLayout::flexBoxRenderer const):
+        (WebCore::LayoutIntegration::FlexLayout::flexBoxRenderer):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutUsingFlexFormattingContext):
+
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
         [FFC][Integration] Do not reset the effective display value for flex root
         https://bugs.webkit.org/show_bug.cgi?id=240412
 

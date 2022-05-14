@@ -2347,6 +2347,8 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
     if (!m_flexLayout)
         m_flexLayout = makeUnique<LayoutIntegration::FlexLayout>(*this);
 
+    m_flexLayout->updateFormattingRootGeometryAndInvalidate();
+
     for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
         flexItem.layoutIfNeeded();
         m_flexLayout->updateFlexItemDimensions(flexItem);

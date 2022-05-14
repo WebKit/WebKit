@@ -45,8 +45,48 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
 {
 }
 
+// FIXME: Merge these with the other integration layout functions.
+static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+{
+    UNUSED_PARAM(isLeftToRightInlineDirection);
+    UNUSED_PARAM(writingMode);
+
+    auto borderLeft = renderer.borderLeft();
+    auto borderRight = renderer.borderRight();
+    auto borderTop = renderer.borderTop();
+    auto borderBottom = renderer.borderBottom();
+
+    return { { borderLeft, borderRight }, { borderTop, borderBottom } };
+}
+
+static inline Layout::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+{
+    UNUSED_PARAM(isLeftToRightInlineDirection);
+    UNUSED_PARAM(writingMode);
+
+    auto paddingLeft = renderer.paddingLeft();
+    auto paddingRight = renderer.paddingRight();
+    auto paddingTop = renderer.paddingTop();
+    auto paddingBottom = renderer.paddingBottom();
+
+    return { { paddingLeft, paddingRight }, { paddingTop, paddingBottom } };
+}
+
 void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 {
+    auto& flexBoxRenderer = this->flexBoxRenderer();
+
+    auto updateGeometry = [&](auto& root) {
+        auto isLeftToRightInlineDirection = flexBoxRenderer.style().isLeftToRightDirection();
+        auto writingMode = flexBoxRenderer.style().writingMode();
+
+        root.setContentBoxWidth(writingMode == WritingMode::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
+        root.setPadding(logicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
+        root.setBorder(logicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
+        root.setHorizontalMargin({ });
+        root.setVerticalMargin({ });
+    };
+    return updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox()));
 }
 
 void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem)
@@ -80,6 +120,19 @@ void FlexLayout::layout()
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
     flexFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop() });
+
+    updateRenderers();
+}
+
+void FlexLayout::updateRenderers() const
+{
+    auto& boxAndRendererList = m_boxTree.boxAndRendererList();
+    for (auto& boxAndRenderer : boxAndRendererList) {
+        auto& layoutBox = boxAndRenderer.box.get();
+
+        auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
+        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(m_flexFormattingState.boxGeometry(layoutBox)));
+    }
 }
 
 void FlexLayout::paint(PaintInfo&, const LayoutPoint&)
