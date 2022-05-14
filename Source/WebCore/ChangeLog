@@ -1,3 +1,42 @@
+2022-05-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] LayoutState should track the integration formatting context type
+        https://bugs.webkit.org/show_bug.cgi?id=240411
+
+        Reviewed by Antti Koivisto.
+
+        Let's not use RuntimeEnabledFeatures to check wheter the integration codepath is enabled as
+        the new FCs (e.g. flex) don't even have such flags.
+
+        * layout/LayoutContext.cpp:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        (WebCore::Layout::LayoutState::formattingStateForFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForInlineFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForFlexFormattingContext const):
+        (WebCore::Layout::LayoutState::ensureInlineFormattingState):
+        (WebCore::Layout::LayoutState::ensureFlexFormattingState):
+        (WebCore::Layout::LayoutState::setViewportSize):
+        (WebCore::Layout::LayoutState::viewportSize const):
+        (WebCore::Layout::LayoutState::setIsIntegratedRootBoxFirstChild):
+        (WebCore::Layout::LayoutState::shouldIgnoreTrailingLetterSpacing const):
+        (WebCore::Layout::LayoutState::shouldNotSynthesizeInlineBlockBaseline const):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::isInlineFormattingContextIntegration const):
+        (WebCore::Layout::LayoutState::isFlexFormattingContextIntegration const):
+        * layout/floats/FloatingState.cpp:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::appendTextDisplayBox):
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:
+        (WebCore::LayoutIntegration::FlexLayout::FlexLayout):
+        * layout/integration/inline/LayoutIntegrationInlineContent.cpp:
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::LineLayout):
+        (WebCore::LayoutIntegration::LineLayout::releaseCaches):
+
 2022-05-13  Tim Horton  <timothy_horton@apple.com>
 
         ApplePayLogoSystemImage needlessly loads PassKit in WebKit child processes on iOS

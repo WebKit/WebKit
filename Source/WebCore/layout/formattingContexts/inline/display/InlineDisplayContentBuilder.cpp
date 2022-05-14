@@ -31,7 +31,6 @@
 #include "FontCascade.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
@@ -145,7 +144,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
 
     auto inkOverflow = [&] {
-        auto initialContaingBlockSize = RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled()
+        auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
             ? formattingState().layoutState().viewportSize()
             : formattingState().layoutState().geometryForBox(layoutBox.initialContainingBlock()).contentBox().size();
         auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));

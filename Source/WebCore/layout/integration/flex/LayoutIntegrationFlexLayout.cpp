@@ -40,7 +40,7 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)
-    , m_layoutState(flexBoxRenderer.document(), rootLayoutBox())
+    , m_layoutState(flexBoxRenderer.document(), rootLayoutBox(), Layout::LayoutState::FormattingContextIntegrationType::Flex)
     , m_flexFormattingState(m_layoutState.ensureFlexFormattingState(rootLayoutBox()))
 {
 }

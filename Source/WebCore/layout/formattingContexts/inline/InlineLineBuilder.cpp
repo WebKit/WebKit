@@ -34,7 +34,6 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 
@@ -547,7 +546,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
     // This quirk however should not be applied when running intrinsic width computation.
     // FIXME: webkit.org/b/233261
-    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = isInIntrinsicWidthMode || !RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled()
+    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration()
         ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No
         : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes;
     m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk);

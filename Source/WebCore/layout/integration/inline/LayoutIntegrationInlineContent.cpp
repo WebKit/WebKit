@@ -30,7 +30,6 @@
 
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextPainter.h"
 
 namespace WebCore {
