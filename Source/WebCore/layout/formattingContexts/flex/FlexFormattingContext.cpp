@@ -30,6 +30,7 @@
 
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
+#include "FlexRect.h"
 #include "InlineRect.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
@@ -118,17 +119,44 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
+struct FlexItemLogicalBox {
+    FlexRect rect;
+    const ContainerBox& flexItem;
+};
+
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto mainAxisPosition = constraints.horizontal().logicalLeft;
-    auto crossAxisPosition = constraints.logicalTop();
-    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
-        auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
+    Vector<FlexItemLogicalBox> logicalFlexItemList;
 
-        flexItemGeometry.setLogicalTopLeft({ mainAxisPosition, crossAxisPosition });
-        mainAxisPosition = BoxGeometry::borderBoxRect(flexItemGeometry).right();
+    auto logicalLeft = LayoutUnit { };
+    auto logicalTop = LayoutUnit { };
+
+    auto convertVisualToLogical = [&] {
+        // FIXME: Convert visual (row/column) direction to logical.
+        logicalLeft = constraints.horizontal().logicalLeft;
+        logicalTop = constraints.logicalTop();
+    
+        for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+            auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
+            logicalFlexItemList.append({ { LayoutSize { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() } }, flexItem });
+        }
+    };
+    convertVisualToLogical();
+
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
+        logicalLeft = logicalFlexItem.rect.right();
     }
+
+    auto convertLogicalToVisual = [&] {
+        // FIXME: Convert logical coordinates to visual.
+        for (auto& logicalFlexItem : logicalFlexItemList) {
+            auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.flexItem);
+            flexItemGeometry.setLogicalTopLeft(logicalFlexItem.rect.topLeft());
+        }
+    };
+    convertLogicalToVisual();
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

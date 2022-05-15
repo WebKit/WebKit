@@ -1,3 +1,19 @@
+2022-05-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Introduce logical direction based flex layout
+        https://bugs.webkit.org/show_bug.cgi?id=240424
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for ensuring that core flex layout only needs to deal with
+        one direction for flex content progression (row vs. column vs. reversed etc).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntegration):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForFlexLayout):
+
 2022-05-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebCore::IOSurface has WebCore::GraphicsContext as its property, it should be the other way around
