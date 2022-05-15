@@ -38,18 +38,8 @@ namespace PAL {
 ThreadGlobalData::ThreadGlobalData()
     : m_cachedConverterICU(makeUnique<ICUConverterWrapper>())
 {
-    // This constructor will have been called on the main thread before being called on
-    // any other thread, and is only called once per thread - this makes this a convenient
-    // point to call methods that internally perform a one-time initialization that is not
-    // threadsafe.
-    Thread::current();
 }
 
 ThreadGlobalData::~ThreadGlobalData() = default;
-
-void ThreadGlobalData::destroy()
-{
-    m_cachedConverterICU = nullptr;
-}
 
 } // namespace PAL

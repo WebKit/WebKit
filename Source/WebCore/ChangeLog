@@ -1,3 +1,29 @@
+2022-05-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Put ThreadGlobalData in Thread
+        https://bugs.webkit.org/show_bug.cgi?id=240116
+
+        Reviewed by Darin Adler and Mark Lam.
+
+        This patch puts ThreadGlobalData into Thread's m_clientData field.
+        Thread is stored in fast TLS, so accessing to this field is quite fast
+        compared to the current ThreadSpecific one.
+
+        At the same time, this change can remove a hack in ThreadGlobalData.
+        Previously worker thread needs to tear down ThreadGlobalData explicitly
+        because Thread::current() can be destroyed earlier than ThreadGlobalData.
+        In that case, EventNames etc., which accesses to AtomString's destruction
+        can have problem because of lack of Thread::current() access. But since
+        we now move it to Thread, we can control how it is destroyed with Thread::current()
+        precisely, and we can explicitly destroy it before Thread::current() is fully
+        cleared. So we do not need to call it explicitly anymore.
+        Currently, we are calling it just to make ThreadGlobalData destroyed for debugging.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::destroy):
+        (WebCore::ThreadGlobalData::setWebCoreThreadData):
+        (WebCore::threadGlobalData):
+
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
         Changing text color and removing line-clamp on hover causes text to disappear permanently

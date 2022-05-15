@@ -27,17 +27,14 @@
 #pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
 
 namespace PAL {
 
 struct ICUConverterWrapper;
 
-#if USE(WEB_THREAD)
-class ThreadGlobalData : public ThreadSafeRefCounted<ThreadGlobalData> {
-#else
-class ThreadGlobalData {
-#endif
+class ThreadGlobalData : public WTF::Thread::ClientData {
     WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -47,7 +44,6 @@ public:
 
 protected:
     PAL_EXPORT ThreadGlobalData();
-    void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
 private:
     PAL_EXPORT friend ThreadGlobalData& threadGlobalData();
