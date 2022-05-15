@@ -35,6 +35,14 @@
 
 pthread_t pas_thread_that_is_crash_logging;
 
+// Debug option to log to a file instead of stdout by default.
+// This does not affect pas_fd_stream.
+#define PAS_DEBUG_LOG_TO_SYSLOG 0
+
+#if PAS_DEBUG_LOG_TO_SYSLOG
+#include <sys/syslog.h>
+#endif
+
 void pas_vlog_fd(int fd, const char* format, va_list list)
 {
     char buf[PAS_LOG_MAX_BYTES];
@@ -84,7 +92,13 @@ void pas_log_fd(int fd, const char* format, ...)
 
 void pas_vlog(const char* format, va_list list)
 {
+#if PAS_DEBUG_LOG_TO_SYSLOG
+PAS_IGNORE_WARNINGS_BEGIN("format-nonliteral")
+    syslog(LOG_WARNING, format, list);
+PAS_IGNORE_WARNINGS_END
+#else
     pas_vlog_fd(PAS_LOG_DEFAULT_FD, format, list);
+#endif
 }
 
 void pas_log(const char* format, ...)

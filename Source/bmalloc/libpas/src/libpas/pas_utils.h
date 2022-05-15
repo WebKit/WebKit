@@ -202,6 +202,7 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
 #endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
 
 PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
+PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra);
 
 PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
@@ -239,6 +240,15 @@ PAS_IGNORE_WARNINGS_END
         if (PAS_LIKELY(exp)) \
             break; \
         pas_assertion_failed_no_inline(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+    } while (0)
+
+#define PAS_ASSERT_WITH_EXTRA_DETAIL(exp, extra) \
+    do { \
+        if (!PAS_ENABLE_ASSERT) \
+            break; \
+        if (PAS_LIKELY(exp)) \
+            break; \
+        pas_assertion_failed_no_inline_with_extra_detail(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp, extra); \
     } while (0)
 
 static inline bool pas_is_power_of_2(uintptr_t value)

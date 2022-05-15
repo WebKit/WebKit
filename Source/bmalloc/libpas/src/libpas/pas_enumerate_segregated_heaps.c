@@ -603,7 +603,7 @@ static PAS_NEVER_INLINE void consider_allocator(pas_enumerator* enumerator, enum
     if (verbose)
         pas_log("Have allocator %p in page_ish = %p\n", allocator, (void*)allocator->page_ish);
     
-    PAS_ASSERT_WITH_DETAIL(!pas_local_allocator_config_kind_is_bitfit(allocator->config_kind));
+    PAS_ASSERT_WITH_EXTRA_DETAIL(!pas_local_allocator_config_kind_is_bitfit(allocator->config_kind), allocator->config_kind);
     
     page_config = pas_segregated_page_config_kind_get_config(
         pas_local_allocator_config_kind_get_segregated_page_config_kind(allocator->config_kind));
