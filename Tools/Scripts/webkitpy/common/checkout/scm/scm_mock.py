@@ -96,7 +96,7 @@ class MockSCM(object):
     def timestamp_of_native_revision(self, path, revision):
         return '2013-02-01 08:48:05 +0000'
 
-    def create_patch(self, git_commit, changed_files=None):
+    def create_patch(self, git_commit, changed_files=None, commit_message=False):
         return b"Patch1"
 
     def commit_ids_from_commitish_arguments(self, args):

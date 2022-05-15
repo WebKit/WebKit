@@ -96,7 +96,7 @@ class TestExporterTest(unittest.TestCase):
         def branch_ref_exists(self, name):
             return False
 
-        def create_patch(self, commit, arguments):
+        def create_patch(self, commit, arguments, commit_message=False):
             self.calls.append('create_patch ' + commit + ' ' + str(arguments))
             return self.mock_format_patch_result
 

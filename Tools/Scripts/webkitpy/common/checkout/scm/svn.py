@@ -308,7 +308,7 @@ class SVN(SCM, SVNRepository):
         return self.timestamp_of_revision(path, revision)
 
     # FIXME: This method should be on Checkout.
-    def create_patch(self, git_commit=None, changed_files=None, git_index=None):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=None, commit_message=False):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""

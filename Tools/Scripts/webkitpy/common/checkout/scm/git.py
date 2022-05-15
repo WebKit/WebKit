@@ -350,7 +350,7 @@ class Git(SCM, SVNRepository):
 
         return string_utils.encode("Subversion Revision: ") + string_utils.encode(revision) + string_utils.encode('\n') + string_utils.encode(diff)
 
-    def create_patch(self, git_commit=None, changed_files=None, git_index=False):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain files of multiple different encodings.
         If git_index is True, git_commit is ignored because only indexed files are handled.
@@ -358,7 +358,7 @@ class Git(SCM, SVNRepository):
 
         head = self.rev_parse('HEAD')
         merge_base = self.merge_base(git_commit)
-        if merge_base == head:
+        if not commit_message or merge_base == head:
             command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
         else:
             command = [self.executable_name, 'format-patch', '--stdout', '--binary']
@@ -376,6 +376,8 @@ class Git(SCM, SVNRepository):
             command += [merge_base]
         elif merge_base != head:
             command += ['HEAD...{}'.format(merge_base)]
+        else:
+            command += ['HEAD']
 
         return self.run(command, decode_output=False, cwd=self.checkout_root)
 

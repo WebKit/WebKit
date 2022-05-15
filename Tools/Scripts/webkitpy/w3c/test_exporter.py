@@ -147,7 +147,7 @@ class WebPlatformTestExporter(object):
     @property
     @memoized
     def _wpt_patch(self):
-        patch_data = self._host.scm().create_patch(self._options.git_commit, [WEBKIT_WPT_DIR]) or b''
+        patch_data = self._host.scm().create_patch(self._options.git_commit, [WEBKIT_WPT_DIR], commit_message=False) or b''
         patch_data = self._strip_ignored_files_from_diff(patch_data)
         if b'diff' not in patch_data:
             return ''
