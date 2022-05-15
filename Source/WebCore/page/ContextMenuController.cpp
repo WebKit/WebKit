@@ -77,6 +77,9 @@
 #include "ImageControlsMac.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 namespace WebCore {
 
@@ -164,7 +167,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
     if (!result.innerNonSharedNode())
         return nullptr;
 
-    m_context = ContextMenuContext(contextType, result);
+    m_context = { contextType, result, &event };
     
     return makeUnique<ContextMenu>();
 }
@@ -183,7 +186,7 @@ void ContextMenuController::didDismissContextMenu()
         m_menuProvider->didDismissContextMenu();
 }
 
-static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+static void openNewWindow(const URL& urlToLoad, Frame& frame, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     Page* oldPage = frame.page();
     if (!oldPage)
@@ -197,7 +200,7 @@ static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternal
     if (!newPage)
         return;
     newPage->chrome().show();
-    newPage->mainFrame().loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr, { });
+    newPage->mainFrame().loader().loadFrameRequest(WTFMove(frameLoadRequest), event, { });
 }
 
 #if PLATFORM(GTK)
@@ -229,10 +232,17 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         return;
 
     Ref<Frame> protector(*frame);
+    RefPtr<Event> eventForLoadRequests = [&]() -> Event* {
+#if PLATFORM(COCOA)
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ContextMenuTriggersLinkActivationNavigationType))
+            return nullptr;
+#endif
+        return m_context.event();
+    }();
 
     switch (action) {
     case ContextMenuItemTagOpenLinkInNewWindow:
-        openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks);
+        openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, eventForLoadRequests.get(), ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks);
         break;
     case ContextMenuItemTagDownloadLinkToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
@@ -242,7 +252,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().copyURL(m_context.hitTestResult().absoluteLinkURL(), m_context.hitTestResult().textContent());
         break;
     case ContextMenuItemTagOpenImageInNewWindow:
-        openNewWindow(m_context.hitTestResult().absoluteImageURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+        openNewWindow(m_context.hitTestResult().absoluteImageURL(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         break;
     case ContextMenuItemTagDownloadImageToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
@@ -259,7 +269,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
 #endif
     case ContextMenuItemTagOpenMediaInNewWindow:
-        openNewWindow(m_context.hitTestResult().absoluteMediaURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+        openNewWindow(m_context.hitTestResult().absoluteMediaURL(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         break;
     case ContextMenuItemTagDownloadMediaToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
@@ -292,9 +302,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagOpenFrameInNewWindow: {
         DocumentLoader* loader = frame->loader().documentLoader();
         if (!loader->unreachableURL().isEmpty())
-            openNewWindow(loader->unreachableURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+            openNewWindow(loader->unreachableURL(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         else
-            openNewWindow(loader->url(), *frame, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+            openNewWindow(loader->url(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         break;
     }
     case ContextMenuItemTagCopy:
@@ -407,9 +417,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
             if (targetFrame->isMainFrame())
                 frameLoadRequest.setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy::ShouldAllow);
-            targetFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr,  { });
+            targetFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), eventForLoadRequests.get(), { });
         } else
-            openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllow);
+            openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, eventForLoadRequests.get(), ShouldOpenExternalURLsPolicy::ShouldAllow);
         break;
     case ContextMenuItemTagBold:
         frame->editor().command("ToggleBold"_s).execute();

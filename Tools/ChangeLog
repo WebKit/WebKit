@@ -1,3 +1,17 @@
+2022-05-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Right click > "Open Link" should trigger a navigation action with WKNavigationTypeLinkActivated
+        https://bugs.webkit.org/show_bug.cgi?id=240427
+        rdar://90400867
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that right clicking a link and selecting "Open Link" triggers a navigation action with
+        the type `WKNavigationTypeLinkActivated`.
+
+        * TestWebKitAPI/Tests/mac/ContextMenuTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] Include commit messages in patches (Follow-up #2) 
