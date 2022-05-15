@@ -267,8 +267,8 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
             // image. We need to convert subimageRect to physical image coordinates.
             if (auto transform = options.orientation().transformFromDefault(imageSize).inverse())
                 physicalSubimageRect = transform.value().mapRect(physicalSubimageRect);
-        }
 
+        }
 #if CACHE_SUBIMAGES
         return SubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
 #else

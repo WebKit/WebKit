@@ -125,17 +125,17 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
+    m_context = std::nullopt; // Make sure the context does not interfere with moving to pool.
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
-    GraphicsContext& context = m_surface->ensureGraphicsContext();
-    if (m_needsSetupContext) {
-        m_needsSetupContext = false;
+    if (!m_context) {
+        m_context.emplace(*m_surface);
         applyBaseTransformToContext();
     }
-    return context;
+    return *m_context;
 }
 
 void ImageBufferIOSurfaceBackend::flushContext()
@@ -238,8 +238,8 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
 
 void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
-    m_needsSetupContext = true;
-    return m_surface->releaseGraphicsContext();
+    m_context = std::nullopt;
+    m_surface->releasePlatformGraphicsContext();
 }
 
 bool ImageBufferIOSurfaceBackend::setVolatile()

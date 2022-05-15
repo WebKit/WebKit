@@ -1,3 +1,36 @@
+2022-05-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebCore::IOSurface has WebCore::GraphicsContext as its property, it should be the other way around
+        https://bugs.webkit.org/show_bug.cgi?id=240417
+
+        Reviewed by Simon Fraser.
+
+        Do not store WebCore::GraphicsContext in WebCore::IOSurface.
+        E.g. graphics context is not the property of the bitmap that
+        is being drawn to. The backing bitmap is a property of the context.
+
+        Instead, store the GraphicsContextCG at the place where the user is,
+        e.g. in ImageBufferIOSurfaceBackend. This allows the context client
+        to create the context with the options the client needs.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContextCG::GraphicsContextCG):
+        (WebCore::GraphicsContextCG::drawNativeImage):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::willAddSurface):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend):
+        (WebCore::ImageBufferIOSurfaceBackend::context const):
+        (WebCore::ImageBufferIOSurfaceBackend::releaseGraphicsContext):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::create):
+        (WebCore::IOSurface::releasePlatformGraphicsContext):
+        (WebCore::IOSurface::ensureGraphicsContext): Deleted.
+        (WebCore::IOSurface::releaseGraphicsContext): Deleted.
+
 2022-05-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Put ThreadGlobalData in Thread
