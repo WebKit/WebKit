@@ -302,7 +302,7 @@ void RemoteDisplayListRecorder::drawSystemImage(SystemImage& systemImage, const 
             ASSERT_NOT_REACHED();
             return;
         }
-        badge.setImage(BitmapImage::create(WTFMove(nativeImage)));
+        badge.setImage(BitmapImage::create(nativeImage.releaseNonNull()));
     }
 #endif
     handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));

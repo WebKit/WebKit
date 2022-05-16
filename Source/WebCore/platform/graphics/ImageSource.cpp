@@ -44,7 +44,7 @@ ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndCo
 {
 }
 
-ImageSource::ImageSource(RefPtr<NativeImage>&& nativeImage)
+ImageSource::ImageSource(Ref<NativeImage>&& nativeImage)
     : m_runLoop(RunLoop::current())
 {
     m_frameCount = 1;
@@ -120,17 +120,17 @@ bool ImageSource::isAllDataReceived()
     return isDecoderAvailable() ? m_decoder->isAllDataReceived() : frameCount();
 }
 
-void ImageSource::destroyDecodedData(size_t frameCount, size_t excludeFrame)
+void ImageSource::destroyDecodedData(size_t begin, size_t end)
 {
+    if (begin >= end)
+        return;
+
+    ASSERT(end <= m_frames.size());
+
     unsigned decodedSize = 0;
 
-    ASSERT(frameCount <= m_frames.size());
-
-    for (size_t index = 0; index < frameCount; ++index) {
-        if (index == excludeFrame)
-            continue;
+    for (size_t index = begin; index < end; ++index)
         decodedSize += m_frames[index].clearImage();
-    }
 
     decodedSizeReset(decodedSize);
 }
@@ -232,7 +232,7 @@ void ImageSource::growFrames()
         m_frames.grow(newSize);
 }
 
-void ImageSource::setNativeImage(RefPtr<NativeImage>&& nativeImage)
+void ImageSource::setNativeImage(Ref<NativeImage>&& nativeImage)
 {
     ASSERT(m_frames.size() == 1);
     ImageFrame& frame = m_frames[0];

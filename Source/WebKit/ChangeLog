@@ -1,3 +1,14 @@
+2022-05-16  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION(r249162): CanvasRenderingContext2DBase::drawImage() crashes if the image is animated and the first frame cannot be decoded
+        https://bugs.webkit.org/show_bug.cgi?id=239113
+        rdar://87980543
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawSystemImage):
+
 2022-05-16  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after 250556@main
