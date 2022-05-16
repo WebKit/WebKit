@@ -147,7 +147,7 @@ private:
 
     Vector<float> m_bipBopBuffer;
     bool m_hasAudioUnit { false };
-    Ref<MockAudioSharedInternalUnitState> m_isProducingState;
+    Ref<MockAudioSharedInternalUnitState> m_internalState;
     bool m_enableEchoCancellation { true };
     RunLoop::Timer<MockAudioSharedInternalUnit> m_timer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
@@ -188,7 +188,7 @@ static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 
 }
 
 MockAudioSharedInternalUnit::MockAudioSharedInternalUnit()
-    : m_isProducingState(MockAudioSharedInternalUnitState::create())
+    : m_internalState(MockAudioSharedInternalUnitState::create())
     , m_timer(RunLoop::current(), [this] { this->start(); })
     , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue", WorkQueue::QOS::UserInteractive))
 {
@@ -197,7 +197,7 @@ MockAudioSharedInternalUnit::MockAudioSharedInternalUnit()
 
 MockAudioSharedInternalUnit::~MockAudioSharedInternalUnit()
 {
-    ASSERT(!m_isProducingState->isProducingData());
+    ASSERT(!m_internalState->isProducingData());
 }
 
 OSStatus MockAudioSharedInternalUnit::initialize()
@@ -216,7 +216,7 @@ OSStatus MockAudioSharedInternalUnit::start()
 
     m_lastRenderTime = MonotonicTime::now();
 
-    m_isProducingState->setIsProducingData(true);
+    m_internalState->setIsProducingData(true);
     m_workQueue->dispatch([this, renderTime = m_lastRenderTime] {
         generateSampleBuffers(renderTime);
     });
@@ -225,7 +225,7 @@ OSStatus MockAudioSharedInternalUnit::start()
 
 OSStatus MockAudioSharedInternalUnit::stop()
 {
-    m_isProducingState->setIsProducingData(false);
+    m_internalState->setIsProducingData(false);
     if (m_hasAudioUnit)
         m_lastRenderTime = MonotonicTime::nan();
 
@@ -236,7 +236,7 @@ OSStatus MockAudioSharedInternalUnit::stop()
 
 OSStatus MockAudioSharedInternalUnit::uninitialize()
 {
-    ASSERT(!m_isProducingState->isProducingData());
+    ASSERT(!m_internalState->isProducingData());
     return 0;
 }
 
@@ -311,7 +311,7 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
         nextRenderDelay = 0_s;
     }
 
-    m_workQueue->dispatchAfter(nextRenderDelay, [this, nextRenderTime, state = m_isProducingState] {
+    m_workQueue->dispatchAfter(nextRenderDelay, [this, nextRenderTime, state = m_internalState] {
         if (state->isProducingData())
             generateSampleBuffers(nextRenderTime);
     });
