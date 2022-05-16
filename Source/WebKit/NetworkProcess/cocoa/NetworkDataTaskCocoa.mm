@@ -356,20 +356,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
 
-    switch (parameters.storedCredentialsPolicy) {
-    case WebCore::StoredCredentialsPolicy::Use:
-        ASSERT(m_sessionWrapper->session.get().configuration.URLCredentialStorage);
-        break;
-    case WebCore::StoredCredentialsPolicy::EphemeralStateless:
-        ASSERT(!m_sessionWrapper->session.get().configuration.URLCredentialStorage);
-        break;
-    case WebCore::StoredCredentialsPolicy::DoNotUse:
-        NSURLSessionConfiguration *effectiveConfiguration = m_sessionWrapper->session.get().configuration;
-        effectiveConfiguration.URLCredentialStorage = nil;
-        [m_task _adoptEffectiveConfiguration:effectiveConfiguration];
-        break;
-    };
-
     WTFBeginSignpost(m_task.get(), "DataTask", "%{public}s pri: %.2f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     RELEASE_ASSERT(!m_sessionWrapper->dataTaskMap.contains([m_task taskIdentifier]));
