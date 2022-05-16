@@ -36,6 +36,7 @@ enum class SDKAlignedBehavior {
     ApplicationCacheDisabledByDefault,
     AuthorizationHeaderOnSameOriginRedirects,
     BlanksViewOnJSPrompt,
+    ContextMenuTriggersLinkActivationNavigationType,
     ConvertsInvalidURLsToBlank,
     DataURLFragmentRemoval,
     DecidesPolicyBeforeLoadingQuickLookPreview,
