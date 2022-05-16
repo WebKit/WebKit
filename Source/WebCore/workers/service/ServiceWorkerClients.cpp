@@ -30,6 +30,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerWindowClient.h"
+#include "Logging.h"
 #include "SWContextManager.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"

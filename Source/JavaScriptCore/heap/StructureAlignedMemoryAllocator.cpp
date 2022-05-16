@@ -32,6 +32,10 @@
 
 #include <wtf/OSAllocator.h>
 
+#if OS(UNIX) && ASSERT_ENABLED
+#include <sys/mman.h>
+#endif
+
 namespace JSC {
 
 StructureAlignedMemoryAllocator::StructureAlignedMemoryAllocator(CString name)
