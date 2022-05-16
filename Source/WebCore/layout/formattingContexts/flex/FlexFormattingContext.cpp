@@ -134,12 +134,31 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
     auto convertVisualToLogical = [&] {
         // FIXME: Convert visual (row/column) direction to logical.
+        auto direction = root().style().flexDirection();
+
         logicalLeft = constraints.horizontal().logicalLeft;
         logicalTop = constraints.logicalTop();
-    
+
         for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
             auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
-            logicalFlexItemList.append({ { LayoutSize { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() } }, flexItem });
+            auto logicalSize = LayoutSize { };
+
+            switch (direction) {
+            case FlexDirection::Row:
+                logicalSize = { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() };
+                break;
+            case FlexDirection::Column:
+                logicalSize = { flexItemGeometry.marginBoxHeight(), flexItemGeometry.marginBoxWidth() };
+                break;
+            case FlexDirection::RowReverse:
+            case FlexDirection::ColumnReverse:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            logicalFlexItemList.append({ { logicalSize }, flexItem });
         }
     };
     convertVisualToLogical();
@@ -151,9 +170,27 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
     auto convertLogicalToVisual = [&] {
         // FIXME: Convert logical coordinates to visual.
+        auto direction = root().style().flexDirection();
         for (auto& logicalFlexItem : logicalFlexItemList) {
             auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.flexItem);
-            flexItemGeometry.setLogicalTopLeft(logicalFlexItem.rect.topLeft());
+            auto topLeft = LayoutPoint { };
+
+            switch (direction) {
+            case FlexDirection::Row:
+                topLeft = logicalFlexItem.rect.topLeft();
+                break;
+            case FlexDirection::Column:
+                topLeft = logicalFlexItem.rect.topLeft().transposedPoint();
+                break;
+            case FlexDirection::RowReverse:
+            case FlexDirection::ColumnReverse:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            flexItemGeometry.setLogicalTopLeft(topLeft);
         }
     };
     convertLogicalToVisual();

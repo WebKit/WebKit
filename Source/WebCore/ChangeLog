@@ -1,3 +1,15 @@
+2022-05-16  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][FFC] Add "flex-direction: column" basic visual/logical conversion
+        https://bugs.webkit.org/show_bug.cgi?id=240430
+
+        Reviewed by Antti Koivisto.
+
+        With "flex-direction: column" the main axis progression is based on the margin box height.
+
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntegration):
+
 2022-05-15  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r294104): [GStreamer] getUserMedia broken
