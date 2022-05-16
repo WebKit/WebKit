@@ -1,3 +1,15 @@
+2022-05-16  Youenn Fablet  <youenn@apple.com>
+
+        Add logging when taking a process assertion synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=240334
+
+        Reviewed by Chris Dumez.
+
+        No observable change of behavior.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::acquireSync):
+
 2022-05-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Rename EventTrackingRegions::Event to EventTrackingRegions::EventType
