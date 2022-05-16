@@ -702,14 +702,18 @@ const ShadowData* TextBoxPainter<TextBoxPath>::debugTextShadow() const
 {
     if (!m_renderer.settings().legacyLineLayoutVisualCoverageEnabled())
         return nullptr;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if constexpr (std::is_same_v<TextBoxPath, InlineIterator::BoxModernPath>)
         return nullptr;
+#endif
 
     static NeverDestroyed<ShadowData> debugTextShadow(LengthPoint(Length(LengthType::Fixed), Length(LengthType::Fixed)), Length(10, LengthType::Fixed), Length(20, LengthType::Fixed), ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
     return &debugTextShadow.get();
 }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 template class TextBoxPainter<InlineIterator::BoxModernPath>;
+#endif
 template class TextBoxPainter<InlineIterator::BoxLegacyPath>;
 
 }

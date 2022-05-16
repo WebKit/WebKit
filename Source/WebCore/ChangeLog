@@ -1,3 +1,14 @@
+2022-05-16  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Unreviewed, fix build after 250565@main
+        https://bugs.webkit.org/show_bug.cgi?id=240416
+        <rdar://problem/93293276>
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter<TextBoxPath>::debugTextShadow const):
+
 2022-05-16  Ziran Sun  <zsun@igalia.com>
 
         [css-ui] alias appearance <compat-auto> keywords to 'auto' for textfield
