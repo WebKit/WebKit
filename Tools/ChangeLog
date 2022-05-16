@@ -1,3 +1,26 @@
+2022-05-16  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Make ANGLE backend EGL context initialization work
+        https://bugs.webkit.org/show_bug.cgi?id=240313
+
+        The platform is not selected correctly by default and the config
+        can not be chosen in some cases in the current conditions. Maybe
+        at some point we want something more general in the code for the
+        platform detection but for testing we have solved it adding the
+        environment variable (EGL_PLATORM) to make sure the platform
+        inside mesa is correctly selected when running the tests. If we
+        don't do it the small environment in the testing driver process
+        causes to chose the X11 because it is the building default
+        option. We used wayland because the headless driver we use is a
+        wayland backed implemented using shared memory.
+
+        Reviewed by Žan Doberšek.
+
+        No new tests, it fixes the tests for the ANGLE implementation.
+
+        * Scripts/webkitpy/port/headlessdriver.py:
+        (HeadlessDriver._setup_environ_for_test):
+
 2022-05-16  J Pascoe  <j_pascoe@apple.com>
 
         (REGRESSION(r287957)[ Mac ] TestWebKitAPI.WebAuthenticationPanel.LAGetAssertionNoMockNoUserGesture is a constant timeout)
