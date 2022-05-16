@@ -1,3 +1,11 @@
+2022-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after 250556@main
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Maintain the status quo here, for now, by adopting unsafeBuffer().
+
 2022-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
         [SOUP2] Compute number of header bytes whe using soup 2
