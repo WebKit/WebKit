@@ -1098,7 +1098,9 @@ WebKitDOMNodeIterator* webkit_dom_document_create_node_iterator(WebKitDOMDocumen
     WebCore::Node* convertedRoot = WebKit::core(root);
     RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(item, filter);
     RefPtr<WebCore::NodeIterator> gobjectResult = WTF::getPtr(item->createNodeIterator(*convertedRoot, whatToShow, WTF::getPtr(convertedFilter), expandEntityReferences));
+IGNORE_GCC_WARNINGS_BEGIN("use-after-free")
     return WebKit::kit(gobjectResult.get());
+IGNORE_GCC_WARNINGS_END
 }
 
 WebKitDOMTreeWalker* webkit_dom_document_create_tree_walker(WebKitDOMDocument* self, WebKitDOMNode* root, gulong whatToShow, WebKitDOMNodeFilter* filter, gboolean expandEntityReferences, GError** error)
@@ -1112,7 +1114,9 @@ WebKitDOMTreeWalker* webkit_dom_document_create_tree_walker(WebKitDOMDocument* s
     WebCore::Node* convertedRoot = WebKit::core(root);
     RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(item, filter);
     RefPtr<WebCore::TreeWalker> gobjectResult = WTF::getPtr(item->createTreeWalker(*convertedRoot, whatToShow, WTF::getPtr(convertedFilter), expandEntityReferences));
+IGNORE_GCC_WARNINGS_BEGIN("use-after-free")
     return WebKit::kit(gobjectResult.get());
+IGNORE_GCC_WARNINGS_END
 }
 
 WebKitDOMCSSStyleDeclaration* webkit_dom_document_get_override_style(WebKitDOMDocument*, WebKitDOMElement*, const gchar*)
