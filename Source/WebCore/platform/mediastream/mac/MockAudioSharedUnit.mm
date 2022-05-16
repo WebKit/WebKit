@@ -97,6 +97,17 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt), constraints, MockAudioSharedUnit::singleton(), pageIdentifier);
 }
 
+class MockAudioSharedInternalUnitState : public ThreadSafeRefCounted<MockAudioSharedInternalUnitState> {
+public:
+    static Ref<MockAudioSharedInternalUnitState> create() { return adoptRef(*new MockAudioSharedInternalUnitState()); }
+
+    bool isProducingData() const { return m_isProducingData; }
+    void setIsProducingData(bool value) { m_isProducingData = value; }
+
+private:
+    bool m_isProducingData { false };
+};
+
 class MockAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -105,7 +116,7 @@ public:
 
 private:
     OSStatus initialize() final;
-    OSStatus uninitialize() final { return 0; }
+    OSStatus uninitialize() final;
     OSStatus start() final;
     OSStatus stop() final;
     OSStatus set(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, const void*, UInt32) final;
@@ -136,7 +147,7 @@ private:
 
     Vector<float> m_bipBopBuffer;
     bool m_hasAudioUnit { false };
-    bool m_isProducingData { false };
+    Ref<MockAudioSharedInternalUnitState> m_isProducingState;
     bool m_enableEchoCancellation { true };
     RunLoop::Timer<MockAudioSharedInternalUnit> m_timer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
@@ -177,7 +188,8 @@ static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 
 }
 
 MockAudioSharedInternalUnit::MockAudioSharedInternalUnit()
-    : m_timer(RunLoop::current(), [this] { this->start(); })
+    : m_isProducingState(MockAudioSharedInternalUnitState::create())
+    , m_timer(RunLoop::current(), [this] { this->start(); })
     , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue", WorkQueue::QOS::UserInteractive))
 {
     m_streamFormat = m_outputStreamFormat = createAudioFormat(44100, 2);
@@ -185,7 +197,7 @@ MockAudioSharedInternalUnit::MockAudioSharedInternalUnit()
 
 MockAudioSharedInternalUnit::~MockAudioSharedInternalUnit()
 {
-    ASSERT(!m_isProducingData);
+    ASSERT(!m_isProducingState->isProducingData());
 }
 
 OSStatus MockAudioSharedInternalUnit::initialize()
@@ -203,7 +215,8 @@ OSStatus MockAudioSharedInternalUnit::start()
         m_hasAudioUnit = true;
 
     m_lastRenderTime = MonotonicTime::now();
-    m_isProducingData = true;
+
+    m_isProducingState->setIsProducingData(true);
     m_workQueue->dispatch([this, renderTime = m_lastRenderTime] {
         generateSampleBuffers(renderTime);
     });
@@ -212,12 +225,18 @@ OSStatus MockAudioSharedInternalUnit::start()
 
 OSStatus MockAudioSharedInternalUnit::stop()
 {
-    m_isProducingData = false;
+    m_isProducingState->setIsProducingData(false);
     if (m_hasAudioUnit)
         m_lastRenderTime = MonotonicTime::nan();
 
     m_workQueue->dispatchSync([] { });
 
+    return 0;
+}
+
+OSStatus MockAudioSharedInternalUnit::uninitialize()
+{
+    ASSERT(!m_isProducingState->isProducingData());
     return 0;
 }
 
@@ -283,10 +302,6 @@ void MockAudioSharedInternalUnit::emitSampleBuffers(uint32_t frameCount)
 
 void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime)
 {
-    ASSERT(!isMainThread());
-    if (!m_isProducingData)
-        return;
-
     auto delta = renderInterval();
     auto currentTime = MonotonicTime::now();
     auto nextRenderTime = renderTime + delta;
@@ -295,8 +310,10 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
         nextRenderTime = currentTime;
         nextRenderDelay = 0_s;
     }
-    m_workQueue->dispatchAfter(nextRenderDelay, [this, nextRenderTime] {
-        generateSampleBuffers(nextRenderTime);
+
+    m_workQueue->dispatchAfter(nextRenderDelay, [this, nextRenderTime, state = m_isProducingState] {
+        if (state->isProducingData())
+            generateSampleBuffers(nextRenderTime);
     });
 
     if (!m_audioBufferList || !m_bipBopBuffer.size())
