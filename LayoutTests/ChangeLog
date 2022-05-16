@@ -1,3 +1,12 @@
+2022-05-16  Karl Rackler  <rackler@apple.com>
+
+        [Gardening]:[ iOS ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html is a consistent failure
+        https://bugs.webkit.org/show_bug.cgi?id=240348
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
 2022-05-16  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r266885) Crash sometimes when rehydrating imported audit results

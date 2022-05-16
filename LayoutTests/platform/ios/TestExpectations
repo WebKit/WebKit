@@ -3612,5 +3612,5 @@ webkit.org/b/240148 fast/images/exif-orientation-background-image-repeat.html [ 
 
 webkit.org/b/240167 [ Release ] fast/css-custom-paint/animate-repaint.html [ Pass Failure ]
 
-webkit.org/b/240348 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Slow ]
+webkit.org/b/240348 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure ]
 
