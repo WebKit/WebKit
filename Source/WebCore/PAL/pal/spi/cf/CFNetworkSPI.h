@@ -280,6 +280,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 
 @interface NSURLSessionTask ()
+- (void) _adoptEffectiveConfiguration:(NSURLSessionConfiguration*) newConfiguration;
 - (NSDictionary *)_timingData;
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
