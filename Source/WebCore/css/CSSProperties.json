@@ -6699,14 +6699,25 @@
         },
         "perspective": {
             "codegen-properties": {
-                "aliases": [
-                    "-webkit-perspective"
-                ],
                 "conditional-converter": "Perspective"
             },
             "specification": {
                 "category": "css-transforms",
-                "url": "https://www.w3.org/TR/css-transforms-1/#transform-style-property"
+                "url": "https://www.w3.org/TR/css-transforms-2/#perspective-property"
+            }
+        },
+        "-webkit-perspective": {
+            "codegen-properties": {
+                "longhands": [
+                    "perspective"
+                ]
+            },
+            "specification": {
+                "category": "css-transforms",
+                "url": "https://www.w3.org/TR/css-transforms-2/#perspective-property"
+            },
+            "status": {
+                "comment": "Differs from unprefixed perspective only through support for unitless values, which are interpreted as 'px'."
             }
         },
         "perspective-origin": {

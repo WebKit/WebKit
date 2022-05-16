@@ -387,6 +387,7 @@ PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
+PASS -webkit-perspective
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-tap-highlight-color

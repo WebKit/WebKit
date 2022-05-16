@@ -90,6 +90,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
 {
     switch (property) {
     case CSSPropertyPerspective:
+    case CSSPropertyWebkitPerspective:
     case CSSPropertyScale:
     case CSSPropertyRotate:
     case CSSPropertyTranslate:

@@ -3636,6 +3636,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitMaskComposite:
         case CSSPropertyWebkitMaskSourceType:
         case CSSPropertyWebkitNbspMode:
+        case CSSPropertyWebkitPerspective:
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         case CSSPropertyWebkitOverflowScrolling:
 #endif

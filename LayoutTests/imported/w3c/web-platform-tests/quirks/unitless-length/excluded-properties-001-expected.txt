@@ -35,7 +35,7 @@ PASS Property padding-block-end does not support quirky length
 PASS Property padding-block-start does not support quirky length
 PASS Property padding-inline-end does not support quirky length
 PASS Property padding-inline-start does not support quirky length
-FAIL Property perspective does not support quirky length assert_equals: expected "567px" but got "1234px"
+PASS Property perspective does not support quirky length
 PASS Property row-gap does not support quirky length
 PASS Property scroll-margin-block-end does not support quirky length
 PASS Property scroll-margin-block-start does not support quirky length

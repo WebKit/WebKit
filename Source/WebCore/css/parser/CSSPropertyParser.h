@@ -121,6 +121,7 @@ private:
 
     bool consumeTransformOrigin(bool important);
     bool consumePerspectiveOrigin(bool important);
+    bool consumePrefixedPerspective(bool important);
     bool consumeOffset(bool important);
 
     bool consumeOverscrollBehaviorShorthand(bool important);

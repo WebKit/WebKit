@@ -3847,6 +3847,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return cssValuePool.createIdentifierValue(CSSValueSmooth);
         case CSSPropertyPerspective:
+        case CSSPropertyWebkitPerspective:
             if (!style.hasPerspective())
                 return cssValuePool.createIdentifierValue(CSSValueNone);
             return zoomAdjustedPixelValue(style.perspective(), style);

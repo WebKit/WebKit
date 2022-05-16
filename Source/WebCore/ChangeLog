@@ -1,3 +1,27 @@
+2022-05-16  Martin Robinson  <mrobinson@webkit.org>
+
+        Do not allow unitless values for CSS unprefixed perspective property
+        https://bugs.webkit.org/show_bug.cgi?id=104805
+        <rdar://problem/77016090>
+
+        Reviewed by Tim Nguyen.
+
+        No new tests. This is tested by an existing WPT test:
+            web-platform-tests/quirks/unitless-length/excluded-properties-001.html
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumePerspective):
+        (WebCore::CSSPropertyParser::consumePrefixedPerspective):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSPropertyParser.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+
 2022-05-16  Youenn Fablet  <youenn@apple.com>
 
         MockAudioSharedInternalUnit should exit early when being stopped in generateSampleBuffers
