@@ -1,5 +1,19 @@
 2022-05-16  Tim Nguyen  <ntim@apple.com>
 
+        [css-ui] Unexpose attachment and borderless-attachment appearance values
+        https://bugs.webkit.org/show_bug.cgi?id=240447
+
+        Reviewed by Tim Horton.
+
+        Hide them behind the attachmentElementEnabled setting.
+
+        Test: imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+
+2022-05-16  Tim Nguyen  <ntim@apple.com>
+
         [css-ui] Update documentation for appearance CSS property
         https://bugs.webkit.org/show_bug.cgi?id=240481
 

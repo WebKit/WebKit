@@ -17,9 +17,9 @@ PASS -webkit-appearance: square-button
 PASS -webkit-appearance: textarea
 PASS -webkit-appearance: textfield
 PASS -webkit-appearance: bogus-button (invalid)
-FAIL -webkit-appearance: attachment (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "attachment"
+PASS -webkit-appearance: attachment (invalid)
 PASS -webkit-appearance: button-bevel (invalid)
-FAIL -webkit-appearance: borderless-attachment (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "borderless-attachment"
+PASS -webkit-appearance: borderless-attachment (invalid)
 PASS -webkit-appearance: button-arrow-down (invalid)
 PASS -webkit-appearance: button-arrow-next (invalid)
 PASS -webkit-appearance: button-arrow-previous (invalid)
@@ -180,9 +180,9 @@ PASS appearance: square-button
 PASS appearance: textarea
 PASS appearance: textfield
 PASS appearance: bogus-button (invalid)
-FAIL appearance: attachment (invalid) assert_equals: style.appearance expected "" but got "attachment"
+PASS appearance: attachment (invalid)
 PASS appearance: button-bevel (invalid)
-FAIL appearance: borderless-attachment (invalid) assert_equals: style.appearance expected "" but got "borderless-attachment"
+PASS appearance: borderless-attachment (invalid)
 PASS appearance: button-arrow-down (invalid)
 PASS appearance: button-arrow-next (invalid)
 PASS appearance: button-arrow-previous (invalid)
