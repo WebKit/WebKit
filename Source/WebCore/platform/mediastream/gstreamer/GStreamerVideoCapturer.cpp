@@ -317,6 +317,9 @@ void GStreamerVideoCapturer::reconfigure()
 
             if (*width >= selector->stopCondition.width && *height >= selector->stopCondition.height
                 && *frameRate >= selector->stopCondition.frameRate) {
+                selector->maxWidth = *width;
+                selector->maxHeight = *height;
+                selector->maxFrameRate = *frameRate;
                 selector->mimeType = gst_structure_get_name(structure);
                 selector->format = gst_structure_get_string(structure, "format");
                 return FALSE;
@@ -333,7 +336,8 @@ void GStreamerVideoCapturer::reconfigure()
             return TRUE;
         }), &selector);
 
-    auto caps = adoptGRef(gst_caps_new_empty_simple(selector.mimeType));
+    auto caps = adoptGRef(gst_caps_new_simple(selector.mimeType, "width", G_TYPE_INT, selector.maxWidth,
+        "height", G_TYPE_INT, selector.maxHeight, nullptr));
 
     // Workaround for https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/1793.
     if (selector.format)
