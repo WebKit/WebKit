@@ -1538,7 +1538,11 @@ TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
     [webView focus];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+    [webView waitForMessage:@"Operation failed."];
+#else
     [webView waitForMessage:@"This request has been cancelled by the user."];
+#endif
 }
 
 TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)

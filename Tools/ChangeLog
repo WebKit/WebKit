@@ -1,3 +1,17 @@
+2022-05-16  J Pascoe  <j_pascoe@apple.com>
+
+        (REGRESSION(r287957)[ Mac ] TestWebKitAPI.WebAuthenticationPanel.LAGetAssertionNoMockNoUserGesture is a constant timeout)
+        https://bugs.webkit.org/show_bug.cgi?id=240403
+        rdar://93271671
+
+        Reviewed by Brent Fulgham.
+
+        Whenever HAVE(UNIFIED_ASC_AUTH_UI), unmocked calls are passed to ASA, which does not
+        support calls from TWAPI.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-16  Youenn Fablet  <youenn@apple.com>
 
         Make sure calling showNotification will extend the service worker lifetime
