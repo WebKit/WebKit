@@ -182,7 +182,9 @@ void InsertTextCommand::doApply()
         startPosition = startPosition.downstream();
     
     startPosition = positionAvoidingSpecialElementBoundary(startPosition);
-    
+    if (endingSelection().isNoneOrOrphaned())
+        return;
+
     Position endPosition;
     
     if (m_text == "\t") {
