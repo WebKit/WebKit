@@ -1,5 +1,563 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r294190. rdar://problem/91006582
+
+    SharedBuffer should be copied and then attributed back to WebContent
+    https://bugs.webkit.org/show_bug.cgi?id=240223
+    rdar://91006582
+    
+    Patch by Jean-Yves Avenard <jean-yves.avenard@apple.com> on 2022-05-14
+    Reviewed by Jer Noble.
+    
+    Ideally, when mapping an IPCHandle we would prefer to use Copy On Write.
+    However, there's no support for COW with explicitly-owned memory such as
+    those created with VM_FLAGS_PURGABLE flag.
+    As such, when calling mach_vm_map with copy=true argument is set the
+    entire page will be copied.
+    It is therefore more performant to manually create a new buffer and copy
+    the actual content.
+    The memory can then be blamed on a particular process.
+    
+    Rework FragmentedSharedBuffer/SharedBuffer IPC's serializer to perform
+    a copy, partially reverting changes made in bug 233401.
+    
+    We replace the unnecessary use of SharedMemory::IPCHandle and directly
+    send SharedBuffer in clipboard and PDF related methods.
+    Rename SharedBufferCopy to SharedBufferReference to more accurately
+    describe what it does.
+    
+    Make new use of the SharedBufferReference class, replacing the use of IPCHandle
+    in RemoteSourceBufferProxy and RemoteMediaResourceManager.
+    
+    Rename SharedBufferReference::buffer() into
+    SharedBufferReference::unsafeBuffer() to give better clarity that accessing
+    SharedBuffer and SharedMemory should be treated with care.
+    
+    SharedBuffer sent from trusted processes such as network process should
+    prefer the use of SharedBufferReference over directly using IPCHandle or
+    SharedBuffer, it makes optimisation easier and avoid duplicating code.
+    
+    No observable change, covered by existing tests.
+    
+    * GPUProcess/GPUConnectionToWebProcess.cpp:
+    (WebKit::GPUConnectionToWebProcess::remoteMediaResourceManager):
+    * GPUProcess/media/RemoteCDMInstanceProxy.h:
+    * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+    (WebKit::RemoteImageDecoderAVFProxy::createDecoder):
+    (WebKit::RemoteImageDecoderAVFProxy::setData):
+    * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+    * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in:
+    * GPUProcess/media/RemoteMediaResourceManager.cpp:
+    (WebKit::RemoteMediaResourceManager::RemoteMediaResourceManager):
+    (WebKit::RemoteMediaResourceManager::dataReceived):
+    * GPUProcess/media/RemoteMediaResourceManager.h:
+    * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+    * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+    (WebKit::RemoteSourceBufferProxy::append):
+    * GPUProcess/media/RemoteSourceBufferProxy.h:
+    * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    (WebKit::NetworkResourceLoader::bufferingTimerFired):
+    (WebKit::NetworkResourceLoader::sendBuffer):
+    (WebKit::NetworkResourceLoader::dataReceivedThroughContentFilter):
+    * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp:
+    (WebKit::ServiceWorkerDownloadTask::didReceiveData):
+    * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.h:
+    * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in:
+    * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+    (WebKit::ServiceWorkerFetchTask::didReceiveData):
+    (WebKit::ServiceWorkerFetchTask::loadBodyFromPreloader):
+    * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+    * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in:
+    * Platform/IPC/SharedBufferCopy.cpp: Removed.
+    * Platform/IPC/SharedBufferCopy.h: Removed.
+    * Platform/IPC/SharedBufferReference.cpp: Added.
+    (IPC::SharedBufferReference::encode const):
+    (IPC::SharedBufferReference::decode):
+    (IPC::SharedBufferReference::unsafeBuffer const):
+    (IPC::SharedBufferReference::data const):
+    (IPC::SharedBufferReference::bufferWithOwner const):
+    * Platform/IPC/SharedBufferReference.h: Added.
+    (IPC::SharedBufferReference::SharedBufferReference):
+    (IPC::SharedBufferReference::size const):
+    (IPC::SharedBufferReference::isEmpty const):
+    (IPC::SharedBufferReference::isNull const):
+    * Platform/SharedMemory.cpp:
+    (WebKit::transferOwnershipOfMemory const):
+    * Platform/SharedMemory.h:
+    * Platform/cocoa/SharedMemoryCocoa.cpp:
+    (WebKit::changeOwnershipOfMemory):
+    (WebKit::SharedMemory::Handle::takeOwnershipOfMemory const):
+    (WebKit::SharedMemory::Handle::transferOwnershipOfMemory const):
+    (WebKit::machProtection):
+    (WebKit::SharedMemory::map):
+    * Scripts/process-entitlements.sh:
+    * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+    (WebKit::CGDisplayListImageBufferBackend::createBackendHandle const):
+    * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+    (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+    * Shared/WebCoreArgumentCoders.cpp:
+    (IPC::encodeSharedBuffer):
+    (IPC::decodeSharedBuffer):
+    * Sources.txt:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+    * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+    (WebKit::WebPageProxy::platformRegisterAttachment):
+    * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+    (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+    (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+    (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+    * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+    (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::CompletionHandler<void):
+    (WebKit::WebPageProxy::drawPagesToPDF):
+    (WebKit::WebPageProxy::drawToPDF):
+    (WebKit::WebPageProxy::getLoadDecisionForIcon):
+    (WebKit::WebPageProxy::updateAttachmentAttributes):
+    (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+    (WebKit::WebPageProxy::platformRegisterAttachment):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/WebPasteboardProxy.cpp:
+    (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+    * UIProcess/WebPasteboardProxy.h:
+    * UIProcess/WebPasteboardProxy.messages.in:
+    * UIProcess/WebURLSchemeTask.cpp:
+    (WebKit::WebURLSchemeTask::didReceiveData):
+    * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+    (WebKit::WebPasteboardProxy::readBuffer):
+    * UIProcess/ios/WKContentView.mm:
+    (-[WKContentView _wk_pageCountForPrintFormatter:]):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::drawToPDFiOS):
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::dataSelectionForPasteboard):
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+    * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+    (WebKit::RemoteImageDecoderAVF::setData):
+    * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+    (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+    * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+    (WebKit::RemoteMediaResourceProxy::dataReceived):
+    * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+    (WebKit::SourceBufferPrivateRemote::append):
+    * WebProcess/Network/WebResourceLoader.cpp:
+    (WebKit::WebResourceLoader::didReceiveData):
+    * WebProcess/Network/WebResourceLoader.h:
+    * WebProcess/Network/WebResourceLoader.messages.in:
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (WebKit::PDFPlugin::writeItemsToPasteboard):
+    * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+    (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+    (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+    (WebKit::WebEditorClient::registerAttachmentIdentifier):
+    * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+    (WebKit::WebPlatformStrategies::bufferForType):
+    (WebKit::WebPlatformStrategies::setBufferForType):
+    (WebKit::WebPlatformStrategies::readBufferFromClipboard):
+    (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+    * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+    (WebKit::WebDragClient::declareAndWriteDragImage):
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::getContentsAsMHTMLData):
+    (WebKit::WebPage::getSelectionAsWebArchiveData):
+    (WebKit::WebPage::getMainResourceDataOfFrame):
+    (WebKit::WebPage::getResourceDataFromFrame):
+    (WebKit::WebPage::getWebArchiveOfFrame):
+    (WebKit::WebPage::getAccessibilityTreeData):
+    (WebKit::WebPage::drawToPDF):
+    (WebKit::WebPage::drawPagesToPDF):
+    (WebKit::WebPage::didGetLoadDecisionForIcon):
+    (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+    (WebKit::WebPage::updateAttachmentAttributes):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getDataSelectionForPasteboard):
+    (WebKit::WebPage::performActionOnElement):
+    (WebKit::WebPage::drawToPDFiOS):
+    (WebKit::WebPage::didFinishLoadForQuickLookDocumentInMainFrame):
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::getDataSelectionForPasteboard):
+    * WebProcess/WebProcess.h:
+    * WebProcess/WebProcess.messages.in:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::consumeAudioComponentRegistrations):
+    
+    # Please populate the above commit message. Lines starting
+    # with '#' will be ignored
+    
+    # 13  Tim Horton  <timothy_horton@apple.com>
+    #
+    # ApplePayLogoSystemImage needlessly loads PassKit in WebKit child processes on iOS
+    # https://bugs.webkit.org/show_bug.cgi?id=240404
+    # <rdar://93070349>
+    #
+    # Reviewed by Chris Dumez.
+    #
+    # * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+    # (WebKit::ProcessLauncher::launchProcess): Adopt the WTF implementation of systemDirectoryPath.
+    # (WebKit::systemDirectoryPath): Moved to WTF.
+    #
+    # 13  Wenson Hsieh  <wenson_hsieh@apple.com>
+    #
+    # ImageAnalysisQueue should reanalyze image elements whose image sources have changed
+    # https://bugs.webkit.org/show_bug.cgi?id=240371
+    # rdar://93175651
+    #
+    # Reviewed by Tim Horton.
+    #
+    # To aid with debugging similar issues in the future, plumb the image URL through to
+    # `requestImageAnalysisWithIdentifier`, which (if an engineering default is specified) will additionally reveal
+    # the URL in system logs.
+    #
+    # * Platform/cocoa/ImageAnalysisUtilities.h:
+    # * UIProcess/Cocoa/WebViewImpl.mm:
+    # (WebKit::WebViewImpl::requestTextRecognition):
+    # * UIProcess/ios/WKContentViewInteraction.mm:
+    # (-[WKContentView requestTextRecognition:imageData:identifier:completionHandler:]):
+    #
+    # 13  Aditya Keerthi  <akeerthi@apple.com>
+    #
+    # [iOS] Multiple visible find highlights when searching for text after beginning a "find from selection"
+    # https://bugs.webkit.org/show_bug.cgi?id=240393
+    # rdar://91441895
+    #
+    # Reviewed by Wenson Hsieh.
+    #
+    # Some WebKit clients use SPI on WKWebView to support "find from selection"
+    # functionality (the Cmd+E shortcut). However, to support general
+    # find functionality, they use new find API that uses a different codepath
+    # to draw highlights. Mixing use of the API and SPI can currently result
+    # in two highlights showing up.
+    #
+    # To fix, ensure SPI highlights are removed once the API is being used.
+    # The long term solution is for clients to adopt API for the
+    # "find from selection" functionality, but in the short term the SPI
+    # should remain supported.
+    #
+    # * WebProcess/WebPage/WebPage.cpp:
+    # (WebKit::WebPage::clearAllDecoratedFoundText):
+    #
+    # 13  Kimmo Kinnunen  <kkinnunen@apple.com>
+    #
+    # IPC cannot encode, decode Ref<>, causing duplicate code
+    # https://bugs.webkit.org/show_bug.cgi?id=240160
+    #
+    # Reviewed by Antti Koivisto.
+    #
+    # Consider reference counted type T:
+    # Encoding is of signature `encode(const T&)`
+    # Decoding is of signature `std::optional<Ref<T>> decode()`
+    # This is usable for both `RefPtr` and `Ref` use-cases.
+    #
+    # Add `Ref<T>` encoder that is polymorphic to `T`.
+    # This way clients do not need to write encoders for
+    # `Ref<T>`, `RefPtr<T>`. They just need one encoder, for `T`.
+    #
+    # When clients do not need to write `RefPtr<T>`, they make less
+    # bugs. These will be corrected in future patches.
+    #
+    # Having `Ref<T>` encoders allows clients to use `Vector<Ref<T>>` encoding
+    # via `Vector<U>` encoder, and they would not need to duplicate that
+    # logic, making less bugs. These will be corrected in future patches.
+    #
+    # Remove most `IPC::ArgumentCoder<Ref<..>>` in favor of `IPC::ArgumentCoder<..>`.
+    # In the cases where removal was done, remove also redundant
+    # `IPC::ArgumentCoder<RefPtr<..>>`.
+    #
+    # * Platform/IPC/ArgumentCoders.h:
+    # (IPC::ArgumentCoder<RefPtr<T>>::decode):
+    # (IPC::ArgumentCoder<Ref<T>>::encode):
+    # (IPC::ArgumentCoder<Ref<T>>::decode):
+    # * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    # (IPC::ArgumentCoder<WebCore::Font>::encodePlatformData):
+    # (IPC::ArgumentCoder<WebCore::Font>::decodePlatformData):
+    # * Shared/WebCoreArgumentCoders.cpp:
+    # (IPC::ArgumentCoder<WebCore::Font>::encode):
+    # (IPC::ArgumentCoder<Font>::decode):
+    # (IPC::ArgumentCoder<SystemImage>::encode):
+    # (IPC::ArgumentCoder<SystemImage>::decode):
+    # * Shared/WebCoreArgumentCoders.h:
+    # * Shared/playstation/WebCoreArgumentCodersPlayStation.cpp:
+    # (IPC::ArgumentCoder<Font>::encodePlatformData):
+    # (IPC::ArgumentCoder<Font>::decodePlatformData):
+    # * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+    # (IPC::ArgumentCoder<Font>::encodePlatformData):
+    # (IPC::ArgumentCoder<Font>::decodePlatformData):
+    # * Shared/win/WebCoreArgumentCodersWin.cpp:
+    # (IPC::ArgumentCoder<Font>::encodePlatformData):
+    # (IPC::ArgumentCoder<Font>::decodePlatformData):
+    #
+    # 13  Tim Horton  <timothy_horton@apple.com>
+    #
+    # Add UI-side layers for optionally indicating interaction regions
+    # https://bugs.webkit.org/show_bug.cgi?id=240372
+    # <rdar://problem/87170289>
+    #
+    # Reviewed by Dean Jackson.
+    #
+    # * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+    # (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+    # (WebKit::RemoteLayerTreePropertyApplier::applyHierarchyUpdates):
+    # Allow RemoteLayerTreeInteractionRegionLayers to add and maintain layers for interaction regions.
+    #
+    # * SourcesCocoa.txt:
+    # * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.h: Added.
+    # * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm: Added.
+    # (configureLayerForInteractionRegion):
+    # (WebKit::interactionRegionForLayer):
+    # (WebKit::isInteractionRegionLayer):
+    # (WebKit::setInteractionRegion):
+    # Box WebCore::InteractionRegion in a Objective-C object and store it on the layer.
+    # Use this as a key to indicate that a given layer is an interaction region.
+    #
+    # (WebKit::appendInteractionRegionLayersForLayer):
+    # Make sure that interaction region layers are always at the end of the layer's sublayers array.
+    #
+    # (WebKit::updateLayersForInteractionRegions):
+    # Add new layers for interaction regions.
+    # Maintain the same layer for regions that cover the same area.
+    # Add a green wash if the default `WKInteractionRegionDebugFill` is set.
+    #
+    # * WebKit.xcodeproj/project.pbxproj:
+    #
+    # 13  Simon Fraser  <simon.fraser@apple.com>
+    #
+    # Simplify the usage of DrawGlyphsRecorder
+    # https://bugs.webkit.org/show_bug.cgi?id=240363
+    #
+    # Reviewed by Myles Maxfield.
+    #
+    # Move the DeconstructDrawGlyphs switch from inside DrawGlyphsRecorder to
+    # DisplayList::Recorder, so that DrawGlyphsRecorder is only ever used when deconstructing
+    # glyphs.
+    #
+    # Also, ensure that the only time that glyph deconstruction is enabled is when
+    # recording display lists via RemoteDisplayListRecorderProxy. There's no reason for
+    # paintAttachmentText() to need glyph deconstruction.
+    #
+    # This is a small perf improvement on the MotionMark Design subtest.
+    #
+    # * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+    # (WebKit::RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy):
+    # (WebKit::m_renderingBackend):
+    # * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+    #
+    # it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens
+    
+    # On branch bz/240223
+    # Your branch is ahead of 'origin/main' by 1 commit.
+    #   (use "git push" to publish your local commits)
+    #
+    # Changes to be committed:
+    #   (use "git restore --staged <file>..." to unstage)
+    #   modified:   Source/WebKit/ChangeLog
+    #
+    # Untracked files:
+    #   (use "git add <file>..." to include in what will be committed)
+    #   0001-SharedBuffer-should-be-copied-and-then-attributed-ba.patch
+    #
+    
+    Canonical link: https://commits.webkit.org/250556@main
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294190 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-08  Jean-Yves Avenard  <jya@apple.com>
+
+            SharedBuffer should be copied and then attributed back to WebContent
+            https://bugs.webkit.org/show_bug.cgi?id=240223
+            rdar://91006582
+
+            Reviewed by Jer Noble.
+
+            Ideally, when mapping an IPCHandle we would prefer to use Copy On Write.
+            However, there's no support for COW with explicitly-owned memory such as
+            those created with VM_FLAGS_PURGABLE flag.
+            As such, when calling mach_vm_map with copy=true argument is set the
+            entire page will be copied.
+            It is therefore more performant to manually create a new buffer and copy
+            the actual content.
+            The memory can then be blamed on a particular process.
+
+            Rework FragmentedSharedBuffer/SharedBuffer IPC's serializer to perform
+            a copy, partially reverting changes made in bug 233401.
+
+            We replace the unnecessary use of SharedMemory::IPCHandle and directly
+            send SharedBuffer in clipboard and PDF related methods.
+            Rename SharedBufferCopy to SharedBufferReference to more accurately
+            describe what it does.
+
+            Make new use of the SharedBufferReference class, replacing the use of IPCHandle
+            in RemoteSourceBufferProxy and RemoteMediaResourceManager.
+
+            Rename SharedBufferReference::buffer() into
+            SharedBufferReference::unsafeBuffer() to give better clarity that accessing
+            SharedBuffer and SharedMemory should be treated with care.
+
+            SharedBuffer sent from trusted processes such as network process should
+            prefer the use of SharedBufferReference over directly using IPCHandle or
+            SharedBuffer, it makes optimisation easier and avoid duplicating code.
+
+            No observable change, covered by existing tests.
+
+            * GPUProcess/GPUConnectionToWebProcess.cpp:
+            (WebKit::GPUConnectionToWebProcess::remoteMediaResourceManager):
+            * GPUProcess/media/RemoteCDMInstanceProxy.h:
+            * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+            (WebKit::RemoteImageDecoderAVFProxy::createDecoder):
+            (WebKit::RemoteImageDecoderAVFProxy::setData):
+            * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+            * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in:
+            * GPUProcess/media/RemoteMediaResourceManager.cpp:
+            (WebKit::RemoteMediaResourceManager::RemoteMediaResourceManager):
+            (WebKit::RemoteMediaResourceManager::dataReceived):
+            * GPUProcess/media/RemoteMediaResourceManager.h:
+            * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+            * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+            (WebKit::RemoteSourceBufferProxy::append):
+            * GPUProcess/media/RemoteSourceBufferProxy.h:
+            * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::bufferingTimerFired):
+            (WebKit::NetworkResourceLoader::sendBuffer):
+            (WebKit::NetworkResourceLoader::dataReceivedThroughContentFilter):
+            * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp:
+            (WebKit::ServiceWorkerDownloadTask::didReceiveData):
+            * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.h:
+            * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in:
+            * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+            (WebKit::ServiceWorkerFetchTask::didReceiveData):
+            (WebKit::ServiceWorkerFetchTask::loadBodyFromPreloader):
+            * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+            * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in:
+            * Platform/IPC/SharedBufferCopy.cpp: Removed.
+            * Platform/IPC/SharedBufferCopy.h: Removed.
+            * Platform/IPC/SharedBufferReference.cpp: Added.
+            (IPC::SharedBufferReference::encode const):
+            (IPC::SharedBufferReference::decode):
+            (IPC::SharedBufferReference::unsafeBuffer const):
+            (IPC::SharedBufferReference::data const):
+            (IPC::SharedBufferReference::bufferWithOwner const):
+            * Platform/IPC/SharedBufferReference.h: Added.
+            (IPC::SharedBufferReference::SharedBufferReference):
+            (IPC::SharedBufferReference::size const):
+            (IPC::SharedBufferReference::isEmpty const):
+            (IPC::SharedBufferReference::isNull const):
+            * Platform/SharedMemory.cpp:
+            (WebKit::transferOwnershipOfMemory const):
+            * Platform/SharedMemory.h:
+            * Platform/cocoa/SharedMemoryCocoa.cpp:
+            (WebKit::changeOwnershipOfMemory):
+            (WebKit::SharedMemory::Handle::takeOwnershipOfMemory const):
+            (WebKit::SharedMemory::Handle::transferOwnershipOfMemory const):
+            (WebKit::machProtection):
+            (WebKit::SharedMemory::map):
+            * Scripts/process-entitlements.sh:
+            * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+            (WebKit::CGDisplayListImageBufferBackend::createBackendHandle const):
+            * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+            (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::encodeSharedBuffer):
+            (IPC::decodeSharedBuffer):
+            * Sources.txt:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+            * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+            (WebKit::WebPageProxy::platformRegisterAttachment):
+            * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+            (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+            (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+            (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+            * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+            (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::CompletionHandler<void):
+            (WebKit::WebPageProxy::drawPagesToPDF):
+            (WebKit::WebPageProxy::drawToPDF):
+            (WebKit::WebPageProxy::getLoadDecisionForIcon):
+            (WebKit::WebPageProxy::updateAttachmentAttributes):
+            (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+            (WebKit::WebPageProxy::platformRegisterAttachment):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/WebPasteboardProxy.cpp:
+            (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+            * UIProcess/WebPasteboardProxy.h:
+            * UIProcess/WebPasteboardProxy.messages.in:
+            * UIProcess/WebURLSchemeTask.cpp:
+            (WebKit::WebURLSchemeTask::didReceiveData):
+            * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+            (WebKit::WebPasteboardProxy::readBuffer):
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _wk_pageCountForPrintFormatter:]):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::drawToPDFiOS):
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::dataSelectionForPasteboard):
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+            * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+            (WebKit::RemoteImageDecoderAVF::setData):
+            * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+            (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+            * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+            (WebKit::RemoteMediaResourceProxy::dataReceived):
+            * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+            (WebKit::SourceBufferPrivateRemote::append):
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::didReceiveData):
+            * WebProcess/Network/WebResourceLoader.h:
+            * WebProcess/Network/WebResourceLoader.messages.in:
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::writeItemsToPasteboard):
+            * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+            (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+            (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            (WebKit::WebEditorClient::registerAttachmentIdentifier):
+            * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+            (WebKit::WebPlatformStrategies::bufferForType):
+            (WebKit::WebPlatformStrategies::setBufferForType):
+            (WebKit::WebPlatformStrategies::readBufferFromClipboard):
+            (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+            * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+            (WebKit::WebDragClient::declareAndWriteDragImage):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::getContentsAsMHTMLData):
+            (WebKit::WebPage::getSelectionAsWebArchiveData):
+            (WebKit::WebPage::getMainResourceDataOfFrame):
+            (WebKit::WebPage::getResourceDataFromFrame):
+            (WebKit::WebPage::getWebArchiveOfFrame):
+            (WebKit::WebPage::getAccessibilityTreeData):
+            (WebKit::WebPage::drawToPDF):
+            (WebKit::WebPage::drawPagesToPDF):
+            (WebKit::WebPage::didGetLoadDecisionForIcon):
+            (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+            (WebKit::WebPage::updateAttachmentAttributes):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getDataSelectionForPasteboard):
+            (WebKit::WebPage::performActionOnElement):
+            (WebKit::WebPage::drawToPDFiOS):
+            (WebKit::WebPage::didFinishLoadForQuickLookDocumentInMainFrame):
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::getDataSelectionForPasteboard):
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::consumeAudioComponentRegistrations):
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r294175. rdar://problem/91441895
 
     [iOS] Multiple visible find highlights when searching for text after beginning a "find from selection"
@@ -705,7 +1263,7 @@
         Reviewed by Yusuke Suzuki.
 
         We have reports that it can take a long time to launch WebKit processes in some cases. This is the time 
-        it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens 
+        it takes from the XPC message is sent until the XPC reply is received. Add reporting when this happens
         in order to help diagnose the issue.
         
         * UIProcess/AuxiliaryProcessProxy.cpp:
