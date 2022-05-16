@@ -3615,3 +3615,5 @@ webkit.org/b/240167 [ Release ] fast/css-custom-paint/animate-repaint.html [ Pas
 webkit.org/b/240348 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure ]
 
 webkit.org/b/240463 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Failure ]
+
+webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
