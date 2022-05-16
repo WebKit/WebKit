@@ -72,13 +72,13 @@ OSStatus AudioSampleDataConverter::setFormats(const CAAudioStreamDescription& in
     return noErr;
 }
 
-bool AudioSampleDataConverter::updateBufferedAmount(size_t currentBufferedAmount)
+bool AudioSampleDataConverter::updateBufferedAmount(size_t currentBufferedAmount, size_t pushedSampleSize)
 {
     if (currentBufferedAmount) {
         if (m_selectedConverter == m_regularConverter) {
             if (currentBufferedAmount <= m_lowBufferSize)
                 m_selectedConverter = m_lowConverter;
-            else if (currentBufferedAmount >= m_highBufferSize)
+            else if (currentBufferedAmount >= m_highBufferSize && currentBufferedAmount >= 4 * pushedSampleSize)
                 m_selectedConverter = m_highConverter;
         } else if (m_selectedConverter == m_highConverter) {
             if (currentBufferedAmount < m_regularLowBufferSize)
