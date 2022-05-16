@@ -4144,6 +4144,17 @@
    },
    {
       "emails" : [
+         "tho22@apple.com",
+         "tuankiet65@gmail.com"
+      ],
+      "github" : "tuankiet65",
+      "name" : "Kiet Ho",
+      "nicks" : [
+         "tuankiet65"
+      ]
+   },
+   {
+      "emails" : [
          "kihong.kwon@samsung.com"
       ],
       "expertise" : "Device APIs(Battery Status, Vibration...), The EFLWebKit Port",
