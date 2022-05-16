@@ -244,6 +244,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
         if (TARGET ${angle_target})
             WEBKIT_ADD_TARGET_CXX_FLAGS(${angle_target}
                 -Wno-cast-align
+                -Wno-dangling-pointer
                 -Wno-extra
                 -Wno-suggest-attribute=format
                 -Wno-undef

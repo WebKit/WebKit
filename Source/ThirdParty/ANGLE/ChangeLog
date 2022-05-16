@@ -1,3 +1,16 @@
+2022-05-09  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        -Wdangling-pointer warning when building ANGLE with GCC 12
+        https://bugs.webkit.org/show_bug.cgi?id=239339
+        <rdar://problem/92959790>
+
+        Reviewed by Yusuke Suzuki and Kenneth Russell.
+
+        Add -Wdangling-pointer to the list of warnings that we suppress. This looks more likely to
+        be a false positive than a security issue.
+
+        * CMakeLists.txt:
+
 2022-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Update ANGLE to 2022-04-26 (7ca11287a056d4150cba96c9c9b964153ad539cb)
