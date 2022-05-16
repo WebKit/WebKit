@@ -1436,6 +1436,13 @@ LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<La
     return std::max(0_lu, result);
 }
 
+LayoutUnit RenderBox::adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const
+{
+    if (style().boxSizing() == BoxSizing::BorderBox)
+        return height + borderAndPaddingLogicalHeight();
+    return height;
+}
+
 // Hit Testing
 bool RenderBox::hitTestVisualOverflow(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
@@ -3257,8 +3264,8 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
-        if (intrinsicContentHeight && style().boxSizing() == BoxSizing::BorderBox)
-            return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
+        if (intrinsicContentHeight)
+            return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
         return intrinsicContentHeight;
     }
     if (logicalHeightLength.isFillAvailable())

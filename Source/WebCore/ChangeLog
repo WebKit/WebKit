@@ -1,3 +1,37 @@
+2022-05-16  Oriol Brufau  <obrufau@igalia.com>
+
+        Take intrinsicBorderForFieldset() into account in intrinsically sized fieldset
+        https://bugs.webkit.org/show_bug.cgi?id=240388
+
+        Reviewed by Darin Adler.
+
+        With 'box-sizing: content-box', computeIntrinsicLogicalContentHeightUsing
+        was not taking intrinsicBorderForFieldset() into account. So a fieldset
+        with 'height: min-content' would ignore the extra space required by the
+        legend, and the contents would overflow.
+
+        This patch adds a RenderBox::adjustIntrinsicLogicalHeightForBoxSizing
+        method with the logic, and overrides it in RenderBlock to take
+        intrinsicBorderForFieldset() into account.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/forms/the-fieldset-element/fieldset-intrinsic-size.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustIntrinsicLogicalHeightForBoxSizing const):
+        Take intrinsicBorderForFieldset() into account.
+
+        * rendering/RenderBlock.h:
+        Override adjustIntrinsicLogicalHeightForBoxSizing.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::adjustIntrinsicLogicalHeightForBoxSizing const):
+        (WebCore::RenderBox::computeIntrinsicLogicalContentHeightUsing const):
+        Move logic into a new method so that RenderBlock can override it.
+
+        * rendering/RenderBox.h:
+        Declare adjustIntrinsicLogicalHeightForBoxSizing as virtual.
+        No need for computeIntrinsicLogicalContentHeightUsing to be virtual.
+
 2022-05-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][VS] PrivateHeaders/WebCore/WebCoreJSBuiltinInternals.h is not updated in incremental build

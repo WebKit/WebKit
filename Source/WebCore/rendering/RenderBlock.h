@@ -228,6 +228,7 @@ public:
     LayoutUnit borderBefore() const override;
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const override;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const override;
+    LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const override;
     void paintExcludedChildrenInBorder(PaintInfo&, const LayoutPoint&);
     
     LayoutSize clientLogicalRightAndBottomAfterRepositioning() const;

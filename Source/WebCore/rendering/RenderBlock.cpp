@@ -3450,6 +3450,13 @@ LayoutUnit RenderBlock::adjustContentBoxLogicalHeightForBoxSizing(std::optional<
     return std::max(0_lu, result);
 }
 
+LayoutUnit RenderBlock::adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const
+{
+    if (style().boxSizing() == BoxSizing::BorderBox)
+        return height + borderAndPaddingLogicalHeight();
+    return height + intrinsicBorderForFieldset();
+}
+
 void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!isFieldset())
