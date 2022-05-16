@@ -103,11 +103,6 @@ public:
         return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
-    const RenderBlockFlow& containingBlock() const
-    {
-        return m_inlineContent->containingBlock();
-    }
-
     const RenderStyle& style() const
     {
         return box().style();
@@ -212,9 +207,6 @@ public:
         return last;
     }
 
-    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
-    bool isFirstLine() const { return !box().lineIndex(); }
-
     bool operator==(const BoxModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
     bool atEnd() const { return !m_inlineContent || m_boxIndex == boxes().size(); }
@@ -280,6 +272,7 @@ private:
     const LayoutIntegration::Line& line() const { return m_inlineContent->lineForBox(box()); }
 
     const RenderText& renderText() const { return downcast<RenderText>(renderer()); }
+    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
     WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_boxIndex { 0 };

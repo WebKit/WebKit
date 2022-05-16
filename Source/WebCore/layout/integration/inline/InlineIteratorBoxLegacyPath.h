@@ -76,11 +76,6 @@ public:
         return m_inlineBox->renderer();
     }
 
-    const RenderBlockFlow& containingBlock() const
-    {
-        return m_inlineBox->root().blockFlow();
-    }
-
     const RenderStyle& style() const
     {
         return m_inlineBox->lineStyle();
@@ -117,9 +112,6 @@ public:
     {
         return { inlineFlowBox()->lastLeafDescendant() };
     }
-
-    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
-    bool isFirstLine() const { return !rootInlineBox().prevRootBox(); }
 
     bool operator==(const BoxLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 

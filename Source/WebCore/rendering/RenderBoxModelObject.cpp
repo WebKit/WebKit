@@ -727,15 +727,8 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
         for (auto box = inlineBox->firstLeafBox(), end = inlineBox->endLeafBox(); box != end; box.traverseNextOnLine()) {
             if (!box->isText())
                 continue;
-            if (auto* legacyTextBox = downcast<LegacyInlineTextBox>(box->legacyInlineBox())) {
-                LegacyTextBoxPainter textBoxPainter(*legacyTextBox, maskInfo, paintOffset);
-                textBoxPainter.paint();
-                continue;
-            }
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            ModernTextBoxPainter textBoxPainter(box->modernPath().inlineContent(), box->modernPath().box(), maskInfo, paintOffset);
+            TextBoxPainter textBoxPainter(downcast<InlineIterator::TextBoxIterator>(box), maskInfo, paintOffset);
             textBoxPainter.paint();
-#endif
         }
         return;
     }

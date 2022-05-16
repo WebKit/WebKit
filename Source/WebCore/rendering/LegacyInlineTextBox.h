@@ -150,6 +150,7 @@ public:
 
 private:
     friend class InlineIterator::BoxLegacyPath;
+    friend class TextBoxPainter;
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
