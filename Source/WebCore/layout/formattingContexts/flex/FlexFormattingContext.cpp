@@ -121,18 +121,20 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 
 struct FlexItemLogicalBox {
     FlexRect rect;
-    const ContainerBox& flexItem;
+    int logicalOrder { 0 };
+    CheckedPtr<const ContainerBox> flexItem;
 };
 
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
     Vector<FlexItemLogicalBox> logicalFlexItemList;
-
+    auto flexItemsNeedReordering = false;
 
     auto convertVisualToLogical = [&] {
         // FIXME: Convert visual (row/column) direction to logical.
         auto direction = root().style().flexDirection();
+        auto previousLogicalOrder = std::optional<int> { };
 
         for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
             auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
@@ -151,10 +153,25 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
                 ASSERT_NOT_REACHED();
                 break;
             }
-            logicalFlexItemList.append({ { logicalSize }, flexItem });
+            auto flexItemOrder = flexItem.style().order();
+            flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
+            previousLogicalOrder = flexItemOrder;
+
+            logicalFlexItemList.append({ { logicalSize }, flexItemOrder, &flexItem });
+
         }
     };
     convertVisualToLogical();
+
+    auto reorderFlexItemsIfApplicable = [&] {
+        if (!flexItemsNeedReordering)
+            return;
+
+        std::stable_sort(logicalFlexItemList.begin(), logicalFlexItemList.end(), [&] (auto& a, auto& b) {
+            return a.logicalOrder < b.logicalOrder;
+        });
+    };
+    reorderFlexItemsIfApplicable();
 
     auto logicalLeft = LayoutUnit { };
     auto logicalTop = LayoutUnit { };
@@ -169,7 +186,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
         auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
         auto direction = root().style().flexDirection();
         for (auto& logicalFlexItem : logicalFlexItemList) {
-            auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.flexItem);
+            auto& flexItemGeometry = formattingState.boxGeometry(*logicalFlexItem.flexItem);
             auto topLeft = LayoutPoint { };
 
             switch (direction) {

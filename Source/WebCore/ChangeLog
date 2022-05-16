@@ -1,5 +1,17 @@
 2022-05-16  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][FFC] Add support for logical ordering
+        https://bugs.webkit.org/show_bug.cgi?id=240442
+
+        Reviewed by Antti Koivisto.
+
+        Let's reorder the logicalFlexItemList when the 'order' property has a non-initial value.
+
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntegration):
+
+2022-05-16  Alan Bujtas  <zalan@apple.com>
+
         [LFC][FFC] Add "flex-direction: column-reverse" basic visual/logical conversion
         https://bugs.webkit.org/show_bug.cgi?id=240434
 
