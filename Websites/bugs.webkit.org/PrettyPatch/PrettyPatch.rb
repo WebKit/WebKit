@@ -797,6 +797,7 @@ EOF
         def self.parse(string)
             commitMessageLength = 0
             haveSeenDiffHeader = false
+            haveCommitMessage = false
             subject = ''
             linesForDiffs = []
             line_array = string.lines.to_a
@@ -809,7 +810,7 @@ EOF
                     haveSeenDiffHeader = false
                 elsif (PrettyPatch.message_header?(line))
                     haveSeenDiffHeader = false
-                    parsingSubject = true
+                    haveCommitMessage = true
                     commitMessageLength = 1
                     linesForDiffs << []
                     linesForDiffs.last << '+++ COMMIT_MESSAGE'
@@ -836,7 +837,7 @@ EOF
                 if (subject.empty? && commitMessageLength != 0)
                     commitMessageLength += 1
                     linesForDiffs.last << '+' + line unless linesForDiffs.last.nil?
-                elsif (subject.empty? && haveSeenDiffHeader)
+                elsif (subject.empty? && (!haveCommitMessage || haveSeenDiffHeader))
                     linesForDiffs.last << line unless linesForDiffs.last.nil?
                 end
             end
