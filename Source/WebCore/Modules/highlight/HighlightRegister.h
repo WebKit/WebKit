@@ -29,6 +29,7 @@
 #include "HighlightVisibility.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 

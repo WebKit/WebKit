@@ -36,6 +36,7 @@ class FontCascade;
 class RenderCombineText;
 class ShadowData;
 class TextRun;
+class Text;
 
 struct TextPaintStyle;
 
