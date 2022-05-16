@@ -144,10 +144,8 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
                 logicalSize = { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() };
                 break;
             case FlexDirection::Column:
-                logicalSize = { flexItemGeometry.marginBoxHeight(), flexItemGeometry.marginBoxWidth() };
-                break;
             case FlexDirection::ColumnReverse:
-                ASSERT_NOT_IMPLEMENTED_YET();
+                logicalSize = { flexItemGeometry.marginBoxHeight(), flexItemGeometry.marginBoxWidth() };
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -168,6 +166,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
     auto convertLogicalToVisual = [&] {
         // FIXME: Convert logical coordinates to visual.
+        auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
         auto direction = root().style().flexDirection();
         for (auto& logicalFlexItem : logicalFlexItemList) {
             auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.flexItem);
@@ -186,7 +185,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
                 break;
             }
             case FlexDirection::ColumnReverse:
-                ASSERT_NOT_IMPLEMENTED_YET();
+                topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.top(), constraints.logicalTop() + logicalWidth - logicalFlexItem.rect.right() };
                 break;
             default:
                 ASSERT_NOT_REACHED();
