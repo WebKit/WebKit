@@ -1,3 +1,14 @@
+2022-05-16  Tim Nguyen  <ntim@apple.com>
+
+        [css-ui] Update documentation for appearance CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=240481
+
+        Reviewed by Devin Rousso.
+
+        Account for r294226, r294187 and r294170.
+
+        * css/CSSProperties.json:
+
 2022-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         Remove abandoned UseScreenCaptureKit preference
