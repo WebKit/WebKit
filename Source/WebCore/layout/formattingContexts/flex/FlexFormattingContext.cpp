@@ -129,15 +129,10 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     auto& formattingState = this->formattingState();
     Vector<FlexItemLogicalBox> logicalFlexItemList;
 
-    auto logicalLeft = LayoutUnit { };
-    auto logicalTop = LayoutUnit { };
 
     auto convertVisualToLogical = [&] {
         // FIXME: Convert visual (row/column) direction to logical.
         auto direction = root().style().flexDirection();
-
-        logicalLeft = constraints.horizontal().logicalLeft;
-        logicalTop = constraints.logicalTop();
 
         for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
             auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
@@ -145,12 +140,12 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
             switch (direction) {
             case FlexDirection::Row:
+            case FlexDirection::RowReverse:
                 logicalSize = { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() };
                 break;
             case FlexDirection::Column:
                 logicalSize = { flexItemGeometry.marginBoxHeight(), flexItemGeometry.marginBoxWidth() };
                 break;
-            case FlexDirection::RowReverse:
             case FlexDirection::ColumnReverse:
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
@@ -162,6 +157,9 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
         }
     };
     convertVisualToLogical();
+
+    auto logicalLeft = LayoutUnit { };
+    auto logicalTop = LayoutUnit { };
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
@@ -177,12 +175,16 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
             switch (direction) {
             case FlexDirection::Row:
-                topLeft = logicalFlexItem.rect.topLeft();
-                break;
-            case FlexDirection::Column:
-                topLeft = logicalFlexItem.rect.topLeft().transposedPoint();
+                topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.left(), constraints.logicalTop() + logicalFlexItem.rect.top() };
                 break;
             case FlexDirection::RowReverse:
+                topLeft = { constraints.horizontal().logicalRight() - logicalFlexItem.rect.right(), constraints.logicalTop() + logicalFlexItem.rect.top() };
+                break;
+            case FlexDirection::Column: {
+                auto flippedTopLeft = logicalFlexItem.rect.topLeft().transposedPoint();
+                topLeft = { constraints.horizontal().logicalLeft + flippedTopLeft.x(), constraints.logicalTop() + flippedTopLeft.y() };
+                break;
+            }
             case FlexDirection::ColumnReverse:
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
