@@ -28,6 +28,7 @@
 
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -52,8 +53,10 @@ WebsiteDataStore* ServiceWorkerNotificationHandler::dataStoreForNotificationID(c
     return WebsiteDataStore::existingDataStoreForSessionID(iterator->value);
 }
 
-void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data)
+void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, CompletionHandler<void()>&& callback)
 {
+    auto scope = makeScopeExit([&callback] { callback(); });
+
     auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(data.sourceSession);
     if (!dataStore)
         return;

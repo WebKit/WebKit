@@ -1,3 +1,30 @@
+2022-05-16  Youenn Fablet  <youenn@apple.com>
+
+        Make sure calling showNotification will extend the service worker lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=240273
+        <rdar://92978482>
+
+        Reviewed by Chris Dumez.
+
+        Update NotificationClient API so that show is taking a completion handler.
+        Make use of this completion handler to resolve the promise when the show notification steps are done, as per spec.
+        Register push event to ServiceWorkerGlobalScope when the event handlers are called.
+        When ServiceWorkerRegistration::show is called during one of the push event handlers,
+        extend the push event lifetime by adding the show notification promise to the push event.
+
+        Covered by API test.
+
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationClient.h:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+
 2022-05-16  Martin Robinson  <mrobinson@webkit.org>
 
         Do not allow unitless values for CSS unprefixed perspective property

@@ -49,6 +49,7 @@
 #include "WindowFocusAllowedIndicator.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -143,17 +144,23 @@ void Notification::markAsShown()
     m_state = Showing;
 }
 
-void Notification::show()
+void Notification::show(CompletionHandler<void()>&& callback)
 {
+    CompletionHandlerCallingScope scope { WTFMove(callback) };
+
     // prevent double-showing
     if (m_state != Idle)
         return;
 
-    auto* client = clientFromContext();
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    auto* client = context->notificationClient();
     if (!client)
         return;
 
-    if (client->checkPermission(scriptExecutionContext()) != Permission::Granted) {
+    if (client->checkPermission(context) != Permission::Granted) {
         switch (m_notificationSource) {
         case NotificationSource::Document:
             dispatchErrorEvent();
@@ -163,11 +170,10 @@ void Notification::show()
             // If permission has since been revoked, then silently failing here is expected behavior.
             break;
         }
-
         return;
     }
 
-    if (client->show(*this))
+    if (client->show(*this, scope.release()))
         m_state = Showing;
 }
 

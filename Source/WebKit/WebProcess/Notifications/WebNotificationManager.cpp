@@ -123,14 +123,14 @@ void WebNotificationManager::removeAllPermissionsForTesting()
 }
 
 #if ENABLE(NOTIFICATIONS)
-template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& message, Notification& notification, WebPage* page)
+static bool sendMessage(Notification& notification, WebPage* page, const Function<bool(IPC::Connection&, uint64_t)>& sendMessage)
 {
     if (!page && !notification.scriptExecutionContext())
         return false;
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     if (RuntimeEnabledFeatures::sharedFeatures().builtInNotificationsEnabled())
-        return m_process.ensureNetworkProcessConnection().connection().send(WTFMove(message), WebProcess::singleton().sessionID().toUInt64());
+        return sendMessage(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WebProcess::singleton().sessionID().toUInt64());
 #endif
 
     std::optional<WebCore::PageIdentifier> pageIdentifier;
@@ -143,12 +143,25 @@ template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& me
     }
 
     ASSERT(pageIdentifier);
+    return sendMessage(*WebProcess::singleton().parentProcessConnection(), pageIdentifier->toUInt64());
+}
 
-    return m_process.parentProcessConnection()->send(WTFMove(message), *pageIdentifier);
+template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& message, Notification& notification, WebPage* page)
+{
+    return sendMessage(notification, page, [&] (auto& connection, auto destinationIdentifier) {
+        return connection.send(WTFMove(message), destinationIdentifier);
+    });
+}
+
+template<typename U> bool WebNotificationManager::sendNotificationMessageWithAsyncReply(U&& message, Notification& notification, WebPage* page, CompletionHandler<void()>&& callback)
+{
+    return sendMessage(notification, page, [&] (auto& connection, auto destinationIdentifier) {
+        return connection.sendWithAsyncReply(WTFMove(message), WTFMove(callback), destinationIdentifier);
+    });
 }
 #endif // ENABLE(NOTIFICATIONS)
 
-bool WebNotificationManager::show(Notification& notification, WebPage* page)
+bool WebNotificationManager::show(Notification& notification, WebPage* page, CompletionHandler<void()>&& callback)
 {
 #if ENABLE(NOTIFICATIONS)
     LOG(Notifications, "WebProcess %i going to show notification %s", getpid(), notification.identifier().toString().utf8().data());
@@ -157,7 +170,7 @@ bool WebNotificationManager::show(Notification& notification, WebPage* page)
     if (page && !page->corePage()->settings().notificationsEnabled())
         return false;
 
-    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::ShowNotification(notification.data()), notification, page))
+    if (!sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::ShowNotification(notification.data()), notification, page, WTFMove(callback)))
         return false;
 
     if (!notification.isPersistent()) {

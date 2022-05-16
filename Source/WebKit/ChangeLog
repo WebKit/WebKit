@@ -1,5 +1,31 @@
 2022-05-16  Youenn Fablet  <youenn@apple.com>
 
+        Make sure calling showNotification will extend the service worker lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=240273
+        <rdar://92978482>
+
+        Reviewed by Chris Dumez.
+
+        On WebProcess side, implement the new NoficationClient::show API that takes a callback.
+        Delay calling this callback until UIProcess tells us so through async IPC.
+        On UIProcess side, take a callback and call it when the show notification steps are done.
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp:
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.h:
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+
+2022-05-16  Youenn Fablet  <youenn@apple.com>
+
         Add logging when taking a process assertion synchronously
         https://bugs.webkit.org/show_bug.cgi?id=240334
 

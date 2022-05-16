@@ -40,6 +40,7 @@ namespace WebCore {
 class DeferredPromise;
 class ExtendableEvent;
 class Page;
+class PushEvent;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
@@ -81,6 +82,9 @@ public:
 
     WEBCORE_EXPORT Page* serviceWorkerPage();
 
+    void dispatchPushEvent(PushEvent&);
+    PushEvent* pushEvent() { return m_pushEvent.get(); }
+
     bool hasPendingSilentPushEvent() const { return m_hasPendingSilentPushEvent; }
     void setHasPendingSilentPushEvent(bool value) { m_hasPendingSilentPushEvent = value; }
 
@@ -112,6 +116,7 @@ private:
     bool m_hasPendingSilentPushEvent { false };
     bool m_isProcessingUserGesture { false };
     Timer m_userGestureTimer;
+    RefPtr<PushEvent> m_pushEvent;
 };
 
 } // namespace WebCore

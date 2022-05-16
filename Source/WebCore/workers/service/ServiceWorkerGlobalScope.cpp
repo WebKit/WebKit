@@ -37,6 +37,7 @@
 #include "FrameLoaderClient.h"
 #include "JSDOMPromiseDeferred.h"
 #include "NotificationEvent.h"
+#include "PushEvent.h"
 #include "SWContextManager.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
@@ -76,6 +77,14 @@ ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope()
     // NotificationClient might have some interactions pending with the main thread,
     // so it should also be destroyed there.
     callOnMainThread([notificationClient = WTFMove(m_notificationClient)] { });
+}
+
+void ServiceWorkerGlobalScope::dispatchPushEvent(PushEvent& pushEvent)
+{
+    ASSERT(!m_pushEvent);
+    m_pushEvent = &pushEvent;
+    dispatchEvent(pushEvent);
+    m_pushEvent = nullptr;
 }
 
 void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()

@@ -32,12 +32,14 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSNotification.h"
 #include "Logging.h"
 #include "NavigationPreloadManager.h"
 #include "NotificationClient.h"
 #include "NotificationPermission.h"
+#include "PushEvent.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -274,40 +276,44 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, DOMPromiseDeferred<void>&& promise)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (!m_activeWorker) {
-        promise.reject(Exception { TypeError, "Registration does not have an active worker"_s });
+        promise->reject(Exception { TypeError, "Registration does not have an active worker"_s });
         return;
     }
 
     auto* client = context.notificationClient();
     if (!client) {
-        promise.reject(Exception { TypeError, "Registration not active"_s });
+        promise->reject(Exception { TypeError, "Registration not active"_s });
         return;
     }
 
     if (client->checkPermission(&context) != NotificationPermission::Granted) {
-        promise.reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
+        promise->reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
         return;
     }
 
     if (context.isServiceWorkerGlobalScope())
         downcast<ServiceWorkerGlobalScope>(context).setHasPendingSilentPushEvent(false);
 
-    // The Notification is kept alive by virtue of being show()'n soon.
-    // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.
     auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
     if (notificationResult.hasException()) {
-        promise.reject(notificationResult.releaseException());
+        promise->reject(notificationResult.releaseException());
         return;
     }
 
-    auto notification = notificationResult.releaseReturnValue();
-    notification->showSoon();
+    if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
+        if (auto* pushEvent = serviceWorkerGlobalScope->pushEvent()) {
+            auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(promise->globalObject());
+            auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promise->promise());
+            pushEvent->waitUntil(DOMPromise::create(globalObject, jsPromise));
+        }
+    }
 
-    context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise)]() mutable {
-        promise.resolve();
+    auto notification = notificationResult.releaseReturnValue();
+    notification->show([promise = WTFMove(promise)]() mutable {
+        promise->resolve();
     });
 }
 
