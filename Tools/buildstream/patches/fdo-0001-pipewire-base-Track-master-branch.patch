@@ -1,0 +1,38 @@
+From 58a792ac322995205758a34f716865387b76fa1c Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sun, 15 May 2022 17:59:50 +0100
+Subject: [PATCH] pipewire-base: Track master branch
+
+---
+ elements/components/pipewire-base.bst | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/elements/components/pipewire-base.bst b/elements/components/pipewire-base.bst
+index 2c5686a89..01ffe8a01 100644
+--- a/elements/components/pipewire-base.bst
++++ b/elements/components/pipewire-base.bst
+@@ -38,6 +38,9 @@ variables:
+     -Dbluez5-codec-ldac=disabled
+     -Dbluez5-codec-aptx=disabled
+     -Dlibcamera=disabled
++    -Dlibcanberra=disabled
++    -Dlv2=disabled
++    -Dsession-managers=
+     -Dlibjack-path=%{libdir}
+     -Dudevrulesdir=$(pkg-config --variable=udevdir udev)/rules.d
+ 
+@@ -107,9 +110,7 @@ public:
+ sources:
+ - kind: git_tag
+   url: freedesktop:PipeWire/pipewire.git
+-  # track: master : Frozen due to forward break
++  track: master
+   exclude:
+   - '*.*.9*'
+-  ref: 0.3.36-0-g4997d47f63ed2c91d74bc8e5b229e57200354ee5
+-- kind: patch
+-  path: patches/pipewire/remove-useless-rpaths.patch
++  ref: 0.3.51-0-gebc775674a0cf254cebd6d4694944006405807e3
+-- 
+2.35.1
+

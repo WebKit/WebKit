@@ -3,7 +3,7 @@ sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   track: 'release/21.08'
-  ref: freedesktop-sdk-21.08.12-73-g6f02787ff2f4506731cf6aac153728e3251bdda1
+  ref: freedesktop-sdk-21.08.13-31-g21fed0ebe165b748f4bbf1edd0f275dbabc26086
 - kind: patch
   path: patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch
 - kind: patch
@@ -16,6 +16,8 @@ sources:
   path: patches/fdo-0001-gobject-introspection-Bump-to-1.72.patch
 - kind: patch
   path: patches/fdo-0002-meson-Bump-to-1.62.patch
+- kind: patch
+  path: patches/fdo-0001-pipewire-base-Track-master-branch.patch
 config:
   options:
     target_arch: '%{arch}'
