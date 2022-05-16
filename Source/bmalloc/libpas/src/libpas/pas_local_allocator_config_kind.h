@@ -86,7 +86,7 @@ pas_local_allocator_config_kind_create_normal(pas_segregated_page_config_kind ki
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
     }
-    PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+    PAS_ASSERT(!"Should not be reached");
     return (pas_local_allocator_config_kind)0;
 }
 
@@ -100,7 +100,7 @@ pas_local_allocator_config_kind_create_primordial_partial(pas_segregated_page_co
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
     }
-    PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+    PAS_ASSERT(!"Should not be reached");
     return (pas_local_allocator_config_kind)0;
 }
 
@@ -114,7 +114,7 @@ pas_local_allocator_config_kind_create_bitfit(pas_bitfit_page_config_kind kind)
 #include "pas_bitfit_page_config_kind.def"
 #undef PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND
     }
-    PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+    PAS_ASSERT(!"Should not be reached");
     return (pas_local_allocator_config_kind)0;
 }
 
@@ -129,7 +129,7 @@ pas_local_allocator_config_kind_get_segregated_page_config_kind(pas_local_alloca
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
     default:
-        PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+        PAS_ASSERT(!"Should not be reached");
         return (pas_segregated_page_config_kind)0;
     }
 }
@@ -144,7 +144,7 @@ pas_local_allocator_config_kind_get_bitfit_page_config_kind(pas_local_allocator_
 #include "pas_bitfit_page_config_kind.def"
 #undef PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND
     default:
-        PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+        PAS_ASSERT(!"Should not be reached");
         return (pas_bitfit_page_config_kind)0;
     }
 }
@@ -170,7 +170,7 @@ pas_local_allocator_config_kind_get_string(pas_local_allocator_config_kind kind)
 #include "pas_bitfit_page_config_kind.def"
 #undef PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND
     }
-    PAS_ASSERT_WITH_EXTRA_DETAIL(!"Should not be reached", kind);
+    PAS_ASSERT(!"Should not be reached");
     return NULL;
 }
 

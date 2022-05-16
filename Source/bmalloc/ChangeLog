@@ -1,3 +1,18 @@
+2022-05-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, revert r294214 partially
+        https://bugs.webkit.org/show_bug.cgi?id=240292
+
+        These part is not cold code. We must not use PAS_ASSERT_WITH_DETAIL.
+
+        * libpas/src/libpas/pas_local_allocator_config_kind.h:
+        (pas_local_allocator_config_kind_create_normal):
+        (pas_local_allocator_config_kind_create_primordial_partial):
+        (pas_local_allocator_config_kind_create_bitfit):
+        (pas_local_allocator_config_kind_get_segregated_page_config_kind):
+        (pas_local_allocator_config_kind_get_bitfit_page_config_kind):
+        (pas_local_allocator_config_kind_get_string):
+
 2022-05-14  Justin Michaud  <justin_michaud@apple.com>
 
         [LIBPAS] Add extra assert information to malloc enumeration API
