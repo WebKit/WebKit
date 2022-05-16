@@ -1410,7 +1410,8 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
                     sweeper->doWork(vm());
             }
 
-            dataLogLn("Done: ", RawPointer(visitor), " ", RawPointer(sweeper));
+            if (false)
+                dataLogLn("Done executing visitor/sweeper: ", RawPointer(visitor), " ", RawPointer(sweeper));
 
             {
                 Locker locker { m_parallelSlotVisitorLock };

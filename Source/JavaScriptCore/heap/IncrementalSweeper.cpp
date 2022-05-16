@@ -101,7 +101,8 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
 
 bool IncrementalSweeper::sweepNextBlockInParallel(VM&)
 {
-    dataLogLn("Sweeping block?");
+    if (false)
+        dataLogLn("Sweeping block in parallel?");
     RELEASE_ASSERT(m_sweeperThreadType == SweepInParallel);
     MarkedBlock::Handle* block = nullptr;
     
@@ -115,16 +116,18 @@ bool IncrementalSweeper::sweepNextBlockInParallel(VM&)
     
     if (!block)
         return false;
-    dataLogLn("Sweeping block ", RawPointer(block->atomAt(0)));
+    if (false)
+        dataLogLn("*****Sweeping block in parallel ", RawPointer(block->atomAt(0)));
     
-    block->sweep(nullptr);
+    block->sweepInParallel();
 
     return true;
 }
 
 void IncrementalSweeper::startSweeping(Heap& heap)
 {
-    dataLogLn("Start sweeping, parallel? ", m_sweeperThreadType == SweepInParallel);
+    if (false)
+        dataLogLn("Start sweeping, parallel? ", m_sweeperThreadType == SweepInParallel);
     scheduleTimer();
     m_currentDirectory = heap.objectSpace().firstDirectory();
 }

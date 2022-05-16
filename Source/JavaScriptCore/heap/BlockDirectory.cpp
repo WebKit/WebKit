@@ -30,6 +30,7 @@
 #include "Heap.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
+#include "wtf/RawPointer.h"
 
 #include <wtf/FunctionTraits.h>
 #include <wtf/Lock.h>
@@ -99,6 +100,15 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
 {
     for (;;) {
+        auto swept = ((~m_bits.unswept()) & (m_bits.canAllocateButNotEmpty() | m_bits.empty())).findBit(allocator.m_allocationCursor, true);
+        if (swept < m_blocks.size()) {
+            MarkedBlock::Handle* result = m_blocks[swept];
+            if (false)
+                dataLogLn("***Using pre-swept block to allocate in: ", RawPointer(result->atomAt(0)));
+            setIsCanAllocateButNotEmpty(NoLockingNecessary, swept, false);
+            return result;
+        }
+
         allocator.m_allocationCursor = (m_bits.canAllocateButNotEmpty() | m_bits.empty()).findBit(allocator.m_allocationCursor, true);
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
