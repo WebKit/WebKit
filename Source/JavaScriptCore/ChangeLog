@@ -1,3 +1,12 @@
+2022-05-16  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Regression(r266885) Crash sometimes when rehydrating imported audit results
+        https://bugs.webkit.org/show_bug.cgi?id=240366
+
+        Reviewed by Devin Rousso.
+
+        * inspector/protocol/DOM.json:
+
 2022-05-13  Mark Lam  <mark.lam@apple.com>
 
         Enhance the ARM64Disassembler to print pc indices and better branch target labels.
