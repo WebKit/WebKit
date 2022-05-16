@@ -39,6 +39,7 @@
 #include "NotificationPermission.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SerializedScriptValue.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include "WritingMode.h"
@@ -74,7 +75,7 @@ public:
 
     WEBCORE_EXPORT virtual ~Notification();
 
-    void show();
+    void show(CompletionHandler<void()>&& = [] { });
     void close();
 
     const String& title() const { return m_title; }

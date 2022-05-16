@@ -231,7 +231,7 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
         serviceWorkerGlobalScope->setHasPendingSilentPushEvent(true);
 
         auto pushEvent = PushEvent::create(eventNames().pushEvent, { }, WTFMove(data), ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope->dispatchEvent(pushEvent);
+        serviceWorkerGlobalScope->dispatchPushEvent(pushEvent);
 
         pushEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, eventCreationTime = pushEvent->timeStamp(), callback = WTFMove(callback)](auto&& extendLifetimePromises) mutable {
             bool hasRejectedAnyPromise = false;

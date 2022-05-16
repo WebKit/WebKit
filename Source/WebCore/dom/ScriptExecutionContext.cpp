@@ -176,6 +176,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
     m_inScriptExecutionContextDestructor = true;
 #endif // ASSERT_ENABLED
 
+    auto callbacks = WTFMove(m_notificationCallbacks);
+    for (auto& callback : callbacks.values())
+        callback();
+
 #if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
 #endif
@@ -753,6 +757,18 @@ ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResou
         return HasResourceAccess::Yes;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+ScriptExecutionContext::NotificationCallbackIdentifier ScriptExecutionContext::addNotificationCallback(CompletionHandler<void()>&& callback)
+{
+    auto identifier = NotificationCallbackIdentifier::generateThreadSafe();
+    m_notificationCallbacks.add(identifier, WTFMove(callback));
+    return identifier;
+}
+
+CompletionHandler<void()> ScriptExecutionContext::takeNotificationCallback(NotificationCallbackIdentifier identifier)
+{
+    return m_notificationCallbacks.take(identifier);
 }
 
 } // namespace WebCore

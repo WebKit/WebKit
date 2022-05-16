@@ -121,6 +121,8 @@ static WKNotificationManagerRef notificationManagerForPage(WKPageRef page)
 
 void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificationRef notification)
 {
+    m_hasReceivedNotification = true;
+
     auto notificationManager = notificationManagerForPage(page);
     uint64_t identifier = WKNotificationGetID(notification);
     WKNotificationManagerProviderDidShowNotification(notificationManager, identifier);

@@ -90,10 +90,9 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
     sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&)
+void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&, CompletionHandler<void()>&& callback)
 {
-    if (!m_connection)
-        return;
+    callback();
 
 //     FIXME: While we don't normally land commented-out code in the tree,
 //     this is a nice bookmark for a development milestone; Roundtrip communication with webpushd

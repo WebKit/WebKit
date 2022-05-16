@@ -313,6 +313,12 @@ public:
     enum class HasResourceAccess : uint8_t { No, Yes, DefaultForThirdParty };
     WEBCORE_EXPORT HasResourceAccess canAccessResource(ResourceType) const;
 
+    enum NotificationCallbackIdentifierType { };
+    using NotificationCallbackIdentifier = ObjectIdentifier<NotificationCallbackIdentifierType>;
+
+    WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
+    WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -395,6 +401,8 @@ private:
 
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
+
+    HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
 };
 
 } // namespace WebCore

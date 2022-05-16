@@ -1,5 +1,82 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r294225. rdar://problem/92978482
+
+    Make sure calling showNotification will extend the service worker lifetime
+    https://bugs.webkit.org/show_bug.cgi?id=240273
+    <rdar://92978482>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Update NotificationClient API so that show is taking a completion handler.
+    Make use of this completion handler to resolve the promise when the show notification steps are done, as per spec.
+    Register push event to ServiceWorkerGlobalScope when the event handlers are called.
+    When ServiceWorkerRegistration::show is called during one of the push event handlers,
+    extend the push event lifetime by adding the show notification promise to the push event.
+    
+    Covered by API test.
+    
+    * Modules/notifications/Notification.cpp:
+    * Modules/notifications/Notification.h:
+    * Modules/notifications/NotificationClient.h:
+    * dom/ScriptExecutionContext.cpp:
+    * dom/ScriptExecutionContext.h:
+    * workers/service/ServiceWorkerGlobalScope.cpp:
+    * workers/service/ServiceWorkerGlobalScope.h:
+    * workers/service/ServiceWorkerRegistration.cpp:
+    * workers/service/ServiceWorkerRegistration.h:
+    * workers/service/context/ServiceWorkerThread.cpp:
+    
+    Source/WebKit:
+    
+    On WebProcess side, implement the new NoficationClient::show API that takes a callback.
+    Delay calling this callback until UIProcess tells us so through async IPC.
+    On UIProcess side, take a callback and call it when the show notification steps are done.
+    
+    * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+    * NetworkProcess/Notifications/NetworkNotificationManager.h:
+    * Shared/Notifications/NotificationManagerMessageHandler.h:
+    * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+    * UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp:
+    * UIProcess/Notifications/ServiceWorkerNotificationHandler.h:
+    * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+    * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+    * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+    * WebProcess/Notifications/WebNotificationManager.cpp:
+    * WebProcess/Notifications/WebNotificationManager.h:
+    * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+    * WebProcess/WebCoreSupport/WebNotificationClient.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebNotificationClient.h:
+    * WebCoreSupport/WebNotificationClient.mm:
+    
+    Tools:
+    
+    * TestWebKitAPI/TestNotificationProvider.cpp:
+    * TestWebKitAPI/TestNotificationProvider.h:
+    * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294225 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-16  Youenn Fablet  <youenn@apple.com>
+
+            Make sure calling showNotification will extend the service worker lifetime
+            https://bugs.webkit.org/show_bug.cgi?id=240273
+            <rdar://92978482>
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/TestNotificationProvider.cpp:
+            * TestWebKitAPI/TestNotificationProvider.h:
+            * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r294218. rdar://problem/90400867
 
     Right click > "Open Link" should trigger a navigation action with WKNavigationTypeLinkActivated

@@ -677,6 +677,9 @@ TEST(PushAPI, fireNotificationClickEvent)
 
     TestWebKitAPI::Util::run(&done);
 
+    provider.resetHasReceivedNotification();
+    auto& providerRef = provider;
+
     done = false;
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
@@ -684,6 +687,7 @@ TEST(PushAPI, fireNotificationClickEvent)
     expectedMessage = "Received: Sweet Potatoes"_s;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        EXPECT_TRUE(providerRef.hasReceivedNotification());
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];

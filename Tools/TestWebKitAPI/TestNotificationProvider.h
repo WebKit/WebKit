@@ -47,11 +47,15 @@ public:
     void showWebNotification(WKPageRef, WKNotificationRef);
     void simulateNotificationClick();
 
+    bool hasReceivedNotification() const { return m_hasReceivedNotification; }
+    void resetHasReceivedNotification() { m_hasReceivedNotification = false; }
+
 private:
     Vector<WKNotificationManagerRef> m_managers;
     HashMap<String, bool> m_permissions;
     WKNotificationProviderV0 m_provider;
 
+    bool m_hasReceivedNotification { false };
     std::pair<WKNotificationManagerRef, uint64_t> m_pendingNotification;
 };
 
