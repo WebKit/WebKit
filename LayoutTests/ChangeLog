@@ -1,3 +1,13 @@
+2022-05-16  Ziran Sun  <zsun@igalia.com>
+
+        [css-ui] alias appearance <compat-auto> keywords to 'auto' for textfield
+        https://bugs.webkit.org/show_bug.cgi?id=238551
+
+        Reviewed by Tim Nguyen.
+
+        Rename test name as the test result now matches the expected.
+        * fast/forms/color/color-input-uses-color-well-appearance-expected.html: Renamed from LayoutTests/fast/forms/color/color-input-uses-color-well-appearance-expected-mismatch.html.
+
 2022-05-16  Karl Rackler  <rackler@apple.com>
 
         [Gardening]: REGRESSION (r264117): [ Mac iOS ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html

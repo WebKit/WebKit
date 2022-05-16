@@ -1,3 +1,22 @@
+2022-05-16  Ziran Sun  <zsun@igalia.com>
+
+        [css-ui] alias appearance <compat-auto> keywords to 'auto' for textfield
+        https://bugs.webkit.org/show_bug.cgi?id=238551
+
+        Reviewed by Tim Nguyen.
+
+        This is to add support of aliasing appearance to 'auto' for textfield.
+        It has improved the following wpt tests
+        imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html
+        and
+        imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html.
+
+        The test failures though, are not fully fixed. The issue left is that the search cancel button
+        for input type="search" still present while it is expected to disappear (Bug 238751).
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustAppearanceForElement const):
+
 2022-05-16  Loïc Le Page  <llepage@igalia.com>
 
         REGRESSION(r294104): [GStreamer][VideoCapture] Webcam raw streams may hang up the video capture pipeline

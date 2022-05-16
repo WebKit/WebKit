@@ -117,6 +117,13 @@ ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const El
         return autoAppearance;
     }
 
+    if (part == TextFieldPart) {
+        if (is<HTMLInputElement>(*element) && downcast<HTMLInputElement>(*element).isSearchField())
+            return part;
+        style.setEffectiveAppearance(autoAppearance);
+        return autoAppearance;
+    }
+
     return part;
 }
 
