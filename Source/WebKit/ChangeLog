@@ -1,3 +1,20 @@
+2022-05-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        [SOUP2] Compute number of header bytes whe using soup 2
+        https://bugs.webkit.org/show_bug.cgi?id=240200
+
+        Reviewed by Michael Catanzaro.
+
+        SOUP 2 lacks methods that allow to get computed head sizes (only present in v3),
+        calculate the sizes manually when libsoup 2 is used.
+
+        No new tests, covered by LayoutTests/http/tests/inspector/network/resource-sizes-network.html
+        when compiled with SOUP 2.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::addHeaderSizes):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+
 2022-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         Remove abandoned UseScreenCaptureKit preference

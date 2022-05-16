@@ -1218,6 +1218,15 @@ WebCore::AdditionalNetworkLoadMetricsForWebInspector& NetworkDataTaskSoup::addit
     return *m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector;
 }
 
+#if USE(SOUP2)
+static void addHeaderSizes(const char *name, const char *value, gpointer pointer)
+{
+    uint64_t* size = static_cast<uint64_t*>(pointer);
+    // Each header is formatted as "<name>: <value>\r\n"
+    *size += strlen(name) + strlen(value) + 4;
+}
+#endif
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1263,6 +1272,20 @@ void NetworkDataTaskSoup::didGetHeaders()
         additionalMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
         additionalMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
         additionalMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
+#else
+        {
+            auto* requestHeaders = soup_message_get_request_headers(m_soupMessage.get());
+            uint64_t requestHeadersSize = 0;
+            soup_message_headers_foreach(requestHeaders, addHeaderSizes, &requestHeadersSize);
+            additionalMetrics.requestHeaderBytesSent = requestHeadersSize;
+        }
+
+        {
+            auto* responseHeaders = soup_message_get_response_headers(m_soupMessage.get());
+            uint64_t responseHeadersSize = 0;
+            soup_message_headers_foreach(responseHeaders, addHeaderSizes, &responseHeadersSize);
+            additionalMetrics.responseHeaderBytesReceived = responseHeadersSize;
+        }
 #endif
     }
 
