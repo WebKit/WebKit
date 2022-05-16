@@ -2377,15 +2377,12 @@ add_custom_command(
            ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.cpp
            ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltins.h
            ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.h
-    MAIN_DEPENDENCY ${WebCore_BUILTINS_SOURCES}
-    DEPENDS ${BUILTINS_GENERATOR_SCRIPTS} ${WebCore_DERIVED_BUILTIN_HEADERS}
+    DEPENDS ${BUILTINS_GENERATOR_SCRIPTS} ${WebCore_DERIVED_BUILTIN_HEADERS} ${WebCore_BUILTINS_SOURCES}
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --wrappers-only --framework WebCore --output-directory ${WebCore_DERIVED_SOURCES_DIR} ${WebCore_BUILTINS_SOURCES}
     VERBATIM)
 list(APPEND WebCore_SOURCES
     ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltins.cpp
-    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.cpp
-    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltins.h
-    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.h)
+    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.cpp)
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 
