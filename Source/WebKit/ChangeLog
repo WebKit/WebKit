@@ -1,3 +1,16 @@
+2022-05-16  J Pascoe  <j_pascoe@apple.com>
+
+        REGRESSION (250501@main): [ Mac ] 2 TestWebKitAPI.WebAuthenticationPanel.GetAssertionLA tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=240406
+        rdar://93267082
+
+        Reviewed by Brent Fulgham.
+
+        Using the the truthiness of BOOL from attributes doesn't work here, instead compare it to @YES.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::getExistingCredentials):
+
 2022-05-16  Alex Christensen  <achristensen@webkit.org>
 
         Use _adoptEffectiveConfiguration instead of a separate NSURLSession without credentials

@@ -186,7 +186,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         if (!group.isNull())
             response->setGroup(group);
         if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
-            response->setSynchronizable(attributes[(id)kSecAttrSynchronizable]);
+            response->setSynchronizable([attributes[(id)kSecAttrSynchronizable] isEqual:@YES]);
 
         result.uncheckedAppend(WTFMove(response));
     }
