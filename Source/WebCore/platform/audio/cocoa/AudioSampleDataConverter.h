@@ -42,7 +42,7 @@ public:
     ~AudioSampleDataConverter();
 
     OSStatus setFormats(const CAAudioStreamDescription& inputDescription, const CAAudioStreamDescription& outputDescription);
-    bool updateBufferedAmount(size_t currentBufferedAmount);
+    bool updateBufferedAmount(size_t currentBufferedAmount, size_t pushedSampleSize);
     OSStatus convert(const AudioBufferList&, AudioSampleBufferList&, size_t sampleCount);
     size_t regularBufferSize() const { return m_regularBufferSize; }
     bool isRegular() const { return m_selectedConverter == m_regularConverter; }

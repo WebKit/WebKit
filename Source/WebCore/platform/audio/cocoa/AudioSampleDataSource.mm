@@ -129,7 +129,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
     int64_t offset = 0;
     const AudioBufferList* sampleBufferList;
 
-    if (m_converter.updateBufferedAmount(m_lastBufferedAmount)) {
+    if (m_converter.updateBufferedAmount(m_lastBufferedAmount, sampleCount)) {
         m_scratchBuffer->reset();
         m_converter.convert(bufferList, *m_scratchBuffer, sampleCount);
         auto expectedSampleCount = sampleCount * m_outputDescription->sampleRate() / m_inputDescription->sampleRate();
