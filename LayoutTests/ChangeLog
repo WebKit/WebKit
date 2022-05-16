@@ -1,5 +1,14 @@
 2022-05-16  Karl Rackler  <rackler@apple.com>
 
+        [ iOS ] imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html is a consistent failure
+        https://bugs.webkit.org/show_bug.cgi?id=240463
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
+2022-05-16  Karl Rackler  <rackler@apple.com>
+
         [Gardening]:[ iOS ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html is a consistent failure
         https://bugs.webkit.org/show_bug.cgi?id=240348
 
