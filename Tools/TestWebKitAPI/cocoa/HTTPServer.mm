@@ -237,15 +237,7 @@ void HTTPServer::respondWithChallengeThenOK(Connection connection)
         "Content-Length: 0\r\n"
         "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n"_s;
         connection.send(challengeHeader, [connection] {
-            connection.receiveHTTPRequest([connection] (Vector<char>&&) {
-                connection.send(
-                    "HTTP/1.1 200 OK\r\n"
-                    "Content-Length: 34\r\n\r\n"
-                    "<script>alert('success!')</script>"_s, [connection] {
-                        respondWithChallengeThenOK(connection);
-                    }
-                );
-            });
+            respondWithOK(connection);
         });
     });
 }

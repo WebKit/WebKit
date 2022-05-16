@@ -68,6 +68,7 @@ struct IsolatedSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SessionWrapper sessionWithCredentialStorage;
+    SessionWrapper sessionWithoutCredentialStorage;
     WallTime lastUsed;
 };
 
@@ -86,6 +87,7 @@ public:
     std::unique_ptr<IsolatedSession> appBoundSession;
 
     SessionWrapper sessionWithCredentialStorage;
+    SessionWrapper sessionWithoutCredentialStorage;
     SessionWrapper ephemeralStatelessSession;
 
 private:
