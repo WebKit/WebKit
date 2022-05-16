@@ -1,3 +1,11 @@
+2022-05-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=240439
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2022-05-14  Alan Bujtas  <zalan@apple.com>
 
         Changing text color and removing line-clamp on hover causes text to disappear permanently
