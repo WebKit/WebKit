@@ -910,10 +910,6 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
         m_page.process().processPool().ensureGPUProcess().setUseMockCaptureDevices(mockDevicesEnabled);
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-    WebCore::ScreenCaptureKitCaptureSource::setEnabled(m_page.preferences().useScreenCaptureKit());
-#endif
-
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)
         return;
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);

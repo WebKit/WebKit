@@ -163,16 +163,4 @@ bool defaultMediaSessionCoordinatorEnabled()
 }
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-bool defaultScreenCaptureKitEnabled()
-{
-#if ENABLE(SCREEN_CAPTURE_KIT)
-    return true;
-#else
-    return false;
-#endif
-}
-#endif // HAVE(SCREEN_CAPTURE_KIT)
-
-
 } // namespace WebKit

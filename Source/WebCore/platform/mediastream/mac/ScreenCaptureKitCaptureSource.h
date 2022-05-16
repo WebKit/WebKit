@@ -57,7 +57,6 @@ public:
     virtual ~ScreenCaptureKitCaptureSource();
 
     WEBCORE_EXPORT static bool isAvailable();
-    WEBCORE_EXPORT static void setEnabled(bool);
 
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     WEBCORE_EXPORT static void screenCaptureDevices(Vector<CaptureDevice>&);
@@ -119,7 +118,6 @@ private:
     uint32_t m_height { 0 };
     float m_frameRate { 0 };
     bool m_isRunning { false };
-    static bool m_enabled;
 };
 
 } // namespace WebCore

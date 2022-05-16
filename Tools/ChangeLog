@@ -1,3 +1,17 @@
+2022-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove abandoned UseScreenCaptureKit preference
+        https://bugs.webkit.org/show_bug.cgi?id=240460
+        <rdar://problem/93351960>
+
+        Reviewed by Youenn Fablet.
+
+        We no longer need this switch to activate ScreenCaptureKit, and this code is no
+        longer used. We should remove it to simplify the build and reduce complexity.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm:
+        (TestWebKitAPI::TEST):
+
 2022-05-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r294238.
