@@ -1,3 +1,25 @@
+2022-05-16  Tim Nguyen  <ntim@apple.com>
+
+        [css-ui] Make inner-spin-button/sliderthumb-horizontal/sliderthumb-vertical appearance values internal
+        https://bugs.webkit.org/show_bug.cgi?id=240448
+
+        Reviewed by Antti Koivisto.
+
+        iOS baseline for appearance-cssom-001-expected.txt is identical to the main one, so remove it.
+
+        * fast/forms/range/thumbslider-crash-expected.txt: Removed.
+        * fast/forms/range/thumbslider-crash.html: Removed.
+        * fast/forms/range/thumbslider-no-parent-slider.html: Removed.
+        * platform/gtk/fast/forms/range/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/gtk/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt: Removed.
+        * platform/ios/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/win/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/wincairo/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+
 2022-05-16  Martin Robinson  <mrobinson@webkit.org>
 
         Do not allow unitless values for CSS unprefixed perspective property

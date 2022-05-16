@@ -1,3 +1,17 @@
+2022-05-16  Tim Nguyen  <ntim@apple.com>
+
+        [css-ui] Make inner-spin-button/sliderthumb-horizontal/sliderthumb-vertical appearance values internal
+        https://bugs.webkit.org/show_bug.cgi?id=240448
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.h:
+
 2022-05-16  Youenn Fablet  <youenn@apple.com>
 
         Make sure calling showNotification will extend the service worker lifetime

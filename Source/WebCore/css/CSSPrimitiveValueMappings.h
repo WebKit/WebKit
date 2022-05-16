@@ -469,9 +469,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case DefaultButtonPart:
         m_value.valueID = CSSValueDefaultButton;
         break;
-    case InnerSpinButtonPart:
-        m_value.valueID = CSSValueInnerSpinButton;
-        break;
     case ListboxPart:
         m_value.valueID = CSSValueListbox;
         break;
@@ -535,12 +532,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case SliderVerticalPart:
         m_value.valueID = CSSValueSliderVertical;
         break;
-    case SliderThumbHorizontalPart:
-        m_value.valueID = CSSValueSliderthumbHorizontal;
-        break;
-    case SliderThumbVerticalPart:
-        m_value.valueID = CSSValueSliderthumbVertical;
-        break;
     case SearchFieldPart:
         m_value.valueID = CSSValueSearchfield;
         break;
@@ -570,6 +561,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
 #endif
+    case InnerSpinButtonPart:
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
 #endif
@@ -577,6 +569,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:
     case SearchFieldCancelButtonPart:
+    case SliderThumbHorizontalPart:
+    case SliderThumbVerticalPart:
         ASSERT_NOT_REACHED();
         m_value.valueID = CSSValueNone;
         break;

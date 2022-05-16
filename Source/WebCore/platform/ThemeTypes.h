@@ -41,7 +41,6 @@ enum ControlPart {
     SquareButtonPart,
     ButtonPart,
     DefaultButtonPart,
-    InnerSpinButtonPart,
     ListboxPart,
     MediaControlsDarkBarBackgroundPart,
     MediaControlsLightBarBackgroundPart,
@@ -59,8 +58,6 @@ enum ControlPart {
     ProgressBarPart,
     SliderHorizontalPart,
     SliderVerticalPart,
-    SliderThumbHorizontalPart,
-    SliderThumbVerticalPart,
     SearchFieldPart,
     RelevancyLevelIndicatorPart,
     ContinuousCapacityLevelIndicatorPart,
@@ -83,13 +80,16 @@ enum ControlPart {
 #if ENABLE(SERVICE_CONTROLS)
     ImageControlsButtonPart,
 #endif
+    InnerSpinButtonPart,
 #if ENABLE(DATALIST_ELEMENT)
     ListButtonPart,
 #endif
     SearchFieldDecorationPart,
     SearchFieldResultsDecorationPart,
     SearchFieldResultsButtonPart,
-    SearchFieldCancelButtonPart
+    SearchFieldCancelButtonPart,
+    SliderThumbHorizontalPart,
+    SliderThumbVerticalPart
 };
 
 #if ENABLE(SERVICE_CONTROLS)

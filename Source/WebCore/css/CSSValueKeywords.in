@@ -840,7 +840,6 @@ push-button
 square-button
 button
 default-button
-inner-spin-button
 listbox
 media-controls-dark-bar-background
 media-controls-light-bar-background
@@ -858,8 +857,6 @@ meter
 progress-bar
 slider-horizontal
 slider-vertical
-sliderthumb-horizontal
-sliderthumb-vertical
 searchfield
 relevancy-level-indicator
 continuous-capacity-level-indicator
