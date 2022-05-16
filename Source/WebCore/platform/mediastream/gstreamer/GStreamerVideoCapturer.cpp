@@ -67,16 +67,43 @@ GstElement* GStreamerVideoCapturer::createSource()
 
 GstElement* GStreamerVideoCapturer::createConverter()
 {
+    auto* bin = gst_bin_new(nullptr);
+    auto* videoscale = gst_element_factory_make("videoscale", "videoscale");
+    auto* videoconvert = gst_element_factory_make("videoconvert", nullptr);
+    auto* videorate = gst_element_factory_make("videorate", "videorate");
+
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
-    auto bin = makeGStreamerBin("capsfilter caps=\"video/x-raw\" name=mimetype-filter ! decodebin3 ! videoscale ! videoconvert ! videorate drop-only=1 average-period=1 name=videorate", false);
+    g_object_set(videorate, "drop-only", 1, "average-period", 1, nullptr);
 
-    m_videoSrcMIMETypeFilter = adoptGRef(gst_bin_get_by_name(GST_BIN(bin), "mimetype-filter"));
-    auto videorate = adoptGRef(gst_bin_get_by_name(GST_BIN(bin), "videorate"));
+    gst_bin_add_many(GST_BIN_CAST(bin), videoscale, videoconvert, videorate, nullptr);
 
-    RELEASE_ASSERT(gst_element_add_pad(bin, gst_ghost_pad_new("sink", GST_PAD(m_videoSrcMIMETypeFilter->sinkpads->data))));
-    RELEASE_ASSERT(gst_element_add_pad(bin, gst_ghost_pad_new("src", GST_PAD(videorate->srcpads->data))));
+    GstElement* head = videoscale;
+    if (!isCapturingDisplay()) {
+        m_videoSrcMIMETypeFilter = gst_element_factory_make("capsfilter", "mimetype-filter");
+        head = m_videoSrcMIMETypeFilter.get();
 
-    adjustVideoSrcMIMEType();
+        auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
+        g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
+
+        auto* decodebin = gst_element_factory_make("decodebin3", nullptr);
+        gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
+        gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
+
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(videoscale, "sink"));
+        g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
+            RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
+            gst_pad_link(srcPad, sinkPad);
+        }), sinkPad.get());
+    }
+
+    gst_element_link_many(videoscale, videoconvert, videorate, nullptr);
+
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(head, "sink"));
+    gst_element_add_pad(bin, gst_ghost_pad_new("sink", sinkPad.get()));
+
+    auto srcPad = adoptGRef(gst_element_get_static_pad(videorate, "src"));
+    gst_element_add_pad(bin, gst_ghost_pad_new("src", srcPad.get()));
+
     return bin;
 }
 
@@ -91,7 +118,7 @@ GstVideoInfo GStreamerVideoCapturer::getBestFormat()
 
 bool GStreamerVideoCapturer::setSize(int width, int height)
 {
-    if (feedingFromPipewire()) {
+    if (isCapturingDisplay()) {
         // Pipewiresrc doesn't seem to support caps re-negotiation and framerate configuration properly.
         GST_FIXME_OBJECT(m_pipeline.get(), "Resizing disabled on display capture source");
         return true;
@@ -110,8 +137,6 @@ bool GStreamerVideoCapturer::setSize(int width, int height)
     m_caps = adoptGRef(gst_caps_copy(m_caps.get()));
     gst_caps_set_simple(m_caps.get(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr);
 
-    adjustVideoSrcMIMEType();
-
     if (!m_capsfilter)
         return false;
 
@@ -121,7 +146,7 @@ bool GStreamerVideoCapturer::setSize(int width, int height)
 
 bool GStreamerVideoCapturer::setFrameRate(double frameRate)
 {
-    if (feedingFromPipewire()) {
+    if (isCapturingDisplay()) {
         // Pipewiresrc doesn't seem to support caps re-negotiation and framerate configuration properly.
         GST_FIXME_OBJECT(m_pipeline.get(), "Framerate override disabled on display capture source");
         return true;
@@ -143,8 +168,6 @@ bool GStreamerVideoCapturer::setFrameRate(double frameRate)
 
     m_caps = adoptGRef(gst_caps_copy(m_caps.get()));
     gst_caps_set_simple(m_caps.get(), "framerate", GST_TYPE_FRACTION, numerator, denominator, nullptr);
-
-    adjustVideoSrcMIMEType();
 
     if (!m_capsfilter)
         return false;
@@ -234,14 +257,20 @@ static std::optional<double> getMaxFractionValueFromStructure(const GstStructure
     return (maxFraction > -G_MAXDOUBLE) ? std::make_optional<>(maxFraction) : std::nullopt;
 }
 
-void GStreamerVideoCapturer::adjustVideoSrcMIMEType()
+void GStreamerVideoCapturer::reconfigure()
 {
+    if (isCapturingDisplay()) {
+        // Pipewiresrc doesn't seem to support caps re-negotiation and framerate configuration properly.
+        GST_FIXME_OBJECT(m_pipeline.get(), "Caps re-negotiation disabled on display capture source");
+        return;
+    }
+
     if (!m_videoSrcMIMETypeFilter)
         return;
 
     struct MimeTypeSelector {
         const char* mimeType = "video/x-raw";
-
+        const char* format = nullptr;
         int maxWidth = 0;
         int maxHeight = 0;
         double maxFrameRate = 0;
@@ -289,6 +318,7 @@ void GStreamerVideoCapturer::adjustVideoSrcMIMEType()
             if (*width >= selector->stopCondition.width && *height >= selector->stopCondition.height
                 && *frameRate >= selector->stopCondition.frameRate) {
                 selector->mimeType = gst_structure_get_name(structure);
+                selector->format = gst_structure_get_string(structure, "format");
                 return FALSE;
             }
 
@@ -297,15 +327,19 @@ void GStreamerVideoCapturer::adjustVideoSrcMIMEType()
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
                 selector->mimeType = gst_structure_get_name(structure);
+                selector->format = gst_structure_get_string(structure, "format");
             }
 
             return TRUE;
-        }),
-        &selector);
-
-    GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device mime type to %s", selector.mimeType);
+        }), &selector);
 
     auto caps = adoptGRef(gst_caps_new_empty_simple(selector.mimeType));
+
+    // Workaround for https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/1793.
+    if (selector.format)
+        gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, selector.format, nullptr);
+
+    GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device caps to %" GST_PTR_FORMAT, caps.get());
     g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 }
 
