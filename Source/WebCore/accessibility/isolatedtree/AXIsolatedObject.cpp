@@ -201,7 +201,6 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
-    setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::ClickPoint, object.clickPoint());
     setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString().isolatedCopy());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
@@ -265,8 +264,6 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
         setProperty(AXPropertyName::IsTableCell, true);
         setProperty(AXPropertyName::ColumnIndexRange, object.columnIndexRange());
         setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
-        setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
-        setObjectVectorProperty(AXPropertyName::RowHeaders, object.rowHeaders());
         setProperty(AXPropertyName::IsColumnHeaderCell, object.isColumnHeaderCell());
         setProperty(AXPropertyName::IsRowHeaderCell, object.isRowHeaderCell());
         setProperty(AXPropertyName::AXColumnIndex, object.axColumnIndex());
@@ -972,11 +969,20 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
             });
             break;
         }
+        case AXPropertyName::ColumnHeaders:
+            value = axIDs(axObject->columnHeaders());
+            break;
         case AXPropertyName::InnerHTML:
             value = axObject->innerHTML().isolatedCopy();
             break;
         case AXPropertyName::OuterHTML:
             value = axObject->outerHTML().isolatedCopy();
+            break;
+        case AXPropertyName::RowHeaders:
+            value = axIDs(axObject->rowHeaders());
+            break;
+        case AXPropertyName::SupportsPressAction:
+            value = axObject->supportsPressAction();
             break;
         default:
             break;
@@ -2381,6 +2387,11 @@ void AXIsolatedObject::setIsIgnoredFromParentDataForChild(AXCoreObject*)
     ASSERT_NOT_REACHED();
 }
 
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::columnHeaders()
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<AXCoreObject::AccessibilityChildrenVector>(AXPropertyName::ColumnHeaders);
+}
+
 String AXIsolatedObject::innerHTML() const
 {
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::InnerHTML);
@@ -2389,6 +2400,17 @@ String AXIsolatedObject::innerHTML() const
 String AXIsolatedObject::outerHTML() const
 {
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::OuterHTML);
+}
+
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<AXCoreObject::AccessibilityChildrenVector>(AXPropertyName::RowHeaders);
+}
+
+// FIXME: Rather than lazily retrieving this property, we should make it performant enough to retrieve up-front in AXIsolatedObject::initializeProperties.
+bool AXIsolatedObject::supportsPressAction() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<bool>(AXPropertyName::SupportsPressAction);
 }
 
 } // namespace WebCore
