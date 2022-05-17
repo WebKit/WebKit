@@ -1,5 +1,14 @@
 2022-05-16  Karl Rackler  <rackler@apple.com>
 
+        REGRESSION (r294215): [ iOS ] Nine fast tests are a consistent image failure
+        https://bugs.webkit.org/show_bug.cgi?id=240495
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
+2022-05-16  Karl Rackler  <rackler@apple.com>
+
         [ iOS ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=240489
 

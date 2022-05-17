@@ -3617,3 +3617,13 @@ webkit.org/b/240348 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-vid
 webkit.org/b/240463 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Failure ]
 
 webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
+
+webkit.org/b/240495 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/forms/ios/focus-ring-size.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
+webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-one-focusring-rect.html [ ImageOnlyFailure ]
