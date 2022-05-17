@@ -151,8 +151,8 @@ private:
     unsigned rowCount() override { return unsignedAttributeValue(AXPropertyName::RowCount); }
     AccessibilityChildrenVector cells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
     AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override;
-    AccessibilityChildrenVector columnHeaders() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ColumnHeaders)); }
-    AccessibilityChildrenVector rowHeaders() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::RowHeaders)); }
+    AccessibilityChildrenVector columnHeaders() override;
+    AccessibilityChildrenVector rowHeaders() override;
     AccessibilityChildrenVector visibleRows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleRows)); }
     AXCoreObject* headerContainer() override { return objectAttributeValue(AXPropertyName::HeaderContainer); }
     int axColumnCount() const override { return intAttributeValue(AXPropertyName::AXColumnCount); }
@@ -273,7 +273,7 @@ private:
     String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }
     String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
     String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
-    bool supportsPressAction() const override { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
+    bool supportsPressAction() const override;
     LayoutRect boundingBoxRect() const override;
     LayoutRect elementRect() const override;
     IntPoint clickPoint() override { return intPointAttributeValue(AXPropertyName::ClickPoint); }
