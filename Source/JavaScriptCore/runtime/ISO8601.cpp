@@ -782,31 +782,6 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
     return std::tuple { WTFMove(plainTime.value()), std::nullopt };
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-isodaysinmonth
-unsigned daysInMonth(int32_t year, unsigned month)
-{
-    switch (month) {
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12:
-        return 31;
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-        return 30;
-    case 2:
-        if (isLeapYear(year))
-            return 29;
-        return 28;
-    }
-    return 0;
-}
-
 template<typename CharacterType>
 static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& buffer)
 {
@@ -1039,14 +1014,76 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
     });
 }
 
+template<typename CharacterType>
+static bool isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>& buffer)
+{
+    auto length = buffer.lengthRemaining();
+    ASSERT(length > 1);
+
+    // There is no ambiguity if we have a TimeDesignator.
+    if (toASCIIUpper(*buffer) == 'T')
+        return false;
+
+    // The string is known to be valid as `TimeSpec TimeZone[opt]`, so DateExtendedYear and TwoDashes are not possible.
+    // Actual possibilities are `DateFourDigitYear -[opt] DateMonth` and `DateMonth -[opt] DateDay`, i.e. YYYY-MM, YYYYMM, MM-DD, MMDD.
+    ASSERT(isASCIIDigit(buffer[0]) && isASCIIDigit(buffer[1]));
+
+    unsigned monthPartLength = 2;
+    switch (length) {
+    case 7:
+        if (!isASCIIDigit(buffer[2]) || !isASCIIDigit(buffer[3]) || buffer[4] != '-' || !isASCIIDigit(buffer[5]) || !isASCIIDigit(buffer[6]))
+            return false;
+        buffer.advanceBy(5);
+        break;
+    case 6:
+        if (!isASCIIDigit(buffer[2]) || !isASCIIDigit(buffer[3]) || !isASCIIDigit(buffer[4]) || !isASCIIDigit(buffer[5]))
+            return false;
+        buffer.advanceBy(4);
+        break;
+    case 5:
+        if (buffer[2] != '-' || !isASCIIDigit(buffer[3]) || !isASCIIDigit(buffer[4]))
+            return false;
+        monthPartLength++;
+        break;
+    case 4:
+        if (!isASCIIDigit(buffer[2]) || !isASCIIDigit(buffer[3]))
+            return false;
+        break;
+    default:
+        return false;
+    }
+
+    // Any YYYY is valid, we just need to check the MM and DD.
+    unsigned month = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+    if (!month || month > 12)
+        return false;
+
+    buffer.advanceBy(monthPartLength);
+    if (buffer.hasCharactersRemaining()) {
+        unsigned day = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+        if (!day || day > daysInMonth(month))
+            return false;
+    }
+
+    return true;
+}
+
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView string)
 {
-    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+    auto tuple = readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
         auto result = parseCalendarTime(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
     });
+
+    // Without a calendar, we need to verify that the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
+    if (tuple && !std::get<2>(tuple.value())) {
+        if (readCharactersForParsing(string, [](auto buffer) -> bool { return isAmbiguousCalendarTime(buffer); }))
+            return std::nullopt;
+    }
+
+    return tuple;
 }
 
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView string)
@@ -1154,9 +1191,16 @@ static constexpr uint8_t daysInMonths[2][12] = {
     { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 };
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isodaysinmonth
 uint8_t daysInMonth(int32_t year, uint8_t month)
 {
-    return daysInMonths[!!isLeapYear(year)][month - 1];
+    return daysInMonths[isLeapYear(year)][month - 1];
+}
+
+uint8_t daysInMonth(uint8_t month)
+{
+    constexpr unsigned isLeapYear = 1;
+    return daysInMonths[isLeapYear][month - 1];
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring

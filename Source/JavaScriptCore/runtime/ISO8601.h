@@ -303,11 +303,11 @@ uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 uint8_t daysInMonth(int32_t year, uint8_t month);
+uint8_t daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned> precision);
 String temporalDateToString(PlainDate);
 String monthCode(uint32_t);
-unsigned daysInMonth(int32_t year, unsigned month);
 
 bool isValidDuration(const Duration&);
 

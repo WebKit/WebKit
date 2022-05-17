@@ -1,3 +1,13 @@
+2022-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ISO8601::parseCalendarTime must throw in cases of time/date ambiguity
+        https://bugs.webkit.org/show_bug.cgi?id=240498
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/temporal-plaintime.js: Adjust expectations.
+        * test262/expectations.yaml: Mark 10 test cases as passing.
+
 2022-05-15  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip flaky test on ARM
