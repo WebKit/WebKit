@@ -49,7 +49,7 @@ private:
     void childrenChanged(const ChildChange&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) final;
     void defaultEventHandler(Event&) final;
-    bool willRespondToMouseClickEvents() final;
+    bool willRespondToMouseClickEvents() const final;
 
     void toggle();
     int getSelectedActionChildAndIndex(Element*& selectedChild);

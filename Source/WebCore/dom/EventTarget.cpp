@@ -372,7 +372,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         InspectorInstrumentation::didDispatchEvent(downcast<Document>(context), event);
 }
 
-Vector<AtomString> EventTarget::eventTypes()
+Vector<AtomString> EventTarget::eventTypes() const
 {
     if (auto* data = eventTargetData())
         return data->eventListenerMap.eventTypes();

@@ -1278,7 +1278,7 @@ void HTMLInputElement::defaultEventHandler(Event& event)
         HTMLTextFormControlElement::defaultEventHandler(event);
 }
 
-bool HTMLInputElement::willRespondToMouseClickEvents()
+bool HTMLInputElement::willRespondToMouseClickEvents() const
 {
     if (!isDisabledFormControl())
         return true;

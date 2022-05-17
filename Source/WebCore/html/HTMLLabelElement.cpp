@@ -167,7 +167,7 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-bool HTMLLabelElement::willRespondToMouseClickEvents()
+bool HTMLLabelElement::willRespondToMouseClickEvents() const
 {
     auto element = control();
     return (element && element->willRespondToMouseClickEvents()) || HTMLElement::willRespondToMouseClickEvents();

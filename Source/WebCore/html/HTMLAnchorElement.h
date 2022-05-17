@@ -64,7 +64,7 @@ public:
 
     bool isLiveLink() const;
 
-    bool willRespondToMouseClickEvents() final;
+    bool willRespondToMouseClickEvents() const final;
 
     bool hasRel(Relation) const;
     

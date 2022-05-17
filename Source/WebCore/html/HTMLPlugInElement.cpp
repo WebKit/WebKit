@@ -72,7 +72,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
     ASSERT(!m_instance); // cleared in detach()
 }
 
-bool HTMLPlugInElement::willRespondToMouseClickEvents()
+bool HTMLPlugInElement::willRespondToMouseClickEvents() const
 {
     if (isDisabledFormControl())
         return false;

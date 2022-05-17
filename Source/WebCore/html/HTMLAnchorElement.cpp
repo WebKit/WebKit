@@ -676,7 +676,7 @@ bool shouldProhibitLinks(Element* element)
     return isInSVGImage(element);
 }
 
-bool HTMLAnchorElement::willRespondToMouseClickEvents()
+bool HTMLAnchorElement::willRespondToMouseClickEvents() const
 {
     return isLink() || HTMLElement::willRespondToMouseClickEvents();
 }

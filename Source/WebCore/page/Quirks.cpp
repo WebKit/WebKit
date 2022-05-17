@@ -374,7 +374,7 @@ bool Quirks::isGoogleMaps() const
     return topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
 }
 
-bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
+bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
     if (RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled())
         return true;
@@ -453,8 +453,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
 
     case ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
         if (is<Node>(target)) {
-            for (auto* node = downcast<Node>(target); node; node = node->parentNode()) {
-                if (is<Element>(node) && downcast<Element>(*node).classList().contains("lm-DockPanel-tabBar"_s))
+            for (const auto* node = downcast<Node>(target); node; node = node->parentNode()) {
+                if (is<Element>(node) && const_cast<Element&>(downcast<Element>(*node)).classList().contains("lm-DockPanel-tabBar"_s))
                     return true;
             }
         }

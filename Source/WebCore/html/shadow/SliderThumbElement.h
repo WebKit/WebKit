@@ -67,8 +67,8 @@ private:
     RefPtr<Element> focusDelegate() final;
 
     void defaultEventHandler(Event&) final;
-    bool willRespondToMouseMoveEvents() final;
-    bool willRespondToMouseClickEvents() final;
+    bool willRespondToMouseMoveEvents() const final;
+    bool willRespondToMouseClickEvents() const final;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void didAttachRenderers() final;

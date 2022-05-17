@@ -63,9 +63,9 @@ public:
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
 
 #if PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseMoveEvents() final { return false; }
+    bool willRespondToMouseMoveEvents() const final { return false; }
 #endif
-    bool willRespondToMouseClickEvents() final;
+    bool willRespondToMouseClickEvents() const final;
 
     virtual bool isPlugInImageElement() const = 0;
 

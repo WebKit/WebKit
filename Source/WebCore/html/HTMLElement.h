@@ -94,9 +94,9 @@ public:
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
-    bool willRespondToMouseMoveEvents() override;
-    bool willRespondToMouseWheelEvents() override;
-    bool willRespondToMouseClickEvents() override;
+    bool willRespondToMouseMoveEvents() const override;
+    bool willRespondToMouseWheelEvents() const override;
+    bool willRespondToMouseClickEvents() const override;
 
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem();

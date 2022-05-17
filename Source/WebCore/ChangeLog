@@ -1,3 +1,170 @@
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r293993. rdar://problem/92993954
+
+    Const-ify Node::willRespondTo*Events()
+    https://bugs.webkit.org/show_bug.cgi?id=240246
+    
+    Reviewed by Wenson Hsieh.
+    
+    Constify these four methods, because there's no
+    reason for them not to be, and because it makes
+    them usable in a const context in a future patch.
+    
+    * dom/EventNames.h:
+    (WebCore::EventNames::isTouchRelatedEventType const):
+    * dom/EventTarget.cpp:
+    (WebCore::EventTarget::eventTypes const):
+    * dom/EventTarget.h:
+    * dom/Node.cpp:
+    (WebCore::Node::willRespondToMouseMoveEvents const):
+    (WebCore::Node::willRespondToTouchEvents const):
+    (WebCore::Node::willRespondToMouseClickEvents const):
+    (WebCore::Node::willRespondToMouseWheelEvents const):
+    * dom/Node.h:
+    * html/HTMLAnchorElement.cpp:
+    (WebCore::HTMLAnchorElement::willRespondToMouseClickEvents const):
+    * html/HTMLAnchorElement.h:
+    * html/HTMLButtonElement.cpp:
+    (WebCore::HTMLButtonElement::willRespondToMouseClickEvents const):
+    * html/HTMLButtonElement.h:
+    * html/HTMLElement.cpp:
+    (WebCore::HTMLElement::willRespondToMouseMoveEvents const):
+    (WebCore::HTMLElement::willRespondToMouseWheelEvents const):
+    (WebCore::HTMLElement::willRespondToMouseClickEvents const):
+    * html/HTMLElement.h:
+    * html/HTMLImageElement.cpp:
+    (WebCore::HTMLImageElement::willRespondToMouseClickEvents const):
+    * html/HTMLImageElement.h:
+    * html/HTMLInputElement.cpp:
+    (WebCore::HTMLInputElement::willRespondToMouseClickEvents const):
+    * html/HTMLInputElement.h:
+    * html/HTMLLabelElement.cpp:
+    (WebCore::HTMLLabelElement::willRespondToMouseClickEvents const):
+    * html/HTMLLabelElement.h:
+    * html/HTMLPlugInElement.cpp:
+    (WebCore::HTMLPlugInElement::willRespondToMouseClickEvents const):
+    * html/HTMLPlugInElement.h:
+    * html/HTMLSelectElement.cpp:
+    (WebCore::HTMLSelectElement::willRespondToMouseClickEvents const):
+    * html/HTMLSelectElement.h:
+    * html/HTMLSummaryElement.cpp:
+    (WebCore::HTMLSummaryElement::willRespondToMouseClickEvents const):
+    * html/HTMLSummaryElement.h:
+    * html/HTMLTextAreaElement.cpp:
+    (WebCore::HTMLTextAreaElement::willRespondToMouseClickEvents const):
+    * html/HTMLTextAreaElement.h:
+    * html/TextFieldInputType.cpp:
+    (WebCore::TextFieldInputType::shouldSpinButtonRespondToMouseEvents const):
+    (WebCore::TextFieldInputType::shouldSpinButtonRespondToWheelEvents const):
+    * html/TextFieldInputType.h:
+    * html/shadow/SliderThumbElement.cpp:
+    (WebCore::SliderThumbElement::willRespondToMouseMoveEvents const):
+    (WebCore::SliderThumbElement::willRespondToMouseClickEvents const):
+    * html/shadow/SliderThumbElement.h:
+    * html/shadow/SpinButtonElement.cpp:
+    (WebCore::SpinButtonElement::willRespondToMouseMoveEvents const):
+    (WebCore::SpinButtonElement::willRespondToMouseClickEvents const):
+    (WebCore::SpinButtonElement::shouldRespondToMouseEvents const):
+    * html/shadow/SpinButtonElement.h:
+    * html/shadow/TextControlInnerElements.cpp:
+    (WebCore::SearchFieldResultsButtonElement::willRespondToMouseClickEvents const):
+    (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents const):
+    * html/shadow/TextControlInnerElements.h:
+    * mathml/MathMLElement.cpp:
+    (WebCore::MathMLElement::willRespondToMouseClickEvents const):
+    * mathml/MathMLElement.h:
+    * mathml/MathMLSelectElement.cpp:
+    (WebCore::MathMLSelectElement::willRespondToMouseClickEvents const):
+    * mathml/MathMLSelectElement.h:
+    * svg/SVGAElement.cpp:
+    (WebCore::SVGAElement::willRespondToMouseClickEvents const):
+    * svg/SVGAElement.h:
+    
+    Canonical link: https://commits.webkit.org/250430@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293993 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-09  Tim Horton  <timothy_horton@apple.com>
+
+            Const-ify Node::willRespondTo*Events()
+            https://bugs.webkit.org/show_bug.cgi?id=240246
+
+            Reviewed by Wenson Hsieh.
+
+            Constify these four methods, because there's no
+            reason for them not to be, and because it makes
+            them usable in a const context in a future patch.
+
+            * dom/EventNames.h:
+            (WebCore::EventNames::isTouchRelatedEventType const):
+            * dom/EventTarget.cpp:
+            (WebCore::EventTarget::eventTypes const):
+            * dom/EventTarget.h:
+            * dom/Node.cpp:
+            (WebCore::Node::willRespondToMouseMoveEvents const):
+            (WebCore::Node::willRespondToTouchEvents const):
+            (WebCore::Node::willRespondToMouseClickEvents const):
+            (WebCore::Node::willRespondToMouseWheelEvents const):
+            * dom/Node.h:
+            * html/HTMLAnchorElement.cpp:
+            (WebCore::HTMLAnchorElement::willRespondToMouseClickEvents const):
+            * html/HTMLAnchorElement.h:
+            * html/HTMLButtonElement.cpp:
+            (WebCore::HTMLButtonElement::willRespondToMouseClickEvents const):
+            * html/HTMLButtonElement.h:
+            * html/HTMLElement.cpp:
+            (WebCore::HTMLElement::willRespondToMouseMoveEvents const):
+            (WebCore::HTMLElement::willRespondToMouseWheelEvents const):
+            (WebCore::HTMLElement::willRespondToMouseClickEvents const):
+            * html/HTMLElement.h:
+            * html/HTMLImageElement.cpp:
+            (WebCore::HTMLImageElement::willRespondToMouseClickEvents const):
+            * html/HTMLImageElement.h:
+            * html/HTMLInputElement.cpp:
+            (WebCore::HTMLInputElement::willRespondToMouseClickEvents const):
+            * html/HTMLInputElement.h:
+            * html/HTMLLabelElement.cpp:
+            (WebCore::HTMLLabelElement::willRespondToMouseClickEvents const):
+            * html/HTMLLabelElement.h:
+            * html/HTMLPlugInElement.cpp:
+            (WebCore::HTMLPlugInElement::willRespondToMouseClickEvents const):
+            * html/HTMLPlugInElement.h:
+            * html/HTMLSelectElement.cpp:
+            (WebCore::HTMLSelectElement::willRespondToMouseClickEvents const):
+            * html/HTMLSelectElement.h:
+            * html/HTMLSummaryElement.cpp:
+            (WebCore::HTMLSummaryElement::willRespondToMouseClickEvents const):
+            * html/HTMLSummaryElement.h:
+            * html/HTMLTextAreaElement.cpp:
+            (WebCore::HTMLTextAreaElement::willRespondToMouseClickEvents const):
+            * html/HTMLTextAreaElement.h:
+            * html/TextFieldInputType.cpp:
+            (WebCore::TextFieldInputType::shouldSpinButtonRespondToMouseEvents const):
+            (WebCore::TextFieldInputType::shouldSpinButtonRespondToWheelEvents const):
+            * html/TextFieldInputType.h:
+            * html/shadow/SliderThumbElement.cpp:
+            (WebCore::SliderThumbElement::willRespondToMouseMoveEvents const):
+            (WebCore::SliderThumbElement::willRespondToMouseClickEvents const):
+            * html/shadow/SliderThumbElement.h:
+            * html/shadow/SpinButtonElement.cpp:
+            (WebCore::SpinButtonElement::willRespondToMouseMoveEvents const):
+            (WebCore::SpinButtonElement::willRespondToMouseClickEvents const):
+            (WebCore::SpinButtonElement::shouldRespondToMouseEvents const):
+            * html/shadow/SpinButtonElement.h:
+            * html/shadow/TextControlInnerElements.cpp:
+            (WebCore::SearchFieldResultsButtonElement::willRespondToMouseClickEvents const):
+            (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents const):
+            * html/shadow/TextControlInnerElements.h:
+            * mathml/MathMLElement.cpp:
+            (WebCore::MathMLElement::willRespondToMouseClickEvents const):
+            * mathml/MathMLElement.h:
+            * mathml/MathMLSelectElement.cpp:
+            (WebCore::MathMLSelectElement::willRespondToMouseClickEvents const):
+            * mathml/MathMLSelectElement.h:
+            * svg/SVGAElement.cpp:
+            (WebCore::SVGAElement::willRespondToMouseClickEvents const):
+            * svg/SVGAElement.h:
+
 2022-05-13  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r294135. rdar://problem/93201070
