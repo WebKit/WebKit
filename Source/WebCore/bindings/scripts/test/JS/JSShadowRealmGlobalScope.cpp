@@ -70,8 +70,8 @@ static const struct CompactHashIndex JSShadowRealmGlobalScopeTableIndex[5] = {
 
 static const HashTableValue JSShadowRealmGlobalScopeTableValues[] =
 {
-    { "ExposedStar", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsShadowRealmGlobalScope_ExposedStarConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "ShadowRealmGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsShadowRealmGlobalScope_ExposedStarConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
 static const HashTable JSShadowRealmGlobalScopeTable = { 2, 3, true, JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues, JSShadowRealmGlobalScopeTableIndex };

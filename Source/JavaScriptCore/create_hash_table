@@ -290,7 +290,7 @@ sub output() {
     } else {
         # MSVC dislikes empty arrays.
         print "static const struct HashTableValue ${nameEntries}\[1\] = {\n";
-        print "    { nullptr, 0, NoIntrinsic, { 0, 0 } }\n";
+        print "    { { }, 0, NoIntrinsic, { 0, 0 } }\n";
     }
     my $i = 0;
     foreach my $key (@keys) {
@@ -329,10 +329,10 @@ sub output() {
         if ($values[$i]{"type"} eq "PropertyAttribute::Function" && $firstValue eq "JSBuiltin")  {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
-            print "   { \"$key\", (($attributes) & ~PropertyAttribute::Function) | PropertyAttribute::Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
+            print "   { \"$key\"_s, (($attributes) & ~PropertyAttribute::Function) | PropertyAttribute::Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
         }
         else {
-            print "   { \"$key\", $attributes, $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
+            print "   { \"$key\"_s, $attributes, $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
         }
         $i++;
     }

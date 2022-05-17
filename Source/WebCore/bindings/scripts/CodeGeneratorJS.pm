@@ -7362,7 +7362,7 @@ sub GenerateHashTableValueArray
             $hasSetter = "true";
         }
         if ("@$specials[$i]" =~ m/ConstantInteger/) {
-            push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, { (long long)" . $firstTargetType . "(@$value1[$i]) } },\n");
+            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { (long long)" . $firstTargetType . "(@$value1[$i]) } },\n");
         } else {
             my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
             if ($readWriteConditional) {
@@ -7370,23 +7370,23 @@ sub GenerateHashTableValueArray
                 push(@implContent, "#if ${readWriteConditionalString}\n");
             }
 
-            push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) } },\n");
+            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) } },\n");
 
             if ($readWriteConditional) {
                 push(@implContent, "#else\n") ;
-                push(@implContent, "    { \"$key\", JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
+                push(@implContent, "    { \"$key\"_s, JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
                 push(@implContent, "#endif\n");
             }
         }
         if ($conditional) {
             push(@implContent, "#else\n");
-            push(@implContent, "    { 0, 0, NoIntrinsic, { 0, 0 } },\n");
+            push(@implContent, "    { { }, 0, NoIntrinsic, { 0, 0 } },\n");
             push(@implContent, "#endif\n");
         }
         ++$i;
     }
 
-    push(@implContent, "    { 0, 0, NoIntrinsic, { 0, 0 } }\n") if (!$packedSize);
+    push(@implContent, "    { { }, 0, NoIntrinsic, { 0, 0 } }\n") if (!$packedSize);
     push(@implContent, "};\n\n");
 
     return $hasSetter;

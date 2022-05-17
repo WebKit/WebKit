@@ -745,9 +745,9 @@ static const struct CompactHashIndex staticCustomAccessorTableIndex[9] = {
 };
 
 static const struct HashTableValue staticCustomAccessorTableValues[3] = {
-    { "testStaticAccessor", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticAccessorPutter) } },
-    { "testStaticAccessorDontEnum", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutValueFunc>(testStaticAccessorPutter) } },
-    { "testStaticAccessorReadOnly", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), 0 } },
+    { "testStaticAccessor"_s, static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticAccessorPutter) } },
+    { "testStaticAccessorDontEnum"_s, PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutValueFunc>(testStaticAccessorPutter) } },
+    { "testStaticAccessorReadOnly"_s, PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), 0 } },
 };
 
 static const struct HashTable staticCustomAccessorTable =
@@ -844,10 +844,10 @@ static const struct CompactHashIndex staticCustomValueTableIndex[8] = {
 };
 
 static const struct HashTableValue staticCustomValueTableValues[4] = {
-    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutter) } },
-    { "testStaticValueNoSetter", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
-    { "testStaticValueReadOnly", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
-    { "testStaticValueSetFlag", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutterSetFlag) } },
+    { "testStaticValue"_s, static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutter) } },
+    { "testStaticValueNoSetter"_s, PropertyAttribute::CustomValue | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
+    { "testStaticValueReadOnly"_s, PropertyAttribute::CustomValue | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
+    { "testStaticValueSetFlag"_s, static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutterSetFlag) } },
 };
 
 static const struct HashTable staticCustomValueTable =

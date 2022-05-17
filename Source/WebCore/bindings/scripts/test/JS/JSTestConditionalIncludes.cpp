@@ -152,19 +152,19 @@ using JSTestConditionalIncludesDOMConstructor = JSDOMConstructorNotConstructable
 static const HashTableValue JSTestConditionalIncludesConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "MIXIN_CONSTANT"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "MIXIN_REFLECTED_CONSTANT"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
+    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
@@ -224,82 +224,82 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
 
 static const HashTableValue JSTestConditionalIncludesPrototypeTableValues[] =
 {
-    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "testAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_testAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "testAttr"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_testAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinReadOnlyAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinReadOnlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "mixinReadOnlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinReadOnlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinAttribute) } },
+    { "mixinAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinAttribute) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinCustomAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinCustomAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinCustomAttribute) } },
+    { "mixinCustomAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinCustomAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinCustomAttribute) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinNodeAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinNodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinNodeAttribute) } },
+    { "mixinNodeAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinNodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinNodeAttribute) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "partialMixinAttributeFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_partialMixinAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "partialMixinAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_partialMixinAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinOperation), (intptr_t) (0) } },
+    { "mixinOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinOperation), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinComplexOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation), (intptr_t) (2) } },
+    { "mixinComplexOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation), (intptr_t) (2) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinCustomOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation), (intptr_t) (0) } },
+    { "mixinCustomOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation), (intptr_t) (0) } },
+    { "mixinConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinSettingsConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation), (intptr_t) (0) } },
+    { "mixinSettingsConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinResultFieldOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation), (intptr_t) (0) } },
+    { "mixinResultFieldOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-    { "partialMixinOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial), (intptr_t) (0) } },
+    { "partialMixinOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "MIXIN_CONSTANT"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "MIXIN_REFLECTED_CONSTANT"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
+    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 

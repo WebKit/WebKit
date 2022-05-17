@@ -80,18 +80,18 @@ using JSTestNamespaceObjectDOMConstructor = JSDOMConstructorNotCallable<JSTestNa
 
 static const HashTableValue JSTestNamespaceObjectConstructorTableValues[] =
 {
-    { "namespaceAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "namespaceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(Condition1)
-    { "namespaceAttributeFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "namespaceAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
-    { "overloadedNamespaceOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation), (intptr_t) (1) } },
-    { "enabledBySettingNamespaceOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation), (intptr_t) (0) } },
+    { "overloadedNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation), (intptr_t) (1) } },
+    { "enabledBySettingNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation), (intptr_t) (0) } },
 #if ENABLE(Condition1)
-    { "namespaceOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial), (intptr_t) (0) } },
+    { "namespaceOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial), (intptr_t) (0) } },
 #else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
+    { { }, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
