@@ -4330,6 +4330,11 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
         self.assert_multi_line_lint(
             '''\
+                enum class Requester { Main, XHR };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
                 enum Foo {
                     fooOne = 1,
                     FooTwo = 2
