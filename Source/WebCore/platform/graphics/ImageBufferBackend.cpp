@@ -180,9 +180,8 @@ AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& par
     return baseTransform;
 }
 
-void ImageBufferBackend::applyBaseTransformToContext() const
+void ImageBufferBackend::applyBaseTransform(GraphicsContext& context)
 {
-    auto& context = this->context();
     context.applyDeviceScaleFactor(m_parameters.resolutionScale);
     context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }

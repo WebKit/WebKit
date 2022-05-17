@@ -493,16 +493,11 @@ void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestI
 {
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
 
-    auto makeVolatile = [](ImageBuffer& imageBuffer) {
-        imageBuffer.releaseGraphicsContext();
-        return imageBuffer.setVolatile();
-    };
-
     Vector<RenderingResourceIdentifier> markedVolatileBufferIdentifiers;
     for (auto identifier : identifiers) {
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
         if (imageBuffer) {
-            if (makeVolatile(*imageBuffer))
+            if (imageBuffer->setVolatile())
                 markedVolatileBufferIdentifiers.append(identifier);
         } else
             LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " failed to find ImageBuffer for identifier " << identifier);

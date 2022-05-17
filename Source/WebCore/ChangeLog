@@ -1,3 +1,46 @@
+2022-05-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ImageBufferIOSurfaceBackend context setup and teardown functions are redundant and error-prone
+        https://bugs.webkit.org/show_bug.cgi?id=240452
+
+        Reviewed by Simon Fraser.
+
+        Remove ImageBuffer::releaseGraphicsContext().
+        It only made sense to be used before ImageBuffer::setVolatile().
+        The call setVolatile only made sense after releaseGraphicsContext().
+        Instead, make releasing the graphics context part of the
+        setVolatile() contract.
+
+        ImageBufferBackend::applyBaseTransformToContext() invoked a virtual
+        function context(). This was called from the middle of the inheritance chain,
+        from a constructor.
+        If a class later in the inheritance chain would override context(), the
+        call would not be invoked correctly. Currently no class suffered from this, but
+        in future some might.
+        ImageBufferIOSurfaceBackend call to applyBaseTransformToContext() would also
+        recurse through context() back to applyBaseTransformToContext() in non-intuitive
+        way through overridden ::context() which would re-enter applyBaseTransformToContext().
+        Based on current knowledge doubly invoking the logic did not cause any harm.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::applyBaseTransform):
+        (WebCore::ImageBufferBackend::applyBaseTransformToContext const): Deleted.
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::isInUse const):
+        (WebCore::ImageBufferBackend::releaseGraphicsContext): Deleted.
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend):
+        (WebCore::ImageBufferIOSurfaceBackend::context const):
+        (WebCore::ImageBufferIOSurfaceBackend::setVolatile):
+        (WebCore::ImageBufferIOSurfaceBackend::setNonVolatile):
+        (WebCore::ImageBufferIOSurfaceBackend::initializeContext):
+        (WebCore::ImageBufferIOSurfaceBackend::releaseGraphicsContext): Deleted.
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+
 2022-05-16  Antti Koivisto  <antti@apple.com>
 
         Resolve ::first-letter eagerly

@@ -74,7 +74,6 @@ private:
     unsigned bytesPerRow() const final;
 
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
-    void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
 
     Ref<ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;

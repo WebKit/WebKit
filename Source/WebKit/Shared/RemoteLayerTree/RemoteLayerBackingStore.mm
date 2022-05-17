@@ -628,7 +628,6 @@ bool RemoteLayerBackingStore::setBufferVolatile(Buffer& buffer)
     if (!buffer.imageBuffer || buffer.imageBuffer->volatilityState() == VolatilityState::Volatile)
         return true;
 
-    buffer.imageBuffer->releaseGraphicsContext();
     return buffer.imageBuffer->setVolatile();
 }
 

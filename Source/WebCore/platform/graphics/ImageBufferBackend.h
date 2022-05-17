@@ -137,7 +137,6 @@ public:
 #endif
 
     virtual bool isInUse() const { return false; }
-    virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
 
     // Returns true on success.
     virtual bool setVolatile() { return true; }
@@ -147,7 +146,7 @@ public:
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
-    void applyBaseTransformToContext() const;
+    void applyBaseTransform(GraphicsContext&);
 
     static constexpr bool isOriginAtBottomLeftCorner = false;
     virtual bool originAtBottomLeftCorner() const { return isOriginAtBottomLeftCorner; }

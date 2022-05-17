@@ -1,3 +1,18 @@
+2022-05-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ImageBufferIOSurfaceBackend context setup and teardown functions are redundant and error-prone
+        https://bugs.webkit.org/show_bug.cgi?id=240452
+
+        Reviewed by Simon Fraser.
+
+        Adjust after removing ImageBuffer::releaseGraphicsContext().
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::markSurfacesVolatile):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::setBufferVolatile):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+
 2022-05-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Demote -[WKWebView retrieveAccessibilityTreeData:] to SPI

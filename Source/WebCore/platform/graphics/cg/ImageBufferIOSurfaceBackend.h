@@ -73,7 +73,6 @@ protected:
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     bool isInUse() const override;
-    void releaseGraphicsContext() override;
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;
@@ -90,6 +89,7 @@ protected:
 
     void prepareToDrawIntoContext(GraphicsContext& destinationContext) override;
     void invalidateCachedNativeImage() const;
+    void initializeContext();
 
     std::unique_ptr<IOSurface> m_surface;
     IOSurfaceSeed m_lastSeedWhenDrawingImage { 0 };
