@@ -193,7 +193,7 @@ public:
     static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
     static void didReceiveResourceResponse(Frame&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponse(DocumentThreadableLoader&, ResourceLoaderIdentifier);
-    static void didReceiveData(Frame*, ResourceLoaderIdentifier, const SharedBuffer&, int encodedDataLength);
+    static void didReceiveData(Frame*, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
     static void didFinishLoading(Frame*, DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
     static void didFailLoading(Frame*, DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
 
@@ -414,7 +414,7 @@ private:
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
     static void didReceiveResourceResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
-    static void didReceiveDataImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const SharedBuffer&, int encodedDataLength);
+    static void didReceiveDataImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
     static void didFinishLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
     static void didFailLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents&);
@@ -1082,7 +1082,7 @@ inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(Documen
         didReceiveThreadableLoaderResponseImpl(*agents, documentThreadableLoader, identifier);
 }
     
-inline void InspectorInstrumentation::didReceiveData(Frame* frame, ResourceLoaderIdentifier identifier, const SharedBuffer& buffer, int encodedDataLength)
+inline void InspectorInstrumentation::didReceiveData(Frame* frame, ResourceLoaderIdentifier identifier, const SharedBuffer* buffer, int encodedDataLength)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
@@ -1092,7 +1092,7 @@ inline void InspectorInstrumentation::didReceiveData(Frame* frame, ResourceLoade
 inline void InspectorInstrumentation::didReceiveData(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const SharedBuffer& buffer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    didReceiveDataImpl(instrumentingAgents(globalScope), identifier, buffer, buffer.size());
+    didReceiveDataImpl(instrumentingAgents(globalScope), identifier, &buffer, buffer.size());
 }
 
 inline void InspectorInstrumentation::didFinishLoading(Frame* frame, DocumentLoader* loader, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)

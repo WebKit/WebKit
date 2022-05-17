@@ -160,7 +160,7 @@ void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, Resour
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchDidReceiveContentLength(loader, identifier, expectedDataLength);
 
-    InspectorInstrumentation::didReceiveData(&m_frame, identifier, buffer ? *buffer : SharedBuffer::create(), encodedDataLength);
+    InspectorInstrumentation::didReceiveData(&m_frame, identifier, buffer, encodedDataLength);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
