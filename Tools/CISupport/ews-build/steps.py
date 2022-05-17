@@ -4569,7 +4569,6 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
                         AddAuthorToCommitMessage(),
-                        AddReviewerToChangeLog(),
                         ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True),
                         Canonicalize(),
                         PushCommitToWebKitRepo(),
@@ -4926,54 +4925,6 @@ class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return not self.doStepIf(step)
 
 
-class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
-    name = 'add-reviewer-to-changelog'
-    haltOnFailure = True
-
-    def __init__(self, **kwargs):
-        super(AddReviewerToChangeLog, self).__init__(logEnviron=False, timeout=60, **kwargs)
-
-    def _files(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if sourcestamp and sourcestamp.changes:
-            return sourcestamp.changes[0].files
-        return []
-
-    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        self.commands = []
-        for file in self._files():
-            if not file.startswith('+++') or not file.endswith('ChangeLog'):
-                continue
-            self.commands.append(util.ShellArg(
-                command=['sed', '-i', '', self.NOBODY_SED.format(self.reviewers()), file[4:]],
-                logname='stdio',
-                haltOnFailure=True,
-            ))
-
-        for command in [
-            ['git', 'add', '-A'],
-            ['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
-        ]:
-            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
-
-        self.env = self.gitCommitEnvironment()
-
-        return super(AddReviewerToChangeLog, self).run()
-
-    def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': 'Failed to add reviewers to ChangeLogs'}
-        if self.results == SUCCESS:
-            return {'step': f'Reviewed by {self.reviewers()}'}
-        return super(AddReviewerToChangeLog, self).getResultSummary()
-
-    def doStepIf(self, step):
-        return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step) or self.getProperty('sensitive', False)
-
-
 class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
     name = 'validate-commit-message'
     haltOnFailure = False
@@ -4988,6 +4939,12 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def _files(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if sourcestamp and sourcestamp.changes:
+            return sourcestamp.changes[0].files
+        return []
 
     @defer.inlineCallbacks
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
@@ -5015,7 +4972,10 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
             return rc
 
         log_text = self.log_observer.getStdout().rstrip()
-        if log_text:
+        if any(['ChangeLog' in file for file in self._files()]):
+            self.summary = 'ChangeLog modified, WebKit only allows commit messages'
+            rc = FAILURE
+        elif log_text:
             self.summary = log_text
             rc = FAILURE
         elif rc == SUCCESS:

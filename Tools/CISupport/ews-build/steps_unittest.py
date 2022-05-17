@@ -42,7 +42,7 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
-from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
+from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CompileJSCWithoutChange,
@@ -6090,121 +6090,6 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestAddReviewerToChangeLog(BuildStepMixinAdditions, unittest.TestCase):
-    ENV = dict(
-        GIT_COMMITTER_NAME='WebKit Committer',
-        GIT_COMMITTER_EMAIL='committer@webkit.org',
-        FILTER_BRANCH_SQUELCH_WARNING='1',
-    )
-
-    def setUp(self):
-        self.longMessage = True
-        Contributors.load = mock_load_contributors
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_skipped_patch(self):
-        self.setupStep(AddReviewerToChangeLog())
-        self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
-        return self.runStep()
-
-    def test_success(self):
-        self.setupStep(AddReviewerToChangeLog())
-        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/ChangeLog', '+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['Aakash Jain'])
-        self.setProperty('owners', ['webkit-commit-queue'])
-        self.expectRemoteCommands(
-            ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['sed', '-i', '', 's/NOBODY (OO*PP*S!*)/Aakash Jain/g', 'Tools/ChangeLog'],
-            ) + 0, ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'add', '-A'],
-            ) + 0, ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
-            ) + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Reviewed by Aakash Jain')
-        return self.runStep()
-
-    def test_no_changelog(self):
-        self.setupStep(AddReviewerToChangeLog())
-        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['Aakash Jain'])
-        self.setProperty('owners', ['webkit-commit-queue'])
-        self.expectRemoteCommands(
-            ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'add', '-A'],
-            ) + 0, ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
-            ) + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Reviewed by Aakash Jain')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(AddReviewerToChangeLog())
-        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['Aakash Jain'])
-        self.setProperty('owners', ['webkit-commit-queue'])
-        self.expectRemoteCommands(
-            ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'add', '-A'],
-            ) + 0, ExpectShell(
-                workdir='wkdir',
-                logEnviron=False,
-                env=self.ENV,
-                timeout=60,
-                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
-            ) + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to add reviewers to ChangeLogs')
-        return self.runStep()
-
-    def test_no_reviewers(self):
-        self.setupStep(AddReviewerToChangeLog())
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', [])
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
-        return self.runStep()
-
-
 class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -6221,6 +6106,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -6230,7 +6116,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=60,
                         command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
             + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
+                logEnviron=False,
                         timeout=60,
                         command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
             + 0
@@ -6241,6 +6127,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_oops(self):
         self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -6259,6 +6146,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_no_reviewer(self):
         self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -6278,6 +6166,27 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
         return rc
+
+    def test_failure_no_changelog(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/ChangeLog', '+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+            + 0
+            + ExpectShell.log('stdio', stdout=''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='ChangeLog modified, WebKit only allows commit messages')
+        return self.runStep()
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):

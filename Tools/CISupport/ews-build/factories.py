@@ -24,7 +24,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddReviewerToChangeLog, ApplyPatch, ApplyWatchList, Canonicalize,
+from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitSvnFetch,
@@ -335,9 +335,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())
         self.addStep(AddAuthorToCommitMessage())
-        self.addStep(AddReviewerToChangeLog())
         self.addStep(ValidateCommitMessage())
-        self.addStep(ValidateChangeLogAndReviewer())
 
 
 class MergeQueueFactory(MergeQueueFactoryBase):

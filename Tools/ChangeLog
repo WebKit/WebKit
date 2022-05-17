@@ -159,122 +159,24 @@
         (apply_patch): If a patch has a commit subject, it contains commit messages
         and we should apply those commit messages.
 
-2022-05-13  Jonathan Bedard  <jbedard@apple.com>
+2022-05-15  Jonathan Bedard  <jbedard@apple.com>
 
-        [webkit-patch] Include commit messages in patches
-        https://bugs.webkit.org/show_bug.cgi?id=240256
-        <rdar://92982358>
+        [Merge-Queue] Forbid ChangeLog modification
+        https://bugs.webkit.org/show_bug.cgi?id=239413
+        <rdar://problem/91839553>
 
-        Rubber-stamped by Aakash Jain.
+        Reviewed by Aakash Jain.
 
-        * Scripts/webkitpy/common/checkout/checkout.py:
-        (Checkout.commit_message_for_this_commit): If no changelogs are modified, prefer
-        the commit message.
-        * Scripts/webkitpy/common/checkout/diff_parser.py:
-        (DiffParser._parse_into_diff_files): Ignore commit message headers.
-        * Scripts/webkitpy/common/checkout/scm/git.py:
-        (Git.create_patch): Prefer `git format-patch` when local commits are available.
-        (Git.rev_parse): Determine hash for ref.
-        (Git.format_patch): Deleted.
-        (Git.request_pull): Deleted.
-        * Scripts/webkitpy/tool/steps/abstractstep.py:
-        (AbstractStep): Keep record of local commit.
-        * Scripts/webkitpy/tool/steps/editchangelog.py:
-        (EditChangeLog.run): Do not edit changelog if no changelog is present.
-        * Scripts/webkitpy/tool/steps/preparechangelog.py:
-        (PrepareChangeLog.run): Do not prepare changelog if local commit is present.
-
-2022-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
-
-        ImageAnalysisQueue should reanalyze image elements whose image sources have changed
-        https://bugs.webkit.org/show_bug.cgi?id=240371
-        rdar://93175651
-
-        Reviewed by Tim Horton.
-
-        Add an API test to exercise the scenario by verifying that the same image element is reanalyzed after setting
-        the `src` to a different image URL.
-
-        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
-        (TestWebKitAPI::TEST):
-
-2022-05-13  Alex Christensen  <achristensen@webkit.org>
-
-        Disable MediaLoading.CaptivePortalHLS API test
-        https://bugs.webkit.org/show_bug.cgi?id=239859
-
-        It is always timing out.
-        Disable it to speed up EWS.
-
-        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
-        (TestWebKitAPI::TEST):
-
-2022-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
-
-        Use None for architecture when dump-class-layout does not have `-a` option
-        https://bugs.webkit.org/show_bug.cgi?id=240395
-
-        Reviewed by Saam Barati and Simon Fraser.
-
-        We can pass None to architecture, then SBDebugger::CreateTargetWithFileAndArch
-        will call CreateTarget with nullptr architecture string. Then, TargetList constructs
-        ArchSpec based on currently selected platform automatically and it covers most of cases.
-        I tried it, and it worked with watchOS, macOS, iOS so far.
-        So, we should just pass None to CreateTargetWithFileAndArch by default.
-
-        * lldb/lldb_dump_class_layout.py:
-        (LLDBDebuggerInstance.__init__):
-        (LLDBDebuggerInstance.__del__):
-        (LLDBDebuggerInstance._get_first_file_architecture): Deleted.
-
-2022-05-13  Commit Queue  <commit-queue@webkit.org>
-
-        Unreviewed, reverting r294113.
-        https://bugs.webkit.org/show_bug.cgi?id=240381
-
-        This bug needs to be addressed using a different approach
-
-        Reverted changeset:
-
-        "Mail compose: right clicking an image attachment selects it"
-        https://bugs.webkit.org/show_bug.cgi?id=240315
-        https://commits.webkit.org/r294113
-
-2022-05-12  Philippe Normand  <philn@igalia.com>
-
-        [Flatpak SDK] Sandbox access to pipewire socket
-        https://bugs.webkit.org/show_bug.cgi?id=240338
-
-        Reviewed by Adrian Perez de Castro.
-
-        Starting from version 0.5 of Bubblewrap bind mounts behavior slightly changed. Without this
-        patch the pipewire socket wouldn't be available from the default XDG runtime directory.
-
-        * flatpak/webkit-bwrap:
-
-2022-05-12  Alex Christensen  <achristensen@webkit.org>
-
-        Make if-domain and unless-domain regexes only look at URL hosts
-        https://bugs.webkit.org/show_bug.cgi?id=240199
-
-        Reviewed by John Wilander.
-
-        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
-        (TestWebKitAPI::TEST_F):
-
-2022-05-11  Kate Cheney  <katherine_cheney@apple.com>
-
-        Mail compose: right clicking an image attachment selects it
-        https://bugs.webkit.org/show_bug.cgi?id=240315
-        rdar://45454933
-
-        Reviewed by Wenson Hsieh.
-
-        API test coverage.
-
-        * TestWebKitAPI/Tests/mac/ContextMenuTests.mm:
-        (TestWebKitAPI::rightClick):
-        (TestWebKitAPI::TEST):
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactoryBase.__init__): Remove AddReviewerToChangeLog and ValidateChangeLogAndReviewer.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo.evaluateCommand): Remove AddReviewerToChangeLog.
+        (ValidateCommitMessage._files): List all modified files.
+        (ValidateCommitMessage.evaluateCommand): Fail step if no ChangeLog modified.
+        (AddReviewerToChangeLog): Deleted.
+        * CISupport/ews-build/steps_unittest.py:
 
 2022-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
