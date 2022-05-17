@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Gustavo Noronha Silva <gns@gnome.org>
 # Copyright (C) 2012 Intel Corporation
@@ -59,7 +59,7 @@ def jhbuild_at_expected_revision():
     if process.returncode != 0:
         raise Exception('failed to find jhbuild revision: %s' % err)
 
-    return output.strip() == jhbuild_revision
+    return output.strip().decode('utf-8', 'ignore') == jhbuild_revision
 
 
 def update_jhbuild():
