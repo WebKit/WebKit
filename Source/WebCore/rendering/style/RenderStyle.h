@@ -169,6 +169,7 @@ public:
     void fastPathInheritFrom(const RenderStyle&);
     void copyNonInheritedFrom(const RenderStyle&);
     void copyContentFrom(const RenderStyle&);
+    void copyPseudoElementsFrom(const RenderStyle&);
 
     ContentPosition resolvedJustifyContentPosition(const StyleContentAlignmentData& normalValueBehavior) const;
     ContentDistribution resolvedJustifyContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const;
@@ -186,7 +187,6 @@ public:
 
     RenderStyle* getCachedPseudoStyle(PseudoId) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
-    void removeCachedPseudoStyle(PseudoId);
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 

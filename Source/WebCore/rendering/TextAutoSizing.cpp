@@ -45,6 +45,11 @@ namespace WebCore {
 static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
 {
     auto newStyle = RenderStyle::clone(currentStyle);
+
+    // FIXME: This should probably handle at least ::first-line too.
+    if (auto* firstLetterStyle = currentStyle.getCachedPseudoStyle(PseudoId::FirstLetter))
+        newStyle.addCachedPseudoStyle(makeUnique<RenderStyle>(RenderStyle::clone(*firstLetterStyle)));
+
     if (currentStyle.lastChildState())
         newStyle.setLastChildState();
     if (currentStyle.firstChildState())
@@ -170,6 +175,21 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
         if (!block)
             continue;
+
+        RenderObject* firstLetterRenderer;
+        RenderElement* dummy;
+        block->getFirstLetter(firstLetterRenderer, dummy);
+        if (firstLetterRenderer && firstLetterRenderer->parent() && firstLetterRenderer->parent()->parent()) {
+            auto& parentStyle = firstLetterRenderer->parent()->parent()->style();
+            auto* firstLetterStyle = parentStyle.getCachedPseudoStyle(PseudoId::FirstLetter);
+            if (!firstLetterStyle)
+                continue;
+            auto fontDescription = firstLetterStyle->fontDescription();
+            fontDescription.setComputedSize(averageSize * fontDescription.specifiedSize() / parentStyle.fontDescription().specifiedSize());
+            firstLetterStyle->setFontDescription(FontCascadeDescription { fontDescription });
+            firstLetterStyle->fontCascade().update(&node->document().fontSelector());
+        }
+
         builder.updateAfterDescendants(*block);
     }
 

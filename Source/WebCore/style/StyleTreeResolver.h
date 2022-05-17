@@ -71,7 +71,9 @@ private:
 
     static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
     std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
-    std::unique_ptr<RenderStyle> resolveInheritedFirstLinePseudoElement(Element&, const ElementUpdate&);
+    std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, PseudoId, const ElementUpdate&);
+    std::unique_ptr<RenderStyle> resolveAncestorFirstLinePseudoElement(Element&, const ElementUpdate&);
+    std::unique_ptr<RenderStyle> resolveAncestorFirstLetterPseudoElement(Element&, const ElementUpdate&, ResolutionContext&);
 
     struct Scope : RefCounted<Scope> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope);
@@ -92,7 +94,7 @@ private:
         Change change { Change::None };
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
         bool didPushScope { false };
-        bool resolvedFirstBoxGeneratingChild { false };
+        bool resolvedFirstLineAndLetterChild { false };
 
         Parent(Document&);
         Parent(Element&, const RenderStyle&, Change, DescendantsToResolve);
@@ -114,7 +116,7 @@ private:
     static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     ResolutionContext makeResolutionContext();
-    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&);
+    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, PseudoId);
     std::optional<ResolutionContext> makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const RenderStyle& inheritStyle);
     const Parent* boxGeneratingParent() const;
     const RenderStyle* parentBoxStyle() const;

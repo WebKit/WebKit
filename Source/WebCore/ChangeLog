@@ -1,3 +1,54 @@
+2022-05-16  Antti Koivisto  <antti@apple.com>
+
+        Resolve ::first-letter eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=239844
+
+        Reviewed by Alan Bujtas.
+
+        ::first-letter pseudo-element should be resolved eagerly during style resolution, similar to ::first-line.
+        This will clean up the architecture. It also makes ::first-letter animatable.
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::styleDidChange): Deleted.
+        * rendering/RenderTextFragment.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::removeCachedPseudoStyle): Deleted.
+
+        We always create a new style. There is no need to removed pseudo element styles.
+
+        * rendering/style/RenderStyle.h:
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::styleForFirstLetter):
+
+        Pull first-letter style from the parent style instead of resolving it in the middle of render tree building.
+
+        (WebCore::RenderTreeBuilder::FirstLetter::updateAfterDescendants):
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+
+        Delete the renderer if we no longer have a style.
+
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+        * rendering/updating/RenderTreeBuilderFirstLetter.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
+        Resove first-letter.
+
+        (WebCore::Style::TreeResolver::resolvePseudoElement):
+        (WebCore::Style::TreeResolver::resolveInheritedPseudoElement):
+
+        Factor into a function.
+
+        (WebCore::Style::isChildInBlockFormattingContext):
+        (WebCore::Style::TreeResolver::resolveAncestorFirstLinePseudoElement):
+        (WebCore::Style::TreeResolver::resolveAncestorFirstLetterPseudoElement):
+
+        Resolving first-letter is similar to first-line except it is always a leaf and so won't be inherited from.
+
+        (WebCore::Style::TreeResolver::makeResolutionContextForPseudoElement):
+        (WebCore::Style::TreeResolver::makeResolutionContextForInheritedFirstLine):
+        * style/StyleTreeResolver.h:
+
 2022-05-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Current-context enforcement in ANGLE is expensive

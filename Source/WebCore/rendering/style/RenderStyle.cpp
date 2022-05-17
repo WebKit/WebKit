@@ -115,14 +115,7 @@ RenderStyle RenderStyle::clone(const RenderStyle& style)
 RenderStyle RenderStyle::cloneIncludingPseudoElements(const RenderStyle& style)
 {
     auto newStyle = RenderStyle(style, Clone);
-
-    if (!style.m_cachedPseudoStyles)
-        return newStyle;
-
-    for (auto& pseudoElementStyle : *style.m_cachedPseudoStyles) {
-        auto clone = makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle));
-        newStyle.addCachedPseudoStyle(WTFMove(clone));
-    }
+    newStyle.copyPseudoElementsFrom(style);
     return newStyle;
 }
 
@@ -392,6 +385,15 @@ void RenderStyle::copyContentFrom(const RenderStyle& other)
     m_rareNonInheritedData.access().content = other.m_rareNonInheritedData->content->clone();
 }
 
+void RenderStyle::copyPseudoElementsFrom(const RenderStyle& other)
+{
+    if (!other.m_cachedPseudoStyles)
+        return;
+
+    for (auto& pseudoElementStyle : *other.m_cachedPseudoStyles)
+        addCachedPseudoStyle(makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle)));
+}
+
 bool RenderStyle::operator==(const RenderStyle& other) const
 {
     // compare everything except the pseudoStyle pointer
@@ -448,19 +450,6 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     m_cachedPseudoStyles->append(WTFMove(pseudo));
 
     return result;
-}
-
-void RenderStyle::removeCachedPseudoStyle(PseudoId pid)
-{
-    if (!m_cachedPseudoStyles)
-        return;
-    for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
-        RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
-        if (pseudoStyle->styleType() == pid) {
-            m_cachedPseudoStyles->remove(i);
-            return;
-        }
-    }
 }
 
 bool RenderStyle::inheritedEqual(const RenderStyle& other) const
