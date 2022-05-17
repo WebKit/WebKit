@@ -128,6 +128,7 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 + (void)clearAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)setUsernameForLocalCredentialWithID:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)setUsernameForLocalCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)setDisplayNameForLocalCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID displayName: (NSString *)displayName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 + (NSData *)exportLocalAuthenticatorCredentialWithID:(NSData *)credentialID error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (NSData *)exportLocalAuthenticatorCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
