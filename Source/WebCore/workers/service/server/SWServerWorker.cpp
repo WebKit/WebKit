@@ -63,6 +63,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_registrableDomain(m_data.scriptURL)
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
+    , m_terminationIfPossibleTimer(*this, &SWServerWorker::terminationIfPossibleTimerFired)
     , m_lastNavigationWasAppInitiated(m_server->clientIsAppInitiatedForRegistrableDomain(m_registrableDomain))
 {
     m_data.scriptURL.removeFragmentIdentifier();
@@ -141,6 +142,7 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
 
     m_terminationCallbacks.append(WTFMove(callback));
     m_terminationTimer.startOneShot(SWServer::defaultTerminationDelay);
+    m_terminationIfPossibleTimer.stop();
 
     contextConnection->terminateWorker(identifier());
 }
@@ -410,9 +412,24 @@ void SWServerWorker::setAsInspected(bool isInspected)
     terminateIfPossible();
 }
 
+bool SWServerWorker::shouldBeTerminated() const
+{
+    return !m_functionalEventCounter && !m_isInspected && m_server && !m_server->hasClientsWithOrigin(origin());
+}
+
 void SWServerWorker::terminateIfPossible()
 {
-    if (m_functionalEventCounter || m_isInspected || !m_server || m_server->hasClientsWithOrigin(origin()))
+    if (!shouldBeTerminated()) {
+        m_terminationIfPossibleTimer.stop();
+        return;
+    }
+
+    m_terminationIfPossibleTimer.startOneShot(SWServer::defaultFunctionalEventDuration);
+}
+
+void SWServerWorker::terminationIfPossibleTimerFired()
+{
+    if (!shouldBeTerminated())
         return;
 
     terminate();

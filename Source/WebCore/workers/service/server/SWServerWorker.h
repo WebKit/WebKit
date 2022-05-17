@@ -156,8 +156,10 @@ private:
     void startTermination(CompletionHandler<void()>&&);
     void terminationCompleted();
     void terminationTimerFired();
+    void terminationIfPossibleTimerFired();
     void callTerminationCallbacks();
     void terminateIfPossible();
+    bool shouldBeTerminated() const;
 
     WeakPtr<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
@@ -179,6 +181,7 @@ private:
     bool m_hasTimedOutAnyFetchTasks { false };
     Vector<CompletionHandler<void()>> m_terminationCallbacks;
     Timer m_terminationTimer;
+    Timer m_terminationIfPossibleTimer;
     LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;
     int m_functionalEventCounter { 0 };
     bool m_isInspected { false };
