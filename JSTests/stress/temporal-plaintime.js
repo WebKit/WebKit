@@ -95,13 +95,16 @@ shouldBe(Temporal.PlainTime.prototype.constructor, Temporal.PlainTime);
 }
 
 shouldBe(String(Temporal.PlainTime.from('03')), `03:00:00`);
-shouldBe(String(Temporal.PlainTime.from('0314')), `03:14:00`);
+shouldBe(String(Temporal.PlainTime.from('T0314')), `03:14:00`);
+shouldThrow(() => Temporal.PlainTime.from('0314'), RangeError);
 shouldBe(String(Temporal.PlainTime.from('031415')), `03:14:15`);
 shouldBe(String(Temporal.PlainTime.from('03:14')), `03:14:00`);
 shouldBe(String(Temporal.PlainTime.from('03:14:15')), `03:14:15`);
 shouldBe(String(Temporal.PlainTime.from('03:24:30')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('2020-01')), `20:20:00`); // -01 UTC offset
-shouldBe(String(Temporal.PlainTime.from('01-01')), `01:00:00`); // -01 UTC offset
+shouldBe(String(Temporal.PlainTime.from('T2020-01')), `20:20:00`); // -01 UTC offset
+shouldThrow(() => Temporal.PlainTime.from('2020-01'), RangeError);
+shouldBe(String(Temporal.PlainTime.from('T01-01')), `01:00:00`); // -01 UTC offset
+shouldThrow(() => Temporal.PlainTime.from('01-01'), RangeError);
 shouldBe(String(Temporal.PlainTime.from('03:24:30[u-ca=japanese]')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('03:24:30+01:00[u-ca=japanese]')), `03:24:30`);

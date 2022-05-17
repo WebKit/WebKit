@@ -1,3 +1,25 @@
+2022-05-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ISO8601::parseCalendarTime must throw in cases of time/date ambiguity
+        https://bugs.webkit.org/show_bug.cgi?id=240498
+
+        Reviewed by Yusuke Suzuki.
+
+        The CalendarTime production (https://tc39.es/proposal-temporal/#prod-CalendarTime) goes to a lot of trouble
+        to ensure that ambiguous parses are not allowed; this patch ensures that our implementation does so too.
+
+        In short:
+        - CalendarTime is basically TimeDesignator[opt] TimeSpec TimeZone[opt] Calendar[opt].
+        - When we don't have a TimeDesignator or a Calendar, we're in danger of ambiguity:
+          YYYY-MM, YYYYMM, MM-DD, MMDD look the same as HHMM-UU, HHMMSS, HH-UU, HHMM (where UU is a UTC offset)
+        - The solution is to attempt to reparse the string as one of these date formats and throw if we succeed.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::isAmbiguousCalendarTime):
+        (JSC::ISO8601::parseCalendarTime):
+        (JSC::ISO8601::daysInMonth):
+        * runtime/ISO8601.h:
+
 2022-05-16  Mark Lam  <mark.lam@apple.com>
 
         Add ARM64 disassembler support for symbolic dumping of some well known constants.
