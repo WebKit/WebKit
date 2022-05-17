@@ -2237,3 +2237,5 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/simulated-click-inert.html [ Failure ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
+
+webkit.org/b/240352 system-preview/badge.html [ ImageOnlyFailure ]
