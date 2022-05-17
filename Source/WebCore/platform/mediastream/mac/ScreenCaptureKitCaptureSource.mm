@@ -177,16 +177,9 @@ namespace WebCore {
 
 static void forEachNSWindow(const Function<bool(NSDictionary *, unsigned, const String&)>&);
 
-bool ScreenCaptureKitCaptureSource::m_enabled;
-
-void ScreenCaptureKitCaptureSource::setEnabled(bool enabled)
-{
-    m_enabled = enabled;
-}
-
 bool ScreenCaptureKitCaptureSource::isAvailable()
 {
-    return m_enabled && PAL::isScreenCaptureKitFrameworkAvailable();
+    return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
 Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)

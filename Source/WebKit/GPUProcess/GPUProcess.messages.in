@@ -77,10 +77,6 @@ messages -> GPUProcess LegacyReceiver {
     SetMediaSourceInlinePaintingEnabled(bool enabled);
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-    SetUseScreenCaptureKit(bool use);
-#endif
-
 #if HAVE(AVCONTENTKEYSPECIFIER)
     SetSampleBufferContentKeySessionSupportEnabled(bool enabled);
 #endif
