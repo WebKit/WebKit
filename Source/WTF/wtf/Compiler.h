@@ -532,3 +532,15 @@
 #if !defined(NO_UNIQUE_ADDRESS)
 #define NO_UNIQUE_ADDRESS
 #endif
+
+/* TLS_MODEL_INITIAL_EXEC */
+
+#if !defined(TLS_MODEL_INITIAL_EXEC) && defined(__has_attribute)
+#if __has_attribute(tls_model)
+#define TLS_MODEL_INITIAL_EXEC __attribute__((tls_model("initial-exec")))
+#endif
+#endif
+
+#if !defined(TLS_MODEL_INITIAL_EXEC)
+#define TLS_MODEL_INITIAL_EXEC
+#endif

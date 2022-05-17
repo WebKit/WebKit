@@ -78,11 +78,16 @@ GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
+    static thread_local TLS_MODEL_INITIAL_EXEC GraphicsContextGLANGLE* s_currentContext { nullptr };
+
     auto madeCurrent =
         [&] {
-            if (EGL_GetCurrentContext() == m_contextObj)
+            if (s_currentContext == this)
                 return true;
-            return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+            bool current = !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+            if (current)
+                s_currentContext = this;
+            return current;
         }();
 
     auto& contextSwapchain = static_cast<GraphicsContextGLGBM&>(*this).swapchain();
