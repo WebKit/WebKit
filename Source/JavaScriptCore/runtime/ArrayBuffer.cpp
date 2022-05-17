@@ -332,6 +332,7 @@ void ArrayBuffer::makeShared()
 {
     m_contents.makeShared();
     m_locked = true;
+    ASSERT(!isDetached());
 }
 
 void ArrayBuffer::makeWasmMemory()
