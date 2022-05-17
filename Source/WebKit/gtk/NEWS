@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.36.2
+================
+
+What's new in WebKitGTK 2.36.2?
+
+  - Fix some pages showing empty content boxes when using GTK4.
+  - Fix the build with accessibility disabled.
+  - Fix the build with newer Ruby versions.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.1
 ================
 
