@@ -1,20 +1,50 @@
 This tests that aria-modal works correctly on multiple dialogs
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+Verifying the background is accessible on page load.
 
-PASS backgroundAccessible() is true
-PASS backgroundAccessible() is false
-PASS dialog1Accessible() is true
-PASS backgroundAccessible() is false
-PASS dialog1Accessible() is false
-PASS closeBtn.isIgnored is false
-PASS backgroundAccessible() is false
-PASS dialog1Accessible() is true
-PASS backgroundAccessible() is true
+PASS: background accessible: true
+
+Clicking the display button to open #dialog1.
+
+PASS: background accessible: false
+PASS: #dialog1 accessible: true
+
+Clicking the new button to open #dialog2 without closing #dialog1.
+
+PASS: background accessible: false
+PASS: #dialog1 accessible: false
+PASS: #dialog2 accessible: true
+
+Focusing on background.
+
+PASS: background accessible: true
+
+Focusing first descendant of #dialog1.
+
+PASS: background accessible: false
+PASS: #dialog1 accessible: true
+PASS: #dialog2 accessible: false
+
+Moving focus back to first descendant of #dialog2.
+
+PASS: background accessible: false
+PASS: #dialog1 accessible: false
+PASS: #dialog2 accessible: true
+
+Closing dialog2.
+
+PASS: background accessible: false
+PASS: #dialog1 accessible: true
+
+Closing dialog1.
+
+PASS: background accessible: true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 Other page content with a dummy focusable element
 
 Display a dialog

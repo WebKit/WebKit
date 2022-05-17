@@ -1090,7 +1090,7 @@ public:
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool isModalDescendant(Node*) const = 0;
-    virtual bool isModalNode() const = 0;
+    virtual bool isCurrentModalNode() const = 0;
 
     virtual bool supportsSetSize() const = 0;
     virtual bool supportsPosInSet() const = 0;

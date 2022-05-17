@@ -834,7 +834,7 @@ uint64_t AccessibilityObjectAtspi::state() const
     else if ((m_coreObject->isCheckboxOrRadio() || m_coreObject->isMenuItem() || m_coreObject->isToggleButton()) && m_coreObject->checkboxOrRadioValue() == AccessibilityButtonState::Mixed)
         addState(Atspi::State::Indeterminate);
 
-    if (m_coreObject->isModalNode())
+    if (m_coreObject->isCurrentModalNode())
         addState(Atspi::State::Modal);
 
     if (m_coreObject->isBusy())

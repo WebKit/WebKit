@@ -218,7 +218,6 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
     , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
-    , m_focusModalNodeTimer(*this, &AXObjectCache::focusModalNodeTimerFired)
     , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
 {
@@ -236,7 +235,6 @@ AXObjectCache::~AXObjectCache()
 {
     m_notificationPostTimer.stop();
     m_liveRegionChangedPostTimer.stop();
-    m_focusModalNodeTimer.stop();
     m_performCacheUpdateTimer.stop();
 
     for (const auto& object : m_objects.values())
@@ -292,11 +290,24 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
     return false;
 }
 
-Element* AXObjectCache::currentModalNode()
+Element* AXObjectCache::recomputeCurrentModalNode(WillRecomputeFocus willRecomputeFocus)
+{
+    auto* previousModal = m_currentModalElement.get();
+    m_currentModalElement = recomputeCurrentModalNodeInner(willRecomputeFocus);
+    if (previousModal != m_currentModalElement.get()) {
+        fprintf(stderr, "modal change, old %s, new %s\n", previousModal ? previousModal->debugDescription().utf8().data() : "null", m_currentModalElement ? m_currentModalElement->debugDescription().utf8().data() : "null");
+        childrenChanged(rootWebArea());
+        // Because the presence of a modal affects every element on the page,
+        // regenerate the entire isolated tree with the next cache update.
+        m_regenerateIsolatedTree = true;
+    }
+    return m_currentModalElement.get();
+}
+
+Element* AXObjectCache::recomputeCurrentModalNodeInner(WillRecomputeFocus willRecomputeFocus)
 {
     // There might be multiple modal dialog nodes.
     // We use this function to pick the one we want.
-    m_currentModalElement = nullptr;
     if (m_modalElementsSet.isEmpty())
         return nullptr;
 
@@ -311,6 +322,7 @@ Element* AXObjectCache::currentModalNode()
     // If not, we want to pick the last visible dialog in the DOM.
     RefPtr<Element> focusedElement = document().focusedElement();
     RefPtr<Element> lastVisible;
+    bool focusedElementOutsideModals = focusedElement;
     for (auto& element : m_modalElementsSet) {
         // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
         // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
@@ -321,17 +333,18 @@ Element* AXObjectCache::currentModalNode()
         if (!isNodeVisible(element) || !modalElementHasAccessibleContent(*element))
             continue;
 
+        lastVisible = element;
         if (focusedElement && focusedElement->isDescendantOf(element)) {
-            m_currentModalElement = element;
+            focusedElementOutsideModals = false;
             break;
         }
-        lastVisible = element;
     }
 
-    if (!m_currentModalElement)
-        m_currentModalElement = lastVisible.get();
-
-    return m_currentModalElement.get();
+    // If there is a focused element, and it's not inside any of the modals, we should
+    // consider all modals inactive to allow the user to freely navigate.
+    if (focusedElementOutsideModals && willRecomputeFocus == WillRecomputeFocus::No)
+        return nullptr;
+    return lastVisible.get();
 }
 
 bool AXObjectCache::isNodeVisible(Node* node) const
@@ -381,7 +394,7 @@ Node* AXObjectCache::modalNode()
         return m_currentModalElement.get();
 
     // Recompute the valid aria modal node when m_currentModalElement is null or hidden.
-    return currentModalNode();
+    return recomputeCurrentModalNode();
 }
 
 AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* areaElement)
@@ -1114,6 +1127,13 @@ void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
 
     m_deferredNodeAddedOrRemovedList.add(node);
 
+    if (is<Element>(node)) {
+        auto* changedElement = downcast<Element>(node);
+        fprintf(stderr, "got changed element %s, isModalElement: %d\n", changedElement->debugDescription().utf8().data(), isModalElement(*changedElement));
+        if (isModalElement(*changedElement))
+            deferModalChange(changedElement);
+    }
+
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
@@ -1329,12 +1349,14 @@ void AXObjectCache::deferModalChange(Element* element)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
     
-void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
+void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode, RecomputeModal recomputeModal)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     setIsolatedTreeFocusedObject(newNode);
 #endif
 
+    if (recomputeModal == RecomputeModal::Yes)
+        recomputeCurrentModalNode();
     handleMenuItemSelected(newNode);
     platformHandleFocusedUIElementChanged(oldNode, newNode);
 }
@@ -1727,7 +1749,7 @@ static AccessibilityObject* firstFocusableChild(AccessibilityObject* obj)
 {
     if (!obj)
         return nullptr;
-    
+
     for (auto* child = obj->firstChild(); child; child = child->nextSibling()) {
         if (child->canSetFocusAttribute())
             return child;
@@ -1737,21 +1759,17 @@ static AccessibilityObject* firstFocusableChild(AccessibilityObject* obj)
     return nullptr;
 }
 
-void AXObjectCache::focusModalNode()
-{
-    if (m_focusModalNodeTimer.isActive())
-        m_focusModalNodeTimer.stop();
-    
-    m_focusModalNodeTimer.startOneShot(0_s);
-}
-
-void AXObjectCache::focusModalNodeTimerFired()
+void AXObjectCache::focusCurrentModal()
 {
     if (!m_document.hasLivingRenderTree())
         return;
 
     Ref<Document> protectedDocument(m_document);
     if (!nodeAndRendererAreValid(m_currentModalElement.get()) || !isNodeVisible(m_currentModalElement.get()))
+        return;
+
+    // Don't focus the current modal if focus has been requested to be put elsewhere (e.g. via JS).
+    if (!m_deferredFocusedNodeChange.isEmpty())
         return;
     
     // Don't set focus if we are already focusing onto some element within
@@ -1940,34 +1958,6 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXObjectCache::AXRequiredStatusChanged);
     else if (attrName == aria_sortAttr)
         postNotification(element, AXObjectCache::AXSortDirectionChanged);
-}
-
-void AXObjectCache::handleModalChange(Element& element)
-{
-    if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
-        return;
-
-    stopCachingComputedObjectAttributes();
-
-    if (!m_modalNodesInitialized)
-        findModalNodes();
-
-    if (isModalElement(element)) {
-        // Add the newly modified node to the modal nodes set.
-        // We will recompute the current valid aria modal node in modalNode() when this node is not visible.
-        m_modalElementsSet.add(&element);
-    } else {
-        // Remove the node from the modal nodes set.
-        m_modalElementsSet.remove(&element);
-    }
-
-    // Find new active modal node.
-    currentModalNode();
-
-    if (m_currentModalElement)
-        focusModalNode();
-
-    startCachingComputedObjectAttributesUntilTreeMutates();
 }
 
 void AXObjectCache::labelChanged(Element* element)
@@ -3348,22 +3338,59 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredAttributeChange.clear();
     
     for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
-        handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
+        // Don't recompute the active modal for each individal focus change, as that could cause a lot of expensive tree rebuilding. Instead, we do it once below.
+        handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second, RecomputeModal::No);
         // Recompute isIgnored after a focus change in case that altered visibility.
         recomputeIsIgnored(deferredFocusedChangeContext.first);
         recomputeIsIgnored(deferredFocusedChangeContext.second);
     }
+    bool updatedFocusedElement = !m_deferredFocusedNodeChange.isEmpty();
+    // If we changed the focused element, that could affect what modal should be active, so recompute it.
+    bool shouldRecomputeModal = updatedFocusedElement;
     m_deferredFocusedNodeChange.clear();
 
-    m_deferredModalChangedList.forEach([this] (auto& deferredModalChangedElement) {
-        handleModalChange(deferredModalChangedElement);
-    });
+    for (auto& element : m_deferredModalChangedList) {
+        if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
+            continue;
+
+        shouldRecomputeModal = true;
+        if (!m_modalNodesInitialized)
+            findModalNodes();
+
+        fprintf(stderr, "processing deferred modal element %s, isModalElement: %d\n", element.debugDescription().utf8().data(), isModalElement(element));
+        if (isModalElement(element)) {
+            // Add the newly modified node to the modal nodes set.
+            // We will recompute the current valid aria modal node in modalNode() when this node is not visible.
+            m_modalElementsSet.add(&element);
+        } else
+            m_modalElementsSet.remove(&element);
+    }
     m_deferredModalChangedList.clear();
+
+    if (shouldRecomputeModal) {
+        // https://w3c.github.io/aria/#aria-modal
+        // "When a modal element is displayed, assistive technologies SHOULD navigate to the element unless focus has explicitly been set elsewhere."
+        // `updatedFocusedElement` indicates focus was explicitly set elsewhere, so don't autofocus into the modal.
+        recomputeCurrentModalNode(updatedFocusedElement ? WillRecomputeFocus::No : WillRecomputeFocus::Yes);
+        if (!updatedFocusedElement)
+            focusCurrentModal();
+    }
 
     m_deferredMenuListChange.forEach([this] (auto& element) {
         handleMenuListValueChanged(element);
     });
     m_deferredMenuListChange.clear();
+
+    if (m_regenerateIsolatedTree && m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID)) {
+            if (auto* webArea = rootWebArea()) {
+                AXLOG("Regenerating isolated tree from AXObjectCache::performDeferredCacheUpdate().");
+                fprintf(stderr, "regenerating IT\n");
+                tree->generateSubtree(*webArea);
+            }
+        }
+    }
+    m_regenerateIsolatedTree = false;
 
     platformPerformDeferredCacheUpdate();
 }

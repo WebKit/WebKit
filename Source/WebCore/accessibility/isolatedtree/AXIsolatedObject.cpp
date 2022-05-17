@@ -79,6 +79,9 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
     // We should never create an isolated object from an ignored object.
     ASSERT(!object.accessibilityIsIgnored());
 
+    if (!object.identifierAttribute().isEmpty())
+        fprintf(stderr, "Creating object ID %s with dom ID %s\n", object.objectID().loggingString().utf8().data(), object.identifierAttribute().utf8().data());
+
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
@@ -1949,7 +1952,7 @@ bool AXIsolatedObject::isModalDescendant(Node*) const
     return false;
 }
 
-bool AXIsolatedObject::isModalNode() const
+bool AXIsolatedObject::isCurrentModalNode() const
 {
     ASSERT_NOT_REACHED();
     return false;

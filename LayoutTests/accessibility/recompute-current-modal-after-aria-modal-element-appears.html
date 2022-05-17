@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <p id="p-before-modal">Page content before modal</p>
+
+    <div id="modal" aria-modal="true" role="dialog" style="display: none">
+        <p id="p-inside-modal">Page content inside modal</p>
+        <button id="close-button">Close modal button</button>
+    </div>
+    <div id="new-modal-container"></div>
+
+    <p id="p-after-modal">Page content after modal</p>
+</div>
+
+<script>
+    var testOutput = "This test ensures that we update the page-wide active modal when an aria-modal element is dynamically added and removed.\n\n";
+
+    function backgroundIsAccessible() {
+        return accessibilityController.accessibleElementById("p-before-modal") &&
+            accessibilityController.accessibleElementById("p-after-modal");
+    }
+    function modalContentIsAccessible() {
+        return accessibilityController.accessibleElementById("p-inside-modal") &&
+            accessibilityController.accessibleElementById("close-button");
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        if (backgroundIsAccessible() && !modalContentIsAccessible())
+            testOutput += "PASS: Modal content is not initially accessible.\n";
+        else
+            testOutput += "FAIL: Model content is initially accessible.\n";
+
+        testOutput += `\nUn-hiding aria-modal element.\n`;
+        // Move the modal in the DOM. This is the key thing being tested -- do we properly preserve modal behavior
+        // for a modal that has been moved?
+        document.getElementById("new-modal-container").appendChild(document.getElementById("modal"))
+        document.getElementById("modal").removeAttribute("style");
+        setTimeout(async function() {
+            await waitFor(() => { return !backgroundIsAccessible() && modalContentIsAccessible() });
+            testOutput += "PASS: Background is inaccessible, modal content is accessible.\n";
+
+            testOutput += `\nRe-hiding aria-modal element.\n`;
+            document.getElementById("modal").style.display = "none";
+            await waitFor(() => { return backgroundIsAccessible() });
+            testOutput += "PASS: Background is accessible, modal content is inaccessible.\n";
+
+            document.getElementById("content").style.visibility = "hidden";
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

@@ -563,7 +563,7 @@ private:
     bool supportsChecked() const override;
     bool supportsRowCountChange() const override { return boolAttributeValue(AXPropertyName::SupportsRowCountChange); }
     bool isModalDescendant(Node*) const override;
-    bool isModalNode() const override;
+    bool isCurrentModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* parentObjectIfExists() const override;
     bool isDescendantOfBarrenParent() const override;

@@ -588,7 +588,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
             objectWithInterestingHTML = parent;
 
         if (objectWithInterestingHTML)
-            stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML());
+            stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML().left(200));
     }
 
     if (options & AXStreamOptions::DisplayContents) {

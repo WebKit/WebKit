@@ -343,7 +343,7 @@ public:
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;
     bool isModalDescendant(Node*) const override;
-    bool isModalNode() const override;
+    bool isCurrentModalNode() const override;
 
     bool supportsSetSize() const override;
     bool supportsPosInSet() const override;

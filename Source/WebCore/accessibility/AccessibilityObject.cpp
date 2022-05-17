@@ -2261,7 +2261,7 @@ bool AccessibilityObject::isModalDescendant(Node* modalNode) const
     return node->isDescendantOf(*modalNode);
 }
 
-bool AccessibilityObject::isModalNode() const
+bool AccessibilityObject::isCurrentModalNode() const
 {
     if (AXObjectCache* cache = axObjectCache())
         return node() && cache->modalNode() == node();
@@ -4340,6 +4340,7 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
 
     // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
     for (auto* stopSearchElement = criteria.anchorObject->parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;
