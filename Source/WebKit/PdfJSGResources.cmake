@@ -1,4 +1,4 @@
-file(GLOB_RECURSE PdfJSFiles ${THIRDPARTY_DIR}/pdfjs/*)
+file(GLOB_RECURSE PdfJSFiles CONFIGURE_DEPENDS ${THIRDPARTY_DIR}/pdfjs/*)
 
 set(PdfJSExtraFiles
     ${WEBCORE_DIR}/Modules/pdfjs-extras/content-script.js
