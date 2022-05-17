@@ -1,3 +1,46 @@
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r292350. rdar://problem/90589355
+
+    intersectsWithAncestor should take fragmented boxes into account.
+    https://bugs.webkit.org/show_bug.cgi?id=238648
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Test: compositing/backing/backing-store-columns-inside-position-fixed.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::intersectsWithAncestor):
+    
+    Use boundingBox() for intersectsWithAncestor, so that we can explicitly request the box that contains
+    all fragment boxes.
+    
+    LayoutTests:
+    
+    * compositing/backing/backing-store-columns-inside-position-fixed-expected.txt: Added.
+    * compositing/backing/backing-store-columns-inside-position-fixed.html: Added.
+    
+    Adds new test that scrolls content split into columns until the first column is offscreen, to confirm
+    that we still have a backing store.
+    
+    Canonical link: https://commits.webkit.org/249215@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292350 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-04  Matt Woodrow  <mattwoodrow@apple.com>
+
+            intersectsWithAncestor should take fragmented boxes into account.
+            https://bugs.webkit.org/show_bug.cgi?id=238648
+
+            Reviewed by Dean Jackson.
+
+            * compositing/backing/backing-store-columns-inside-position-fixed-expected.txt: Added.
+            * compositing/backing/backing-store-columns-inside-position-fixed.html: Added.
+
+            Adds new test that scrolls content split into columns until the first column is offscreen, to confirm
+            that we still have a backing store.
+
 2022-05-03  Sihui Liu  <sihui_liu@apple.com>
 
         StorageMap::removeItem may fail to remove item from map

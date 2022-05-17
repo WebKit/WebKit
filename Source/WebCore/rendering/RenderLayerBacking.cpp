@@ -2799,9 +2799,7 @@ static std::optional<bool> intersectsWithAncestor(const RenderLayer& child, cons
             return std::nullopt;
     }
 
-    auto offset = child.convertToLayerCoords(&ancestor, { }, RenderLayer::AdjustForColumns);
-    auto overlap = child.overlapBounds();
-    overlap.moveBy(offset);
+    auto overlap = child.boundingBox(&ancestor, child.offsetFromAncestor(&ancestor), RenderLayer::UseFragmentBoxesExcludingCompositing);
     return overlap.intersects(ancestorCompositedBounds);
 }
 
