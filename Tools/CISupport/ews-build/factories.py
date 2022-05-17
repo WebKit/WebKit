@@ -24,10 +24,10 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
+from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitSvnFetch,
+                   DetermineAuthor, DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitSvnFetch,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -292,15 +292,21 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(ValidateChange(verifycqplus=True))
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
-        self.addStep(CleanGitRepo(default_branch='master'))
-        self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
+        self.addStep(CleanGitRepo())
+        self.addStep(CheckOutSource())
+        self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
-        self.addStep(ApplyPatch())
-        self.addStep(ValidateChangeLogAndReviewer())
-        self.addStep(FindModifiedChangeLogs())
+        self.addStep(CommitPatch())
+
+        self.addStep(ValidateSquashed())
+        self.addStep(AddReviewerToCommitMessage())
+        self.addStep(DetermineAuthor())
+        self.addStep(AddAuthorToCommitMessage())
+        self.addStep(ValidateCommitMessage())
+
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
@@ -308,11 +314,8 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(CheckPatchStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
         self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
-        self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
-        self.addStep(ShowIdentifier())
-        self.addStep(UpdateWorkingDirectory())
-        self.addStep(ApplyPatch())
-        self.addStep(CreateLocalGITCommit())
+
+        self.addStep(Canonicalize())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
 
@@ -334,6 +337,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())
+        self.addStep(DetermineAuthor())
         self.addStep(AddAuthorToCommitMessage())
         self.addStep(ValidateCommitMessage())
 

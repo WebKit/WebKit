@@ -45,9 +45,9 @@ import send_email
 from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CompileJSCWithoutChange,
+                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
-                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
+                   DetermineAuthor, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard, GitSvnFetch,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
@@ -5827,10 +5827,18 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_skipped_patch(self):
+    def test_patch(self):
         self.setupStep(ValidateSquashed())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Verified branch is squashed')
         return self.runStep()
 
     def test_success(self):
@@ -5989,9 +5997,8 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_skipped_patch(self):
+    def test_skipped_no_author(self):
         self.setupStep(AddAuthorToCommitMessage())
-        self.setProperty('patch_id', '1234')
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
@@ -6002,11 +6009,10 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         time.time = lambda: fixed_time
 
         self.setupStep(AddAuthorToCommitMessage())
-        self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('github.head.user.login', 'webkit-reviewer')
         self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('author', 'WebKit Reviewer <reviewer@apple.com>')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -6021,36 +6027,35 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0
             + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
         )
-        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Reviewer as author')
+        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Reviewer <reviewer@apple.com> as author')
         return self.runStep()
 
-    def test_success_fallback(self):
+    def test_success_patch(self):
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         fixed_time = int(time.time())
         timestamp = f'{int(time.time())} {gmtoffset}'
         time.time = lambda: fixed_time
 
         self.setupStep(AddAuthorToCommitMessage())
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('github.head.user.login', 'unregistered-author')
-        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('author', 'WebKit Reviewer <reviewer@apple.com>')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        env=self.ENV,
-                        timeout=60,
+                        env=dict(
+                            GIT_COMMITTER_EMAIL='ews@webkit.org',
+                            GIT_COMMITTER_NAME='EWS',
+                            FILTER_BRANCH_SQUELCH_WARNING='1',
+                        ), timeout=60,
                         command=[
                             'git', 'filter-branch', '-f',
                             '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
-                            '--msg-filter', f'sed "1,/^$/ s/^$/\\nPatch by WebKit Committer <committer@webkit.org> on {date.today().strftime("%Y-%m-%d")}/g"',
-                            'eng/pull-request-branch...main',
+                            '--msg-filter', f'sed "1,/^$/ s/^$/\\nPatch by WebKit Reviewer <reviewer@apple.com> on {date.today().strftime("%Y-%m-%d")}/g"',
+                            'HEAD...origin/main',
                         ])
             + 0
-            + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
+            + ExpectShell.log('stdio', stdout="Ref 'main' was rewritten\n"),
         )
-        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Committer as author')
+        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Reviewer <reviewer@apple.com> as author')
         return self.runStep()
 
     def test_failure(self):
@@ -6060,11 +6065,10 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         time.time = lambda: fixed_time
 
         self.setupStep(AddAuthorToCommitMessage())
-        self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('github.head.user.login', 'webkit-commit-queue')
         self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('author', 'WebKit Committer <committer@webkit.org>')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -6082,13 +6086,6 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Failed to add author to commit message')
         return self.runStep()
 
-    def test_no_owner(self):
-        self.setupStep(AddAuthorToCommitMessage())
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
-        return self.runStep()
-
 
 class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -6098,10 +6095,22 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_skipped_patch(self):
+    def test_patch(self):
         self.setupStep(ValidateCommitMessage())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+            + 0
+            + ExpectShell.log('stdio', stdout=''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
     def test_success(self):
@@ -6614,6 +6623,45 @@ class TestResetGitSvn(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to remove git-svn references')
         return self.runStep()
+
+
+class TestDetermineAuthor(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(DetermineAuthor())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log -1 | grep '^Author:'"])
+            + 0
+            + ExpectShell.log('stdio', stdout='Author: WebKit Reviewer <reviewer@apple.com>'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Author is WebKit Reviewer <reviewer@apple.com>')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('author'), 'WebKit Reviewer <reviewer@apple.com>')
+        return rc
+
+    def test_failure(self):
+        self.setupStep(DetermineAuthor())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log -1 | grep '^Author:'"])
+            + 1
+            + ExpectShell.log('stdio', stdout=''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to find author')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('author'), None)
+        return rc
 
 
 if __name__ == '__main__':
