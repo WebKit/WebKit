@@ -187,6 +187,9 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
             response->setGroup(group);
         if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
             response->setSynchronizable([attributes[(id)kSecAttrSynchronizable] isEqual:@YES]);
+        it = responseMap.find(CBOR(fido::kDisplayNameMapKey));
+        if (it != responseMap.end() && it->second.isString())
+            response->setDisplayName(it->second.getString());
 
         result.uncheckedAppend(WTFMove(response));
     }

@@ -83,6 +83,7 @@ static String testES256PrivateKeyBase64 =
 static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVkSm9obg=="_s; // { "id": h'00010203040506070809', "name": "John" }
 static String testUserEntityBundleNoUserHandleBase64 = "oWRuYW1lbE1DIE5vLUhhbmRsZQ=="_s; // {"name": "MC No-Handle"}
 static String webAuthenticationPanelSelectedCredentialName;
+static String webAuthenticationPanelSelectedCredentialDisplayName;
 static String testWebKitAPIAccessGroup = "com.apple.TestWebKitAPI"_s;
 static String testWebKitAPIAlternateAccessGroup = "com.apple.TestWebKitAPIAlternate"_s;
 static bool laContextRequested = false;
@@ -174,6 +175,7 @@ static bool laContextRequested = false;
         [object setLAContext:laContext.get()];
 
         webAuthenticationPanelSelectedCredentialName = object.name;
+        webAuthenticationPanelSelectedCredentialDisplayName = object.displayName;
         completionHandler(object);
         return;
     }
@@ -1510,7 +1512,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
     [webView focus];
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, emptyString(), testUserEntityBundleBase64));
-    ASSERT_TRUE(addKeyToKeychain("BBRoi2JbR0IXTeJmvXUp1YIuM4sph/Lu3eGf75F7n+HojHKG70a4R0rB2PQce5/SJle6T7OO5Cqet/LJZVM6NQ8yDDxWvayf71GTDp2yUtuIbqJLFVbpWymlj9WRizgX3A=="_s, emptyString(), "omJpZEoAAQIDBAUGBwgJZG5hbWVkSmFuZQ=="_s/* { "id": h'00010203040506070809', "name": "Jane" } */, true /* synchronizable */));
+    ASSERT_TRUE(addKeyToKeychain("BBRoi2JbR0IXTeJmvXUp1YIuM4sph/Lu3eGf75F7n+HojHKG70a4R0rB2PQce5/SJle6T7OO5Cqet/LJZVM6NQ8yDDxWvayf71GTDp2yUtuIbqJLFVbpWymlj9WRizgX3A=="_s, emptyString(), "o2JpZEoAAQIDBAUGBwgJZG5hbWVkSmFuZWtkaXNwbGF5TmFtZWpKYW5lIFNtaXRo"_s/* { "id": h'00010203040506070809', "name": "Jane", "displayName": "Jane Smith" } */, true /* synchronizable */));
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
@@ -1519,6 +1521,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
+    EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialDisplayName, "Jane Smith");
 
     cleanUpKeychain(emptyString());
 }
