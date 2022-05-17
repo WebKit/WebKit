@@ -1,3 +1,41 @@
+2022-05-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Current-context enforcement in ANGLE is expensive
+        https://bugs.webkit.org/show_bug.cgi?id=240392
+
+        Reviewed by Adrian Perez de Castro.
+
+        ANGLE's current-context operations are relatively heavy and introduce
+        detectable overhead when executed for each of many WebGL operation. More
+        specifically, loads of the current-thread data from thread-local
+        storage are done under both EGL_GetCurrentContext() and
+        EGL_MakeCurrent() through the general TLS access model, relying on the
+        __tls_get_addr function.
+
+        Instead, a static thread-local pointer variable is introduced, with the
+        initial-exec method, containing the address of the current
+        GraphicsContextGLANGLE object for a given thread. Instead of dipping
+        into ANGLE to retrieve the current context, the GraphicsContextGLANGLE
+        object's address is compared to the value of the thread-local variable
+        and an early return is done if they match.
+
+        This model is applied through the TLS_MODEL_INITIAL_EXEC macro that's
+        defined appropriately if the compiler is detected to support the
+        required tls_model attribute. This should be the case when targetting
+        platforms that use ELF, i.e. Unix-like systems but primarily Linux.
+
+        The initial-exec TLS model relies on early understanding from the
+        dynamic linker about what TLS data is required, which enables more
+        efficient allocation of and access into the required underlying memory.
+
+        Caching the current-context data into a static thread-specific variable
+        with the initial-exec TLS model is the same approach that's taken in the
+        Mesa library. More on this and other TLS models can be gathered from the
+        'ELF Handling For Thread-Local Storage' paper by Ulrich Drepper.
+
+        * platform/graphics/gbm/GraphicsContextGLGBM.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+
 2022-05-16  Mark Lam  <mark.lam@apple.com>
 
         Add ARM64 disassembler support for symbolic dumping of some well known constants.
