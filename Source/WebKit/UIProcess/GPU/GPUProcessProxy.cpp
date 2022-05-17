@@ -647,13 +647,6 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
         }
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-        if (!m_hasEnabledScreenCaptureKit && preferences.useScreenCaptureKit()) {
-            m_hasEnabledScreenCaptureKit = true;
-            send(Messages::GPUProcess::SetUseScreenCaptureKit(m_hasEnabledScreenCaptureKit), 0);
-        }
-#endif
-
 #if HAVE(AVCONTENTKEYSPECIFIER)
         if (!m_hasEnabledSampleBufferContentKeySessionSupport && preferences.sampleBufferContentKeySessionSupportEnabled()) {
             m_hasEnabledSampleBufferContentKeySessionSupport = true;

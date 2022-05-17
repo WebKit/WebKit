@@ -188,10 +188,6 @@ private:
     void setMediaSourceInlinePaintingEnabled(bool);
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-    void setUseScreenCaptureKit(bool);
-#endif
-
 #if HAVE(AVCONTENTKEYSPECIFIER)
     void setSampleBufferContentKeySessionSupportEnabled(bool);
 #endif
@@ -261,9 +257,6 @@ private:
 #endif
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     bool m_mediaSourceInlinePaintingEnabled { false };
-#endif
-#if HAVE(SCREEN_CAPTURE_KIT)
-    bool m_useScreenCaptureKit { false };
 #endif
 #if HAVE(AVCONTENTKEYSPECIFIER)
     bool m_sampleBufferContentKeySessionSupportEnabled { false };

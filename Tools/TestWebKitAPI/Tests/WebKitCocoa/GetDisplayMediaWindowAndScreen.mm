@@ -127,7 +127,6 @@ TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
     auto preferences = [configuration preferences];
     preferences._mediaCaptureRequiresSecureConnection = NO;
     preferences._mockCaptureDevicesEnabled = YES;
-    preferences._useScreenCaptureKit = YES;
 
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     auto webView = adoptNS([[WindowAndScreenCaptureTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);

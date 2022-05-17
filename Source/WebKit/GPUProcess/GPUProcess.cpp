@@ -539,16 +539,6 @@ void GPUProcess::setMediaSourceInlinePaintingEnabled(bool enabled)
 }
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-void GPUProcess::setUseScreenCaptureKit(bool use)
-{
-    if (m_useScreenCaptureKit == use)
-        return;
-    m_useScreenCaptureKit = use;
-    WebCore::ScreenCaptureKitCaptureSource::setEnabled(m_useScreenCaptureKit);
-}
-#endif
-
 #if HAVE(AVCONTENTKEYSPECIFIER)
 void GPUProcess::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
 {

@@ -77,10 +77,6 @@ bool defaultMediaSourceEnabled();
 bool defaultMediaSessionCoordinatorEnabled();
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
-bool defaultScreenCaptureKitEnabled();
-#endif
-
 #if ENABLE(IMAGE_ANALYSIS)
 bool defaultTextRecognitionEnhancementsEnabled();
 bool defaultImageAnalysisQueueEnabled();

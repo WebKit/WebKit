@@ -1,5 +1,80 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r294264. rdar://problem/93118830
+
+    Remove abandoned UseScreenCaptureKit preference
+    https://bugs.webkit.org/show_bug.cgi?id=240460
+    <rdar://problem/93351960>
+    
+    Reviewed by Youenn Fablet.
+    
+    We no longer need this switch to activate ScreenCaptureKit, and this code is no
+    longer used. We should remove it to simplify the build and reduce complexity.
+    
+    Source/WebCore:
+    
+    * platform/mediastream/RealtimeMediaSourceCenter.h:
+    (WebCore::RealtimeMediaSourceCenter::useScreenCaptureKit const): Deleted.
+    (WebCore::RealtimeMediaSourceCenter::setUseScreenCaptureKit): Deleted.
+    
+    Source/WebKit:
+    
+    * GPUProcess/GPUProcess.cpp:
+    (WebKit::GPUProcess::setUseScreenCaptureKit): Deleted.
+    * GPUProcess/GPUProcess.h:
+    * GPUProcess/GPUProcess.messages.in:
+    * Shared/WebPreferencesDefaultValues.cpp:
+    (WebKit::defaultScreenCaptureKitEnabled): Deleted.
+    * Shared/WebPreferencesDefaultValues.h:
+    * UIProcess/API/Cocoa/WKPreferences.mm:
+    (-[WKPreferences _useScreenCaptureKit]): Deleted.
+    (-[WKPreferences _setUseScreenCaptureKit:]): Deleted.
+    * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    (WebKit::GPUProcessProxy::updatePreferences):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294264 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+            Remove abandoned UseScreenCaptureKit preference
+            https://bugs.webkit.org/show_bug.cgi?id=240460
+            <rdar://problem/93351960>
+
+            Reviewed by Youenn Fablet.
+
+            We no longer need this switch to activate ScreenCaptureKit, and this code is no
+            longer used. We should remove it to simplify the build and reduce complexity.
+
+            * GPUProcess/GPUProcess.cpp:
+            (WebKit::GPUProcess::setUseScreenCaptureKit): Deleted.
+            * GPUProcess/GPUProcess.h:
+            * GPUProcess/GPUProcess.messages.in:
+            * Shared/WebPreferencesDefaultValues.cpp:
+            (WebKit::defaultScreenCaptureKitEnabled): Deleted.
+            * Shared/WebPreferencesDefaultValues.h:
+            * UIProcess/API/Cocoa/WKPreferences.mm:
+            (-[WKPreferences _useScreenCaptureKit]): Deleted.
+            (-[WKPreferences _setUseScreenCaptureKit:]): Deleted.
+            * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+            * UIProcess/GPU/GPUProcessProxy.cpp:
+            (WebKit::GPUProcessProxy::updatePreferences):
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r294190. rdar://problem/91006582
 
     SharedBuffer should be copied and then attributed back to WebContent
