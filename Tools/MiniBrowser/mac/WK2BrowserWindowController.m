@@ -315,7 +315,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 #pragma clang diagnostic pop
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result == NSModalResponseOK) {
-            [_webView retrieveAccessibilityTreeData:^(NSData *data, NSError *error) {
+            [_webView _retrieveAccessibilityTreeData:^(NSData *data, NSError *error) {
                 [data writeToURL:[panel URL] options:0 error:nil];
             }];
         }

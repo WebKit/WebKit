@@ -126,6 +126,13 @@
     return _impl->mouseMoved(event);
 }
 
+- (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
+{
+    _page->getAccessibilityTreeData([completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
+        completionHandler(wrapper(data), nil);
+    });
+}
+
 @end
 
 #endif // PLATFORM(MAC)

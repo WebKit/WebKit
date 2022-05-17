@@ -53,6 +53,7 @@
 - (NSSet<NSView *> *)_pdfHUDs;
 
 - (void)_simulateMouseMove:(NSEvent *)event;
+- (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
 
 @end
 
