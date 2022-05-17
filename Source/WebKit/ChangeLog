@@ -1,3 +1,36 @@
+2022-05-17  Chris Lord  <clord@igalia.com>
+
+        [WPE] Use new libwpe API to synchronise display refreshes fully to the screen refresh rate
+        https://bugs.webkit.org/show_bug.cgi?id=240453
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use new libwpe API to track the target refresh rate and use it in
+        ThreadedDisplayRefreshMonitor for DisplayUpdate objects.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::targetRefreshRateDidChange):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor):
+        (WebKit::ThreadedDisplayRefreshMonitor::setTargetRefreshRate):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::targetRefreshRateDidChange):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::targetRefreshRateDidChange):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+
 2022-05-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ImageBufferIOSurfaceBackend context setup and teardown functions are redundant and error-prone

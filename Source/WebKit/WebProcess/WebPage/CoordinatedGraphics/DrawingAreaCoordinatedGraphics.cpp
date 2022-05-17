@@ -461,6 +461,15 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
         forceRepaint();
 }
 
+void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
+{
+    UNUSED_PARAM(rate);
+#if !USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
+    if (m_layerTreeHost)
+        m_layerTreeHost->targetRefreshRateDidChange(rate);
+#endif
+}
+
 void DrawingAreaCoordinatedGraphics::didUpdate()
 {
     // We might get didUpdate messages from the UI process even after we've

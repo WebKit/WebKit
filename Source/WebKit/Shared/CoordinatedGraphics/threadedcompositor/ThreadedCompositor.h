@@ -76,6 +76,7 @@ public:
     RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
 
     void frameComplete();
+    void targetRefreshRateDidChange(unsigned);
 
     void suspend();
     void resume();

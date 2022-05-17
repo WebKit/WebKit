@@ -175,6 +175,7 @@ private:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/,
                                          const WebCore::IntSize& /*scrollOffset*/) { }
+    virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
 #endif
     virtual void didUpdate() { }
 

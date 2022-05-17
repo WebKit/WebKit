@@ -239,6 +239,11 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
+void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
+{
+    send(Messages::DrawingArea::TargetRefreshRateDidChange(rate));
+}
+
 #if !PLATFORM(WPE)
 void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(const UpdateInfo& updateInfo)
 {

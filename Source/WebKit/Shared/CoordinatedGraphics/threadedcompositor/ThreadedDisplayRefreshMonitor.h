@@ -54,6 +54,8 @@ public:
     void dispatchDisplayRefreshCallback();
     void invalidate();
 
+    void setTargetRefreshRate(unsigned);
+
 private:
     ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
 
@@ -63,6 +65,7 @@ private:
     void displayRefreshCallback();
     RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
     Client* m_client;
+    unsigned m_targetRefreshRate;
     WebCore::DisplayUpdate m_currentUpdate;
 };
 

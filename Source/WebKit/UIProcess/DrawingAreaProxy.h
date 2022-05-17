@@ -79,6 +79,7 @@ public:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     // The timeout we use when waiting for a DidUpdateGeometry message.
     static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
+    virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
 
     virtual void colorSpaceDidChange() { }

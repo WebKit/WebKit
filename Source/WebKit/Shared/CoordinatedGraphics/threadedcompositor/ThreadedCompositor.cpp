@@ -310,5 +310,11 @@ void ThreadedCompositor::frameComplete()
     sceneUpdateFinished();
 }
 
+void ThreadedCompositor::targetRefreshRateDidChange(unsigned rate)
+{
+    ASSERT(!RunLoop::isMain());
+    m_displayRefreshMonitor->setTargetRefreshRate(rate);
+}
+
 }
 #endif // USE(COORDINATED_GRAPHICS)
