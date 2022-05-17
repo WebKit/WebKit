@@ -800,7 +800,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             if (!box.text()->length() || !hasDamage(box))
                 continue;
 
-            TextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
+            ModernTextBoxPainter painter(*m_inlineContent, box, paintInfo, paintOffset);
             painter.paint();
             continue;
         }

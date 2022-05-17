@@ -94,6 +94,13 @@ LineBoxIterator Box::lineBox() const
     );
 }
 
+FloatRect Box::visualRect() const
+{
+    auto rect = visualRectIgnoringBlockDirection();
+    containingBlock().flipForWritingMode(rect);
+    return rect;
+}
+
 RenderObject::HighlightState Box::selectionState() const
 {
     if (isText()) {

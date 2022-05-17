@@ -45,22 +45,17 @@ struct MarkedText;
 struct PaintInfo;
 struct StyledMarkedText;
 
+template<typename TextBoxPath>
 class TextBoxPainter {
 public:
-    TextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    TextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
-#endif
-    TextBoxPainter(const InlineIterator::TextBoxIterator&, PaintInfo&, const LayoutPoint& paintOffset);
-
+    TextBoxPainter(TextBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset);
     ~TextBoxPainter();
 
     void paint();
 
-    static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
-
-private:
-    auto& textBox() const { return *m_textBox; }
+protected:
+    auto& textBox() const { return m_textBox; }
+    InlineIterator::TextBoxIterator makeIterator() const;
 
     void paintBackground();
     void paintForegroundAndDecorations();
@@ -78,8 +73,7 @@ private:
     void paintCompositionUnderline(const CompositionUnderline&);
     void paintPlatformDocumentMarker(const MarkedText&);
 
-    static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
-
+    float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;
     MarkedText createMarkedTextFromSelectionInBox();
@@ -88,20 +82,36 @@ private:
 
     const ShadowData* debugTextShadow() const;
 
-    const InlineIterator::TextBoxIterator m_textBox;
+    const TextBoxPath m_textBox;
     const RenderText& m_renderer;
     const Document& m_document;
     const RenderStyle& m_style;
+    const FloatRect m_logicalRect;
     const TextRun m_paintTextRun;
     PaintInfo& m_paintInfo;
     const TextBoxSelectableRange m_selectableRange;
     const FloatRect m_paintRect;
     const bool m_isFirstLine;
+    const bool m_isCombinedText;
     const bool m_isPrinting;
     const bool m_haveSelection;
     const bool m_containsComposition;
     const bool m_useCustomUnderlines;
     std::optional<bool> m_emphasisMarkExistsAndIsAbove { };
 };
+
+class LegacyTextBoxPainter : public TextBoxPainter<InlineIterator::BoxLegacyPath> {
+public:
+    LegacyTextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
+
+    static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
+};
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+class ModernTextBoxPainter : public TextBoxPainter<InlineIterator::BoxModernPath> {
+public:
+    ModernTextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
+};
+#endif
 
 }

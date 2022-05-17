@@ -35,6 +35,12 @@
 
 namespace WebCore {
 
+class LegacyInlineTextBox;
+
+namespace InlineDisplay {
+struct Box;
+}
+
 template<typename LayoutRun>
 class GlyphDisplayListCache {
 public:
@@ -42,6 +48,7 @@ public:
 
     static GlyphDisplayListCache& singleton()
     {
+        static_assert(std::is_same_v<LayoutRun, LegacyInlineTextBox> || std::is_same_v<LayoutRun, InlineDisplay::Box>);
         static NeverDestroyed<GlyphDisplayListCache> cache;
         return cache;
     }
