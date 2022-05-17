@@ -1,3 +1,14 @@
+2022-05-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix Tools/Scripts/check-for-invalid-symbols-in-version-script
+        https://bugs.webkit.org/show_bug.cgi?id=240543
+
+        Unreviewed build fix.
+
+        * Tools/Scripts/check-for-invalid-symbols-in-version-script: Change
+        shebang to use "python3", and pass an "encoding" argument to the Popen
+        constructor to read strings instead of bytes from the subprocess pipe.
+
 2022-03-03  Lauro Moura  <lmoura@igalia.com>
 
         [Python3] Switch a few more glib scripts to Python3
