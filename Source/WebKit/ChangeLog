@@ -1,3 +1,35 @@
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r292738. rdar://problem/91295875
+
+    Use WebKit::blockedError instead of ResourceLoader::blockedError in WebLoaderStrategy::scheduleLoadFromNetworkProcess
+    https://bugs.webkit.org/show_bug.cgi?id=239089
+    <rdar://91295875>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-04-11
+    Reviewed by Chris Dumez.
+    
+    The latter dereferences the frame loader which can be null.
+    
+    * WebProcess/Network/WebLoaderStrategy.cpp:
+    (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+    
+    Canonical link: https://commits.webkit.org/249522@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292738 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-11  Alex Christensen  <achristensen@webkit.org>
+
+            Use WebKit::blockedError instead of ResourceLoader::blockedError in WebLoaderStrategy::scheduleLoadFromNetworkProcess
+            https://bugs.webkit.org/show_bug.cgi?id=239089
+            <rdar://91295875>
+
+            Reviewed by Chris Dumez.
+
+            The latter dereferences the frame loader which can be null.
+
+            * WebProcess/Network/WebLoaderStrategy.cpp:
+            (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
 2022-05-02  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/92617943
