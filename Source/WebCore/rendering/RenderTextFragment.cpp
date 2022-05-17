@@ -69,14 +69,6 @@ bool RenderTextFragment::canBeSelectionLeaf() const
     return textNode() && textNode()->hasEditableStyle();
 }
 
-void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderText::styleDidChange(diff, oldStyle);
-
-    if (RenderBlock* block = blockForAccompanyingFirstLetter())
-        block->mutableStyle().removeCachedPseudoStyle(PseudoId::FirstLetter);
-}
-
 void RenderTextFragment::setText(const String& newText, bool force)
 {
     RenderText::setText(newText, force);

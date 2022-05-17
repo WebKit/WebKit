@@ -144,6 +144,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         contentsStyle->setStyleType(pseudoId);
         contentsStyle->inheritFrom(*updateStyle);
         contentsStyle->copyContentFrom(*updateStyle);
+        contentsStyle->copyPseudoElementsFrom(*updateStyle);
 
         Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdate));

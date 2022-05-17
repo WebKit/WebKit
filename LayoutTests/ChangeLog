@@ -1,3 +1,30 @@
+2022-05-16  Antti Koivisto  <antti@apple.com>
+
+        Resolve ::first-letter eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=239844
+
+        Reviewed by Alan Bujtas.
+
+        * fast/css-generated-content/first-letter-in-nested-before-expected.html: Added.
+        * fast/css-generated-content/first-letter-in-nested-before-expected.png: Removed.
+        * fast/css-generated-content/first-letter-in-nested-before-expected.txt: Removed.
+        * fast/css-generated-content/first-letter-in-nested-before-table-expected.html: Copied from LayoutTests/fast/css-generated-content/first-letter-in-nested-before-table.html.
+        * fast/css-generated-content/first-letter-in-nested-before-table-expected.png: Removed.
+        * fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * fast/css-generated-content/first-letter-in-nested-before-table.html:
+        * fast/css-generated-content/first-letter-in-nested-before.html:
+
+        Make reftest and update the behavior. ::first-letter won't affect ::before/after with display:table,
+        matching Firefox behavior (and spec logic).
+
+        * platform/glib/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * platform/gtk/fast/css-generated-content/first-letter-in-nested-before-expected.png: Removed.
+        * platform/gtk/fast/css-generated-content/first-letter-in-nested-before-table-expected.png: Removed.
+        * platform/ios/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * platform/mac/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * platform/win/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * platform/wincairo/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+
 2022-05-16  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r294215): [ iOS ] Nine fast tests are a consistent image failure
