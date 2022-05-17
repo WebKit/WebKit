@@ -3627,3 +3627,12 @@ webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-vertical-l
 webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
 webkit.org/b/240495 fast/inline/hidpi-outline-auto-with-one-focusring-rect.html [ ImageOnlyFailure ]
+
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html [ Failure ]
+webkit.org/b/240538 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Failure ]

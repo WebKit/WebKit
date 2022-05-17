@@ -1,3 +1,12 @@
+2022-05-17  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r294317): [ iOS ] Eight imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation are a consistent failure
+        https://bugs.webkit.org/show_bug.cgi?id=240538
+
+        Unreviewed test gardening. 
+
+        * platform/ios/TestExpectations:
+
 2022-05-17  Tim Nguyen  <ntim@apple.com>
 
         [iOS] Rebaseline 2 tests in imported/w3c/web-platform-tests/html/semantics/forms/
