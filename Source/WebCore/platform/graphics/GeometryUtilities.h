@@ -29,6 +29,8 @@
 #include "IntRect.h"
 #include <wtf/Forward.h>
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 class FloatQuad;
@@ -88,7 +90,13 @@ float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std:
 
 // Given a box and an offset from the top left corner, calculate the distance of the point from each side
 RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
+
+// Given a box and an offset from the top left corner, construct a coordinate system with this offset as the origin,
+// and return the vertices of the box in this coordinate system
+Vector<FloatPoint> verticesForBox(const FloatRect&, const FloatPoint);
+
 float toPositiveAngle(float angle);
+float toRelatedAcuteAngle(float angle);
 
 struct RotatedRect {
     FloatPoint center;
