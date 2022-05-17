@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "LayerOverlapMap.h"
+#include "Logging.h"
 #include "RenderLayer.h"
 #include <wtf/text/TextStream.h>
 
@@ -73,8 +74,9 @@ static TextStream& operator<<(TextStream& ts, const RectList& rectList)
 class OverlapMapContainer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OverlapMapContainer(const RenderLayer& rootLayer)
+    OverlapMapContainer(const RenderLayer& rootLayer, const RenderLayer& scopeLayer)
         : m_rootScope(rootLayer)
+        , m_scopeLayer(scopeLayer)
     {
     }
 
@@ -84,6 +86,8 @@ public:
     void append(std::unique_ptr<OverlapMapContainer>&&);
     
     String dump(unsigned) const;
+    
+    const RenderLayer& scopeLayer() const { return m_scopeLayer; }
 
 private:
     struct ClippingScope {
@@ -160,6 +164,7 @@ private:
     ClippingScope& rootScope() { return m_rootScope; }
 
     ClippingScope m_rootScope;
+    const RenderLayer& m_scopeLayer;
 };
 
 void OverlapMapContainer::add(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers)
@@ -258,7 +263,7 @@ String OverlapMapContainer::dump(unsigned indent) const
 {
     TextStream multilineStream;
     multilineStream.increaseIndent(indent);
-    multilineStream << "overlap container - root scope layer " <<  &m_rootScope.layer << " rects " << m_rootScope.rectList;
+    multilineStream << "overlap container - root layer " <<  &m_rootScope.layer << " scope layer " << &m_scopeLayer << " rects " << m_rootScope.rectList;
 
     for (auto& childScope : m_rootScope.children)
         recursiveOutputToStream(multilineStream, childScope, 1);
@@ -273,7 +278,7 @@ LayerOverlapMap::LayerOverlapMap(const RenderLayer& rootLayer)
     // Begin assuming the root layer will be composited so that there is
     // something on the stack. The root layer should also never get an
     // popCompositingContainer call.
-    pushCompositingContainer();
+    pushCompositingContainer(rootLayer);
 }
 
 LayerOverlapMap::~LayerOverlapMap() = default;
@@ -284,8 +289,11 @@ void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, co
     // contribute to overlap as soon as their composited ancestor has been
     // recursively processed and popped off the stack.
     ASSERT(m_overlapStack.size() >= 2);
-    m_overlapStack[m_overlapStack.size() - 2]->add(layer, bounds, enclosingClippingLayers);
-    
+    auto& container = m_overlapStack[m_overlapStack.size() - 2];
+    container->add(layer, bounds, enclosingClippingLayers);
+
+    LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " contributes to overlap in the scope of layer " << &container->scopeLayer() << ", added to map " << *this);
+
     m_isEmpty = false;
 }
 
@@ -294,13 +302,14 @@ bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect&
     return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);
 }
 
-void LayerOverlapMap::pushCompositingContainer()
+void LayerOverlapMap::pushCompositingContainer(const RenderLayer& layer)
 {
-    m_overlapStack.append(makeUnique<OverlapMapContainer>(m_rootLayer));
+    m_overlapStack.append(makeUnique<OverlapMapContainer>(m_rootLayer, layer));
 }
 
-void LayerOverlapMap::popCompositingContainer()
+void LayerOverlapMap::popCompositingContainer(const RenderLayer& layer)
 {
+    ASSERT_UNUSED(layer, &m_overlapStack.last()->scopeLayer() == &layer);
     m_overlapStack[m_overlapStack.size() - 2]->append(WTFMove(m_overlapStack.last()));
     m_overlapStack.removeLast();
 }
