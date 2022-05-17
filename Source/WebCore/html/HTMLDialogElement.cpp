@@ -26,12 +26,14 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include "CSSSelector.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
 #include "GCReachableRef.h"
 #include "HTMLNames.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScopedEventQueue.h"
 #include "TypedElementDescendantIterator.h"
@@ -76,7 +78,7 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     EventQueueScope scope;
     setBooleanAttribute(openAttr, true);
 
-    m_isModal = true;
+    setIsModal(true);
 
     if (!isInTopLayer())
         addToTopLayer();
@@ -95,7 +97,7 @@ void HTMLDialogElement::close(const String& result)
 
     setBooleanAttribute(openAttr, false);
 
-    m_isModal = false;
+    setIsModal(false);
 
     if (!result.isNull())
         m_returnValue = result;
@@ -161,7 +163,15 @@ void HTMLDialogElement::runFocusingSteps()
 void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    m_isModal = false;
+    setIsModal(false);
+}
+
+void HTMLDialogElement::setIsModal(bool newValue)
+{
+    if (m_isModal == newValue)
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassModal, newValue);
+    m_isModal = newValue;
 }
 
 }

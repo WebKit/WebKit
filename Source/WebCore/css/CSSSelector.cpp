@@ -590,8 +590,8 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassLink:
                 builder.append(":link");
                 break;
-            case CSSSelector::PseudoClassModalDialog:
-                builder.append(":-internal-modal-dialog");
+            case CSSSelector::PseudoClassModal:
+                builder.append(":modal");
                 break;
             case CSSSelector::PseudoClassNoButton:
                 builder.append(":no-button");

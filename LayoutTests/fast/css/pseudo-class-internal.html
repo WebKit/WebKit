@@ -10,7 +10,6 @@ description('This tests that -internal- pseudo classes are not exposed');
 function runTest() {
     const internalPseudoClasses = [
         ':-internal-direct-focus',
-        ':-internal-modal-dialog',
     ];
     for (const pseudo of internalPseudoClasses) {
         shouldThrowErrorName('target.matches("' + pseudo + '")', 'SyntaxError');

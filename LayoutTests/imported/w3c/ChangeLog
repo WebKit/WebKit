@@ -1,5 +1,75 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r293987. rdar://problem/92775435
+
+    Implement CSS :modal pseudo class
+    https://bugs.webkit.org/show_bug.cgi?id=240109
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    Add and extend tests for :modal pseudo-class.
+    
+    * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has-expected.txt: Added.
+    * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html: Added.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal.html:
+    
+    Source/WebCore:
+    
+    Test: imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html
+    
+    Renames :-internal-modal-dialog to :modal and adds :has() invalidation support.
+    
+    * css/CSSSelector.cpp:
+    (WebCore::CSSSelector::selectorText const):
+    * css/CSSSelector.h:
+    * css/SelectorChecker.cpp:
+    (WebCore::SelectorChecker::checkOne const):
+    * css/SelectorCheckerTestFunctions.h:
+    (WebCore::matchesModalPseudoClass):
+    (WebCore::matchesModalDialogPseudoClass): Deleted.
+    * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+    * css/dialog.css:
+    (dialog:modal):
+    (dialog:-internal-modal-dialog): Deleted.
+    * css/parser/CSSSelectorParser.cpp:
+    (WebCore::CSSSelectorParser::consumePseudo):
+    * cssjit/SelectorCompiler.cpp:
+    (WebCore::SelectorCompiler::JSC_DEFINE_JIT_OPERATION):
+    (WebCore::SelectorCompiler::addPseudoClassType):
+    * html/HTMLDialogElement.cpp:
+    (WebCore::HTMLDialogElement::showModal):
+    (WebCore::HTMLDialogElement::close):
+    (WebCore::HTMLDialogElement::removedFromAncestor):
+    (WebCore::HTMLDialogElement::setIsModal):
+    * html/HTMLDialogElement.h:
+    
+    LayoutTests:
+    
+    Removes :-internal-modal-dialog from internal pseudo classes.
+    
+    * fast/css/pseudo-class-internal-expected.txt:
+    * fast/css/pseudo-class-internal.html:
+    
+    Canonical link: https://commits.webkit.org/250424@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293987 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-09  Tim Nguyen  <ntim@apple.com>
+
+            Implement CSS :modal pseudo class
+            https://bugs.webkit.org/show_bug.cgi?id=240109
+
+            Reviewed by Simon Fraser.
+
+            Add and extend tests for :modal pseudo-class.
+
+            * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has-expected.txt: Added.
+            * web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html: Added.
+            * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-show-modal.html:
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/88672183
 
     2022-02-19  Antoine Quint  <graouts@webkit.org>
