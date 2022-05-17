@@ -69,7 +69,7 @@ public:
             return;
         }
 
-        flushDrawingContext();
+        flushDrawingContextAsync();
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
     }
 
