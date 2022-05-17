@@ -1,0 +1,4 @@
+
+
+FAIL whitespace should not be eaten after parent style recalculation assert_equals: expected "a b" but got ""
+

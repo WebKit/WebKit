@@ -1,3 +1,13 @@
+2022-05-17  Tim Nguyen  <ntim@apple.com>
+
+        [iOS] Rebaseline 2 tests in imported/w3c/web-platform-tests/html/semantics/forms/
+        https://bugs.webkit.org/show_bug.cgi?id=240512
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/beforeinput.tentative-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-whitespace-expected.txt: Added.
+
 2022-05-17  Ziran Sun  <zsun@igalia.com>
 
         tidy up some test expectations files after resync html/semantics/forms tests
