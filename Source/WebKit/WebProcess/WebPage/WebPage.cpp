@@ -4875,6 +4875,7 @@ void WebPage::scrollTextRangeToVisible(const WebFoundTextRange& range)
 
 void WebPage::clearAllDecoratedFoundText()
 {
+    hideFindUI();
     foundTextRangeController().clearAllDecoratedFoundText();
 }
 

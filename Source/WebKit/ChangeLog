@@ -1,3 +1,52 @@
+2022-05-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r294175. rdar://problem/91441895
+
+    [iOS] Multiple visible find highlights when searching for text after beginning a "find from selection"
+    https://bugs.webkit.org/show_bug.cgi?id=240393
+    rdar://91441895
+    
+    Reviewed by Wenson Hsieh.
+    
+    Some WebKit clients use SPI on WKWebView to support "find from selection"
+    functionality (the Cmd+E shortcut). However, to support general
+    find functionality, they use new find API that uses a different codepath
+    to draw highlights. Mixing use of the API and SPI can currently result
+    in two highlights showing up.
+    
+    To fix, ensure SPI highlights are removed once the API is being used.
+    The long term solution is for clients to adopt API for the
+    "find from selection" functionality, but in the short term the SPI
+    should remain supported.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::clearAllDecoratedFoundText):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294175 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+            [iOS] Multiple visible find highlights when searching for text after beginning a "find from selection"
+            https://bugs.webkit.org/show_bug.cgi?id=240393
+            rdar://91441895
+
+            Reviewed by Wenson Hsieh.
+
+            Some WebKit clients use SPI on WKWebView to support "find from selection"
+            functionality (the Cmd+E shortcut). However, to support general
+            find functionality, they use new find API that uses a different codepath
+            to draw highlights. Mixing use of the API and SPI can currently result
+            in two highlights showing up.
+
+            To fix, ensure SPI highlights are removed once the API is being used.
+            The long term solution is for clients to adopt API for the
+            "find from selection" functionality, but in the short term the SPI
+            should remain supported.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::clearAllDecoratedFoundText):
+
 2022-05-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r294264. rdar://problem/93118830
