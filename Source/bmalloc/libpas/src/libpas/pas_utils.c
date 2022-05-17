@@ -32,6 +32,7 @@
 #include "pas_lock.h"
 #include "pas_log.h"
 #include "pas_string_stream.h"
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -113,7 +114,7 @@ void pas_assertion_failed_no_inline(const char* filename, int line, const char* 
 void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra)
 {
     pas_log("[%d] pas assertion failed (with extra detail): ", getpid());
-    pas_log("%s:%d: %s: assertion %s failed. Extra data: %llu.\n", filename, line, function, expression, extra);
+    pas_log("%s:%d: %s: assertion %s failed. Extra data: %" PRIu64 ".\n", filename, line, function, expression, extra);
     pas_crash_with_info_impl((uint64_t)filename, line, (uint64_t) function, (uint64_t) expression, extra, 1337, 0xbeef0bff);
 }
 
