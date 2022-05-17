@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,7 +179,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
         // http://w3c.github.io/IndexedDB/#request-convert-a-key-to-a-value
         RELEASE_AND_RETURN(scope, toJS<IDLNullable<IDLDate>>(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(key->date()).value())));
     case IndexedDB::KeyType::Number:
-        return jsNumber(key->number());
+        return jsNumber(purifyNaN(key->number()));
     case IndexedDB::KeyType::Min:
     case IndexedDB::KeyType::Max:
     case IndexedDB::KeyType::Invalid:

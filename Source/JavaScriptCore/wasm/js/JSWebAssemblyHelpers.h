@@ -153,7 +153,7 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     case Wasm::TypeKind::I32:
         return jsNumber(static_cast<int32_t>(bits));
     case Wasm::TypeKind::F32:
-        return jsNumber(bitwise_cast<float>(static_cast<int32_t>(bits)));
+        return jsNumber(purifyNaN(bitwise_cast<float>(static_cast<int32_t>(bits))));
     case Wasm::TypeKind::F64:
         return jsNumber(bitwise_cast<double>(bits));
     case Wasm::TypeKind::I64:

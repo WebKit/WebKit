@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3544,7 +3544,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            return jsNumber(d);
+            return jsNumber(purifyNaN(d));
         }
         case BigIntTag:
             return readBigInt();
@@ -3552,7 +3552,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            NumberObject* obj = constructNumber(m_globalObject, jsNumber(d));
+            NumberObject* obj = constructNumber(m_globalObject, jsNumber(purifyNaN(d)));
             m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }

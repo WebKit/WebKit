@@ -1,3 +1,43 @@
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r293220. rdar://problem/91924480
+
+    Apply purifyNaN in more places.
+    https://bugs.webkit.org/show_bug.cgi?id=239619
+    <rdar://problem/91924480>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Source/JavaScriptCore:
+    
+    * wasm/js/JSWebAssemblyHelpers.h:
+    (JSC::toJSValue):
+    
+    Source/WebCore:
+    
+    * bindings/js/IDBBindingUtilities.cpp:
+    (WebCore::toJS):
+    * bindings/js/JSDOMConvertWebGL.cpp:
+    (WebCore::convertToJSValue):
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneDeserializer::readTerminal):
+    * bridge/objc/objc_utility.mm:
+    (JSC::Bindings::convertObjcValueToValue):
+    
+    Canonical link: https://commits.webkit.org/249889@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293220 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-22  Mark Lam  <mark.lam@apple.com>
+
+            Apply purifyNaN in more places.
+            https://bugs.webkit.org/show_bug.cgi?id=239619
+            <rdar://problem/91924480>
+
+            Reviewed by Yusuke Suzuki.
+
+            * wasm/js/JSWebAssemblyHelpers.h:
+            (JSC::toJSValue):
+
 2022-04-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r287877. rdar://problem/92357915

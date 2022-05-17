@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -238,9 +238,9 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffe
         case ObjcUnsignedLongLongType:
             return jsNumber(*(unsigned long long*)buffer);
         case ObjcFloatType:
-            return jsNumber(*(float*)buffer);
+            return jsNumber(purifyNaN(*(float*)buffer));
         case ObjcDoubleType:
-            return jsNumber(*(double*)buffer);
+            return jsNumber(purifyNaN(*(double*)buffer));
         default:
             // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
