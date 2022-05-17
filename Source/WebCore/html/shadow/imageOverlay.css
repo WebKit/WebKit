@@ -62,6 +62,8 @@ div.image-overlay-block {
     line-height: 1.2em;
     box-sizing: border-box;
     white-space: normal;
+    word-break: break-word;
+    letter-spacing: normal;
 }
 
 div.image-overlay-line, .image-overlay-text, div.image-overlay-block {

@@ -7808,7 +7808,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
 
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
-    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), options.identifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), options.source, options.target), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;
@@ -7879,13 +7879,10 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
     completionHandler(updateResult);
 }
 
-void WebPage::startImageAnalysis(const String& identifier)
+void WebPage::startImageAnalysis(const String& source, const String& target)
 {
-    if (RefPtr document = m_mainFrame->coreFrame()->document()) {
-        // We only consider main document content for now, to match the behavior of the corresponding feature
-        // that will trigger this codepath.
-        corePage()->imageAnalysisQueue().enqueueAllImages(*document, identifier);
-    }
+    if (RefPtr document = m_mainFrame->coreFrame()->document())
+        corePage()->imageAnalysisQueue().enqueueAllImages(*document, source, target);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

@@ -2314,15 +2314,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
-- (void)_startImageAnalysis:(NSString *)identifier
+- (void)_startImageAnalysis:(NSString *)source target:(NSString *)target
 {
 #if ENABLE(IMAGE_ANALYSIS)
     THROW_IF_SUSPENDED;
 
-    if (!_page || !_page->preferences().textRecognitionEnhancementsEnabled())
+    if (!_page || !_page->preferences().imageAnalysisQueueEnabled())
         return;
 
-    _page->startImageAnalysis(identifier);
+    _page->startImageAnalysis(source, target);
 #endif
 }
 

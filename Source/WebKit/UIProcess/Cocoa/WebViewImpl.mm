@@ -249,7 +249,7 @@ static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRe
     return request;
 }
 
-void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& source, const String& target, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
 {
     if (!isLiveTextAvailableAndEnabled()) {
         completion({ });
@@ -265,10 +265,11 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
     auto cgImage = imageBitmap->makeCGImage();
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (!identifier.isEmpty())
-        return requestImageAnalysisWithIdentifier(ensureImageAnalyzer(), imageURL, identifier, cgImage.get(), WTFMove(completion));
+    if (!target.isEmpty())
+        return requestImageAnalysisWithIdentifiers(ensureImageAnalyzer(), imageURL, source, target, cgImage.get(), WTFMove(completion));
 #else
-    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(source);
+    UNUSED_PARAM(target);
 #endif
 
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);

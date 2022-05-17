@@ -46,7 +46,7 @@ public:
     ImageAnalysisQueue(Page&);
     ~ImageAnalysisQueue();
 
-    WEBCORE_EXPORT void enqueueAllImages(Document&, const String& identifier);
+    WEBCORE_EXPORT void enqueueAllImages(Document&, const String& source, const String& target);
     void clear();
 
     void enqueueIfNeeded(HTMLImageElement&);
@@ -67,7 +67,8 @@ private:
     static bool firstIsHigherPriority(const Task&, const Task&);
     unsigned nextTaskNumber() { return ++m_currentTaskNumber; }
 
-    String m_identifier;
+    String m_source;
+    String m_target;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashMap<HTMLImageElement, URL> m_queuedElements;

@@ -246,7 +246,7 @@ TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:5];
 
     NSArray<NSString *> *overlaysAsText = [webView objectByEvaluatingJavaScript:@"imageOverlaysAsText()"];
@@ -268,7 +268,7 @@ TEST(ImageAnalysisTests, AnalyzeImagesInSubframes)
     }];
     Util::run(&doneInsertingFrame);
 
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:10];
 }
 
@@ -278,7 +278,7 @@ TEST(ImageAnalysisTests, AnalyzeImageAfterChangingSource)
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"image"];
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:1];
 
     [webView objectByEvaluatingJavaScript:@"document.querySelector('img').src = 'icon.png'"];
@@ -291,7 +291,7 @@ TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:5];
 
     [webView objectByEvaluatingJavaScript:@"appendImage('apple.gif')"];
@@ -313,7 +313,7 @@ TEST(ImageAnalysisTests, ResetImageAnalysisAfterNavigation)
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:5];
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
@@ -329,7 +329,7 @@ TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"offscreen-image"];
-    [webView _startImageAnalysis:nil];
+    [webView _startImageAnalysis:nil target:nil];
     [webView waitForImageAnalysisRequests:2];
 
     auto firstRequestedImage = [processedRequests().first() image];
@@ -345,7 +345,7 @@ TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"fade-in-image"];
-    [webView _startImageAnalysis:@"foo"];
+    [webView _startImageAnalysis:@"foo" target:@"bar"];
     [webView waitForImageAnalysisRequests:1];
 
     CGImagePixelReader reader { [processedRequests().first() image] };

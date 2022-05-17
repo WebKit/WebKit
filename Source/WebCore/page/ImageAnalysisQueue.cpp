@@ -112,16 +112,16 @@ void ImageAnalysisQueue::resumeProcessingSoon()
     m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
 }
 
-void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& identifier)
+void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& source, const String& target)
 {
     if (!m_page)
         return;
 
-    if (m_identifier != identifier) {
+    if (source != m_source || target != m_target)
         clear();
-        m_identifier = identifier;
-    }
 
+    m_source = source;
+    m_target = target;
     enqueueAllImagesRecursive(document);
 }
 
@@ -152,8 +152,8 @@ void ImageAnalysisQueue::resumeProcessing()
         if (auto* image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
-        auto allowSnapshots = m_identifier.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
-        m_page->chrome().client().requestTextRecognition(*element, { m_identifier, allowSnapshots }, [this, page = m_page] (auto&&) {
+        auto allowSnapshots = m_target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
+        m_page->chrome().client().requestTextRecognition(*element, { m_source, m_target, allowSnapshots }, [this, page = m_page] (auto&&) {
             if (!page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
@@ -172,7 +172,8 @@ void ImageAnalysisQueue::clear()
     m_resumeProcessingTimer.stop();
     m_queue = { };
     m_queuedElements.clear();
-    m_identifier = { };
+    m_source = { };
+    m_target = { };
     m_currentTaskNumber = 0;
 }
 
