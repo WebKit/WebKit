@@ -31,11 +31,6 @@ namespace WTF {
 
 #include <WebKitAdditions/ExperimentalFeatureNameAdditions.h>
 
-#else
-
-#define WebKitAdditionsFeature1HumanReadableName "WebKitAdditions Feature"
-#define WebKitAdditionsFeature1HumanReadableDescription "WebKitAdditions Feature"
-
 #endif
 
 }
