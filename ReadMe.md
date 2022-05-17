@@ -27,12 +27,6 @@ On Windows, follow the [instructions on our website](https://webkit.org/webkit-o
 Run the following command to clone WebKit's Git SVN repository:
 
 ```
-git clone git@github.com:WebKit/WebKit.git WebKit
-```
-
-or
-
-```
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
