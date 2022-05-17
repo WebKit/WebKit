@@ -336,6 +336,7 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
     bool needsUpdateForWheelEventHandlers = false;
     bool needsUpdateForTouchActionElements = false;
     bool needsUpdateForEditableElements = false;
+    bool needsUpdateForInteractionRegions = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
     needsUpdateForWheelEventHandlers = m_doc->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
@@ -349,7 +350,10 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
     // Document::mayHaveEditableElements never changes from true to false currently.
     needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
 #endif
-    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    needsUpdateForInteractionRegions = m_page->shouldBuildInteractionRegions();
+#endif
+    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions)
         return;
 
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())

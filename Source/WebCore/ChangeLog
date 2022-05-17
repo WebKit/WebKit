@@ -1,5 +1,150 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r294160. rdar://problem/87170289
+
+    Add UI-side layers for optionally indicating interaction regions
+    https://bugs.webkit.org/show_bug.cgi?id=240372
+    <rdar://problem/87170289>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    * page/DebugPageOverlays.cpp:
+    (WebCore::pathsForRegion):
+    Move inline rect inflation into InteractionRegion so that all clients get it.
+    
+    * page/Page.cpp:
+    (WebCore::Page::shouldBuildInteractionRegions const):
+    * page/Page.h:
+    * page/Frame.cpp:
+    (WebCore::Frame::invalidateContentEventRegionsIfNeeded):
+    * rendering/RenderBlock.cpp:
+    (WebCore::RenderBlock::paintObject):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::maintainsEventRegion const):
+    (WebCore::RenderLayerBacking::updateEventRegion):
+    If the ENABLE() and setting are both enabled, update event regions
+    due to possible interaction region changes. We could make this more
+    conservative later, but chances are high that most layers include
+    interaction regions.
+    
+    For now, compute interaction regions only for the root layer.
+    In a future patch, we will adopt the normal fake paint mechanism
+    and maintain them on the layer that owns them.
+    
+    * page/InteractionRegion.cpp:
+    (WebCore::regionForElement):
+    Move inline rect inflation into InteractionRegion so that all clients get it.
+    Limit interaction rects to half of the viewport. Ignore regions that are larger.
+    
+    * page/InteractionRegion.h:
+    (WebCore::operator==): Added.
+    (WebCore::InteractionRegion::encode const):
+    (WebCore::InteractionRegion::decode):
+    Remove the isInline bit, since we only used it for rect inflation.
+    
+    * rendering/EventRegion.cpp:
+    (WebCore::EventRegion::operator== const):
+    (WebCore::EventRegion::translate):
+    (WebCore::EventRegion::uniteInteractionRegions):
+    (WebCore::EventRegion::computeInteractionRegions):
+    * rendering/EventRegion.h:
+    (WebCore::EventRegion::interactionRegions const):
+    (WebCore::EventRegion::encode const):
+    (WebCore::EventRegion::decode):
+    Store interaction regions on EventRegion.
+    
+    Source/WebKit:
+    
+    * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+    (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+    (WebKit::RemoteLayerTreePropertyApplier::applyHierarchyUpdates):
+    Allow RemoteLayerTreeInteractionRegionLayers to add and maintain layers for interaction regions.
+    
+    * SourcesCocoa.txt:
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.h: Added.
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm: Added.
+    (configureLayerForInteractionRegion):
+    (WebKit::interactionRegionForLayer):
+    (WebKit::isInteractionRegionLayer):
+    (WebKit::setInteractionRegion):
+    Box WebCore::InteractionRegion in a Objective-C object and store it on the layer.
+    Use this as a key to indicate that a given layer is an interaction region.
+    
+    (WebKit::appendInteractionRegionLayersForLayer):
+    Make sure that interaction region layers are always at the end of the layer's sublayers array.
+    
+    (WebKit::updateLayersForInteractionRegions):
+    Add new layers for interaction regions.
+    Maintain the same layer for regions that cover the same area.
+    Add a green wash if the default `WKInteractionRegionDebugFill` is set.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    Add a preference to toggle interaction region layers.
+    
+    Canonical link: https://commits.webkit.org/250529@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294160 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-13  Tim Horton  <timothy_horton@apple.com>
+
+            Add UI-side layers for optionally indicating interaction regions
+            https://bugs.webkit.org/show_bug.cgi?id=240372
+            <rdar://problem/87170289>
+
+            Reviewed by Dean Jackson.
+
+            * page/DebugPageOverlays.cpp:
+            (WebCore::pathsForRegion):
+            Move inline rect inflation into InteractionRegion so that all clients get it.
+
+            * page/Page.cpp:
+            (WebCore::Page::shouldBuildInteractionRegions const):
+            * page/Page.h:
+            * page/Frame.cpp:
+            (WebCore::Frame::invalidateContentEventRegionsIfNeeded):
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::paintObject):
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::maintainsEventRegion const):
+            (WebCore::RenderLayerBacking::updateEventRegion):
+            If the ENABLE() and setting are both enabled, update event regions
+            due to possible interaction region changes. We could make this more
+            conservative later, but chances are high that most layers include
+            interaction regions.
+
+            For now, compute interaction regions only for the root layer.
+            In a future patch, we will adopt the normal fake paint mechanism
+            and maintain them on the layer that owns them.
+
+            * page/InteractionRegion.cpp:
+            (WebCore::regionForElement):
+            Move inline rect inflation into InteractionRegion so that all clients get it.
+            Limit interaction rects to half of the viewport. Ignore regions that are larger.
+
+            * page/InteractionRegion.h:
+            (WebCore::operator==): Added.
+            (WebCore::InteractionRegion::encode const):
+            (WebCore::InteractionRegion::decode):
+            Remove the isInline bit, since we only used it for rect inflation.
+
+            * rendering/EventRegion.cpp:
+            (WebCore::EventRegion::operator== const):
+            (WebCore::EventRegion::translate):
+            (WebCore::EventRegion::uniteInteractionRegions):
+            (WebCore::EventRegion::computeInteractionRegions):
+            * rendering/EventRegion.h:
+            (WebCore::EventRegion::interactionRegions const):
+            (WebCore::EventRegion::encode const):
+            (WebCore::EventRegion::decode):
+            Store interaction regions on EventRegion.
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293993. rdar://problem/92993954
 
     Const-ify Node::willRespondTo*Events()

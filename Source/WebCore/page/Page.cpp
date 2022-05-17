@@ -1092,6 +1092,13 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     return WTF::map(rootEditableElements, [](const auto& element) { return element.copyRef(); });
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+bool Page::shouldBuildInteractionRegions() const
+{
+    return m_settings->interactionRegionsEnabled();
+}
+#endif
+
 const VisibleSelection& Page::selection() const
 {
     return CheckedRef(focusController())->focusedOrMainFrame().selection().selection();

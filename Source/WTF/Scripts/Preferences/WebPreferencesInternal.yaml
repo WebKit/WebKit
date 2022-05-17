@@ -496,6 +496,19 @@ InputTypeWeekEnabled:
     WebCore:
       default: false
 
+InteractionRegionsEnabled:
+  type: bool
+  humanReadableName: "Interaction Regions"
+  humanReadableDescription: "Generate and visualize interaction regions"
+  condition: ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+  defaultValue:
+    WebKit:
+      default: true
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
   type: bool

@@ -3887,6 +3887,8 @@
 		2D3A65E51A7C3AA700CAC637 /* WKFrameInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameInfoRef.h; sourceTree = "<group>"; };
 		2D3EF4401917646300034184 /* WebMemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMemoryPressureHandler.cpp; sourceTree = "<group>"; };
 		2D3EF4411917646300034184 /* WebMemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMemoryPressureHandler.h; sourceTree = "<group>"; };
+		2D40C2BB282E286E0052102D /* RemoteLayerTreeInteractionRegionLayers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeInteractionRegionLayers.h; sourceTree = "<group>"; };
+		2D40C2BC282E286E0052102D /* RemoteLayerTreeInteractionRegionLayers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeInteractionRegionLayers.mm; sourceTree = "<group>"; };
 		2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordField.h; path = PDF/PDFPluginPasswordField.h; sourceTree = "<group>"; };
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitSoftLink.mm; sourceTree = "<group>"; };
@@ -8783,6 +8785,8 @@
 				1AB16ADF1648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm */,
 				1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */,
 				1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */,
+				2D40C2BB282E286E0052102D /* RemoteLayerTreeInteractionRegionLayers.h */,
+				2D40C2BC282E286E0052102D /* RemoteLayerTreeInteractionRegionLayers.mm */,
 				E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */,
 				E4E57F6821A83B0300345F3C /* RemoteLayerTreeNode.mm */,
 				0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */,

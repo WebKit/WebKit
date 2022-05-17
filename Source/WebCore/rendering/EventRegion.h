@@ -26,6 +26,8 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "InteractionRegion.h"
+#include "Node.h"
 #include "Region.h"
 #include "RenderStyleConstants.h"
 #include "TouchAction.h"
@@ -131,6 +133,12 @@ public:
 
     void dump(TextStream&) const;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    const Vector<InteractionRegion>& interactionRegions() const { return m_interactionRegions; }
+    void uniteInteractionRegions(const Vector<InteractionRegion>&);
+    void computeInteractionRegions(Page&, IntRect);
+#endif
+
 private:
 #if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
@@ -147,6 +155,9 @@ private:
 #endif
 #if ENABLE(EDITABLE_REGION)
     std::optional<Region> m_editableRegion;
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    Vector<InteractionRegion> m_interactionRegions;
 #endif
 };
 
@@ -165,6 +176,9 @@ void EventRegion::encode(Encoder& encoder) const
 #endif
 #if ENABLE(EDITABLE_REGION)
     encoder << m_editableRegion;
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    encoder << m_interactionRegions;
 #endif
 }
 
@@ -210,6 +224,14 @@ std::optional<EventRegion> EventRegion::decode(Decoder& decoder)
     if (!editableRegion)
         return std::nullopt;
     eventRegion.m_editableRegion = WTFMove(*editableRegion);
+#endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    std::optional<Vector<InteractionRegion>> interactionRegions;
+    decoder >> interactionRegions;
+    if (!interactionRegions)
+        return std::nullopt;
+    eventRegion.m_interactionRegions = WTFMove(*interactionRegions);
 #endif
 
     return eventRegion;

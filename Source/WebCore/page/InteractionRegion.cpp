@@ -73,39 +73,49 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
     if (!renderer)
         return std::nullopt;
 
-    Vector<FloatRect> rectsInContentsCoordinates;
-    
+    Vector<FloatRect> rectsInContentCoordinates;
     InteractionRegion region;
-
     auto linkRange = makeRangeSelectingNode(element);
     
     if (linkRange)
         region.hasLightBackground = estimatedBackgroundColorForRange(*linkRange, *element.document().frame()).luminance() > 0.5;
     
     if (linkRange && renderer->isInline() && !renderer->isReplacedOrInlineBlock()) {
-        region.isInline = true;
-
+        static constexpr float inlinePadding = 3;
         OptionSet<RenderObject::BoundingRectBehavior> behavior { RenderObject::BoundingRectBehavior::RespectClipping };
-        rectsInContentsCoordinates = RenderObject::absoluteTextRects(*linkRange, behavior).map([&](auto rect) -> FloatRect {
+        rectsInContentCoordinates = RenderObject::absoluteTextRects(*linkRange, behavior).map([&](auto rect) -> FloatRect {
+            rect.inflate(inlinePadding);
             return rect;
         });
 
-        if (rectsInContentsCoordinates.isEmpty()) {
+        if (rectsInContentCoordinates.isEmpty()) {
             auto boundingRectForRange = absoluteBoundingRectForRange(*linkRange);
-            if (!boundingRectForRange.isEmpty())
-                rectsInContentsCoordinates = { boundingRectForRange };
+            if (!boundingRectForRange.isEmpty()) {
+                boundingRectForRange.inflate(inlinePadding);
+                rectsInContentCoordinates = { boundingRectForRange };
+            }
         }
     }
 
-    if (rectsInContentsCoordinates.isEmpty())
-        rectsInContentsCoordinates = { renderer->absoluteBoundingBoxRect() };
+    if (rectsInContentCoordinates.isEmpty())
+        rectsInContentCoordinates = { renderer->absoluteBoundingBoxRect() };
     
+    auto layoutArea = mainFrameView.layoutSize().area();
+    rectsInContentCoordinates = compactMap(rectsInContentCoordinates, [&] (auto rect) -> std::optional<FloatRect> {
+        if (rect.area() > layoutArea / 2)
+            return std::nullopt;
+        return rect;
+    });
+    
+    if (rectsInContentCoordinates.isEmpty())
+        return std::nullopt;
+
     if (is<RenderBox>(*renderer)) {
         RoundedRect::Radii borderRadii = downcast<RenderBox>(*renderer).borderRadii();
         region.borderRadius = borderRadii.minimumRadius();
     }
 
-    region.rectsInContentCoordinates = rectsInContentsCoordinates.map([&](auto rect) {
+    region.rectsInContentCoordinates = rectsInContentCoordinates.map([&](auto rect) {
         auto contentsRect = rect;
 
         if (&frameView != &mainFrameView)
