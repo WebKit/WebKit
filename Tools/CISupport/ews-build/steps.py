@@ -5116,12 +5116,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
             return {'step': f'Failed to canonicalize {commit_pluralized}'}
         return super(Canonicalize, self).getResultSummary()
 
-    def doStepIf(self, step):
-        return self.getProperty('github.number', False)
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
 
 class PushPullRequestBranch(shell.ShellCommand):
     name = 'push-pull-request-branch'

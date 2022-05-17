@@ -6206,10 +6206,29 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_skipped_patch(self):
+    def test_patch(self):
         self.setupStep(Canonicalize())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Canonicalize Commit (skipped)')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'checkout', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
         return self.runStep()
 
     def test_success(self):
