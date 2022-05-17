@@ -1,5 +1,40 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r293433. rdar://problem/91981865
+
+    [WebAuthn] Do not pass ASCCredentialRequestTypePlatform... if LocalService unavailable
+    https://bugs.webkit.org/show_bug.cgi?id=239746
+    rdar://91981865
+    
+    Reviewed by Brent Fulgham.
+    
+    Passing platform in requestTypes breaks the UI in registerations with the syncing platform
+    authenticator off and local service is unavailable. This patch stops passing it in this case.
+    
+    * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+    (WebKit::configureRegistrationRequestContext):
+    (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+    
+    Canonical link: https://commits.webkit.org/249993@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293433 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-26  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Do not pass ASCCredentialRequestTypePlatform... if LocalService unavailable
+            https://bugs.webkit.org/show_bug.cgi?id=239746
+            rdar://91981865
+
+            Reviewed by Brent Fulgham.
+
+            Passing platform in requestTypes breaks the UI in registerations with the syncing platform
+            authenticator off and local service is unavailable. This patch stops passing it in this case.
+
+            * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+            (WebKit::configureRegistrationRequestContext):
+            (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293170. rdar://problem/91117803
 
     AVSampleBufferRenderSynchronizer timeline sometimes goes backwards when playback begins
