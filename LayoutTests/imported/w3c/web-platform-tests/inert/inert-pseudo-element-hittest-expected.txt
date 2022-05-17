@@ -1,0 +1,6 @@
+Manual test: hover the green square, pass if it does not turn red.
+
+
+PASS Hit-testing cannot reach pseudo elements of inert nodes
+PASS Hit-testing can reach pseudo elements of non-inert nodes
+
