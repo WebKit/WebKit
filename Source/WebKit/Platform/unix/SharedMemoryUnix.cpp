@@ -117,6 +117,7 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
 {
     switch (protection) {
     case SharedMemory::Protection::ReadOnly:
+    case SharedMemory::Protection::CopyOnWrite:
         return PROT_READ;
     case SharedMemory::Protection::ReadWrite:
         return PROT_READ | PROT_WRITE;
@@ -202,7 +203,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
     ASSERT(!handle.isNull());
 
     UnixFileDescriptor fd = handle.m_attachment.release();
-    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, fd.value(), 0);
+    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), protection == SharedMemory::Protection::CopyOnWrite ? MAP_PRIVATE : MAP_SHARED, fd.value(), 0);
     fd = { };
     if (data == MAP_FAILED)
         return nullptr;

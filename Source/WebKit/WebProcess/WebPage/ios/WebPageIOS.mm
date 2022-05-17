@@ -44,7 +44,7 @@
 #import "RevealItem.h"
 #import "SandboxUtilities.h"
 #import "ShareableBitmapUtilities.h"
-#import "SharedBufferCopy.h"
+#import "SharedBufferReference.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
 #import "TapHandlingResult.h"
@@ -626,7 +626,7 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
     completionHandler({ });
 }
 
-void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
+void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });
@@ -3350,11 +3350,13 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
         if (!buffer)
             return;
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        if (!sharedMemoryBuffer)
-            return;
         SharedMemory::Handle handle;
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return;
+            sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        }
         send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }, authorizationToken));
     }
 }
@@ -4368,13 +4370,13 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
         auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
 
         frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
-        reply(IPC::SharedBufferCopy(SharedBuffer::create(pdfData.get())));
+        reply(SharedBuffer::create(pdfData.get()));
         return;
     }
 
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, 0, pageCount, pdfPageData);
-    reply(IPC::SharedBufferCopy(SharedBuffer::create(pdfPageData.get())));
+    reply(SharedBuffer::create(pdfPageData.get()));
 
     endPrinting();
 }
@@ -4824,15 +4826,16 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedShare
     // If we could create a handle from that existing resource then we could avoid this extra
     // allocation and copy.
 
-    auto sharedMemory = SharedMemory::copyBuffer(buffer);
-    if (!sharedMemory)
-        return;
-
     ShareableResource::Handle handle;
-    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
-    if (!shareableResource || !shareableResource->createHandle(handle))
-        return;
+    {
+        auto sharedMemory = SharedMemory::copyBuffer(buffer);
+        if (!sharedMemory)
+            return;
 
+        auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
+        if (!shareableResource || !shareableResource->createHandle(handle))
+            return;
+    }
     send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(handle));
 }
 

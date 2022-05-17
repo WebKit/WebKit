@@ -32,6 +32,7 @@
 #include "InitializationSegmentInfo.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
+#include "SharedBufferReference.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/ContentType.h>
@@ -192,13 +193,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(const SharedMemory::IPCHandle& bufferHandle)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& bufferCopy)
 {
-    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!sharedMemory)
+    if (!m_connectionToWebProcess)
         return;
 
-    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
+    auto buffer = bufferCopy.bufferWithOwner(m_connectionToWebProcess->webProcessIdentity(), MemoryLedger::Media);
+    if (buffer)
+        m_sourceBufferPrivate->append(buffer.releaseNonNull());
 }
 
 void RemoteSourceBufferProxy::abort()

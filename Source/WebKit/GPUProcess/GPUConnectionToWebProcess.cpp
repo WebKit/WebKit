@@ -477,7 +477,7 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
     if (!m_remoteMediaResourceManager)
-        m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
+        m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>(webProcessIdentity());
 
     return *m_remoteMediaResourceManager;
 }
