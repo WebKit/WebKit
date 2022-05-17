@@ -1,3 +1,20 @@
+2022-05-17  Ziran Sun  <zsun@igalia.com>
+
+        tidy up some test expectations files after resync html/semantics/forms tests
+        https://bugs.webkit.org/show_bug.cgi?id=240451
+
+        Reviewed by Tim Nguyen.
+
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+
 2022-05-16  Oriol Brufau  <obrufau@igalia.com>
 
         Take intrinsicBorderForFieldset() into account in intrinsically sized fieldset
