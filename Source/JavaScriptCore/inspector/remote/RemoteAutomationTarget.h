@@ -41,12 +41,16 @@ public:
     bool isPaired() const { return m_paired; }
     void setIsPaired(bool);
 
+    bool isPendingTermination() const { return m_pendingTermination; }
+    void setIsPendingTermination() { m_pendingTermination = true; }
+
     virtual String name() const = 0;
     RemoteControllableTarget::Type type() const override { return RemoteControllableTarget::Type::Automation; }
     bool remoteControlAllowed() const override { return !m_paired; };
 
 private:
     bool m_paired { false };
+    bool m_pendingTermination { false };
 };
 
 } // namespace Inspector

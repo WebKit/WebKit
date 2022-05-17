@@ -198,6 +198,9 @@ void RemoteConnectionToTarget::targetClosed()
 void RemoteConnectionToTarget::close()
 {
     auto targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
+
+    if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(m_target))
+        automationTarget->setIsPendingTermination();
     
     dispatchAsyncOnTarget([this, targetIdentifier, strongThis = Ref { *this }]() {
         Locker locker { m_targetMutex };

@@ -466,6 +466,9 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
     // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
     ASSERT(isMainThread());
 
+    if (target.isPendingTermination())
+        return nullptr;
+
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
     [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
     [listing setObject:target.name() forKey:WIRSessionIdentifierKey];
