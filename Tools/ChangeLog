@@ -1,3 +1,54 @@
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r294208. rdar://problem/93118830
+
+    AX: Remove CSSDisplayContentsAXSupportEnabled flag
+    https://bugs.webkit.org/show_bug.cgi?id=240409
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    We added initial support without using this flag and will continue to
+    fix bugs as we find them, making this flag unnecessary.
+    
+    * page/RuntimeEnabledFeatures.h:
+    (WebCore::RuntimeEnabledFeatures::setCSSDisplayContentsAXSupportEnabled): Deleted.
+    (WebCore::RuntimeEnabledFeatures::cssDisplayContentsAXSupportEnabled const): Deleted.
+    
+    Source/WebKitLegacy/mac:
+    
+    We added initial support without using this flag and will continue to
+    fix bugs as we find them, making this flag unnecessary.
+    
+    * WebView/WebPreferenceKeysPrivate.h:
+    * WebView/WebPreferences.mm:
+    (-[WebPreferences cssDisplayContentsAXSupportEnabled]): Deleted.
+    (-[WebPreferences setCSSDisplayContentsAXSupportEnabled:]): Deleted.
+    * WebView/WebPreferencesPrivate.h:
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    
+    Tools:
+    
+    * DumpRenderTree/TestOptions.cpp:
+    (WTR::TestOptions::defaults):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-14  Tyler Wilcock  <tyler_w@apple.com>
+
+            AX: Remove CSSDisplayContentsAXSupportEnabled flag
+            https://bugs.webkit.org/show_bug.cgi?id=240409
+
+            Reviewed by Chris Fleizach.
+
+            * DumpRenderTree/TestOptions.cpp:
+            (WTR::TestOptions::defaults):
+
 2022-05-12  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r294088. rdar://problem/93134975
