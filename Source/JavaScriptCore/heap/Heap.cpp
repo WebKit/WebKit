@@ -292,7 +292,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     // schedule the timer if we've never done a collection.
     , m_fullActivityCallback(GCActivityCallback::tryCreateFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::tryCreateEdenTimer(this))
-    , m_sweeper(adoptRef(*new IncrementalSweeper(this, IncrementalSweeper::SweepAloneWithWorldStopped)))
+    , m_sweeper(adoptRef(*new IncrementalSweeper(this)))
     , m_stopIfNecessaryTimer(adoptRef(*new StopIfNecessaryTimer(vm)))
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
@@ -387,9 +387,8 @@ Heap::Heap(VM& vm, HeapType heapType)
     }
 
     for (unsigned i = numberOfParallelThreads - 1; i < numberOfParallelThreads; ++i) {
-        RefPtr<IncrementalSweeper> sweeper = adoptRef(*new IncrementalSweeper(this, IncrementalSweeper::SweepInParallel));
-        m_availableParallelSweepers.append(sweeper.get());
-        m_parallelSweepers.append(WTFMove(sweeper));
+        m_parallelSweepers.append(ParallelSweeper { this });
+        m_availableParallelSweepers.append(&m_parallelSweepers.last());
     }
     
     if (Options::useConcurrentGC()) {
@@ -1388,7 +1387,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     m_helperClient.setFunction(
         [this] () {
             SlotVisitor* visitor = nullptr;
-            IncrementalSweeper* sweeper = nullptr;
+            ParallelSweeper* sweeper = nullptr;
             {
                 Locker locker { m_parallelSlotVisitorLock };
                 if (!m_availableParallelSweepers.isEmpty())
@@ -1406,8 +1405,8 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
                 visitor->drainFromShared(SlotVisitor::HelperDrain);
             } else {
                 sweeper->startSweeping(*this);
-                while (sweeper->isScheduled())
-                    sweeper->doWork(vm());
+                while (sweeper->sweepNextBlockInParallel(this->vm()) && !m_parallelMarkersShouldExit);
+                sweeper->stopSweeping();
             }
 
             if (false)

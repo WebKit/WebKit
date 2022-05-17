@@ -43,20 +43,16 @@ void IncrementalSweeper::scheduleTimer()
     setTimeUntilFire(sweepTimeSlice * sweepTimeMultiplier);
 }
 
-IncrementalSweeper::IncrementalSweeper(Heap* heap, IncrementalSweeperThreadType sweeperThreadType)
+IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : Base(heap->vm())
     , m_currentDirectory(nullptr)
-    , m_sweeperThreadType(sweeperThreadType)
 {
 }
 
 void IncrementalSweeper::doWork(VM& vm)
 {
-    doSweep(vm, MonotonicTime::now());
-}
+    auto sweepBeginTime = MonotonicTime::now();
 
-void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
-{
     while (sweepNextBlock(vm)) {
         Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
@@ -67,7 +63,6 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
     }
 
     if (m_shouldFreeFastMallocMemoryAfterSweeping) {
-        RELEASE_ASSERT(m_sweeperThreadType == SweepAloneWithWorldStopped);
         WTF::releaseFastMallocFreeMemory();
         m_shouldFreeFastMallocMemoryAfterSweeping = false;
     }
@@ -76,9 +71,6 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
 
 bool IncrementalSweeper::sweepNextBlock(VM& vm)
 {
-    if (m_sweeperThreadType != SweepAloneWithWorldStopped)
-        return sweepNextBlockInParallel(vm);
-
     vm.heap.stopIfNecessary();
 
     MarkedBlock::Handle* block = nullptr;
@@ -99,11 +91,33 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
     return vm.heap.sweepNextLogicallyEmptyWeakBlock();
 }
 
-bool IncrementalSweeper::sweepNextBlockInParallel(VM&)
+void IncrementalSweeper::startSweeping(Heap& heap)
+{
+    if (false)
+        dataLogLn("Start sweeping");
+    scheduleTimer();
+    m_currentDirectory = heap.objectSpace().firstDirectory();
+}
+
+void IncrementalSweeper::stopSweeping()
+{
+    if (false)
+        dataLogLn("Stop sweeping");
+    m_currentDirectory = nullptr;
+    cancelTimer();
+}
+
+void ParallelSweeper::startSweeping(Heap& heap)
+{
+    if (false)
+        dataLogLn("Start sweeping in parallel");
+    m_currentDirectory = heap.objectSpace().firstDirectory();
+}
+
+bool ParallelSweeper::sweepNextBlockInParallel(VM&)
 {
     if (false)
         dataLogLn("Sweeping block in parallel?");
-    RELEASE_ASSERT(m_sweeperThreadType == SweepInParallel);
     MarkedBlock::Handle* block = nullptr;
     
     for (; m_currentDirectory; m_currentDirectory = m_currentDirectory->nextDirectory()) {
@@ -117,25 +131,18 @@ bool IncrementalSweeper::sweepNextBlockInParallel(VM&)
     if (!block)
         return false;
     if (false)
-        dataLogLn("*****Sweeping block in parallel ", RawPointer(block->atomAt(0)));
+        dataLogLn("Sweeping block in parallel ", RawPointer(block->atomAt(0)));
     
     block->sweepInParallel();
 
     return true;
 }
 
-void IncrementalSweeper::startSweeping(Heap& heap)
+void ParallelSweeper::stopSweeping()
 {
     if (false)
-        dataLogLn("Start sweeping, parallel? ", m_sweeperThreadType == SweepInParallel);
-    scheduleTimer();
-    m_currentDirectory = heap.objectSpace().firstDirectory();
-}
-
-void IncrementalSweeper::stopSweeping()
-{
+        dataLogLn("Stop sweeping in parallel");
     m_currentDirectory = nullptr;
-    cancelTimer();
 }
 
 } // namespace JSC

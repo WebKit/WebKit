@@ -36,28 +36,31 @@ class IncrementalSweeper final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    enum IncrementalSweeperThreadType: uint8_t { SweepAloneWithWorldStopped, SweepInParallel };
-    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*, IncrementalSweeperThreadType);
+    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
+    void freeFastMallocMemoryAfterSweeping() { m_shouldFreeFastMallocMemoryAfterSweeping = true; }
 
     JS_EXPORT_PRIVATE void startSweeping(Heap&);
-    void freeFastMallocMemoryAfterSweeping()
-    { 
-        RELEASE_ASSERT(m_sweeperThreadType == SweepAloneWithWorldStopped);
-        m_shouldFreeFastMallocMemoryAfterSweeping = true;
-    }
-
-    void doWork(VM&) final;
     void stopSweeping();
-
+    void doWork(VM&) final;
+    
 private:
-    bool sweepNextBlock(VM&);
-    bool sweepNextBlockInParallel(VM&);
-    void doSweep(VM&, MonotonicTime startTime);
     void scheduleTimer();
+    bool sweepNextBlock(VM&);
     
     BlockDirectory* m_currentDirectory;
     bool m_shouldFreeFastMallocMemoryAfterSweeping { false };
-    IncrementalSweeperThreadType m_sweeperThreadType;
+};
+
+class ParallelSweeper final {
+public:
+    JS_EXPORT_PRIVATE explicit ParallelSweeper(Heap*) {};
+
+    void startSweeping(Heap&);
+    void stopSweeping();
+    bool sweepNextBlockInParallel(VM&);
+
+private:    
+    BlockDirectory* m_currentDirectory;
 };
 
 } // namespace JSC

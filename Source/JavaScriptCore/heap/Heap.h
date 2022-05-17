@@ -34,6 +34,7 @@
 #include "HandleSet.h"
 #include "HeapFinalizerCallback.h"
 #include "HeapObserver.h"
+#include "IncrementalSweeper.h"
 #include "IsoCellSet.h"
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
@@ -89,6 +90,7 @@ class MarkedArgumentBufferBase;
 class MarkingConstraint;
 class MarkingConstraintSet;
 class MutatorScheduler;
+class ParallelSweeper;
 class RunningScope;
 class SlotVisitor;
 class SpaceTimeMutatorScheduler;
@@ -796,8 +798,8 @@ private:
     // them at the end.
     Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
     Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
-    Vector<RefPtr<IncrementalSweeper>> m_parallelSweepers;
-    Vector<IncrementalSweeper*> m_availableParallelSweepers WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
+    Vector<ParallelSweeper> m_parallelSweepers;
+    Vector<ParallelSweeper*> m_availableParallelSweepers WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
     
     HandleSet m_handleSet;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;
