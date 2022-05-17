@@ -1,3 +1,22 @@
+2022-05-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Demote -[WKWebView retrieveAccessibilityTreeData:] to SPI
+        https://bugs.webkit.org/show_bug.cgi?id=240494
+        rdar://93385094
+
+        Reviewed by Tim Horton.
+
+        This method was only intended for use in MiniBrowser, and should not ship as public API on WKWebView. Move the
+        declaration and implementation of this over to WKWebViewPrivateForTestingMac.h and WKWebViewTestingMac.mm
+        (respectively), and additionally prefix this testing-only SPI with an underscore.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView retrieveAccessibilityTreeData:]): Deleted.
+        * UIProcess/API/mac/WKWebViewPrivateForTestingMac.h:
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView _retrieveAccessibilityTreeData:]):
+
 2022-05-16  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(r249162): CanvasRenderingContext2DBase::drawImage() crashes if the image is animated and the first frame cannot be decoded
