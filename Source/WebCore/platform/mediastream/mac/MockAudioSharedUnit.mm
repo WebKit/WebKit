@@ -320,7 +320,7 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
         reconfigure();
 
     uint32_t totalFrameCount = alignTo16Bytes(delta.seconds() * sampleRate());
-    uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
+    uint32_t frameCount = std::min(totalFrameCount, static_cast<uint32_t>(AudioSession::sharedSession().bufferSize()));
 
     while (frameCount) {
         uint32_t bipBopStart = m_samplesRendered % m_bipBopBuffer.size();
@@ -334,7 +334,7 @@ void MockAudioSharedInternalUnit::generateSampleBuffers(MonotonicTime renderTime
         emitSampleBuffers(bipBopCount);
         m_samplesRendered += bipBopCount;
         totalFrameCount -= bipBopCount;
-        frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
+        frameCount = std::min(totalFrameCount, static_cast<uint32_t>(AudioSession::sharedSession().bufferSize()));
     }
 }
 
@@ -344,10 +344,15 @@ OSStatus MockAudioSharedInternalUnit::render(AudioUnitRenderActionFlags*, const 
     if (buffer->mNumberBuffers > sourceBuffer->mNumberBuffers)
         return kAudio_ParamError;
 
+    auto copySize = frameCount * m_streamFormat.mBytesPerPacket;
     for (uint32_t i = 0; i < buffer->mNumberBuffers; i++) {
+        ASSERT(copySize <= sourceBuffer->mBuffers[i].mDataByteSize);
+        if (copySize > buffer->mBuffers[i].mDataByteSize)
+            return kAudio_ParamError;
+
         auto* source = static_cast<uint8_t*>(sourceBuffer->mBuffers[i].mData);
         auto* destination = static_cast<uint8_t*>(buffer->mBuffers[i].mData);
-        memcpy(destination, source, frameCount * m_streamFormat.mBytesPerPacket);
+        memcpy(destination, source, copySize);
     }
 
     return 0;
