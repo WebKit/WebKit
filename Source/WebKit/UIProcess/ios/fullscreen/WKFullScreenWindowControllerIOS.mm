@@ -742,6 +742,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 - (void)exitFullScreen
 {
+    if (_fullScreenState == WebKit::NotInFullScreen)
+        return;
+
     if (_fullScreenState < WebKit::InFullScreen) {
         _exitRequested = YES;
         return;
@@ -786,12 +789,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [self _dismissFullscreenViewController];
 }
 
-- (void)_completedExitFullScreen
+- (void)_reinsertWebViewUnderPlaceholder
 {
-    if (_fullScreenState != WebKit::ExitingFullScreen)
-        return;
-    _fullScreenState = WebKit::NotInFullScreen;
-
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -811,6 +810,15 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [webView layoutIfNeeded];
 
     [CATransaction commit];
+}
+
+- (void)_completedExitFullScreen
+{
+    if (_fullScreenState != WebKit::ExitingFullScreen)
+        return;
+    _fullScreenState = WebKit::NotInFullScreen;
+
+    [self _reinsertWebViewUnderPlaceholder];
 
     if (auto* manager = self._manager) {
         manager->restoreScrollPosition();
@@ -978,19 +986,39 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         return;
 
     _shouldReturnToFullscreenFromPictureInPicture = false;
+    _exitRequested = NO;
+    _exitingFullScreen = NO;
+    _fullScreenState = WebKit::NotInFullScreen;
+    _shouldReturnToFullscreenFromPictureInPicture = false;
 
-    auto* manager = self._manager;
-    if (manager)
+    auto* page = [self._webView _page].get();
+    if (page)
+        page->setSuppressVisibilityUpdates(true);
+
+    [self _reinsertWebViewUnderPlaceholder];
+
+    if (auto* manager = self._manager) {
         manager->requestExitFullScreen();
-    [self exitFullScreen];
-    _fullScreenState = WebKit::ExitingFullScreen;
-    [self _completedExitFullScreen];
-    RetainPtr<WKWebView> webView = self._webView;
-    _webViewPlaceholder.get().parent = nil;
-    WebKit::replaceViewWithView(_webViewPlaceholder.get(), webView.get());
-    if (auto page = [webView _page])
-        page->setSuppressVisibilityUpdates(false);
+        manager->setAnimatingFullScreen(true);
+        manager->willExitFullScreen();
+        manager->restoreScrollPosition();
+        manager->setAnimatingFullScreen(false);
+        manager->didExitFullScreen();
+    }
+
+    [_webViewPlaceholder removeFromSuperview];
     _webViewPlaceholder = nil;
+    [_window setHidden:YES];
+    _window = nil;
+
+    if (page) {
+        page->setSuppressVisibilityUpdates(false);
+        page->setNeedsDOMWindowResizeEvent();
+    }
+
+    [_fullscreenViewController setPrefersStatusBarHidden:YES];
+    [_fullscreenViewController invalidate];
+    _fullscreenViewController = nil;
 }
 
 - (void)_invalidateEVOrganizationName

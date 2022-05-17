@@ -1,5 +1,84 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r293894. rdar://problem/74201964
+
+    [iOS] Infinite recursion at -[WKFullScreenWindowController _exitFullscreenImmediately]
+    https://bugs.webkit.org/show_bug.cgi?id=239744
+    <rdar://74201964>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Even after fullscreen is correctly torn down during an immediate exit, fullscreen can never again
+    be entered for the lifetime of the page. This is due to the ivar m_pendingExitFullscreen being set
+    to true with no opportunity for that state to be cleared. This occurs because the callbacks for
+    exiting fullscreen are performed before the lambda form FullscreenManager::exitFullscreen() is
+    called.
+    
+    Set m_pendingExitFullscreen inside exitFullscreen(), rather than the lambda, and clear it explicitly
+    in the cases where fullscreen exiting is not actually necessary.
+    
+    The mock behavior of Fullscreen inside DumpRenderTree and WebKitTestRunner are not able to exercise
+    this same path. Track improvements to this mock in bug #239747.
+    
+    * dom/FullscreenManager.cpp:
+    (WebCore::FullscreenManager::requestFullscreenForElement):
+    (WebCore::FullscreenManager::exitFullscreen):
+    (WebCore::FullscreenManager::setAnimatingFullscreen):
+    (WebCore::FullscreenManager::setFullscreenControlsHidden):
+    
+    Source/WebKit:
+    
+    When exiting fullscreen immediately, we trigger the correct state transition by calling
+    -[self exitFullScreen]. However, when no fullscreen manager exists (as may happen during
+    navigation), -exitFullscreen may itself call -_exitFullscreenImmediately, which causes an
+    infinite recursion and stack overflow.
+    
+    Unroll the implementation by performing all the same pieces as would have been done by
+    -exitFullScreen, but inline. Refactor out common behavior into -_reinsertWebViewUnderPlaceholder,
+    and call that both from -_exitFullscreenImmediately and _completedExitFullScreen.
+    
+    Unfortunately, no API tests are possible here because TestWebKitAPI is not an actual iOS UI
+    application.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+    (-[WKFullScreenWindowController exitFullScreen]):
+    (-[WKFullScreenWindowController _reinsertWebViewUnderPlaceholder]):
+    (-[WKFullScreenWindowController _completedExitFullScreen]):
+    (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+    
+    Canonical link: https://commits.webkit.org/250352@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293894 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-06  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Infinite recursion at -[WKFullScreenWindowController _exitFullscreenImmediately]
+            https://bugs.webkit.org/show_bug.cgi?id=239744
+            <rdar://74201964>
+
+            Reviewed by Eric Carlson.
+
+            When exiting fullscreen immediately, we trigger the correct state transition by calling
+            -[self exitFullScreen]. However, when no fullscreen manager exists (as may happen during
+            navigation), -exitFullscreen may itself call -_exitFullscreenImmediately, which causes an
+            infinite recursion and stack overflow.
+
+            Unroll the implementation by performing all the same pieces as would have been done by
+            -exitFullScreen, but inline. Refactor out common behavior into -_reinsertWebViewUnderPlaceholder,
+            and call that both from -_exitFullscreenImmediately and _completedExitFullScreen.
+
+            Unfortunately, no API tests are possible here because TestWebKitAPI is not an actual iOS UI
+            application.
+
+            * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+            (-[WKFullScreenWindowController exitFullScreen]):
+            (-[WKFullScreenWindowController _reinsertWebViewUnderPlaceholder]):
+            (-[WKFullScreenWindowController _completedExitFullScreen]):
+            (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293433. rdar://problem/91981865
 
     [WebAuthn] Do not pass ASCCredentialRequestTypePlatform... if LocalService unavailable
