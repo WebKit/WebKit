@@ -3484,7 +3484,7 @@ void SpeculativeJIT::compileValueRep(Node* node)
         // anymore. Unfortunately, this would be unsound. If it's a GetLocal or if the value was
         // subject to a prior SetLocal, filtering the value would imply that the corresponding
         // local was purified.
-        if (needsTypeCheck(node->child1(), ~SpecDoubleImpureNaN))
+        if (m_state.forNode(node->child1()).couldBeType(SpecDoubleImpureNaN))
             m_jit.purifyNaN(valueFPR);
 
         boxDouble(valueFPR, resultRegs);
@@ -4007,6 +4007,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     }
     
     if (format == DataFormatJS) {
+        m_jit.purifyNaN(resultReg);
         m_jit.boxDouble(resultReg, resultRegs);
         jsValueResult(resultRegs, node);
     } else {

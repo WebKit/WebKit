@@ -1,3 +1,18 @@
+2022-05-16  Saam Barati  <sbarati@apple.com>
+
+        Move around some NaN handling code
+        https://bugs.webkit.org/show_bug.cgi?id=240493
+        <rdar://92111504>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueRep):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::purifyNaN):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueRep):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2022-05-16  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r266885) Crash sometimes when rehydrating imported audit results

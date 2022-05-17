@@ -1964,16 +1964,19 @@ private:
         setInt32(integerValue);
     }
 
+    LValue purifyNaN(LValue value)
+    {
+        return m_out.select(m_out.doubleEqual(value, value), value, m_out.constDouble(PNaN));
+    }
+
     void compileValueRep()
     {
         switch (m_node->child1().useKind()) {
         case DoubleRepUse: {
             LValue value = lowDouble(m_node->child1());
             
-            if (m_interpreter.needsTypeCheck(m_node->child1(), ~SpecDoubleImpureNaN)) {
-                value = m_out.select(
-                    m_out.doubleEqual(value, value), value, m_out.constDouble(PNaN));
-            }
+            if (abstractValue(m_node->child1()).couldBeType(SpecDoubleImpureNaN))
+                value = purifyNaN(value);
             
             setJSValue(boxDouble(value));
             return;
@@ -13780,7 +13783,7 @@ IGNORE_CLANG_WARNINGS_END
             else
                 genericResult = strictInt52ToJSValue(m_out.zeroExt(genericResult, Int64));
         } else if (genericResult->type() == Double)
-            genericResult = boxDouble(genericResult);
+            genericResult = boxDouble(purifyNaN(genericResult));
 
         results.append(m_out.anchor(genericResult));
         m_out.jump(continuation);
