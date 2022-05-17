@@ -117,6 +117,7 @@ WK_EXPORT WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef page) WK_C_API_DEPR
 WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 
 WK_EXPORT uint64_t WKPageGetRenderTreeSize(WKPageRef page);
+WK_EXPORT uint64_t WKPageGetIdentifier(WKPageRef page);
 
 WK_EXPORT WKWebsiteDataStoreRef WKPageGetWebsiteDataStore(WKPageRef page);
 
