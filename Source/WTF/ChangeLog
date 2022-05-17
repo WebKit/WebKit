@@ -1,5 +1,40 @@
 2022-05-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r294265. rdar://problem/93118830
+
+    Remove abandoned WebKitAdditionsFeature1 flag (240462)
+    https://bugs.webkit.org/show_bug.cgi?id=240462
+    <rdar://93353298>
+    
+    Reviewed by Alex Christensen.
+    
+    Remove the abandoned WebKitAdditionsFeature1 preference, since
+    it ended up not being needed and now just complicates the build
+    and generated preferences.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    * wtf/ExperimentalFeatureNames.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294265 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+            Remove abandoned WebKitAdditionsFeature1 flag (240462)
+            https://bugs.webkit.org/show_bug.cgi?id=240462
+            <rdar://93353298>
+
+            Reviewed by Alex Christensen.
+
+            Remove the abandoned WebKitAdditionsFeature1 preference, since
+            it ended up not being needed and now just complicates the build
+            and generated preferences.
+
+            * Scripts/Preferences/WebPreferencesExperimental.yaml:
+            * wtf/ExperimentalFeatureNames.h:
+
+2022-05-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r294264. rdar://problem/93118830
 
     Remove abandoned UseScreenCaptureKit preference
