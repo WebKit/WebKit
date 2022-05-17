@@ -4384,6 +4384,22 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 };''',
             '')
 
+        self.assert_multi_line_lint(
+            '''\
+                enum class Foo : uint8_t {
+                    ONE,
+                    Two
+                };''',
+            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
+
+        self.assert_lint(
+            '''enum class Type : uint8_t { FIRST, SECOND };''',
+            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
+
+        self.assert_lint(
+            '''enum class Type : uint8_t { Uno, Dos };''',
+            '')
+
         self.assert_lint(
             '''enum { aOne = 1, zTwo = 2 };''',
             'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
