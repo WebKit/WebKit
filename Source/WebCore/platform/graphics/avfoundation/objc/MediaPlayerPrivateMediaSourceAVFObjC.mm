@@ -156,7 +156,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
         if (!weakThis)
             return;
 
-        DEBUG_LOG(logSiteIdentifier, "synchronizer fired for ", PAL::toMediaTime(time), ", seeking = ", m_seeking, ", pending = ", !!m_pendingSeek);
+        auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_seeking, ", pending = ", !!m_pendingSeek);
 
         if (m_seeking && !m_pendingSeek) {
             m_seeking = false;
@@ -171,7 +172,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
             seekInternal();
 
         if (m_currentTimeDidChangeCallback)
-            m_currentTimeDidChangeCallback(CMTIME_IS_NUMERIC(time) ? PAL::toMediaTime(time) : MediaTime::zeroTime());
+            m_currentTimeDidChangeCallback(clampedTime);
     }];
 }
 
@@ -337,7 +338,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (hostTime && [m_synchronizer respondsToSelector:@selector(setRate:time:atHostTime:)]) {
         auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
-        INFO_LOG(LOGIDENTIFIER, "setting rate to ", m_rate, " at host time ", PAL::CMTimeGetSeconds(cmHostTime));
+        ALWAYS_LOG(LOGIDENTIFIER, "setting rate to ", m_rate, " at host time ", PAL::CMTimeGetSeconds(cmHostTime));
         [m_synchronizer setRate:m_rate time:PAL::kCMTimeInvalid atHostTime:cmHostTime];
     } else
         [m_synchronizer setRate:m_rate];
@@ -363,7 +364,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<Monotonic
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (hostTime && [m_synchronizer respondsToSelector:@selector(setRate:time:atHostTime:)]) {
         auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
-        INFO_LOG(LOGIDENTIFIER, "setting rate to 0 at host time ", PAL::CMTimeGetSeconds(cmHostTime));
+        ALWAYS_LOG(LOGIDENTIFIER, "setting rate to 0 at host time ", PAL::CMTimeGetSeconds(cmHostTime));
         [m_synchronizer setRate:0 time:PAL::kCMTimeInvalid atHostTime:cmHostTime];
     } else
         [m_synchronizer setRate:0];
@@ -437,12 +438,20 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 {
-    MediaTime synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
+    MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();
     if (synchronizerTime < m_lastSeekTime)
         return m_lastSeekTime;
     return synchronizerTime;
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const
+{
+    if (m_lastSeekTime.isFinite() && time < m_lastSeekTime)
+        return m_lastSeekTime;
+
+    return time;
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
@@ -451,8 +460,11 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(Media
 
     if (m_currentTimeDidChangeCallback) {
         m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-            if (m_currentTimeDidChangeCallback)
-                m_currentTimeDidChangeCallback(CMTIME_IS_NUMERIC(time) ? PAL::toMediaTime(time) : MediaTime::zeroTime());
+            if (!m_currentTimeDidChangeCallback)
+                return;
+
+            auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+            m_currentTimeDidChangeCallback(clampedTime);
         }];
 
     } else
@@ -489,7 +501,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
-    INFO_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
+    ALWAYS_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
 
     m_seeking = true;
     m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold);
@@ -519,7 +531,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         m_lastSeekTime = MediaTime::createWithDouble(m_lastSeekTime.toDouble(), MediaTime::DefaultTimeScale);
 
     MediaTime synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
-    INFO_LOG(LOGIDENTIFIER, "seekTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime);
+    ALWAYS_LOG(LOGIDENTIFIER, "seekTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime);
 
     bool doesNotRequireSeek = synchronizerTime == m_lastSeekTime;
 
@@ -645,7 +657,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     if (m_videoOutput) {
         CMTime outputTime;
         if (auto pixelBuffer = adoptCF([m_videoOutput copyPixelBufferForSourceTime:PAL::toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime])) {
-            INFO_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", PAL::toMediaTime(outputTime));
+            ALWAYS_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", PAL::toMediaTime(outputTime));
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
         }
@@ -925,7 +937,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
     if (m_hasAvailableVideoFrame == flag)
         return;
 
-    DEBUG_LOG(LOGIDENTIFIER, flag);
+    ALWAYS_LOG(LOGIDENTIFIER, flag);
     m_hasAvailableVideoFrame = flag;
     updateAllRenderersHaveAvailableSamples();
 
@@ -953,7 +965,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto& properties = iter->value;
     if (properties.hasAudibleSample == flag)
         return;
-    DEBUG_LOG(LOGIDENTIFIER, flag);
+    ALWAYS_LOG(LOGIDENTIFIER, flag);
     properties.hasAudibleSample = flag;
     updateAllRenderersHaveAvailableSamples();
 }
@@ -1010,7 +1022,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
             return;
 
         MediaTime now = weakThis->currentMediaTime();
-        DEBUG_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
+        ALWAYS_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
 
         weakThis->pauseInternal();
         if (now < duration) {

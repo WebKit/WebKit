@@ -1,5 +1,65 @@
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r293170. rdar://problem/91117803
+
+    AVSampleBufferRenderSynchronizer timeline sometimes goes backwards when playback begins
+    https://bugs.webkit.org/show_bug.cgi?id=239471
+    rdar://91117803
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-current-time.html
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Log current time and requested
+    playback rate.
+    (WebCore::HTMLMediaElement::setPausedInternal): Log.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+    If time has gone backward, clamp to the most recent seek time.
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal): INFO_LOG -> ALWAYS_LOG
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal): Ditto.
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime const): Use clampTimeToLastSeekTime.
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime const): New,
+    clamp time value to the most recent seek time.
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback):
+    Use clampTimeToLastSeekTime.
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance): INFO_LOG -> ALWAYS_LOG
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal): INFO_LOG -> ALWAYS_LOG
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer): INFO_LOG -> ALWAYS_LOG
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame): INFO_LOG -> ALWAYS_LOG
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged): INFO_LOG -> ALWAYS_LOG
+    
+    Source/WebKit:
+    
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::currentTimeChanged): Log when time jumps backwards.
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-current-time-expected.txt: Added.
+    * media/media-source/media-source-current-time.html: Added.
+    
+    Canonical link: https://commits.webkit.org/249852@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293170 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+            AVSampleBufferRenderSynchronizer timeline sometimes goes backwards when playback begins
+            https://bugs.webkit.org/show_bug.cgi?id=239471
+            rdar://91117803
+
+            Reviewed by Jer Noble.
+
+            * media/media-source/media-source-current-time-expected.txt: Added.
+            * media/media-source/media-source-current-time.html: Added.
+
+2022-05-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293126. rdar://problem/90483049
 
     REGRESSION (r281913): Map toolbar flickers when dragging the map on https://gis.ee/

@@ -280,6 +280,7 @@ private:
     void stopVideoFrameMetadataGathering() final;
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
     void checkNewVideoFrameMetadata(CMTime);
+    MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
 
     friend class MediaSourcePrivateAVFObjC;
 

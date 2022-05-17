@@ -5746,9 +5746,10 @@ void HTMLMediaElement::setPlaying(bool playing)
 #endif
 }
 
-void HTMLMediaElement::setPausedInternal(bool b)
+void HTMLMediaElement::setPausedInternal(bool paused)
 {
-    m_pausedInternal = b;
+    ALWAYS_LOG(LOGIDENTIFIER, paused);
+    m_pausedInternal = paused;
     scheduleUpdatePlayState();
 }
 
