@@ -1,3 +1,176 @@
+2022-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Add ARM64 disassembler support for symbolic dumping of some well known constants.
+        https://bugs.webkit.org/show_bug.cgi?id=240443
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Added a Options::needDisassemblySupport() option.  This option is true if
+           any of the JSC disassembly options are enabled.  This allows us to trivially
+           check if we need to enable additional infrastructure (like those added in this
+           patch) to support disassembly.
+
+        2. Refactor the Disassembler's thunkLabelMap into a more generic labelMap.  It
+           can now map a pointer to a CString or a const char* label.
+
+        3. Enable JITOperationList infrastructure when ENABLE(JIT_OPERATION_DISASSEMBLY)
+           is true.  This adds a name to the JITOperationAnnotation record.  Since this is
+           guarded by ENABLE(JIT_OPERATION_DISASSEMBLY), we can trivially turn this part
+           off later if adding this name adds too much size burden (or if any unexpected
+           issues arise).  Turning this off will only disable disassembly of JIT operation
+           names.  Disassembly of other constants (see below) will still be supported.
+
+           If Options::needDisassemblySupport() is true, the JITOperationList will
+           register all JIT operations (and the LLInt ones as well) with the Disassembler
+           labelMap.
+
+        4. Removed the < > brackets around branch target labels except for internal pc
+           index labels (e.g. <716>) and <unknown> (when we don't know what the branch
+           target is).  The < > notation takes up space and doesn't add any info.  The
+           branch targets now look like this:
+
+              <32> 0x1180102c0:    b.ne     0x1180101c0 -> thunk: native Tail With Saved Tags Call trampoline
+              <92> 0x11801c87c:    b        0x118008980 -> thunk: LLInt function for call jump to prologue thunk
+            <3508> 0x1198e16b4:    b        0x1198bc1a0 -> JIT PC
+
+           Internal pc index labels will still use the < > brackets:
+
+            <3476> 0x1198e1694:    b.eq     0x1198e16a0 -> <3488>
+
+        5. Added ARM64 disassembler support to compute the value of a constant being
+           loaded into a register using "MoveWide" instructions e.g. movz and movk.
+
+           When the disassembler sees a movz or movn or mov (of the MoveWide variety),
+           the disassembler initializes a m_builtConstant value.  With each subsequent
+           movk instruction with the same destination register, the disassembler splices
+           in the corresponding 16-bit immediate.
+
+           After disassembling a MoveWide instruction, it will check if the next
+           instruction is also a MoveWide instruction targeting the same destination
+           register.  If so, the constant is still being build: hence, it does nothing and
+           continues.
+
+           If the next instruction is (a) a MoveWide instruction targeting a different
+           register, (b) not a MoveWide instruction, or (c) we've reached the end of the
+           LinkBuffer (i.e. there's no next instruction), then the constant building for
+           the current target register is complete.
+
+        6. Added ARM64 disassembler support for looking up constants (built in (5) above)
+           and printing symbolic info / names of those constants.
+
+           With ENABLE(JIT_OPERATION_DISASSEMBLY), we now have JIT operation names e.g.
+
+             <176> 0x118010270:    movk     x3, #0x9f6e, lsl #48 -> 0x102dc8950 operationVMHandleException
+             <164> 0x1180180a4:    movk     x8, #0xe5c, lsl #48 -> 0x102db9420 operationVirtualCall
+
+           Apart from looking up the constant in the Disassembler labelMap, it also looks
+           up some commonly used constants e.g.
+
+           a. VM pointers:
+
+             <156> 0x11801105c:    movk     x0, #0x1, lsl #32 -> 0x139435000 vm
+
+           b. Some VM internal pointers (more can be added later as needed):
+
+              <24> 0x118014d18:    movk     x17, #0x1, lsl #32 -> 0x13943ee78 vm +40568: vm.topCallFrame
+              <76> 0x118014d4c:    movk     x17, #0x1, lsl #32 -> 0x139441a10 vm +51728: vm.m_exception
+             <196> 0x118011244:    movk     x17, #0x1, lsl #32 -> 0x1394417d0 vm +51152: vm.targetMachinePCForThrow
+             <208> 0x1198e09d0:    movk     x17, #0x1, lsl #32 -> 0x104432cc0 vm +52416: vm.m_doesGC
+
+           c. VM related pointers (only 1 for now; not VM fields, but hangs off of VM):
+
+              <12> 0x11801938c:    movk     x1, #0x1, lsl #32 -> 0x1052cd3c8 vm scratchBuffer.m_buffer
+
+           d. Well known PtrTags:
+
+             <204> 0x11801124c:    movz     x16, #0x6f9b -> 0x6f9b ExceptionHandlerPtrTag ?
+             <212> 0x1180150d4:    movz     x16, #0x593 -> 0x593 JSEntryPtrTag ?
+             <168> 0x1180183a8:    movz     lr, #0xb389 -> 0xb389 OperationPtrTag ?
+
+             * the ? is because we cannot be certain that the 16-bit constant is a PtrTag.
+               It may just be a coincidence that the value is the same.  However, the user
+               can trivially look at the surrounding disassembled code, and be able to
+               tell if the value is used as a PtrTag.
+
+           For constants that are not found in the known sets:
+
+           e. Small 16-bit constant (prints decimal value for convenience):
+
+             <200> 0x1198e09c8:    movz     x17, #0x2cc0 -> 11456
+
+           f. Unknown pointers that aren't in the JIT and LLINT regions will simply print
+              the pointer / constant:
+
+              <88> 0x1198e0958:    movz     x17, #0x2088
+              <92> 0x1198e095c:    movk     x17, #0x30d, lsl #16
+              <96> 0x1198e0960:    movk     x17, #0x1, lsl #32 -> 0x1030d2088
+
+              <unknown> is only used in relative branches.
+
+        7. Enhanced the Integrity::isSanePointer() check to reject pointer values that
+           are less than 4G on CPU(ADDRESS64) targets for OS(DARWIN).  No sane pointer
+           should be in the lowest 4G address region.
+
+           This also helps the disassembler more quickly filter out constant values that
+           aren't pointers.
+
+           This change affects DFG's speculationFromCell(), which is the only place that
+           may affect user facing performance.  However, I think the impact should be
+           insignificant (since the added check is cheap).
+
+        * assembler/JITOperationList.cpp:
+        (JSC::JITOperationList::populatePointersInJavaScriptCore):
+        (JSC::llintOperations):
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        (JSC::JITOperationList::addDisassemblyLabels):
+        (JSC::JITOperationList::populateDisassemblyLabelsInJavaScriptCore):
+        (JSC::JITOperationList::populateDisassemblyLabelsInJavaScriptCoreForLLInt):
+        (JSC::JITOperationList::populateDisassemblyLabelsInEmbedder):
+        * assembler/JITOperationList.h:
+        (JSC::JITOperationList::populatePointersInJavaScriptCore):
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        * assembler/JITOperationValidation.h:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        * b3/testb3_1.cpp:
+        (main):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcode::appendPCRelativeOffset):
+        (JSC::ARM64Disassembler::MoveWideFormatTrait::rejectedResult):
+        (JSC::ARM64Disassembler::MoveWideFormatTrait::acceptedResult):
+        (JSC::ARM64Disassembler::MoveWideIsValidTrait::rejectedResult):
+        (JSC::ARM64Disassembler::MoveWideIsValidTrait::acceptedResult):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::handlePotentialDataPointer):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::handlePotentialPtrTag):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::parse):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::format):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::isValid):
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::baseFormat):
+        (JSC::ARM64Disassembler::A64DOpcodeMoveWide::formatBuffer):
+        * disassembler/Disassembler.cpp:
+        (JSC::Disassembler::ensureLabelMap):
+        (JSC::registerLabel):
+        (JSC::labelFor):
+        (JSC::ensureThunkLabelMap): Deleted.
+        (JSC::registerThunkLabel): Deleted.
+        (JSC::labelForThunk): Deleted.
+        * disassembler/Disassembler.h:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Gate.h:
+        * runtime/JSCPtrTag.cpp:
+        (JSC::ptrTagName):
+        * runtime/JSCPtrTag.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::isScratchBuffer):
+        * runtime/VM.h:
+        * tools/Integrity.h:
+        (JSC::Integrity::isSanePointer):
+
 2022-05-16  Saam Barati  <sbarati@apple.com>
 
         Move around some NaN handling code

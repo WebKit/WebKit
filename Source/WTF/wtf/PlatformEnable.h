@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -847,6 +847,10 @@
 
 #if OS(DARWIN) && CPU(ADDRESS64) && ENABLE(JIT) && (ENABLE(JIT_CAGE) || ASSERT_ENABLED)
 #define ENABLE_JIT_OPERATION_VALIDATION 1
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && ENABLE(DISASSEMBLER) && CPU(ARM64E)
+#define ENABLE_JIT_OPERATION_DISASSEMBLY 1
 #endif
 
 #if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)

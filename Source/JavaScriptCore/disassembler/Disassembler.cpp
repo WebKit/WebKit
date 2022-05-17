@@ -27,6 +27,7 @@
 #include "Disassembler.h"
 
 #include "MacroAssemblerCodeRef.h"
+#include <variant>
 #include <wtf/Condition.h>
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
@@ -36,8 +37,23 @@
 
 namespace JSC {
 
-using ThunkLabelMap = HashMap<void*, CString>;
-LazyNeverDestroyed<ThunkLabelMap> thunkLabelMap;
+namespace Disassembler {
+
+Lock labelMapLock;
+
+using LabelMap = HashMap<void*, std::variant<CString, const char*>>;
+LazyNeverDestroyed<LabelMap> labelMap;
+
+static LabelMap& ensureLabelMap() WTF_REQUIRES_LOCK(labelMapLock)
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        labelMap.construct();
+    });
+    return labelMap.get();
+}
+
+} // namespace Disassembler
 
 void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
 {
@@ -157,27 +173,28 @@ void waitForAsynchronousDisassembly()
     asynchronousDisassembler().waitUntilEmpty();
 }
 
-static ThunkLabelMap& ensureThunkLabelMap()
+void registerLabel(void* thunkAddress, CString&& label)
 {
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        thunkLabelMap.construct();
-    });
-    return thunkLabelMap.get();
+    Locker lock { Disassembler::labelMapLock };
+    Disassembler::ensureLabelMap().add(thunkAddress, WTFMove(label));
 }
 
-void registerThunkLabel(void* thunkAddress, CString&& label)
+void registerLabel(void* address, const char* label)
 {
-    ensureThunkLabelMap().add(thunkAddress, WTFMove(label));
+    Locker lock { Disassembler::labelMapLock };
+    Disassembler::ensureLabelMap().add(address, label);
 }
 
-const char* labelForThunk(void* thunkAddress)
+const char* labelFor(void* thunkAddress)
 {
-    auto& map = ensureThunkLabelMap();
+    Locker lock { Disassembler::labelMapLock };
+    auto& map = Disassembler::ensureLabelMap();
     auto it = map.find(thunkAddress);
     if (it == map.end())
         return nullptr;
-    return it->value.data();
+    if (std::holds_alternative<CString>(it->value))
+        return std::get<CString>(it->value).data();
+    return std::get<const char*>(it->value);
 }
 
 } // namespace JSC

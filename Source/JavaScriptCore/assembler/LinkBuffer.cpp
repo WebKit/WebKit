@@ -82,13 +82,15 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
         va_end(preflightArgs);
 
+        const char prefix[] = "thunk: ";
         char* buffer = 0;
-        CString label = CString::newUninitialized(stringLength + 1, buffer);
-        vsnprintf(buffer, stringLength + 1, format, argList);
-        buffer[stringLength] = '\0';
+        size_t length = stringLength + sizeof(prefix);
+        CString label = CString::newUninitialized(length, buffer);
+        snprintf(buffer, length, "%s", prefix);
+        vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
         out.printf("%s", buffer);
 
-        registerThunkLabel(result.code().untaggedExecutableAddress(), WTFMove(label));
+        registerLabel(result.code().untaggedExecutableAddress(), WTFMove(label));
     } else
         out.vprintf(format, argList);
 

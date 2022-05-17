@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,6 +246,10 @@ inline PtrType untagAddressDiversifiedCodePtr(PtrType ptr, const void* ptrAddres
 void initializePtrTagLookup();
 #else
 inline void initializePtrTagLookup() { }
+#endif
+
+#if ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
+const char* ptrTagName(PtrTag);
 #endif
 
 } // namespace JSC

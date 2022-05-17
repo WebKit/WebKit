@@ -685,6 +685,7 @@ public:
     // - You can only write to entries in the ScratchBuffer from the main thread.
     ScratchBuffer* scratchBufferForSize(size_t size);
     void clearScratchBuffers();
+    bool isScratchBuffer(void*);
 
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {

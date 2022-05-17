@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,10 +67,21 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier) TEST_SUPPO
     
 void setAdditionalSupportedImageTypesForTesting(const String&) TEST_SUPPORT_EXPORT;
 
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+void populateDisassemblyLabels() TEST_SUPPORT_EXPORT;
+#else
+inline void populateDisassemblyLabels() { }
+#endif
+
 #if ENABLE(JIT_OPERATION_VALIDATION)
 void populateJITOperations() TEST_SUPPORT_EXPORT;
 #else
-inline void populateJITOperations() { }
+inline void populateJITOperations() { populateDisassemblyLabels(); }
 #endif
+
+#else
+inline void populateJITOperations() { }
+#endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 } // namespace WebCoreTestSupport

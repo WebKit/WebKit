@@ -1409,6 +1409,16 @@ void VM::clearScratchBuffers()
         scratchBuffer->setActiveLength(0);
 }
 
+bool VM::isScratchBuffer(void* ptr)
+{
+    Locker locker { m_scratchBufferLock };
+    for (auto* scratchBuffer : m_scratchBuffers) {
+        if (scratchBuffer->dataBuffer() == ptr)
+            return true;
+    }
+    return false;
+}
+
 void VM::ensureShadowChicken()
 {
     if (m_shadowChicken)

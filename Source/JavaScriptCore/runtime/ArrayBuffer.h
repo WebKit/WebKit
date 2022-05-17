@@ -72,7 +72,7 @@ private:
     size_t m_sizeInBytes;
 };
 
-class ArrayBufferContents {
+class   ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
 public:
     JS_EXPORT_PRIVATE ArrayBufferContents();

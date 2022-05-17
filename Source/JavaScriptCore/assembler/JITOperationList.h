@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 // This indirection is provided so that we can manually force on assertions for
 // testing even on release builds.
@@ -45,6 +45,7 @@ public:
     static JITOperationList& instance();
     static void initialize();
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
     template<typename PtrType>
     void* map(PtrType pointer) const
     {
@@ -58,11 +59,16 @@ public:
         return m_validatedOperationsInverseMap.get(bitwise_cast<void*>(pointer));
     }
 #endif
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 
     static void populatePointersInJavaScriptCore();
     static void populatePointersInJavaScriptCoreForLLInt();
 
     JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
+
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+    JS_EXPORT_PRIVATE static void populateDisassemblyLabelsInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
+#endif
 
     template<typename T> static void assertIsJITOperation(T function)
     {
@@ -81,6 +87,13 @@ public:
     }
 
 private:
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+    static void populateDisassemblyLabelsInJavaScriptCore();
+    static void populateDisassemblyLabelsInJavaScriptCoreForLLInt();
+    static void addDisassemblyLabels(const JITOperationAnnotation* begin, const JITOperationAnnotation* end);
+#endif
+
+#if ENABLE(JIT_OPERATION_VALIDATION)
     ALWAYS_INLINE void addPointers(const JITOperationAnnotation* begin, const JITOperationAnnotation* end);
 
 #if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
@@ -91,7 +104,10 @@ private:
 #if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
     HashMap<void*, void*> m_validatedOperationsInverseMap;
 #endif
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 };
+
+#if ENABLE(JIT_OPERATION_VALIDATION)
 
 JS_EXPORT_PRIVATE extern LazyNeverDestroyed<JITOperationList> jitOperationList;
 
@@ -101,6 +117,22 @@ inline JITOperationList& JITOperationList::instance()
 }
 
 #else // not ENABLE(JIT_OPERATION_VALIDATION)
+
+ALWAYS_INLINE void JITOperationList::populatePointersInJavaScriptCore()
+{
+    if (UNLIKELY(Options::needDisassemblySupport()))
+        populateDisassemblyLabelsInJavaScriptCore();
+}
+
+ALWAYS_INLINE void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
+{
+    if (UNLIKELY(Options::needDisassemblySupport()))
+        populateDisassemblyLabelsInJavaScriptCoreForLLInt();
+}
+
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
+
+#else // not ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 class JITOperationList {
 public:
@@ -113,6 +145,6 @@ public:
     template<typename T> static void assertIsJITOperationWithValidation(T) { }
 };
 
-#endif // ENABLE(JIT_OPERATION_VALIDATION)
+#endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 } // namespace JSC

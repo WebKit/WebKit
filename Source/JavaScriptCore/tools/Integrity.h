@@ -94,13 +94,18 @@ ALWAYS_INLINE static bool isSanePointer(const void* pointer)
 {
 #if CPU(ADDRESS64)
     uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
+#if OS(DARWIN)
+    constexpr uintptr_t oneAbove4G = (static_cast<uintptr_t>(1) << 32);
+    if (pointerAsInt < oneAbove4G)
+        return false;
+#endif
     uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));
     uintptr_t nonCanonicalPointerBits = pointerAsInt >> OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
     return !nonCanonicalPointerBits && canonicalPointerBits;
 #else
     UNUSED_PARAM(pointer);
     return true;
-#endif
+#endif // CPU(ADDRESS64)
 }
 
 #if USE(JSVALUE64)

@@ -61,7 +61,8 @@ void disassembleAsynchronously(
 
 JS_EXPORT_PRIVATE void waitForAsynchronousDisassembly();
 
-void registerThunkLabel(void* thunkAddress, CString&& label);
-const char* labelForThunk(void* thunkAddress);
+void registerLabel(void* thunkAddress, CString&& label);
+void registerLabel(void* thunkAddress, const char* label);
+const char* labelFor(void* thunkAddress);
 
 } // namespace JSC

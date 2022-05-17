@@ -1,3 +1,18 @@
+2022-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Add ARM64 disassembler support for symbolic dumping of some well known constants.
+        https://bugs.webkit.org/show_bug.cgi?id=240443
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Added a ENABLE(JIT_OPERATION_DISASSEMBLY) flag.
+           Currently, this feature relies on an USE(APPLE_INTERNAL_SDK) for enumerating
+           JIT operations similar to ENABLE(JIT_OPERATION_VALIDATION).  It is also
+           restricted to ENABLE(DISASSEMBLER) && CPU(ARM64E).
+
+        * wtf/PlatformCallingConventions.h:
+        * wtf/PlatformEnable.h:
+
 2022-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         Correct erroneous guard in Platform file

@@ -127,6 +127,7 @@ bool canUseWebAssemblyFastMemory();
     \
     v(Bool, useOSLog, false, Normal, "Log dataLog()s to os_log instead of stderr") \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
+    v(Bool, needDisassemblySupport, false, Normal, nullptr) \
     v(Bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
     v(Bool, asyncDisassembly, false, Normal, nullptr) \
     v(Bool, logJIT, false, Normal, nullptr) \

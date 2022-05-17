@@ -465,10 +465,18 @@ void Options::recomputeDependentOptions()
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;
     
-    if (Options::logJIT()
-        || Options::dumpDisassembly()
+    if (Options::dumpDisassembly()
+        || Options::asyncDisassembly()
         || Options::dumpDFGDisassembly()
         || Options::dumpFTLDisassembly()
+        || Options::dumpRegExpDisassembly()
+        || Options::dumpWasmDisassembly()
+        || Options::dumpBBQDisassembly()
+        || Options::dumpOMGDisassembly())
+        Options::needDisassemblySupport() = true;
+
+    if (Options::logJIT()
+        || Options::needDisassemblySupport()
         || Options::dumpBytecodeAtDFGTime()
         || Options::dumpGraphAtEachPhase()
         || Options::dumpDFGGraphAtEachPhase()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -84,9 +84,18 @@
 #define JIT_OPERATION_ATTRIBUTES
 #endif
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+
+#if ENABLE(JIT_OPERATION_VALIDATION) && ENABLE(JIT_OPERATION_DISASSEMBLY)
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) (void*)validateFunction, name
+#elif ENABLE(JIT_OPERATION_VALIDATION)
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) (void*)validateFunction
+#else // ENABLE(JIT_OPERATION_DISASSEMBLY)
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) name
+#endif
+
 #define JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function) \
-    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, (void*)function##Validate };
+    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, JSC_ANNOTATE_JIT_OPERATION_EXTRAS(function##Validate, #function) };
 
 #define JSC_ANNOTATE_JIT_OPERATION(function) \
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_VALIDATION(function); \
@@ -100,12 +109,13 @@
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_RETURN_VALIDATION(function); \
     JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
 
-#else
+#else // not (ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY))
+
 #define JSC_ANNOTATE_JIT_OPERATION(function)
 #define JSC_ANNOTATE_JIT_OPERATION_PROBE(function)
 #define JSC_ANNOTATE_JIT_OPERATION_RETURN(function)
-#endif
 
+#endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 #define JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters

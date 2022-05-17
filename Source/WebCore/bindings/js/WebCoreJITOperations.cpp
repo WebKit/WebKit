@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,35 @@
 
 namespace WebCore {
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+
 extern const JSC::JITOperationAnnotation startOfJITOperationsInWebCore __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const JSC::JITOperationAnnotation endOfJITOperationsInWebCore __asm("section$end$__DATA_CONST$__jsc_ops");
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
 void populateJITOperations()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInWebCore, &endOfJITOperationsInWebCore);
     });
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+    if (UNLIKELY(JSC::Options::needDisassemblySupport()))
+        populateDisassemblyLabels();
+#endif
 }
 #endif // ENABLE(JIT_OPERATION_VALIDATION)
+
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+void populateDisassemblyLabels()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        JSC::JITOperationList::populateDisassemblyLabelsInEmbedder(&startOfJITOperationsInWebCore, &endOfJITOperationsInWebCore);
+    });
+}
+#endif // ENABLE(JIT_OPERATION_DISASSEMBLY)
+
+#endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 }

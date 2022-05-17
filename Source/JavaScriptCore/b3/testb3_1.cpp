@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -903,7 +903,7 @@ static void run(const char*)
 
 #endif // ENABLE(B3_JIT)
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 extern const JSC::JITOperationAnnotation startOfJITOperationsInTestB3 __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const JSC::JITOperationAnnotation endOfJITOperationsInTestB3 __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
@@ -930,7 +930,11 @@ int main(int argc, char** argv)
 #if ENABLE(JIT_OPERATION_VALIDATION)
     JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInTestB3, &endOfJITOperationsInTestB3);
 #endif
-    
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+    if (UNLIKELY(JSC::Options::needDisassemblySupport()))
+        JSC::JITOperationList::populateDisassemblyLabelsInEmbedder(&startOfJITOperationsInTestB3, &endOfJITOperationsInTestB3);
+#endif
+
     for (unsigned i = 0; i <= 2; ++i) {
         JSC::Options::defaultB3OptLevel() = i;
         run(filter);

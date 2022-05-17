@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,19 @@
 
 namespace JSC {
 
-#if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
+#if ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
 
+const char* ptrTagName(PtrTag tag)
+{
+#define RETURN_PTRTAG_NAME(_tagName, calleeType, callerType) case _tagName: return #_tagName;
+    switch (static_cast<unsigned>(tag)) {
+        FOR_EACH_JSC_PTRTAG(RETURN_PTRTAG_NAME)
+    }
+#undef RETURN_PTRTAG_NAME
+    return nullptr; // Matching tag not found.
+}
+
+#if ENABLE(PTRTAG_DEBUGGING)
 static const char* tagForPtr(const void* ptr)
 {
 #define RETURN_NAME_IF_TAG_MATCHES(tag, calleeType, callerType) \
@@ -50,24 +61,14 @@ static const char* tagForPtr(const void* ptr)
     return nullptr; // Matching tag not found.
 }
 
-static const char* ptrTagName(PtrTag tag)
-{
-#define RETURN_PTRTAG_NAME(_tagName, calleeType, callerType) case _tagName: return #_tagName;
-    switch (static_cast<unsigned>(tag)) {
-        FOR_EACH_JSC_PTRTAG(RETURN_PTRTAG_NAME)
-    }
-#undef RETURN_PTRTAG_NAME
-    return nullptr; // Matching tag not found.
-}
-
 void initializePtrTagLookup()
 {
     WTF::PtrTagLookup& lookup = g_jscConfig.ptrTagLookupRecord;
     lookup.initialize(tagForPtr, ptrTagName);
     WTF::registerPtrTagLookup(&lookup);
 }
-
-#endif // CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
+#endif // ENABLE(PTRTAG_DEBUGGING)
+#endif // ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
 
 #if CPU(ARM64E)
 

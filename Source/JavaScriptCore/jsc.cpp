@@ -3756,7 +3756,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     return result;
 }
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 extern const JITOperationAnnotation startOfJITOperationsInShell __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const JITOperationAnnotation endOfJITOperationsInShell __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
@@ -3783,6 +3783,11 @@ int jscmain(int argc, char** argv)
 #if ENABLE(JIT_OPERATION_VALIDATION)
     JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInShell, &endOfJITOperationsInShell);
 #endif
+#if ENABLE(JIT_OPERATION_DISASSEMBLY)
+    if (UNLIKELY(Options::needDisassemblySupport()))
+        JSC::JITOperationList::populateDisassemblyLabelsInEmbedder(&startOfJITOperationsInShell, &endOfJITOperationsInShell);
+#endif
+
     initializeTimeoutIfNeeded();
 
 #if OS(DARWIN) || OS(LINUX)
