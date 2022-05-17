@@ -36,6 +36,7 @@
 #include "Editor.h"
 #include "FileList.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"

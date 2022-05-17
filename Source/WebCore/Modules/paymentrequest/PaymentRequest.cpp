@@ -31,6 +31,7 @@
 #include "ApplePayPaymentHandler.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPaymentDetailsUpdate.h"

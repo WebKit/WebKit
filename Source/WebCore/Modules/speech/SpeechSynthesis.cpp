@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "Page.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesizer.h"

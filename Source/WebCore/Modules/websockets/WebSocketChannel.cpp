@@ -39,6 +39,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"

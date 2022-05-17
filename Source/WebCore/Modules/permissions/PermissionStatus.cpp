@@ -28,6 +28,7 @@
 
 #include "ClientOrigin.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "PermissionController.h"
 #include "SecurityOrigin.h"

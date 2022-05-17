@@ -21,6 +21,7 @@
 #include "JSDocument.h"
 
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"

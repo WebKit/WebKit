@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "JSAttr.h"

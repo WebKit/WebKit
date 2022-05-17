@@ -29,6 +29,7 @@
 #include "ClipboardUtilitiesWin.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "Pasteboard.h"
 #include "Range.h"

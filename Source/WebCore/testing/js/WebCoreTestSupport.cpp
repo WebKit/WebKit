@@ -29,6 +29,7 @@
 
 #include "DeprecatedGlobalSettings.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InternalSettings.h"
 #include "Internals.h"
 #include "JSDocument.h"

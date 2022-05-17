@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "MediaProducer.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
@@ -86,5 +87,9 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
     return &document().contextDocument();
 }
 
+inline bool Document::hasBrowsingContext() const
+{
+    return !!frame();
+}
 
 }

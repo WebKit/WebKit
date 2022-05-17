@@ -23,6 +23,7 @@
 
 #include "DOMWindowWebDatabase.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPParsers.h"

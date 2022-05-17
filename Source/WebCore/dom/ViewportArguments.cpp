@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "IntSize.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"

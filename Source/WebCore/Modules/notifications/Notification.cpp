@@ -38,6 +38,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MessagePort.h"
 #include "NotificationClient.h"

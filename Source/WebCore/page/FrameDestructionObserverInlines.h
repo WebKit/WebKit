@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FrameDestructionObserver.h"
+#pragma once
 
 #include "Frame.h"
+#include "FrameDestructionObserver.h"
 
 namespace WebCore {
 
-FrameDestructionObserver::FrameDestructionObserver(Frame* frame)
-    : m_frame(nullptr)
+inline Frame* FrameDestructionObserver::frame() const
 {
-    observeFrame(frame);
-}
-
-FrameDestructionObserver::~FrameDestructionObserver()
-{
-    observeFrame(nullptr);
-
-}
-
-void FrameDestructionObserver::observeFrame(Frame* frame)
-{
-    if (m_frame)
-        m_frame->removeDestructionObserver(*this);
-
-    m_frame = frame;
-
-    if (m_frame)
-        m_frame->addDestructionObserver(*this);
-}
-
-void FrameDestructionObserver::frameDestroyed()
-{
-    m_frame = nullptr;
-}
-
-void FrameDestructionObserver::willDetachPage()
-{
-    // Subclasses should override this function to handle this notification.
+    return m_frame.get();
 }
 
 }
