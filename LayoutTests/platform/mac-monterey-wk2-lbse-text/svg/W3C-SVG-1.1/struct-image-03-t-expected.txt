@@ -1,0 +1,18 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (23,13) size 434x282
+  RenderSVGContainer {g} at (0,0) size 434x282
+layer at (23,13) size 434x224
+  RenderSVGRect {rect} at (0,0) size 434x224 [fill={[type=SOLID] [color=#000000]}] [x=23.00] [y=13.00] [width=434.00] [height=224.00]
+layer at (25,249) size 299x46
+  RenderSVGText {text} at (2,236) size 299x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 299x46
+      chunk 1 text run 1 at (25.00,285.00) startOffset 0 endOffset 16 width 298.75: "Gamma correction"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

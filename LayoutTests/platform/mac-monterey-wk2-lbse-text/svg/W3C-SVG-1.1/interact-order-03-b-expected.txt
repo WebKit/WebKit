@@ -1,0 +1,20 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,4) size 460x282
+  RenderSVGContainer {g} at (-1,0) size 462x282
+layer at (60,4) size 320x45
+  RenderSVGText {text} at (50,0) size 321x45 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 321x45
+      chunk 1 text run 1 at (60.00,40.00) startOffset 0 endOffset 18 width 320.20: "Event bubbling - c"
+layer at (10,55) size 460x231
+  RenderSVGContainer {g} at (-1,-1) size 462x232
+layer at (10,55) size 460x230
+  RenderSVGRect {rect} at (-1,-1) size 462x232 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=55.00] [width=460.00] [height=230.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

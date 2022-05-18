@@ -1,0 +1,92 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-5,-5) size 360x220 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (64,33) size 362x268
+layer at (141,29) size 198x24
+  RenderSVGText {text} at (145,33) size 200x25 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 199x25
+      chunk 1 (middle anchor) text run 1 at (140.62,48.00) startOffset 0 endOffset 17 width 198.77: "feTurbulence seed"
+layer at (-5,-5) size 360x220 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (64,79) size 362x222
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (65,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (9,66) size 32x18
+  RenderSVGText {text} at (14,70) size 32x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x19
+      chunk 1 (middle anchor) text run 1 at (9.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.8"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (115,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (59,66) size 32x18
+  RenderSVGText {text} at (64,70) size 32x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x19
+      chunk 1 (middle anchor) text run 1 at (59.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.5"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (165,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (109,66) size 32x18
+  RenderSVGText {text} at (114,70) size 32x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x19
+      chunk 1 (middle anchor) text run 1 at (109.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.2"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (215,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (170,66) size 10x18
+  RenderSVGText {text} at (174,70) size 11x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 11x19
+      chunk 1 (middle anchor) text run 1 at (170.00,80.00) startOffset 0 endOffset 1 width 10.01: "0"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (265,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (212,66) size 26x18
+  RenderSVGText {text} at (217,70) size 26x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x19
+      chunk 1 (middle anchor) text run 1 at (212.49,80.00) startOffset 0 endOffset 3 width 25.02: "0.2"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (315,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (262,66) size 26x18
+  RenderSVGText {text} at (267,70) size 26x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x19
+      chunk 1 (middle anchor) text run 1 at (262.49,80.00) startOffset 0 endOffset 3 width 25.02: "0.5"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (365,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (312,66) size 26x18
+  RenderSVGText {text} at (317,70) size 26x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x19
+      chunk 1 (middle anchor) text run 1 at (312.49,80.00) startOffset 0 endOffset 3 width 25.02: "1.5"
+layer at (-5,-5) size 360x100 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (64,79) size 362x102 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-5.00] [width=360.00] [height=100.00]
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (65,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (17,186) size 16x18
+  RenderSVGText {text} at (21,190) size 17x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 17x19
+      chunk 1 (middle anchor) text run 1 at (17.00,200.00) startOffset 0 endOffset 2 width 16.00: "-1"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (115,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (59,186) size 32x18
+  RenderSVGText {text} at (64,190) size 32x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x19
+      chunk 1 (middle anchor) text run 1 at (59.49,200.00) startOffset 0 endOffset 4 width 31.01: "-1.5"
+layer at (-5,115) size 110x100 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (64,79) size 112x102 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=115.00] [width=110.00] [height=100.00]
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (315,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (267,186) size 16x18
+  RenderSVGText {text} at (271,190) size 17x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 17x19
+      chunk 1 (middle anchor) text run 1 at (267.00,200.00) startOffset 0 endOffset 2 width 16.00: "-2"
+layer at (0,0) size 50x50
+  RenderSVGRect {rect} at (365,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+layer at (309,186) size 32x18
+  RenderSVGText {text} at (314,190) size 32x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x19
+      chunk 1 (middle anchor) text run 1 at (309.49,200.00) startOffset 0 endOffset 4 width 31.01: "-2.6"
+layer at (245,115) size 110x100
+  RenderSVGRect {rect} at (64,79) size 112x102 [stroke={[type=SOLID] [color=#000000]}] [x=245.00] [y=115.00] [width=110.00] [height=100.00]
+layer at (10,314) size 230x33
+  RenderSVGContainer {g} at (0,0) size 230x33
+layer at (10,314) size 229x32
+  RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x33
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

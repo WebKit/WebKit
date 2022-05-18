@@ -1,0 +1,34 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,0) size 225x253
+  RenderSVGContainer {g} at (35,105) size 498x387
+layer at (0,0) size 225x253
+  RenderSVGContainer {g} at (35,105) size 498x387
+layer at (0,0) size 20x20
+  RenderSVGContainer {g} at (35,105) size 150x100
+layer at (0,0) size 20x20
+  RenderSVGContainer {g} at (35,105) size 150x100
+layer at (0,0) size 20x1
+  RenderSVGRect {rect} at (35,105) size 150x5 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
+layer at (0,0) size 1x20
+  RenderSVGRect {rect} at (35,105) size 6x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
+layer at (40,186) size 185x67
+  RenderSVGContainer {g} at (-30,-141) size 463x168
+layer at (40,186) size 185x18
+  RenderSVGText {text} at (0,0) size 185x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 185x18
+      chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 31 width 184.81: "scale(25, 95) - translate(2, 2)"
+layer at (48,208) size 5x5
+  RenderSVGRect {rect} at (-30,-141) size 13x13 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=208.00] [width=5.00] [height=5.00]
+layer at (108,208) size 5x5
+  RenderSVGRect {rect} at (-30,-141) size 13x13 [fill={[type=SOLID] [color=#0000FF]}] [x=108.00] [y=208.00] [width=5.00] [height=5.00]
+layer at (48,248) size 5x5
+  RenderSVGRect {rect} at (-30,-141) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=248.00] [width=5.00] [height=5.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

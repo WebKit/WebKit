@@ -1,0 +1,140 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (226,12) size 28x23
+  RenderSVGText {text} at (225,12) size 30x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 29x23
+      chunk 1 (middle anchor) text run 1 at (225.56,30.00) startOffset 0 endOffset 3 width 28.88: "end"
+layer at (-68,-12) size 225x192 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (180,70) size 239x213
+layer at (-68,-12) size 69x191 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (180,85) size 69x191
+layer at (-4,-7) size 152x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (200,65) size 152x9
+layer at (-4,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (-3.56,0.00) startOffset 0 endOffset 2 width 7.11: "0s"
+layer at (8,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (12,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (8.44,0.00) startOffset 0 endOffset 2 width 7.11: "1s"
+layer at (20,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (24,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (20.44,0.00) startOffset 0 endOffset 2 width 7.11: "2s"
+layer at (32,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (36,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (32.44,0.00) startOffset 0 endOffset 2 width 7.11: "3s"
+layer at (44,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (48,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (44.44,0.00) startOffset 0 endOffset 2 width 7.11: "4s"
+layer at (56,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (60,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (56.44,0.00) startOffset 0 endOffset 2 width 7.11: "5s"
+layer at (68,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (72,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (68.44,0.00) startOffset 0 endOffset 2 width 7.11: "6s"
+layer at (80,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (84,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (80.44,0.00) startOffset 0 endOffset 2 width 7.11: "7s"
+layer at (92,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (96,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (92.44,0.00) startOffset 0 endOffset 2 width 7.11: "8s"
+layer at (116,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (120,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (116.44,0.00) startOffset 0 endOffset 2 width 7.11: "0s"
+layer at (128,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (132,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (128.44,0.00) startOffset 0 endOffset 2 width 7.11: "1s"
+layer at (140,-7) size 7x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (144,0) size 8x9 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 8x9
+      chunk 1 (middle anchor) text run 1 at (140.44,0.00) startOffset 0 endOffset 2 width 7.11: "2s"
+layer at (0,0) size 157x26
+  RenderSVGContainer {g} at (194,70) size 156x200
+layer at (0,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (12,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#DDDDDD]}] [x=12.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (24,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=24.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (36,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#DDDDDD]}] [x=36.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (48,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=48.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (60,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#DDDDDD]}] [x=60.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (72,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=72.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (84,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#DDDDDD]}] [x=84.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (96,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=96.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (120,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=120.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (132,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#DDDDDD]}] [x=132.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (144,0) size 12x25
+  RenderSVGRect {rect} at (194,70) size 12x200 [fill={[type=SOLID] [color=#EEEEEE]}] [x=144.00] [y=0.00] [width=12.00] [height=25.00]
+layer at (-6,-6) size 13x13 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (200,80) size 156x187
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (200,80) size 12x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (200,80) size 12x12 [fill={[type=SOLID] [color=#33FF33]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (224,105) size 12x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (224,105) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (320,130) size 36x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (320,130) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (344,130) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (224,155) size 84x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (224,155) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (248,155) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (272,155) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (296,155) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (200,180) size 12x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (200,180) size 12x12 [fill={[type=SOLID] [color=#33FF33]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (236,205) size 36x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (236,205) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (260,205) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (320,230) size 36x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (320,230) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (344,230) size 12x12 [fill={[type=SOLID] [color=#FF3333]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (200,255) size 12x12
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (200,255) size 12x12 [fill={[type=SOLID] [color=#33FF33]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]

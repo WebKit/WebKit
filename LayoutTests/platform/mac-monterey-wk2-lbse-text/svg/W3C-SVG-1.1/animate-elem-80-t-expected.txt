@@ -1,0 +1,84 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (172,11) size 136x18
+  RenderSVGText {text} at (171,11) size 138x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 137x18
+      chunk 1 (middle anchor) text run 1 at (171.89,25.00) startOffset 0 endOffset 18 width 136.22: "<animateTransform>"
+layer at (-45,26) size 125x93 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (66,110) size 435x163
+layer at (-36,46) size 74x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (60,90) size 73x18
+layer at (-36,46) size 73x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 73x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 73x18
+      chunk 1 (middle anchor) text run 1 at (-36.50,60.00) startOffset 0 endOffset 11 width 72.99: "type=rotate"
+layer at (-41,26) size 82x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (180,110) size 82x18
+layer at (-41,26) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 82x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x18
+      chunk 1 (middle anchor) text run 1 at (-40.50,40.00) startOffset 0 endOffset 10 width 81.01: "type=skewX"
+layer at (-41,46) size 82x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,90) size 82x18
+layer at (-41,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 82x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x18
+      chunk 1 (middle anchor) text run 1 at (-40.50,60.00) startOffset 0 endOffset 10 width 81.01: "type=skewY"
+layer at (-35,46) size 71x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (420,90) size 71x33
+layer at (-34,46) size 68x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 70x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x18
+      chunk 1 (middle anchor) text run 1 at (-34.27,60.00) startOffset 0 endOffset 10 width 68.55: "type=scale"
+layer at (-35,61) size 70x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,15) size 71x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 71x18
+      chunk 1 (middle anchor) text run 1 at (-35.11,75.00) startOffset 0 endOffset 11 width 70.21: "(sx and sy)"
+layer at (1,86) size 79x33
+  RenderSVGContainer {g} at (20,180) size 78x33
+layer at (4,86) size 73x18
+  RenderSVGText {text} at (2,0) size 74x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 73x18
+      chunk 1 (middle anchor) text run 1 at (3.50,100.00) startOffset 0 endOffset 11 width 72.99: "type=rotate"
+layer at (1,101) size 78x18
+  RenderSVGText {text} at (0,15) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 (middle anchor) text run 1 at (1.13,115.00) startOffset 0 endOffset 12 width 77.75: "(with cx/cy)"
+layer at (-45,46) size 91x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (180,220) size 91x33
+layer at (-45,46) size 91x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 91x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 91x18
+      chunk 1 (middle anchor) text run 1 at (-45.38,60.00) startOffset 0 endOffset 14 width 90.77: "type=translate"
+layer at (-28,61) size 55x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (17,15) size 57x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 56x18
+      chunk 1 (middle anchor) text run 1 at (-27.77,75.00) startOffset 0 endOffset 9 width 55.55: "(tx only)"
+layer at (-45,46) size 91x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,220) size 91x33
+layer at (-45,46) size 91x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 91x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 91x18
+      chunk 1 (middle anchor) text run 1 at (-45.38,60.00) startOffset 0 endOffset 14 width 90.77: "type=translate"
+layer at (-33,61) size 67x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (12,15) size 67x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 67x18
+      chunk 1 (middle anchor) text run 1 at (-33.32,75.00) startOffset 0 endOffset 11 width 66.65: "(tx and ty)"
+layer at (-34,46) size 69x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (420,220) size 69x33
+layer at (-34,46) size 69x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 69x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x18
+      chunk 1 (middle anchor) text run 1 at (-34.27,60.00) startOffset 0 endOffset 10 width 68.55: "type=scale"
+layer at (-29,61) size 57x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (5,15) size 58x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x18
+      chunk 1 (middle anchor) text run 1 at (-28.66,75.00) startOffset 0 endOffset 9 width 57.33: "(sx only)"

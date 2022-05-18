@@ -1,0 +1,30 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (5,-52) size 90x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (51,100) size 369x58
+layer at (7,-52) size 88x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (50,100) size 87x58
+layer at (7,-22) size 87x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,30) size 87x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 87x28
+      chunk 1 (middle anchor) text run 1 at (6.68,0.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
+layer at (6,-52) size 90x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (190,100) size 89x58
+layer at (6,-22) size 89x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,30) size 89x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 89x28
+      chunk 1 (middle anchor) text run 1 at (5.68,0.00) startOffset 0 endOffset 8 width 88.64: "on image"
+layer at (5,-52) size 90x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (330,100) size 90x58
+layer at (5,-22) size 90x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,30) size 90x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 90x28
+      chunk 1 (middle anchor) text run 1 at (5.02,0.00) startOffset 0 endOffset 9 width 89.96: "on parent"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

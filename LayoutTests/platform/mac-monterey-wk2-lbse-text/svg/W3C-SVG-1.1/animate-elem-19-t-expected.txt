@@ -1,0 +1,46 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-140,0) size 533x148 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (143,8) size 458x280
+layer at (3,9) size 321x44
+  RenderSVGText {text} at (143,8) size 321x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 321x45
+      chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 17 width 320.78: "calcMode=\"linear\""
+layer at (3,64) size 390x44
+  RenderSVGText {text} at (143,63) size 390x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 390x45
+      chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 389.69: "keyTimes=\"0;.5;.75;1\""
+layer at (-140,0) size 451x148 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (150,138) size 451x150
+layer at (-140,0) size 451x148 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (150,138) size 451x150
+layer at (-140,107) size 142x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,107) size 142x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 142x41
+      chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 141.98: "Time (s):"
+layer at (290,107) size 20x41
+  RenderSVGText {text} at (430,107) size 21x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x41
+      chunk 1 text run 1 at (290.00,140.00) startOffset 0 endOffset 1 width 20.02: "0"
+layer at (245,107) size 20x41
+  RenderSVGText {text} at (385,107) size 21x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x41
+      chunk 1 text run 1 at (245.00,140.00) startOffset 0 endOffset 1 width 20.02: "4"
+layer at (170,107) size 20x41
+  RenderSVGText {text} at (310,107) size 21x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x41
+      chunk 1 text run 1 at (170.00,140.00) startOffset 0 endOffset 1 width 20.02: "6"
+layer at (20,107) size 20x41
+  RenderSVGText {text} at (160,107) size 21x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x41
+      chunk 1 text run 1 at (20.00,140.00) startOffset 0 endOffset 1 width 20.02: "8"
+layer at (0,0) size 300x80
+  RenderSVGRect {rect} at (148,138) size 304x84 [stroke={[type=SOLID] [color=#880088] [stroke width=4.00]}] [fill={[type=SOLID] [color=#44AAFF]}] [x=0.00] [y=0.00] [width=300.00] [height=80.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,50 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (228,12) size 24x23
+  RenderSVGText {text} at (228,12) size 24x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 24x23
+      chunk 1 (middle anchor) text run 1 at (228.33,30.00) startOffset 0 endOffset 4 width 23.33: "fill"
+layer at (-139,-27) size 240x157 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (250,120) size 299x141
+layer at (-139,-12) size 140x141 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (250,105) size 140x141
+layer at (-124,113) size 124x16 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (15,125) size 125x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 124x16
+      chunk 1 (end anchor) text run 1 at (-123.71,125.00) startOffset 0 endOffset 24 width 123.71: "fill=freeze (no restart)"
+layer at (-16,-27) size 116x31 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (310,185) size 115x31
+layer at (-12,-12) size 24x16 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (3,15) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (-12.04,0.00) startOffset 0 endOffset 4 width 24.09: "here"
+layer at (68,-12) size 24x16 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (83,15) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (67.96,0.00) startOffset 0 endOffset 4 width 24.09: "here"
+layer at (74,-6) size 13x13 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (309,99) size 14x139
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (309,99) size 14x14
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (309,99) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (309,124) size 14x14
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (309,124) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (309,199) size 14x14
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (309,199) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (309,224) size 14x14
+layer at (74,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (309,224) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]

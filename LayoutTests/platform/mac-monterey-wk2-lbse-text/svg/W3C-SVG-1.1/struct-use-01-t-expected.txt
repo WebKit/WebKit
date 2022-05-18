@@ -1,0 +1,26 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-88,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,40) size 269x263
+layer at (-88,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,40) size 269x263
+layer at (-88,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,40) size 89x263
+layer at (-67,12) size 67x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (21,30) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 67x23
+      chunk 1 (end anchor) text run 1 at (-66.96,30.00) startOffset 0 endOffset 8 width 66.96: "<circle>"
+layer at (-75,42) size 75x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (13,60) size 76x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x23
+      chunk 1 (end anchor) text run 1 at (-74.77,60.00) startOffset 0 endOffset 9 width 74.77: "<ellipse>"
+layer at (-49,-18) size 51x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (310,40) size 50x53
+layer at (10,304) size 283x46
+  RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 284x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.14 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

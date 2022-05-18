@@ -1,0 +1,32 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGContainer {g} at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGContainer {g} at (0,0) size 480x360
+layer at (0,0) size 240x180
+  RenderSVGRect {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=240.00] [height=180.00]
+layer at (60,45) size 120x90
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#008000]}] [x=60.00] [y=45.00] [width=120.00] [height=90.00]
+layer at (240,180) size 240x180
+  RenderSVGRect {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=240.00] [y=180.00] [width=240.00] [height=180.00]
+layer at (240,0) size 240x180
+  RenderSVGContainer {g} at (0,0) size 240x180
+layer at (240,0) size 240x180
+  RenderSVGRect {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=240.00] [height=180.00]
+layer at (0,224) size 40x96
+  RenderSVGContainer {g} at (153,-41) size 71x105
+layer at (0,224) size 40x96
+  RenderSVGContainer {g} at (76,-28) size 72x105
+layer at (0,224) size 40x40
+  RenderSVGRect {rect} at (76,-28) size 52x53 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=224.00] [width=40.00] [height=40.00]
+layer at (0,280) size 40x40
+  RenderSVGRect {rect} at (76,-28) size 52x53 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=280.00] [width=40.00] [height=40.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
