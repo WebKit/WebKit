@@ -947,6 +947,17 @@
    },
    {
       "emails" : [
+         "asumu@igalia.com",
+         "atakikawa@igalia.com"
+      ],
+      "github" : "takikawa",
+      "name" : "Asumu Takikawa",
+      "nicks" : [
+         "asumu"
+      ]
+   },
+   {
+      "emails" : [
          "ayumi_kojima@apple.com"
       ],
       "name" : "Ayumi Kojima",
