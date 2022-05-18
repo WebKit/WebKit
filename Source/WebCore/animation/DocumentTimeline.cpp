@@ -390,13 +390,6 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 
-    // Animations may fail to run accelerated for reasons private to GraphicsLayerCA. If that happens, and the animation
-    // in question targets a transform-related property, we must prevent all other transform-related animations for this
-    // element to run accelerated since we can't run some transform-related animations accelerated, and some not. To do
-    // this, we keep a list of all KeyframeEffectStack objects containing an effect that failed to start a transform-related
-    // animation so that we can return any transform-related accelerated animation to run non-accelerated.
-    HashSet<KeyframeEffectStack*> effectStacksContainingEffectThatFailedToRunAcceleratedTransformRelatedAnimation;
-
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
         auto* effect = animation->effect();
@@ -406,16 +399,8 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
         auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
         if (!hasForcedLayout)
             hasForcedLayout |= keyframeEffect.forceLayoutIfNeeded();
-        auto pendingAccelerationActionResult = keyframeEffect.applyPendingAcceleratedActions();
-        if (pendingAccelerationActionResult.contains(AcceleratedActionApplicationResult::TransformRelatedAnimationCannotBeAccelerated)) {
-            ASSERT(keyframeEffect.targetStyleable());
-            ASSERT(keyframeEffect.targetStyleable()->keyframeEffectStack());
-            effectStacksContainingEffectThatFailedToRunAcceleratedTransformRelatedAnimation.add(keyframeEffect.targetStyleable()->keyframeEffectStack());
-        }
+        keyframeEffect.applyPendingAcceleratedActions();
     }
-
-    for (auto& effectStack : effectStacksContainingEffectThatFailedToRunAcceleratedTransformRelatedAnimation)
-        effectStack->stopAcceleratingTransformRelatedProperties(UseAcceleratedAction::No);
 }
 
 void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)

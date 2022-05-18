@@ -57,9 +57,8 @@ public:
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
-    bool containsEffectThatPreventsAccelerationOfEffect(const KeyframeEffect&);
-
-    void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
+    void effectAbilityToBeAcceleratedDidChange(const KeyframeEffect&);
+    bool allowsAcceleration() const;
 
     void clearInvalidCSSAnimationNames();
     bool hasInvalidCSSAnimationNames() const;
@@ -68,6 +67,9 @@ public:
 
 private:
     void ensureEffectsAreSorted();
+
+    void startAcceleratedAnimationsIfPossible();
+    void stopAcceleratedAnimations();
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
     HashSet<String> m_invalidCSSAnimationNames;

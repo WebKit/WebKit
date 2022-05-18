@@ -83,7 +83,7 @@ promise_test(async test => {
         { duration }
     ));
     await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
-    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
 }, "Setting 'composite' to 'add' on an animation lower down the stack should allow replace animations further up the stack to be accelerated");
 
 promise_test(async test => {
@@ -122,6 +122,150 @@ promise_test(async test => {
     await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
     assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
 }, "Setting 'composite' to 'add' on an animation lower down the stack targeting a property that isn't accelerated should allow replace animations with implicit keyframes further up the stack to be accelerated");
+
+// The following tests check the dynamic interruption and/or start of accelerated animations
+// after changes made to other effects in the stack.
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate({ transform: "translateX(100px)" }, duration);
+
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    // Setting the effect composition to "add" means that the animation should
+    // no longer be accelerated.
+    animation.effect.composite = "add";
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+
+    // Resetting the effect composition to "replace" means that the animation
+    // should be accelerated again.
+    animation.effect.composite = "replace";
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Dynamically setting 'composite' on an effect should toggle acceleration");
+
+promise_test(async test => {
+    const keyframes = composite => [{ offset: 1, composite, transform: "translateX(100px)" }];
+
+    const target = createDiv(test);
+    const animation = target.animate(keyframes("replace"), duration);
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    // Setting the keyframe composition to "add" means that the animation should
+    // no longer be accelerated.
+    animation.effect.setKeyframes(keyframes("add"));
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+
+    // Resetting the keyframe composition to "replace" means that the animation
+    // should be accelerated again.
+    animation.effect.setKeyframes(keyframes("replace"));
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Dynamically setting 'composite' on a keyframe should toggle acceleration");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+
+    animations.push(target.animate({ transform: "translateX(100px)" }, duration));
+    animations.push(target.animate({ transform: "translateY(100px)" }, duration));
+
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2, "Step 1");
+
+    // Make the second animation a composing animation. This will prevent the first animation
+    // from running accelerated as well.
+    animations[1].effect.composite = "add";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "Step 2");
+
+    // Reset to the original state.
+    animations[1].effect.composite = "replace";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2, "Step 3");
+}, "Dynamically setting 'composite' to 'add' on an animation further up the stack should toggle acceleration on lower animations in the stack");
+
+promise_test(async test => {
+    const target = createDiv(test);
+
+    const animations = [];
+    animations.push(target.animate({ transform: "translateX(100px)" }, duration));
+    animations.push(target.animate({ transform: ["none", "translateY(100px)"] }, duration));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2);
+
+    // Make the first animation a composing animation. This will prevent the other animation from running accelerated.
+    animations[0].effect.composite = "add";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+
+    // Reset to the original state.
+    animations[0].effect.composite = "replace";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2);
+}, "Dynamically setting 'composite' to 'add' on an animation lower down the stack should toggle acceleration but always allow replace animations further up the stack to be accelerated");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+
+    animations.push(target.animate({ transform: "translateX(100px)" }, duration));
+    animations.push(target.animate({ transform: "translateX(100px)" }, duration));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2);
+
+    // Make the first animation a composing animation. This will prevent both animations
+    // from running accelerated since the second animation uses the first animation as
+    // input due to using an implicit 0% keyframe.
+    animations[0].effect.composite = "add";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+
+    // Reset to the original state.
+    animations[0].effect.composite = "replace";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2);
+}, "Dynamically setting 'composite' to 'add' on an animation lower down the stack should toggle acceleration on replace animations with an implicity keyframe further up the stack");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+
+    animations.push(target.animate({ marginLeft: "100px" }, duration));
+    animations.push(target.animate({ transform: "translateX(100px)" }, duration));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    // Make the first animation a composing animation. This should not prevent the other animation from running accelerated.
+    animations[0].effect.composite = "add";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    // Reset to the original state.
+    animations[0].effect.composite = "replace";
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Dynamically setting 'composite' to 'add' on an animation lower down the stack targeting a property that isn't accelerated shouldn't prevent acceleration of animations with implicit keyframes further up the stack to be accelerated");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate({ transform: "translateX(100px)" }, duration);
+
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    const composingAnimation = target.animate(
+        { transform: "translateY(100px)" },
+        { composite: "add", duration }
+    );
+
+    await animationReadyToAnimateAccelerated(composingAnimation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Adding a composing effect on top of an existing replace effect should prevent both effects from running accelerated");
 
 </script>
 </body>

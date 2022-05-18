@@ -55,10 +55,6 @@ enum class AnimationImpact {
     ForcesStackingContext   = 1 << 1
 };
 
-enum class AcceleratedActionApplicationResult {
-    TransformRelatedAnimationCannotBeAccelerated  = 1 << 0
-};
-
 enum class UseAcceleratedAction : uint8_t { Yes, No };
 
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
