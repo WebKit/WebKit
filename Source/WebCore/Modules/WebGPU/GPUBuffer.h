@@ -49,8 +49,8 @@ public:
     void setLabel(String&&);
 
     using MapAsyncPromise = DOMPromiseDeferred<IDLNull>;
-    void mapAsync(GPUMapModeFlags, GPUSize64 offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
-    Ref<JSC::ArrayBuffer> getMappedRange(GPUSize64 offset, std::optional<GPUSize64> rangeSize);
+    void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
+    Ref<JSC::ArrayBuffer> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
     void unmap();
 
     void destroy();
