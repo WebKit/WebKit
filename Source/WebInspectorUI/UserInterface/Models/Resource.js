@@ -1123,7 +1123,7 @@ WI.Resource = class Resource extends WI.SourceCode
             break;
         }
 
-        return WI.LocalResourceOverride.create(WI.urlWithoutFragment(this.url), type, resourceData);
+        return WI.LocalResourceOverride.create(this.url, type, resourceData);
     }
 
     updateLocalResourceOverrideRequestData(data)

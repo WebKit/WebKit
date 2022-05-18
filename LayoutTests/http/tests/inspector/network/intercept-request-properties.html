@@ -77,12 +77,12 @@ function test()
         }
     }
 
-    function addTestCase({name, description, expression, override}) {
+    function addTestCase({name, description, url, expression, override}) {
         suite.addTestCase({
             name,
             description,
             async test() {
-                let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py", WI.LocalResourceOverride.InterceptType.Request, override);
+                let localResourceOverride = WI.LocalResourceOverride.create(url || "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py", WI.LocalResourceOverride.InterceptType.Request, override);
                 WI.networkManager.addLocalResourceOverride(localResourceOverride);
 
                 InspectorTest.log("Triggering load...");
@@ -129,6 +129,17 @@ function test()
         description: "Tests request method interception with different URL",
         expression: "fetchData('resources/intercept-echo.py')",
         override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py?newURL=value" },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.URL.Regex",
+        description: "Tests request method interception a URL regex",
+        url: "(.+)/inspector/network/resources/(.+)",
+        expression: "fetchData('resources/intercept-echo.py')",
+        override: {
+            requestURL: "$1/inspector/network/resources/$2?newURL=value",
+            isRegex: true,
+        },
     });
 
     addTestCase({

@@ -44,6 +44,16 @@ Request details:
   Get:
     newURL: value
 
+-- Running test case: Network.interceptRequest.URL.Regex
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.py?newURL=value
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py?newURL=value
+  Method: GET
+  Request Headers:
+  Get:
+    newURL: value
+
 -- Running test case: Network.interceptRequest.URLFragment
 Triggering load...
 Request details:

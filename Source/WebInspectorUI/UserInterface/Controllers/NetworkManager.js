@@ -960,8 +960,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     async requestIntercepted(target, requestId, request)
     {
-        let url = WI.urlWithoutFragment(request.url);
-        for (let localResourceOverride of this.localResourceOverridesForURL(url)) {
+        for (let localResourceOverride of this.localResourceOverridesForURL(request.url)) {
             if (localResourceOverride.disabled)
                 continue;
 
@@ -981,7 +980,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             case WI.LocalResourceOverride.InterceptType.Request: {
                 target.NetworkAgent.interceptWithRequest.invoke({
                     requestId,
-                    url: localResource.url || undefined,
+                    url: localResourceOverride.generateRequestRedirectURL(request.url) ?? undefined,
                     method: localResource.requestMethod ?? undefined,
                     headers: localResource.requestHeaders,
                     postData: (WI.HTTPUtilities.RequestMethodsWithBody.has(localResource.requestMethod) && localResource.requestData) ? btoa(localResource.requestData) : undefined,
@@ -1015,8 +1014,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     async responseIntercepted(target, requestId, response)
     {
-        let url = WI.urlWithoutFragment(response.url);
-        for (let localResourceOverride of this.localResourceOverridesForURL(url)) {
+        for (let localResourceOverride of this.localResourceOverridesForURL(response.url)) {
             if (localResourceOverride.disabled)
                 continue;
 

@@ -38,7 +38,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
         super();
 
-        this._url = url;
+        this._url = WI.urlWithoutFragment(url);
         this._urlComponents = null;
         this._type = type;
         this._localResource = localResource;
@@ -227,6 +227,20 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         return displayName;
     }
 
+    generateRequestRedirectURL(url)
+    {
+        console.assert(this._type === WI.LocalResourceOverride.InterceptType.Request, this);
+
+        let redirectURL = this._localResource.url;
+        if (!redirectURL)
+            return null;
+
+        if (this._isRegex)
+            return url.replace(this._urlRegex, redirectURL);
+
+        return redirectURL;
+    }
+
     get canMapToFile()
     {
         if (!WI.LocalResource.canMapToFile())
@@ -248,13 +262,13 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     matches(url)
     {
-        if (this._isRegex) {
-            let regex = new RegExp(this._url, !this._isCaseSensitive ? "i" : "");
-            return regex.test(url);
-        }
+        url = WI.urlWithoutFragment(url);
+
+        if (this._isRegex)
+            return this._urlRegex.test(url);
 
         if (!this._isCaseSensitive)
-            return String(url).toLowerCase() === this._url.toLowerCase();
+            return url.toLowerCase() === this._url.toLowerCase();
 
         return url === this._url;
     }
@@ -277,6 +291,14 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         cookie["local-resource-override-is-case-sensitive"] = this._isCaseSensitive;
         cookie["local-resource-override-is-regex"] = this._isRegex;
         cookie["local-resource-override-disabled"] = this._disabled;
+    }
+
+    // Private
+
+    get _urlRegex()
+    {
+        console.assert(this._isRegex);
+        return new RegExp(this._url, !this._isCaseSensitive ? "i" : "");
     }
 };
 

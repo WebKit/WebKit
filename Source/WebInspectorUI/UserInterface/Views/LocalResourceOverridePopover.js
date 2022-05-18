@@ -57,7 +57,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         // COMPATIBILITY (iOS 13.4): `Network.addInterception` did not exist yet.
         let data = {
             type: this._skipNetworkCheckbox?.checked ? WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork : this._typeSelectElement.value,
-            url: WI.urlWithoutFragment(this._urlCodeMirror.getValue()),
+            url: this._urlCodeMirror.getValue(),
             isCaseSensitive: !this._isCaseSensitiveCheckbox || this._isCaseSensitiveCheckbox.checked,
             isRegex: !!this._isRegexCheckbox?.checked,
         };
