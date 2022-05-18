@@ -975,7 +975,7 @@ private:
         WeakPtr<RenderBlockFlow> backdropRenderer;
     };
     
-    const RenderObject::RenderObjectRareData& rareData() const;
+    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
     
