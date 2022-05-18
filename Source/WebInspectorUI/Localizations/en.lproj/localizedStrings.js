@@ -643,6 +643,10 @@ localizedStrings["Event Breakpoint\u2026"] = "Event Breakpoint\u2026";
 localizedStrings["Event Dispatched"] = "Event Dispatched";
 localizedStrings["Event Handlers:"] = "Event Handlers:";
 localizedStrings["Event Listeners"] = "Event Listeners";
+/* Display name for the type of network requests sent via EventSource API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource) */
+localizedStrings["EventSource"] = "EventSource";
+/* Display name for the type of network requests sent via EventSource(s) API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource) */
+localizedStrings["EventSources"] = "EventSources";
 localizedStrings["Events"] = "Events";
 localizedStrings["Events:"] = "Events:";
 localizedStrings["Exception with thrown value: %s"] = "Exception with thrown value: %s";
@@ -1798,6 +1802,8 @@ localizedStrings["default prevented"] = "default prevented";
 /* Shown in the 'Type' column of the Network Table for document resources. */
 localizedStrings["document @ Network Tab Resource Type Column Value"] = "document";
 localizedStrings["ensuring that common debugging functions are available on every page via the Console"] = "ensuring that common debugging functions are available on every page via the Console";
+/* Shown in the 'Type' column of the Network Table for EventSource resources. */
+localizedStrings["eventsource @ Network Tab Resource Type Column Value"] = "eventsource";
 /* Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method. */
 localizedStrings["fetch @ Network Tab Resource Type Column Value"] = "fetch";
 /* Shown in the 'Type' column of the Network Table for font resources. */

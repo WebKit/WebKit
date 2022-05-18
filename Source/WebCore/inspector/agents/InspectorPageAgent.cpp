@@ -235,6 +235,8 @@ Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(InspectorPageA
         return Protocol::Page::ResourceType::Beacon;
     case WebSocketResource:
         return Protocol::Page::ResourceType::WebSocket;
+    case EventSourceResource:
+        return Protocol::Page::ResourceType::EventSource;
     case OtherResource:
         return Protocol::Page::ResourceType::Other;
 #if ENABLE(APPLICATION_MANIFEST)
@@ -286,6 +288,8 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const
             return InspectorPageAgent::FetchResource;
         case ResourceRequest::Requester::Main:
             return InspectorPageAgent::DocumentResource;
+        case ResourceRequest::Requester::EventSource:
+            return InspectorPageAgent::EventSourceResource;
         default:
             return InspectorPageAgent::XHRResource;
         }

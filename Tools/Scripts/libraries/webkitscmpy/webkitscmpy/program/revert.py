@@ -23,6 +23,8 @@
 import logging
 import re
 import sys
+import os
+import re
 
 from .command import Command
 from .branch import Branch
@@ -31,11 +33,14 @@ from .pull_request import PullRequest
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, Terminal
 from webkitscmpy import local, log, remote
+from ..commit import Commit
 
 
 class Revert(Command):
     name = 'revert'
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
+    REVERT_TITLE_TEMPLATE = 'Revert [{}] {}'
+    REVERT_TITLE_RE = re.compile(r'^Revert \[{}\] [\s\S]*'.format(Commit.IDENTIFIER_RE.pattern))
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -46,6 +51,13 @@ class Revert(Command):
             help='git hash, svn revision or identifer you want to revert'
         )
 
+        parser.add_argument(
+            '--pr',
+            default=False,
+            action='store_true',
+            help='Create a pull request at the same time'
+        )
+
     @classmethod
     def revert_commit(cls, args, repository, **kwargs):
         # Check if there are any outstanding changes:
@@ -54,7 +66,7 @@ class Revert(Command):
             return 1
         # Make sure we have the commit that user want to revert
         try:
-            commit = repository.find(args.commit, include_log=False)
+            commit = repository.find(args.commit, include_log=True)
         except (local.Scm.Exception, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
@@ -91,33 +103,23 @@ class Revert(Command):
                     run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
                     return 1
 
-        result = run([repository.executable(), 'revert', '--continue', '--no-edit'], cwd=repository.root_path)
+        bug_urls = []
+        commit_title = None
+        for line in commit.message.splitlines():
+            if not commit_title:
+                commit_title = line
+            tracker = Tracker.from_string(line)
+            if tracker:
+                bug_urls.append(line)
+        env = os.environ
+        env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title)
+        env['COMMIT_MESSAGE_BUG'] = '\n'.join(bug_urls)
+        result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=env)
         if result.returncode:
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
             return 1
         log.info('Reverted {}'.format(commit.hash))
-        return 0
-
-    @classmethod
-    def add_comment_to_reverted_commit_bug_tracker(cls, repository, args):
-        source_remote = args.remote or 'origin'
-        rmt = repository.remote(name=source_remote)
-        if not rmt:
-            sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
-            return 1
-        if not rmt.pull_requests:
-            sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
-            return 1
-
-        revert_pr = PullRequest.find_existing_pull_request(repository, rmt)
-
-        commit = repository.find(args.commit, include_log=True)
-        for line in commit.message.split():
-            tracker = Tracker.from_string(line)
-            if tracker:
-                tracker.add_comment('Reverted by {}'.format(revert_pr.link))
-                continue
         return 0
 
     @classmethod
@@ -137,9 +139,8 @@ class Revert(Command):
         if result:
             return result
 
-        result = PullRequest.create_pull_request(repository, args, branch_point)
-        if result:
+        if not args.pr:
             return result
+        else:
+            return PullRequest.create_pull_request(repository, args, branch_point)
 
-        log.info('Adding comment for reverted commits...')
-        return cls.add_comment_to_reverted_commit_bug_tracker(repository, args)
