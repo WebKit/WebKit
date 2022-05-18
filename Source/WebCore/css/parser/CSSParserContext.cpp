@@ -112,6 +112,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
+    , motionPathEnabled { document.settings().cssMotionPathEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -165,6 +166,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
+        && a.motionPathEnabled == b.motionPathEnabled
     ;
 }
 
@@ -209,7 +211,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #endif
         | context.accentColorEnabled                        << 29
         | context.inputSecurityEnabled                      << 30
-        | context.mode                                      << 31; // This is multiple bits, so keep it last.
+        | context.motionPathEnabled                         << 31
+        | (uint64_t)context.mode                            << 32; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -254,6 +257,12 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyWebkitOverflowScrolling:
         return !legacyOverflowScrollingTouchEnabled;
 #endif
+    case CSSPropertyOffsetPath:
+    case CSSPropertyOffsetDistance:
+    case CSSPropertyOffsetPosition:
+    case CSSPropertyOffsetAnchor:
+    case CSSPropertyOffsetRotate:
+        return !motionPathEnabled;
     default:
         return false;
     }
