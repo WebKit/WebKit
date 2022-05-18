@@ -642,19 +642,22 @@ void TextIterator::handleTextRun()
         auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
 
         if (runStart < runEnd) {
-            auto isNewlineOrTab = [&](UChar character) {
-                return character == '\n' || character == '\t';
-            };
+            Function<bool(UChar)> isCharacterThatShouldBeReplaceBySpace;
+            if (renderer.style().whiteSpace() == WhiteSpace::PreLine)
+                isCharacterThatShouldBeReplaceBySpace = [&](UChar c) { return c == '\t'; };
+            else
+                isCharacterThatShouldBeReplaceBySpace = [&](UChar c) { return c == '\n' || c == '\t'; };
+
             // Handle either a single newline or tab character (which becomes a space),
             // or a run of characters that does not include newlines or tabs.
             // This effectively translates newlines and tabs to spaces without copying the text.
-            if (isNewlineOrTab(rendererText[runStart])) {
+            if (isCharacterThatShouldBeReplaceBySpace(rendererText[runStart])) {
                 emitCharacter(' ', textNode, nullptr, runStart, runStart + 1);
                 m_offset = runStart + 1;
             } else {
                 auto subrunEnd = runStart + 1;
                 for (; subrunEnd < runEnd; ++subrunEnd) {
-                    if (isNewlineOrTab(rendererText[subrunEnd]))
+                    if (isCharacterThatShouldBeReplaceBySpace(rendererText[subrunEnd]))
                         break;
                 }
                 if (subrunEnd == runEnd && m_behaviors.contains(TextIteratorBehavior::BehavesAsIfNodesFollowing)) {
