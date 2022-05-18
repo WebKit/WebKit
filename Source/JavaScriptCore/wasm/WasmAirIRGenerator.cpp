@@ -514,6 +514,7 @@ private:
     TypedTmp gExternref() { return { newTmp(B3::GP), Types::Externref }; }
     TypedTmp gFuncref() { return { newTmp(B3::GP), Types::Funcref }; }
     TypedTmp gRef(Type type) { return { newTmp(B3::GP), type }; }
+    TypedTmp gRtt() { return { newTmp(B3::GP), Types::Rtt }; }
     TypedTmp f32() { return { newTmp(B3::FP), Types::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Types::F64 }; }
 
@@ -528,8 +529,9 @@ private:
             return gFuncref();
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rtt:
             return gRef(type);
+        case TypeKind::Rtt:
+            return gRtt();
         case TypeKind::Externref:
             return gExternref();
         case TypeKind::F32:
@@ -715,6 +717,7 @@ private:
             case TypeKind::Funcref:
             case TypeKind::Ref:
             case TypeKind::RefNull:
+            case TypeKind::Rtt:
                 resultType = B3::Int64;
                 break;
             case TypeKind::F32:
@@ -3001,7 +3004,7 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
 
 auto AirIRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
 {
-    result = tmpForType(Types::I32);
+    result = gRtt();
     emitCCall(&operationWasmRttCanon, result, instanceValue(), addConstant(Types::I32, typeIndex));
 
     return { };

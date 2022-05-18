@@ -2256,7 +2256,7 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
 
 auto B3IRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::I32), origin(),
+    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Rtt), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRttCanon)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex)));
 

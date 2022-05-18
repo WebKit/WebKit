@@ -17,7 +17,7 @@
         "ref":       { "type": "varint7", "value":  -21, "b3type": "B3::Int64" },
         "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void" },
         "struct":    { "type": "varint7", "value":  -33, "b3type": "B3::Void" },
-        "rtt":       { "type": "varint7", "value":  -24, "b3type": "B3::Void" },
+        "rtt":       { "type": "varint7", "value":  -24, "b3type": "B3::Int64" },
         "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void" }
     },
     "value_type": ["i32", "i64", "f32", "f64", "externref", "funcref"],
