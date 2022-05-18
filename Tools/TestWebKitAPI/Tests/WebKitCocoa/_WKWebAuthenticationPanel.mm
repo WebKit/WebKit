@@ -2388,7 +2388,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     reset();
     cleanUpKeychain(emptyString());
 
-    addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64);
+    addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64, true /* synchronized */);
 
     auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup];
     EXPECT_NOT_NULL(credentials);
