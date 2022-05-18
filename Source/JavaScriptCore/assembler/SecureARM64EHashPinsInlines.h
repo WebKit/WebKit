@@ -54,7 +54,7 @@ ALWAYS_INLINE void SecureARM64EHashPins::forEachPage(Function function)
         RELEASE_ASSERT(isJITPC(page));
         if (function(*page) == IterationStatus::Done)
             return;
-        page = page->next
+        page = page->next;
     } while (page);
 }
 
