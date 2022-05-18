@@ -370,7 +370,9 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
-    addSession(webProcessProxy.websiteDataStore());
+    if (auto* store = webProcessProxy.websiteDataStore())
+        addSession(*store);
+
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
     sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), connectionIdentifier, parameters }, [this, weakThis = WeakPtr { *this }]() mutable {

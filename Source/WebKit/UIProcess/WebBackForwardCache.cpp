@@ -134,7 +134,8 @@ void WebBackForwardCache::removeEntriesForProcess(WebProcessProxy& process)
 void WebBackForwardCache::removeEntriesForSession(PAL::SessionID sessionID)
 {
     removeEntriesMatching([sessionID](auto& item) {
-        return item.backForwardCacheEntry()->process().websiteDataStore().sessionID() == sessionID;
+        auto* dataStore = item.backForwardCacheEntry()->process().websiteDataStore();
+        return dataStore && dataStore->sessionID() == sessionID;
     });
 }
 

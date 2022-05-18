@@ -576,7 +576,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     // Prioritize the requesting WebProcess for running the service worker.
     if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess) {
-        if (&requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(registrableDomain))
+        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(registrableDomain))
             useProcessForRemoteWorkers(*requestingProcess);
     }
 
@@ -584,7 +584,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         for (auto& process : processPool->m_processes) {
             if (process.ptr() == processPool->m_prewarmedProcess.get() || process->isDummyProcessProxy())
                 continue;
-            if (&process->websiteDataStore() != websiteDataStore)
+            if (process->websiteDataStore() != websiteDataStore)
                 continue;
             if (!process->isMatchingRegistrableDomain(registrableDomain))
                 continue;
@@ -1092,7 +1092,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
             if (process->isRunningServiceWorkers())
                 continue;
 #endif
-            if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+            if (mustMatchDataStore && process->websiteDataStore() != &websiteDataStore)
                 continue;
             return process;
         }
@@ -1132,7 +1132,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
-        ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == &process->websiteDataStore());
+        ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
     } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
@@ -1982,7 +1982,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", targetRegistrableDomain.string().utf8().data());
 
         if (auto* process = m_swappedProcessesPerRegistrableDomain.get(targetRegistrableDomain)) {
-            if (&process->websiteDataStore() == dataStore.ptr()) {
+            if (process->websiteDataStore() == dataStore.ptr()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
 
                 return completionHandler(*process, nullptr, reason);

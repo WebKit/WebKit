@@ -53,7 +53,7 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
 {
     for (auto* suspendedPage : allSuspendedPages()) {
         auto& process = suspendedPage->process();
-        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && &process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.captivePortalMode() == captivePortalMode)
+        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.captivePortalMode() == captivePortalMode)
             return &process;
     }
     return nullptr;

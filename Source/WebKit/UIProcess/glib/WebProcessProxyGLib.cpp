@@ -42,7 +42,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.extraInitializationData.set("enable-sandbox"_s, m_processPool->sandboxEnabled() ? "true"_s : "false"_s);
 
     if (m_processPool->sandboxEnabled()) {
-        WebsiteDataStore* dataStore = m_websiteDataStore.get();
+        WebsiteDataStore* dataStore = websiteDataStore();
         if (!dataStore) {
             // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
             // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
