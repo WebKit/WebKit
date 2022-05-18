@@ -131,14 +131,24 @@ typedef void (^RBSProcessUpdateHandler)(RBSProcessMonitor *monitor, RBSProcessHa
 
 @interface RBSProcessMonitor : NSObject <NSCopying>
 + (instancetype)monitorWithConfiguration:(NS_NOESCAPE RBSProcessMonitorConfigurator)block;
+- (void)invalidate;
 @end
 
 @interface RBSProcessPredicate : NSObject <RBSProcessMatching>
 + (RBSProcessPredicate *)predicateMatchingHandle:(RBSProcessHandle *)process;
+typedef NS_OPTIONS(NSUInteger, RBSProcessStateValues) {
+    RBSProcessStateValueNone                    = 0,
+    RBSProcessStateValueTaskState               = (1 << 0),
+    RBSProcessStateValueTags                    = (1 << 1),
+    RBSProcessStateValueTerminationResistance   = (1 << 2),
+    RBSProcessStateValueLegacyAssertions        = (1 << 3),
+    RBSProcessStateValueModernAssertions        = (1 << 4),
+};
 @end
 
 @interface RBSProcessStateDescriptor : NSObject <NSCopying>
 + (instancetype)descriptor;
+@property (nonatomic, readwrite, assign) RBSProcessStateValues values;
 @property (nonatomic, readwrite, copy, nullable) NSArray<NSString *> *endowmentNamespaces;
 @end
 

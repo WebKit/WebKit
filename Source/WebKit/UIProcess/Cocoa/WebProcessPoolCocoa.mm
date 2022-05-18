@@ -38,6 +38,7 @@
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "PreferenceObserver.h"
+#import "ProcessThrottler.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
@@ -1051,6 +1052,15 @@ void WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend()
     for (auto& processPool : allProcessPools())
         processPool->applicationIsAboutToSuspend();
 }
+
+void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
+{
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setProcessesShouldSuspend: Processes should suspend %d", shouldSuspend);
+
+    for (auto& process : m_processes)
+        process->throttler().setAllowsActivities(!shouldSuspend);
+}
+
 #endif
 
 void WebProcessPool::initializeClassesForParameterCoding()

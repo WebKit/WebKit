@@ -52,16 +52,30 @@ ProcessThrottler::~ProcessThrottler()
     invalidateAllActivities();
 }
 
-void ProcessThrottler::addActivity(ForegroundActivity& activity)
+bool ProcessThrottler::addActivity(ForegroundActivity& activity)
 {
+    if (!m_allowsActivities) {
+        if (!activity.isQuietActivity())
+            PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add foreground activity %s", activity.name().characters());
+        return false;
+    }
+
     m_foregroundActivities.add(&activity);
     updateAssertionIfNeeded();
+    return true;
 }
 
-void ProcessThrottler::addActivity(BackgroundActivity& activity)
+bool ProcessThrottler::addActivity(BackgroundActivity& activity)
 {
+    if (!m_allowsActivities) {
+        if (!activity.isQuietActivity())
+            PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add background activity %s", activity.name().characters());
+        return false;
+    }
+
     m_backgroundActivities.add(&activity);
     updateAssertionIfNeeded();
+    return true;
 }
 
 void ProcessThrottler::removeActivity(ForegroundActivity& activity)
@@ -255,6 +269,18 @@ bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::Activit
     if (!std::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
         return false;
     return std::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
+}
+
+void ProcessThrottler::setAllowsActivities(bool allow)
+{
+    if (m_allowsActivities == allow)
+        return;
+
+    PROCESSTHROTTLER_RELEASE_LOG("setAllowsActivities %d", allow);
+    m_allowsActivities = allow;
+
+    if (!allow)
+        invalidateAllActivities();
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
