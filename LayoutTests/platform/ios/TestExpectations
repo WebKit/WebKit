@@ -3618,5 +3618,15 @@ webkit.org/b/240463 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceT
 
 webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
 
-webkit.org/b/240579 http/tests/workers/service/getnotifications-stop.html [ Timeout ]
-webkit.org/b/240579 http/tests/workers/service/getnotifications.html [ Timeout ]
+#  Correction to guard in Platform file removing iOS - Skip tests
+webkit.org/b/240579 http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
+webkit.org/b/240579 http/tests/workers/service/shownotification-allowed.html [ Skip ]
+webkit.org/b/240579 http/tests/workers/service/shownotification-denied.html [ Skip ]
+webkit.org/b/240579 http/tests/workers/service/shownotification-invalid-data.html [ Skip ]
+webkit.org/b/240579 http/tests/workers/service/getnotifications-stop.html [ Skip ]
+webkit.org/b/240579 http/tests/workers/service/getnotifications.html [ Skip ]
+webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Skip ]
+webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Skip ]
+webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
+webkit.org/b/240579 http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Skip ]
+webkit.org/b/240579 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
