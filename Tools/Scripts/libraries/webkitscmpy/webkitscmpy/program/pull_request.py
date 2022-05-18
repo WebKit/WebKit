@@ -224,6 +224,34 @@ class PullRequest(Command):
         return True
 
     @classmethod
+    def is_revert_commit(cls, commit):
+        msg = commit.message.split()
+        if not len(msg):
+            return False
+        title = msg[0]
+        return title.startswith('Revert')
+
+    @classmethod
+    def add_comment_to_reverted_commit_bug_tracker(cls, repository, args, pr, commit):
+        source_remote = args.remote or 'origin'
+        rmt = repository.remote(name=source_remote)
+        if not rmt:
+            sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
+            return 1
+        if not rmt.pull_requests:
+            sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
+            return 1
+
+        log.info('Adding comment for reverted commits...')
+        for line in commit.message.split():
+            tracker = Tracker.from_string(line)
+            if tracker:
+                tracker.add_comment('Reverted by {}'.format(pr.link))
+                tracker.set(opened=True)
+                continue
+        return 0
+
+    @classmethod
     def create_pull_request(cls, repository, args, branch_point):
         # FIXME: We can do better by inferring the remote from the branch point, if it's not specified
         source_remote = args.remote or 'origin'
@@ -354,6 +382,8 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
             print("Created '{}'!".format(pr))
+            if cls.is_revert_commit(commits[0]):
+                cls.add_comment_to_reverted_commit_bug_tracker(repository, args, pr, commits[0])
 
         if issue:
             log.info('Checking issue assignee...')
