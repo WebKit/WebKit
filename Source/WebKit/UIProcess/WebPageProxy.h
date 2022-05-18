@@ -1920,6 +1920,8 @@ public:
     void revokeAccessToAssetServices();
     void switchFromStaticFontRegistryToUserFontRegistry();
 
+    void disableURLSchemeCheckInDataDetectors() const;
+
     void setIsTakingSnapshotsForApplicationSuspension(bool);
     void setNeedsDOMWindowResizeEvent();
 

@@ -27,6 +27,7 @@
 #import "WebProcess.h"
 
 #import "AccessibilitySupportSPI.h"
+#import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -93,6 +94,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
+#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -157,6 +159,7 @@
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -410,7 +413,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
     
@@ -446,6 +448,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
 
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
+
+    if (!isParentProcessAFullWebBrowser(*this))
+        disableURLSchemeCheckInDataDetectors();
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -1162,6 +1167,14 @@ void WebProcess::revokeAccessToAssetServices()
         return;
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
+}
+
+void WebProcess::disableURLSchemeCheckInDataDetectors() const
+{
+#if HAVE(DDRESULT_DISABLE_URL_SCHEME_CHECKING)
+    if (PAL::canLoad_DataDetectorsCore_DDResultDisableURLSchemeChecking())
+        PAL::softLinkDataDetectorsCoreDDResultDisableURLSchemeChecking();
+#endif
 }
 
 void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)

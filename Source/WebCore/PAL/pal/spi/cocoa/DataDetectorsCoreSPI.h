@@ -147,7 +147,7 @@ void *DDScanQueryGetFragmentMetaData(DDScanQueryRef, CFIndex queryIndex);
 bool DDResultHasProperties(DDResultRef, CFIndex propertySet);
 CFArrayRef DDResultGetSubResults(DDResultRef);
 DDQueryRange DDResultGetQueryRangeForURLification(DDResultRef);
-
+void DDResultDisableURLSchemeChecking();
 WTF_EXTERN_C_END
 
 #endif

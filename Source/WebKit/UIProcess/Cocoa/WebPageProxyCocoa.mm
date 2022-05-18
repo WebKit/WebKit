@@ -852,6 +852,11 @@ void WebPageProxy::revokeAccessToAssetServices()
     process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
 }
 
+void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
+{
+    process().send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
+}
+
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
     process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);

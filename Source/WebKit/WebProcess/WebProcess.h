@@ -367,6 +367,8 @@ public:
     void revokeAccessToAssetServices();
     void switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle);
 
+    void disableURLSchemeCheckInDataDetectors() const;
+
 #if PLATFORM(MAC)
     void updatePageScreenProperties();
 #endif

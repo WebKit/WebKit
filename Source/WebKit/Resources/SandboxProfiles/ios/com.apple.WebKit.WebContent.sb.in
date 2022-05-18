@@ -1062,11 +1062,7 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.iconservices"
-            "com.apple.lsd.open"
-        )
-    )
-)
+            "com.apple.iconservices")))
 
 (allow iokit-open
     (require-all

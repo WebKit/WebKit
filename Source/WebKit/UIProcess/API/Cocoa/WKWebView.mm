@@ -2585,6 +2585,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         _page->revokeAccessToAssetServices();
 }
 
+- (void)_disableURLSchemeCheckInDataDetectors
+{
+    THROW_IF_SUSPENDED;
+    if (_page)
+        _page->disableURLSchemeCheckInDataDetectors();
+}
+
 - (void)_switchFromStaticFontRegistryToUserFontRegistry
 {
     THROW_IF_SUSPENDED;
