@@ -28,6 +28,7 @@
 #import "DOMNodeInternal.h"
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebScriptObjectPrivate.h>

@@ -27,6 +27,7 @@
 #include "IDBFactory.h"
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"
 #include "IDBDatabaseIdentifier.h"

@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {

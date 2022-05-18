@@ -35,6 +35,7 @@
 #include "AuthenticatorResponseData.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"

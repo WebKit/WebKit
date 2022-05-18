@@ -30,6 +30,7 @@
 
 #import "WebKitVersionChecks.h"
 #import "WebView.h"
+#import <WebCore/FrameDestructionObserverInlines.h>
 
 using namespace WebCore;
 

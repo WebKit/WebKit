@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FeaturePolicy.h"
+#include "FrameDestructionObserverInlines.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

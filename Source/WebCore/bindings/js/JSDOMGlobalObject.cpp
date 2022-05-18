@@ -31,6 +31,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FetchResponse.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSAbortAlgorithm.h"
 #include "JSAbortSignal.h"
 #include "JSDOMPromiseDeferred.h"

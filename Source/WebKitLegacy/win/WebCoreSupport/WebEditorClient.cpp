@@ -34,6 +34,7 @@
 #include <comutil.h>
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>

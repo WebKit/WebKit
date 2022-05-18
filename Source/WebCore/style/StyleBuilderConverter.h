@@ -50,6 +50,7 @@
 #include "FontPalette.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "GridPositionsResolver.h"
 #include "Length.h"
 #include "Pair.h"

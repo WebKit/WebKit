@@ -33,6 +33,7 @@
 #include "CachedResource.h"
 #include "CachedSVGDocument.h"
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorPageAgent.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

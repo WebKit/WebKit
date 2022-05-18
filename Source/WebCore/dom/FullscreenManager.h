@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "LayoutRect.h"
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>

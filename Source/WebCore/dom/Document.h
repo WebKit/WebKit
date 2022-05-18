@@ -881,7 +881,7 @@ public:
     // In DOM Level 2, the Document's DOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
 
-    bool hasBrowsingContext() const { return !!frame(); }
+    inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
 
     Document& contextDocument() const;
     void setContextDocument(Document& document) { m_contextDocument = document; }
