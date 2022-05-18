@@ -317,7 +317,7 @@ class TestGit(testing.PathTestCase):
         with mocks.local.Git(self.path, git_svn=True):
             self.assertEqual(
                 run([
-                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', 'remotes/origin/main...1abe25b4',
+                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', 'remotes/origin/main...1abe25b4',
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit d8bce26fa65c6fc8f39c17927abb77f69fab82fc
 Author:     Jonathan Bedard <jbedard@apple.com>
@@ -337,15 +337,15 @@ CommitDate: {time_a}
     8th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(
-                time_a=datetime.utcfromtimestamp(1601668000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
-                time_b=datetime.utcfromtimestamp(1601663000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_a=1601668000,
+                time_b=1601663000,
             ))
 
     def test_branch_log(self):
         with mocks.local.Git(self.path, git_svn=True):
             self.assertEqual(
                 run([
-                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', 'branch-b...main',
+                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', 'branch-b...main',
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit 790725a6d79e28db2ecdde29548d2262c0bd059d
 Author:     Jonathan Bedard <jbedard@apple.com>
@@ -367,9 +367,9 @@ CommitDate: {time_b}
         git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc
     git-svn-id: https://svn.example.org/repository/repository/trunk@5 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(
-                time_a=datetime.utcfromtimestamp(1601667000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
-                time_b=datetime.utcfromtimestamp(1601664000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
-                time_c=datetime.utcfromtimestamp(1601662000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_a=1601667000,
+                time_b=1601664000,
+                time_c=1601662000,
             ))
 
     def test_cache(self):
