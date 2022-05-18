@@ -1,7 +1,7 @@
 [pull]
         rebase = true
 [webkitscmpy]
-        pull-request = append
+        pull-request = overwrite
         history = disabled
         update-fork = true
         auto-check = true
