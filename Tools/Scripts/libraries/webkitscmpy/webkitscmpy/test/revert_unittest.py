@@ -45,19 +45,19 @@ class TestRevert(testing.PathTestCase):
         ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--no-history'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--no-history', '--pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
-            self.assertEqual(True, 'Revert "Patch Series"' in repo.head.message)
+            self.assertEqual(True, 'Revert [5@main] Patch Series' in repo.head.message)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'\n"
-            "Created 'PR 1 | Revert \"Patch Series\"'!\n"
+            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -67,6 +67,51 @@ class TestRevert(testing.PathTestCase):
                 "Creating the local development branch 'eng/pr-branch'...",
                 '    Found 1 commit...',
                 'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Adding comment for reverted commits...'
+            ],
+        )
+
+    def test_github_two_step(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+            self.assertDictEqual(repo.modified, dict())
+            self.assertDictEqual(repo.staged, dict())
+            self.assertEqual(True, 'Revert [5@main] Patch Series' in repo.head.message)
+            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            self.assertEqual(0, result)
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/pr-branch'\n"
+            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/pr-branch'...",
+                '    Found 1 commit...',
+                'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                '    Found 1 commit...',
+                'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -97,7 +142,7 @@ index 05e8751..0bf3c85 100644
 """
             }
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--pr'),
                 path=self.path,
             )
             self.assertEqual(1, result)
@@ -111,7 +156,7 @@ index 05e8751..0bf3c85 100644
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
 
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -124,9 +169,9 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/pr-branch'\n"
-            "Created 'PR 1 | Revert \"Patch Series\"'!\n"
+            "Created 'PR 1 | Revert [5@main] Patch Series'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
-            "Updated 'PR 1 | Revert \"Patch Series\"'!\n"
+            "Updated 'PR 1 | Revert [5@main] Patch Series'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
