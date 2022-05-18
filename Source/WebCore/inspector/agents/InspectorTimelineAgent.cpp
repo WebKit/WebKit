@@ -36,6 +36,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "Frame.h"
+#include "FrameSnapshotting.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorClient.h"
