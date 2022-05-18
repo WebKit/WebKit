@@ -76,16 +76,20 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
     def test_create_body_multiple_linked(self):
+        self.maxDiff = None
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
-                message='[scoping] Bug to fix (Part 2)\nhttps://bugs.webkit.org/1234\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix (Part 3)\nhttps://bugs.webkit.org/1234\n\nReviewed by Tim Contributor.\n',
             ), Commit(
                 hash='53ea230fcedbce327eb1c45a6ab65a88de864505',
-                message='[scoping] Bug to fix (Part 1)\n<http://bugs.webkit.org/1234>\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix (Part 2)\n<http://bugs.webkit.org/1234>\n\nReviewed by Tim Contributor.\n',
+            ), Commit(
+                hash='ccc39e76f938a1685e388991fc3127a85d0be0f0',
+                message='[scoping] Bug to fix (Part 1)\n<rdar:///1234>\n\nReviewed by Tim Contributor.\n',
             )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 <pre>
-[scoping] Bug to fix (Part 2)
+[scoping] Bug to fix (Part 3)
 <a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
 
 Reviewed by Tim Contributor.
@@ -93,8 +97,16 @@ Reviewed by Tim Contributor.
 ----------------------------------------------------------------------
 #### 53ea230fcedbce327eb1c45a6ab65a88de864505
 <pre>
+[scoping] Bug to fix (Part 2)
+&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a>&gt;
+
+Reviewed by Tim Contributor.
+</pre>
+----------------------------------------------------------------------
+#### ccc39e76f938a1685e388991fc3127a85d0be0f0
+<pre>
 [scoping] Bug to fix (Part 1)
-&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a> &gt;
+&lt;rdar:///1234&gt;
 
 Reviewed by Tim Contributor.
 </pre>''',
@@ -160,7 +172,7 @@ Reviewed by Tim Contributor.
 #### 53ea230fcedbce327eb1c45a6ab65a88de864505
 <pre>
 [scoping] Bug to fix (Part 1)
-&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a> &gt;
+&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a>&gt;
 
 Reviewed by Tim Contributor.
 </pre>''')
