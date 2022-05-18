@@ -57,7 +57,7 @@ public:
     void initialize(const AuxiliaryProcessInitializationParameters&);
 
     // disable and enable termination of the process. when disableTermination is called, the
-    // process won't terminate unless a corresponding disableTermination call is made.
+    // process won't terminate unless a corresponding enableTermination call is made.
     void disableTermination();
     void enableTermination();
 
