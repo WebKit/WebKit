@@ -143,7 +143,7 @@ OSStatus CoreAudioSharedInternalUnit::stop()
 
 OSStatus CoreAudioSharedInternalUnit::set(AudioUnitPropertyID propertyID, AudioUnitScope scope, AudioUnitElement element, const void* value, UInt32 size)
 {
-    return PAL::AudioUnitSetProperty(m_ioUnit, propertyID, scope, element, &value, size);
+    return PAL::AudioUnitSetProperty(m_ioUnit, propertyID, scope, element, value, size);
 }
 
 OSStatus CoreAudioSharedInternalUnit::get(AudioUnitPropertyID propertyID, AudioUnitScope scope, AudioUnitElement element, void* value, UInt32* size)
