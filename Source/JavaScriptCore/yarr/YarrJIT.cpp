@@ -3596,7 +3596,16 @@ class YarrGenerator final : public YarrJITInfo {
                 lastOp.m_checkAdjust = nestedAlternative->m_minimumSize;
                 if ((term->quantityType == QuantifierType::FixedCount) && (term->type != PatternTerm::Type::ParentheticalAssertion))
                     lastOp.m_checkAdjust -= disjunction->m_minimumSize;
-                lastOp.m_checkedOffset = checkedOffset + lastOp.m_checkAdjust;
+
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(checkedOffset);
+                checkedOffsetResult += lastOp.m_checkAdjust;
+
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+
+                lastOp.m_checkedOffset = checkedOffsetResult;
             }
             opCompileAlternative(m_ops[lastOpIndex].m_checkedOffset, nestedAlternative);
 
@@ -4720,6 +4729,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::ExecutableMemoryAllocationFailure:
         dataLog("Can't JIT because of failure of allocation of executable memory\n");
+        break;
+    case JITFailureReason::OffsetTooLarge:
+        dataLog("Can't JIT because pattern exceeds string length limits\n");
         break;
     }
 }
