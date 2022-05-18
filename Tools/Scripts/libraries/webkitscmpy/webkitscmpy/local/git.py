@@ -30,6 +30,7 @@ import subprocess
 import sys
 import time
 
+from datetime import datetime, timedelta
 from collections import defaultdict
 
 from webkitcorepy import run, decorators, NestedFuzzyDict
@@ -129,7 +130,7 @@ class Git(Scm):
                     kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
-                    [self.repo.executable(), 'log', branch, '--no-decorate', '--date=unix'],
+                    [self.repo.executable(), 'log', branch, '--no-decorate'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -554,7 +555,7 @@ class Git(Scm):
 
         default_branch = self.default_branch
         parsed_branch_point = None
-        log_format = ['-1', '--no-decorate', '--date=unix'] if include_log else ['-1', '--no-decorate', '--date=unix', '--format=short']
+        log_format = ['-1', '--no-decorate'] if include_log else ['-1', '--no-decorate', '--format=short']
 
         # Determine the `git log` output and branch for a given identifier
         if identifier is not None:
@@ -711,7 +712,13 @@ class Git(Scm):
             if split[0] == 'Author':
                 author = Contributor.from_scm_log(line.lstrip(), self.contributors)
             elif split[0] == 'CommitDate':
-                timestamp = int(line.split(' ')[-1])
+                tz_diff = line.split(' ')[-1]
+                date = datetime.strptime(split[1].lstrip()[:-len(tz_diff)], '%a %b %d %H:%M:%S %Y ')
+                date += timedelta(
+                    hours=int(tz_diff[1:3]),
+                    minutes=int(tz_diff[3:5]),
+                ) * (1 if tz_diff[0] == '-' else -1)
+                timestamp = int(calendar.timegm(date.timetuple())) - time.timezone
 
         message = ''
         for line in content.splitlines()[5:]:
@@ -731,7 +738,7 @@ class Git(Scm):
         try:
             log = None
             log = subprocess.Popen(
-                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}...{}'.format(end.hash, begin.hash)],
+                [self.executable(), 'log', '--format=fuller', '--no-decorate', '{}...{}'.format(end.hash, begin.hash)],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
