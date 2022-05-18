@@ -119,20 +119,13 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
-struct FlexItemLogicalBox {
-    FlexRect rect;
-    int logicalOrder { 0 };
-    CheckedPtr<const ContainerBox> flexItem;
-};
-
-void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
+FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace()
 {
     auto& formattingState = this->formattingState();
-    Vector<FlexItemLogicalBox> logicalFlexItemList;
+    LogicalFlexItems logicalFlexItemList;
     auto flexItemsNeedReordering = false;
 
     auto convertVisualToLogical = [&] {
-        // FIXME: Convert visual (row/column) direction to logical.
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
 
@@ -158,7 +151,6 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
             previousLogicalOrder = flexItemOrder;
 
             logicalFlexItemList.append({ { logicalSize }, flexItemOrder, &flexItem });
-
         }
     };
     convertVisualToLogical();
@@ -173,6 +165,45 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     };
     reorderFlexItemsIfApplicable();
 
+    return logicalFlexItemList;
+}
+
+void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logicalFlexItemList, const ConstraintsForInFlowContent& constraints)
+{
+    auto& formattingState = this->formattingState();
+    auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
+    auto direction = root().style().flexDirection();
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        auto& flexItemGeometry = formattingState.boxGeometry(*logicalFlexItem.layoutBox);
+        auto topLeft = LayoutPoint { };
+
+        switch (direction) {
+        case FlexDirection::Row:
+            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.left(), constraints.logicalTop() + logicalFlexItem.rect.top() };
+            break;
+        case FlexDirection::RowReverse:
+            topLeft = { constraints.horizontal().logicalRight() - logicalFlexItem.rect.right(), constraints.logicalTop() + logicalFlexItem.rect.top() };
+            break;
+        case FlexDirection::Column: {
+            auto flippedTopLeft = logicalFlexItem.rect.topLeft().transposedPoint();
+            topLeft = { constraints.horizontal().logicalLeft + flippedTopLeft.x(), constraints.logicalTop() + flippedTopLeft.y() };
+            break;
+        }
+        case FlexDirection::ColumnReverse:
+            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.top(), constraints.logicalTop() + logicalWidth - logicalFlexItem.rect.right() };
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        flexItemGeometry.setLogicalTopLeft(topLeft);
+    }
+}
+
+void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
+{
+    auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
+
     auto logicalLeft = LayoutUnit { };
     auto logicalTop = LayoutUnit { };
 
@@ -180,38 +211,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
         logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
         logicalLeft = logicalFlexItem.rect.right();
     }
-
-    auto convertLogicalToVisual = [&] {
-        // FIXME: Convert logical coordinates to visual.
-        auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
-        auto direction = root().style().flexDirection();
-        for (auto& logicalFlexItem : logicalFlexItemList) {
-            auto& flexItemGeometry = formattingState.boxGeometry(*logicalFlexItem.flexItem);
-            auto topLeft = LayoutPoint { };
-
-            switch (direction) {
-            case FlexDirection::Row:
-                topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.left(), constraints.logicalTop() + logicalFlexItem.rect.top() };
-                break;
-            case FlexDirection::RowReverse:
-                topLeft = { constraints.horizontal().logicalRight() - logicalFlexItem.rect.right(), constraints.logicalTop() + logicalFlexItem.rect.top() };
-                break;
-            case FlexDirection::Column: {
-                auto flippedTopLeft = logicalFlexItem.rect.topLeft().transposedPoint();
-                topLeft = { constraints.horizontal().logicalLeft + flippedTopLeft.x(), constraints.logicalTop() + flippedTopLeft.y() };
-                break;
-            }
-            case FlexDirection::ColumnReverse:
-                topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.top(), constraints.logicalTop() + logicalWidth - logicalFlexItem.rect.right() };
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-            flexItemGeometry.setLogicalTopLeft(topLeft);
-        }
-    };
-    convertLogicalToVisual();
+    setFlexItemsGeometry(logicalFlexItemList, constraints);
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

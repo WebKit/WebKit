@@ -29,6 +29,7 @@
 
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
+#include "FlexRect.h"
 #include "FormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
 
@@ -54,6 +55,15 @@ public:
 private:
     void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
+
+    struct LogicalFlexItem {
+        FlexRect rect;
+        int logicalOrder { 0 };
+        CheckedPtr<const ContainerBox> layoutBox;
+    };
+    using LogicalFlexItems = Vector<LogicalFlexItem>;
+    LogicalFlexItems convertFlexItemsToLogicalSpace();
+    void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForInFlowContent&);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
