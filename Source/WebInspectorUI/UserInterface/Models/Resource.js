@@ -172,6 +172,10 @@ WI.Resource = class Resource extends WI.SourceCode
             if (plural)
                 return WI.UIString("Sockets");
             return WI.UIString("Socket");
+        case WI.Resource.Type.EventSource:
+            if (plural)
+                return WI.UIString("EventSources", "Display name for the type of network requests sent via EventSource(s) API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource)");
+            return WI.UIString("EventSource", "Display name for the type of network requests sent via EventSource API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource)");
         case WI.Resource.Type.Other:
             return WI.UIString("Other");
         default:
@@ -1285,6 +1289,7 @@ WI.Resource.Type = {
     Ping: "resource-type-ping",
     Beacon: "resource-type-beacon",
     WebSocket: "resource-type-websocket",
+    EventSource: "resource-type-eventsource",
     Other: "resource-type-other",
 };
 

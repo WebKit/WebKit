@@ -224,6 +224,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case WI.Resource.Type.WebSocket:
             return WI.UIString("socket", "socket @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for WebSocket resources.");
 
+        case WI.Resource.Type.EventSource:
+            return WI.UIString("eventsource", "eventsource @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources loaded via the EventSource API.");
+
         case WI.Resource.Type.Other:
             return WI.UIString("other", "other @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources that don't fall into any of the other known types/categories.");
         }

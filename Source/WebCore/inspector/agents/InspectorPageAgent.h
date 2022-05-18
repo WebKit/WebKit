@@ -72,6 +72,7 @@ public:
 #if ENABLE(APPLICATION_MANIFEST)
         ApplicationManifestResource,
 #endif
+        EventSourceResource,
         OtherResource,
     };
 
