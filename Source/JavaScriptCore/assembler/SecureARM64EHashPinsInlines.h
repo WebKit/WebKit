@@ -43,17 +43,19 @@ ALWAYS_INLINE uint64_t SecureARM64EHashPins::keyForCurrentThread()
 #if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
     result = result & ~0x7ull;
 #endif
-    return result + 1;
+    return result;
 }
 
 template <typename Function>
 ALWAYS_INLINE void SecureARM64EHashPins::forEachPage(Function function)
 {
-    for (Page* page = firstPage(); page; page = page->next) {
+    Page* page = firstPage();
+    do {
         RELEASE_ASSERT(isJITPC(page));
         if (function(*page) == IterationStatus::Done)
             return;
-    }
+        page = page->next
+    } while (page);
 }
 
 template <typename Function>
