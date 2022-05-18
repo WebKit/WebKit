@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.36.2
+=================
+
+What's new in WPE WebKit 2.36.2?
+
+  - Fix some pages showing empty content boxes when using threaded rendering.
+  - Fix the build with accessibility disabled.
+  - Fix the build with newer Ruby versions.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.36.1
 =================
 

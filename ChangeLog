@@ -1,5 +1,11 @@
 2022-05-17  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.36.2 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
+2022-05-17  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.36.2 release
 
         * Source/cmake/OptionsGTK.cmake: Bump version numbers.
