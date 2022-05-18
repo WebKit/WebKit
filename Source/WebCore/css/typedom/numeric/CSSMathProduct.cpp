@@ -37,32 +37,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathProduct);
 
-static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType& a, const CSSNumericType& b)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-multiply-two-types
-    if (a.percentHint && b.percentHint && *a.percentHint != *b.percentHint)
-        return std::nullopt;
-
-    auto add = [] (auto left, auto right) -> CSSNumericType::BaseTypeStorage {
-        if (!left)
-            return right;
-        if (!right)
-            return left;
-        return *left + *right;
-    };
-    
-    return { {
-        add(a.length, b.length),
-        add(a.angle, b.angle),
-        add(a.time, b.time),
-        add(a.frequency, b.frequency),
-        add(a.resolution, b.resolution),
-        add(a.flex, b.flex),
-        add(a.percent, b.percent),
-        a.percentHint ? a.percentHint : b.percentHint
-    } };
-}
-
 ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(FixedVector<CSSNumberish> numberishes)
 {
     return create(WTF::map(WTFMove(numberishes), rectifyNumberish));
@@ -72,13 +46,10 @@ ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(Vector<Ref<CSSNumericVal
 {
     if (values.isEmpty())
         return Exception { SyntaxError };
-    
-    std::optional<CSSNumericType> type = values[0]->type();
-    for (size_t i = 1; i < values.size(); i++) {
-        type = multiplyTypes(*type, values[i]->type());
-        if (!type)
-            return Exception { TypeError };
-    }
+
+    auto type = CSSNumericType::multiplyTypes(values);
+    if (!type)
+        return Exception { TypeError };
 
     return adoptRef(*new CSSMathProduct(WTFMove(values), WTFMove(*type)));
 }

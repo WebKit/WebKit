@@ -38,34 +38,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathSum);
 
-static std::optional<CSSNumericType> addTypes(CSSNumericType a, CSSNumericType b)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-add-two-types
-    if (a.percentHint && b.percentHint && *a.percentHint != *b.percentHint)
-        return std::nullopt;
-
-    if (a.percentHint)
-        b.applyPercentHint(*a.percentHint);
-    if (b.percentHint)
-        a.applyPercentHint(*b.percentHint);
-
-    if (a == b)
-        return { WTFMove(a) };
-
-    for (auto type : eachBaseType()) {
-        if (type == CSSNumericBaseType::Percent)
-            continue;
-        if (!a.valueForType(type) && !b.valueForType(type))
-            continue;
-        a.applyPercentHint(type);
-        b.applyPercentHint(type);
-        if (a.valueForType(type) != b.valueForType(type))
-            return std::nullopt;
-    }
-
-    return { WTFMove(a) };
-}
-
 ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(FixedVector<CSSNumberish> numberishes)
 {
     return create(WTF::map(WTFMove(numberishes), rectifyNumberish));
@@ -76,12 +48,9 @@ ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(Vector<Ref<CSSNumericValue>> val
     if (values.isEmpty())
         return Exception { SyntaxError };
 
-    std::optional<CSSNumericType> type = values[0]->type();
-    for (size_t i = 1; i < values.size(); i++) {
-        type = addTypes(*type, values[i]->type());
-        if (!type)
-            return Exception { TypeError };
-    }
+    auto type = CSSNumericType::addTypes(values);
+    if (!type)
+        return Exception { TypeError };
 
     return adoptRef(*new CSSMathSum(WTFMove(values), WTFMove(*type)));
 }

@@ -34,8 +34,11 @@
 
 namespace WebCore {
 
+class CSSNumericValue;
+
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
-struct CSSNumericType {
+class CSSNumericType {
+public:
     using BaseTypeStorage = Markable<int, IntegralMarkableTraits<int, std::numeric_limits<int>::min()>>;
     BaseTypeStorage length;
     BaseTypeStorage angle;
@@ -46,67 +49,13 @@ struct CSSNumericType {
     BaseTypeStorage percent;
     Markable<CSSNumericBaseType, EnumMarkableTraits<CSSNumericBaseType>> percentHint;
 
-    bool operator==(const CSSNumericType& other) const
-    {
-        return length == other.length
-            && angle == other.angle
-            && time == other.time
-            && frequency == other.frequency
-            && resolution == other.resolution
-            && flex == other.flex
-            && percent == other.percent
-            && percentHint == other.percentHint;
-    }
-
-    BaseTypeStorage& valueForType(CSSNumericBaseType type)
-    {
-        switch (type) {
-        case CSSNumericBaseType::Length:
-            return length;
-        case CSSNumericBaseType::Angle:
-            return angle;
-        case CSSNumericBaseType::Time:
-            return time;
-        case CSSNumericBaseType::Frequency:
-            return frequency;
-        case CSSNumericBaseType::Resolution:
-            return resolution;
-        case CSSNumericBaseType::Flex:
-            return flex;
-        case CSSNumericBaseType::Percent:
-            return percent;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    const BaseTypeStorage& valueForType(CSSNumericBaseType type) const
-    {
-        return const_cast<CSSNumericType*>(this)->valueForType(type);
-    }
-
-    void applyPercentHint(CSSNumericBaseType hint)
-    {
-        // https://drafts.css-houdini.org/css-typed-om/#apply-the-percent-hint
-        auto& optional = valueForType(hint);
-        if (!optional)
-            optional = 0;
-        if (percent)
-            *optional += *std::exchange(percent, 0);
-        percentHint = hint;
-    }
-
-    size_t nonZeroEntryCount() const
-    {
-        size_t count { 0 };
-        count += length && *length;
-        count += angle && *angle;
-        count += time && *time;
-        count += frequency && *frequency;
-        count += resolution && *resolution;
-        count += flex && *flex;
-        count += percent && *percent;
-        return count;
-    }
+    bool operator==(const CSSNumericType& other) const;
+    static std::optional<CSSNumericType> addTypes(const Vector<Ref<CSSNumericValue>>&);
+    static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);
+    BaseTypeStorage& valueForType(CSSNumericBaseType);
+    const BaseTypeStorage& valueForType(CSSNumericBaseType type) const { return const_cast<CSSNumericType*>(this)->valueForType(type); }
+    void applyPercentHint(CSSNumericBaseType);
+    size_t nonZeroEntryCount() const;
 
     template<CSSNumericBaseType type>
     bool matches() const
@@ -130,19 +79,10 @@ struct CSSNumericType {
         return matches<type>() || matches<CSSNumericBaseType::Percent>();
     }
 
-    String debugString() const
-    {
-        return makeString("{",
-            length ? makeString(" length:", *length) : String(),
-            angle ? makeString(" angle:", *angle) : String(),
-            time ? makeString(" time:", *time) : String(),
-            frequency ? makeString(" frequency:", *frequency) : String(),
-            resolution ? makeString(" resolution:", *resolution) : String(),
-            flex ? makeString(" flex:", *flex) : String(),
-            percent ? makeString(" percent:", *percent) : String(),
-            percentHint ? makeString(" percentHint:", WebCore::debugString(*percentHint)) : String(),
-        " }");
-    }
+    String debugString() const;
+private:
+    static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
+    static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
 };
 
 } // namespace WebCore
