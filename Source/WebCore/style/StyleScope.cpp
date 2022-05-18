@@ -188,6 +188,11 @@ Scope& Scope::forNode(Node& node)
     return node.document().styleScope();
 }
 
+const Scope& Scope::forNode(const Node& node)
+{
+    return forNode(const_cast<Node&>(node));
+}
+
 Scope* Scope::forOrdinal(Element& element, ScopeOrdinal ordinal)
 {
     if (ordinal == ScopeOrdinal::Element)

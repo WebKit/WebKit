@@ -3762,7 +3762,10 @@ bool Element::needsStyleInvalidation() const
 {
     if (!inRenderedDocument())
         return false;
-    if (styleValidity() >= Style::Validity::SubtreeInvalid)
+    // If :has() is present a change in an element may affect elements outside its subtree.
+    if (styleValidity() >= Style::Validity::SubtreeInvalid && !Style::Scope::forNode(*this).usesHasPseudoClass())
+        return false;
+    if (document().documentElement() && document().documentElement()->styleValidity() >= Style::Validity::SubtreeInvalid)
         return false;
     if (document().hasPendingFullStyleRebuild())
         return false;

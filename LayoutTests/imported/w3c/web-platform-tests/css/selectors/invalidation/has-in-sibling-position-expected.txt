@@ -29,7 +29,7 @@ PASS remove the class 'test' from the element inserted before previous_sibling_c
 PASS add the class 'test' again to the element inserted before previous_sibling_child
 PASS remove element div.test before previous_sibling_child
 PASS insert element div before previous_sibling_child
-FAIL add the class 'test' to the element inserted again before previous_sibling_child assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again before previous_sibling_child
 PASS remove the class 'test' from the element inserted again before previous_sibling_child
 PASS remove element div before previous_sibling_child
 PASS insert element div[test_attr] before previous_sibling_child
@@ -39,7 +39,7 @@ PASS remove the class 'test' from the element inserted before previous_sibling_d
 PASS add the class 'test' again to the element inserted before previous_sibling_descendant
 PASS remove element div.test before previous_sibling_descendant
 PASS insert element div before previous_sibling_descendant
-FAIL add the class 'test' to the element inserted again before previous_sibling_descendant assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again before previous_sibling_descendant
 PASS remove the class 'test' from the element inserted again before previous_sibling_descendant
 PASS remove element div before previous_sibling_descendant
 PASS insert element div[test_attr] before previous_sibling_descendant
@@ -69,7 +69,7 @@ PASS remove the class 'test' from the element inserted before next_sibling_child
 PASS add the class 'test' again to the element inserted before next_sibling_child
 PASS remove element div.test before next_sibling_child
 PASS insert element div before next_sibling_child
-FAIL add the class 'test' to the element inserted again before next_sibling_child assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again before next_sibling_child
 PASS remove the class 'test' from the element inserted again before next_sibling_child
 PASS remove element div before next_sibling_child
 PASS insert element div[test_attr] before next_sibling_child
@@ -79,7 +79,7 @@ PASS remove the class 'test' from the element inserted before next_sibling_desce
 PASS add the class 'test' again to the element inserted before next_sibling_descendant
 PASS remove element div.test before next_sibling_descendant
 PASS insert element div before next_sibling_descendant
-FAIL add the class 'test' to the element inserted again before next_sibling_descendant assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again before next_sibling_descendant
 PASS remove the class 'test' from the element inserted again before next_sibling_descendant
 PASS remove element div before next_sibling_descendant
 PASS insert element div[test_attr] before next_sibling_descendant
@@ -99,7 +99,7 @@ PASS remove the class 'test' from the element inserted after previous_sibling_ch
 PASS add the class 'test' again to the element inserted after previous_sibling_child
 PASS remove element div.test after previous_sibling_child
 PASS insert element div after previous_sibling_child
-FAIL add the class 'test' to the element inserted again after previous_sibling_child assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again after previous_sibling_child
 PASS remove the class 'test' from the element inserted again after previous_sibling_child
 PASS remove element div after previous_sibling_child
 PASS insert element div[test_attr] after previous_sibling_child
@@ -109,7 +109,7 @@ PASS remove the class 'test' from the element inserted after previous_sibling_de
 PASS add the class 'test' again to the element inserted after previous_sibling_descendant
 PASS remove element div.test after previous_sibling_descendant
 PASS insert element div after previous_sibling_descendant
-FAIL add the class 'test' to the element inserted again after previous_sibling_descendant assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again after previous_sibling_descendant
 PASS remove the class 'test' from the element inserted again after previous_sibling_descendant
 PASS remove element div after previous_sibling_descendant
 PASS insert element div[test_attr] after previous_sibling_descendant
@@ -139,7 +139,7 @@ PASS remove the class 'test' from the element inserted after next_sibling_child
 PASS add the class 'test' again to the element inserted after next_sibling_child
 PASS remove element div.test after next_sibling_child
 PASS insert element div after next_sibling_child
-FAIL add the class 'test' to the element inserted again after next_sibling_child assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again after next_sibling_child
 PASS remove the class 'test' from the element inserted again after next_sibling_child
 PASS remove element div after next_sibling_child
 PASS insert element div[test_attr] after next_sibling_child
@@ -149,7 +149,7 @@ PASS remove the class 'test' from the element inserted after next_sibling_descen
 PASS add the class 'test' again to the element inserted after next_sibling_descendant
 PASS remove element div.test after next_sibling_descendant
 PASS insert element div after next_sibling_descendant
-FAIL add the class 'test' to the element inserted again after next_sibling_descendant assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element inserted again after next_sibling_descendant
 PASS remove the class 'test' from the element inserted again after next_sibling_descendant
 PASS remove element div after next_sibling_descendant
 PASS insert element div[test_attr] after next_sibling_descendant
@@ -169,7 +169,7 @@ PASS remove the class 'test' from the element in the tree inserted before previo
 PASS add the class 'test' again to the element in the tree inserted before previous_sibling_child
 PASS remove tree div>div.test before previous_sibling_child
 PASS insert tree div>div before previous_sibling_child
-FAIL add the class 'test' to the element in the tree inserted again before previous_sibling_child assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again before previous_sibling_child
 PASS remove the class 'test' from the element in the tree inserted again before previous_sibling_child
 PASS remove tree div>div before previous_sibling_child
 PASS insert element div>div[test_attr] before previous_sibling_child
@@ -179,7 +179,7 @@ PASS remove the class 'test' from the element in the tree inserted before previo
 PASS add the class 'test' again to the element in the tree inserted before previous_sibling_descendant
 PASS remove tree div>div.test before previous_sibling_descendant
 PASS insert tree div>div before previous_sibling_descendant
-FAIL add the class 'test' to the element in the tree inserted again before previous_sibling_descendant assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again before previous_sibling_descendant
 PASS remove the class 'test' from the element in the tree inserted again before previous_sibling_descendant
 PASS remove tree div>div before previous_sibling_descendant
 PASS insert element div>div[test_attr] before previous_sibling_descendant
@@ -209,7 +209,7 @@ PASS remove the class 'test' from the element in the tree inserted before next_s
 PASS add the class 'test' again to the element in the tree inserted before next_sibling_child
 PASS remove tree div>div.test before next_sibling_child
 PASS insert tree div>div before next_sibling_child
-FAIL add the class 'test' to the element in the tree inserted again before next_sibling_child assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again before next_sibling_child
 PASS remove the class 'test' from the element in the tree inserted again before next_sibling_child
 PASS remove tree div>div before next_sibling_child
 PASS insert element div>div[test_attr] before next_sibling_child
@@ -219,7 +219,7 @@ PASS remove the class 'test' from the element in the tree inserted before next_s
 PASS add the class 'test' again to the element in the tree inserted before next_sibling_descendant
 PASS remove tree div>div.test before next_sibling_descendant
 PASS insert tree div>div before next_sibling_descendant
-FAIL add the class 'test' to the element in the tree inserted again before next_sibling_descendant assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again before next_sibling_descendant
 PASS remove the class 'test' from the element in the tree inserted again before next_sibling_descendant
 PASS remove tree div>div before next_sibling_descendant
 PASS insert element div>div[test_attr] before next_sibling_descendant
@@ -239,7 +239,7 @@ PASS remove the class 'test' from the element in the tree inserted after previou
 PASS add the class 'test' again to the element in the tree inserted after previous_sibling_child
 PASS remove tree div>div.test after previous_sibling_child
 PASS insert tree div>div after previous_sibling_child
-FAIL add the class 'test' to the element in the tree inserted again after previous_sibling_child assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again after previous_sibling_child
 PASS remove the class 'test' from the element in the tree inserted again after previous_sibling_child
 PASS remove tree div>div after previous_sibling_child
 PASS insert element div>div[test_attr] after previous_sibling_child
@@ -249,7 +249,7 @@ PASS remove the class 'test' from the element in the tree inserted after previou
 PASS add the class 'test' again to the element in the tree inserted after previous_sibling_descendant
 PASS remove tree div>div.test after previous_sibling_descendant
 PASS insert tree div>div after previous_sibling_descendant
-FAIL add the class 'test' to the element in the tree inserted again after previous_sibling_descendant assert_equals: expected "rgb(255, 0, 0)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again after previous_sibling_descendant
 PASS remove the class 'test' from the element in the tree inserted again after previous_sibling_descendant
 PASS remove tree div>div after previous_sibling_descendant
 PASS insert element div>div[test_attr] after previous_sibling_descendant
@@ -279,7 +279,7 @@ PASS remove the class 'test' from the element in the tree inserted after next_si
 PASS add the class 'test' again to the element in the tree inserted after next_sibling_child
 PASS remove tree div>div.test after next_sibling_child
 PASS insert tree div>div after next_sibling_child
-FAIL add the class 'test' to the element in the tree inserted again after next_sibling_child assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again after next_sibling_child
 PASS remove the class 'test' from the element in the tree inserted again after next_sibling_child
 PASS remove tree div>div after next_sibling_child
 PASS insert element div>div[test_attr] after next_sibling_child
@@ -289,7 +289,7 @@ PASS remove the class 'test' from the element in the tree inserted after next_si
 PASS add the class 'test' again to the element in the tree inserted after next_sibling_descendant
 PASS remove tree div>div.test after next_sibling_descendant
 PASS insert tree div>div after next_sibling_descendant
-FAIL add the class 'test' to the element in the tree inserted again after next_sibling_descendant assert_equals: expected "rgb(128, 0, 128)" but got "rgb(128, 128, 128)"
+PASS add the class 'test' to the element in the tree inserted again after next_sibling_descendant
 PASS remove the class 'test' from the element in the tree inserted again after next_sibling_descendant
 PASS remove tree div>div after next_sibling_descendant
 PASS insert element div>div[test_attr] after next_sibling_descendant
