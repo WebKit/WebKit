@@ -57,7 +57,6 @@ struct EventTargetData {
 public:
     EventTargetData() = default;
     EventListenerMap eventListenerMap;
-    bool isFiringEventListeners { false };
 };
 
 class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget> {
@@ -103,7 +102,6 @@ public:
 
     enum class EventInvokePhase { Capturing, Bubbling };
     void fireEventListeners(Event&, EventInvokePhase);
-    bool isFiringEventListeners() const;
 
     template<typename Visitor> void visitJSEventListeners(Visitor&);
     void invalidateJSEventListeners(JSC::JSObject*);
@@ -140,12 +138,6 @@ private:
 inline const EventTargetData* EventTarget::eventTargetData() const
 {
     return const_cast<EventTarget*>(this)->eventTargetData();
-}
-
-inline bool EventTarget::isFiringEventListeners() const
-{
-    auto* data = eventTargetData();
-    return data && data->isFiringEventListeners;
 }
 
 inline bool EventTarget::hasEventListeners() const

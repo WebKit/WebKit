@@ -5051,16 +5051,6 @@ sub GenerateImplementation
             }
             push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor, reason))\n");
             push(@implContent, "        return true;\n");
-        } elsif ($codeGenerator->InheritsInterface($interface, "EventTarget")) {
-            if (!$emittedJSCast) {
-                push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
-                $emittedJSCast = 1;
-            }
-            push(@implContent, "    if (js${interfaceName}->wrapped().isFiringEventListeners()) {\n");
-            push(@implContent, "        if (UNLIKELY(reason))\n");
-            push(@implContent, "            *reason = \"EventTarget firing event listeners\";\n");
-            push(@implContent, "        return true;\n");
-            push(@implContent, "    }\n");
         }
         if (GetGenerateIsReachable($interface)) {
             if (!$emittedJSCast) {

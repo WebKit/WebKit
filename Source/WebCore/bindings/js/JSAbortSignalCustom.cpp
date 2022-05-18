@@ -31,20 +31,20 @@ namespace WebCore {
 bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char** reason)
 {
     auto& abortSignal = JSC::jsCast<JSAbortSignal*>(handle.slot()->asCell())->wrapped();
-    if (abortSignal.isFiringEventListeners()) {
-        if (UNLIKELY(reason))
-            *reason = "EventTarget firing event listeners";
-        return true;
-    }
-
     if (abortSignal.aborted())
         return false;
 
-    if (abortSignal.isFollowingSignal())
+    if (abortSignal.isFollowingSignal()) {
+        if (UNLIKELY(reason))
+            *reason = "Is Following Signal";
         return true;
+    }
 
-    if (abortSignal.hasAbortEventListener() && abortSignal.hasActiveTimeoutTimer())
+    if (abortSignal.hasAbortEventListener() && abortSignal.hasActiveTimeoutTimer()) {
+        if (UNLIKELY(reason))
+            *reason = "Has Active Abort Listener";
         return true;
+    }
 
     return visitor.containsOpaqueRoot(&abortSignal);
 }
