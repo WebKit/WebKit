@@ -468,6 +468,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         case WI.Resource.Type.Fetch:
         case WI.Resource.Type.Image:
         case WI.Resource.Type.Font:
+        case WI.Resource.Type.EventSource:
         case WI.Resource.Type.Other:
             break;
         case WI.Resource.Type.Ping:
