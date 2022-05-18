@@ -123,6 +123,7 @@
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
+#include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -2607,6 +2608,17 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 m_frame.dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());
                 if (m_frame.isMainFrame())
                     m_client->dispatchDidFinishDataDetection(documentLevelResults.get());
+            }
+
+            if (document) {
+                auto contextRange = makeRangeSelectingNodeContents(*document);
+                unsigned advanceCountBefore = 0;
+                for (TextIterator iterator { contextRange }; !iterator.atEnd(); iterator.advance(), advanceCountBefore++);
+
+                unsigned advanceCountAfter = 0;
+                for (TextIterator iterator { contextRange }; !iterator.atEnd(); iterator.advance(), advanceCountAfter++);
+
+                RELEASE_ASSERT(advanceCountAfter == advanceCountBefore, "EXPECTED %u TO MATCH %u", advanceCountBefore, advanceCountAfter);
             }
 #endif
             m_client->dispatchDidFinishLoad();
