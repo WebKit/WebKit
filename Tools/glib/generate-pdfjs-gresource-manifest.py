@@ -19,17 +19,19 @@ import argparse
 import os
 import sys
 
-VALID_EXTENSIONS = ['.html', '.js', '.css', '.svg', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf']
-COMPRESSIBLE_EXTENSIONS = ['.html', '.js', '.css', '.svg', '.properties']
-BASE_DIRS = ['pdfjs/', 'pdfjs-extras/']
+VALID_EXTENSIONS = {'.html', '.js', '.css', '.svg', '.png', '.gif', '.cur', '.bcmap', '.properties', '.pfb', '.ttf'}
+COMPRESSIBLE_EXTENSIONS = {'.html', '.js', '.css', '.svg', '.properties'}
+BASE_DIRS = {'pdfjs/', 'pdfjs-extras/'}
+
+IGNORE = {'LICENSE',
+          'README.webkit',
+          'web/cmaps/LICENSE',
+          'web/standard_fonts/LICENSE_FOXIT',
+          'web/standard_fonts/LICENSE_LIBERATION'}
 
 
 def get_filenames(directory):
     filenames = []
-
-    def should_ignore_resource(resource):
-        if os.path.splitext(resource)[1] not in VALID_EXTENSIONS:
-            return True
 
     def resource_name(filename):
         for base_directory in BASE_DIRS:
@@ -53,7 +55,10 @@ def get_filenames(directory):
             # separator is properly replaced.
             if os.sep != '/':
                 name = name.replace(os.sep, '/')
-            if not should_ignore_resource(name):
+            if name not in IGNORE:
+                if os.path.splitext(name)[1] not in VALID_EXTENSIONS:
+                    print('Unexpected file %s, please teach generate-pdfjs-gresource-manifest.py how to handle it' % filename, file=sys.stderr)
+                    sys.exit(1)
                 filenames.append(name)
 
     return filenames
