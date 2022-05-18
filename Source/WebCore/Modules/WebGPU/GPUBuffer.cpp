@@ -38,16 +38,16 @@ void GPUBuffer::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
+void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
 {
-    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTFMove(promise)] () mutable {
+    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise)] () mutable {
         promise.resolve(nullptr);
     });
 }
 
-Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(GPUSize64 offset, std::optional<GPUSize64> size)
+Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    auto mappedRange = m_backing->getMappedRange(offset, size);
+    auto mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
     return ArrayBuffer::create(mappedRange.source, mappedRange.byteLength);
 }
 
