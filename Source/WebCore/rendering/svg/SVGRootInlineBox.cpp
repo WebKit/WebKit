@@ -46,21 +46,37 @@ SVGRootInlineBox::SVGRootInlineBox(RenderSVGText& renderSVGText)
 {
 }
 
-RenderSVGText& SVGRootInlineBox::renderSVGText()
+RenderSVGText& SVGRootInlineBox::renderSVGText() const
 {
     return downcast<RenderSVGText>(blockFlow());
 }
 
-void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
+void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
     ASSERT(!paintInfo.context().paintingDisabled());
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
+        auto overflowRect(visualOverflowRect(lineTop, lineBottom));
+        flipForWritingMode(overflowRect);
+        overflowRect.moveBy(paintOffset);
+
+        if (!paintInfo.rect.intersects(overflowRect))
+            return;
+    }
+#else
+    UNUSED_PARAM(lineTop);
+    UNUSED_PARAM(lineBottom);
+#endif
 
     bool isPrinting = renderSVGText().document().printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::HighlightState::None;
     bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
 
     PaintInfo childPaintInfo(paintInfo);
+    childPaintInfo.updateSubtreePaintRootForChildren(&renderer());
+
     if (hasSelection && shouldPaintSelectionHighlight) {
         for (auto* child = firstChild(); child; child = child->nextOnLine()) {
             if (is<SVGInlineTextBox>(*child))
@@ -69,6 +85,17 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
                 downcast<SVGInlineFlowBox>(*child).paintSelectionBackground(childPaintInfo);
         }
     }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
+        for (auto* child = firstChild(); child; child = child->nextOnLine()) {
+            if (child->renderer().isText() || !child->boxModelObject()->hasSelfPaintingLayer())
+                child->paint(childPaintInfo, paintOffset, lineTop, lineBottom);
+        }
+
+        return;
+    }
+#endif
 
     SVGRenderingContext renderingContext(renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
@@ -170,9 +197,7 @@ void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
     RenderSVGText& parentBlock = renderSVGText();
 
     // Finally, assign the root block position, now that all content is laid out.
-    LayoutRect boundingRect = enclosingLayoutRect(childRect);
-    parentBlock.setLocation(boundingRect.location());
-    parentBlock.setSize(boundingRect.size());
+    parentBlock.updatePositionAndOverflow(childRect);
 
     // Position all children relative to the parent block.
     for (auto* child = firstChild(); child; child = child->nextOnLine()) {
@@ -187,6 +212,8 @@ void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
     setY(0);
     setLogicalWidth(childRect.width());
     setLogicalHeight(childRect.height());
+
+    auto boundingRect = enclosingLayoutRect(childRect);
     setLineTopBottomPositions(0, boundingRect.height(), 0, boundingRect.height());
 }
 

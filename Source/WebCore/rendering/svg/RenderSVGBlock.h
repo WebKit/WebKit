@@ -45,7 +45,7 @@ private:
     bool isRenderSVGBlock() const final { return true; }
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
-
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -59,8 +59,9 @@ private:
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
-
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+#endif
 };
 
 } // namespace WebCore

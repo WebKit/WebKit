@@ -1187,29 +1187,35 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
     if (newBounds == oldBounds && newOutlineBox == oldOutlineBox)
         return false;
 
-    LayoutUnit deltaLeft = newBounds.x() - oldBounds.x();
-    if (deltaLeft > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
-    else if (deltaLeft < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
+    if (newBounds.isEmpty() && !oldBounds.isEmpty())
+        repaintUsingContainer(repaintContainer, oldBounds);
+    else if (!newBounds.isEmpty() && oldBounds.isEmpty())
+        repaintUsingContainer(repaintContainer, newBounds);
+    else {
+        LayoutUnit deltaLeft = newBounds.x() - oldBounds.x();
+        if (deltaLeft > 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
+        else if (deltaLeft < 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
 
-    LayoutUnit deltaRight = newBounds.maxX() - oldBounds.maxX();
-    if (deltaRight > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.maxX(), newBounds.y(), deltaRight, newBounds.height()));
-    else if (deltaRight < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newBounds.maxX(), oldBounds.y(), -deltaRight, oldBounds.height()));
+        LayoutUnit deltaRight = newBounds.maxX() - oldBounds.maxX();
+        if (deltaRight > 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.maxX(), newBounds.y(), deltaRight, newBounds.height()));
+        else if (deltaRight < 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.maxX(), oldBounds.y(), -deltaRight, oldBounds.height()));
 
-    LayoutUnit deltaTop = newBounds.y() - oldBounds.y();
-    if (deltaTop > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
-    else if (deltaTop < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
+        LayoutUnit deltaTop = newBounds.y() - oldBounds.y();
+        if (deltaTop > 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
+        else if (deltaTop < 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
 
-    LayoutUnit deltaBottom = newBounds.maxY() - oldBounds.maxY();
-    if (deltaBottom > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), oldBounds.maxY(), newBounds.width(), deltaBottom));
-    else if (deltaBottom < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), newBounds.maxY(), oldBounds.width(), -deltaBottom));
+        LayoutUnit deltaBottom = newBounds.maxY() - oldBounds.maxY();
+        if (deltaBottom > 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), oldBounds.maxY(), newBounds.width(), deltaBottom));
+        else if (deltaBottom < 0)
+            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), newBounds.maxY(), oldBounds.width(), -deltaBottom));
+    }
 
     if (newOutlineBox == oldOutlineBox)
         return false;

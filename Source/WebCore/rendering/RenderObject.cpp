@@ -521,6 +521,11 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (!object->hasNonVisibleOverflow())
         return false;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (object->document().settings().layerBasedSVGEngineEnabled() && object->isSVGLayerAwareRenderer())
+        return false;
+#endif
+
     if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercentOrCalculated())
         return false;
 

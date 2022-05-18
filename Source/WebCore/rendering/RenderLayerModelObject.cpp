@@ -29,6 +29,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
 #include "RenderView.h"
 #include "SVGGraphicsElement.h"
@@ -245,10 +246,7 @@ void RenderLayerModelObject::updateLayerTransform()
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContainer(const LayoutRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context) const
 {
-    // FIXME: [LBSE] Upstream RenderSVGBlock changes
-    // ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
-    ASSERT(is<RenderSVGModelObject>(this));
-
+    ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
     ASSERT(!style().hasInFlowPosition());
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
