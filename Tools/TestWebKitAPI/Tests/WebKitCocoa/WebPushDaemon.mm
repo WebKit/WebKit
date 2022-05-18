@@ -46,7 +46,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/text/Base64.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if ENABLE(NOTIFICATIONS) && (PLATFORM(MAC) || PLATFORM(IOS))
 
 using WebKit::WebPushD::MessageType;
 
@@ -1231,4 +1231,4 @@ TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // ENABLE(NOTIFICATIONS) && (PLATFORM(MAC) || PLATFORM(IOS))
