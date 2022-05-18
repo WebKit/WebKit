@@ -129,7 +129,6 @@ class RemoteMediaEngineConfigurationFactory;
 class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
-class WebAuthnProcessConnection;
 class WebAutomationSessionProxy;
 class WebBroadcastChannelRegistry;
 class WebCacheStorageProvider;
@@ -259,12 +258,6 @@ public:
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
-
-#if ENABLE(WEB_AUTHN)
-    WebAuthnProcessConnection& ensureWebAuthnProcessConnection();
-    void webAuthnProcessConnectionClosed(WebAuthnProcessConnection*);
-    WebAuthnProcessConnection* existingWebAuthnProcessConnection() { return m_webAuthnProcessConnection.get(); }
-#endif
 
     LibWebRTCNetwork& libWebRTCNetwork();
 
@@ -656,11 +649,6 @@ private:
     std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
 #endif
-
-#if ENABLE(WEB_AUTHN)
-    RefPtr<WebAuthnProcessConnection> m_webAuthnProcessConnection;
-#endif
-
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<WebCookieJar> m_cookieJar;

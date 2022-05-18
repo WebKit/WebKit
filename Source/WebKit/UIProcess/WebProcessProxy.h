@@ -486,10 +486,6 @@ private:
     void createGPUProcessConnection(IPC::Attachment&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&&);
 #endif
 
-#if ENABLE(WEB_AUTHN)
-    void getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
-#endif
-
     bool shouldAllowNonValidInjectedCode() const;
 
     static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();

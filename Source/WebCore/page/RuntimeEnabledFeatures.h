@@ -228,11 +228,6 @@ public:
     bool opusDecoderEnabled() const { return m_opusDecoderEnabled; }
 #endif
 
-#if ENABLE(WEB_AUTHN)
-    void setWebAuthenticationModernEnabled(bool areEnabled) { m_areWebAuthenticationModernEnabled = areEnabled; }
-    bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
-#endif
-
 #if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     WEBCORE_EXPORT void setMediaSourceInlinePaintingEnabled(bool);
     bool mediaSourceInlinePaintingEnabled() const { return m_mediaSourceInlinePaintingEnabled; }
@@ -378,10 +373,6 @@ private:
 
 #if ENABLE(OPUS)
     bool m_opusDecoderEnabled { false };
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    bool m_areWebAuthenticationModernEnabled { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))

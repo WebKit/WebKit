@@ -804,16 +804,6 @@ bool WKPreferencesGetWebAuthenticationEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webAuthenticationEnabled();
 }
 
-void WKPreferencesSetWebAuthenticationModernEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setWebAuthenticationModernEnabled(flag);
-}
-
-bool WKPreferencesGetWebAuthenticationModernEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->webAuthenticationModernEnabled();
-}
-
 void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setInvisibleAutoplayNotPermitted(!flag);

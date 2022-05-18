@@ -71,7 +71,6 @@ public:
     virtual bool isMock() const { return false; }
     virtual bool isVirtual() const { return false; }
 
-    void enableModernWebAuthentication();
     void enableNativeSupport();
 
 protected:
@@ -89,7 +88,6 @@ protected:
 private:
     enum class Mode {
         Compatible,
-        Modern,
         Native,
     };
 

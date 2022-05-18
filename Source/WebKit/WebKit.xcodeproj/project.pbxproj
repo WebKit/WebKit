@@ -17,7 +17,6 @@
 				517B5F6D275B07C3002DC22D /* PBXTargetDependency */,
 				5C1579DF27165E0800ED5280 /* PBXTargetDependency */,
 				5CAF7AA926F93F9F0003F19E /* PBXTargetDependency */,
-				5742A2FA2535619D00B7BA14 /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
 				7A7E8DFC27483A1200DCC97A /* PBXTargetDependency */,
 				372EBB492017E6CF00085064 /* PBXTargetDependency */,
@@ -1106,27 +1105,12 @@
 		570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC02303730300E8FC04 /* NfcConnection.h */; };
 		570DAAC623037F7F00E8FC04 /* WKNFReaderSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */; };
 		570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */; };
-		572EBBBF2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBBB2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp */; };
-		572EBBC02536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBBC2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h */; };
-		572EBBC12536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBBD2536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp */; };
-		572EBBC22536A60A000552B3 /* WebAuthnProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBBE2536A60A000552B3 /* WebAuthnProcessMessages.h */; };
-		572EBBC42536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */; };
-		572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBC62536AFD5000552B3 /* WebAuthnProcessProxy.h */; };
-		572EBBCC2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBCB2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h */; };
-		572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */; };
 		572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */; };
 		572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */; };
 		572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */; };
 		572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBDC25392181000552B3 /* AppAttestSPI.h */; };
 		572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */; };
 		574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 574217912400E098002B303D /* LocalAuthenticationSPI.h */; };
-		5742A2EB2535613F00B7BA14 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
-		5742A2EC2535613F00B7BA14 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
-		5742A2EE2535613F00B7BA14 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		5742A2EF2535613F00B7BA14 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
-		5742A30825358A0400B7BA14 /* WebAuthnProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5742A30625358A0400B7BA14 /* WebAuthnProcessCreationParameters.h */; };
-		5742A30D25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 5742A30A25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.h */; };
-		5742A318253648E500B7BA14 /* WebAuthnProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 5742A315253648E400B7BA14 /* WebAuthnProcess.h */; };
 		574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */; };
 		57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EB721811D9A0037F924 /* CtapHidDriver.h */; };
@@ -2522,27 +2506,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit;
-		};
-		5742A2E72535613F00B7BA14 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
-			remoteInfo = "Unlock Keychain";
-		};
-		5742A2E92535613F00B7BA14 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit;
-		};
-		5742A2F92535619D00B7BA14 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5742A2E52535613F00B7BA14;
-			remoteInfo = WebAuthentication;
 		};
 		5C1579D027165B2F00ED5280 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5057,7 +5020,7 @@
 		572EBBDC25392181000552B3 /* AppAttestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppAttestSPI.h; sourceTree = "<group>"; };
 		572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewDidMoveToWindowObserver.h; sourceTree = "<group>"; };
 		574217912400E098002B303D /* LocalAuthenticationSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSPI.h; sourceTree = "<group>"; };
-		5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebAuthn.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		5742A2F72535613F00B7BA14 /* .xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = .xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		5742A30625358A0400B7BA14 /* WebAuthnProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessCreationParameters.h; sourceTree = "<group>"; };
 		5742A30725358A0400B7BA14 /* WebAuthnProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5742A30A25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnConnectionToWebProcess.h; sourceTree = "<group>"; };
@@ -5135,7 +5098,6 @@
 		579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponseInternal.h; sourceTree = "<group>"; };
 		579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationAssertionResponse.h; sourceTree = "<group>"; };
 		579F1BFB23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationAssertionResponse.cpp; sourceTree = "<group>"; };
-		57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebAuthnService.xcconfig; sourceTree = "<group>"; };
 		57A9FF15252C6AEF006A2040 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
@@ -5178,7 +5140,6 @@
 		57EB2E3921E1983E00B89CDF /* U2fAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fAuthenticator.cpp; sourceTree = "<group>"; };
 		57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanel.h; sourceTree = "<group>"; };
 		57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationPanel.cpp; sourceTree = "<group>"; };
-		57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebAuthn.sb.in; sourceTree = "<group>"; };
 		57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesCoreSPI.h; sourceTree = "<group>"; };
 		57FABB102581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesCoreSoftLink.h; sourceTree = "<group>"; };
 		57FABB112581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationServicesCoreSoftLink.mm; sourceTree = "<group>"; };
@@ -7311,15 +7272,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5742A2ED2535613F00B7BA14 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5742A2EE2535613F00B7BA14 /* Foundation.framework in Frameworks */,
-				5742A2EF2535613F00B7BA14 /* WebKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5C1579D427165B2F00ED5280 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -7397,9 +7349,9 @@
 				5CAF7AA426F93A750003F19E /* adattributiond */,
 				5C1579DA27165B2F00ED5280 /* webpushd */,
 				517B5F5B275A8D3E002DC22D /* webpushtool */,
+				5742A2F72535613F00B7BA14 /* .xpc */,
 				2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */,
 				BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */,
-				5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */,
 				7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.CaptivePortal.xpc */,
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
@@ -7621,7 +7573,6 @@
 				BC032D5C10F436D50058C15A /* WebProcess */,
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
-				5742A2FF2535758000B7BA14 /* WebAuthnProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
 				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -7800,7 +7751,6 @@
 				A1B89B92221E023300EB4CEA /* SDKVariant.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
-				57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */,
 				7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */,
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
@@ -10574,75 +10524,6 @@
 			path = cocoa;
 			sourceTree = "<group>";
 		};
-		5742A2FF2535758000B7BA14 /* WebAuthnProcess */ = {
-			isa = PBXGroup;
-			children = (
-				5742A3002535758000B7BA14 /* EntryPoint */,
-				5742A319253675E900B7BA14 /* ios */,
-				5742A31B253675F600B7BA14 /* mac */,
-				5742A30C25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.cpp */,
-				5742A30A25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.h */,
-				5742A30B25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.messages.in */,
-				5742A314253648E400B7BA14 /* WebAuthnProcess.cpp */,
-				5742A315253648E400B7BA14 /* WebAuthnProcess.h */,
-				5742A313253648E400B7BA14 /* WebAuthnProcess.messages.in */,
-				5742A30725358A0400B7BA14 /* WebAuthnProcessCreationParameters.cpp */,
-				5742A30625358A0400B7BA14 /* WebAuthnProcessCreationParameters.h */,
-			);
-			path = WebAuthnProcess;
-			sourceTree = "<group>";
-		};
-		5742A3002535758000B7BA14 /* EntryPoint */ = {
-			isa = PBXGroup;
-			children = (
-				5742A3012535758000B7BA14 /* Cocoa */,
-			);
-			path = EntryPoint;
-			sourceTree = "<group>";
-		};
-		5742A3012535758000B7BA14 /* Cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				5742A3022535758000B7BA14 /* XPCService */,
-			);
-			path = Cocoa;
-			sourceTree = "<group>";
-		};
-		5742A3022535758000B7BA14 /* XPCService */ = {
-			isa = PBXGroup;
-			children = (
-				5742A3032535758000B7BA14 /* WebAuthnService */,
-				5742A31E2536949300B7BA14 /* WebAuthnServiceEntryPoint.mm */,
-			);
-			path = XPCService;
-			sourceTree = "<group>";
-		};
-		5742A3032535758000B7BA14 /* WebAuthnService */ = {
-			isa = PBXGroup;
-			children = (
-				572EBBB92536A06E000552B3 /* Info-iOS.plist */,
-				572EBBBA2536A06E000552B3 /* Info-OSX.plist */,
-			);
-			path = WebAuthnService;
-			sourceTree = "<group>";
-		};
-		5742A319253675E900B7BA14 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				5742A31A253675E900B7BA14 /* WebAuthnProcessIOS.mm */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
-		5742A31B253675F600B7BA14 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				5742A31D253675F600B7BA14 /* com.apple.WebKit.WebAuthnProcess.sb.in */,
-				5742A31C253675F600B7BA14 /* WebAuthnProcessMac.mm */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
 		575075A620AB75AB00693EA9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -10690,10 +10571,6 @@
 			children = (
 				5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */,
 				5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */,
-				572EBBD12536C885000552B3 /* WebAuthnProcessConnection.cpp */,
-				572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */,
-				572EBBD32536C885000552B3 /* WebAuthnProcessConnection.messages.in */,
-				572EBBCB2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h */,
 			);
 			path = WebAuthentication;
 			sourceTree = "<group>";
@@ -10717,8 +10594,6 @@
 				57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */,
 				57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */,
 				57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */,
-				572EBBC52536AFD5000552B3 /* WebAuthnProcessProxy.cpp */,
-				572EBBC62536AFD5000552B3 /* WebAuthnProcessProxy.h */,
 			);
 			path = WebAuthentication;
 			sourceTree = "<group>";
@@ -11503,7 +11378,6 @@
 				5C1578E5270E0DBC00ED5280 /* com.apple.WebKit.adattributiond.sb.in */,
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb.in */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb.in */,
-				57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb.in */,
 				E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */,
 			);
 			path = ios;
@@ -14783,14 +14657,6 @@
 				57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */,
 				57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */,
 				57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */,
-				5742A30D25358EFD00B7BA14 /* WebAuthnConnectionToWebProcess.h in Headers */,
-				572EBBC02536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h in Headers */,
-				5742A318253648E500B7BA14 /* WebAuthnProcess.h in Headers */,
-				572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */,
-				572EBBCC2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h in Headers */,
-				5742A30825358A0400B7BA14 /* WebAuthnProcessCreationParameters.h in Headers */,
-				572EBBC22536A60A000552B3 /* WebAuthnProcessMessages.h in Headers */,
-				572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */,
 				DDA0A28627E55E4D005E086E /* WebAutocapitalizeTypes.h in Headers */,
 				F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */,
 				990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */,
@@ -15696,7 +15562,7 @@
 			);
 			name = WebAuthn;
 			productName = Networking;
-			productReference = 5742A2F72535613F00B7BA14 /* com.apple.WebKit.WebAuthn.xpc */;
+			productReference = 5742A2F72535613F00B7BA14 /* .xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
 		5C1579CC27165B2F00ED5280 /* webpushd */ = {
@@ -15958,7 +15824,6 @@
 				372EBB382017E64300085064 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
 				2D9FB216237523830049F936 /* GPU */,
-				5742A2E52535613F00B7BA14 /* WebAuthn */,
 				A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */,
 				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				5325BDCD21DFF47700A0DEE1 /* Apply Configuration to XCFileLists */,
@@ -15986,13 +15851,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5742A2F02535613F00B7BA14 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7A7E8DEE2748392500DCC97A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -16007,7 +15865,6 @@
 			files = (
 				E17AE2C316B9C63A001C42F2 /* com.apple.WebKit.GPUProcess.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
-				572EBBC42536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb in Resources */,
 				EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
@@ -16300,36 +16157,6 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/check-xcfilelists.sh\n";
 		};
-		5742A2F12535613F00B7BA14 /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
-		};
-		5742A2F22535613F00B7BA14 /* Process WebAuthentication entitlements */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Scripts/process-entitlements.sh",
-			);
-			name = "Process WebAuthentication entitlements";
-			outputPaths = (
-				"$(WK_PROCESSED_XCENT_FILE)",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "Scripts/process-entitlements.sh\n";
-		};
 		5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -16541,24 +16368,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "export XPC_BUNDLES_TO_COPY_TO_SECONDARY_PATH=\"com.apple.WebKit.GPU.xpc\"\nexport XPC_BUNDLE_INSTALL_PATH_IN_SECONDARY_PATH=\"${SECONDARY_STAGED_FRAMEWORK_DIRECTORY}/WebKit.framework/Versions/A/XPCServices\"\n\"${SRCROOT}/Scripts/copy-xpc-services-to-secondary-path.sh\"\n";
-		};
-		6517572327CFC24A00D9FE40 /* Copy XPC Service to Secondary Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy XPC Service to Secondary Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "export XPC_BUNDLES_TO_COPY_TO_SECONDARY_PATH=\"com.apple.WebKit.WebAuthn.xpc\"\nexport XPC_BUNDLE_INSTALL_PATH_IN_SECONDARY_PATH=\"${SECONDARY_STAGED_FRAMEWORK_DIRECTORY}/WebKit.framework/Versions/A/XPCServices\"\n\"${SRCROOT}/Scripts/copy-xpc-services-to-secondary-path.sh\"\n";
 		};
 		6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16948,15 +16757,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5742A2EA2535613F00B7BA14 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5742A2EB2535613F00B7BA14 /* AuxiliaryProcessMain.cpp in Sources */,
-				5742A2EC2535613F00B7BA14 /* XPCServiceMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5C1579D227165B2F00ED5280 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -17335,8 +17135,6 @@
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
-				572EBBBF2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp in Sources */,
-				572EBBC12536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp in Sources */,
 				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,
@@ -17514,21 +17312,6 @@
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = 519797C827627B2300BE0F83 /* PBXContainerItemProxy */;
-		};
-		5742A2E62535613F00B7BA14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
-			targetProxy = 5742A2E72535613F00B7BA14 /* PBXContainerItemProxy */;
-		};
-		5742A2E82535613F00B7BA14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = 5742A2E92535613F00B7BA14 /* PBXContainerItemProxy */;
-		};
-		5742A2FA2535619D00B7BA14 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5742A2E52535613F00B7BA14 /* WebAuthn */;
-			targetProxy = 5742A2F92535619D00B7BA14 /* PBXContainerItemProxy */;
 		};
 		5C1579CF27165B2F00ED5280 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -17809,27 +17592,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
-		5742A2F42535613F00B7BA14 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		5742A2F52535613F00B7BA14 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		5742A2F62535613F00B7BA14 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57A9FF07252BE6E0006A2040 /* WebAuthnService.xcconfig */;
-			buildSettings = {
 			};
 			name = Production;
 		};
@@ -18215,16 +17977,6 @@
 				5325BDCE21DFF47800A0DEE1 /* Debug */,
 				5325BDCF21DFF47800A0DEE1 /* Release */,
 				5325BDD021DFF47800A0DEE1 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5742A2F32535613F00B7BA14 /* Build configuration list for PBXNativeTarget "WebAuthn" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5742A2F42535613F00B7BA14 /* Debug */,
-				5742A2F52535613F00B7BA14 /* Release */,
-				5742A2F62535613F00B7BA14 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -37,10 +37,6 @@ messages -> WebProcessProxy LegacyReceiver {
     CreateGPUProcessConnection(IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters)
 #endif
 
-#if ENABLE(WEB_AUTHN)
-    GetWebAuthnProcessConnection() -> (struct WebKit::WebAuthnProcessConnectionInfo connectionInfo) Synchronous
-#endif
-
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     DidExceedActiveMemoryLimit()

@@ -31,8 +31,6 @@
 #include "DefaultWebBrowserChecks.h"
 #include "FrameInfoData.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
-#include "WebAuthnConnectionToWebProcess.h"
-#include "WebAuthnProcessConnection.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -76,22 +74,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
         return;
 
     auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-#if HAVE(UNIFIED_ASC_AUTH_UI)
-    bool useWebAuthnProcess = false;
-#else
-    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
-#endif
-    if (!useWebAuthnProcess) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
-        return;
-    }
-
-    if (!isWebBrowser()) {
-        WEBAUTHN_RELEASE_LOG_ERROR("makeCredential: The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
-        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement."_s });
-        return;
-    }
-    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
@@ -101,26 +84,7 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         return;
 
     auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-#if HAVE(UNIFIED_ASC_AUTH_UI)
-    bool useWebAuthnProcess = false;
-#else
-    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
-#endif
-    if (!useWebAuthnProcess) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second, isProcessingUserGesture), WTFMove(handler));
-        return;
-    }
-    if (scopeAndCrossOriginParent.first == WebAuthn::Scope::CrossOrigin) {
-        handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
-        return;
-    }
-
-    if (!isWebBrowser()) {
-        WEBAUTHN_RELEASE_LOG_ERROR("getAssertion: The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
-        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement."_s });
-        return;
-    }
-    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, isProcessingUserGesture), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second, isProcessingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isConditionalMediationAvailable(QueryCompletionHandler&& handler)
@@ -130,22 +94,7 @@ void WebAuthenticatorCoordinator::isConditionalMediationAvailable(QueryCompletio
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
-#if HAVE(UNIFIED_ASC_AUTH_UI)
-    bool useWebAuthnProcess = false;
-#else
-    bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
-#endif
-    if (!useWebAuthnProcess) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
-        return;
-    }
-
-    if (!isWebBrowser()) {
-        WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME("isUserVerifyingPlatformAuthenticatorAvailable: WebAuthn is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
-        handler(false);
-        return;
-    }
-    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
 }
 
 bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, const FrameIdentifier& frameID)

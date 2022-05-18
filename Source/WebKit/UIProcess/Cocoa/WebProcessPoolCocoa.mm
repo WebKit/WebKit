@@ -43,8 +43,6 @@
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WebAuthnProcessMessages.h"
-#import "WebAuthnProcessProxy.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
@@ -1108,11 +1106,6 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
         if (auto* networkProcess = dataStore.networkProcessIfExists())
             networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
     });
-    
-#if ENABLE(WEB_AUTHN)
-    if (auto webAuthnProcess = WebAuthnProcessProxy::singletonIfCreated())
-        webAuthnProcess->send(Messages::WebAuthnProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-#endif
 
     if (key == WKCaptivePortalModeEnabledKey)
         captivePortalModeStateChanged();
