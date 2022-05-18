@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -193,10 +193,10 @@ PAS_API PAS_NO_RETURN void pas_assertion_failed(
 static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
     const char* filename, int line, const char* function, const char* expression)
 {
-    PAS_UNUSED_PARAM(filename);
-    PAS_UNUSED_PARAM(line);
-    PAS_UNUSED_PARAM(function);
-    PAS_UNUSED_PARAM(expression);
+#if PAS_COMPILER(GCC) || PAS_COMPILER(CLANG)
+    // Force each assertion crash site to be unique.
+    asm volatile("" : "=r"(filename), "=r"(line), "=r"(function), "=r"(expression));
+#endif
     __builtin_trap();
 }
 #endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
