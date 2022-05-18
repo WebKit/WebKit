@@ -34,8 +34,9 @@
 
 namespace PAL::WebGPU {
 
-BufferImpl::BufferImpl(WGPUBuffer buffer, ConvertToBackingContext& convertToBackingContext)
+BufferImpl::BufferImpl(WGPUBuffer buffer, Size64 size, ConvertToBackingContext& convertToBackingContext)
     : m_backing(buffer)
+    , m_size(size)
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
@@ -57,13 +58,30 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
     }).get());
 }
 
+static size_t computeRangeSize(uint64_t bufferSize, Size64 offset)
+{
+    auto result = checkedDifference<size_t>(bufferSize, offset);
+    if (result.hasOverflowed())
+        return 0;
+    return result.value();
+}
+
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
 {
-    auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
-    // FIXME: Check the casts.
-    auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(offset), static_cast<size_t>(usedSize));
-    // FIXME: Check the type narrowing.
-    return { pointer, static_cast<size_t>(usedSize) };
+    CheckedSize checkedOffset = offset;
+
+    if (checkedOffset.hasOverflowed())
+        return { nullptr, 0 };
+
+    CheckedSize usedSize = valueOrCompute(size, [bufferSize = m_size, offset = checkedOffset.value()]() {
+        return computeRangeSize(bufferSize, offset);
+    });
+    if (usedSize.hasOverflowed())
+        return { nullptr, 0 };
+
+    auto* pointer = wgpuBufferGetMappedRange(m_backing, checkedOffset.value(), usedSize.value());
+
+    return { pointer, usedSize.value() };
 }
 
 void BufferImpl::unmap()

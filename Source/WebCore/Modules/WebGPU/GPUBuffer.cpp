@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUBuffer.h"
 
+#include <wtf/SharedTask.h>
+
 namespace WebCore {
 
 String GPUBuffer::label() const
@@ -45,10 +47,14 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     });
 }
 
-Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
     auto mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
-    return ArrayBuffer::create(mappedRange.source, mappedRange.byteLength);
+    if (!mappedRange.source)
+        return Exception { OperationError };
+    // FIXME: We need some kind of "detach" logic, in case someone calls destroy()
+    // on the buffer and then continues to use the ArrayBuffer.
+    return ArrayBuffer::createFromBytes(mappedRange.source, mappedRange.byteLength, createSharedTask<void(void*)>([backing = m_backing.copyRef()](void*) { }));
 }
 
 void GPUBuffer::unmap()

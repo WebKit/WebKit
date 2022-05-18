@@ -154,6 +154,9 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
         return;
     }
 
+    if (!size)
+        return;
+
     ensureBlitCommandEncoder();
 
     [m_blitCommandEncoder copyFromBuffer:source.buffer() sourceOffset:static_cast<NSUInteger>(sourceOffset) toBuffer:destination.buffer() destinationOffset:static_cast<NSUInteger>(destinationOffset) size:static_cast<NSUInteger>(size)];
@@ -252,6 +255,9 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         m_device->generateAValidationError("Validation failure."_s);
         return;
     }
+
+    if (!copySize.width && !copySize.height && !copySize.depthOrArrayLayers)
+        return;
 
     ensureBlitCommandEncoder();
 

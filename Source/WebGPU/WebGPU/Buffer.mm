@@ -203,14 +203,13 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = computeRangeSize(m_size, offset);
 
-    if (!validateGetMappedRange(offset, rangeSize)) {
-        // FIXME: "throw an OperationError and stop."
+    if (!validateGetMappedRange(offset, rangeSize))
         return nullptr;
-    }
 
     m_mappedRanges.add({ offset, offset + rangeSize });
     m_mappedRanges.compact();
 
+    ASSERT(m_buffer.contents);
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 

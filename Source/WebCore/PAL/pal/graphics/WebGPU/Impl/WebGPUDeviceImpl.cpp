@@ -94,7 +94,7 @@ Ref<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)
         descriptor.mappedAtCreation,
     };
 
-    return BufferImpl::create(wgpuDeviceCreateBuffer(backing(), &backingDescriptor), m_convertToBackingContext);
+    return BufferImpl::create(wgpuDeviceCreateBuffer(backing(), &backingDescriptor), descriptor.size, m_convertToBackingContext);
 }
 
 Ref<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)

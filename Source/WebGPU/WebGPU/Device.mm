@@ -190,6 +190,8 @@ void Device::generateAValidationError(String&& message)
     }
 
     if (m_uncapturedErrorCallback) {
+        // FIXME: It's wrong to retain `this`. Instead, we should be using SharedTask.
+        // Consider someone calls setUncapturedErrorCallback() while there's a callback pending.
         instance().scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
             protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Validation, WTFMove(message));
         });

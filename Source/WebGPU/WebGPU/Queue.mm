@@ -30,6 +30,7 @@
 #import "Buffer.h"
 #import "CommandBuffer.h"
 #import "Device.h"
+#import "Instance.h"
 #import "IsValidToUseWith.h"
 #import "Texture.h"
 #import <wtf/CheckedArithmetic.h>
@@ -124,7 +125,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
     [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+        protectedThis->scheduleWork(Instance::WorkItem([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);

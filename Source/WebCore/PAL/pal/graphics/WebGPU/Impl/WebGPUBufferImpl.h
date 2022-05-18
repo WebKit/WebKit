@@ -38,9 +38,9 @@ class ConvertToBackingContext;
 class BufferImpl final : public Buffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BufferImpl> create(WGPUBuffer buffer, ConvertToBackingContext& convertToBackingContext)
+    static Ref<BufferImpl> create(WGPUBuffer buffer, Size64 size, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BufferImpl(buffer, convertToBackingContext));
+        return adoptRef(*new BufferImpl(buffer, size, convertToBackingContext));
     }
 
     virtual ~BufferImpl();
@@ -48,7 +48,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    BufferImpl(WGPUBuffer, ConvertToBackingContext&);
+    BufferImpl(WGPUBuffer, Size64, ConvertToBackingContext&);
 
     BufferImpl(const BufferImpl&) = delete;
     BufferImpl(BufferImpl&&) = delete;
@@ -66,6 +66,7 @@ private:
     void setLabelInternal(const String&) final;
 
     WGPUBuffer m_backing { nullptr };
+    Size64 m_size { 0 };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

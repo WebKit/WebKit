@@ -50,7 +50,7 @@ public:
 
     using MapAsyncPromise = DOMPromiseDeferred<IDLNull>;
     void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
-    Ref<JSC::ArrayBuffer> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
     void unmap();
 
     void destroy();
