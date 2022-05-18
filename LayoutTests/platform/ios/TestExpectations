@@ -3618,11 +3618,5 @@ webkit.org/b/240463 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceT
 
 webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Slow ]
 
-webkit.org/b/240579 http/tests/workers/service/shownotification-allowed-document.html [ Failure ]
-webkit.org/b/240579 http/tests/workers/service/shownotification-allowed.html [ Failure ]
-webkit.org/b/240579 http/tests/workers/service/shownotification-denied.html [ Failure ]
-webkit.org/b/240579 http/tests/workers/service/shownotification-invalid-data.html [ Failure ]
-
 webkit.org/b/240579 http/tests/workers/service/getnotifications-stop.html [ Timeout ]
 webkit.org/b/240579 http/tests/workers/service/getnotifications.html [ Timeout ]
-
