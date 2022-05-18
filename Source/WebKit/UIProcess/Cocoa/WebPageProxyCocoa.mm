@@ -859,15 +859,7 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
 
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
-}
-
-SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions machBootstrapOptions)
-{
-    SandboxExtension::Handle fontMachExtensionHandle;
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, process().auditToken(), machBootstrapOptions))
-        fontMachExtensionHandle = WTFMove(*handle);
-    return fontMachExtensionHandle;
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
