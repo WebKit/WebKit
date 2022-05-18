@@ -222,7 +222,8 @@
          "zbujtas@gmail.com",
          "zalan.bujtas@nokia.com"
       ],
-      "expertise" : "Layout and Rendering, subpixel positioning, frame flattening",
+      "expertise" : "Layout",
+      "github" : "alanbujtas",
       "name" : "Alan Bujtas",
       "nicks" : [
          "zalan"
