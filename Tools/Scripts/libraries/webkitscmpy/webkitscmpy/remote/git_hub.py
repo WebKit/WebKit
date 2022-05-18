@@ -203,7 +203,7 @@ class GitHub(Scm):
             if user not in assignees:
                 issue = pull_request._metadata.get('issue')
                 if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
-                    sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
+                    sys.stderr.write("Failed to assign '{}' to '{}'\n".format(pull_request, user))
 
             return pull_request
 
