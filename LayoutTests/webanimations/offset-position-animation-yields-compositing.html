@@ -1,0 +1,15 @@
+<pre id="results"></pre>
+<div id="target" style="width: 100px; height: 100px; background-color: black; offset-path: path('M10,10 H50')"></div>
+<script>
+
+testRunner.waitUntilDone();
+testRunner.dumpAsText();
+
+document.getElementById("target").animate({
+    offsetPosition: ["0 0", "100% 100%"]
+}, 1000 * 60).ready.then(() => {
+    document.getElementById("results").innerText = internals.layerTreeAsText(document);
+    testRunner.notifyDone();
+});
+
+</script>
