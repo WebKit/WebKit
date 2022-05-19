@@ -99,7 +99,6 @@ static ResourceRequest scriptResourceRequest(ScriptExecutionContext& context, co
 {
     ResourceRequest request { url };
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
-    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
     return request;
 }
 
@@ -186,7 +185,10 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     auto source = m_jobData.workerType == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
 
     m_scriptLoader = WorkerScriptLoader::create();
-    m_scriptLoader->loadAsynchronously(context, scriptResourceRequest(context, m_jobData.scriptURL), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
+    auto request = scriptResourceRequest(context, m_jobData.scriptURL);
+    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+
+    m_scriptLoader->loadAsynchronously(context, WTFMove(request), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
 }
 
 ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorkerJobData& jobData, const ResourceResponse& response)

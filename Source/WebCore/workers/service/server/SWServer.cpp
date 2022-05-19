@@ -523,7 +523,6 @@ ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorke
     request.setFirstPartyForCookies(originURL(topOrigin));
 
     request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
-    request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
     request.setHTTPReferrer(originURL(origin).string());
     request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
     request.setPriority(ResourceLoadPriority::Low);
@@ -551,7 +550,9 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
     if (jobData.connectionIdentifier() == Process::identifier()) {
         ASSERT(jobData.type == ServiceWorkerJobType::Update);
         // This is a soft-update job, create directly a network load to fetch the script.
-        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(jobData.scriptURL, jobData, registration), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& result) {
+        auto request = createScriptRequest(jobData.scriptURL, jobData, registration);
+        request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& result) {
             if (weakThis)
                 weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, WTFMove(result));
         });
