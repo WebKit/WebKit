@@ -87,8 +87,12 @@ void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTran
 
     HashMap<IntRect, CALayer *> interactionRegionLayers;
     for (CALayer *sublayer in layer.sublayers) {
-        if (isInteractionRegionLayer(sublayer))
-            interactionRegionLayers.set(enclosingIntRect(sublayer.frame), sublayer);
+        if (!isInteractionRegionLayer(sublayer))
+            continue;
+        auto enclosingFrame = enclosingIntRect(sublayer.frame);
+        if (enclosingFrame.isEmpty())
+            continue;
+        interactionRegionLayers.set(enclosingFrame, sublayer);
     }
 
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
