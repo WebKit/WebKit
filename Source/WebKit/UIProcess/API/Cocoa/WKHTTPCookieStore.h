@@ -61,6 +61,11 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
  */
 - (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)(void))completionHandler WK_SWIFT_ASYNC_NAME(deleteCookie(_:));
 
+/*! @abstract Deletes all stored cookies.
+ @param completionHandler A block to invoke once the cookies have been deleted.
+ */
+- (void)deleteAllCookies:(nullable void (^)(void))completionHandler;
+
 /*! @abstract Adds a WKHTTPCookieStoreObserver object with the cookie store.
  @param observer The observer object to add.
  @discussion The observer is not retained by the receiver. It is your responsibility

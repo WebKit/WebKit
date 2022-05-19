@@ -106,6 +106,15 @@ private:
     });
 }
 
+- (void)deleteAllCookies:(void (^)(void))completionHandler
+{
+    _cookieStore->deleteAllCookies([handler = adoptNS([completionHandler copy])]() {
+        auto rawHandler = (void (^)())handler.get();
+        if (rawHandler)
+            rawHandler();
+    });
+}
+
 - (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
     auto result = _observers.add((__bridge CFTypeRef)observer, nullptr);
