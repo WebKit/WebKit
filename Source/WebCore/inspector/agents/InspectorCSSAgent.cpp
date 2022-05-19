@@ -491,6 +491,9 @@ Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Protocol::CSS::RuleMatch
     if (!element)
         return makeUnexpected(errorString);
 
+    if (!element->isConnected())
+        return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
+
     Element* originalElement = element;
     PseudoId elementPseudoId = element->pseudoId();
     if (elementPseudoId != PseudoId::None) {
@@ -569,6 +572,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
     auto* element = elementForId(errorString, nodeId);
     if (!element)
         return makeUnexpected(errorString);
+
+    if (!element->isConnected())
+        return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
     auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
     auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), WTFMove(computedStyleInfo), nullptr);
@@ -1096,6 +1102,8 @@ Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSStyleSheet* p
 
 RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const StyleRule* styleRule, Style::Resolver& styleResolver, Element& element)
 {
+    ASSERT(element.isConnected());
+
     if (!styleRule)
         return nullptr;
 

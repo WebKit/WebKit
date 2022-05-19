@@ -316,13 +316,15 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         let child = this.children[childIndex];
         let parent = child.parent;
 
-        if (child.deselect(suppressOnDeselect) && !suppressSelectSibling) {
+        let childOrDescendantWasSelected = child.deselect(suppressOnDeselect) || child.selfOrDescendant((descendant) => descendant.selected);
+        if (childOrDescendantWasSelected && !suppressSelectSibling) {
+            const omitFocus = true;
             if (child.previousSibling)
-                child.previousSibling.select(true, false);
+                child.previousSibling.select(omitFocus);
             else if (child.nextSibling)
-                child.nextSibling.select(true, false);
+                child.nextSibling.select(omitFocus);
             else
-                parent.select(true, false);
+                parent.select(omitFocus);
         }
 
         let treeOutline = child.treeOutline;
