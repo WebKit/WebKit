@@ -136,6 +136,8 @@ public:
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
+    RenderElement* firstNonAnonymousAncestor() const;
+
 #if ENABLE(TEXT_AUTOSIZING)
     // Minimal distance between the block with fixed height and overflowing content and the text block to apply text autosizing.
     // The greater this constant is the more potential places we have where autosizing is turned off.
@@ -778,8 +780,6 @@ protected:
     //////////////////////////////////////////
     void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
-
-    RenderElement* firstNonAnonymousAncestor() const;
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 

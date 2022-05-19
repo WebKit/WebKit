@@ -41,7 +41,7 @@ namespace WebCore {
 
 static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& firstLetterContainer)
 {
-    auto& styleContainer = firstLetterContainer.isAnonymous() && firstLetterContainer.parent() ? *firstLetterContainer.parent() : firstLetterContainer;
+    auto& styleContainer = firstLetterContainer.isAnonymous() ? *firstLetterContainer.firstNonAnonymousAncestor() : firstLetterContainer;
     auto style = styleContainer.style().getCachedPseudoStyle(PseudoId::FirstLetter);
     if (!style)
         return { };
