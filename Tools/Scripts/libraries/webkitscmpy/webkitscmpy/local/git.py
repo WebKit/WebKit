@@ -421,15 +421,20 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def default_branch(self):
-        result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'origin/HEAD'], cwd=self.path, capture_output=True, encoding='utf-8')
-        if result.returncode:
-            candidates = self.branches
-            if 'master' in candidates:
-                return 'master'
-            if 'main' in candidates:
-                return 'main'
-            return None
-        return '/'.join(result.stdout.rstrip().split('/')[1:])
+        for name in ['HEAD', 'main', 'master']:
+            result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/origin/{}'.format(name)],
+                         cwd=self.path, capture_output=True, encoding='utf-8')
+            s = result.stdout.strip()
+            if result.returncode == 0 and s:
+                assert s.startswith('refs/remotes/origin/')
+                return s[len('refs/remotes/origin/'):]
+
+        candidates = self.branches
+        if 'main' in candidates:
+            return 'main'
+        if 'master' in candidates:
+            return 'master'
+        return None
 
     @property
     def branch(self):
