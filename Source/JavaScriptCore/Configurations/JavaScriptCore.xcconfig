@@ -34,7 +34,7 @@ OTHER_LDFLAGS[sdk=embedded*] = $(inherited) $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices $(PROFILE_GENERATE_OR_USE_LDFLAGS);
 
 WTF_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libWTF.a;
-WTF_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/local/lib/libWTF.a;
+WTF_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/libWTF.a;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;

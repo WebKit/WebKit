@@ -22,12 +22,13 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
+headersFolderPath = ENV['WK_LIBRARY_HEADERS_FOLDER_PATH'];
 if buildProductsDirectory and File.exists?(buildProductsDirectory)
-    $: << "#{buildProductsDirectory}/usr/local/include/WebKitAdditions/Scripts"
+    $: << "#{buildProductsDirectory}#{headersFolderPath}/WebKitAdditions/Scripts"
 end
 sdkRootDirectory = ENV['SDKROOT'];
 if sdkRootDirectory and File.exists?(sdkRootDirectory)
-    $: << "#{sdkRootDirectory}/usr/local/include/WebKitAdditions/Scripts"
+    $: << "#{sdkRootDirectory}#{headersFolderPath}/WebKitAdditions/Scripts"
 end
 
 
