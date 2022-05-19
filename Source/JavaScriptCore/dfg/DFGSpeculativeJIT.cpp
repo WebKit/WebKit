@@ -2150,11 +2150,9 @@ void SpeculativeJIT::compileLoopHint(Node* node)
             }
 
             m_jit.popToRestore(GPRInfo::regT0);
-#if USE(JSVALUE64)
-            JSValueRegs resultRegs(GPRInfo::returnValueGPR);
-#else
-            JSValueRegs resultRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
-#endif
+
+            constexpr JSValueRegs resultRegs = JSRInfo::returnValueJSR;
+
             m_jit.moveValue(baselineCodeBlock->globalObject(), resultRegs);
             m_jit.emitRestoreCalleeSaves();
             m_jit.emitFunctionEpilogue();
