@@ -140,10 +140,13 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
     // TextFieldInputType dispatches events different way from InputType.
     InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent, selection);
 
+    // Visible value needs update if it differs from sanitized value, if it was set with setValue().
+    // event_behavior == DispatchNoEvent usually means this call is not a user edit.
+    bool needsTextUpdate = valueChanged || (eventBehavior == TextFieldEventBehavior::DispatchNoEvent && sanitizedValue != element()->innerTextValue());
+    if (needsTextUpdate)
+        updateInnerTextValue();
     if (!valueChanged)
         return;
-
-    updateInnerTextValue();
 
     if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
         auto max = visibleValue().length();
