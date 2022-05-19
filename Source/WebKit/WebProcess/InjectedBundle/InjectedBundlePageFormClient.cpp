@@ -45,16 +45,16 @@ InjectedBundlePageFormClient::InjectedBundlePageFormClient(const WKBundlePageFor
     initialize(client);
 }
 
-void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
 {
     if (!m_client.didFocusTextField)
         return;
 
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
+    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
     m_client.didFocusTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidBeginEditing)
         return;
@@ -63,7 +63,7 @@ void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLI
     m_client.textFieldDidBeginEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidEndEditing)
         return;
@@ -72,7 +72,7 @@ void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInp
     m_client.textFieldDidEndEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame, bool initiatedByUserTyping)
+void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame, bool initiatedByUserTyping)
 {
     if (!m_client.textDidChangeInTextField)
         return;
@@ -84,7 +84,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLI
     m_client.textDidChangeInTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement* textAreaElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement& textAreaElement, WebFrame* frame)
 {
     if (!m_client.textDidChangeInTextArea)
         return;
@@ -116,7 +116,7 @@ static WKInputFieldActionType toWKInputFieldActionType(API::InjectedBundle::Form
     return WKInputFieldActionTypeCancel;
 }
 
-bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement* inputElement, API::InjectedBundle::FormClient::InputFieldAction actionType, WebFrame* frame)
+bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement& inputElement, API::InjectedBundle::FormClient::InputFieldAction actionType, WebFrame* frame)
 {
     if (!m_client.shouldPerformActionInTextField)
         return false;

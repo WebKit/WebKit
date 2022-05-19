@@ -88,12 +88,12 @@ private:
     void redo() final;
     
     bool shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
-    void textFieldDidBeginEditing(WebCore::Element*) final;
-    void textFieldDidEndEditing(WebCore::Element*) final;
-    void textDidChangeInTextField(WebCore::Element*) final;
-    bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) final;
-    void textWillBeDeletedInTextField(WebCore::Element* input) final;
-    void textDidChangeInTextArea(WebCore::Element*) final;
+    void textFieldDidBeginEditing(WebCore::Element&) final;
+    void textFieldDidEndEditing(WebCore::Element&) final;
+    void textDidChangeInTextField(WebCore::Element&) final;
+    bool doTextFieldCommandFromEvent(WebCore::Element&, WebCore::KeyboardEvent*) final;
+    void textWillBeDeletedInTextField(WebCore::Element& input) final;
+    void textDidChangeInTextArea(WebCore::Element&) final;
     void overflowScrollPositionChanged() final { }
     void subFrameScrollPositionChanged() final { }
 

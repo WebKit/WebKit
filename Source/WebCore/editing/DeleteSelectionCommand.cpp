@@ -985,7 +985,7 @@ void DeleteSelectionCommand::doApply()
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
         if (RefPtr textControl = enclosingTextFormControl(m_selectionToDelete.start()); textControl && textControl->focused())
-            document().editor().textWillBeDeletedInTextField(textControl.get());
+            document().editor().textWillBeDeletedInTextField(*textControl);
     }
 
     // save this to later make the selection with

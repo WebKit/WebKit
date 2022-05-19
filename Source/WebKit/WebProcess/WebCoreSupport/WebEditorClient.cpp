@@ -352,50 +352,54 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 
 #endif // !PLATFORM(COCOA) && !USE(GLIB)
 
-void WebEditorClient::textFieldDidBeginEditing(Element* element)
+void WebEditorClient::textFieldDidBeginEditing(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, downcast<HTMLInputElement>(element), webFrame);
+    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, *inputElement, webFrame);
 }
 
-void WebEditorClient::textFieldDidEndEditing(Element* element)
+void WebEditorClient::textFieldDidEndEditing(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, downcast<HTMLInputElement>(element), webFrame);
+    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, *inputElement, webFrame);
 }
 
-void WebEditorClient::textDidChangeInTextField(Element* element)
+void WebEditorClient::textDidChangeInTextField(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    bool initiatedByUserTyping = UserTypingGestureIndicator::processingUserTypingGesture() && UserTypingGestureIndicator::focusedElementAtGestureStart() == element;
+    bool initiatedByUserTyping = UserTypingGestureIndicator::processingUserTypingGesture() && UserTypingGestureIndicator::focusedElementAtGestureStart() == inputElement;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, downcast<HTMLInputElement>(element), webFrame, initiatedByUserTyping);
+    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, *inputElement, webFrame, initiatedByUserTyping);
 }
 
-void WebEditorClient::textDidChangeInTextArea(Element* element)
+void WebEditorClient::textDidChangeInTextArea(Element& element)
 {
-    if (!is<HTMLTextAreaElement>(*element))
+    auto* textAreaElement = dynamicDowncast<HTMLTextAreaElement>(element);
+    if (!textAreaElement)
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, downcast<HTMLTextAreaElement>(element), webFrame);
+    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, *textAreaElement, webFrame);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -455,30 +459,32 @@ static API::InjectedBundle::FormClient::InputFieldAction toInputFieldAction(WKIn
     return API::InjectedBundle::FormClient::InputFieldAction::Cancel;
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element& element, KeyboardEvent* event)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    if (!inputElement)
         return false;
 
     WKInputFieldActionType actionType = static_cast<WKInputFieldActionType>(0);
     if (!getActionTypeForKeyEvent(event, actionType))
         return false;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, downcast<HTMLInputElement>(element), toInputFieldAction(actionType), webFrame);
+    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(actionType), webFrame);
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(Element* element)
+void WebEditorClient::textWillBeDeletedInTextField(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, downcast<HTMLInputElement>(element), toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
+    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
 }
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const

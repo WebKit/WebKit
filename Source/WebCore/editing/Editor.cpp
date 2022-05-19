@@ -3462,26 +3462,26 @@ void Editor::computeAndSetTypingStyle(StyleProperties& properties, EditAction ed
     return computeAndSetTypingStyle(EditingStyle::create(&properties), editingAction);
 }
 
-void Editor::textFieldDidBeginEditing(Element* e)
+void Editor::textFieldDidBeginEditing(Element& e)
 {
     if (client())
         client()->textFieldDidBeginEditing(e);
 }
 
-void Editor::textFieldDidEndEditing(Element* e)
+void Editor::textFieldDidEndEditing(Element& e)
 {
     dismissCorrectionPanelAsIgnored();
     if (client())
         client()->textFieldDidEndEditing(e);
 }
 
-void Editor::textDidChangeInTextField(Element* e)
+void Editor::textDidChangeInTextField(Element& e)
 {
     if (client())
         client()->textDidChangeInTextField(e);
 }
 
-bool Editor::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
+bool Editor::doTextFieldCommandFromEvent(Element& e, KeyboardEvent* ke)
 {
     if (client())
         return client()->doTextFieldCommandFromEvent(e, ke);
@@ -3489,13 +3489,13 @@ bool Editor::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
     return false;
 }
 
-void Editor::textWillBeDeletedInTextField(Element* input)
+void Editor::textWillBeDeletedInTextField(Element& input)
 {
     if (client())
         client()->textWillBeDeletedInTextField(input);
 }
 
-void Editor::textDidChangeInTextArea(Element* e)
+void Editor::textDidChangeInTextArea(Element& e)
 {
     if (client())
         client()->textDidChangeInTextArea(e);

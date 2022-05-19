@@ -485,12 +485,12 @@ public:
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
 
-    void textFieldDidBeginEditing(Element*);
-    void textFieldDidEndEditing(Element*);
-    void textDidChangeInTextField(Element*);
-    bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
-    void textWillBeDeletedInTextField(Element* input);
-    void textDidChangeInTextArea(Element*);
+    void textFieldDidBeginEditing(Element&);
+    void textFieldDidEndEditing(Element&);
+    void textDidChangeInTextField(Element&);
+    bool doTextFieldCommandFromEvent(Element&, KeyboardEvent*);
+    void textWillBeDeletedInTextField(Element& input);
+    void textDidChangeInTextArea(Element&);
     WEBCORE_EXPORT WritingDirection baseWritingDirectionForSelectionStart() const;
 
     enum class SelectReplacement : bool { No, Yes };

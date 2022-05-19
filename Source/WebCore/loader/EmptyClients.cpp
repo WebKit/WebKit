@@ -305,12 +305,12 @@ private:
     void handleKeyboardEvent(KeyboardEvent&) final { }
     void handleInputMethodKeydown(KeyboardEvent&) final { }
 
-    void textFieldDidBeginEditing(Element*) final { }
-    void textFieldDidEndEditing(Element*) final { }
-    void textDidChangeInTextField(Element*) final { }
-    bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) final { return false; }
-    void textWillBeDeletedInTextField(Element*) final { }
-    void textDidChangeInTextArea(Element*) final { }
+    void textFieldDidBeginEditing(Element&) final { }
+    void textFieldDidEndEditing(Element&) final { }
+    void textDidChangeInTextField(Element&) final { }
+    bool doTextFieldCommandFromEvent(Element&, KeyboardEvent*) final { return false; }
+    void textWillBeDeletedInTextField(Element&) final { }
+    void textDidChangeInTextArea(Element&) final { }
     void overflowScrollPositionChanged() final { }
     void subFrameScrollPositionChanged() final { }
 

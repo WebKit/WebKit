@@ -201,8 +201,8 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
         event.setDefaultHandled();
     }
 #endif
-    RefPtr<Frame> frame = element()->document().frame();
-    if (frame && frame->editor().doTextFieldCommandFromEvent(element(), &event))
+    RefPtr frame = element()->document().frame();
+    if (frame && frame->editor().doTextFieldCommandFromEvent(*element(), &event))
         event.setDefaultHandled();
     return ShouldCallBaseEventHandler::Yes;
 }
@@ -275,8 +275,8 @@ void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
 {
     ASSERT(element());
     ASSERT_UNUSED(oldFocusedNode, oldFocusedNode != element());
-    if (RefPtr<Frame> frame = element()->document().frame()) {
-        frame->editor().textFieldDidBeginEditing(element());
+    if (RefPtr frame = element()->document().frame()) {
+        frame->editor().textFieldDidBeginEditing(*element());
 #if ENABLE(DATALIST_ELEMENT)
         if (shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited() && element()->list() && m_dataListDropdownIndicator)
             m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);
@@ -712,8 +712,8 @@ void TextFieldInputType::didSetValueByUserEdit()
     ASSERT(element());
     if (!element()->focused())
         return;
-    if (RefPtr<Frame> frame = element()->document().frame())
-        frame->editor().textDidChangeInTextField(element());
+    if (RefPtr frame = element()->document().frame())
+        frame->editor().textDidChangeInTextField(*element());
 #if ENABLE(DATALIST_ELEMENT)
     if (shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited() && element()->list() && m_dataListDropdownIndicator)
         m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);

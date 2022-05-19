@@ -392,15 +392,15 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled(void) const
     return page->settings().selectTrailingWhitespaceEnabled();
 }
 
-void WebEditorClient::textFieldDidBeginEditing(Element* e)
+void WebEditorClient::textFieldDidBeginEditing(Element& e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textFieldDidBeginEditing(domInputElement, kit(e->document().frame()));
+                formDelegate->textFieldDidBeginEditing(domInputElement, kit(e.document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -409,15 +409,15 @@ void WebEditorClient::textFieldDidBeginEditing(Element* e)
     }
 }
 
-void WebEditorClient::textFieldDidEndEditing(Element* e)
+void WebEditorClient::textFieldDidEndEditing(Element& e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textFieldDidEndEditing(domInputElement, kit(e->document().frame()));
+                formDelegate->textFieldDidEndEditing(domInputElement, kit(e.document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -426,18 +426,18 @@ void WebEditorClient::textFieldDidEndEditing(Element* e)
     }
 }
 
-void WebEditorClient::textDidChangeInTextField(Element* e)
+void WebEditorClient::textDidChangeInTextField(Element& e)
 {
-    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != e)
+    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != &e)
         return;
 
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textDidChangeInTextField(domInputElement, kit(e->document().frame()));
+                formDelegate->textDidChangeInTextField(domInputElement, kit(e.document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -446,19 +446,19 @@ void WebEditorClient::textDidChangeInTextField(Element* e)
     }
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element& e, KeyboardEvent* ke)
 {
     BOOL result = FALSE;
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
                 auto command = String::fromLatin1(m_webView->interpretKeyEvent(ke));
                 // We allow empty commands here because the app code actually depends on this being called for all key presses.
                 // We may want to revisit this later because it doesn't really make sense to send an empty command.
-                formDelegate->doPlatformCommand(domInputElement, BString(command), kit(e->document().frame()), &result);
+                formDelegate->doPlatformCommand(domInputElement, BString(command), kit(e.document().frame()), &result);
                 domInputElement->Release();
             }
             domElement->Release();
@@ -468,17 +468,17 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
     return !!result;
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(Element* e)
+void WebEditorClient::textWillBeDeletedInTextField(Element& e)
 {
     // We're using the deleteBackward command for all deletion operations since the autofill code treats all deletions the same way.
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
                 BOOL result;
-                formDelegate->doPlatformCommand(domInputElement, BString(L"DeleteBackward"), kit(e->document().frame()), &result);
+                formDelegate->doPlatformCommand(domInputElement, BString(L"DeleteBackward"), kit(e.document().frame()), &result);
                 domInputElement->Release();
             }
             domElement->Release();
@@ -487,15 +487,15 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* e)
     }
 }
 
-void WebEditorClient::textDidChangeInTextArea(Element* e)
+void WebEditorClient::textDidChangeInTextArea(Element& e)
 {
     IWebFormDelegate* formDelegate;
     if (SUCCEEDED(m_webView->formDelegate(&formDelegate)) && formDelegate) {
-        IDOMElement* domElement = DOMElement::createInstance(e);
+        IDOMElement* domElement = DOMElement::createInstance(&e);
         if (domElement) {
             IDOMHTMLTextAreaElement* domTextAreaElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLTextAreaElement, (void**)&domTextAreaElement))) {
-                formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e->document().frame()));
+                formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e.document().frame()));
                 domTextAreaElement->Release();
             }
             domElement->Release();

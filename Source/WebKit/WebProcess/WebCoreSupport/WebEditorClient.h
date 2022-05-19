@@ -107,12 +107,12 @@ private:
     void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
     void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
     
-    void textFieldDidBeginEditing(WebCore::Element*) final;
-    void textFieldDidEndEditing(WebCore::Element*) final;
-    void textDidChangeInTextField(WebCore::Element*) final;
-    bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) final;
-    void textWillBeDeletedInTextField(WebCore::Element*) final;
-    void textDidChangeInTextArea(WebCore::Element*) final;
+    void textFieldDidBeginEditing(WebCore::Element&) final;
+    void textFieldDidEndEditing(WebCore::Element&) final;
+    void textDidChangeInTextField(WebCore::Element&) final;
+    bool doTextFieldCommandFromEvent(WebCore::Element&, WebCore::KeyboardEvent*) final;
+    void textWillBeDeletedInTextField(WebCore::Element&) final;
+    void textDidChangeInTextArea(WebCore::Element&) final;
     void overflowScrollPositionChanged() final;
     void subFrameScrollPositionChanged() final;
 

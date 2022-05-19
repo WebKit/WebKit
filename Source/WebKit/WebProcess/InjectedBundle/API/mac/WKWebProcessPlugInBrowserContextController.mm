@@ -465,11 +465,11 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         {
         }
 
-        void didFocusTextField(WebKit::WebPage*, WebCore::HTMLInputElement* inputElement, WebKit::WebFrame* frame) final
+        void didFocusTextField(WebKit::WebPage*, WebCore::HTMLInputElement& inputElement, WebKit::WebFrame* frame) final
         {
             auto formDelegate = m_controller->_formDelegate.get();
             if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didFocusTextField:inFrame:)])
-                [formDelegate _webProcessPlugInBrowserContextController:m_controller didFocusTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement).get()) inFrame:wrapper(*frame)];
+                [formDelegate _webProcessPlugInBrowserContextController:m_controller didFocusTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame)];
         }
 
         void willSendSubmitEvent(WebKit::WebPage*, WebCore::HTMLFormElement* formElement, WebKit::WebFrame* targetFrame, WebKit::WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) final
@@ -510,11 +510,11 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
         }
 
-        void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement* inputElement, WebKit::WebFrame* frame, bool initiatedByUserTyping) final
+        void textDidChangeInTextField(WebKit::WebPage*, WebCore::HTMLInputElement& inputElement, WebKit::WebFrame* frame, bool initiatedByUserTyping) final
         {
             auto formDelegate = m_controller->_formDelegate.get();
             if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:textDidChangeInTextField:inFrame:initiatedByUserTyping:)])
-                [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame) initiatedByUserTyping:initiatedByUserTyping];
+                [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame) initiatedByUserTyping:initiatedByUserTyping];
         }
 
         void willBeginInputSession(WebKit::WebPage*, WebCore::Element* element, WebKit::WebFrame* frame, bool userIsInteracting, RefPtr<API::Object>& userData) final

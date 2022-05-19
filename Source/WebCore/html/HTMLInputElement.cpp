@@ -470,7 +470,7 @@ void HTMLInputElement::endEditing()
         return;
 
     if (RefPtr frame = document().frame())
-        frame->editor().textFieldDidEndEditing(this);
+        frame->editor().textFieldDidEndEditing(*this);
 }
 
 bool HTMLInputElement::shouldUseInputMethod()

@@ -705,39 +705,49 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent& event)
 
 #define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
 
-void WebEditorClient::textFieldDidBeginEditing(Element* element)
+template <typename T>
+static DOMElement *dynamicDowncastToKit(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
-        return;
+    auto* coreInputElement = dynamicDowncast<T>(element);
+    if (!coreInputElement)
+        return nil;
 
-    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
-    FormDelegateLog(inputElement);
-    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement, kit(element->document().frame()));
+    return kit(coreInputElement);
 }
 
-void WebEditorClient::textFieldDidEndEditing(Element* element)
+void WebEditorClient::textFieldDidBeginEditing(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto *inputElement = dynamicDowncastToKit<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
-    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element->document().frame()));
+    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement, kit(element.document().frame()));
 }
 
-void WebEditorClient::textDidChangeInTextField(Element* element)
+void WebEditorClient::textFieldDidEndEditing(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto *inputElement = dynamicDowncastToKit<HTMLInputElement>(element);
+    if (!inputElement)
+        return;
+
+    FormDelegateLog(inputElement);
+    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element.document().frame()));
+}
+
+void WebEditorClient::textDidChangeInTextField(Element& element)
+{
+    auto *inputElement = dynamicDowncastToKit<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
 #if !PLATFORM(IOS_FAMILY)
-    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != element)
+    if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != &element)
         return;
 #endif
 
-    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement, kit(element->document().frame()));
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement, kit(element.document().frame()));
 }
 
 static SEL selectorForKeyEvent(KeyboardEvent* event)
@@ -765,37 +775,37 @@ IGNORE_WARNINGS_END
     return 0;
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element& element, KeyboardEvent* event)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto *inputElement = dynamicDowncastToKit<HTMLInputElement>(element);
+    if (!inputElement)
         return NO;
 
-    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     if (SEL commandSelector = selectorForKeyEvent(event))
-        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, commandSelector, kit(element->document().frame()));
+        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, commandSelector, kit(element.document().frame()));
     return NO;
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(Element* element)
+void WebEditorClient::textWillBeDeletedInTextField(Element& element)
 {
-    if (!is<HTMLInputElement>(*element))
+    auto *inputElement = dynamicDowncastToKit<HTMLInputElement>(element);
+    if (!inputElement)
         return;
 
-    DOMHTMLInputElement* inputElement = kit(downcast<HTMLInputElement>(element));
     FormDelegateLog(inputElement);
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
-    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, @selector(deleteBackward:), kit(element->document().frame()));
+    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, @selector(deleteBackward:), kit(element.document().frame()));
 }
 
-void WebEditorClient::textDidChangeInTextArea(Element* element)
+void WebEditorClient::textDidChangeInTextArea(Element& element)
 {
-    if (!is<HTMLTextAreaElement>(*element))
+    auto *textAreaElement = dynamicDowncastToKit<HTMLTextAreaElement>(element);
+    if (!textAreaElement)
         return;
 
-    DOMHTMLTextAreaElement* textAreaElement = kit(downcast<HTMLTextAreaElement>(element));
     FormDelegateLog(textAreaElement);
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document().frame()));
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element.document().frame()));
 }
 
 #if PLATFORM(IOS_FAMILY)
