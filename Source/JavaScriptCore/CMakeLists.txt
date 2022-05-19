@@ -398,6 +398,12 @@ set(LLIntSettingsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
 set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
 WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
+# LLIntSettingsExtractor target needs to have a direct or indirect
+# dependency to Bytecodes target for CMake Visual Studio generator to
+# eliminate duplicated custom commands. Otherwise, Bytecodes.h will be
+# generated in both projects.
+add_dependencies(LLIntSettingsExtractor Bytecodes)
+
 WEBKIT_EXECUTABLE_DECLARE(LLIntOffsetsExtractor)
 set(LLIntOffsetsExtractor_SOURCES
     ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
