@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
 #import "DragAndDropSimulator.h"
+#import "InstanceMethodSwizzler.h"
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -37,6 +38,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
+#import <QuickLookThumbnailing/QLThumbnailGenerator.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebArchive.h>
@@ -54,6 +56,9 @@ SOFT_LINK_CLASS(Contacts, CNMutableContact)
 SOFT_LINK_FRAMEWORK(MapKit)
 SOFT_LINK_CLASS(MapKit, MKMapItem)
 SOFT_LINK_CLASS(MapKit, MKPlacemark)
+
+SOFT_LINK_FRAMEWORK(QuickLookThumbnailing)
+SOFT_LINK_CLASS(QuickLookThumbnailing, QLThumbnailGenerator)
 
 @interface NSArray (AttachmentTestingHelpers)
 - (_WKAttachment *)_attachmentWithName:(NSString *)name;
@@ -236,6 +241,16 @@ static NSData *testZIPData()
 static NSData *testHTMLData()
 {
     return [@"<a href='#'>This is some HTML data</a>" dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+static NSURL *testiWorkAttachmentFileURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+static NSData *testiWorkAttachmentData()
+{
+    return [NSData dataWithContentsOfURL:testiWorkAttachmentFileURL()];
 }
 
 static NSURL *testImageFileURL()
@@ -1626,6 +1641,34 @@ TEST(WKAttachmentTests, CopyAndPasteImageBetweenWebViews)
     EXPECT_WK_STREQ("image/png", pastedAttachmentInfo.contentType);
     EXPECT_WK_STREQ("icon.png", pastedAttachmentInfo.name);
     EXPECT_TRUE([originalData isEqualToData:pastedAttachmentInfo.data]);
+}
+
+static bool triedToLoadThumbnail;
+static void _generateBestRepresentationForRequest(id, SEL)
+{
+    triedToLoadThumbnail = true;
+}
+
+TEST(WKAttachmentTests, CutAndPasteAttachmentBetweenWebViews)
+{
+    auto webView = webViewForTestingAttachments();
+    [webView synchronouslyInsertAttachmentWithFilename:@"test.pages" contentType:nil data:testiWorkAttachmentData()];
+    [webView selectAll:nil];
+    [webView _synchronouslyExecuteEditCommand:@"Cut" argument:nil];
+
+    InstanceMethodSwizzler quickLookSwizzler {
+        getQLThumbnailGeneratorClass(),
+        @selector(generateBestRepresentationForRequest:completionHandler:),
+        reinterpret_cast<IMP>(_generateBestRepresentationForRequest)
+    };
+
+    auto destinationView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(destinationView.get());
+    triedToLoadThumbnail = false;
+    [destinationView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+
+    Util::run(&triedToLoadThumbnail);
 }
 
 TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
