@@ -1603,6 +1603,23 @@ bool KeyframeEffect::canBeAccelerated() const
 
 bool KeyframeEffect::preventsAcceleration() const
 {
+    // We cannot run accelerated transform animations if a motion path is applied
+    // to an element, either through the underlying style, or through a keyframe.
+    if (auto target = targetStyleable()) {
+        if (auto* lastStyleChangeEventStyle = target->lastStyleChangeEventStyle()) {
+            if (lastStyleChangeEventStyle->offsetPath())
+                return true;
+        }
+    }
+
+    if (animatesProperty(CSSPropertyOffsetAnchor)
+        || animatesProperty(CSSPropertyOffsetDistance)
+        || animatesProperty(CSSPropertyOffsetPath)
+        || animatesProperty(CSSPropertyOffsetPosition)
+        || animatesProperty(CSSPropertyOffsetRotate)) {
+        return true;
+    }
+
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
         return false;
 
@@ -2280,6 +2297,16 @@ KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 {
     if (m_effect && m_couldOriginallyPreventAcceleration != m_effect->preventsAcceleration())
         m_effect->abilityToBeAcceleratedDidChange();
+}
+
+void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle)
+{
+    auto hasMotionPath = [](const RenderStyle* style) {
+        return style && style->offsetPath();
+    };
+
+    if (hasMotionPath(previousStyle) != hasMotionPath(currentStyle))
+        abilityToBeAcceleratedDidChange();
 }
 
 } // namespace WebCore

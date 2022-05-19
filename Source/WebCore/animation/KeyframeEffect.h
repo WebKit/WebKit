@@ -179,6 +179,8 @@ public:
     void effectStackNoLongerPreventsAcceleration();
     void effectStackNoLongerAllowsAcceleration();
 
+    void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
 private:

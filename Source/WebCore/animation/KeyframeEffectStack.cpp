@@ -238,4 +238,10 @@ void KeyframeEffectStack::stopAcceleratedAnimations()
         effect->effectStackNoLongerAllowsAcceleration();
 }
 
+void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle)
+{
+    for (auto& effect : m_effects)
+        effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
+}
+
 } // namespace WebCore

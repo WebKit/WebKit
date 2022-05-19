@@ -65,6 +65,8 @@ public:
     bool containsInvalidCSSAnimationName(const String&) const;
     void addInvalidCSSAnimationName(const String&);
 
+    void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+
 private:
     void ensureEffectsAreSorted();
 
