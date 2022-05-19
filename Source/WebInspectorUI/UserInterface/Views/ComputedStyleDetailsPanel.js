@@ -215,13 +215,11 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             this.element.appendChild(styleSection.element);
             this.removeSubview(styleSection);
             styleSection.element.remove();
+            this._detailsSectionByStyleSectionMap.delete(styleSection);
 
             // The top-level details section for variables needs to be preserved because it's the host of nested details sections for variables groups.
-            if (detailsSection === this._variablesSection)
-                continue;
-
-            detailsSection.element.remove();
-            this._detailsSectionByStyleSectionMap.delete(styleSection);
+            if (detailsSection !== this._variablesSection)
+                detailsSection.element.remove();
         }
 
         this._variablesStyleSectionForGroupTypeMap.clear();
