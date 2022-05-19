@@ -166,8 +166,12 @@ void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
     ASSERT(element());
     // If an unselected radio is tabbed into (because the entire group has nothing
     // checked, or because of some explicit .focus() call), then allow space to check it.
-    if (element()->checked())
+    if (element()->checked()) {
+        // If we are going to skip DispatchSimulatedClick, then at least call setActive(false)
+        // to prevent the radio from being stuck in the active state.
+        element()->setActive(false);
         return;
+    }
     dispatchSimulatedClickIfActive(event);
 }
 
