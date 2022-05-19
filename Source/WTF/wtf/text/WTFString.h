@@ -334,7 +334,6 @@ private:
 static_assert(sizeof(String) == sizeof(void*), "String should effectively be a pointer to a StringImpl, and efficient to pass by value");
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
-inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const String& a, ASCIILiteral b) { return equal(a.impl(), b); }
 inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
@@ -344,7 +343,6 @@ template<size_t inlineCapacity> inline bool operator==(const Vector<char, inline
 template<size_t inlineCapacity> inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
 inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const String& a, const LChar* b) { return !equal(a.impl(), b); }
 inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator!=(const String& a, ASCIILiteral b) { return !equal(a.impl(), b); }
 inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
