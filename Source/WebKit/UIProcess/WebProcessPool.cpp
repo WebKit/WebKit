@@ -761,14 +761,14 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    if (auto& directory = websiteDataStore.cookieStorageDirectory(); !directory.isEmpty())
-        cookieStorageDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+    if (auto directory = websiteDataStore.cookieStorageDirectory(); !directory.isEmpty())
+        cookieStorageDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
     std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    if (auto& directory = websiteDataStore.containerCachesDirectory(); !directory.isEmpty())
-        containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+    if (auto directory = websiteDataStore.containerCachesDirectory(); !directory.isEmpty())
+        containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
     std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
-    if (auto& directory = websiteDataStore.containerTemporaryDirectory(); !directory.isEmpty())
-        containerTemporaryDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+    if (auto directory = WebsiteDataStore::containerTemporaryDirectory(); !directory.isEmpty())
+        containerTemporaryDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
 #endif
 
     return WebProcessDataStoreParameters {

@@ -299,13 +299,6 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     if (!m_configuration->modelElementCacheDirectory().isEmpty())
         m_resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->modelElementCacheDirectory()));
 #endif
-#if PLATFORM(IOS_FAMILY)
-    if (isPersistent()) {
-        m_cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::cookieStorageDirectory());
-        m_containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::webContentCachesDirectory());
-        m_containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
-    }
-#endif
 
     // Resolve directories for file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
@@ -1928,12 +1921,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
 #if PLATFORM(IOS_FAMILY)
     if (isPersistent()) {
-        if (String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory(); !cookieStorageDirectory.isEmpty())
-            parameters.cookieStorageDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory);
-        if (String containerCachesDirectory = WebProcessPool::networkingCachesDirectory(); !containerCachesDirectory.isEmpty())
-            parameters.containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory);
-        if (String parentBundleDirectory = WebProcessPool::parentBundleDirectory(); !parentBundleDirectory.isEmpty())
-            parameters.parentBundleDirectoryExtensionHandle = SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly);
+        if (auto directory = cookieStorageDirectory(); !directory.isEmpty())
+            parameters.cookieStorageDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
+        if (auto directory = networkingCachesDirectory(); !directory.isEmpty())
+            parameters.containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
+        if (auto directory = parentBundleDirectory(); !directory.isEmpty())
+            parameters.parentBundleDirectoryExtensionHandle = SandboxExtension::createHandle(directory, SandboxExtension::Type::ReadOnly);
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite))
             parameters.tempDirectoryExtensionHandle = WTFMove(handleAndFilePath->first);
     }

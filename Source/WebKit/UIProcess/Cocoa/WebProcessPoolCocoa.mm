@@ -263,24 +263,6 @@ void WebProcessPool::platformInitialize()
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
-String WebProcessPool::cacheDirectoryInContainerOrHomeDirectory(const String& subpath)
-{
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-
-    path = path + subpath;
-    path = stringByResolvingSymlinksInPath(path);
-    return path;
-}
-
-String WebProcessPool::cookieStorageDirectory()
-{
-    return cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
-}
-#endif
-
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
 {
     m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension(String { [[NSBundle mainBundle] resourcePath] });
@@ -480,47 +462,6 @@ void WebProcessPool::platformInvalidateContext()
 {
     unregisterNotificationObservers();
 }
-
-#if PLATFORM(IOS_FAMILY)
-String WebProcessPool::parentBundleDirectory()
-{
-    return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
-}
-
-String WebProcessPool::networkingCachesDirectory()
-{
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
-
-    NSError *error = nil;
-    NSString* nsPath = path;
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create networking caches directory \"%@\", error %@", nsPath, error);
-        return String();
-    }
-
-    return path;
-}
-
-String WebProcessPool::webContentCachesDirectory()
-{
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
-
-    NSError *error = nil;
-    NSString* nsPath = path;
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create web content caches directory \"%@\", error %@", nsPath, error);
-        return String();
-    }
-
-    return path;
-}
-
-String WebProcessPool::containerTemporaryDirectory()
-{
-    String path = NSTemporaryDirectory();
-    return stringByResolvingSymlinksInPath(path);
-}
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 void WebProcessPool::setJavaScriptConfigurationFileEnabledFromDefaults()

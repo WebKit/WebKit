@@ -629,4 +629,63 @@ bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
     return !internalFeatureEnabled(WebPreferencesKey::useGeneralDirectoryForStorageKey(), true);
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& subpath)
+{
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + subpath;
+    path = stringByResolvingSymlinksInPath(path);
+    return path;
+}
+
+String WebsiteDataStore::cookieStorageDirectory()
+{
+    return cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
+}
+
+String WebsiteDataStore::containerCachesDirectory()
+{
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
+
+    NSError *error = nil;
+    NSString* nsPath = path;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create web content caches directory \"%@\", error %@", nsPath, error);
+        return String();
+    }
+
+    return path;
+}
+
+String WebsiteDataStore::parentBundleDirectory()
+{
+    return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
+}
+
+String WebsiteDataStore::networkingCachesDirectory()
+{
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
+
+    NSError *error = nil;
+    NSString* nsPath = path;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create networking caches directory \"%@\", error %@", nsPath, error);
+        return String();
+    }
+
+    return path;
+}
+
+String WebsiteDataStore::containerTemporaryDirectory()
+{
+    String path = NSTemporaryDirectory();
+    return stringByResolvingSymlinksInPath(path);
+}
+
+#endif
+
 }

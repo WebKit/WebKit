@@ -512,15 +512,6 @@ public:
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
-#if PLATFORM(IOS_FAMILY)
-    static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
-    static String cookieStorageDirectory();
-    static String parentBundleDirectory();
-    static String networkingCachesDirectory();
-    static String webContentCachesDirectory();
-    static String containerTemporaryDirectory();
-#endif
-
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
     bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }

@@ -161,9 +161,10 @@ public:
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
 
 #if PLATFORM(IOS_FAMILY)
-    const String& cookieStorageDirectory() const { return m_cookieStorageDirectory; }
-    const String& containerCachesDirectory() const { return m_containerCachesDirectory; }
-    const String& containerTemporaryDirectory() const { return m_containerTemporaryDirectory; }
+    String cookieStorageDirectory();
+    String containerCachesDirectory();
+    static String containerTemporaryDirectory();
+    static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -427,17 +428,17 @@ private:
     void setAppBoundDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    String networkingCachesDirectory();
+    String parentBundleDirectory();
+#endif
+
     const PAL::SessionID m_sessionID;
 
     Ref<WebsiteDataStoreConfiguration> m_resolvedConfiguration;
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
-#if PLATFORM(IOS_FAMILY)
-    String m_cookieStorageDirectory;
-    String m_containerCachesDirectory;
-    String m_containerTemporaryDirectory;
-#endif
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_resourceLoadStatisticsDebugMode { false };
