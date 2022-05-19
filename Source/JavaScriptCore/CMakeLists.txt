@@ -1405,13 +1405,6 @@ add_custom_command(
     VERBATIM)
 add_custom_target(InspectorBackendCommands DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js")
 
-list(APPEND JavaScriptCore_HEADERS
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
-)
-
 if (WTF_CPU_X86_64)
     if (MSVC AND NOT ENABLE_C_LOOP)
         add_custom_command(
