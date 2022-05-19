@@ -50,7 +50,7 @@ PASS Changing the ID of an element causes the content attribute to become out of
 PASS Reparenting an element into a descendant shadow scope hides the element reference.
 PASS Reparenting referenced element cannot cause retargeting of reference.
 PASS Element reference set in invalid scope remains intact throughout move to valid scope.
-PASS aria-labelledby.
+FAIL aria-labelledby. assert_equals: check idl attribute caching after parsing expected [Element node <div id="billingElement">Billing</div>, Element node <div id="nameElement">Name</div>] but got [Element node <div id="billingElement">Billing</div>, Element node <div id="nameElement">Name</div>]
 PASS aria-controls.
 PASS aria-describedby.
 PASS aria-flowto.
