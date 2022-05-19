@@ -667,8 +667,6 @@ private:
     bool m_hasRichContentServices { false };
 #endif
 
-    bool m_processIsSuspended { false };
-
     HashSet<WebCore::PageIdentifier> m_pagesInWindows;
     WebCore::Timer m_nonVisibleProcessGraphicsCleanupTimer;
 
@@ -677,10 +675,6 @@ private:
 #endif
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
-
-#if PLATFORM(IOS_FAMILY)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-#endif
 
     bool m_suppressMemoryPressureHandler { false };
     bool m_loggedProcessLimitWarningMemoryStatistics { false };

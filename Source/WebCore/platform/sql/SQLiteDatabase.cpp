@@ -73,15 +73,6 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
-static Lock isDatabaseOpeningForbiddenLock;
-static bool isDatabaseOpeningForbidden WTF_GUARDED_BY_LOCK(isDatabaseOpeningForbiddenLock) { false };
-
-void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
-{
-    Locker locker { isDatabaseOpeningForbiddenLock };
-    isDatabaseOpeningForbidden = isForbidden;
-}
-
 SQLiteDatabase::SQLiteDatabase() = default;
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -105,12 +96,6 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     });
 
     {
-        Locker locker { isDatabaseOpeningForbiddenLock };
-        if (isDatabaseOpeningForbidden) {
-            m_openErrorMessage = "opening database is forbidden";
-            return false;
-        }
-
         int flags = SQLITE_OPEN_AUTOPROXY;
         switch (openMode) {
         case OpenMode::ReadOnly:

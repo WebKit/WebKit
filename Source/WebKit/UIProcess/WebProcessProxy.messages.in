@@ -37,8 +37,6 @@ messages -> WebProcessProxy LegacyReceiver {
     CreateGPUProcessConnection(IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters)
 #endif
 
-    SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
-
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
     DidExceedCPULimit()

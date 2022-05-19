@@ -101,6 +101,8 @@ public:
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
 
+    WEBCORE_EXPORT void setAllowsOpeningDatabase(bool);
+
 private:
     WEBCORE_EXPORT ApplicationCacheStorage(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
@@ -153,6 +155,7 @@ private:
     HashCountedSet<unsigned, AlreadyHashed> m_cacheHostSet;
     
     HashMap<String, ApplicationCacheGroup*> m_cachesInMemory; // Excludes obsolete cache groups.
+    bool m_allowsOpeningDatabase { true };
 
     friend class NeverDestroyed<ApplicationCacheStorage>;
 };

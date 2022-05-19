@@ -298,9 +298,6 @@ WebProcess::WebProcess()
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
 #endif
-#if PLATFORM(IOS_FAMILY)
-    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
-#endif
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -1477,7 +1474,6 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
 {
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);
     SetForScope suspensionScope(m_isSuspending, true);
-    m_processIsSuspended = true;
 
     flushResourceLoadStatistics();
 
@@ -1507,10 +1503,8 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker.setIsSuspended(true);
-    SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
-    if (DatabaseTracker::isInitialized())
-        DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
+    if (m_applicationCacheStorage)
+        m_applicationCacheStorage->setAllowsOpeningDatabase(false);
     IPC::AccessibilityProcessSuspendedNotification(true);
     updateFreezerStatus();
 #endif
@@ -1560,8 +1554,6 @@ void WebProcess::processDidResume()
 {
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "processDidResume:");
 
-    m_processIsSuspended = false;
-
 #if PLATFORM(COCOA)
     if (m_processType == ProcessType::PrewarmedWebContent)
         return;
@@ -1571,8 +1563,8 @@ void WebProcess::processDidResume()
     unfreezeAllLayerTrees();
     
 #if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker.setIsSuspended(false);
-    SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
+    if (m_applicationCacheStorage)
+        m_applicationCacheStorage->setAllowsOpeningDatabase(true);
     IPC::AccessibilityProcessSuspendedNotification(false);
 #endif
 

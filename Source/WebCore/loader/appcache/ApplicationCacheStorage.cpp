@@ -582,6 +582,9 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     if (m_database.isOpen())
         return;
 
+    if (!m_allowsOpeningDatabase)
+        return;
+
     // The cache directory should never be null, but if it for some weird reason is we bail out.
     if (m_cacheDirectory.isNull())
         return;
@@ -1517,5 +1520,16 @@ ApplicationCacheStorage::ApplicationCacheStorage(const String& cacheDirectory, c
     , m_flatFileSubdirectoryName(flatFileSubdirectoryName)
 {
 }
+
+void ApplicationCacheStorage::setAllowsOpeningDatabase(bool allow)
+{
+    if (m_allowsOpeningDatabase == allow)
+        return;
+
+    m_allowsOpeningDatabase = allow;
+    if (!allow)
+        m_database.close();
+}
+
 
 } // namespace WebCore
