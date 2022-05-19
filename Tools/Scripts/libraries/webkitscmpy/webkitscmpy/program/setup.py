@@ -481,6 +481,8 @@ Automation may create pull requests and forks in unexpected locations
 
     @classmethod
     def main(cls, args, repository, **kwargs):
+        import jinja2
+
         if isinstance(repository, local.Git):
             if 'true' != repository.config().get('webkitscmpy.setup', ''):
                 info_url = 'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options'
