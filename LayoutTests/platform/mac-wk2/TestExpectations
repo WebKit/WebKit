@@ -1717,3 +1717,4 @@ webkit.org/b/239634 [ arm64 ] media/modern-media-controls/tracks-support/text-tr
 
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
+webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
