@@ -42,7 +42,7 @@ struct CDMKeySystemConfiguration;
 }
 
 namespace IPC {
-class SharedBufferReference;
+class SharedBufferCopy;
 }
 
 namespace WebKit {

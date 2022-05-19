@@ -79,7 +79,7 @@ class Object;
 }
 
 namespace IPC {
-class SharedBufferReference;
+class SharedBufferCopy;
 }
 
 namespace PAL {
@@ -534,7 +534,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void consumeAudioComponentRegistrations(const IPC::SharedBufferReference&);
+    void consumeAudioComponentRegistrations(const IPC::SharedBufferCopy&);
 #endif
     
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);

@@ -29,14 +29,12 @@
 #include "ArgumentCoders.h"
 #include "Logging.h"
 #include "MachPort.h"
-#include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedBuffer.h>
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RefPtr.h>
-#include <wtf/cocoa/Entitlements.h>
 #include <wtf/spi/cocoa/MachVMSPI.h>
 
 #if HAVE(MACH_MEMORY_ENTRY)
@@ -98,41 +96,16 @@ SharedMemory::Handle::~Handle()
     clear();
 }
 
-static void changeOwnershipOfMemory(mach_port_t port, task_t task, MemoryLedger memoryLedger)
+void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
 #if HAVE(MACH_MEMORY_ENTRY)
-    if (!port)
+    if (!m_port)
         return;
 
-    kern_return_t kr = mach_memory_entry_ownership(port, task, toVMMemoryLedger(memoryLedger), 0);
+    kern_return_t kr = mach_memory_entry_ownership(m_port, mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
     if (kr != KERN_SUCCESS)
         RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::setOwnership: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
 #else
-    UNUSED_PARAM(port);
-    UNUSED_PARAM(task);
-    UNUSED_PARAM(memoryLedger);
-#endif
-}
-
-void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
-{
-    changeOwnershipOfMemory(m_port, mach_task_self(), memoryLedger);
-}
-
-void SharedMemory::Handle::transferOwnershipOfMemory(const WebCore::ProcessIdentity& identity, MemoryLedger memoryLedger) const
-{
-#if HAVE(TASK_IDENTITY_TOKEN)
-    if (identity) {
-        auto taskId = identity.taskIdToken();
-        mach_port_t taskPort = MACH_PORT_NULL;
-        kern_return_t kr = task_identity_token_get_task_port(taskId, TASK_FLAVOR_CONTROL, &taskPort);
-        if (kr != KERN_SUCCESS)
-            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::transferOwnershipOfMemory: Failed to retrieve task port. Error: %{public}s (%x)", mach_error_string(kr), kr);
-        if (taskPort)
-            changeOwnershipOfMemory(m_port, taskPort, memoryLedger);
-    }
-#else
-    UNUSED_PARAM(identity);
     UNUSED_PARAM(memoryLedger);
 #endif
 }
@@ -234,7 +207,6 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
 {
     switch (protection) {
     case SharedMemory::Protection::ReadOnly:
-    case SharedMemory::Protection::CopyOnWrite:
         return VM_PROT_READ;
     case SharedMemory::Protection::ReadWrite:
         return VM_PROT_READ | VM_PROT_WRITE;
@@ -299,7 +271,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, protection == Protection::CopyOnWrite, vmProtection, vmProtection, VM_INHERIT_NONE);
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
 #if RELEASE_LOG_DISABLED
     if (kr != KERN_SUCCESS)
         return nullptr;
