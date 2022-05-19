@@ -116,9 +116,10 @@ void CurlRequest::start()
         [[fallthrough]];
     case StartState::StartSuspended:
         return;
+    case StartState::WaitingForStart:
+        m_startState = StartState::DidStart;
+        break;
     }
-
-    m_startState = StartState::DidStart;
 
     if (m_request.url().isLocalFile())
         invokeDidReceiveResponseForFile(m_request.url());
