@@ -887,6 +887,7 @@ webkit.org/b/217617 imported/w3c/web-platform-tests/service-workers/service-work
 # These tests are slow in debug and may flakily time out.
 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Skip ]
+[ Debug ] accessibility/visible-character-range-scrolling.html [ Skip ]
 
 # This test adds a lot of iframes and is slow to run.
 fast/dom/connected-subframe-counter-overflow.html [ Slow ]
