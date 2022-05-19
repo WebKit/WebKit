@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SharedBufferCopy.h"
 
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+#include "Decoder.h"
+#include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 
-messages -> RemoteImageDecoderAVFProxy NotRefCounted {
-    CreateDecoder(IPC::SharedBufferCopy data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
-    DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
-    SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
-    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferCopy data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<MachSendRight> sendRight, std::optional<WebCore::DestinationColorSpace> colorSpace) Synchronous
-    ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
+namespace IPC {
+
+using namespace WebCore;
+
+void SharedBufferCopy::encode(Encoder& encoder) const
+{
+    encoder << m_buffer;
 }
 
-#endif
+std::optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
+{
+    RefPtr<SharedBuffer> buffer;
+    if (!decoder.decode(buffer))
+        return std::nullopt;
+    return { IPC::SharedBufferCopy(WTFMove(buffer)) };
+}
+
+const uint8_t* SharedBufferCopy::data() const
+{
+    if (!m_buffer)
+        return nullptr;
+    return downcast<SharedBuffer>(m_buffer.get())->data();
+}
+
+} // namespace IPC
