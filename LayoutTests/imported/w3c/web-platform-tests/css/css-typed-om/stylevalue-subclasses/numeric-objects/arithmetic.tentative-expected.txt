@@ -62,4 +62,6 @@ PASS Calling CSSNumericValue.div inverts all argument values
 PASS Can not divide with CSSUnitValue which has zero value and number type
 PASS CSSNumericValue.add should throw TypeError when the types are different.
 PASS CSSNumericValue.sub should throw TypeError when the types are different.
+PASS CSSNumericValue.max should throw TypeError when the types are different.
+PASS CSSNumericValue.min should throw TypeError when the types are different.
 

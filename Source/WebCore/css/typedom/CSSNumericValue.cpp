@@ -186,30 +186,32 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>
     return multiplyInternal(WTFMove(invertedValues));
 }
 
-Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& numberishes)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::min(FixedVector<CSSNumberish>&& numberishes)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-min
     auto values = prependItemsOfTypeOrThis<CSSMathMin>(WTF::map(WTFMove(numberishes), rectifyNumberish));
     
     if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::min<double>, values))
-        return *result;
+        return { *result };
 
-    // FIXME: Implement step 4 to check that the types can be added.
+    if (!CSSNumericType::addTypes(values))
+        return Exception { TypeError };
 
-    return CSSMathMin::create(WTFMove(values));
+    return { CSSMathMin::create(WTFMove(values)) };
 }
 
-Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& numberishes)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::max(FixedVector<CSSNumberish>&& numberishes)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-max
     auto values = prependItemsOfTypeOrThis<CSSMathMax>(WTF::map(WTFMove(numberishes), rectifyNumberish));
     
     if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::max<double>, values))
-        return *result;
+        return { *result };
 
-    // FIXME: Implement step 4 to check that the types can be added.
+    if (!CSSNumericType::addTypes(values))
+        return Exception { TypeError };
 
-    return CSSMathMax::create(WTFMove(values));
+    return { CSSMathMax::create(WTFMove(values)) };
 }
 
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
