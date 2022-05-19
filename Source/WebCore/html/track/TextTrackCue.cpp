@@ -216,7 +216,6 @@ TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const Med
     : ActiveDOMObject(document)
     , m_startTime(start)
     , m_endTime(end)
-    , m_document(document)
     , m_cueNode(WTFMove(cueFragment))
 {
 }
@@ -225,13 +224,17 @@ TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const Med
     : ActiveDOMObject(document)
     , m_startTime(start)
     , m_endTime(end)
-    , m_document(document)
 {
 }
 
 ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
 {
-    return &m_document;
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+Document* TextTrackCue::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 void TextTrackCue::willChange()
@@ -436,7 +439,11 @@ RefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
     if (!m_cueNode)
         return nullptr;
 
-    auto clonedFragment = DocumentFragment::create(ownerDocument());
+    auto* document = this->document();
+    if (!document)
+        return nullptr;
+
+    auto clonedFragment = DocumentFragment::create(*document);
     m_cueNode->cloneChildNodes(clonedFragment);
 
     for (Node* node = clonedFragment->firstChild(); node; node = node->nextSibling())
@@ -485,21 +492,25 @@ void TextTrackCue::rebuildDisplayTree()
     if (!m_cueNode)
         return;
 
+    RefPtr document = this->document();
+    if (!document)
+        return;
+
     ScriptDisallowedScope::EventAllowedScope allowedScopeForReferenceTree(*m_cueNode);
 
     if (!m_displayTree) {
-        m_displayTree = TextTrackCueBox::create(ownerDocument(), *this);
+        m_displayTree = TextTrackCueBox::create(*document, *this);
         m_displayTree->setPseudo(ShadowPseudoIds::webkitGenericCueRoot());
     }
 
     m_displayTree->removeChildren();
-    auto clonedFragment = DocumentFragment::create(ownerDocument());
+    auto clonedFragment = DocumentFragment::create(*document);
     m_cueNode->cloneChildNodes(clonedFragment);
     m_displayTree->appendChild(clonedFragment);
 
     if (m_fontSize) {
-        if (auto page = ownerDocument().page()) {
-            auto style = HTMLStyleElement::create(HTMLNames::styleTag, ownerDocument(), false);
+        if (auto page = document->page()) {
+            auto style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
             style->setTextContent(makeString(page->captionUserPreferencesStyleSheet(),
                 " ::", ShadowPseudoIds::cue(), "{font-size:", m_fontSize, m_fontSizeIsImportant ? "px !important}" : "px}"));
             m_displayTree->appendChild(style);
