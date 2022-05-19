@@ -33,7 +33,6 @@
 #include "MediaPlayerPrivateRemote.h"
 #include "MediaSourcePrivateRemote.h"
 #include "RemoteSourceBufferProxyMessages.h"
-#include "SharedBufferReference.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/SourceBufferPrivateClient.h>
@@ -84,7 +83,14 @@ void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     if (!m_gpuProcessConnection)
         return;
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference(WTFMove(data))), m_remoteSourceBufferIdentifier);
+    auto sharedData = SharedMemory::copyBuffer(data);
+    SharedMemory::Handle handle;
+    sharedData->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
+    // Take ownership of shared memory and mark it as media-related memory.
+    handle.takeOwnershipOfMemory(MemoryLedger::Media);
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(SharedMemory::IPCHandle { WTFMove(handle), sharedData->size() }), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::abort()

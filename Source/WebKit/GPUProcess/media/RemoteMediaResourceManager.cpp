@@ -29,20 +29,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "GPUConnectionToWebProcess.h"
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
-#include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
-
 
 namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaResourceManager::RemoteMediaResourceManager(const ProcessIdentity& contentProcessIdentity)
-    : m_contentProcessIdentity(contentProcessIdentity)
+RemoteMediaResourceManager::RemoteMediaResourceManager()
 {
 }
 
@@ -93,15 +89,16 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
     resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& bufferCopy)
+void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, const SharedMemory::IPCHandle& bufferHandle)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
     if (!resource || !resource->ready())
         return;
 
-    auto buffer = bufferCopy.bufferWithOwner(m_contentProcessIdentity, MemoryLedger::Media);
-    if (buffer)
-        resource->dataReceived(buffer.releaseNonNull());
+    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
+    resource->dataReceived(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)

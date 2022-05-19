@@ -65,10 +65,6 @@ Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger) const
 {
 }
-
-void SharedMemory::Handle::transferOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const
-{
-}
 #endif
 
 } // namespace WebKit

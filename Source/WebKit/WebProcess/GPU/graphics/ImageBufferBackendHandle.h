@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ShareableBitmap.h"
-#include "SharedBufferReference.h"
+#include "SharedBufferCopy.h"
 #include <variant>
 #include <wtf/MachSendRight.h>
 
@@ -38,7 +38,7 @@ using ImageBufferBackendHandle = std::variant<
     , MachSendRight
 #endif
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , IPC::SharedBufferReference
+    , IPC::SharedBufferCopy
 #endif
 >;
 
