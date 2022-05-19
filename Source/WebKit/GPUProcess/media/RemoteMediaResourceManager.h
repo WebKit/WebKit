@@ -38,25 +38,22 @@
 namespace IPC {
 class Connection;
 class Decoder;
-class SharedBufferReference;
 }
 
 namespace WebCore {
 class NetworkLoadMetrics;
-class ProcessIdentity;
 class ResourceRequest;
 }
 
 namespace WebKit {
 
-class GPUConnectionToWebProcess;
 class RemoteMediaResource;
 
 class RemoteMediaResourceManager
     : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaResourceManager(const WebCore::ProcessIdentity&);
+    RemoteMediaResourceManager();
     ~RemoteMediaResourceManager();
 
     void addMediaResource(RemoteMediaResourceIdentifier, RemoteMediaResource&);
@@ -69,13 +66,12 @@ private:
     void responseReceived(RemoteMediaResourceIdentifier, const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(RemoteMediaResourceIdentifier, uint64_t, uint64_t);
-    void dataReceived(RemoteMediaResourceIdentifier, IPC::SharedBufferReference&&);
+    void dataReceived(RemoteMediaResourceIdentifier, const SharedMemory::IPCHandle& bufferHandle);
     void accessControlCheckFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);
 
     HashMap<RemoteMediaResourceIdentifier, RemoteMediaResource*> m_remoteMediaResources;
-    const WebCore::ProcessIdentity& m_contentProcessIdentity;
 };
 
 } // namespace WebKit

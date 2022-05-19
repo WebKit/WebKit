@@ -32,7 +32,7 @@
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "ServiceWorkerDownloadTaskMessages.h"
-#include "SharedBufferReference.h"
+#include "SharedBufferCopy.h"
 #include "WebErrors.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
@@ -181,7 +181,7 @@ void ServiceWorkerDownloadTask::start()
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 }
 
-void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, int64_t encodedDataLength)
+void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferCopy& data, int64_t encodedDataLength)
 {
     ASSERT(!isMainRunLoop());
 

@@ -37,7 +37,7 @@
 
 namespace IPC {
 class FormDataReference;
-class SharedBufferReference;
+class SharedBufferCopy;
 }
 
 namespace WebKit {
@@ -73,7 +73,7 @@ private:
     void startListeningForIPC();
 
     // IPC Message
-    void didReceiveData(const IPC::SharedBufferReference&, int64_t encodedDataLength);
+    void didReceiveData(const IPC::SharedBufferCopy&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFail(WebCore::ResourceError&&);

@@ -62,7 +62,7 @@
 #include "SessionStateConversion.h"
 #include "ShareableBitmap.h"
 #include "ShareableBitmapUtilities.h"
-#include "SharedBufferReference.h"
+#include "SharedBufferCopy.h"
 #include "TextRecognitionUpdateResult.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
@@ -3929,9 +3929,9 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
 }
 
 #if ENABLE(MHTML)
-void WebPage::getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferReference&)>&& callback)
+void WebPage::getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
 {
-    callback(IPC::SharedBufferReference(MHTMLArchive::generateMHTMLData(m_page.get())));
+    callback(IPC::SharedBufferCopy(MHTMLArchive::generateMHTMLData(m_page.get())));
 }
 #endif
 
@@ -3949,7 +3949,7 @@ static Frame* frameWithSelection(Page* page)
     return nullptr;
 }
 
-void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3957,10 +3957,10 @@ void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const std::opt
         data = LegacyWebArchive::createFromSelection(frame)->rawDataRepresentation();
 #endif
 
-    IPC::SharedBufferReference dataBuffer;
+    IPC::SharedBufferCopy dataBuffer;
 #if PLATFORM(COCOA)
     if (data)
-        dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+        dataBuffer = IPC::SharedBufferCopy(SharedBuffer::create(data.get()));
 #endif
     callback(dataBuffer);
 }
@@ -3983,7 +3983,7 @@ void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(
     callback(resultString);
 }
 
-void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
 {
     RefPtr<FragmentedSharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3995,7 +3995,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
         }
     }
 
-    callback(IPC::SharedBufferReference(WTFMove(buffer)));
+    callback(IPC::SharedBufferCopy(WTFMove(buffer)));
 }
 
 static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
@@ -4011,7 +4011,7 @@ static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const U
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
 {
     RefPtr<FragmentedSharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -4019,10 +4019,10 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
         buffer = resourceDataForFrame(frame->coreFrame(), resourceURL);
     }
 
-    callback(IPC::SharedBufferReference(WTFMove(buffer)));
+    callback(IPC::SharedBufferCopy(WTFMove(buffer)));
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -4032,17 +4032,17 @@ void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<vo
     UNUSED_PARAM(frameID);
 #endif
 
-    IPC::SharedBufferReference dataBuffer;
+    IPC::SharedBufferCopy dataBuffer;
 #if PLATFORM(COCOA)
     if (data)
-        dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+        dataBuffer = IPC::SharedBufferCopy(SharedBuffer::create(data.get()));
 #endif
     callback(dataBuffer);
 }
 
-void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
+void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
 {
-    IPC::SharedBufferReference dataBuffer;
+    IPC::SharedBufferCopy dataBuffer;
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -4059,7 +4059,7 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
     }
 
     if (data)
-        dataBuffer = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
+        dataBuffer = IPC::SharedBufferCopy(SharedBuffer::create(data.get()));
 #endif
 
     callback(dataBuffer);
@@ -5629,7 +5629,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 }
 
 #if PLATFORM(COCOA)
-void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& completionHandler)
 {
     auto& frameView = *m_page->mainFrame().view();
     IntSize snapshotSize;
@@ -5654,7 +5654,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>&
     frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
     frameView.setPaintBehavior(originalPaintBehavior);
 
-    completionHandler(SharedBuffer::create(pdfData.get()));
+    completionHandler(IPC::SharedBufferCopy(SharedBuffer::create(pdfData.get())));
 }
 
 void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
@@ -5704,12 +5704,12 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     completionHandler(handle);
 }
 
-void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& callback)
+void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
 {
     PrintContextAccessScope scope { *this };
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
-    callback(SharedBuffer::create(pdfPageData.get()));
+    callback(IPC::SharedBufferCopy(SharedBuffer::create(pdfPageData.get())));
 }
 
 void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)
@@ -7201,14 +7201,14 @@ void WebPage::didLosePointerLock()
 }
 #endif
 
-void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, CompletionHandler<void(const IPC::SharedBufferReference&)>&& completionHandler)
+void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& completionHandler)
 {
     auto* documentLoader = corePage()->mainFrame().loader().documentLoader();
     if (!documentLoader)
         return completionHandler({ });
 
     documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), [completionHandler = WTFMove(completionHandler)] (WebCore::FragmentedSharedBuffer* iconData) mutable {
-        completionHandler(IPC::SharedBufferReference(RefPtr { iconData }));
+        completionHandler(IPC::SharedBufferCopy(RefPtr { iconData }));
     });
 }
 
@@ -7266,12 +7266,12 @@ void WebPage::urlSchemeTaskDidReceiveResponse(WebURLSchemeHandlerIdentifier hand
     handler->taskDidReceiveResponse(taskIdentifier, response);
 }
 
-void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::SharedBufferReference& data)
+void WebPage::urlSchemeTaskDidReceiveData(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::SharedBufferCopy& data)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
 
-    handler->taskDidReceiveData(taskIdentifier, data.isNull() ? WebCore::SharedBuffer::create() : data.unsafeBuffer().releaseNonNull());
+    handler->taskDidReceiveData(taskIdentifier, data.safeBuffer());
 }
 
 void WebPage::urlSchemeTaskDidComplete(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)
@@ -7465,12 +7465,12 @@ void WebPage::insertAttachment(const String& identifier, std::optional<uint64_t>
     callback();
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& enclosingImageData, CompletionHandler<void()>&& callback)
+void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferCopy& enclosingImageData, CompletionHandler<void()>&& callback)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
         attachment->updateAttributes(WTFMove(fileSize), AtomString { contentType }, AtomString { fileName });
-        attachment->updateEnclosingImageWithData(contentType, enclosingImageData.isNull() ? WebCore::SharedBuffer::create() : enclosingImageData.unsafeBuffer().releaseNonNull());
+        attachment->updateEnclosingImageWithData(contentType, enclosingImageData.safeBuffer());
     }
     callback();
 }
