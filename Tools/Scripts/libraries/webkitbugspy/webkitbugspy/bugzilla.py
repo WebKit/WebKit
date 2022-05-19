@@ -125,7 +125,8 @@ class Tracker(GenericTracker):
             url=self.url,
             required=required,
             prompt=self.url.split('//')[-1],
-            validater=validater if validate else None,
+            validater=validater,
+            validate_existing_credentials=validate
         )
 
     def _login_arguments(self, required=False, query=None):

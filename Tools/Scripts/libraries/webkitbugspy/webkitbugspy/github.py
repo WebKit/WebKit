@@ -125,7 +125,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             name=self.url.split('/')[2].replace('.', '_').upper(),
             prompt=prompt,
             key_name='token',
-            validater=validater if validate else None,
+            validater=validater,
+            validate_existing_credentials=validate,
             save_in_keyring=save_in_keyring,
         )
 

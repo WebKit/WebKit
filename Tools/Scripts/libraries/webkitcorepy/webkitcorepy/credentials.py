@@ -29,7 +29,7 @@ from webkitcorepy import Environment, OutputCapture, Terminal, string_utils
 _cache = dict()
 
 
-def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, retry=3, save_in_keyring=None):
+def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, validate_existing_credentials=False, retry=3, save_in_keyring=None):
     global _cache
 
     name = name or url.split('/')[2].replace('.', '_')
@@ -69,7 +69,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
                     prompt = prompt()
                 sys.stderr.write("Authentication required to use {}\n".format(prompt or name))
                 sys.stderr.write('Username: ')
-                username = Terminal.input()
+                username = Terminal.input().strip()
                 username_prompted = True
 
         if not key and username:
@@ -82,10 +82,11 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
             if not key and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')
-                key = getpass.getpass('{}: '.format(key_name.capitalize()))
+                key = getpass.getpass('{}: '.format(key_name.capitalize())).strip()
                 key_prompted = True
 
-        if username and key and (not validater or validater(username, key)):
+        should_validate = validater and (username_prompted or key_prompted or validate_existing_credentials)
+        if username and key and (not should_validate or validater(username, key)):
             _cache[name] = (username, key)
             break
 

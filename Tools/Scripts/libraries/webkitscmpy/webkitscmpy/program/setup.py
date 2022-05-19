@@ -80,6 +80,7 @@ class Setup(Command):
         ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
         if response.status_code not in (200, 202):
             sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(forked_name, username))
+            sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
             return 1
 
         set_name = response.json().get('name', '')
@@ -93,6 +94,7 @@ class Setup(Command):
             ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
             if response.status_code not in (200, 202):
                 sys.stderr.write("Fork created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(set_name, username, forked_name))
+                sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
                 return 1
 
         response = None
