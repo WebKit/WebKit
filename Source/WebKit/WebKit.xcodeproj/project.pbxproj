@@ -3825,10 +3825,6 @@
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
 		2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemoteIOSurfaceBackend.h; sourceTree = "<group>"; };
 		2D25F32925758E9100231A8B /* ImageBufferRemoteIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemoteIOSurfaceBackend.cpp; sourceTree = "<group>"; };
-		2D279E0E2694C226004B3EEB /* WKHoverPlatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKHoverPlatter.h; path = ios/WKHoverPlatter.h; sourceTree = "<group>"; };
-		2D279E0F2694C227004B3EEB /* WKHoverPlatter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKHoverPlatter.mm; path = ios/WKHoverPlatter.mm; sourceTree = "<group>"; };
-		2D279E102694C2D1004B3EEB /* WKHoverPlatterParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKHoverPlatterParameters.h; path = ios/WKHoverPlatterParameters.h; sourceTree = "<group>"; };
-		2D279E112694C2D1004B3EEB /* WKHoverPlatterParameters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKHoverPlatterParameters.mm; path = ios/WKHoverPlatterParameters.mm; sourceTree = "<group>"; };
 		2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeToolsSPI.h; sourceTree = "<group>"; };
 		2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewLayoutStrategy.h; sourceTree = "<group>"; };
 		2D28A4961AF965A100F190C9 /* WKViewLayoutStrategy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKViewLayoutStrategy.mm; sourceTree = "<group>"; };
@@ -9248,10 +9244,6 @@
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
 				F4DB54E42319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h */,
 				F4DB54E52319E733009E3155 /* WKHighlightLongPressGestureRecognizer.mm */,
-				2D279E0E2694C226004B3EEB /* WKHoverPlatter.h */,
-				2D279E0F2694C227004B3EEB /* WKHoverPlatter.mm */,
-				2D279E102694C2D1004B3EEB /* WKHoverPlatterParameters.h */,
-				2D279E112694C2D1004B3EEB /* WKHoverPlatterParameters.mm */,
 				F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */,
 				F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */,
 				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,

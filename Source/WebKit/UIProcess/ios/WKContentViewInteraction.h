@@ -40,7 +40,6 @@
 #import "TextCheckingController.h"
 #import "TransactionID.h"
 #import "UIKitSPI.h"
-#import "WKHoverPlatter.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -225,7 +224,6 @@ enum SuppressSelectionAssistantReason : uint8_t {
     EditableRootIsTransparentOrFullyClipped = 1 << 0,
     FocusedElementIsTooSmall = 1 << 1,
     InteractionIsHappening = 1 << 2,
-    HoverPlatterEnabled = 1 << 3,
 };
 
 struct WKSelectionDrawingInfo {
@@ -317,10 +315,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
     RetainPtr<WKMouseGestureRecognizer> _alternateMouseGestureRecognizer;
     WebCore::MouseEventPolicy _mouseEventPolicy;
-#endif
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    RetainPtr<WKHoverPlatter> _hoverPlatter;
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -562,9 +556,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
     , WKTouchActionGestureRecognizerDelegate
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    , WKHoverPlatterDelegate
-#endif
 #if HAVE(UIFINDINTERACTION)
     , UITextSearching
 #endif
