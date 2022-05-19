@@ -1,5 +1,15 @@
 2022-03-21  Saam Barati  <sbarati@apple.com>
 
+        Fix bug in Relationship::mergeImpl
+        https://bugs.webkit.org/show_bug.cgi?id=238183
+        <rdar://89822922>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+
+2022-03-21  Saam Barati  <sbarati@apple.com>
+
         AirFixObviousSpills needs to consider a PreIndex and PostIndex as clobbering the Reg used for indexing
         https://bugs.webkit.org/show_bug.cgi?id=238178
         <rdar://87345895>

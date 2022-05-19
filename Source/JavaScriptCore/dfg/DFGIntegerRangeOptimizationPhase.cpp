@@ -749,6 +749,9 @@ private:
             //
             //     @a < @b + max(C, D + 1)
             
+            if (sumOverflows<int32_t>(other.m_offset, 1))
+                return Relationship();
+
             int bestOffset = std::max(m_offset, other.m_offset + 1);
             
             // We have something like @a < @b + 2. We can't do it.
