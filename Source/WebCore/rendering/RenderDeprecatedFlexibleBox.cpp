@@ -186,7 +186,7 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
             for (auto& child : childrenOfType<RenderBlockFlow>(*this))
                 child.invalidateLineLayoutPath();
 
-            if (hadLineClamp && !hasLineClamp)
+            if (hadLineClamp)
                 clearLineClamp();
         }
     }
