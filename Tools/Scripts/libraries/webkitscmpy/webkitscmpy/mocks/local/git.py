@@ -271,7 +271,7 @@ nothing to commit, working tree clean
                     stdout='{}\n'.format(self.find(args[2]).hash),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
             ), mocks.Subprocess.Route(
-                self.executable, 'log', re.compile(r'.+'), '-1', '--no-decorate',
+                self.executable, 'log', re.compile(r'.+'), '-1', '--no-decorate', '--date=unix',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -284,7 +284,7 @@ nothing to commit, working tree clean
                             branch=self.branch,
                             author=self.find(args[2]).author.name,
                             email=self.find(args[2]).author.email,
-                            date=datetime.utcfromtimestamp(self.find(args[2]).timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            date=self.find(args[2]).timestamp,
                             log='\n'.join([
                                     ('    ' + line) if line else '' for line in self.find(args[2]).message.splitlines()
                                 ] + (['    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
@@ -296,7 +296,7 @@ nothing to commit, working tree clean
                         ),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                self.executable, 'log', '--format=fuller', '--no-decorate', re.compile(r'.+\.\.\..+'),
+                self.executable, 'log', '--format=fuller', '--no-decorate', '--date=unix', re.compile(r'.+\.\.\..+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -310,7 +310,7 @@ nothing to commit, working tree clean
                             hash=commit.hash,
                             author=commit.author.name,
                             email=commit.author.email,
-                            date=datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            date=commit.timestamp,
                             log='\n'.join([
                                 ('    ' + line) if line else '' for line in commit.message.splitlines()
                             ] + ([
@@ -319,7 +319,7 @@ nothing to commit, working tree clean
                                     os.path.basename(path),
                                    commit.revision,
                             )] if git_svn else []),
-                        )) for commit in list(self.commits_in_range(args[4].split('...')[-1], args[4].split('...')[0]))[:-1]
+                        )) for commit in list(self.commits_in_range(args[5].split('...')[-1], args[5].split('...')[0]))[:-1]
                     ])
                 )
             ), mocks.Subprocess.Route(
@@ -335,7 +335,7 @@ nothing to commit, working tree clean
                             hash=commit.hash,
                             author=commit.author.name,
                             email=commit.author.email,
-                            date=datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            date=commit.timestamp if '--date=unix' in args else datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
                             log='\n'.join([
                                 ('    ' + line) if line else '' for line in commit.message.splitlines()
                             ] + ([
