@@ -62,12 +62,12 @@ void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerTh
     threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage, bool doesHandleFetch) {
         SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage, doesHandleFetch);
     });
+    if (m_serviceWorkerCreationCallback)
+        m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
 }
 
 void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch)
 {
-    if (m_serviceWorkerCreationCallback)
-        m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
     if (!exceptionMessage.isEmpty()) {
         connection()->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
         return;
