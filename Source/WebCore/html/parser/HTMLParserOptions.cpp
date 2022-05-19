@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "ScriptController.h"
 #include "Settings.h"

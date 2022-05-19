@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "Page.h"
 #include "PageConsoleClient.h"

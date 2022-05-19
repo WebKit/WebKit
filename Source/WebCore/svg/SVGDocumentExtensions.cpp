@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"

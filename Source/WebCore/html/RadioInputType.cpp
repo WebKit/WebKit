@@ -23,6 +23,7 @@
 #include "RadioInputType.h"
 
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

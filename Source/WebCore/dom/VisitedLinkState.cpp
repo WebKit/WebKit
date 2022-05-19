@@ -31,6 +31,7 @@
 
 #include "ElementIterator.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLAnchorElementInlines.h"
 #include "Page.h"
 #include "SVGAElement.h"

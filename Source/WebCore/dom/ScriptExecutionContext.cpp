@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "FontLoadRequest.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSWorkerGlobalScope.h"

@@ -46,6 +46,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "ExtensionStyleSheets.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

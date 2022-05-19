@@ -35,6 +35,7 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "SecurityOrigin.h"

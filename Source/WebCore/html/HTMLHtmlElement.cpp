@@ -30,6 +30,7 @@
 #include "DocumentParser.h"
 #include "ElementInlines.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "Logging.h"

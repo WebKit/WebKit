@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "FormState.h"
+#include "FrameDestructionObserverInlines.h"
 
 #include "Document.h"
 #include "HTMLFormElement.h"

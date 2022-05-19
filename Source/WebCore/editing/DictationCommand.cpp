@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"

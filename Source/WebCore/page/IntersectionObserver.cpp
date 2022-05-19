@@ -32,6 +32,7 @@
 #include "CSSTokenizer.h"
 #include "DOMWindow.h"
 #include "Element.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"

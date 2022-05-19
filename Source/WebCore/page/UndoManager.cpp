@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "UndoItem.h"
 #include <wtf/IsoMallocInlines.h>
 

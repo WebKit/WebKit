@@ -28,6 +28,8 @@
 
 #include "WebFrame.h"
 
+#include <WebCore/FrameDestructionObserverInlines.h>
+
 namespace WebKit {
 using namespace WebCore;
 
