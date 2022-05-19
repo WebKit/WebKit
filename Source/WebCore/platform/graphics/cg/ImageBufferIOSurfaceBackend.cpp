@@ -120,7 +120,7 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
-    initializeContext();
+    applyBaseTransformToContext();
 }
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
@@ -131,6 +131,10 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
+    if (!m_context) {
+        m_context.emplace(*m_surface);
+        applyBaseTransformToContext();
+    }
     return *m_context;
 }
 
@@ -232,9 +236,14 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
     return m_surface->isInUse();
 }
 
-bool ImageBufferIOSurfaceBackend::setVolatile()
+void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
     m_context = std::nullopt;
+    m_surface->releasePlatformGraphicsContext();
+}
+
+bool ImageBufferIOSurfaceBackend::setVolatile()
+{
     if (m_surface->isInUse())
         return false;
 
@@ -246,9 +255,7 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
 SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
     setVolatilityState(VolatilityState::NonVolatile);
-    auto result = m_surface->setVolatile(false);
-    initializeContext();
-    return result;
+    return m_surface->setVolatile(false);
 }
 
 VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const
@@ -265,12 +272,6 @@ void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
 {
     invalidateCachedNativeImage();
     flushContext();
-}
-
-void ImageBufferIOSurfaceBackend::initializeContext()
-{
-    m_context.emplace(*m_surface);
-    applyBaseTransform(*m_context);
 }
 
 } // namespace WebCore

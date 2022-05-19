@@ -311,6 +311,12 @@ protected:
         return false;
     }
 
+    void releaseGraphicsContext() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->releaseGraphicsContext();
+    }
+
     bool setVolatile() override
     {
         if (auto* backend = ensureBackendCreated())

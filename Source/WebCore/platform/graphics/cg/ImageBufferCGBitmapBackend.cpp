@@ -115,7 +115,7 @@ ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& paramet
     ASSERT(m_data);
     ASSERT(m_dataProvider);
     ASSERT(m_context);
-    applyBaseTransform(*m_context);
+    applyBaseTransformToContext();
 }
 
 ImageBufferCGBitmapBackend::~ImageBufferCGBitmapBackend() = default;

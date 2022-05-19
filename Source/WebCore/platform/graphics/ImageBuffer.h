@@ -115,6 +115,7 @@ public:
     virtual size_t externalMemoryCost() const = 0;
 
     virtual bool isInUse() const = 0;
+    virtual void releaseGraphicsContext() = 0;
     // Returns true on success.
     virtual bool setVolatile() = 0;
     virtual SetNonVolatileResult setNonVolatile() = 0;

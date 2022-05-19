@@ -1,3 +1,16 @@
+2022-05-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r294317.
+
+        Broke multiple layout-tests, and 2 api-tests.
+
+        Reverted changeset:
+
+        "ImageBufferIOSurfaceBackend context setup and teardown
+        functions are redundant and error-prone"
+        https://bugs.webkit.org/show_bug.cgi?id=240452
+        https://commits.webkit.org/r294317
+
 2022-05-17  Chris Lord  <clord@igalia.com>
 
         [WPE] Use new libwpe API to synchronise display refreshes fully to the screen refresh rate
