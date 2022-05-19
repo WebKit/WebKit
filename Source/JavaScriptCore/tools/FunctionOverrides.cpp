@@ -130,7 +130,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     FunctionOverridesAssertScope assertScope;
     String origProviderStr = origCode.provider()->source().toString();
     unsigned origStart = origCode.startOffset();
-    unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
+    unsigned origFunctionStart = origProviderStr.reverseFind("function"_s, origStart);
     unsigned origBraceStart = origProviderStr.find('{', origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
     auto origHeaderView = StringView(origProviderStr).substring(origFunctionStart, headerLength);

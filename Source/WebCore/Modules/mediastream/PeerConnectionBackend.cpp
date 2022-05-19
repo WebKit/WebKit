@@ -358,7 +358,7 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
     if (!m_shouldFilterICECandidates)
         return;
     sdp.split('\n', [](auto line) {
-        ASSERT(!line.startsWith("a=candidate") || line.contains(".local"));
+        ASSERT(!line.startsWith("a=candidate"_s) || line.contains(".local"_s));
     });
 #else
     UNUSED_PARAM(sdp);
@@ -381,7 +381,7 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
         m_finishedGatheringCandidates = false;
 
-        ASSERT(!m_shouldFilterICECandidates || sdp.contains(".local") || sdp.contains(" srflx "));
+        ASSERT(!m_shouldFilterICECandidates || sdp.contains(".local"_s) || sdp.contains(" srflx "_s));
         auto candidate = RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex);
         m_peerConnection.dispatchEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
     });

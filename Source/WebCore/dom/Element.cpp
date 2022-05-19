@@ -325,8 +325,8 @@ bool Element::isNonceable() const
 
     if (hasAttributes()
         && (is<HTMLScriptElement>(*this) || is<SVGScriptElement>(*this))) {
-        static const char scriptString[] = "<script";
-        static const char styleString[] = "<style";
+        static constexpr auto scriptString = "<script"_s;
+        static constexpr auto styleString = "<style"_s;
 
         for (const auto& attribute : attributesIterator()) {
             auto name = attribute.localName().convertToASCIILowercase();

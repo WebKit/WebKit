@@ -212,7 +212,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
     switch (setting) {
     case Id: {
         String stringValue = input.extractString(valueRun);
-        if (stringValue.find("-->") == notFound)
+        if (stringValue.find("-->"_s) == notFound)
             m_id = stringValue;
         break;
     }

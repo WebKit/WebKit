@@ -144,7 +144,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         size_t contentDispositionBegin = header.find(contentDispositionCharacters);
         if (contentDispositionBegin == notFound)
             return false;
-        size_t contentDispositionEnd = header.find("\r\n", contentDispositionBegin);
+        size_t contentDispositionEnd = header.find("\r\n"_s, contentDispositionBegin);
         size_t contentDispositionParametersBegin = header.find(';', contentDispositionBegin + strlen(contentDispositionCharacters));
         if (contentDispositionParametersBegin != notFound)
             contentDispositionParametersBegin++;
@@ -163,7 +163,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
             size_t contentTypePrefixLength = strlen(contentTypeCharacters);
             size_t contentTypeBegin = header.find(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
-                size_t contentTypeEnd = header.find("\r\n", contentTypeBegin);
+                size_t contentTypeEnd = header.find("\r\n"_s, contentTypeBegin);
                 contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).stripLeadingAndTrailingMatchedCharacters(isHTTPSpace).toString();
             }
 

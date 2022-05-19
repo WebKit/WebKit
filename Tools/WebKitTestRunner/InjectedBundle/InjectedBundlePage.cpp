@@ -1315,7 +1315,7 @@ static WTF::String addLeadingSpaceStripTrailingSpacesAddNewline(const WTF::Strin
 
 static StringView lastFileURLPathComponent(StringView path)
 {
-    auto pos = path.find("file://");
+    auto pos = path.find("file://"_s);
     ASSERT(WTF::notFound != pos);
 
     auto tmpPath = path.substring(pos + 7);

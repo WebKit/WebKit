@@ -39,7 +39,7 @@ namespace PAL {
 // See <http://en.wikipedia.org/wiki/Percent-encoding#Non-standard_implementations>.
 struct Unicode16BitEscapeSequence {
     enum { SequenceSize = 6 }; // e.g. %u26C4
-    static size_t findInString(StringView string, size_t startPosition) { return string.find("%u", startPosition); }
+    static size_t findInString(StringView string, size_t startPosition) { return string.find("%u"_s, startPosition); }
     static size_t findEndOfRun(StringView string, size_t startPosition, size_t endPosition)
     {
         size_t runEnd = startPosition;

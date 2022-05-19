@@ -320,7 +320,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
 {
     StringView locale(buffer.data(), buffer.size());
     ASSERT(locale.is8Bit());
-    size_t extensionIndex = locale.find("-u-");
+    size_t extensionIndex = locale.find("-u-"_s);
     if (extensionIndex == notFound)
         return WTFMove(buffer);
 
@@ -855,7 +855,7 @@ static MatcherResult lookupMatcher(JSGlobalObject* globalObject, const LocaleSet
     if (!availableLocale.isEmpty()) {
         result.locale = availableLocale;
         if (locale != noExtensionsLocale) {
-            size_t extensionIndex = locale.find("-u-");
+            size_t extensionIndex = locale.find("-u-"_s);
             RELEASE_ASSERT(extensionIndex != notFound);
 
             size_t extensionLength = locale.length() - extensionIndex;

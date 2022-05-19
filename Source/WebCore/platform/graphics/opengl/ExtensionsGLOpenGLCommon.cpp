@@ -78,13 +78,13 @@ ExtensionsGLOpenGLCommon::ExtensionsGLOpenGLCommon(GraphicsContextGLOpenGL* cont
     m_renderer = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
 
     Vector<String> vendorComponents = m_vendor.convertToASCIILowercase().split(' ');
-    if (vendorComponents.contains("nvidia"))
+    if (vendorComponents.contains("nvidia"_s))
         m_isNVIDIA = true;
-    if (vendorComponents.contains("ati") || vendorComponents.contains("amd"))
+    if (vendorComponents.contains("ati"_s) || vendorComponents.contains("amd"_s))
         m_isAMD = true;
-    if (vendorComponents.contains("intel"))
+    if (vendorComponents.contains("intel"_s))
         m_isIntel = true;
-    if (vendorComponents.contains("imagination"))
+    if (vendorComponents.contains("imagination"_s))
         m_isImagination = true;
 
 #if PLATFORM(MAC)

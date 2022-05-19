@@ -852,7 +852,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     if (isCrossOriginPrefetch()) {
         LOADER_RELEASE_LOG("didReceiveResponse: Using response for cross-origin prefetch");
-        if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie")) {
+        if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie"_s)) {
             LOADER_RELEASE_LOG("didReceiveResponse: Canceling cross-origin prefetch for Vary: Cookie");
             abort();
             return completionHandler(PolicyAction::Ignore);

@@ -161,7 +161,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, StringVi
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto notAFunctionIndex = originalMessage.reverseFind("is not a function");
+    auto notAFunctionIndex = originalMessage.reverseFind("is not a function"_s);
     RELEASE_ASSERT(notAFunctionIndex != notFound);
     StringView displayValue;
     if (originalMessage.is8Bit()) 
@@ -197,14 +197,14 @@ static String invalidParameterInSourceAppender(const String& originalMessage, St
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto inIndex = sourceText.reverseFind("in");
+    auto inIndex = sourceText.reverseFind("in"_s);
     if (inIndex == notFound) {
         // This should basically never happen, since JS code must use the literal
         // text "in" for the `in` operation. However, if we fail to find "in"
         // for any reason, just fail gracefully.
         return originalMessage;
     }
-    if (sourceText.find("in") != inIndex)
+    if (sourceText.find("in"_s) != inIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned inLength = 2;
@@ -218,12 +218,12 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto instanceofIndex = sourceText.reverseFind("instanceof");
+    auto instanceofIndex = sourceText.reverseFind("instanceof"_s);
     // This can happen when Symbol.hasInstance function is directly called.
     if (instanceofIndex == notFound)
         return originalMessage;
 
-    if (sourceText.find("instanceof") != instanceofIndex)
+    if (sourceText.find("instanceof"_s) != instanceofIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned instanceofLength = 10;
@@ -246,8 +246,8 @@ static String invalidPrototypeSourceAppender(const String& originalMessage, Stri
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
 
-    auto extendsIndex = sourceText.reverseFind("extends");
-    if (extendsIndex == notFound || sourceText.find("extends") != extendsIndex)
+    auto extendsIndex = sourceText.reverseFind("extends"_s);
+    if (extendsIndex == notFound || sourceText.find("extends"_s) != extendsIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     return "The value of the superclass's prototype property is not an object or null."_s;

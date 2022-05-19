@@ -1085,7 +1085,7 @@ ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
     if (isHTMLDocument())
         return Exception { NotSupportedError };
 
-    if (data.contains("]]>"))
+    if (data.contains("]]>"_s))
         return Exception { InvalidCharacterError };
 
     return CDATASection::create(*this, WTFMove(data));
@@ -1096,7 +1096,7 @@ ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(St
     if (!isValidName(target))
         return Exception { InvalidCharacterError };
 
-    if (data.contains("?>"))
+    if (data.contains("?>"_s))
         return Exception { InvalidCharacterError };
 
     return ProcessingInstruction::create(*this, WTFMove(target), WTFMove(data));

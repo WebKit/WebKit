@@ -68,7 +68,7 @@ std::unique_ptr<PrefetchCache::Entry> PrefetchCache::take(const URL& url)
         return std::get<0>(tuple) == url;
     });
     auto entry = resources->take(url);
-    ASSERT(!entry || !entry->response.httpHeaderField(WebCore::HTTPHeaderName::Vary).contains("Cookie"));
+    ASSERT(!entry || !entry->response.httpHeaderField(WebCore::HTTPHeaderName::Vary).contains("Cookie"_s));
     return entry;
 }
 

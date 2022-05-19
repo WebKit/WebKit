@@ -146,9 +146,13 @@ public:
     size_t find(UChar, unsigned start = 0) const;
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
+    ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.characters8(), literal.length(), start); }
+    size_t find(const char*, unsigned start = 0) const = delete;
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start = 0) const;
 
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
+    ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = std::numeric_limits<unsigned>::max()) const { return reverseFind(literal.characters8(), literal.length(), start); }
+    size_t reverseFind(const char*, unsigned start = std::numeric_limits<unsigned>::max()) const = delete;
     WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = std::numeric_limits<unsigned>::max()) const;
 
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
@@ -161,8 +165,9 @@ public:
     bool contains(UChar) const;
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     bool contains(CodeUnitMatchFunction&&) const;
-    bool contains(StringView string) const { return find(string, 0) != notFound; }
-    WTF_EXPORT_PRIVATE bool contains(const char*) const;
+    bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
+    bool contains(const char*) const = delete;
+    bool contains(StringView string) const { return find(string) != notFound; }
 
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView, unsigned start) const;
@@ -190,6 +195,9 @@ private:
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
+
+    WTF_EXPORT_PRIVATE size_t find(const LChar* match, unsigned matchLength, unsigned start) const;
+    WTF_EXPORT_PRIVATE size_t reverseFind(const LChar* match, unsigned matchLength, unsigned start) const;
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&) const;

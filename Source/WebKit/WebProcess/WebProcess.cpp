@@ -1940,9 +1940,9 @@ static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& e
     });
 
     if (isCapturingAudio)
-        ASSERT(extensionIDs.findIf([](auto& id) { return id.contains("microphone"); }) == notFound);
+        ASSERT(!extensionIDs.containsIf([](auto& id) { return id.contains("microphone"_s); }));
     if (isCapturingVideo)
-        ASSERT(extensionIDs.findIf([](auto& id) { return id.contains("camera"); }) == notFound);
+        ASSERT(!extensionIDs.containsIf([](auto& id) { return id.contains("camera"_s); }));
 #endif // ASSERT_ENABLED
 }
 

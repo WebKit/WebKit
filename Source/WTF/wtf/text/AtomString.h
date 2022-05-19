@@ -97,14 +97,17 @@ public:
     // If we need more overloads of the number function, we can add all the others that String has, but these seem to do for now.
 
     bool contains(UChar character) const { return m_string.contains(character); }
-    bool contains(const LChar* string) const { return m_string.contains(string); }
+    bool contains(ASCIILiteral literal) const { return m_string.contains(literal); }
+    bool contains(const char*) const = delete;
     bool contains(StringView) const;
     bool containsIgnoringASCIICase(StringView) const;
 
     size_t find(UChar character, unsigned start = 0) const { return m_string.find(character, start); }
-    size_t find(const LChar* string, unsigned start = 0) const { return m_string.find(string, start); }
+    size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_string.find(literal, start); }
+    size_t find(const char*, unsigned start = 0) const = delete;
     size_t find(StringView, unsigned start = 0) const;
     size_t findIgnoringASCIICase(StringView) const;
+    size_t findIgnoringASCIICase(const char*) const = delete;
     size_t findIgnoringASCIICase(StringView, unsigned start) const;
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
 

@@ -295,7 +295,7 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
 
     if (equalLettersIgnoringASCIICase(host, "www.icloud.com"_s)) {
         auto path = url.path();
-        if (path.contains("notes") || url.fragmentIdentifier().contains("notes"))
+        if (path.contains("notes"_s) || url.fragmentIdentifier().contains("notes"_s))
             return true;
     }
 #endif

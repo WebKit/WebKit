@@ -809,24 +809,10 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(characters16(), m_length, ok);
 }
 
-size_t StringImpl::find(const LChar* matchString, unsigned start)
+size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned start)
 {
-    // Check for null or empty string to match against
-    if (!matchString)
-        return notFound;
-    size_t matchStringLength = strlen(reinterpret_cast<const char*>(matchString));
-    if (matchStringLength > MaxLength)
-        CRASH();
-    unsigned matchLength = matchStringLength;
-    if (!matchLength)
-        return std::min(start, length());
-
-    // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1) {
-        if (is8Bit())
-            return WTF::find(characters8(), length(), matchString[0], start);
-        return WTF::find(characters16(), length(), *matchString, start);
-    }
+    ASSERT(matchLength);
+    ASSERT(matchLength <= MaxLength);
 
     // Check start & matchLength are in range.
     if (start > length())
@@ -837,7 +823,7 @@ size_t StringImpl::find(const LChar* matchString, unsigned start)
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
 
-    // Optimization 2: keep a running hash of the strings,
+    // Optimization: keep a running hash of the strings,
     // only call equal if the hashes match.
 
     if (is8Bit()) {
@@ -879,6 +865,19 @@ size_t StringImpl::find(const LChar* matchString, unsigned start)
         ++i;
     }
     return start + i;
+}
+
+size_t StringImpl::reverseFind(const LChar* matchString, unsigned matchLength, unsigned start)
+{
+    ASSERT(matchLength);
+
+    unsigned length = this->length();
+    if (matchLength > length)
+        return notFound;
+
+    if (is8Bit())
+        return reverseFindInner(characters8(), matchString, start, length, matchLength);
+    return reverseFindInner(characters16(), matchString, start, length, matchLength);
 }
 
 size_t StringImpl::find(StringView matchString)
