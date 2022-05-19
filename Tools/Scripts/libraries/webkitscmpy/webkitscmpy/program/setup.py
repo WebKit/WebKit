@@ -298,10 +298,21 @@ class Setup(Command):
                 default='default',
                 numbered=True,
             )
+            editor = None
             if editor_name == 'default':
+                for variable in ['SVN_LOG_EDITOR', 'LOG_EDITOR']:
+                    if os.environ.get(variable):
+                        log.info("Setting contents of '{}' as editor".format(variable))
+                        editor_name = variable
+                        editor = os.environ.get(variable)
+                        break
+            else:
+                editor = ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])
+
+            if not editor:
                 log.info('Using the default git editor for this repository')
             elif run(
-                [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
+                [local.Git.executable(), 'config', 'core.editor', editor],
                 capture_output=True,
                 cwd=repository.root_path,
             ).returncode:

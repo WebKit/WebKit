@@ -44,7 +44,7 @@ class Git(mocks.Subprocess):
     # 	  merge = refs/heads/main
     RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
     RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
-    RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>\S+)')
+    RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>.*\S+)')
 
     def __init__(
         self, path='/.invalid-git', datafile=None,

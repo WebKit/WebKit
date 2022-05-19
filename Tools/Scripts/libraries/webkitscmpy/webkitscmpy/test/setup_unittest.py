@@ -76,8 +76,9 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
-            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
+            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR='xed -w'):
 
             self.assertEqual(0, program.main(
                 args=('setup', '--defaults', '-v'),
@@ -85,6 +86,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
             ))
 
             config = repo.config()
+            self.assertEqual('xed -w', config.get('core.editor', ''))
             self.assertEqual('^[-+@a-zA-Z_].*$', config.get('diff.objcpp.xfuncname', ''))
             self.assertEqual('^[@a-zA-Z_].*$', config.get('diff.objcppheader.xfuncname', ''))
             self.assertEqual('auto', config.get('color.status', ''))
@@ -110,16 +112,16 @@ Setting better Objective-C diffing behavior for this repository...
 Set better Objective-C diffing behavior for this repository!
 Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
-Using the default git editor for this repository
+Setting contents of 'SVN_LOG_EDITOR' as editor
+Set git editor to 'SVN_LOG_EDITOR' for this repository
 '''.format(repository=self.path),
         )
 
     def test_github_checkout(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
-            wkmocks.Environment(EMAIL_ADDRESS=''):
+            wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR=''):
 
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
@@ -132,7 +134,7 @@ Using the default git editor for this repository
             self.assertNotIn('color.status', config)
             self.assertEqual('Committer', config.get('user.name', ''))
             self.assertEqual('committer@webkit.org', config.get('user.email', ''))
-            self.assertEqual('!f()', config.get('credential.https://github.example.com.helper', ''))
+            self.assertEqual('!f()', config.get('credential.https://github.example.com.helper', '').split()[0])
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
         programs = ['default'] + [p.name for p in Editor.programs()]
