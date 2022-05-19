@@ -28,7 +28,6 @@ fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
 
 # These tests fail or are flaky in non-internal iOS 14 simulator
-fast/forms/ios/autocapitalize-words.html [ Pass Failure ]
 fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
 
 fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
@@ -3630,3 +3629,17 @@ webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions-iframe-sam
 webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
+
+webkit.org/b/240616 editing/input/cocoa/autocorrect-off.html [ Slow ]
+webkit.org/b/240616 editing/input/cocoa/autocorrect-on.html [ Slow ]
+webkit.org/b/240616 fast/events/ios/keyup.html [ Slow ]
+webkit.org/b/240616 fast/shadow-dom/ios/accessory-bar-work-on-input-with-tabindex-in-shadow-tree.html [ Slow ]
+webkit.org/b/240616 fast/forms/ios/autocapitalize-words.html [ Slow ]
+webkit.org/b/240616 fast/forms/ios/form-control-refresh/select/select-multiple-picker.html [ Slow ]
+webkit.org/b/240616 fast/forms/ios/no-scrolling-when-moving-focus-between-adjacent-fields.html [ Slow ]
+webkit.org/b/240616 mathml/fractions-invalid.html [ Slow ]
+webkit.org/b/240616 editing/undo-manager/undo-manager-item-labels.html [ Pass Slow ]
+webkit.org/b/240616 fast/forms/ios/inputmode-none.html [ Pass Slow ]
+webkit.org/b/240616 fast/forms/validation-messages.html [ Pass Slow ]
+webkit.org/b/240616 fast/forms/ios/inputmode-removing-none.html [ Pass Slow ]
+webkit.org/b/240616 fast/forms/datalist/datalist.html [ Pass Slow Crash ]
