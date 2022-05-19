@@ -248,7 +248,7 @@ void initializePtrTagLookup();
 inline void initializePtrTagLookup() { }
 #endif
 
-#if ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
+#if CPU(ARM64E) && (ENABLE(PTRTAG_DEBUGGING) || ENABLE(DISASSEMBLER))
 const char* ptrTagName(PtrTag);
 #endif
 

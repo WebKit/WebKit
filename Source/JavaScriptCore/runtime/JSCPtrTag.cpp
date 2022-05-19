@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-#if ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
+#if CPU(ARM64E) && (ENABLE(PTRTAG_DEBUGGING) || ENABLE(DISASSEMBLER))
 
 const char* ptrTagName(PtrTag tag)
 {
@@ -68,7 +68,7 @@ void initializePtrTagLookup()
     WTF::registerPtrTagLookup(&lookup);
 }
 #endif // ENABLE(PTRTAG_DEBUGGING)
-#endif // ENABLE(JIT_OPERATION_DISASSEMBLY) || (CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING))
+#endif // CPU(ARM64E) && (ENABLE(PTRTAG_DEBUGGING) || ENABLE(DISASSEMBLER))
 
 #if CPU(ARM64E)
 
