@@ -47,6 +47,17 @@ class Editor(object):
         )
 
     @classmethod
+    def bbedit(cls):
+        from whichcraft import which
+        path = which('bbedit') or '/Applications/BBEdit.app/Contents/Helpers/bbedit_tool'
+        return cls(
+            name='BBEdit',
+            path=path,
+            command=[path, '--view-top'],
+            wait=['--wait', '--resume'],
+        )
+
+    @classmethod
     def textmate(cls):
         from whichcraft import which
         return cls(
@@ -125,9 +136,10 @@ class Editor(object):
             Editor.sublime(),
             Editor.textmate(),
             Editor.atom(),
+            Editor.bbedit(),
+            Editor.vscode(),
             Editor.xcode(),
             Editor.textedit(),
-            Editor.vscode(),
             Editor.vi(),
             Editor.default(),
         ]:
