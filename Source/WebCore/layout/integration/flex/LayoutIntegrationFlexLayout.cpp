@@ -131,7 +131,10 @@ void FlexLayout::updateRenderers() const
         auto& layoutBox = boxAndRenderer.box.get();
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(m_flexFormattingState.boxGeometry(layoutBox)));
+        auto& flexItemGeometry = m_flexFormattingState.boxGeometry(layoutBox);
+        auto borderBox = Layout::BoxGeometry::borderBoxRect(flexItemGeometry);
+        renderer.setLocation(borderBox.topLeft());
+        renderer.setWidth(borderBox.width());
     }
 }
 

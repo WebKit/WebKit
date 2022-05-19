@@ -197,6 +197,10 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
             break;
         }
         flexItemGeometry.setLogicalTopLeft(topLeft);
+        if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.rect.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
+        else
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.rect.width() - flexItemGeometry.verticalMarginBorderAndPadding());
     }
 }
 
@@ -204,12 +208,35 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 {
     auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
 
+    auto totalGrowth = 0.f;
+    auto totalFixedWidth = LayoutUnit { };
+
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        totalGrowth += logicalFlexItem.layoutBox->style().flexGrow();
+        // FIXME: Use min/max here.
+        totalFixedWidth += logicalFlexItem.rect.width();
+    }
+
     auto logicalLeft = LayoutUnit { };
     auto logicalTop = LayoutUnit { };
+    auto availableWidth = constraints.horizontal().logicalWidth;
+    auto flexibleWidth = availableWidth - totalFixedWidth;
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
         logicalLeft = logicalFlexItem.rect.right();
+        auto growFlexItemIfApplicable = [&] {
+            if (flexibleWidth <= 0)
+                return;
+            auto grow = logicalFlexItem.layoutBox->style().flexGrow();
+            if (!grow)
+                return;
+            // This value specifies the flex grow factor, which determines how much the flex item will grow relative to the
+            // rest of the flex items in the flex container when positive free space is distributed.
+            logicalFlexItem.rect.setWidth(LayoutUnit { availableWidth * grow / totalGrowth });
+            // FIXME: constrain logical width on min width.
+        };
+        growFlexItemIfApplicable();
     }
     setFlexItemsGeometry(logicalFlexItemList, constraints);
 }
