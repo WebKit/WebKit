@@ -2741,6 +2741,7 @@ media/modern-media-controls/media-controller/ios/media-controller-allows-click-o
 media/modern-media-controls/media-controller/ios/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html [ Skip ]
 media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html [ Skip ]
 media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Skip ]
+media/modern-media-controls/overflow-support [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
 media/modern-media-controls/seek-backward-support [ Skip ]
@@ -2748,6 +2749,7 @@ media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
 media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
+media/modern-media-controls/tracks-support [ Skip ]
 
 # There is no focus state for on iOS
 media/modern-media-controls/button/button-focus-state.html [ Skip ]
