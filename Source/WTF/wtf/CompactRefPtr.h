@@ -34,10 +34,12 @@
 namespace WTF {
 
 #if CPU(ADDRESS64)
+#if CPU(ARM64) && OS(DARWIN)
 #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
 #define HAVE_36BIT_ADDRESS 1
 #endif
 #endif
+#endif // CPU(ADDRESS64)
 
 template <typename T>
 class Compacted {
@@ -127,7 +129,7 @@ public:
     static ALWAYS_INLINE constexpr StorageSize encode(uintptr_t ptr)
     {
 #if HAVE(36BIT_ADDRESS)
-        ASSERT(!(ptr & 0xF));
+        static_assert(!(ptr & 0xF));
         return static_cast<StorageSize>(ptr >> 4);
 #else
         return ptr;
