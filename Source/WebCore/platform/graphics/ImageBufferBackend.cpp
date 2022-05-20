@@ -65,11 +65,6 @@ RefPtr<Image> ImageBufferBackend::sinkIntoImage(PreserveResolution preserveResol
     return copyImage(DontCopyBackingStore, preserveResolution);
 }
 
-void ImageBufferBackend::drawConsuming(GraphicsContext& destinationContext, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
-{
-    draw(destinationContext, destinationRect, sourceRect, options);
-}
-
 void ImageBufferBackend::convertToLuminanceMask()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };

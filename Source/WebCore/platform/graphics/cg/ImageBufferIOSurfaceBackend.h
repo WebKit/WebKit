@@ -66,9 +66,6 @@ protected:
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
-    void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
-    void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
-
     std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
@@ -88,11 +85,10 @@ protected:
     // ImageBufferCGBackend overrides.
     RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const final;
 
-    void prepareToDrawIntoContext(GraphicsContext& destinationContext) override;
+    void finalizeDrawIntoContext(GraphicsContext& destinationContext) override;
     void invalidateCachedNativeImage() const;
 
     std::unique_ptr<IOSurface> m_surface;
-    IOSurfaceSeed m_lastSeedWhenDrawingImage { 0 };
     mutable bool m_requiresDrawAfterPutPixelBuffer { false };
 
     mutable std::optional<GraphicsContextCG> m_context;

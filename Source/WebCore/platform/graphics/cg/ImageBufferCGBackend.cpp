@@ -131,28 +131,6 @@ RefPtr<Image> ImageBufferCGBackend::sinkIntoImage(PreserveResolution preserveRes
     return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(), logicalSize(), backendSize, resolutionScale(), preserveResolution);
 }
 
-void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-{
-    prepareToDrawIntoContext(destContext);
-
-    FloatRect srcRectScaled = srcRect;
-    srcRectScaled.scale(resolutionScale());
-
-    if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
-}
-
-void ImageBufferCGBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
-{
-    prepareToDrawIntoContext(destContext);
-
-    FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(resolutionScale());
-
-    if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
-}
-
 void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
 {
     auto nativeImage = copyNativeImage(DontCopyBackingStore);
@@ -246,10 +224,6 @@ String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<dou
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
     return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
-}
-
-void ImageBufferCGBackend::prepareToDrawIntoContext(GraphicsContext&)
-{
 }
 
 bool ImageBufferCGBackend::originAtBottomLeftCorner() const

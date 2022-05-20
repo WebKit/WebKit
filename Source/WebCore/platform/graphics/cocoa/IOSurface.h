@@ -147,7 +147,7 @@ public:
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
     size_t bytesPerRow() const;
 
-    IOSurfaceSeed seed() const;
+    WEBCORE_EXPORT IOSurfaceSeed seed() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 

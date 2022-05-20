@@ -153,16 +153,6 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
     return m_surface->bytesPerRow();
 }
 
-void ImageBufferIOSurfaceBackend::prepareToDrawIntoContext(GraphicsContext& destContext)
-{
-    auto currentSeed = m_surface->seed();
-    if (std::exchange(m_lastSeedWhenDrawingImage, currentSeed) == currentSeed)
-        return;
-
-    if (destContext.renderingMode() == RenderingMode::Unaccelerated)
-        invalidateCachedNativeImage();
-}
-
 void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
 {
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
@@ -183,24 +173,12 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
     return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
 }
 
-void ImageBufferIOSurfaceBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& destinationContext)
 {
-    ImageBufferCGBackend::draw(destContext, destRect, srcRect, options);
-    // Accelerated to/from unaccelerated image buffers need complex caching. We trust that
+    // Accelerated to unaccelerated image buffers need complex caching. We trust that
     // this is a one-off draw, and as such we clear the caches of the source image after each draw.
-    if (destContext.renderingMode() != context().renderingMode())
+    if (destinationContext.renderingMode() == RenderingMode::Unaccelerated)
         invalidateCachedNativeImage();
-}
-void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-{
-    prepareToDrawIntoContext(destContext);
-
-    FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(resolutionScale());
-
-    auto backendSize = this->backendSize();
-    if (auto image = sinkIntoNativeImage())
-        destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
 }
 
 RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution preserveResolution) const

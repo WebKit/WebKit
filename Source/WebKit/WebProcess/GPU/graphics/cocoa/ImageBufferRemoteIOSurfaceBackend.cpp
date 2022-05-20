@@ -118,16 +118,6 @@ RefPtr<Image> ImageBufferRemoteIOSurfaceBackend::copyImage(BackingStoreCopy, Pre
     return { };
 }
 
-void ImageBufferRemoteIOSurfaceBackend::draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void ImageBufferRemoteIOSurfaceBackend::drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 String ImageBufferRemoteIOSurfaceBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     RELEASE_ASSERT_NOT_REACHED();
