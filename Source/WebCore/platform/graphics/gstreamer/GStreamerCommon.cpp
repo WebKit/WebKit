@@ -383,6 +383,16 @@ void registerWebKitGStreamerElements()
                     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
             }
         }
+
+        // The VAAPI plugin is not much maintained anymore and prone to rendering issues. In the
+        // mid-term we will leverage the new stateless VA decoders. Disable the legacy plugin,
+        // unless the WEBKIT_GST_ENABLE_LEGACY_VAAPI environment variable is set to 1.
+        const char* enableLegacyVAAPIPlugin = getenv("WEBKIT_GST_ENABLE_LEGACY_VAAPI");
+        if (!enableLegacyVAAPIPlugin || !strcmp(enableLegacyVAAPIPlugin, "0")) {
+            auto* registry = gst_registry_get();
+            if (auto vaapiPlugin = adoptGRef(gst_registry_find_plugin(registry, "vaapi")))
+                gst_registry_remove_plugin(registry, vaapiPlugin.get());
+        }
     });
 }
 
