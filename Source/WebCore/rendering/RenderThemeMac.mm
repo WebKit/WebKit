@@ -2661,6 +2661,18 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
     }
 }
 
+static bool shouldDrawIcon(const String& title)
+{
+    // The thumbnail will be painted by the client.
+    NSString *cocoaTitle = title;
+    if (auto fileExtension = cocoaTitle.pathExtension; fileExtension.length) {
+        return ![fileExtension isEqualToString:@"key"]
+            && ![fileExtension isEqualToString:@"pages"]
+            && ![fileExtension isEqualToString:@"numbers"];
+    }
+    return true;
+}
+
 static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     if (auto thumbnailIcon = attachment.attachmentElement().thumbnail()) {
@@ -2681,6 +2693,9 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     if (!image)
         return;
     
+    if (!shouldDrawIcon(attachment.attachmentElement().attachmentTitleForDisplay()))
+        return;
+
     LocalCurrentGraphicsContext localCurrentGC(context);
 
     [image drawInRect:layout.iconRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];

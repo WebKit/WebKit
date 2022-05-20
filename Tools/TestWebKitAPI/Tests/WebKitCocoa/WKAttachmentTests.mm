@@ -146,6 +146,29 @@ using CocoaPasteboard = UIPasteboard;
 
 @end
 
+static NSURL *testiWorkAttachmentFileURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+static NSData *testiWorkAttachmentData()
+{
+    return [NSData dataWithContentsOfURL:testiWorkAttachmentFileURL()];
+}
+
+@interface AttachmentUIDelegate : NSObject<WKUIDelegatePrivate>
+@end
+
+@implementation AttachmentUIDelegate
+
+- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)wkAttachment withSource:(NSString *)source
+{
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:testiWorkAttachmentFileURL() options:0 error:NULL]);
+    [wkAttachment setFileWrapper:fileWrapper.get() contentType:nil completion:nil];
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 class ObserveAttachmentUpdatesForScope {
@@ -241,16 +264,6 @@ static NSData *testZIPData()
 static NSData *testHTMLData()
 {
     return [@"<a href='#'>This is some HTML data</a>" dataUsingEncoding:NSUTF8StringEncoding];
-}
-
-static NSURL *testiWorkAttachmentFileURL()
-{
-    return [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
-}
-
-static NSData *testiWorkAttachmentData()
-{
-    return [NSData dataWithContentsOfURL:testiWorkAttachmentFileURL()];
 }
 
 static NSURL *testImageFileURL()
@@ -1651,6 +1664,7 @@ static void _generateBestRepresentationForRequest(id, SEL)
 
 TEST(WKAttachmentTests, CutAndPasteAttachmentBetweenWebViews)
 {
+    triedToLoadThumbnail = false;
     auto webView = webViewForTestingAttachments();
     [webView synchronouslyInsertAttachmentWithFilename:@"test.pages" contentType:nil data:testiWorkAttachmentData()];
     [webView selectAll:nil];
@@ -1667,6 +1681,34 @@ TEST(WKAttachmentTests, CutAndPasteAttachmentBetweenWebViews)
     triedToLoadThumbnail = false;
     [destinationView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
     EXPECT_EQ(1U, observer.observer().inserted.count);
+
+    Util::run(&triedToLoadThumbnail);
+}
+
+TEST(WKAttachmentTests, iWorkAttachmentWithoutPasteboardActionLoadsThumbnail)
+{
+    triedToLoadThumbnail = false;
+    InstanceMethodSwizzler quickLookSwizzler {
+        getQLThumbnailGeneratorClass(),
+        @selector(generateBestRepresentationForRequest:completionHandler:),
+        reinterpret_cast<IMP>(_generateBestRepresentationForRequest)
+    };
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._attachmentElementEnabled = YES;
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[configuration preferences], YES);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 500, 500) configuration:configuration.get()]);
+
+    auto uiDelegate = adoptNS([[AttachmentUIDelegate alloc] init]);
+    webView.get().UIDelegate = uiDelegate.get();
+
+    static NSString *htmlWithEmbeddedAttachment = @"<meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "<script>focus = () => document.body.focus()</script>"
+        "<body onload=focus() contenteditable>"
+        "<attachment src='test.pages' title='test.pages'></attachment></body>";
+
+    [webView synchronouslyLoadHTMLString:htmlWithEmbeddedAttachment];
 
     Util::run(&triedToLoadThumbnail);
 }

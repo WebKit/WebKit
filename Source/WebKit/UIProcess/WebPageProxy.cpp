@@ -10327,6 +10327,10 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Completio
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
 {
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    requestThumbnailWithFileWrapper(attachment.fileWrapper(), attachment.identifier());
+#endif
+
     sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferCopy(attachment.enclosingImageData())), WTFMove(callback));
 }
 
