@@ -1914,7 +1914,27 @@ public:
         for (unsigned i = 0; i < outOfLineCapacity; ++i)
             storeTrustedValue(JSValue(), Address(butterflyGPR, -sizeof(IndexingHeader) - (i + 1) * sizeof(EncodedJSValue)));
     }
-    
+
+    void loadCompactPtr(Address address, GPRReg dest)
+    {
+#if PLATFORM(IOS_FAMILY)
+        load32(address, dest);
+        lshift64(TrustedImm32(4), dest);
+#else
+        loadPtr(address, dest);
+#endif
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
+    {
+        ASSERT(left != scratch);
+        load32(right, scratch);
+        lshift64(TrustedImm32(4), scratch);
+        return branchPtr(cond, left, Address(scratch));
+    }
+#endif
+
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
 #endif

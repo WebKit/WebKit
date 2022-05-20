@@ -46,6 +46,7 @@
 #include "WriteBarrierInlines.h"
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
+#include <wtf/CompactPtr.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -330,7 +331,7 @@ public:
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
-    const ClassInfo* classInfoForCells() const { return m_classInfo; }
+    const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
@@ -974,7 +975,10 @@ private:
 
     RefPtr<UniquedStringImpl> m_transitionPropertyName;
 
-    const ClassInfo* m_classInfo;
+    CompactPtr<const ClassInfo> m_classInfo;
+#if PLATFORM(IOS_FAMILY)
+    static_assert(sizeof(m_classInfo) == 4);
+#endif
 
     StructureTransitionTable m_transitionTable;
 
