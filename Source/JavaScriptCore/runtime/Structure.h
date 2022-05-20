@@ -977,10 +977,6 @@ private:
     CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
 
     CompactPtr<const ClassInfo> m_classInfo;
-#if PLATFORM(IOS_FAMILY)
-    static_assert(sizeof(m_classInfo) == 4);
-    static_assert(sizeof(m_transitionPropertyName) == 4);
-#endif
 
     StructureTransitionTable m_transitionTable;
 
@@ -997,6 +993,11 @@ private:
 
     uint32_t m_propertyHash;
     TinyBloomFilter m_seenProperties;
+#if PLATFORM(IOS_FAMILY)
+    static_assert(sizeof(m_classInfo) == 4);
+    static_assert(sizeof(m_transitionPropertyName) == 4);
+    static_assert(sizeof(m_seenProperties) == 4);
+#endif
 
     friend class VMInspector;
     friend class JSDollarVMHelper;

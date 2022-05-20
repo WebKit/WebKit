@@ -25,31 +25,38 @@
 
 #pragma once
 
+#include <wtf/CompactRefPtr.h>
+
 namespace JSC {
 
 typedef uintptr_t Bits;
 
 class TinyBloomFilter {
+#if PLATFORM(IOS_FAMILY)
+    using StorageSize = WTF::Compacted<nullptr_t>::StorageSize;
+#else
+    using StorageSize = Bits;
+#endif
 public:
     TinyBloomFilter() = default;
-    TinyBloomFilter(Bits);
+    TinyBloomFilter(StorageSize);
 
-    void add(Bits);
+    void add(StorageSize);
     void add(TinyBloomFilter&);
-    bool ruleOut(Bits) const; // True for 0.
+    bool ruleOut(StorageSize) const; // True for 0.
     void reset();
-    Bits bits() const { return m_bits; }
+    StorageSize bits() const { return m_bits; }
 
 private:
-    Bits m_bits { 0 };
+    StorageSize m_bits { 0 };
 };
 
-inline TinyBloomFilter::TinyBloomFilter(Bits bits)
+inline TinyBloomFilter::TinyBloomFilter(StorageSize bits)
     : m_bits(bits)
 {
 }
 
-inline void TinyBloomFilter::add(Bits bits)
+inline void TinyBloomFilter::add(StorageSize bits)
 {
     m_bits |= bits;
 }
@@ -59,7 +66,7 @@ inline void TinyBloomFilter::add(TinyBloomFilter& other)
     m_bits |= other.m_bits;
 }
 
-inline bool TinyBloomFilter::ruleOut(Bits bits) const
+inline bool TinyBloomFilter::ruleOut(StorageSize bits) const
 {
     if (!bits)
         return true;

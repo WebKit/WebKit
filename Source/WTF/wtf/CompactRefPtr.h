@@ -36,14 +36,14 @@ namespace WTF {
 template<typename T>
 class Compacted {
     WTF_MAKE_FAST_ALLOCATED;
+public:
 #if PLATFORM(IOS_FAMILY)
     static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
-    using CompactedStorageType = uint32_t;
+    using StorageSize = uint32_t;
 #else
-    using CompactedStorageType = T*;
+    using StorageSize = T*;
 #endif
 
-public:
     Compacted()
     {
         set(nullptr);
@@ -104,7 +104,7 @@ public:
         set(t1);
     }
 
-    ALWAYS_INLINE constexpr CompactedStorageType encode(T* ptr) const
+    ALWAYS_INLINE constexpr StorageSize encode(T* ptr) const
     {
 #if PLATFORM(IOS_FAMILY)
         ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & 0xF));
@@ -114,7 +114,7 @@ public:
 #endif
     }
 
-    ALWAYS_INLINE constexpr T* decode(const CompactedStorageType& ptr) const
+    ALWAYS_INLINE constexpr T* decode(const StorageSize& ptr) const
     {
 #if PLATFORM(IOS_FAMILY)
         return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << 4);
@@ -124,7 +124,7 @@ public:
     }
 
 private:
-    CompactedStorageType m_ptr;
+    StorageSize m_ptr;
 };
 
 template<typename T>
