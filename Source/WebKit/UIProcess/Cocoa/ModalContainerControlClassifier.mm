@@ -99,7 +99,7 @@ public:
 private:
     USpoofChecker* checker()
     {
-        if (!m_checker && m_status == U_ZERO_ERROR)
+        if (!m_checker && U_SUCCESS(m_status))
             m_checker = uspoof_open(&m_status);
         return m_checker;
     }

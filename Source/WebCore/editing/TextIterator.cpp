@@ -1658,7 +1658,7 @@ static UStringSearch* createSearcher()
     UErrorCode status = U_ZERO_ERROR;
     auto searchCollatorName = makeString(currentSearchLocaleID(), "@collation=search");
     UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8().data(), 0, &status);
-    ASSERT(status == U_ZERO_ERROR || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
+    ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;
 }
 
@@ -1965,10 +1965,10 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
     UErrorCode status = U_ZERO_ERROR;
     usearch_setAttribute(searcher, USEARCH_ELEMENT_COMPARISON, comparator, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
     usearch_setPattern(searcher, m_targetCharacters, targetLength, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
     // The kana workaround requires a normalized copy of the target string.
     if (m_targetRequiresKanaWorkaround)
@@ -1980,9 +1980,9 @@ inline SearchBuffer::~SearchBuffer()
     // Leave the static object pointing to a valid string.
     UErrorCode status = U_ZERO_ERROR;
     usearch_setPattern(WebCore::searcher(), &newlineCharacter, 1, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
     usearch_setText(WebCore::searcher(), &newlineCharacter, 1, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
     unlockSearcher();
 }
@@ -2190,10 +2190,10 @@ inline size_t SearchBuffer::search(size_t& start)
 
     UErrorCode status = U_ZERO_ERROR;
     usearch_setText(searcher, m_buffer.data(), size, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
     usearch_setOffset(searcher, m_prefixLength, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    ASSERT(U_SUCCESS(status));
 
     int matchStart = usearch_next(searcher, &status);
     ASSERT(U_SUCCESS(status));
@@ -2231,7 +2231,7 @@ nextMatch:
         || (m_options.contains(AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
         || (m_options.contains(AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
         matchStart = usearch_next(searcher, &status);
-        ASSERT(status == U_ZERO_ERROR);
+        ASSERT(U_SUCCESS(status));
         goto nextMatch;
     }
 
