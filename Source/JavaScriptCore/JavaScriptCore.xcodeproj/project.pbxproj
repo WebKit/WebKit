@@ -2128,6 +2128,7 @@
 		FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = FF25B933283306DA00E03F4D /* CompactBloomFilter.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -5783,6 +5784,7 @@
 		FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTrapsInlines.h; sourceTree = "<group>"; };
 		FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionExpectation.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
+		FF25B933283306DA00E03F4D /* CompactBloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactBloomFilter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6670,6 +6672,7 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				FF25B933283306DA00E03F4D /* CompactBloomFilter.h */,
 				FE912B4E2531193300FABDDF /* AbstractSlotVisitor.h */,
 				FE912B5025311AD100FABDDF /* AbstractSlotVisitorInlines.h */,
 				0FEC3C501F33A41600F59B6C /* AlignedMemoryAllocator.cpp */,
@@ -10806,6 +10809,7 @@
 				DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */,
 				99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */,
 				1409ECBF225E177400BEDD54 /* LeafExecutable.h in Headers */,
+				FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,

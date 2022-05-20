@@ -25,54 +25,44 @@
 
 #pragma once
 
+#include <wtf/CompactRefPtr.h>
+
 namespace JSC {
 
-typedef uintptr_t Bits;
+class CompactBloomFilter {
+    using Compacted = WTF::Compacted<nullptr_t>;
+    using StorageSize = Compacted::StorageSize;
 
-class TinyBloomFilter {
 public:
-    TinyBloomFilter() = default;
-    TinyBloomFilter(Bits);
+    CompactBloomFilter() = default;
 
-    void add(Bits);
-    void add(TinyBloomFilter&);
-    bool ruleOut(Bits) const; // True for 0.
-    void reset();
-    Bits bits() const { return m_bits; }
+    CompactBloomFilter(StorageSize bits)
+        : m_bits(bits)
+    {
+    }
+
+    void add(uintptr_t ptr) { m_bits |= Compacted::encode(ptr); }
+
+    void add(CompactBloomFilter& other) { m_bits |= other.m_bits; }
+
+    bool ruleOut(uintptr_t ptr) const
+    {
+        StorageSize bits = Compacted::encode(ptr);
+        if (!bits)
+            return true;
+
+        if ((bits & m_bits) != bits)
+            return true;
+
+        return false;
+    } // True for 0.
+
+    void reset() { m_bits = 0; }
+
+    StorageSize bits() const { return m_bits; }
 
 private:
-    Bits m_bits { 0 };
+    StorageSize m_bits { 0 };
 };
-
-inline TinyBloomFilter::TinyBloomFilter(Bits bits)
-    : m_bits(bits)
-{
-}
-
-inline void TinyBloomFilter::add(Bits bits)
-{
-    m_bits |= bits;
-}
-
-inline void TinyBloomFilter::add(TinyBloomFilter& other)
-{
-    m_bits |= other.m_bits;
-}
-
-inline bool TinyBloomFilter::ruleOut(Bits bits) const
-{
-    if (!bits)
-        return true;
-
-    if ((bits & m_bits) != bits)
-        return true;
-
-    return false;
-}
-
-inline void TinyBloomFilter::reset()
-{
-    m_bits = 0;
-}
 
 } // namespace JSC

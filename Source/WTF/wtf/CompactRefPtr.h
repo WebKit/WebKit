@@ -119,14 +119,19 @@ public:
         set(t1);
     }
 
+    static ALWAYS_INLINE constexpr StorageSize encode(uintptr_t ptr)
+    {
+        ASSERT(!ptr & 0xF);
+#if PLATFORM(IOS_FAMILY)
+        return static_cast<StorageSize>(ptr >> 4);
+#else
+        return ptr;
+#endif
+    }
+
     ALWAYS_INLINE constexpr StorageSize encode(T* ptr) const
     {
-#if PLATFORM(IOS_FAMILY)
-        ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & 0xF));
-        return static_cast<StorageSize>(reinterpret_cast<uintptr_t>(ptr) >> 4);
-#else
-        return reinterpret_cast<StorageSize>(ptr);
-#endif
+        return encode(reinterpret_cast<uintptr_t>(ptr));
     }
 
     ALWAYS_INLINE constexpr T* decode(const StorageSize& ptr) const

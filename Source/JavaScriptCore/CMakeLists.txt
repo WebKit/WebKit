@@ -711,6 +711,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/CellState.h
     heap/CollectionScope.h
     heap/CollectorPhase.h
+    heap/CompactBloomFilter.h
     heap/CompleteSubspace.h
     heap/CompleteSubspaceInlines.h
     heap/ConstraintConcurrency.h
