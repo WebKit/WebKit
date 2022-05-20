@@ -28,6 +28,7 @@ fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
 
 # These tests fail or are flaky in non-internal iOS 14 simulator
+fast/forms/ios/autocapitalize-words.html [ Pass Failure ]
 fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
 
 fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
@@ -3631,6 +3632,7 @@ webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions-iframe-sam
 webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
+<<<<<<< HEAD
 
 webkit.org/b/240616 editing/input/cocoa/autocorrect-off.html [ Slow ]
 webkit.org/b/240616 editing/input/cocoa/autocorrect-on.html [ Slow ]
@@ -3659,3 +3661,5 @@ webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-one-focusring-rect.html 
 webkit.org/b/240659 fast/text/isolate-ignore.html [ Crash ]
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
+=======
+>>>>>>> parent of 4d4015d6dc57 (REGRESSION (r294317): [ iOS ] Thirteen layout tests are flaky or consistent timeouts)
