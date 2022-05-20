@@ -1841,6 +1841,3 @@ webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Slow
 
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
-
-webkit.org/b/231298 accessibility/mac/selection-boundary-userinfo.html [ Failure ]
-webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]

@@ -15,17 +15,13 @@ function test()
     ta.focus();
     // click
     if (window.eventSender) {
-        testRunner.waitUntilDone();
-        requestAnimationFrame(() => {
-            eventSender.mouseMoveTo(90, 20);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-            if (ta.selectionEnd == 17)
-                res.innerHTML = "Test Succeeded";
-            else
-                res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
-            testRunner.notifyDone();
-        });
+        eventSender.mouseMoveTo(90, 20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        if (ta.selectionEnd == 17)
+            res.innerHTML = "Test Succeeded";
+        else
+            res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
     } else {
         res.innerHTML = "Test can't run without event sender (part of DumpRenderTree). "
             + "To test manually, click at the middle of the line marked 9 and check that the caret appears after the 9.";

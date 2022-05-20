@@ -245,7 +245,7 @@ public:
     void clearTypingStyle();
 
     enum class ClipToVisibleContent : uint8_t { No, Yes };
-    WEBCORE_EXPORT FloatRect selectionBounds(ClipToVisibleContent = ClipToVisibleContent::Yes);
+    WEBCORE_EXPORT FloatRect selectionBounds(ClipToVisibleContent = ClipToVisibleContent::Yes) const;
 
     enum class TextRectangleHeight { TextHeight, SelectionHeight };
     WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
@@ -267,7 +267,6 @@ public:
     void updateFromAssociatedLiveRange();
 
 private:
-    void updateSelectionAppearanceNow();
     void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent);
     void updateDataDetectorsForSelection();
 

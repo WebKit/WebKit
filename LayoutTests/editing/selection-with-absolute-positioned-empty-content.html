@@ -12,26 +12,15 @@ span {
 <div><a id=foobar style="color: black" href="">select this text<span></span></a> but not this</div>
 <pre id=result></pre>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+if (window.internals)
+  internals.startTrackingRepaints();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
-function timerAfterRAF(callback) {
-    return requestAnimationFrame(() => setTimeout(callback, 0));
-}
+window.getSelection().selectAllChildren(foobar);
 
-timerAfterRAF(() => {
-    if (window.internals)
-        internals.startTrackingRepaints();
-    window.getSelection().selectAllChildren(foobar);
-    timerAfterRAF(() => {
-        if (window.internals) {
-            result.innerText = internals.repaintRectsAsText();
-            internals.stopTrackingRepaints();
-        }
-        if (window.testRunner)
-            testRunner.notifyDone();
-    });
-});
+if (window.internals) {
+  result.innerText = internals.repaintRectsAsText();
+  internals.stopTrackingRepaints();
+}
 </script>
