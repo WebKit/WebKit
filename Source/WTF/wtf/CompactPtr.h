@@ -27,104 +27,101 @@
 
 #include <cstdint>
 #include <utility>
-#include <wtf/RawPtrTraits.h>
+#include <wtf/CompactRefPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-template<typename T> struct DefaultCompactPtrTraits {
-#if PLATFORM(IOS_FAMILY)
-    static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
-    using StorageType = uint32_t;
-#else
-    using StorageType = T*;
-#endif
-
-    static ALWAYS_INLINE constexpr StorageType encode(T* ptr)
-    {
-#if PLATFORM(IOS_FAMILY)
-        ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & 0xF));
-        return static_cast<uint32_t>(reinterpret_cast<uintptr_t>(ptr) >> 4);
-#else
-        return ptr;
-#endif
-    }
-
-    static ALWAYS_INLINE constexpr T* decode(const StorageType& ptr)
-    {
-#if PLATFORM(IOS_FAMILY)
-        return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << 4);
-#else
-        return ptr;
-#endif
-    }
-};
-
-template<typename T, typename CompactPtrTraits = DefaultCompactPtrTraits<T>>
+template <typename T, typename Traits = CompactPtrTraits<T>>
 class CompactPtr {
-
 public:
-    ALWAYS_INLINE constexpr CompactPtr() : m_ptr(CompactPtrTraits::encode(nullptr)) { }
-    ALWAYS_INLINE constexpr CompactPtr(std::nullptr_t) : m_ptr(CompactPtrTraits::encode(nullptr)) { }
-    ALWAYS_INLINE CompactPtr(T* ptr) : m_ptr(CompactPtrTraits::encode(ptr)) { }
-    ALWAYS_INLINE CompactPtr(const CompactPtr& o) : m_ptr(o.m_ptr) { }
-    ALWAYS_INLINE CompactPtr(CompactPtr&& o) : m_ptr(o.m_ptr) { }
+    ALWAYS_INLINE constexpr CompactPtr()
+        : m_ptr(nullptr)
+    {
+    }
+
+    ALWAYS_INLINE constexpr CompactPtr(std::nullptr_t)
+        : m_ptr(nullptr)
+    {
+    }
+
+    ALWAYS_INLINE CompactPtr(T* ptr)
+        : m_ptr(ptr)
+    {
+    }
+
+    ALWAYS_INLINE CompactPtr(const CompactPtr& o)
+        : m_ptr(o.m_ptr)
+    {
+    }
+
+    ALWAYS_INLINE CompactPtr(CompactPtr&& o)
+        : m_ptr(o.m_ptr)
+    {
+    }
 
     ALWAYS_INLINE ~CompactPtr() = default;
 
     T& operator*() const
     {
-        T* ptr = CompactPtrTraits::decode(m_ptr);
+        T* ptr = Traits::unwrap(m_ptr);
         ASSERT(ptr);
         return *ptr;
     }
 
-    ALWAYS_INLINE T* operator->() const { return CompactPtrTraits::decode(m_ptr); }
+    ALWAYS_INLINE T* operator->() const { return Traits::unwrap(m_ptr); }
 
-    bool operator!() const { return !CompactPtrTraits::decode(m_ptr); }
+    bool operator!() const { return !m_ptr; }
 
-    explicit operator bool() const { return !!CompactPtrTraits::decode(m_ptr); }
+    explicit operator bool() const { return !!m_ptr; }
 
     CompactPtr& operator=(std::nullptr_t)
     {
-        m_ptr = CompactPtrTraits::encode(nullptr);
+        Traits::exchange(m_ptr, nullptr);
         return *this;
     }
 
     CompactPtr& operator=(const CompactPtr& o)
     {
-        m_ptr = o.m_ptr;
+        CompactPtr ptr = o;
+        Traits::swap(m_ptr, ptr);
         return *this;
     }
 
-    CompactPtr& operator=(T* ptr)
+    CompactPtr& operator=(T* optr)
     {
-        m_ptr = CompactPtrTraits::encode(ptr);
+        CompactPtr ptr = optr;
+        Traits::swap(m_ptr, ptr);
         return *this;
     }
 
-    template<typename X, typename Y> CompactPtr& operator=(const CompactPtr<X>& o)
+    template <typename X, typename Y>
+    CompactPtr& operator=(const CompactPtr<X>& o)
     {
-        m_ptr = o.m_ptr;
+        CompactPtr ptr = o;
+        Traits::swap(m_ptr, ptr);
         return *this;
     }
 
     CompactPtr& operator=(CompactPtr&& o)
     {
-        m_ptr = o.m_ptr;
+        CompactPtr ptr = WTFMove(o);
+        Traits::swap(m_ptr, ptr);
         return *this;
     }
 
-    template<typename X, typename Y> CompactPtr& operator=(CompactPtr<X>&& o)
+    template <typename X, typename Y>
+    CompactPtr& operator=(CompactPtr<X>&& o)
     {
-        m_ptr = o.m_ptr;
+        CompactPtr ptr = WTFMove(o);
+        Traits::swap(m_ptr, ptr);
         return *this;
     }
 
-    T* get() const { return CompactPtrTraits::decode(m_ptr); }
+    T* get() const { return Traits::unwrap(m_ptr); }
 
 private:
-    typename CompactPtrTraits::StorageType m_ptr;
+    typename Traits::StorageType m_ptr;
 };
 
 } // namespace WTF

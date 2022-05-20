@@ -33,9 +33,10 @@
 
 namespace WTF {
 
-template<typename T>
+template <typename T>
 class Compacted {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
 #if PLATFORM(IOS_FAMILY)
     static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
@@ -79,7 +80,7 @@ public:
         m_ptr = encode(ptr);
     }
 
-    template<class U>
+    template <class U>
     T* exchange(U&& newValue)
     {
         T* oldValue = get();
@@ -100,7 +101,7 @@ public:
     void swap(T* t2)
     {
         T* t1 = get();
-        swap(t1, t2);
+        std::swap(t1, t2);
         set(t1);
     }
 
@@ -127,27 +128,28 @@ private:
     StorageSize m_ptr;
 };
 
-template<typename T>
+template <typename T>
 struct GetPtrHelper<Compacted<T>> {
     using PtrType = T*;
     static T* getPtr(const Compacted<T>& p) { return const_cast<T*>(p.get()); }
 };
 
-template<typename T>
+template <typename T>
 struct IsSmartPtr<Compacted<T>> {
     static constexpr bool value = true;
 };
 
-template<typename T>
-struct CompactRefPtrTraits {
-    template<typename U> using RebindTraits = RawPtrTraits<U>;
+template <typename T>
+struct CompactPtrTraits {
+    template <typename U>
+    using RebindTraits = RawPtrTraits<U>;
 
     using StorageType = Compacted<T>;
 
-    template<typename U>
+    template <typename U>
     static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
 
-    template<typename Other>
+    template <typename Other>
     static ALWAYS_INLINE void swap(StorageType& a, Other& b) { a.swap(b); }
 
     static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
@@ -156,8 +158,8 @@ struct CompactRefPtrTraits {
     static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr == hashTableDeletedValue(); }
 };
 
-template<typename T>
-using CompactRefPtr = RefPtr<T, CompactRefPtrTraits<T>>;
+template <typename T>
+using CompactRefPtr = RefPtr<T, CompactPtrTraits<T>>;
 
 } // namespace WTF
 
