@@ -2128,7 +2128,7 @@
 		FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = FF25B933283306DA00E03F4D /* CompactBloomFilter.h */; };
+		FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = FF25B933283306DA00E03F4D /* CompactBloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
