@@ -62,6 +62,16 @@ void SessionStorageManager::connectionClosed(IPC::Connection::UniqueID connectio
         storageArea->removeListener(connection);
 }
 
+void SessionStorageManager::removeNamespace(StorageNamespaceIdentifier namespaceIdentifier)
+{
+    auto identifier = m_storageAreasByNamespace.take(namespaceIdentifier);
+    if (!identifier.isValid())
+        return;
+
+    m_storageAreas.remove(identifier);
+    m_registry.unregisterStorageArea(identifier);
+}
+
 StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = storageArea->identifier();

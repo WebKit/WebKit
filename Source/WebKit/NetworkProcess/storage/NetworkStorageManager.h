@@ -32,6 +32,7 @@
 #include "StorageAreaImplIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
@@ -80,6 +81,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     void close();
     void clearStorageForTesting(CompletionHandler<void()>&&);
+    void clearStorageForWebPage(WebPageProxyIdentifier);
     void didIncreaseQuota(WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     void fetchData(OptionSet<WebsiteDataType>, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
     void deleteData(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);

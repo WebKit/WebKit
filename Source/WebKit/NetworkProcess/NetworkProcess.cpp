@@ -2766,8 +2766,10 @@ void NetworkProcess::addWebPageNetworkParameters(PAL::SessionID sessionID, WebPa
 
 void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, WebPageProxyIdentifier pageID)
 {
-    if (auto* session = networkSession(sessionID))
+    if (auto* session = networkSession(sessionID)) {
         session->removeWebPageNetworkParameters(pageID);
+        session->storageManager().clearStorageForWebPage(pageID);
+    }
 }
 
 void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, CompletionHandler<void(size_t)>&& completionHandler)

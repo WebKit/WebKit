@@ -319,6 +319,18 @@ void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& c
     });
 }
 
+void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageIdentifier)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, pageIdentifier]() mutable {
+        for (auto& manager : m_localOriginStorageManagers.values()) {
+            if (auto* sessionStorageManager = manager->existingSessionStorageManager())
+                sessionStorageManager->removeNamespace(makeObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64()));
+        }
+    });
+}
+
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());
