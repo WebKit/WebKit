@@ -6424,11 +6424,6 @@ void WebPage::canceledComposition()
     sendEditorStateUpdate();
 }
 
-void WebPage::interactionRegions(FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<InteractionRegion>)>&& completionHandler)
-{
-    completionHandler(WebCore::interactionRegions(*m_page, rectInContentCoordinates));
-}
-
 void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(bool)>&& callback)
 {
 #if ENABLE(SERVICE_WORKER)

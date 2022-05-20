@@ -2089,8 +2089,6 @@ public:
     void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&);
     void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&);
 
-    void interactionRegions(WebCore::FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<WebCore::InteractionRegion>)>&&);
-
 #if ENABLE(SERVICE_WORKER)
     void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& completionCallback)
     {

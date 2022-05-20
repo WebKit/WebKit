@@ -680,8 +680,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
-    InteractionRegions(WebCore::FloatRect rectInContentCoordinates) -> (Vector<WebCore::InteractionRegion> regions)
-
     NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
