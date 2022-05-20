@@ -356,6 +356,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::IsRequired:
         propertyMap.set(AXPropertyName::IsRequired, axObject.isRequired());
         break;
+    case AXPropertyName::IsSelected:
+        propertyMap.set(AXPropertyName::IsSelected, axObject.isSelected());
+        break;
     case AXPropertyName::ReadOnlyValue:
         propertyMap.set(AXPropertyName::ReadOnlyValue, axObject.readOnlyValue().isolatedCopy());
         break;

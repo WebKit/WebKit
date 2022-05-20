@@ -51,7 +51,7 @@
         axSelectable.press();
         setTimeout(async () => {
             await waitFor(() => {
-                return notificationCount == 1;
+                return notificationCount == 1 && axSelectable.isSelected;
             });
             shouldBeTrue("axSelectable.isSelected");
             if (platform == "ios")

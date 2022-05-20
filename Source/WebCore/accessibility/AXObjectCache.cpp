@@ -3446,6 +3446,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXRequiredStatusChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsRequired);
             break;
+        case AXSelectedStateChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
+            break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
         case AXElementBusyChanged:
