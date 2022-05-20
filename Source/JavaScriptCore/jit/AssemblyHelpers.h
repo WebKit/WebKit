@@ -1917,7 +1917,7 @@ public:
 
     void loadCompactPtr(Address address, GPRReg dest)
     {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(36BIT_ADDRESS)
         load32(address, dest);
         lshift64(TrustedImm32(4), dest);
 #else
@@ -1927,7 +1927,7 @@ public:
 
     Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
     {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(36BIT_ADDRESS)
         ASSERT(left != scratch);
         load32(right, scratch);
         lshift64(TrustedImm32(4), scratch);

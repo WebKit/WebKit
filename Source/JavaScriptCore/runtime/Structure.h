@@ -232,13 +232,7 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const 
-    {
-// #if PLATFORM(IOS_FAMILY)
-//         static_assert(sizeof(*this) == 96);
-// #endif
-        return StructureID::encode(this);
-    }
+    StructureID id() const { return StructureID::encode(this); }
 
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
     int32_t idBlob() const { return m_blob.blob(); }

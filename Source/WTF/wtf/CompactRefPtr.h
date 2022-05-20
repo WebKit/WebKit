@@ -33,13 +33,18 @@
 
 namespace WTF {
 
+#if CPU(ADDRESS64)
+#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
+#define HAVE_36BIT_ADDRESS 1
+#endif
+#endif
+
 template <typename T>
 class Compacted {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-#if PLATFORM(IOS_FAMILY)
-    // static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
+#if HAVE(36BIT_ADDRESS)
     using StorageSize = uint32_t;
 #else
     using StorageSize = uintptr_t;
@@ -121,7 +126,7 @@ public:
 
     static ALWAYS_INLINE constexpr StorageSize encode(uintptr_t ptr)
     {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(36BIT_ADDRESS)
         ASSERT(!(ptr & 0xF));
         return static_cast<StorageSize>(ptr >> 4);
 #else
@@ -136,7 +141,7 @@ public:
 
     ALWAYS_INLINE constexpr T* decode(const StorageSize& ptr) const
     {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(36BIT_ADDRESS)
         return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << 4);
 #else
         return reinterpret_cast<T*>(ptr);
