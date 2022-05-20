@@ -119,9 +119,7 @@ void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHan
     if (!m_owningDataStore)
         return completionHandler();
     auto& cookieManager = m_owningDataStore->networkProcess().cookieManager();
-    cookieManager.deleteAllCookies(m_owningDataStore->sessionID());
-    // FIXME: The CompletionHandler should be passed to WebCookieManagerProxy::deleteAllCookies.
-    RunLoop::main().dispatch(WTFMove(completionHandler));
+    cookieManager.deleteAllCookies(m_owningDataStore->sessionID(), WTFMove(completionHandler));
 }
 
 void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)

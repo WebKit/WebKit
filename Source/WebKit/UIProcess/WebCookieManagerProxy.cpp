@@ -66,10 +66,12 @@ void WebCookieManagerProxy::deleteCookiesForHostnames(PAL::SessionID sessionID, 
         m_networkProcess->send(Messages::WebCookieManager::DeleteCookiesForHostnames(sessionID, hostnames), 0);
 }
 
-void WebCookieManagerProxy::deleteAllCookies(PAL::SessionID sessionID)
+void WebCookieManagerProxy::deleteAllCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& callbackFunction)
 {
     if (m_networkProcess)
-        m_networkProcess->send(Messages::WebCookieManager::DeleteAllCookies(sessionID), 0);
+        m_networkProcess->sendWithAsyncReply(Messages::WebCookieManager::DeleteAllCookies(sessionID), WTFMove(callbackFunction));
+    else
+        callbackFunction();
 }
 
 void WebCookieManagerProxy::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, CompletionHandler<void()>&& callbackFunction)

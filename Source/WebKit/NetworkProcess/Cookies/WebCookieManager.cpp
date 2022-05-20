@@ -69,10 +69,11 @@ void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const
         storageSession->deleteCookiesForHostnames(hostnames);
 }
 
-void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID)
+void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
         storageSession->deleteAllCookies();
+    completionHandler();
 }
 
 void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, CompletionHandler<void()>&& completionHandler)

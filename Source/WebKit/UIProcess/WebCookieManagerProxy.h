@@ -61,7 +61,7 @@ public:
     void getHostnamesWithCookies(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
     void deleteCookie(PAL::SessionID, const WebCore::Cookie&, CompletionHandler<void()>&&);
     void deleteCookiesForHostnames(PAL::SessionID, const Vector<String>&);
-    void deleteAllCookies(PAL::SessionID);
+    void deleteAllCookies(PAL::SessionID, CompletionHandler<void()>&&);
     void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CompletionHandler<void()>&&);
 
     void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
