@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
+#include <wtf/CompactRefPtr.h>
 
 #include "RefLogger.h"
 #include "Utilities.h"
-#include <wtf/CompactRefPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>

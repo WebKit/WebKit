@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-
 #include <wtf/CompactPtr.h>
+
 #include "RefLogger.h"
 #include "Utilities.h"
 #include <wtf/MainThread.h>
