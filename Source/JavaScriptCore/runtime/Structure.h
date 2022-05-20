@@ -994,7 +994,7 @@ private:
     static_assert(firstOutOfLineOffset < 256);
 
     uint32_t m_propertyHash;                                     // macOS|iOS: 4 bytes
-    CompactBloomFilter m_seenProperties;                            // macOS: 8 bytes, iOS: 4 bytes
+    CompactBloomFilter m_seenProperties;                         // macOS: 8 bytes, iOS: 4 bytes
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
