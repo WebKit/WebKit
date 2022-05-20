@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "CSSNumericType.h"
+#include "CSSNumericValue.h"
 
 #if ENABLE(CSS_TYPED_OM)
 
