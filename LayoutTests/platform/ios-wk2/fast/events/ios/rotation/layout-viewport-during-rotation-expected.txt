@@ -1,0 +1,20 @@
+Before rotation
+layoutViewport: 0, 0 - 390 x 797
+visualViewport: 0, 0 - 390 x 797
+client rect of fixed object:0, 0 - 390 x 797
+
+In resize event handler:
+layoutViewport: 0, 0 - 390 x 797
+visualViewport: 0, 0 - 390 x 390
+client rect of fixed object:0, 0 - 390 x 797
+
+In orientationchange event handler:
+layoutViewport: 0, 0 - 844 x 390
+visualViewport: 0, 0 - 844 x 390
+client rect of fixed object:0, 0 - 844 x 390
+
+After rotation
+layoutViewport: 0, 0 - 844 x 390
+visualViewport: 0, 0 - 844 x 390
+client rect of fixed object:0, 0 - 844 x 390
+
