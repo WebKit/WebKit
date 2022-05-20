@@ -3726,7 +3726,8 @@
                     "offset-position",
                     "offset-anchor",
                     "offset-rotate"
-                ]
+                ],
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",

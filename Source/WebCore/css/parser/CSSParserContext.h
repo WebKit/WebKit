@@ -90,6 +90,7 @@ struct CSSParserContext {
     bool inputSecurityEnabled { false };
     bool subgridEnabled { false };
     bool containIntrinsicSizeEnabled { false };
+    bool motionPathEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

@@ -3464,16 +3464,28 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOffsetPath:
             // The computed value of offset-path must only contain absolute draw commands.
             // https://github.com/w3c/fxtf-drafts/issues/225#issuecomment-334322738
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute);
         case CSSPropertyOffsetDistance:
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return cssValuePool.createValue(style.offsetDistance(), style);
         case CSSPropertyOffsetPosition:
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return valueForPositionOrAuto(style, style.offsetPosition());
         case CSSPropertyOffsetAnchor:
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return valueForPositionOrAuto(style, style.offsetAnchor());
         case CSSPropertyOffsetRotate:
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return valueForOffsetRotate(style.offsetRotate());
         case CSSPropertyOffset:
+            if (!m_element->document().settings().cssMotionPathEnabled())
+                return nullptr;
             return valueForOffsetShorthand(style);
         case CSSPropertyOpacity:
             return cssValuePool.createValue(style.opacity(), CSSUnitType::CSS_NUMBER);

@@ -113,6 +113,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
     , subgridEnabled { document.settings().subgridEnabled() }
     , containIntrinsicSizeEnabled { document.settings().cssContainIntrinsicSizeEnabled() }
+    , motionPathEnabled { document.settings().cssMotionPathEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -167,6 +168,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 #endif
         && a.subgridEnabled == b.subgridEnabled
         && a.containIntrinsicSizeEnabled == b.containIntrinsicSizeEnabled
+        && a.motionPathEnabled == b.motionPathEnabled
     ;
 }
 
@@ -212,8 +214,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.inputSecurityEnabled                      << 30
         | context.subgridEnabled                            << 31
         | (uint64_t)context.containIntrinsicSizeEnabled     << 32
-        | (uint64_t)context.mode                            << 33; // This is multiple bits, so keep it last.
-
+        | (uint64_t)context.motionPathEnabled               << 33
+        | (uint64_t)context.mode                            << 34; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -266,6 +268,13 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyContainIntrinsicBlockSize:
     case CSSPropertyContainIntrinsicInlineSize:
         return !containIntrinsicSizeEnabled;
+    case CSSPropertyOffset:
+    case CSSPropertyOffsetPath:
+    case CSSPropertyOffsetDistance:
+    case CSSPropertyOffsetPosition:
+    case CSSPropertyOffsetAnchor:
+    case CSSPropertyOffsetRotate:
+        return !motionPathEnabled;
     default:
         return false;
     }
