@@ -1,3 +1,30 @@
+2022-05-15  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r294104): [GStreamer] getUserMedia broken
+        https://bugs.webkit.org/show_bug.cgi?id=240420
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The converter handling logic was modified in order to fix getUserMedia negotiated with raw
+        video and also getDisplayMedia which is always raw video and thus doesn't require decoding.
+
+        This patch also introduces a small optimization, reconfiguration is now done once only,
+        after setting size and framerate. Before this patch it was done twice, so the pipeline was a
+        taking more time to produce the first frame.
+
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource):
+        (WebCore::GStreamerVideoCaptureSource::settingsDidChange): Trigger capturer reconfiguration after setting both size and framerate.
+        (WebCore::GStreamerVideoCaptureSource::startProducingData): Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        (WebCore::GStreamerVideoCapturer::createConverter): Do not decode display capture streams, these are always raw anyway.
+        (WebCore::GStreamerVideoCapturer::setSize): Delay reconfiguration.
+        (WebCore::GStreamerVideoCapturer::setFrameRate): Ditto.
+        (WebCore::GStreamerVideoCapturer::reconfigure): Keep track of compatible video format. This
+        is needed to workaround an issue in pipewiresrc caps negotiation.
+        (WebCore::GStreamerVideoCapturer::adjustVideoSrcMIMEType): Renamed to reconfigure().
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h:
+
 2022-05-12  Loïc Le Page  <llepage@igalia.com>
 
         [GStreamer][VideoCapture] Add support for capturing encoded video streams from a webcam

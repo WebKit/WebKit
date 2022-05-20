@@ -26,33 +26,34 @@
 
 #include "GStreamerCapturer.h"
 
-#include <gst/video/video.h>
-
 namespace WebCore {
 
 class GStreamerVideoCapturer final : public GStreamerCapturer {
+    friend class GStreamerVideoCaptureSource;
 public:
     GStreamerVideoCapturer(GStreamerCaptureDevice);
-    GStreamerVideoCapturer(const char* source_factory, CaptureDevice::DeviceType);
+    GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType);
 
     GstElement* createSource() final;
     GstElement* createConverter() final;
     const char* name() final { return "Video"; }
 
-    bool setSize(int width, int height);
-    bool setFrameRate(double);
-    GstVideoInfo getBestFormat();
-
     using NodeAndFD = std::pair<uint32_t, int>;
 
-    void setPipewireNodeAndFD(const NodeAndFD& nodeAndFd) { m_nodeAndFd = nodeAndFd; }
-    bool feedingFromPipewire() const { return m_nodeAndFd.has_value(); }
-
 private:
+    bool setSize(int width, int height);
+    bool setFrameRate(double);
+    void reconfigure();
+
+    GstVideoInfo getBestFormat();
+
+    void setPipewireNodeAndFD(const NodeAndFD& nodeAndFd) { m_nodeAndFd = nodeAndFd; }
+    bool isCapturingDisplay() const { return m_nodeAndFd.has_value(); }
+
     std::optional<NodeAndFD> m_nodeAndFd;
     GRefPtr<GstElement> m_videoSrcMIMETypeFilter;
-    void adjustVideoSrcMIMEType();
 };
 
 } // namespace WebCore
+
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

@@ -146,7 +146,7 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
     g_signal_handlers_disconnect_by_func(m_capturer->sink(), reinterpret_cast<gpointer>(newSampleCallback), this);
     m_capturer->stop();
 
-    if (m_capturer->feedingFromPipewire()) {
+    if (m_capturer->isCapturingDisplay()) {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
         manager.stopSource(persistentID());
     }
@@ -163,6 +163,8 @@ void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
 
     if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate))
         m_capturer->setFrameRate(frameRate());
+
+    m_capturer->reconfigure();
 }
 
 void GStreamerVideoCaptureSource::sourceCapsChanged(const GstCaps* caps)
@@ -187,6 +189,7 @@ void GStreamerVideoCaptureSource::startProducingData()
         m_capturer->setSize(size().width(), size().height());
 
     m_capturer->setFrameRate(frameRate());
+    m_capturer->reconfigure();
     g_signal_connect(m_capturer->sink(), "new-sample", G_CALLBACK(newSampleCallback), this);
     m_capturer->play();
 }
