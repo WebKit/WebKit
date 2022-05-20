@@ -90,6 +90,8 @@
 
 - (NSString *)_serializedSelectionCaretBackgroundColorForTesting;
 
+- (BOOL)_hasResizeAssertion;
+
 @end
 
 #endif // TARGET_OS_IPHONE

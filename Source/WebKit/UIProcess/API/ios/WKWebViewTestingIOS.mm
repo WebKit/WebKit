@@ -481,6 +481,15 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return serializationForCSS(WebCore::colorFromCocoaColor(backgroundColor));
 }
 
+- (BOOL)_hasResizeAssertion
+{
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+    if (!_resizeAssertions.isEmpty())
+        return YES;
+#endif
+    return NO;
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -27,6 +27,7 @@
 
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 #if HAVE(MAC_CATALYST_LIVE_RESIZE)
@@ -34,8 +35,10 @@
 TEST(WKWebViewResize, DoesNotAssertInDeallocAfterChangingFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_FALSE([webView _hasResizeAssertion]);
 
     [webView setFrame:NSMakeRect(0, 0, 400, 300)];
+    EXPECT_TRUE([webView _hasResizeAssertion]);
 
     bool didThrow = false;
     @try {
@@ -49,8 +52,10 @@ TEST(WKWebViewResize, DoesNotAssertInDeallocAfterChangingFrame)
 TEST(WKWebViewResize, DoesNotAssertInDeallocAfterChangingBounds)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_FALSE([webView _hasResizeAssertion]);
 
     [webView setBounds:NSMakeRect(0, 0, 400, 300)];
+    EXPECT_TRUE([webView _hasResizeAssertion]);
 
     bool didThrow = false;
     @try {
@@ -59,6 +64,26 @@ TEST(WKWebViewResize, DoesNotAssertInDeallocAfterChangingBounds)
         didThrow = true;
     }
     EXPECT_FALSE(didThrow);
+}
+
+TEST(WKWebViewResize, RemovesAssertionsAfterMovingToWindow)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_FALSE([webView _hasResizeAssertion]);
+
+    [webView setFrame:NSMakeRect(0, 0, 400, 300)];
+    EXPECT_TRUE([webView _hasResizeAssertion]);
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 320, 568)]);
+
+    [window addSubview:webView.get()];
+    EXPECT_FALSE([webView _hasResizeAssertion]);
+
+    [webView setFrame:NSMakeRect(0, 0, 200, 150)];
+    EXPECT_TRUE([webView _hasResizeAssertion]);
+
+    [webView removeFromSuperview];
+    EXPECT_FALSE([webView _hasResizeAssertion]);
 }
 
 #endif // HAVE(MAC_CATALYST_LIVE_RESIZE)
