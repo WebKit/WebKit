@@ -125,31 +125,18 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
     };
 }
 
-void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity)
+uint64_t calculateURLCacheDiskCapacity(CacheModel cacheModel, uint64_t diskFreeSize)
 {
+    uint64_t urlCacheDiskCapacity;
+
     switch (cacheModel) {
     case CacheModel::DocumentViewer: {
-        // Foundation memory cache capacity (in bytes)
-        urlCacheMemoryCapacity = 0;
-
         // Disk cache capacity (in bytes)
         urlCacheDiskCapacity = 0;
 
         break;
     }
     case CacheModel::DocumentBrowser: {
-        uint64_t memorySize = ramSize() / MB;
-
-        // Foundation memory cache capacity (in bytes)
-        if (memorySize >= 2048)
-            urlCacheMemoryCapacity = 4 * MB;
-        else if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 2 * MB;
-        else if (memorySize >= 512)
-            urlCacheMemoryCapacity = 1 * MB;
-        else
-            urlCacheMemoryCapacity = 512 * KB;
-
         // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
             urlCacheDiskCapacity = 75 * MB;
@@ -163,26 +150,6 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
         break;
     }
     case CacheModel::PrimaryWebBrowser: {
-        uint64_t memorySize = ramSize() / MB;
-
-#if PLATFORM(IOS_FAMILY)
-        if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 16 * MB;
-        else
-            urlCacheMemoryCapacity = 8 * MB;
-#else
-        // Foundation memory cache capacity (in bytes)
-        // (These values are small because WebCore does most caching itself.)
-        if (memorySize >= 1024)
-            urlCacheMemoryCapacity = 4 * MB;
-        else if (memorySize >= 512)
-            urlCacheMemoryCapacity = 2 * MB;
-        else if (memorySize >= 256)
-            urlCacheMemoryCapacity = 1 * MB;
-        else
-            urlCacheMemoryCapacity = 512 * KB;
-#endif
-
         // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
             urlCacheDiskCapacity = 1 * GB;
@@ -202,6 +169,8 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
     default:
         ASSERT_NOT_REACHED();
     };
+
+    return urlCacheDiskCapacity;
 }
 
 } // namespace WebKit

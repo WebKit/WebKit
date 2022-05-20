@@ -64,15 +64,13 @@ static const AtomString& resourceType()
 
 static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
 {
-    unsigned urlCacheMemoryCapacity = 0;
-    uint64_t urlCacheDiskCapacity = 0;
     if (auto diskFreeSize = FileSystem::volumeFreeSpace(cachePath)) {
         // As a fudge factor, use 1000 instead of 1024, in case the reported byte
         // count doesn't align exactly to a megabyte boundary.
         *diskFreeSize /= KB * 1000;
-        calculateURLCacheSizes(cacheModel, *diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
+        return calculateURLCacheDiskCapacity(cacheModel, *diskFreeSize);
     }
-    return urlCacheDiskCapacity;
+    return 0;
 }
 
 RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
