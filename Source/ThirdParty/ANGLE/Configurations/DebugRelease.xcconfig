@@ -19,5 +19,7 @@ WK_RELOCATABLE_FRAMEWORKS = YES;
 
 WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 
+MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+
 WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 #include "../../../../Tools/ccache/ccache.xcconfig"
