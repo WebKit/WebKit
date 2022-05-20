@@ -25,9 +25,9 @@
 
 #include "config.h"
 
+#include <wtf/CompactPtr.h>
 #include "RefLogger.h"
 #include "Utilities.h"
-#include <wtf/CompactPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
