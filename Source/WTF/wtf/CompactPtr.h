@@ -163,7 +163,7 @@ public:
     {
 #if HAVE(36BIT_ADDRESS)
         ASSERT_UNDER_CONSTEXPR_CONTEXT(!(ptr & alignmentMask));
-        return static_cast<StorageSize>(ptr >> bitsShift);
+        return static_cast<uint32_t>(ptr >> bitsShift);
 #else
         return ptr;
 #endif
