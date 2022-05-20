@@ -164,6 +164,16 @@ function test()
     });
 
     addTestCase({
+        name: "Network.interceptRequest.Headers.Passthrough",
+        description: "Tests request headers passthrough",
+        expression: "postData('resources/intercept-echo.py')",
+        override: {
+            requestMethod: "POST",
+            requestData: "value=overridden",
+        },
+    });
+
+    addTestCase({
         name: "Network.interceptRequest.PostData",
         description: "Tests request post data interception",
         expression: "postData('resources/intercept-echo.py')",

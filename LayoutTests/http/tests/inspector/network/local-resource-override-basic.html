@@ -122,7 +122,7 @@ function test()
             responseBase64Encoded: true,
             responseStatusCode: 200,
             responseStatusText: "OK",
-            responseHeaders: {},
+            responseHeaders: {"Content-Type": "image/png"},
         }]
     });
 
@@ -210,6 +210,21 @@ function test()
             responseHeaders: {"X-Expected": "PASS"},
             isCaseSensitive: false,
             isRegex: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Headers.Passthrough",
+        description: "Load an override without modifying headers.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            responseMIMEType: "text/plain",
+            responseContent: "PASS",
+            responseBase64Encoded: false,
+            responseStatusCode: 200,
+            responseStatusText: "OK",
+            responseHeaders: {},
         }]
     });
 

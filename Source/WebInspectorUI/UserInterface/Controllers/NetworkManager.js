@@ -982,7 +982,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     requestId,
                     url: localResourceOverride.generateRequestRedirectURL(request.url) ?? undefined,
                     method: localResource.requestMethod ?? undefined,
-                    headers: localResource.requestHeaders,
+                    headers: !isEmptyObject(localResource.requestHeaders) ? localResource.requestHeaders : undefined,
                     postData: (WI.HTTPUtilities.RequestMethodsWithBody.has(localResource.requestMethod) && localResource.requestData) ? btoa(localResource.requestData) : undefined,
                 });
                 return;
@@ -1033,7 +1033,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     mimeType: revision.mimeType ?? undefined,
                     status: !isNaN(localResource.statusCode) ? localResource.statusCode : undefined,
                     statusText: !isNaN(localResource.statusCode) ? (localResource.statusText ?? "") : undefined,
-                    headers: localResource.responseHeaders,
+                    headers: !isEmptyObject(localResource.responseHeaders) ? localResource.responseHeaders : undefined,
                 });
                 return;
             }

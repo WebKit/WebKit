@@ -127,6 +127,26 @@ Response Headers:
   X-Expected: PASS
 Content: PASS
 
+-- Running test case: LocalResourceOverride.Headers.Passthrough
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Accept-Ranges: <filtered>
+  Connection: <filtered>
+  Content-Length: 29
+  Content-Type: text/plain
+  Date: <filtered>
+  ETag: <filtered>
+  Keep-Alive: <filtered>
+  Last-Modified: <filtered>
+  Server: <filtered>
+Content: PASS
+
 -- Running test case: LocalResourceOverride.404
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Triggering load...
