@@ -411,7 +411,8 @@ TEST(WTF_CompactRefPtr, ReturnValue)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-struct ConstRefCounted : RefCounted<ConstRefCounted> {
+struct ConstRefCounted alignas(16)
+    : RefCounted<ConstRefCounted> {
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
 

@@ -468,7 +468,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
     // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
 
-    TinyBloomFilter<uintptr_t> filter = m_vm.heap.objectSpace().blocks().filter();
+    TinyBloomFilter<> filter = m_vm.heap.objectSpace().blocks().filter();
 
     for (UnprocessedStackTrace& unprocessedStackTrace : m_unprocessedStackTraces) {
         m_stackTraces.append(StackTrace());

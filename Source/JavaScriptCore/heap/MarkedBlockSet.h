@@ -38,13 +38,13 @@ public:
     void add(MarkedBlock*);
     void remove(MarkedBlock*);
 
-    TinyBloomFilter<uintptr_t> filter() const;
+    TinyBloomFilter<> filter() const;
     const HashSet<MarkedBlock*>& set() const;
 
 private:
     void recomputeFilter();
 
-    TinyBloomFilter<uintptr_t> m_filter;
+    TinyBloomFilter<> m_filter;
     HashSet<MarkedBlock*> m_set;
 };
 
@@ -64,13 +64,13 @@ inline void MarkedBlockSet::remove(MarkedBlock* block)
 
 inline void MarkedBlockSet::recomputeFilter()
 {
-    TinyBloomFilter<uintptr_t> filter;
+    TinyBloomFilter<> filter;
     for (HashSet<MarkedBlock*>::iterator it = m_set.begin(); it != m_set.end(); ++it)
         filter.add(reinterpret_cast<uintptr_t>(*it));
     m_filter = filter;
 }
 
-inline TinyBloomFilter<uintptr_t> MarkedBlockSet::filter() const
+inline TinyBloomFilter<> MarkedBlockSet::filter() const
 {
     return m_filter;
 }

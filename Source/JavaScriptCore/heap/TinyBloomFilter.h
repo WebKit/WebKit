@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-template <typename Bits>
+template <typename Bits = uintptr_t>
 class TinyBloomFilter {
 public:
     TinyBloomFilter() = default;
