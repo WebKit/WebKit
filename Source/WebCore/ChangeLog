@@ -1,3 +1,17 @@
+2022-05-16  Loïc Le Page  <llepage@igalia.com>
+
+        REGRESSION(r294104): [GStreamer][VideoCapture] Webcam raw streams may hang up the video capture pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=240456
+
+        Reviewed by Philippe Normand.
+
+        When capturing a raw stream from a webcam, the pipeline may hang up because the decodebin3 cannot fix the upstream caps.
+        The webcam capsfilter should not only specify the captured mime-type (video/x-raw) but also the capture image dimensions.
+
+        Manually tested.
+
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+
 2022-05-15  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r294104): [GStreamer] getUserMedia broken
