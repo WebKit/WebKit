@@ -208,7 +208,7 @@ public:
         if (m_shouldStopOnEncodingErrors) {
             UErrorCode err = U_ZERO_ERROR;
             ucnv_setToUCallBack(&m_converter, UCNV_TO_U_CALLBACK_SUBSTITUTE, UCNV_SUB_STOP_ON_ILLEGAL, &m_savedAction, &m_savedContext, &err);
-            ASSERT(err == U_ZERO_ERROR);
+            ASSERT(U_SUCCESS(err));
         }
     }
     ~ErrorCallbackSetter()
@@ -220,7 +220,7 @@ public:
             ucnv_setToUCallBack(&m_converter, m_savedAction, m_savedContext, &oldAction, &oldContext, &err);
             ASSERT(oldAction == UCNV_TO_U_CALLBACK_SUBSTITUTE);
             ASSERT(!strcmp(static_cast<const char*>(oldContext), UCNV_SUB_STOP_ON_ILLEGAL));
-            ASSERT(err == U_ZERO_ERROR);
+            ASSERT(U_SUCCESS(err));
         }
     }
 
