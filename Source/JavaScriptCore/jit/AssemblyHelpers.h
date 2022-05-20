@@ -1933,7 +1933,7 @@ public:
         lshift64(TrustedImm32(4), scratch);
         return branchPtr(cond, left, Address(scratch));
 #else
-        (void)scratch;
+        UNUSED_PARAM(scratch);
         return branchPtr(cond, left, right);
 #endif
     }   
