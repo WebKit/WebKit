@@ -332,7 +332,8 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 {
     const Structure* structurePtr = reinterpret_cast<const Structure*>(structure.m_value);
 #if USE(JSVALUE64)
-    jit.store64(TrustedImm64(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+    jit.store32(TrustedImm32(StructureID::encode(structurePtr).bits()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+    jit.store32(TrustedImm32(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
     if (ASSERT_ENABLED) {
         Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id().bits()));
         jit.abortWithReason(AHStructureIDIsValid);
@@ -426,6 +427,15 @@ void AssemblyHelpers::emitLoadStructure(VM&, RegisterID source, RegisterID dest)
 {
     load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
     emitNonNullDecodeZeroExtendedStructureID(dest, dest);
+}
+
+void AssemblyHelpers::emitEncodeStructure(RegisterID source, RegisterID dest)
+{
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    urshift32(source, TrustedImm32(StructureID::encodeShiftAmount), dest);
+#elif CPU(ADDRESS64)
+    and32(TrustedImm32(static_cast<uint32_t>(StructureID::structureIDMask)), source, dest);
+#endif
 }
 
 void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath)

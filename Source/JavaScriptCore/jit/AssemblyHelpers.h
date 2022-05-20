@@ -1613,6 +1613,7 @@ public:
     void emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest);
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest);
     void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath);
+    void emitEncodeStructure(RegisterID source, RegisterID dest);
 
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {
@@ -1621,17 +1622,16 @@ public:
 
     void emitStoreStructureWithTypeInfo(RegisterID structure, RegisterID dest, RegisterID scratch)
     {
+        // Store the StructureID
 #if USE(JSVALUE64)
-        load64(MacroAssembler::Address(structure, Structure::structureIDOffset()), scratch);
-        store64(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+        emitEncodeStructure(structure, scratch);
+        store32(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
 #else
+        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
         // Store all the info flags using a single 32-bit wide load and store.
         load32(MacroAssembler::Address(structure, Structure::indexingModeIncludingHistoryOffset()), scratch);
         store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
-
-        // Store the StructureID
-        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#endif
     }
 
     static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest);

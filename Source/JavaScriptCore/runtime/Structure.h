@@ -232,9 +232,16 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const { ASSERT(m_blob.structureID() == StructureID::encode(this)); return m_blob.structureID(); }
+    StructureID id() const 
+    {
+#if PLATFORM(IOS_FAMILY)
+        static_assert(sizeof(*this) == 96);
+#endif
+        return StructureID::encode(this);
+    }
+
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
-    int64_t idBlob() const { return m_blob.blob(); }
+    int32_t idBlob() const { return m_blob.blob(); }
 
     bool isProxy() const
     {
@@ -651,11 +658,6 @@ public:
     }
     void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
-    static ptrdiff_t structureIDOffset()
-    {
-        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::structureIDOffset();
-    }
-
     static ptrdiff_t prototypeOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_prototype);
@@ -954,50 +956,45 @@ private:
 
     void clearCachedPrototypeChain();
 
-    static constexpr int s_maxTransitionLength = 64;
-    static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
+    static constexpr int s_maxTransitionLength = 64; // macOS|iOS: 4 bytes
+    static constexpr int s_maxTransitionLengthForNonEvalPutById = 512; // macOS|iOS: 4 bytes
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.
-    StructureIDBlob m_blob;
-    TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
+    StructureIDBlob m_blob; // macOS|iOS: 4 bytes
+    TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags; // macOS|iOS: 2 bytes
 
-    uint8_t m_inlineCapacity;
+    uint8_t m_inlineCapacity; // macOS|iOS: 1 byte
 
-    ConcurrentJSLock m_lock;
+    ConcurrentJSLock m_lock; // macOS|iOS: 1 byte
 
-    uint32_t m_bitField;
+    uint32_t m_bitField; // macOS|iOS: 4 bytes
 
-    WriteBarrier<JSGlobalObject> m_globalObject;
-    WriteBarrier<Unknown> m_prototype;
-    mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
+    uint16_t m_transitionOffset; // macOS|iOS: 2 bytes
+    uint16_t m_maxOffset; // macOS|iOS: 2 bytes
 
-    WriteBarrier<JSCell> m_previousOrRareData;
+    WriteBarrier<JSGlobalObject> m_globalObject; // macOS|iOS: 8 bytes
+    WriteBarrier<Unknown> m_prototype; // macOS|iOS: 8 bytes
+    mutable WriteBarrier<StructureChain> m_cachedPrototypeChain; // macOS|iOS: 8 bytes
 
-    CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
+    WriteBarrier<JSCell> m_previousOrRareData; // macOS|iOS: 8 bytes
 
-    CompactPtr<const ClassInfo> m_classInfo;
+    CompactRefPtr<UniquedStringImpl> m_transitionPropertyName; // macOS: 8 bytes, iOS: 4 bytes
 
-    StructureTransitionTable m_transitionTable;
+    CompactPtr<const ClassInfo> m_classInfo; // macOS|iOS: 8 bytes, iOS: 4 bytes
+
+    StructureTransitionTable m_transitionTable; // macOS|iOS: 8 bytes
 
     // Should be accessed through ensurePropertyTable(). During GC, it may be set to 0 by another thread.
     // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
-    WriteBarrier<PropertyTable> m_propertyTableUnsafe;
+    WriteBarrier<PropertyTable> m_propertyTableUnsafe; // macOS|iOS: 8 bytes
 
-    mutable InlineWatchpointSet m_transitionWatchpointSet;
+    mutable InlineWatchpointSet m_transitionWatchpointSet; // macOS|iOS: 8 bytes
 
     static_assert(firstOutOfLineOffset < 256);
 
-    uint16_t m_transitionOffset;
-    uint16_t m_maxOffset;
-
-    uint32_t m_propertyHash;
-    TinyBloomFilter m_seenProperties;
-#if PLATFORM(IOS_FAMILY)
-    static_assert(sizeof(m_classInfo) == 4);
-    static_assert(sizeof(m_transitionPropertyName) == 4);
-    static_assert(sizeof(m_seenProperties) == 4);
-#endif
+    uint32_t m_propertyHash; // 4
+    TinyBloomFilter m_seenProperties; // macOS|iOS: 8 bytes, iOS: 4 bytes
 
     friend class VMInspector;
     friend class JSDollarVMHelper;

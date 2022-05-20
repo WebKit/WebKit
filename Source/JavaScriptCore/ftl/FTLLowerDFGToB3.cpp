@@ -16835,6 +16835,16 @@ IGNORE_CLANG_WARNINGS_END
             object, m_heaps.JSCell_usefulBytes);
     }
 
+    LValue emitEncodeStructure(LValue structure)
+    {
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+        return m_out.lShr(structure, m_out.constInt32(StructureID::encodeShiftAmount));
+#elif CPU(ADDRESS64)
+        return m_out.bitAnd(structure, m_out.constInt32(static_cast<uint32_t>(StructureID::structureIDMask)));
+#endif
+        return structure;
+    }
+
     void storeStructure(LValue object, LValue structure)
     {
         if (structure->hasIntPtr()) {
@@ -16842,7 +16852,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        LValue id = m_out.load32(structure, m_heaps.Structure_structureID);
+        LValue id = emitEncodeStructure(structure);
         m_out.store32(id, object, m_heaps.JSCell_structureID);
 
         LValue blob = m_out.load32(structure, m_heaps.Structure_indexingModeIncludingHistory);
