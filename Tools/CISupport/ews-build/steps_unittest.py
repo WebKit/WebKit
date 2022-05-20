@@ -77,8 +77,10 @@ def mock_load_contributors(*args, **kwargs):
     return {
         'reviewer@apple.com': {'name': 'WebKit Reviewer', 'status': 'reviewer', 'email': 'reviewer@apple.com'},
         'webkit-reviewer': {'name': 'WebKit Reviewer', 'status': 'reviewer', 'email': 'reviewer@apple.com'},
+        'WebKit Reviewer': {'status': 'reviewer'},
         'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer', 'email': 'committer@webkit.org'},
         'webkit-commit-queue': {'name': 'WebKit Committer', 'status': 'committer', 'email': 'committer@webkit.org'},
+        'WebKit Committer': {'status': 'committer'},
     }, []
 
 
@@ -5944,6 +5946,7 @@ class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        Contributors.load = mock_load_contributors
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -5960,9 +5963,13 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
             + 0
-            + ExpectShell.log('stdio', stdout=''),
+            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
@@ -5981,9 +5988,13 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
             + 0
-            + ExpectShell.log('stdio', stdout=''),
+            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
@@ -6021,7 +6032,11 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
             + 0
             + ExpectShell.log('stdio', stdout='No reviewer information in commit message\n'),
         )
@@ -6044,11 +6059,66 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Unreviewed\\|Rubber-stamped by\\|Rubber stamped by\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
             + 0
-            + ExpectShell.log('stdio', stdout=''),
+            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='ChangeLog modified, WebKit only allows commit messages')
+        return self.runStep()
+
+    def test_invalid_reviewer(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
+            + 0
+            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Contributor.\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string="'WebKit Contributor' is not a reviewer")
+        return self.runStep()
+
+    def test_self_reviewer(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('author', 'WebKit Reviewer <reviewer@apple.com>')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)'"])
+            + 0
+            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string="'WebKit Reviewer <reviewer@apple.com>' cannot review their own change")
         return self.runStep()
 
 

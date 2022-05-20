@@ -479,6 +479,7 @@ class Contributors(object):
             if name and emails:
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
                 cls.contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
+                cls.contributors[name] = {'status': value.get('status')}
             if github_username and name and emails:
                 cls.contributors[github_username.lower()] = dict(
                     name=name,
@@ -4871,21 +4872,42 @@ class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return not self.doStepIf(step)
 
 
-class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
+class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     name = 'validate-commit-message'
     haltOnFailure = False
     flunkOnFailure = True
     OOPS_RE = 'OO*PP*S!'
     REVIEWED_STRINGS = (
         'Reviewed by',
-        'Unreviewed',
         'Rubber-stamped by',
         'Rubber stamped by',
+        'Unreviewed',
     )
     RE_CHANGELOG = br'^(\+\+\+)\s+(.*ChangeLog.*)'
+    BY_RE = re.compile(r'.+\s+by\s+(.+)$')
+    SPLIT_RE = re.compile(r'(,\s*)|( and )|\.')
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
+        self.contributors = {}
+
+    @classmethod
+    def extract_reviewers(cls, text):
+        reviewers = set()
+        stripped_text = ''
+        for line in text.splitlines():
+            match = cls.BY_RE.match(line)
+            if not match:
+                stripped_text += line + '\n'
+                continue
+            for person in cls.SPLIT_RE.split(match.group(1)):
+                if person and not cls.SPLIT_RE.match(person):
+                    reviewers.add(person)
+        return reviewers, stripped_text
+
+    def is_reviewer(self, name):
+        contributor = self.contributors.get(name)
+        return contributor and contributor['status'] == 'reviewer'
 
     def _files(self):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
@@ -4911,6 +4933,9 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
             "git log {} ^{} | grep -q '\\({}\\)' || echo 'No reviewer information in commit message'".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS),
+            ), "git log {} ^{} | grep '\\({}\\)'".format(
+                head_ref, base_ref,
+                '\\|'.join(self.REVIEWED_STRINGS[:-1]),
             ),
         ]
         for command in commands:
@@ -4925,7 +4950,15 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
             self.summary = 'Patches have no commit message'
             return rc
 
-        log_text = self.log_observer.getStdout().rstrip()
+        self.contributors, errors = Contributors.load(use_network=True)
+        for error in errors:
+            print(error)
+            self._addToLog('stdio', error)
+
+        reviewers, log_text = self.extract_reviewers(self.log_observer.getStdout())
+        log_text = log_text.rstrip()
+        author = self.getProperty('author', '')
+
         if any(['ChangeLog' in file for file in self._files()]):
             self.summary = 'ChangeLog modified, WebKit only allows commit messages'
             rc = FAILURE
@@ -4933,7 +4966,21 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin):
             self.summary = log_text
             rc = FAILURE
         elif rc == SUCCESS:
-            self.summary = 'Validated commit message'
+            if reviewers and not self.contributors:
+                self.summary = "Failed to load contributors.json, can't validate reviewers"
+                rc = FAILURE
+            elif reviewers and any([not self.is_reviewer(reviewer) for reviewer in reviewers]):
+                self.summary = "'{}' is not a reviewer"
+                for reviewer in reviewers:
+                    if not self.is_reviewer(reviewer):
+                        self.summary = self.summary.format(reviewer)
+                        break
+                rc = FAILURE
+            elif reviewers and author and any([author.startswith(reviewer) for reviewer in reviewers]):
+                self.summary = f"'{author}' cannot review their own change"
+                rc = FAILURE
+            else:
+                self.summary = 'Validated commit message'
         else:
             self.summary = 'Error parsing commit message'
             rc = FAILURE
