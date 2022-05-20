@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "AbortableTaskQueue.h"
 #include "AudioTrackPrivate.h"
 #include "TrackPrivateBaseGStreamer.h"
 
@@ -59,6 +60,7 @@ public:
     AtomString id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
+    AbortableTaskQueue m_taskQueue;
 
 protected:
     void updateConfigurationFromCaps();
