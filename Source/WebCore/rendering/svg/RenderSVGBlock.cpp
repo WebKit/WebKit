@@ -24,6 +24,7 @@
 
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGResource.h"
+#include "RenderView.h"
 #include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
