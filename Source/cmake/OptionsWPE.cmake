@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 35 1)
+SET_PROJECT_VERSION(2 37 0)
 
 # This is required because we use the DEPFILE argument to add_custom_command().
 # Remove after upgrading cmake_minimum_required() to 3.20.
@@ -167,9 +167,9 @@ endif ()
 endif ()
 
 if (WPE_API_VERSION VERSION_EQUAL "1.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 20 0 17)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 21 0 18)
 else ()
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 1 0 1)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 2 0 2)
 endif ()
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
