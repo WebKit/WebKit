@@ -30,6 +30,7 @@
 #pragma once
 
 #include "BasicShapes.h"
+#include "OffsetRotation.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
