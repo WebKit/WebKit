@@ -40,4 +40,24 @@ struct DerivedAlignedRefLogger : AlignedRefLogger {
     DerivedAlignedRefLogger(const char* name);
 };
 
+AlignedRefLogger::AlignedRefLogger(const char* name)
+    : name { *name }
+{
+}
+
+void AlignedRefLogger::ref()
+{
+    log() << "ref(" << &name << ") ";
+}
+
+void AlignedRefLogger::deref()
+{
+    log() << "deref(" << &name << ") ";
+}
+
+DerivedAlignedRefLogger::DerivedAlignedRefLogger(const char* name)
+    : AlignedRefLogger { name }
+{
+}
+
 }
