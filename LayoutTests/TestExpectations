@@ -2911,7 +2911,6 @@ imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.htt
 webkit.org/b/76173 fast/css3-text/css3-text-align-last [ Skip ]
 webkit.org/b/99945 fast/css3-text/css3-text-justify [ Skip ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent/text-indent-each-line-hanging.html [ Skip ]
-webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle [ Skip ]
 
 # Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
 webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
