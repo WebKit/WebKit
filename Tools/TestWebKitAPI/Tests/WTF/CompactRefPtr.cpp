@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/CompactRefPtr.h>
 
-#include "RefLogger.h"
+#include "AlignedRefLogger.h"
 #include "Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -39,13 +39,13 @@ namespace TestWebKitAPI {
 
 TEST(WTF_CompactRefPtr, Basic)
 {
-    DerivedRefLogger a("a");
+    DerivedAlignedRefLogger a("a");
 
-    CompactRefPtr<RefLogger> empty;
+    CompactRefPtr<AlignedRefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -53,61 +53,61 @@ TEST(WTF_CompactRefPtr, Basic)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr = &a;
+        CompactRefPtr<AlignedRefLogger> ptr = &a;
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2(p1);
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = p1;
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2(WTFMove(p1));
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<DerivedRefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = p1;
+        CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<DerivedRefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -117,10 +117,10 @@ TEST(WTF_CompactRefPtr, Basic)
 
 TEST(WTF_CompactRefPtr, AssignPassRefToCompactRefPtr)
 {
-    DerivedRefLogger a("a");
+    DerivedAlignedRefLogger a("a");
     {
-        Ref<RefLogger> passRef(a);
-        CompactRefPtr<RefLogger> ptr = WTFMove(passRef);
+        Ref<AlignedRefLogger> passRef(a);
+        CompactRefPtr<AlignedRefLogger> ptr = WTFMove(passRef);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -128,13 +128,13 @@ TEST(WTF_CompactRefPtr, AssignPassRefToCompactRefPtr)
 
 TEST(WTF_CompactRefPtr, Adopt)
 {
-    DerivedRefLogger a("a");
+    DerivedAlignedRefLogger a("a");
 
-    CompactRefPtr<RefLogger> empty;
+    CompactRefPtr<AlignedRefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        CompactRefPtr<RefLogger> ptr(adoptRef(&a));
+        CompactRefPtr<AlignedRefLogger> ptr(adoptRef(&a));
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -142,7 +142,7 @@ TEST(WTF_CompactRefPtr, Adopt)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr = adoptRef(&a);
+        CompactRefPtr<AlignedRefLogger> ptr = adoptRef(&a);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
@@ -150,13 +150,13 @@ TEST(WTF_CompactRefPtr, Adopt)
 
 TEST(WTF_CompactRefPtr, Assignment)
 {
-    DerivedRefLogger a("a");
-    RefLogger b("b");
-    DerivedRefLogger c("c");
+    DerivedAlignedRefLogger a("a");
+    AlignedRefLogger b("b");
+    DerivedAlignedRefLogger c("c");
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<RefLogger> p2(&b);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<AlignedRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -168,7 +168,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | ref(b) deref(a) | deref(b) deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &b;
@@ -178,7 +178,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&b);
@@ -188,7 +188,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -196,8 +196,8 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<RefLogger> p2(&b);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<AlignedRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -209,8 +209,8 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<DerivedRefLogger> p2(&c);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<DerivedAlignedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -222,7 +222,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | ref(c) deref(a) | deref(c) deref(c) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &c;
@@ -232,7 +232,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(c) deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&c);
@@ -242,8 +242,8 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<DerivedRefLogger> p2(&c);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<DerivedAlignedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -255,7 +255,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
 #if COMPILER(CLANG)
@@ -274,7 +274,7 @@ TEST(WTF_CompactRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(a) deref(a) | deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> ptr(&a);
+        CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -292,12 +292,12 @@ TEST(WTF_CompactRefPtr, Assignment)
 
 TEST(WTF_CompactRefPtr, Swap)
 {
-    RefLogger a("a");
-    RefLogger b("b");
+    AlignedRefLogger a("a");
+    AlignedRefLogger b("b");
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<RefLogger> p2(&b);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<AlignedRefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -309,8 +309,8 @@ TEST(WTF_CompactRefPtr, Swap)
     EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<RefLogger> p2(&b);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<AlignedRefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -324,11 +324,11 @@ TEST(WTF_CompactRefPtr, Swap)
 
 TEST(WTF_CompactRefPtr, ReleaseNonNull)
 {
-    RefLogger a("a");
+    AlignedRefLogger a("a");
 
     {
-        CompactRefPtr<RefLogger> refPtr = &a;
-        CompactRefPtr<RefLogger> ref = refPtr.releaseNonNull();
+        CompactRefPtr<AlignedRefLogger> refPtr = &a;
+        CompactRefPtr<AlignedRefLogger> ref = refPtr.releaseNonNull();
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -336,37 +336,37 @@ TEST(WTF_CompactRefPtr, ReleaseNonNull)
 
 TEST(WTF_CompactRefPtr, Release)
 {
-    DerivedRefLogger a("a");
-    RefLogger b("b");
-    DerivedRefLogger c("c");
+    DerivedAlignedRefLogger a("a");
+    AlignedRefLogger b("b");
+    DerivedAlignedRefLogger c("c");
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2(WTFMove(p1));
+        CompactRefPtr<AlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<DerivedRefLogger> p1 = &a;
-        CompactRefPtr<RefLogger> p2 = WTFMove(p1);
+        CompactRefPtr<DerivedAlignedRefLogger> p1 = &a;
+        CompactRefPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<RefLogger> p2(&b);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<AlignedRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -378,8 +378,8 @@ TEST(WTF_CompactRefPtr, Release)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<RefLogger> p1(&a);
-        CompactRefPtr<DerivedRefLogger> p2(&c);
+        CompactRefPtr<AlignedRefLogger> p1(&a);
+        CompactRefPtr<DerivedAlignedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -391,14 +391,14 @@ TEST(WTF_CompactRefPtr, Release)
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
 }
 
-static CompactRefPtr<RefLogger> f1(RefLogger& logger)
+static CompactRefPtr<AlignedRefLogger> f1(AlignedRefLogger& logger)
 {
-    return CompactRefPtr<RefLogger>(&logger);
+    return CompactRefPtr<AlignedRefLogger>(&logger);
 }
 
 TEST(WTF_CompactRefPtr, ReturnValue)
 {
-    DerivedRefLogger a("a");
+    DerivedAlignedRefLogger a("a");
 
     {
         f1(a);
@@ -440,45 +440,45 @@ TEST(WTF_CompactRefPtr, Const)
     Ref<const ConstRefCounted> i(returnRefCountedRef());
 }
 
-struct CompactRefPtrCheckingRefLogger : RefLogger {
-    CompactRefPtrCheckingRefLogger(const char* name);
+struct CompactRefPtrCheckingAlignedRefLogger : AlignedRefLogger {
+    CompactRefPtrCheckingAlignedRefLogger(const char* name);
     void ref();
     void deref();
-    const CompactRefPtr<CompactRefPtrCheckingRefLogger>* slotToCheck { nullptr };
+    const CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger>* slotToCheck { nullptr };
 };
 
-CompactRefPtrCheckingRefLogger::CompactRefPtrCheckingRefLogger(const char* name)
-    : RefLogger { name }
+CompactRefPtrCheckingAlignedRefLogger::CompactRefPtrCheckingAlignedRefLogger(const char* name)
+    : AlignedRefLogger { name }
 {
 }
 
-static const char* loggerName(const CompactRefPtr<CompactRefPtrCheckingRefLogger>& pointer)
+static const char* loggerName(const CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger>& pointer)
 {
     return pointer ? &pointer->name : "null";
 }
 
-void CompactRefPtrCheckingRefLogger::ref()
+void CompactRefPtrCheckingAlignedRefLogger::ref()
 {
     if (slotToCheck)
         log() << "slot=" << loggerName(*slotToCheck) << " ";
-    RefLogger::ref();
+    AlignedRefLogger::ref();
 }
 
-void CompactRefPtrCheckingRefLogger::deref()
+void CompactRefPtrCheckingAlignedRefLogger::deref()
 {
     if (slotToCheck)
         log() << "slot=" << loggerName(*slotToCheck) << " ";
-    RefLogger::deref();
+    AlignedRefLogger::deref();
 }
 
 TEST(WTF_CompactRefPtr, AssignBeforeDeref)
 {
-    CompactRefPtrCheckingRefLogger a("a");
-    CompactRefPtrCheckingRefLogger b("b");
+    CompactRefPtrCheckingAlignedRefLogger a("a");
+    CompactRefPtrCheckingAlignedRefLogger b("b");
 
     {
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> p1(&a);
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> p2(&b);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> p1(&a);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -494,7 +494,7 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) ref(b) | slot=a ref(b) slot=b deref(a) | deref(b) deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> ptr(&a);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         a.slotToCheck = &ptr;
@@ -508,7 +508,7 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) | slot=a ref(b) slot=b deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> ptr(&a);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         a.slotToCheck = &ptr;
         ptr = nullptr;
@@ -518,8 +518,8 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 
     {
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> p1(&a);
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> p2(&b);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> p1(&a);
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -537,10 +537,10 @@ TEST(WTF_CompactRefPtr, AssignBeforeDeref)
 
 TEST(WTF_CompactRefPtr, ReleaseNonNullBeforeDeref)
 {
-    CompactRefPtrCheckingRefLogger a("a");
+    CompactRefPtrCheckingAlignedRefLogger a("a");
 
     {
-        CompactRefPtr<CompactRefPtrCheckingRefLogger> refPtr = &a;
+        CompactRefPtr<CompactRefPtrCheckingAlignedRefLogger> refPtr = &a;
         a.slotToCheck = &refPtr;
         refPtr.releaseNonNull();
         a.slotToCheck = nullptr;

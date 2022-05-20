@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/CompactPtr.h>
 
-#include "RefLogger.h"
+#include "AlignedRefLogger.h"
 #include "Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -39,92 +39,92 @@ namespace TestWebKitAPI {
 
 TEST(WTF_CompactPtr, Basic)
 {
-    DerivedRefLogger a("a");
+    DerivedAlignedRefLogger a("a");
 
-    CompactPtr<RefLogger> empty;
+    CompactPtr<AlignedRefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        CompactPtr<RefLogger> ptr(&a);
+        CompactPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
     }
 
     {
-        CompactPtr<RefLogger> ptr = &a;
+        CompactPtr<AlignedRefLogger> ptr = &a;
         EXPECT_EQ(&a, ptr.get());
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2(p1);
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = p1;
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = WTFMove(p1);
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2(WTFMove(p1));
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2(WTFMove(p1));
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<DerivedRefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = p1;
+        CompactPtr<DerivedAlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<DerivedRefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = WTFMove(p1);
+        CompactPtr<DerivedAlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
 
     {
-        CompactPtr<RefLogger> ptr(&a);
+        CompactPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
     }
 
     {
-        CompactPtr<RefLogger> ptr(nullptr);
+        CompactPtr<AlignedRefLogger> ptr(nullptr);
         EXPECT_EQ(nullptr, ptr.get());
     }
 
     {
-        CompactPtr<RefLogger> ptr = nullptr;
+        CompactPtr<AlignedRefLogger> ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
     }
 }
 
 TEST(WTF_CompactPtr, Assignment)
 {
-    DerivedRefLogger a("a");
-    RefLogger b("b");
-    DerivedRefLogger c("c");
+    DerivedAlignedRefLogger a("a");
+    AlignedRefLogger b("b");
+    DerivedAlignedRefLogger c("c");
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = &b;
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = &b;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         p1 = p2;
@@ -133,22 +133,22 @@ TEST(WTF_CompactPtr, Assignment)
     }
 
     {
-        CompactPtr<RefLogger> ptr(&a);
+        CompactPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = &b;
         EXPECT_EQ(&b, ptr.get());
     }
 
     {
-        CompactPtr<RefLogger> ptr(&a);
+        CompactPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<RefLogger> p2 = &b;
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<AlignedRefLogger> p2 = &b;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         p1 = WTFMove(p2);
@@ -157,8 +157,8 @@ TEST(WTF_CompactPtr, Assignment)
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<DerivedRefLogger> p2 = &c;
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<DerivedAlignedRefLogger> p2 = &c;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         p1 = p2;
@@ -167,8 +167,8 @@ TEST(WTF_CompactPtr, Assignment)
     }
 
     {
-        CompactPtr<RefLogger> p1 = &a;
-        CompactPtr<DerivedRefLogger> p2 = &c;
+        CompactPtr<AlignedRefLogger> p1 = &a;
+        CompactPtr<DerivedAlignedRefLogger> p2 = &c;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         p1 = WTFMove(p2);
@@ -177,7 +177,7 @@ TEST(WTF_CompactPtr, Assignment)
     }
 
     {
-        CompactPtr<RefLogger> ptr(&a);
+        CompactPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = &c;
         EXPECT_EQ(&c, ptr.get());
