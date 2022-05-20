@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ClassInfo.h"
+#include "CompactBloomFilter.h"
 #include "Concurrency.h"
 #include "ConcurrentJSLock.h"
 #include "DeletePropertySlot.h"
@@ -41,7 +42,6 @@
 #include "StructureIDBlob.h"
 #include "StructureRareData.h"
 #include "StructureTransitionTable.h"
-#include "CompactBloomFilter.h"
 #include "Watchpoint.h"
 #include "WriteBarrierInlines.h"
 #include <wtf/Atomics.h>

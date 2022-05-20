@@ -6672,7 +6672,6 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
-				FF25B933283306DA00E03F4D /* CompactBloomFilter.h */,
 				FE912B4E2531193300FABDDF /* AbstractSlotVisitor.h */,
 				FE912B5025311AD100FABDDF /* AbstractSlotVisitorInlines.h */,
 				0FEC3C501F33A41600F59B6C /* AlignedMemoryAllocator.cpp */,
@@ -6702,6 +6701,7 @@
 				0FA762011DB9242300B7A2FD /* CollectionScope.h */,
 				0FD0E5E51E43D3470006AB08 /* CollectorPhase.cpp */,
 				0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */,
+				FF25B933283306DA00E03F4D /* CompactBloomFilter.h */,
 				0FDCE1271FAFA859006F3901 /* CompleteSubspace.cpp */,
 				0FDCE1281FAFA859006F3901 /* CompleteSubspace.h */,
 				0FD2FD9320B52BDD00F09441 /* CompleteSubspaceInlines.h */,
@@ -9988,6 +9988,7 @@
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
 				33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */,
+				FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */,
 				0FDCE12A1FAFA85F006F3901 /* CompleteSubspace.h in Headers */,
@@ -10809,7 +10810,6 @@
 				DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */,
 				99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */,
 				1409ECBF225E177400BEDD54 /* LeafExecutable.h in Headers */,
-				FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,

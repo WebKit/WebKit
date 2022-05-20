@@ -27,10 +27,10 @@
 
 #include "RefLogger.h"
 #include "Utilities.h"
+#include <wtf/CompactRefPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
-#include <wtf/CompactRefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
@@ -550,7 +550,7 @@ TEST(WTF_CompactRefPtr, ReleaseNonNullBeforeDeref)
 }
 
 // FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
-#if! PLATFORM(WIN)
+#if !PLATFORM(WIN)
 
 static bool done;
 static bool isDestroyedInMainThread;
