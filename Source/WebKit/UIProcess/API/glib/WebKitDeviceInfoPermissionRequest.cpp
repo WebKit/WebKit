@@ -37,7 +37,7 @@ using namespace WebKit;
  *
  * WebKitUserMediaPermissionRequest represents a request for
  * permission to whether WebKit should be allowed to access the user's
- * devices information when requested through the enumeraceDevices API.
+ * devices information when requested through the enumerateDevices API.
  *
  * When a WebKitDeviceInfoPermissionRequest is not handled by the user,
  * it is denied by default.
