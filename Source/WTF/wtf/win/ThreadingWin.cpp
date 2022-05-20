@@ -269,8 +269,8 @@ struct Thread::ThreadHolder {
         // deadlock.
         if (isMainThread())
             return;
-        thread->m_clientData = nullptr;
         if (thread) {
+            thread->m_clientData = nullptr;
             thread->specificStorage().destroySlots();
             thread->didExit();
         }
