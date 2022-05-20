@@ -987,7 +987,7 @@ private:
     static_assert(firstOutOfLineOffset < 256);
 
     uint32_t m_propertyHash;
-    TinyBloomFilter<WTF::Compacted<uint32_t>::StorageSize> m_seenProperties;
+    TinyBloomFilter<WTF::Compacted<ClassInfo>::StorageSize> m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
