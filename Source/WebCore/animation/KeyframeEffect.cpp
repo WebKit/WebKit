@@ -519,7 +519,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
                 keyframeEffectOptions.direction
             };
 
-            if (document.settings().webAnimationsCompositeOperationsEnabled()) {
+            if (document.settings().webAnimationsIterationCompositeEnabled()) {
                 keyframeEffect->setComposite(keyframeEffectOptions.composite);
                 keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
             }

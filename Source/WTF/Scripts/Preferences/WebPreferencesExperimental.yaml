@@ -1576,6 +1576,18 @@ WebAnimationsCustomFrameRateEnabled:
     WebCore:
       default: false
 
+WebAnimationsIterationCompositeEnabled:
+  type: bool
+  humanReadableName: "Web Animations iteration composite"
+  humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebAnimationsMutableTimelinesEnabled:
   type: bool
   humanReadableName: "Web Animations mutable timelines"
