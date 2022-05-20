@@ -542,7 +542,10 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
-    NSAccessibilityUnregisterUniqueIdForUIElement(self);
+    // Only unregister this wrapper if the underlying object or cache is being destroyed. Unregistering it in other cases (like `ElementChanged`)
+    // would cause AX clients to get a notification that this wrapper was destroyed, which wouldn't be true.
+    if (detachmentType == AccessibilityDetachmentType::ElementDestroyed || detachmentType == AccessibilityDetachmentType::CacheDestroyed)
+        NSAccessibilityUnregisterUniqueIdForUIElement(self);
     [super detachIsolatedObject:detachmentType];
 }
 #endif
