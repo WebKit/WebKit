@@ -34,6 +34,8 @@ namespace WTF {
 
 template <typename T, typename Traits = CompactPtrTraits<T>>
 class CompactPtr {
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
     ALWAYS_INLINE constexpr CompactPtr()
         : m_ptr(nullptr)
@@ -55,8 +57,20 @@ public:
     {
     }
 
+    template <typename X, typename Y>
+    ALWAYS_INLINE CompactPtr(const CompactPtr<X, Y>& o)
+        : m_ptr(o.get())
+    {
+    }
+
     ALWAYS_INLINE CompactPtr(CompactPtr&& o)
         : m_ptr(o.m_ptr)
+    {
+    }
+
+    template <typename X, typename Y>
+    ALWAYS_INLINE CompactPtr(CompactPtr<X, Y>&& o)
+        : m_ptr(o.get())
     {
     }
 
@@ -75,52 +89,53 @@ public:
 
     explicit operator bool() const { return !!m_ptr; }
 
-    CompactPtr& operator=(std::nullptr_t)
+    CompactPtr<T>& operator=(std::nullptr_t)
     {
         Traits::exchange(m_ptr, nullptr);
         return *this;
     }
 
-    CompactPtr& operator=(const CompactPtr& o)
+    CompactPtr<T>& operator=(const CompactPtr& o)
     {
-        CompactPtr ptr = o;
-        Traits::swap(m_ptr, ptr);
+        m_ptr = o.m_ptr;
         return *this;
     }
 
-    CompactPtr& operator=(T* optr)
+    CompactPtr<T>& operator=(T* optr)
     {
-        CompactPtr ptr = optr;
-        Traits::swap(m_ptr, ptr);
-        return *this;
-    }
-
-    template <typename X, typename Y>
-    CompactPtr& operator=(const CompactPtr<X>& o)
-    {
-        CompactPtr ptr = o;
-        Traits::swap(m_ptr, ptr);
-        return *this;
-    }
-
-    CompactPtr& operator=(CompactPtr&& o)
-    {
-        CompactPtr ptr = WTFMove(o);
-        Traits::swap(m_ptr, ptr);
+        CompactPtr copy = optr;
+        Traits::swap(m_ptr, copy.m_ptr);
         return *this;
     }
 
     template <typename X, typename Y>
-    CompactPtr& operator=(CompactPtr<X>&& o)
+    CompactPtr<T>& operator=(const CompactPtr<X, Y>& o)
     {
-        CompactPtr ptr = WTFMove(o);
-        Traits::swap(m_ptr, ptr);
+        CompactPtr copy = o;
+        Traits::swap(m_ptr, copy.m_ptr);
+        return *this;
+    }
+
+    CompactPtr<T>& operator=(CompactPtr&& o)
+    {
+        m_ptr = o.m_ptr;
+        return *this;
+    }
+
+    template <typename X, typename Y>
+    CompactPtr<T>& operator=(CompactPtr<X, Y>&& o)
+    {
+        CompactPtr copy = o;
+        Traits::swap(m_ptr, copy.m_ptr);
         return *this;
     }
 
     T* get() const { return Traits::unwrap(m_ptr); }
 
 private:
+    template <typename X, typename Y>
+    friend class CompactPtr;
+
     typename Traits::StorageType m_ptr;
 };
 

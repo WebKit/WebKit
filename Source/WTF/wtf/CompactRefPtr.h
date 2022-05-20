@@ -44,6 +44,7 @@ public:
 #else
     using StorageSize = T*;
 #endif
+    static constexpr bool isCompactedType = true;
 
     Compacted()
     {
@@ -65,6 +66,10 @@ public:
         set(ptr);
         return *this;
     }
+
+    T* operator->() const { return get(); }
+
+    T& operator*() const { return *get(); }
 
     bool operator!() const { return !get(); }
 
@@ -91,6 +96,15 @@ public:
     void swap(nullptr_t) { set(nullptr); }
 
     void swap(Compacted& other)
+    {
+        T* t1 = get();
+        T* t2 = other.get();
+        set(t2);
+        other.set(t1);
+    }
+
+    template <typename Other, typename = std::enable_if_t<Other::isCompactedType>>
+    void swap(Other& other)
     {
         T* t1 = get();
         T* t2 = other.get();
