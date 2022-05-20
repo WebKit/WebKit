@@ -16838,9 +16838,9 @@ IGNORE_CLANG_WARNINGS_END
     LValue emitEncodeStructure(LValue structure)
     {
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-        return m_out.lShr(structure, m_out.constInt32(StructureID::encodeShiftAmount));
+        return m_out.castToInt32(m_out.lShr(structure, m_out.constInt32(StructureID::encodeShiftAmount)));
 #elif CPU(ADDRESS64)
-        return m_out.bitAnd(structure, m_out.constInt32(static_cast<uint32_t>(StructureID::structureIDMask)));
+        return m_out.castToInt32(m_out.bitAnd(structure, m_out.constInt64(StructureID::structureIDMask)));
 #endif
         return structure;
     }
