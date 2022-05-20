@@ -2128,7 +2128,6 @@
 		FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = FF25B933283306DA00E03F4D /* CompactBloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -5784,7 +5783,6 @@
 		FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTrapsInlines.h; sourceTree = "<group>"; };
 		FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionExpectation.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
-		FF25B933283306DA00E03F4D /* CompactBloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactBloomFilter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6701,7 +6699,6 @@
 				0FA762011DB9242300B7A2FD /* CollectionScope.h */,
 				0FD0E5E51E43D3470006AB08 /* CollectorPhase.cpp */,
 				0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */,
-				FF25B933283306DA00E03F4D /* CompactBloomFilter.h */,
 				0FDCE1271FAFA859006F3901 /* CompleteSubspace.cpp */,
 				0FDCE1281FAFA859006F3901 /* CompleteSubspace.h */,
 				0FD2FD9320B52BDD00F09441 /* CompleteSubspaceInlines.h */,
@@ -9988,7 +9985,6 @@
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
 				33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */,
-				FF25B934283306DB00E03F4D /* CompactBloomFilter.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */,
 				0FDCE12A1FAFA85F006F3901 /* CompleteSubspace.h in Headers */,

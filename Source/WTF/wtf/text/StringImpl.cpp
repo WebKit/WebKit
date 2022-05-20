@@ -25,7 +25,6 @@
 #include "config.h"
 #include <wtf/text/StringImpl.h>
 
-#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
@@ -46,7 +45,7 @@ namespace WTF {
 
 using namespace Unicode;
 
-static_assert(sizeof(StringImpl) == roundUpToPowerOfTwoMultiple(2 * sizeof(int) + 2 * sizeof(void*), 16), "StringImpl should stay small");
+static_assert(sizeof(StringImpl) == 32, "StringImpl should stay small");
 
 #if STRING_STATS
 StringStats StringImpl::m_stringStats;

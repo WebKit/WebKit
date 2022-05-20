@@ -47,6 +47,7 @@ class Compacted {
 
 public:
 #if HAVE(36BIT_ADDRESS)
+    static_assert(alignof(T) >= 16);
     using StorageSize = uint32_t;
 #else
     using StorageSize = uintptr_t;
@@ -129,7 +130,7 @@ public:
     static ALWAYS_INLINE constexpr StorageSize encode(uintptr_t ptr)
     {
 #if HAVE(36BIT_ADDRESS)
-        static_assert(!(ptr & 0xF));
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(!(ptr & 0xF));
         return static_cast<StorageSize>(ptr >> 4);
 #else
         return ptr;
