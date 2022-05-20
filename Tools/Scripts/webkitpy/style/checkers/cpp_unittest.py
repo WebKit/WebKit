@@ -4333,6 +4333,21 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum class Requester { Main, XHR };''',
             '')
 
+        self.assert_lint(
+            '''enum class CommonAbbreviations { AM, CF, PM, URL, XHR };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum class CommonAbbreviationsMultiline {
+                    AM,
+                    CF,
+                    PM,
+                    URL,
+                    XHR
+                };''',
+            '')
+
         self.assert_multi_line_lint(
             '''\
                 enum Foo {
