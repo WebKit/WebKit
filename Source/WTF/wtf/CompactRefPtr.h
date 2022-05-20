@@ -121,8 +121,8 @@ public:
 
     static ALWAYS_INLINE constexpr StorageSize encode(uintptr_t ptr)
     {
-        ASSERT(!(ptr & 0xF));
 #if PLATFORM(IOS_FAMILY)
+        ASSERT(!(ptr & 0xF));
         return static_cast<StorageSize>(ptr >> 4);
 #else
         return ptr;
