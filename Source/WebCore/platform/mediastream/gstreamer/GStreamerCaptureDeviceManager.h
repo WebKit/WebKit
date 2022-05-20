@@ -26,9 +26,12 @@
 #include "DisplayCaptureManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
+#include "GStreamerVideoCapturer.h"
 #include "RealtimeMediaSourceFactory.h"
 
 namespace WebCore {
+
+using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
 public:
@@ -82,35 +85,37 @@ public:
     void stopSource(const String& persistentID);
 
 protected:
-    void notifyResponse() { m_currentResponseCallback(); }
+    void notifyResponse(GVariant* parameters) { m_currentResponseCallback(parameters); }
 
 private:
     GStreamerDisplayCaptureDeviceManager();
     ~GStreamerDisplayCaptureDeviceManager();
 
-    void waitResponseSignal(const char* objectPath);
+    using ResponseCallback = CompletionHandler<void(GVariant*)>;
+
+    void waitResponseSignal(const char* objectPath, ResponseCallback&& = [](GVariant*) { });
 
     Vector<CaptureDevice> m_devices;
 
     struct Session {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Session);
-        Session(int fd, String&& path)
-            : fd(fd)
+        Session(const NodeAndFD& nodeAndFd, String&& path)
+            : nodeAndFd(nodeAndFd)
             , path(WTFMove(path)) { }
 
         ~Session()
         {
-            close(fd);
+            close(nodeAndFd.second);
         }
 
-        int fd;
+        NodeAndFD nodeAndFd;
         String path;
     };
     HashMap<String, std::unique_ptr<Session>> m_sessions;
 
     GRefPtr<GDBusProxy> m_proxy;
-    CompletionHandler<void()> m_currentResponseCallback;
+    ResponseCallback m_currentResponseCallback;
 };
 }
 

@@ -97,9 +97,9 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Stri
     return CaptureSourceOrError(WTFMove(source));
 }
 
-CaptureSourceOrError GStreamerVideoCaptureSource::createPipewireSource(String&& deviceID, int fd, String&& hashSalt, const MediaConstraints* constraints, CaptureDevice::DeviceType deviceType)
+CaptureSourceOrError GStreamerVideoCaptureSource::createPipewireSource(String&& deviceID, const NodeAndFD& nodeAndFd, String&& hashSalt, const MediaConstraints* constraints, CaptureDevice::DeviceType deviceType)
 {
-    auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(deviceID), { }, WTFMove(hashSalt), "pipewiresrc", deviceType, fd));
+    auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(deviceID), { }, WTFMove(hashSalt), "pipewiresrc", deviceType, nodeAndFd));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return WTFMove(result->badConstraint);
@@ -119,13 +119,13 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
     return factory.get();
 }
 
-GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, int fd)
+GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
     : RealtimeVideoCaptureSource(WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_capturer(makeUnique<GStreamerVideoCapturer>(sourceFactory, deviceType))
     , m_deviceType(deviceType)
 {
     initializeDebugCategory();
-    m_capturer->setPipewireFD(fd);
+    m_capturer->setPipewireNodeAndFD(nodeAndFd);
     m_capturer->addObserver(*this);
 }
 
@@ -146,7 +146,7 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
     g_signal_handlers_disconnect_by_func(m_capturer->sink(), reinterpret_cast<gpointer>(newSampleCallback), this);
     m_capturer->stop();
 
-    if (auto fd = m_capturer->pipewireFD()) {
+    if (m_capturer->feedingFromPipewire()) {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
         manager.stopSource(persistentID());
     }
