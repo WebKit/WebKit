@@ -46,9 +46,9 @@ from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, Analyze
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CommitPatch, CompileJSCWithoutChange,
-                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
+                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
                    DetermineAuthor, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard, GitSvnFetch,
+                   FetchBranches, FindModifiedLayoutTests, GitHub, GitResetHard, GitSvnFetch,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, ResetGitSvn, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -58,7 +58,7 @@ from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, Analyze
                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutChangeRedTree,
                    RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateCommitMessage, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, ValidateChange,
+                   UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange,
                    VerifyGitHubIntegrity, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -422,43 +422,6 @@ class TestApplyWatchList(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to apply watchlist')
         return self.runStep()
-
-
-class TestValidateChangeLogAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(ValidateChangeLogAndReviewer())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=180,
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive'])
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Validated ChangeLog and Reviewer')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(ValidateChangeLogAndReviewer())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=180,
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive'])
-            + ExpectShell.log('stdio', stdout='ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='ChangeLog validation failed')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.\n')
-        self.assertEqual(self.getProperty('build_finish_summary'), 'ChangeLog validation failed')
-        return rc
 
 
 class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
@@ -4934,125 +4897,6 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.runStep()
-
-class TestFindModifiedChangeLogs(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_modified_changelogs(self):
-        self.setupStep(FindModifiedChangeLogs())
-        self.assertEqual(FindModifiedChangeLogs.haltOnFailure, False)
-        self.setProperty('buildername', 'Commit-Queue')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=180,
-                        logEnviron=False,
-                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
-            ExpectShell.log('stdio', stdout='''M	Source/WebCore/ChangeLog
-M	Source/WebCore/layout/blockformatting/BlockFormattingContext.h
-M	Source/WebCore/layout/blockformatting/BlockMarginCollapse.cpp
-M	Tools/ChangeLog
-M	Tools/TestWebKitAPI/CMakeLists.txt''') +
-            0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('modified_changelogs'), ['Source/WebCore/ChangeLog', 'Tools/ChangeLog'])
-        self.assertEqual(self.getProperty('comment_text'), None)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
-        return rc
-
-    def test_success_added_changelog(self):
-        self.setupStep(FindModifiedChangeLogs())
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=180,
-                        logEnviron=False,
-                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
-            ExpectShell.log('stdio', stdout='''A	Tools/Scripts/ChangeLog
-M	Tools/Scripts/run-api-tests''') +
-            0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('modified_changelogs'), ['Tools/Scripts/ChangeLog'])
-        self.assertEqual(self.getProperty('comment_text'), None)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
-        return rc
-
-    def test_failure(self):
-        self.setupStep(FindModifiedChangeLogs())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('buildername', 'Commit-Queue')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=180,
-                        logEnviron=False,
-                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
-            ExpectShell.log('stdio', stdout='Unexpected failure') +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to find any modified ChangeLog in Patch 1234')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Unable to find any modified ChangeLog in Attachment 1234')
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Unable to find any modified ChangeLog in Patch 1234')
-        return rc
-
-
-class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(CreateLocalGITCommit())
-        self.assertEqual(CreateLocalGITCommit.haltOnFailure, False)
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog', 'Source/WebCore/ChangeLog'])
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        logEnviron=False,
-                        command='perl Tools/Scripts/commit-log-editor --print-log Tools/Scripts/ChangeLog Source/WebCore/ChangeLog | git commit --all -F -') +
-            0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Created local git commit')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), None)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
-        return rc
-
-    def test_failure_no_changelog(self):
-        self.setupStep(CreateLocalGITCommit())
-        self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=FAILURE, state_string='No modified ChangeLog file found for Patch 1234')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(CreateLocalGITCommit())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog'])
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        logEnviron=False,
-                        command='perl Tools/Scripts/commit-log-editor --print-log Tools/Scripts/ChangeLog | git commit --all -F -') +
-            ExpectShell.log('stdio', stdout='Unexpected failure') +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to create git commit')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Failed to create git commit for Attachment 1234')
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to create git commit for Patch 1234')
-        return rc
 
 
 class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
