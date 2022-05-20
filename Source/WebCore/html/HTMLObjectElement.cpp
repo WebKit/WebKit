@@ -41,7 +41,6 @@
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"

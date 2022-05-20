@@ -145,7 +145,6 @@ class PerformanceMonitor;
 class PermissionController;
 class PluginData;
 class PluginInfoProvider;
-class PluginViewBase;
 class PointerCaptureController;
 class PointerLockController;
 class ProgressTracker;
@@ -990,8 +989,6 @@ private:
 #if ENABLE(VIDEO)
     void playbackControlsManagerUpdateTimerFired();
 #endif
-
-    Vector<Ref<PluginViewBase>> pluginViews();
 
     void handleLowModePowerChange(bool);
 

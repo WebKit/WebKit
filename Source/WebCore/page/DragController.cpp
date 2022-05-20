@@ -503,7 +503,7 @@ std::optional<DragOperation> DragController::operationForLoad(const DragData& dr
 
     bool pluginDocumentAcceptsDrags = false;
     if (auto* pluginDocument = dynamicDowncast<PluginDocument>(document)) {
-        if (auto* pluginView = dynamicDowncast<PluginViewBase>(pluginDocument->pluginWidget()))
+        if (auto* pluginView = pluginDocument->pluginWidget())
             pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();
     }
 

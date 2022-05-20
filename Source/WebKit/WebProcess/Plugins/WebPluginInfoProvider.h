@@ -26,23 +26,19 @@
 #pragma once
 
 #include <WebCore/PluginInfoProvider.h>
-#include <wtf/HashMap.h>
 
 namespace WebKit {
 
 class WebPluginInfoProvider final : public WebCore::PluginInfoProvider {
-    friend NeverDestroyed<WebPluginInfoProvider>;
-
 public:
     static WebPluginInfoProvider& singleton();
-    virtual ~WebPluginInfoProvider();
 
 private:
-    WebPluginInfoProvider();
+    WebPluginInfoProvider() = default;
 
     Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
     Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const URL&) final;
-    void refreshPlugins() override;
+    void refreshPlugins() final;
 };
 
 }

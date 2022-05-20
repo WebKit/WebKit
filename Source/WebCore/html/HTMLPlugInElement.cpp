@@ -112,13 +112,13 @@ JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
     return m_instance.get();
 }
 
-Widget* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
+PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
 {
     RenderWidget* renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : this->renderWidget();
     if (!renderWidget)
         return nullptr;
 
-    return renderWidget->widget();
+    return dynamicDowncast<PluginViewBase>(renderWidget->widget());
 }
 
 RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
@@ -187,37 +187,12 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
 
 bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent*) const
 {
-    // FIXME: Why is this check needed?
-    if (!document().page())
-        return false;
-
-    RefPtr<Widget> widget = pluginWidget();
-    if (!is<PluginViewBase>(widget))
-        return false;
-
-    return downcast<PluginViewBase>(*widget).supportsKeyboardFocus();
+    return false;
 }
 
 bool HTMLPlugInElement::isPluginElement() const
 {
     return true;
-}
-
-bool HTMLPlugInElement::isUserObservable() const
-{
-    // No widget - can't be anything to see or hear here.
-    RefPtr<Widget> widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
-    if (!is<PluginViewBase>(widget))
-        return false;
-
-    PluginViewBase& pluginView = downcast<PluginViewBase>(*widget);
-
-    // If audio is playing (or might be) then the plugin is detectable.
-    if (pluginView.audioHardwareActivity() != AudioHardwareActivityType::IsInactive)
-        return true;
-
-    // If the plugin is visible and not vanishingly small in either dimension it is detectable.
-    return pluginView.isVisible() && pluginView.width() > 2 && pluginView.height() > 2;
 }
 
 bool HTMLPlugInElement::supportsFocus() const
@@ -360,15 +335,6 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     m_pluginReplacement = replacement->create(*this, paramNames, paramValues);
     setDisplayState(PreparingPluginReplacement);
     return true;
-}
-
-bool HTMLPlugInElement::isBelowSizeThreshold() const
-{
-    auto* renderObject = renderer();
-    if (!is<RenderEmbeddedObject>(renderObject))
-        return true;
-    auto& renderEmbeddedObject = downcast<RenderEmbeddedObject>(*renderObject);
-    return renderEmbeddedObject.isPluginUnavailable() && renderEmbeddedObject.pluginUnavailabilityReason() == RenderEmbeddedObject::PluginTooSmall;
 }
 
 bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)

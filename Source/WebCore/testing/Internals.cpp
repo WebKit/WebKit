@@ -4215,11 +4215,6 @@ bool Internals::isPluginSnapshotted(Element&)
     return false;
 }
 
-bool Internals::pluginIsBelowSizeThreshold(Element& element)
-{
-    return is<HTMLPlugInElement>(element) && downcast<HTMLPlugInElement>(element).isBelowSizeThreshold();
-}
-
 #if ENABLE(MEDIA_SOURCE)
 
 void Internals::initializeMockMediaSource()

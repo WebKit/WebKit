@@ -24,29 +24,20 @@
 
 #pragma once
 
-#include "AudioHardwareListener.h"
-#include "BridgeJSC.h"
 #include "PlatformLayer.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
-#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 typedef struct objc_object* id;
 #endif
 
-namespace JSC {
-    class CallFrame;
-    class JSGlobalObject;
-    class JSObject;
-}
-
 namespace WebCore {
 
+class Element;
 class Scrollbar;
 
-// PluginViewBase is a widget that all plug-in views inherit from, both in Webkit and WebKit2.
-// It's intended as a stopgap measure until we can merge all plug-in views into a single plug-in view.
+// FIXME: Move these virtual functions all into the Widget class and get rid of this class.
 class PluginViewBase : public Widget {
 public:
     virtual PlatformLayer* platformLayer() const { return 0; }
@@ -56,27 +47,13 @@ public:
     virtual void detachPluginLayer() { }
 #endif
 
-    virtual void storageBlockingStateChanged() { }
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
 
-    // A plug-in can ask WebKit to handle scrollbars for it.
-    virtual Scrollbar* horizontalScrollbar() { return 0; }
-    virtual Scrollbar* verticalScrollbar() { return 0; }
+    virtual Scrollbar* horizontalScrollbar() { return nullptr; }
+    virtual Scrollbar* verticalScrollbar() { return nullptr; }
 
-    // FIXME: This is a hack that works around the fact that the WebKit2 PluginView isn't a ScrollableArea.
     virtual bool wantsWheelEvents() { return false; }
-    virtual bool supportsKeyboardFocus() const { return false; }
-
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
-
-    bool isPluginViewBase() const override { return true; }
-
-    virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }
-
-    virtual void setJavaScriptPaused(bool) { }
-
-    virtual RefPtr<JSC::Bindings::Instance> bindingInstance() { return nullptr; }
-    
     virtual void willDetachRenderer() { }
 
 #if PLATFORM(COCOA)
@@ -85,6 +62,9 @@ public:
     
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
+
+private:
+    bool isPluginViewBase() const final { return true; }
 };
 
 } // namespace WebCore

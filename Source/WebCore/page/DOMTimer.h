@@ -37,7 +37,6 @@ namespace WebCore {
 
 class DOMTimerFireState;
 class Document;
-class HTMLPlugInElement;
 class ScheduledAction;
 
 class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase {
@@ -62,7 +61,7 @@ public:
     // setting for the context has changed).
     void updateTimerIntervalIfNecessary();
 
-    static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
+    static void scriptDidInteractWithPlugin();
 
 private:
     DOMTimer(ScriptExecutionContext&, Function<void(ScriptExecutionContext&)>&&, Seconds interval, bool singleShot);

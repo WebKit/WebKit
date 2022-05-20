@@ -605,12 +605,6 @@ void WebPage::getSelectionContext(CompletionHandler<void(const String&, const St
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
-    if (!m_page)
-        return nil;
-    
-    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame()))
-        return pluginView->accessibilityObject();
-    
     return nil;
 }
     

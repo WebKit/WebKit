@@ -275,9 +275,15 @@ private:
 
     void didCreateWindow(WebCore::DOMWindow&) final;
 
+    inline bool hasPlugInView() const;
+
     Ref<WebFrame> m_frame;
+
+#if ENABLE(PDFKIT_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };
+#endif
+
     bool m_didCompletePageTransition { false };
     bool m_frameHasCustomContentProvider { false };
     bool m_frameCameFromBackForwardCache { false };
@@ -307,6 +313,7 @@ inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient& 
 {
     return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebFrameLoaderClient*>(&client);
 }
+
 inline const WebFrameLoaderClient* toWebFrameLoaderClient(const WebCore::FrameLoaderClient& client)
 {
     return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebFrameLoaderClient*>(&client);

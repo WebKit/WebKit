@@ -788,7 +788,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean isPluginUnavailabilityIndicatorObscured(Element element);
     DOMString unavailablePluginReplacementText(Element element);
     boolean isPluginSnapshotted(Element element);
-    boolean pluginIsBelowSizeThreshold(Element element);
 
     DOMRect selectionBounds();
     undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);

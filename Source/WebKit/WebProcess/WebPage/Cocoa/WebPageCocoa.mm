@@ -118,10 +118,12 @@ void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bo
     
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
-    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame())) {
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;
     }
+#endif
     
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
@@ -511,23 +513,19 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExten
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
+#if !ENABLE(PDFKIT_PLUGIN)
+    return completionHandler({ });
+#else
     auto* webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
         return completionHandler({ });
 
-    auto* coreFrame = webFrame->coreFrame();
-    if (!coreFrame)
-        return completionHandler({ });
-
-    auto* pluginView = pluginViewForFrame(coreFrame);
+    auto* pluginView = pluginViewForFrame(webFrame->coreFrame());
     if (!pluginView)
         return completionHandler({ });
     
-    auto* plugin = pluginView->plugin();
-    if (!plugin)
-        return completionHandler({ });
-
-    completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
+    completionHandler(FloatSize(pluginView->pdfDocumentSizeForPrinting()));
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)

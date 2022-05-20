@@ -781,10 +781,8 @@ WebProcess/Network/webrtc/WebRTCResolver.cpp
 WebProcess/Notifications/NotificationPermissionRequestManager.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
 
-// TODO: These files should be unified once GTK's PluginProcess2 is removed.
-WebProcess/Plugins/Plugin.cpp @no-unify
-WebProcess/Plugins/PluginView.cpp @no-unify
-WebProcess/Plugins/WebPluginInfoProvider.cpp @no-unify
+WebProcess/Plugins/PluginView.cpp
+WebProcess/Plugins/WebPluginInfoProvider.cpp
 
 WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
 

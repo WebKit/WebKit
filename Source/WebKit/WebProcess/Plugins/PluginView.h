@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,78 +25,58 @@
 
 #pragma once
 
-#include "LayerTreeContext.h"
-#include "Plugin.h"
-#include "PluginController.h"
-#include "WebFrame.h"
-#include <WebCore/ActivityState.h>
+#if ENABLE(PDFKIT_PLUGIN)
+
 #include <WebCore/FindOptions.h>
-#include <WebCore/Image.h>
-#include <WebCore/MediaCanStartListener.h>
-#include <WebCore/MediaProducer.h>
 #include <WebCore/PluginViewBase.h>
-#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
 #include <memory>
-#include <wtf/Deque.h>
 #include <wtf/RunLoop.h>
 
-// FIXME: Eventually this should move to WebCore.
-
-#if PLATFORM(COCOA)
 OBJC_CLASS NSDictionary;
+OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
-#endif
-
-namespace WTF {
-class MachSendRight;
-}
 
 namespace WebCore {
 class Frame;
 class HTMLPlugInElement;
-class MouseEvent;
 }
 
 namespace WebKit {
 
-class WebEvent;
+class PDFPlugin;
+class ShareableBitmap;
+class WebPage;
 
-class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener, private WebCore::MediaProducer {
+struct WebHitTestResultData;
+
+class PluginView final : public WebCore::PluginViewBase {
 public:
-    static Ref<PluginView> create(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
+    static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
     WebCore::Frame* frame() const;
 
-    bool isBeingDestroyed() const { return !m_plugin || m_plugin->isBeingDestroyed(); }
+    bool isBeingDestroyed() const;
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
     void manualLoadDidReceiveData(const WebCore::SharedBuffer&);
     void manualLoadDidFinishLoading();
-    void manualLoadDidFail(const WebCore::ResourceError&);
+    void manualLoadDidFail();
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed);
-    void setLayerHostingMode(LayerHostingMode);
-
-#if PLATFORM(COCOA)
     void setDeviceScaleFactor(float);
-    void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
-    RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
-    id accessibilityHitTest(const WebCore::IntPoint& point) const override { return m_plugin->accessibilityHitTest(point); }
-    id accessibilityObject() const override;
-    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
-#endif
+    RetainPtr<PDFDocument> pdfDocumentForPrinting() const;
+    WebCore::FloatSize pdfDocumentSizeForPrinting() const;
+    id accessibilityHitTest(const WebCore::IntPoint&) const final;
+    id accessibilityObject() const final;
+    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 
-    WebCore::HTMLPlugInElement* pluginElement() const { return m_pluginElement.get(); }
-    const Plugin::Parameters& initialParameters() const { return m_parameters; }
-    Plugin* plugin() const { return m_plugin.get(); }
+    WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
+    const URL& mainResourceURL() const { return m_mainResourceURL; }
 
-    void setPageScaleFactor(double scaleFactor, WebCore::IntPoint origin);
+    void setPageScaleFactor(double);
     double pageScaleFactor() const;
-    bool handlesPageScaleFactor() const;
-    bool requiresUnifiedScaleFactor() const;
 
     void pageScaleFactorDidChange();
     void topContentInsetDidChange();
@@ -111,14 +91,16 @@ public:
 
     String getSelectionString() const;
 
-    bool shouldAllowScripting();
-
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
 
+    std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+    WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
+    CGFloat contentScaleFactor() const;
+
 private:
-    PluginView(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
+    PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
 
     void initializePlugin();
@@ -128,114 +110,65 @@ private:
     WebCore::IntRect clipRectInWindowCoordinates() const;
     void focusPluginElement();
     
-    void pendingURLRequestsTimerFired();
-    class URLRequest;
-    void performURLRequest(URLRequest*);
+    void pendingResourceRequestTimerFired();
 
-    // Perform a URL request where the frame target is not null.
-    void performFrameLoadURLRequest(URLRequest*);
-
-    // Perform a URL request where the URL protocol is "javascript:".
-    void performJavaScriptURLRequest(URLRequest*);
-
-    class Stream;
-    void addStream(Stream*);
-    void removeStream(Stream*);
-    void cancelAllStreams();
-
+    void loadMainResource();
     void redeliverManualStream();
 
     bool shouldCreateTransientPaintingSnapshot() const;
 
     // WebCore::PluginViewBase
-#if PLATFORM(COCOA)
-    PlatformLayer* platformLayer() const override;
-#endif
-    void storageBlockingStateChanged() override;
-    bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
-    WebCore::Scrollbar* horizontalScrollbar() override;
-    WebCore::Scrollbar* verticalScrollbar() override;
-    bool wantsWheelEvents() override;
-    bool shouldAllowNavigationFromDrags() const override;
-    void willDetachRenderer() override;
+    PlatformLayer* platformLayer() const final;
+    bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
+    WebCore::Scrollbar* horizontalScrollbar() final;
+    WebCore::Scrollbar* verticalScrollbar() final;
+    bool wantsWheelEvents() final;
+    bool shouldAllowNavigationFromDrags() const final;
+    void willDetachRenderer() final;
 
     // WebCore::Widget
-    void setFrameRect(const WebCore::IntRect&) override;
-    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::EventRegionContext*) override;
-    void invalidateRect(const WebCore::IntRect&) override;
-    void setFocus(bool) override;
-    void frameRectsChanged() override;
-    void setParent(WebCore::ScrollView*) override;
-    void handleEvent(WebCore::Event&) override;
-    void notifyWidget(WebCore::WidgetNotification) override;
-    void show() override;
-    void hide() override;
-    void setParentVisible(bool) override;
-    bool transformsAffectFrameRect() override;
-    void clipRectChanged() override;
+    void setFrameRect(const WebCore::IntRect&) final;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::EventRegionContext*) final;
+    void invalidateRect(const WebCore::IntRect&) final;
+    void frameRectsChanged() final;
+    void setParent(WebCore::ScrollView*) final;
+    void handleEvent(WebCore::Event&) final;
+    void notifyWidget(WebCore::WidgetNotification) final;
+    void show() final;
+    void hide() final;
+    void setParentVisible(bool) final;
+    bool transformsAffectFrameRect() final;
+    void clipRectChanged() final;
 
-    // WebCore::MediaCanStartListener
-    void mediaCanStart(WebCore::Document&) override;
-
-    // WebCore::MediaProducer
-    WebCore::MediaProducerMediaStateFlags mediaState() const override;
-    void pageMutedStateDidChange() override;
-
-    // PluginController
-    void loadURL(uint64_t requestID, const String& method, const String& urlString, const AtomString& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-    float contentsScaleFactor() override;
-
-    void didInitializePlugin() override;
-    void destroyPluginAndReset();
-
-    // WebFrame::LoadListener
-    void didFinishLoad(WebFrame*) override;
-    void didFailLoad(WebFrame*, bool wasCancelled) override;
-
-    std::unique_ptr<WebEvent> createWebEvent(WebCore::MouseEvent&) const;
-
-    RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
-    RefPtr<Plugin> m_plugin;
+    Ref<WebCore::HTMLPlugInElement> m_pluginElement;
+    Ref<PDFPlugin> m_plugin;
     WeakPtr<WebPage> m_webPage;
-    Plugin::Parameters m_parameters;
+    URL m_mainResourceURL;
+    String m_mainResourceContentType;
+    bool m_shouldUseManualLoader { false };
 
     bool m_isInitialized { false };
-    bool m_isWaitingUntilMediaCanStart { false };
 
-    // Pending URLRequests that the plug-in has made.
-    Deque<RefPtr<URLRequest>> m_pendingURLRequests;
-    RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
+    // Pending request that the plug-in has made.
+    std::unique_ptr<const WebCore::ResourceRequest> m_pendingResourceRequest;
+    RunLoop::Timer<PluginView> m_pendingResourceRequestTimer;
 
-    // Pending frame loads that the plug-in has made.
-    typedef HashMap<RefPtr<WebFrame>, RefPtr<URLRequest>> FrameLoadMap;
-    FrameLoadMap m_pendingFrameLoads;
+    // Stream that the plug-in has requested to load.
+    class Stream;
+    RefPtr<Stream> m_stream;
 
-    // Streams that the plug-in has requested to load. 
-    HashMap<uint64_t, RefPtr<Stream>> m_streams;
-
-    // The manual stream state. This is used so we can deliver a manual stream to a plug-in
-    // when it is initialized.
+    // The manual stream state. We deliver a manual stream to a plug-in when it is initialized.
     enum class ManualStreamState { Initial, HasReceivedResponse, Finished, Failed };
     ManualStreamState m_manualStreamState { ManualStreamState::Initial };
-
     WebCore::ResourceResponse m_manualStreamResponse;
-    WebCore::ResourceError m_manualStreamError;
     WebCore::SharedBufferBuilder m_manualStreamData;
 
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
 
     double m_pageScaleFactor { 1 };
-
-    bool m_pluginIsPlayingAudio { false };
 };
 
-inline WebCore::MediaProducerMediaStateFlags PluginView::mediaState() const
-{
-    WebCore::MediaProducerMediaStateFlags mediaState;
-    if (m_pluginIsPlayingAudio)
-        mediaState.add(WebCore::MediaProducerMediaState::IsPlayingAudio);
-    return mediaState;
-}
-
 } // namespace WebKit
+
+#endif

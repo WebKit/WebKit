@@ -295,7 +295,6 @@
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
 #include "InsertTextOptions.h"
-#include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
@@ -1071,15 +1070,17 @@ WebPage::~WebPage()
     
     m_sandboxExtensionTracker.invalidate();
 
+#if ENABLE(PDFKIT_PLUGIN)
     for (auto* pluginView : m_pluginViews)
         pluginView->webPageDestroyed();
+#endif
 
 #if !PLATFORM(IOS_FAMILY)
     if (m_headerBanner)
         m_headerBanner->detachFromPage();
     if (m_footerBanner)
         m_footerBanner->detachFromPage();
-#endif // !PLATFORM(IOS_FAMILY)
+#endif
 
 #ifndef NDEBUG
     webPageCounter.decrement();
@@ -1190,15 +1191,6 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 }
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
-RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
-{
-    if (shouldUsePDFPlugin(parameters.mimeType, parameters.url.path()))
-        return PDFPlugin::create(*frame, pluginElement);
-    return nullptr;
-}
-#endif // ENABLE(PDFKIT_PLUGIN)
-
 #if ENABLE(WEBGL) && !PLATFORM(MAC)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL&)
 {
@@ -1223,6 +1215,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 
     EditorState result;
 
+#if ENABLE(PDFKIT_PLUGIN)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
         if (!pluginView->getSelectionString().isNull()) {
             result.selectionIsNone = false;
@@ -1231,6 +1224,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
             return result;
         }
     }
+#endif
 
     const VisibleSelection& selection = frame->selection().selection();
     auto& editor = frame->editor();
@@ -1417,6 +1411,8 @@ Ref<API::Array> WebPage::trackedRepaintRects()
     return API::Array::create(WTFMove(repaintRects));
 }
 
+#if ENABLE(PDFKIT_PLUGIN)
+
 PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
 {
     if (!is<PluginDocument>(frame.document()))
@@ -1431,12 +1427,20 @@ PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
 
 PluginView* WebPage::pluginViewForFrame(Frame* frame)
 {
-    if (!frame || !is<PluginDocument>(frame->document()))
+    if (!frame)
         return nullptr;
-
-    auto& document = downcast<PluginDocument>(*frame->document());
-    return static_cast<PluginView*>(document.pluginWidget());
+    auto* document = dynamicDowncast<PluginDocument>(frame->document());
+    if (!document)
+        return nullptr;
+    return static_cast<PluginView*>(document->pluginWidget());
 }
+
+PluginView* WebPage::mainFramePlugIn() const
+{
+    return pluginViewForFrame(mainFrame());
+}
+
+#endif
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
@@ -1444,10 +1448,12 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
 
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
+#if ENABLE(PDFKIT_PLUGIN)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
         pluginView->handleEditingCommand(commandName, argument);
         return;
     }
+#endif
     
     frame->editor().command(commandName).execute(argument);
 }
@@ -1493,9 +1499,11 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
+#if ENABLE(PDFKIT_PLUGIN)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame))
         return pluginView->isEditingCommandEnabled(commandName);
-    
+#endif
+
     Editor::Command command = frame->editor().command(commandName);
     return command.isSupported() && command.isEnabled();
 }
@@ -2066,12 +2074,10 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 
 double WebPage::textZoomFactor() const
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
-        if (pluginView->handlesPageScaleFactor())
-            return pluginView->pageScaleFactor();
-        return pageScaleFactor();
-    }
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn())
+        return pluginView->pageScaleFactor();
+#endif
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -2081,14 +2087,12 @@ double WebPage::textZoomFactor() const
 
 void WebPage::setTextZoomFactor(double zoomFactor)
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
-        if (pluginView->handlesPageScaleFactor())
-            pluginView->setPageScaleFactor(zoomFactor, IntPoint());
-        else
-            scalePage(zoomFactor, IntPoint());
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        pluginView->setPageScaleFactor(zoomFactor);
         return;
     }
+#endif
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -2098,12 +2102,10 @@ void WebPage::setTextZoomFactor(double zoomFactor)
 
 double WebPage::pageZoomFactor() const
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
-        if (pluginView->handlesPageScaleFactor())
-            return pluginView->pageScaleFactor();
-        return pageScaleFactor();
-    }
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn())
+        return pluginView->pageScaleFactor();
+#endif
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -2113,14 +2115,12 @@ double WebPage::pageZoomFactor() const
 
 void WebPage::setPageZoomFactor(double zoomFactor)
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
-        if (pluginView->handlesPageScaleFactor())
-            pluginView->setPageScaleFactor(zoomFactor, IntPoint());
-        else
-            scalePage(zoomFactor, IntPoint());
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        pluginView->setPageScaleFactor(zoomFactor);
         return;
     }
+#endif
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -2191,14 +2191,12 @@ void WebPage::clearHistory()
 
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
-        if (pluginView->handlesPageScaleFactor())
-            pluginView->setPageScaleFactor(pageZoomFactor, IntPoint());
-        else
-            scalePage(pageZoomFactor, IntPoint());
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        pluginView->setPageScaleFactor(pageZoomFactor);
         return;
     }
+#endif
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -2227,19 +2225,20 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         m_scaleWasSetByUIProcess = false;
     }
 #endif
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor()) {
-        // If the main-frame plugin wants to handle the page scale factor, make sure to reset WebCore's page scale.
+
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        // Since the main-frame PDF plug-in handles the page scale factor, make sure to reset WebCore's page scale.
         // Otherwise, we can end up with an immutable but non-1 page scale applied by WebCore on top of whatever the plugin does.
         if (m_page->pageScaleFactor() != 1) {
             m_page->setPageScaleFactor(1, origin);
             for (auto* pluginView : m_pluginViews)
                 pluginView->pageScaleFactorDidChange();
         }
-
-        pluginView->setPageScaleFactor(totalScale, origin);
+        pluginView->setPageScaleFactor(totalScale);
         return;
     }
+#endif
 
     m_page->setPageScaleFactor(totalScale, origin);
 
@@ -2247,8 +2246,10 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     if (!willChangeScaleFactor)
         return;
 
+#if ENABLE(PDFKIT_PLUGIN)
     for (auto* pluginView : m_pluginViews)
         pluginView->pageScaleFactorDidChange();
+#endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     m_drawingArea->deviceOrPageScaleFactorChanged();
@@ -2280,10 +2281,10 @@ void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoor
 
 double WebPage::totalScaleFactor() const
 {
-    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor())
+#if ENABLE(PDFKIT_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn())
         return pluginView->pageScaleFactor();
-
+#endif
     return m_page->pageScaleFactor();
 }
 
@@ -3249,9 +3250,13 @@ void WebPage::validateCommand(const String& commandName, CompletionHandler<void(
     bool isEnabled = false;
     int32_t state = 0;
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+
+#if ENABLE(PDFKIT_PLUGIN)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame))
         isEnabled = pluginView->isEditingCommandEnabled(commandName);
-    else {
+    else
+#endif
+    {
         Editor::Command command = frame->editor().command(commandName);
         state = (command.state() != TriState::False);
         isEnabled = command.isSupported() && command.isEnabled();
@@ -3530,8 +3535,10 @@ void WebPage::setTopContentInset(float contentInset)
 
     m_page->setTopContentInset(contentInset);
 
+#if ENABLE(PDFKIT_PLUGIN)
     for (auto* pluginView : m_pluginViews)
         pluginView->topContentInsetDidChange();
+#endif
 }
 
 void WebPage::viewWillStartLiveResize()
@@ -3637,9 +3644,6 @@ void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, Act
         m_page->setActivityState(activityState);
     }
     
-    for (auto* pluginView : m_pluginViews)
-        pluginView->activityStateDidChange(changed);
-
     m_drawingArea->activityStateDidChange(changed, activityStateChangeID, WTFMove(callback));
     WebProcess::singleton().pageActivityStateDidChange(m_identifier, changed);
 
@@ -3655,9 +3659,6 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
     m_layerHostingMode = layerHostingMode;
 
     m_drawingArea->setLayerHostingMode(m_layerHostingMode);
-
-    for (auto* pluginView : m_pluginViews)
-        pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
@@ -3987,9 +3988,12 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
 {
     RefPtr<FragmentedSharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
+#if ENABLE(PDFKIT_PLUGIN)
         if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame()))
             buffer = pluginView->liveResourceData();
-        if (!buffer) {
+        if (!buffer)
+#endif
+        {
             if (DocumentLoader* loader = frame->coreFrame()->loader().documentLoader())
                 buffer = loader->mainResourceData();
         }
@@ -5227,20 +5231,21 @@ void WebPage::mainFrameDidLayout()
 #endif
 }
 
+#if ENABLE(PDFKIT_PLUGIN)
+
 void WebPage::addPluginView(PluginView* pluginView)
 {
     ASSERT(!m_pluginViews.contains(pluginView));
-
     m_pluginViews.add(pluginView);
-    m_hasSeenPlugin = true;
 }
 
 void WebPage::removePluginView(PluginView* pluginView)
 {
     ASSERT(m_pluginViews.contains(pluginView));
-
     m_pluginViews.remove(pluginView);
 }
+
+#endif
 
 void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
 {
@@ -5251,19 +5256,16 @@ void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
 }
 
 #if PLATFORM(COCOA)
+
 void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
     m_windowFrameInUnflippedScreenCoordinates = windowFrameInUnflippedScreenCoordinates;
     m_viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
     m_accessibilityPosition = accessibilityViewCoordinates;
-    
-    // Tell all our plug-in views that the window and view frames have changed.
-    for (auto* pluginView : m_pluginViews)
-        pluginView->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
-
     m_hasCachedWindowFrame = !m_windowFrameInUnflippedScreenCoordinates.isEmpty();
 }
+
 #endif
 
 void WebPage::setMainFrameIsScrollable(bool isScrollable)
@@ -5996,7 +5998,6 @@ FrameView* WebPage::mainFrameView() const
 {
     if (Frame* frame = mainFrame())
         return frame->view();
-    
     return nullptr;
 }
 
@@ -7651,6 +7652,7 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 }
 
 #if !PLATFORM(COCOA)
+
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
     completionHandler({ });
@@ -7664,6 +7666,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 {
 }
+
 #endif
 
 #if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
@@ -8127,6 +8130,15 @@ void WebPage::setIsInMultitaskingMode(bool value)
 }
 
 #endif // HAVE(MULTITASKING_MODE)
+
+bool WebPage::handlesPageScaleGesture()
+{
+#if !ENABLE(PDFKIT_PLUGIN)
+    return false;
+#else
+    return mainFramePlugIn();
+#endif
+}
 
 } // namespace WebKit
 

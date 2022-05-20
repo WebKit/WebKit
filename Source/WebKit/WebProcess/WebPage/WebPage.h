@@ -50,7 +50,6 @@
 #include "MessageSender.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PDFPluginIdentifier.h"
-#include "Plugin.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -159,12 +158,13 @@
 #if PLATFORM(COCOA)
 #include <WebCore/VisibleSelection.h>
 #include <wtf/RetainPtr.h>
-OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
-OBJC_CLASS WKAccessibilityWebPageObject;
+OBJC_CLASS PDFDocument;
+OBJC_CLASS PDFSelection;
 OBJC_CLASS RVItem;
+OBJC_CLASS WKAccessibilityWebPageObject;
 #endif
 
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
@@ -557,10 +557,6 @@ public:
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
-#if ENABLE(PDFKIT_PLUGIN)
-    RefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&, String& newMIMEType);
-#endif
-
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const URL&);
     WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const URL&);
@@ -650,8 +646,10 @@ public:
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode();
 
+#if ENABLE(PDFKIT_PLUGIN)
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
+#endif
 
     bool isVisible() const { return m_activityState.contains(WebCore::ActivityState::IsVisible); }
     bool isVisibleOrOccluded() const { return m_activityState.contains(WebCore::ActivityState::IsVisibleOrOccluded); }
@@ -747,6 +745,8 @@ public:
     void selectAll();
 
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
+
+    bool handlesPageScaleGesture();
 
 #if PLATFORM(IOS_FAMILY)
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
@@ -1298,7 +1298,10 @@ public:
 
     std::optional<double> cpuLimit() const { return m_cpuLimit; }
 
+#if ENABLE(PDFKIT_PLUGIN)
     static PluginView* pluginViewForFrame(WebCore::Frame*);
+    PluginView* mainFramePlugIn() const;
+#endif
 
     void themeColorChanged() { m_pendingThemeColorChange = true; }
     void flushPendingThemeColorChange();
@@ -1782,7 +1785,7 @@ private:
     void performDictionaryLookupForRange(WebCore::Frame&, const WebCore::SimpleRange&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForRange(WebCore::Frame&, const WebCore::SimpleRange&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
 #if ENABLE(PDFKIT_PLUGIN)
-    WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *, PDFPlugin&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
+    WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *, PluginView&, NSDictionary *options, WebCore::TextIndicatorPresentationTransition);
 #endif
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
@@ -1895,7 +1898,9 @@ private:
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
+#if ENABLE(PDFKIT_PLUGIN)
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
+#endif
 
     void reportUsedFeatures();
 
@@ -2025,8 +2030,9 @@ private:
     std::unique_ptr<DrawingArea> m_drawingArea;
     DrawingAreaType m_drawingAreaType;
 
+#if ENABLE(PDFKIT_PLUGIN)
     HashSet<PluginView*> m_pluginViews;
-    bool m_hasSeenPlugin { false };
+#endif
 
     HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
 

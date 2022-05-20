@@ -57,9 +57,9 @@
 #include <WebCore/WorkerScriptLoader.h>
 
 namespace WebKit {
+
 using namespace PAL;
 using namespace WebCore;
-
 
 WebSWClientConnection::WebSWClientConnection()
     : m_identifier(Process::identifier())

@@ -180,9 +180,8 @@ void HTMLPlugInImageElement::didAttachRenderers()
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
-    if (is<PluginViewBase>(widget))
-        downcast<PluginViewBase>(*widget).willDetachRenderer();
+    if (RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad))
+        widget->willDetachRenderer();
 
     HTMLPlugInElement::willDetachRenderers();
 }

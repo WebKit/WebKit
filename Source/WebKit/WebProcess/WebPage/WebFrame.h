@@ -142,8 +142,6 @@ public:
     bool containsAnyFormElements() const;
     bool containsAnyFormControls() const;
     void stopLoading();
-    bool handlesPageScaleGesture() const;
-    bool requiresUnifiedScaleFactor() const;
     void setAccessibleName(const AtomString&);
 
     static WebFrame* frameForContext(JSContextRef);

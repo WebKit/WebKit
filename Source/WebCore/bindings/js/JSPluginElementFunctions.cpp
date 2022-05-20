@@ -24,8 +24,6 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSHTMLElement.h"
-#include "PluginViewBase.h"
-
 
 namespace WebCore {
 using namespace JSC;
@@ -51,23 +49,21 @@ Instance* pluginInstance(HTMLElement& element)
 
 JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)
 {
-    HTMLElement& element = jsHTMLElement->wrapped();
-    if (!is<HTMLPlugInElement>(element))
+    auto* element = dynamicDowncast<HTMLPlugInElement>(jsHTMLElement->wrapped());
+    if (!element)
         return nullptr;
 
-    auto& pluginElement = downcast<HTMLPlugInElement>(element);
-
     // Choke point for script/plugin interaction; notify DOMTimer of the event.
-    DOMTimer::scriptDidInteractWithPlugin(pluginElement);
+    DOMTimer::scriptDidInteractWithPlugin();
 
     // The plugin element holds an owning reference, so we don't have to.
-    auto* instance = pluginElement.bindingsInstance();
+    auto* instance = element->bindingsInstance();
     if (!instance || !instance->rootObject())
         return nullptr;
 
     return instance->createRuntimeObject(lexicalGlobalObject);
 }
-    
+
 JSC_DEFINE_CUSTOM_GETTER(pluginElementPropertyGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();

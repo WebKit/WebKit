@@ -166,9 +166,10 @@ bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef
     return WebKit::toImpl(frameRef)->allowsFollowingLink(URL { WebKit::toWTFString(urlRef) });
 }
 
-bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef frameRef)
+bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef)
 {
-    return WebKit::toImpl(frameRef)->handlesPageScaleGesture();
+    // Deprecated, always returns false, but result is not meaningful.
+    return false;
 }
 
 WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)

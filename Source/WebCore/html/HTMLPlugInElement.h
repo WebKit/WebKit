@@ -36,8 +36,8 @@ class Instance;
 namespace WebCore {
 
 class PluginReplacement;
+class PluginViewBase;
 class RenderWidget;
-class Widget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLPlugInElement);
@@ -49,7 +49,7 @@ public:
     JSC::Bindings::Instance* bindingsInstance();
 
     enum class PluginLoadingPolicy { DoNotLoad, Load };
-    WEBCORE_EXPORT Widget* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
+    WEBCORE_EXPORT PluginViewBase* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
 
     enum DisplayState {
         Playing,
@@ -68,10 +68,6 @@ public:
     bool willRespondToMouseClickEvents() const final;
 
     virtual bool isPlugInImageElement() const = 0;
-
-    bool isUserObservable() const;
-
-    WEBCORE_EXPORT bool isBelowSizeThreshold() const;
 
     // Return whether or not the replacement content for blocked plugins is accessible to the user.
     WEBCORE_EXPORT bool setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason, const String& unavailabilityDescription);

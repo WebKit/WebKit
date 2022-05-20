@@ -201,7 +201,7 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     if (!m_page)
         return nil;
     
-    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame()))
+    if (auto* pluginView = mainFramePlugIn())
         return pluginView->accessibilityObject();
 
     return nil;
@@ -370,7 +370,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PDFPlugin& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     if (!selection.string.length)
@@ -384,7 +384,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    CGFloat scaleFactor = pdfPlugin.scaleFactor();
+    CGFloat scaleFactor = pdfPlugin.contentScaleFactor();
 
     __block CGFloat maxAscender = 0;
     __block CGFloat maxDescender = 0;
@@ -909,25 +909,21 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 #if ENABLE(PDFKIT_PLUGIN)
     if (is<HTMLPlugInImageElement>(element)) {
         if (auto* pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
-            if (is<PDFPlugin>(pluginView->plugin())) {
-                // FIXME: We don't have API to identify images inside PDFs based on position.
-                auto& plugIn = downcast<PDFPlugin>(*pluginView->plugin());
-                auto lookupResult = plugIn.lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
-                auto lookupText = std::get<String>(lookupResult);
-                if (!lookupText.isEmpty()) {
-                    // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
-                    auto& document = element->document();
-                    if (is<PluginDocument>(document))
-                        downcast<PluginDocument>(document).setFocusedElement(element);
+            // FIXME: We don't have API to identify images inside PDFs based on position.
+            auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
+            if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {
+                // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
+                auto& document = element->document();
+                if (is<PluginDocument>(document))
+                    downcast<PluginDocument>(document).setFocusedElement(element);
 
-                    auto selection = std::get<PDFSelection *>(lookupResult);
-                    auto options = std::get<NSDictionary *>(lookupResult);
+                auto selection = std::get<PDFSelection *>(lookupResult);
+                auto options = std::get<NSDictionary *>(lookupResult);
 
-                    immediateActionResult.lookupText = lookupText;
-                    immediateActionResult.isTextNode = true;
-                    immediateActionResult.isSelected = true;
-                    immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, plugIn, options, TextIndicatorPresentationTransition::FadeIn);
-                }
+                immediateActionResult.lookupText = lookupText;
+                immediateActionResult.isTextNode = true;
+                immediateActionResult.isSelected = true;
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pluginView, options, TextIndicatorPresentationTransition::FadeIn);
             }
         }
     }

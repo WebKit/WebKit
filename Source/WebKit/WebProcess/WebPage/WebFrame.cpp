@@ -547,18 +547,6 @@ JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScript
 #endif
 }
 
-bool WebFrame::handlesPageScaleGesture() const
-{
-    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
-    return pluginView && pluginView->handlesPageScaleFactor();
-}
-
-bool WebFrame::requiresUnifiedScaleFactor() const
-{
-    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
-    return pluginView && pluginView->requiresUnifiedScaleFactor();
-}
-
 void WebFrame::setAccessibleName(const AtomString& accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())

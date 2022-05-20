@@ -37,7 +37,6 @@
 #include "JSDOMWindowCustom.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PluginViewBase.h"
 #include "ScriptController.h"
 #include "Timer.h"
 #include <JavaScriptCore/JSLock.h>
@@ -175,14 +174,6 @@ void PageDebugger::setJavaScriptPaused(Frame& frame, bool paused)
     } else {
         document.resumeActiveDOMObjects(ReasonForSuspension::JavaScriptDebuggerPaused);
         document.resumeScriptedAnimationControllerCallbacks();
-    }
-
-    if (auto* view = frame.view()) {
-        for (auto& child : view->children()) {
-            if (!is<PluginViewBase>(child))
-                continue;
-            downcast<PluginViewBase>(child.get()).setJavaScriptPaused(paused);
-        }
     }
 }
 

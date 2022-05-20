@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebEventConversion.h"
 #import "WebFindOptions.h"
+#import "WebFrame.h"
+#import "WebHitTestResultData.h"
 #import "WebKeyboardEvent.h"
 #import "WebLoaderStrategy.h"
 #import "WebMouseEvent.h"
@@ -532,8 +534,6 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-const uint64_t pdfDocumentRequestID = 1; // PluginController supports loading multiple streams, but we only need one for PDF.
-
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
 {
     CGPDFArrayRef names;
@@ -627,13 +627,13 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
     }
 }
 
-Ref<PDFPlugin> PDFPlugin::create(WebFrame& frame, HTMLPlugInElement* pluginElement)
+Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
 {
-    return adoptRef(*new PDFPlugin(frame, pluginElement));
+    return adoptRef(*new PDFPlugin(pluginElement));
 }
 
-inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
-    : m_frame(frame)
+PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
+    : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]))
@@ -645,6 +645,8 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
 #endif
     , m_identifier(PDFPluginIdentifier::generate())
 {
+    auto& document = element.document();
+
 #if ENABLE(UI_PROCESS_PDF_HUD)
     [m_pdfLayerController setDisplaysPDFHUDController:NO];
 #endif
@@ -653,36 +655,31 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
 
     bool isFullFrame = isFullFramePlugin();
     if (isFullFrame) {
-        auto* document = frame.coreFrame()->document();
-
         // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
-        document->bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
+        document.bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
     }
 
     if (supportsForms()) {
-        auto* document = frame.coreFrame()->document();
-        m_annotationContainer = document->createElement(divTag, false);
+        m_annotationContainer = document.createElement(divTag, false);
         m_annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
 
-        auto annotationStyleElement = document->createElement(styleTag, false);
+        auto annotationStyleElement = document.createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle);
 
         m_annotationContainer->appendChild(annotationStyleElement);
-        document->bodyOrFrameset()->appendChild(*m_annotationContainer);
+        document.bodyOrFrameset()->appendChild(*m_annotationContainer);
     }
 
-    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:pluginElement]);
+    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    if (isFullFrame && frame.isMainFrame())
-        [m_accessibilityObject setParent:frame.page()->accessibilityRemoteObject()];
+    if (isFullFrame && m_frame->isMainFrame())
+        [m_accessibilityObject setParent:m_frame->page()->accessibilityRemoteObject()];
     // If this is not a main-frame (e.g. it originated from an iframe) full-frame plugin, we'll need to set the parent later after the AXObjectCache has been initialized.
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
-    if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
-        auto view = frame.coreFrame()->view();
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view).platformColorSpace()];
-    }
+    if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreFrame()->view()).platformColorSpace()];
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {
@@ -1019,7 +1016,7 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
         return;
 
     auto resourceRequest = documentLoader->request();
-    resourceRequest.setURL(m_sourceURL);
+    resourceRequest.setURL(m_view->mainResourceURL());
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
@@ -1320,7 +1317,7 @@ void PDFPlugin::updateScrollbars()
     if (m_horizontalScrollbar) {
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), m_firstPageHeight);
         m_horizontalScrollbar->setProportion(m_size.width() - scrollbarSpace.width(), m_pdfDocumentSize.width());
-        IntRect scrollbarRect(pluginView()->x(), pluginView()->y() + m_size.height() - m_horizontalScrollbar->height(), m_size.width(), m_horizontalScrollbar->height());
+        IntRect scrollbarRect(m_view->x(), m_view->y() + m_size.height() - m_horizontalScrollbar->height(), m_size.width(), m_horizontalScrollbar->height());
         if (m_verticalScrollbar)
             scrollbarRect.contract(m_verticalScrollbar->width(), 0);
         m_horizontalScrollbar->setFrameRect(scrollbarRect);
@@ -1329,7 +1326,7 @@ void PDFPlugin::updateScrollbars()
     if (m_verticalScrollbar) {
         m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), m_firstPageHeight);
         m_verticalScrollbar->setProportion(m_size.height() - scrollbarSpace.height(), m_pdfDocumentSize.height());
-        IntRect scrollbarRect(IntRect(pluginView()->x() + m_size.width() - m_verticalScrollbar->width(), pluginView()->y(), m_verticalScrollbar->width(), m_size.height()));
+        IntRect scrollbarRect(IntRect(m_view->x() + m_size.width() - m_verticalScrollbar->width(), m_view->y(), m_verticalScrollbar->width(), m_size.height()));
         if (m_horizontalScrollbar)
             scrollbarRect.contract(0, m_horizontalScrollbar->height());
         m_verticalScrollbar->setFrameRect(scrollbarRect);
@@ -1365,16 +1362,6 @@ void PDFPlugin::updateScrollbars()
     }
 }
 
-PluginView* PDFPlugin::pluginView()
-{
-    return static_cast<PluginView*>(controller());
-}
-
-const PluginView* PDFPlugin::pluginView() const
-{
-    return static_cast<const PluginView*>(controller());
-}
-
 Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 {
     auto widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
@@ -1396,7 +1383,7 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 
     // Is it ever possible that the code above and the code below can ever get at different Frames?
     // Can't we settle on one Frame accessor?
-    if (auto* frame = pluginView()->frame()) {
+    if (auto* frame = m_view->frame()) {
         if (auto* frameView = frame->view())
             frameView->addChild(widget);
     }
@@ -1426,15 +1413,15 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
 IntRect PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
 {
     IntRect rect = scrollbarRect;
-    rect.move(scrollbar.location() - pluginView()->location());
+    rect.move(scrollbar.location() - m_view->location());
 
-    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), rect);
+    return m_view->frame()->view()->convertFromRendererToContainingView(m_view->pluginElement().renderer(), rect);
 }
 
 IntRect PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
 {
-    IntRect rect = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentRect);
-    rect.move(pluginView()->location() - scrollbar.location());
+    IntRect rect = m_view->frame()->view()->convertFromContainingViewToRenderer(m_view->pluginElement().renderer(), parentRect);
+    rect.move(m_view->location() - scrollbar.location());
 
     return rect;
 }
@@ -1442,15 +1429,15 @@ IntRect PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scrollb
 IntPoint PDFPlugin::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
 {
     IntPoint point = scrollbarPoint;
-    point.move(scrollbar.location() - pluginView()->location());
+    point.move(scrollbar.location() - m_view->location());
 
-    return pluginView()->frame()->view()->convertFromRendererToContainingView(pluginView()->pluginElement()->renderer(), point);
+    return m_view->frame()->view()->convertFromRendererToContainingView(m_view->pluginElement().renderer(), point);
 }
 
 IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
 {
-    IntPoint point = pluginView()->frame()->view()->convertFromContainingViewToRenderer(pluginView()->pluginElement()->renderer(), parentPoint);
-    point.move(pluginView()->location() - scrollbar.location());
+    IntPoint point = m_view->frame()->view()->convertFromContainingViewToRenderer(m_view->pluginElement().renderer(), parentPoint);
+    point.move(m_view->location() - scrollbar.location());
     
     return point;
 }
@@ -1458,11 +1445,6 @@ IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scroll
 String PDFPlugin::debugDescription() const
 {
     return makeString("PDFPlugin 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
-}
-
-bool PDFPlugin::handleScroll(ScrollDirection direction, ScrollGranularity granularity)
-{
-    return scroll(direction, granularity);
 }
 
 IntRect PDFPlugin::scrollCornerRect() const
@@ -1473,7 +1455,7 @@ IntRect PDFPlugin::scrollCornerRect() const
         ASSERT(m_verticalScrollbar->isOverlayScrollbar());
         return IntRect();
     }
-    return IntRect(pluginView()->width() - m_verticalScrollbar->width(), pluginView()->height() - m_horizontalScrollbar->height(), m_verticalScrollbar->width(), m_horizontalScrollbar->height());
+    return IntRect(m_view->width() - m_verticalScrollbar->width(), m_view->height() - m_horizontalScrollbar->height(), m_verticalScrollbar->width(), m_horizontalScrollbar->height());
 }
 
 ScrollableArea* PDFPlugin::enclosingScrollableArea() const
@@ -1484,7 +1466,7 @@ ScrollableArea* PDFPlugin::enclosingScrollableArea() const
 
 IntRect PDFPlugin::scrollableAreaBoundingBox(bool*) const
 {
-    return pluginView()->frameRect();
+    return m_view->frameRect();
 }
 
 bool PDFPlugin::isActive() const
@@ -1549,11 +1531,11 @@ void PDFPlugin::addArchiveResource()
 
     // Add just enough data for context menu handling and web archives to work.
     NSDictionary* headers = @{ @"Content-Disposition": (NSString *)m_suggestedFilename, @"Content-Type" : @"application/pdf" };
-    RetainPtr<NSURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_sourceURL statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
+    RetainPtr<NSURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_view->mainResourceURL() statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
     ResourceResponse synthesizedResponse(response.get());
 
-    auto resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_sourceURL, "application/pdf"_s, String(), String(), synthesizedResponse);
-    pluginView()->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
+    auto resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_view->mainResourceURL(), "application/pdf"_s, String(), String(), synthesizedResponse);
+    m_view->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
 static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)
@@ -1616,7 +1598,7 @@ JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
     return JSObjectMake(ctx, jsPDFDocClass, this);
 }
 
-void PDFPlugin::documentDataDidFinishLoading()
+void PDFPlugin::streamDidFinishLoading()
 {
     if (m_hasBeenDestroyed)
         return;
@@ -1652,8 +1634,8 @@ void PDFPlugin::installPDFDocument()
     if (m_hasBeenDestroyed)
         return;
 
-    if (!controller()) {
-        RELEASE_LOG(IncrementalPDF, "PDFPlugin::installPDFDocument called - Plug-in has not been destroyed, but there's also no controller.");
+    if (!m_view) {
+        RELEASE_LOG(IncrementalPDF, "PDFPlugin::installPDFDocument called - Plug-in has not been destroyed, but there's also no view.");
         return;
     }
 
@@ -1667,7 +1649,7 @@ void PDFPlugin::installPDFDocument()
     m_pdfLayerController.get().document = m_pdfDocument.get();
 
     if (handlesPageScaleFactor())
-        pluginView()->setPageScaleFactor([m_pdfLayerController contentScaleFactor], IntPoint());
+        m_view->setPageScaleFactor([m_pdfLayerController contentScaleFactor]);
 
     notifyScrollPositionChanged(IntPoint([m_pdfLayerController scrollPosition]));
 
@@ -1683,52 +1665,13 @@ void PDFPlugin::installPDFDocument()
         [m_pdfLayerController setURLFragment:m_frame->url().fragmentIdentifier().createNSString().get()];
 }
 
-void PDFPlugin::setSuggestedFilename(const String& suggestedFilename)
+void PDFPlugin::streamDidReceiveResponse(const WebCore::ResourceResponse& response)
 {
-    m_suggestedFilename = suggestedFilename;
-
+    m_suggestedFilename = response.suggestedFilename();
     if (m_suggestedFilename.isEmpty())
         m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
-
     if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
         m_suggestedFilename = makeString(m_suggestedFilename, ".pdf"_s);
-}
-    
-void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
-{
-    ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
-
-    setSuggestedFilename(suggestedFilename);
-}
-
-void PDFPlugin::streamDidReceiveData(uint64_t streamID, const SharedBuffer& buffer)
-{
-    ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
-
-    if (!m_data)
-        m_data = adoptCF(CFDataCreateMutable(0, 0));
-
-    CFDataAppendBytes(m_data.get(), buffer.data(), buffer.size());
-    m_streamedBytes += buffer.size();
-}
-
-void PDFPlugin::streamDidFinishLoading(uint64_t streamID)
-{
-    ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
-
-    documentDataDidFinishLoading();
-}
-
-void PDFPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
-{
-    ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
-
-    m_data.clear();
-}
-
-void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
-{
-    setSuggestedFilename(suggestedFilename);
 }
 
 void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
@@ -1742,7 +1685,7 @@ void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
         CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
 }
 
-void PDFPlugin::manualStreamDidReceiveData(const SharedBuffer& buffer)
+void PDFPlugin::streamDidReceiveData(const SharedBuffer& buffer)
 {
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
@@ -1772,12 +1715,7 @@ void PDFPlugin::manualStreamDidReceiveData(const SharedBuffer& buffer)
 #endif
 }
 
-void PDFPlugin::manualStreamDidFinishLoading()
-{
-    documentDataDidFinishLoading();
-}
-
-void PDFPlugin::manualStreamDidFail(bool)
+void PDFPlugin::streamDidFail()
 {
     m_data = nullptr;
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -1846,12 +1784,23 @@ void PDFPlugin::attemptToUnlockPDF(const String& password)
     }
 }
 
+float PDFPlugin::deviceScaleFactor() const
+{
+    if (m_frame) {
+        if (auto* coreFrame = m_frame->coreFrame()) {
+            if (auto* page = coreFrame->page())
+                return page->deviceScaleFactor();
+        }
+    }
+    return 1;
+}
+
 void PDFPlugin::updatePageAndDeviceScaleFactors()
 {
-    if (!controller())
+    if (!m_view)
         return;
 
-    double newScaleFactor = controller()->contentsScaleFactor();
+    CGFloat newScaleFactor = deviceScaleFactor();
     if (!handlesPageScaleFactor()) {
         if (auto* page = m_frame ? m_frame->page() : nullptr)
             newScaleFactor *= page->pageScaleFactor();
@@ -1889,14 +1838,10 @@ void PDFPlugin::calculateSizes()
 #endif
 }
 
-bool PDFPlugin::initialize(const Parameters& parameters)
+void PDFPlugin::setView(PluginView& view)
 {
-    m_sourceURL = parameters.url;
-    if (!parameters.shouldUseManualLoader && !parameters.url.isEmpty())
-        controller()->loadURL(pdfDocumentRequestID, "GET"_s, parameters.url.string(), nullAtom(), HTTPHeaderMap(), Vector<uint8_t>(), false);
-
-    controller()->didInitializePlugin();
-    return true;
+    ASSERT(!m_view);
+    m_view = view;
 }
 
 void PDFPlugin::willDetachRenderer()
@@ -1909,6 +1854,9 @@ void PDFPlugin::willDetachRenderer()
 
 void PDFPlugin::destroy()
 {
+    ASSERT(!m_isBeingDestroyed);
+    SetForScope scope { m_isBeingDestroyed, true };
+
     m_hasBeenDestroyed = true;
     m_documentFinishedLoading = true;
 
@@ -1935,6 +1883,8 @@ void PDFPlugin::destroy()
     
     [m_scrollCornerLayer removeFromSuperlayer];
     [m_contentLayer removeFromSuperlayer];
+
+    m_view = nullptr;
 }
 
 void PDFPlugin::updateControlTints(GraphicsContext& graphicsContext)
@@ -1988,7 +1938,7 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
     if (size().isEmpty())
         return nullptr;
 
-    float contentsScaleFactor = controller()->contentsScaleFactor();
+    float contentsScaleFactor = deviceScaleFactor();
     IntSize backingStoreSize = size();
     backingStoreSize.scale(contentsScaleFactor);
 
@@ -2007,7 +1957,7 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
     return bitmap;
 }
 
-PlatformLayer* PDFPlugin::pluginLayer()
+CALayer *PDFPlugin::pluginLayer()
 {
     return m_containerLayer.get();
 }
@@ -2085,9 +2035,9 @@ void PDFPlugin::visibilityDidChange(bool visible)
 #endif
 }
 
-void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, const AffineTransform& pluginToRootViewTransform)
+void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
-    if (size() == pluginSize && pluginView()->pageScaleFactor() == [m_pdfLayerController contentScaleFactor])
+    if (size() == pluginSize && m_view->pageScaleFactor() == [m_pdfLayerController contentScaleFactor])
         return;
 
     m_size = pluginSize;
@@ -2100,7 +2050,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
     transform = CATransform3DTranslate(transform, 0, -pluginSize.height(), 0);
     
     if (handlesPageScaleFactor()) {
-        CGFloat magnification = pluginView()->pageScaleFactor() - [m_pdfLayerController contentScaleFactor];
+        CGFloat magnification = m_view->pageScaleFactor() - [m_pdfLayerController contentScaleFactor];
 
         // FIXME: Instead of m_lastMousePositionInPluginCoordinates, we should use the zoom origin from PluginView::setPageScaleFactor.
         if (magnification)
@@ -2121,22 +2071,6 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
     [CATransaction commit];
 }
 
-void PDFPlugin::frameDidFinishLoading(uint64_t)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void PDFPlugin::frameDidFail(uint64_t, bool)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void PDFPlugin::didEvaluateJavaScript(uint64_t, const WTF::String&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-    
 static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
 {
     return (event.shiftKey() ? NSEventModifierFlagShift : 0)
@@ -2398,7 +2332,7 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     return false;
 }
     
-bool PDFPlugin::handleEditingCommand(const String& commandName, const String& argument)
+bool PDFPlugin::handleEditingCommand(StringView commandName)
 {
     if (commandName == "copy")
         [m_pdfLayerController copySelection];
@@ -2415,7 +2349,7 @@ bool PDFPlugin::handleEditingCommand(const String& commandName, const String& ar
     return true;
 }
 
-bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
+bool PDFPlugin::isEditingCommandEnabled(StringView commandName)
 {
     if (commandName == "copy" || commandName == "takeFindStringFromSelection")
         return [m_pdfLayerController currentSelection];
@@ -2461,7 +2395,7 @@ bool PDFPlugin::isFullFramePlugin() const
     auto* document = m_frame->coreFrame()->document();
     if (!document)
         return false;
-    return document->isPluginDocument() && static_cast<PluginDocument*>(document)->pluginWidget() == pluginView();
+    return document->isPluginDocument() && static_cast<PluginDocument*>(document)->pluginWidget() == m_view;
 }
 
 bool PDFPlugin::handlesPageScaleFactor() const
@@ -2517,7 +2451,7 @@ bool PDFPlugin::supportsForms()
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
 {
     if (handlesPageScaleFactor())
-        pluginView()->setPageScaleFactor(scaleFactor, IntPoint());
+        m_view->setPageScaleFactor(scaleFactor);
 
     calculateSizes();
     updateScrollbars();
@@ -2537,12 +2471,6 @@ RefPtr<FragmentedSharedBuffer> PDFPlugin::liveResourceData() const
         return nullptr;
 
     return SharedBuffer::create(pdfData);
-}
-
-bool PDFPlugin::pluginHandlesContentOffsetForAccessibilityHitTest() const
-{
-    // The PDF plugin handles the scroll view offset natively as part of the layer conversions.
-    return true;
 }
 
 #if ENABLE(UI_PROCESS_PDF_HUD)
@@ -2595,7 +2523,7 @@ void PDFPlugin::openWithNativeApplication()
     if (!m_frame || !m_frame->page())
         return;
 
-    if (!m_temporaryPDFUUID) {
+    if (m_temporaryPDFUUID.isNull()) {
         // FIXME: We should probably notify the user that they can't save before the document is finished loading.
         // PDFViewController does an NSBeep(), but that seems insufficient.
         if (!m_documentFinishedLoading)
@@ -2690,7 +2618,7 @@ unsigned PDFPlugin::countFindMatches(const String& target, WebCore::FindOptions 
     return [[m_pdfDocument findString:target withOptions:nsOptions] count];
 }
 
-PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchForward, BOOL caseSensitive, BOOL wrapSearch, PDFSelection *initialSelection, BOOL startInSelection)
+PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchForward, bool caseSensitive, bool wrapSearch, PDFSelection *initialSelection, bool startInSelection)
 {
     if (!target.length())
         return nil;

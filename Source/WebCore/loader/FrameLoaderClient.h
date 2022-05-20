@@ -89,7 +89,6 @@ class LegacyPreviewLoaderClient;
 class MessageEvent;
 class NavigationAction;
 class Page;
-class PluginViewBase;
 class ProtectionSpace;
 class RegistrableDomain;
 class RTCPeerConnectionHandler;
