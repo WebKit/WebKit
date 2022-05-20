@@ -1622,16 +1622,28 @@ public:
 
     void emitStoreStructureWithTypeInfo(RegisterID structure, RegisterID dest, RegisterID scratch)
     {
-        // Store the StructureID
 #if USE(JSVALUE64)
-        emitEncodeStructure(structure, scratch);
-        store32(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+        load64(MacroAssembler::Address(structure, Structure::structureIDOffset()), scratch);
+        store64(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
 #else
-        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#endif
         // Store all the info flags using a single 32-bit wide load and store.
         load32(MacroAssembler::Address(structure, Structure::indexingModeIncludingHistoryOffset()), scratch);
         store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
+
+        // Store the StructureID
+        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
+
+//         // Store the StructureID
+// #if USE(JSVALUE64)
+//         emitEncodeStructure(structure, scratch);
+//         store32(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+// #else
+//         storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+// #endif
+//         // Store all the info flags using a single 32-bit wide load and store.
+//         load32(MacroAssembler::Address(structure, Structure::indexingModeIncludingHistoryOffset()), scratch);
+//         store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
     }
 
     static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest);

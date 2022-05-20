@@ -231,10 +231,10 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const { return StructureID::encode(this); }
+    StructureID id() const { ASSERT(m_blob.structureID() == StructureID::encode(this)); return m_blob.structureID(); }
 
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
-    int32_t idBlob() const { return m_blob.blob(); }
+    int64_t idBlob() const { return m_blob.blob(); }
 
     bool isProxy() const
     {
@@ -650,6 +650,11 @@ public:
         return rareData()->cachedSpecialProperty(key);
     }
     void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
+
+    static ptrdiff_t structureIDOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::structureIDOffset();
+    }
 
     static ptrdiff_t prototypeOffset()
     {

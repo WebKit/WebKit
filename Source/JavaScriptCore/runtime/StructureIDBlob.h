@@ -37,16 +37,18 @@ class StructureIDBlob {
 public:
     StructureIDBlob() = default;
 
-    StructureIDBlob(IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
+    StructureIDBlob(StructureID structureID, IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
     {
+        u.fields.structureID = structureID;
         u.fields.indexingModeIncludingHistory = indexingModeIncludingHistory;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
         u.fields.defaultCellState = CellState::DefinitelyWhite;
     }
 
-    void operator=(const StructureIDBlob& other) { u.word2 = other.u.word2; }
-
+    void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
+    
+    StructureID structureID() const { return u.fields.structureID; }
     IndexingType indexingModeIncludingHistory() const { return u.fields.indexingModeIncludingHistory; }
     Dependency fencedIndexingModeIncludingHistory(IndexingType& indexingType)
     {
@@ -58,8 +60,13 @@ public:
     
     TypeInfo typeInfo(TypeInfo::OutOfLineTypeFlags outOfLineTypeFlags) const { return TypeInfo(type(), inlineTypeFlags(), outOfLineTypeFlags); }
     
-    int32_t blobExcludingStructureID() const { return u.word1; }
-    int32_t blob() const { return u.word2; }
+    int32_t blobExcludingStructureID() const { return u.words.word2; }
+    int64_t blob() const { return u.doubleWord; }
+    
+    static ptrdiff_t structureIDOffset()
+    {
+        return OBJECT_OFFSETOF(StructureIDBlob, u.fields.structureID);
+    }
 
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
@@ -69,15 +76,20 @@ public:
 private:
     union Data {
         struct {
+            // FIXME: We should remove this since the structureID can be directly computed from the Structure*
+            StructureID structureID;
             IndexingType indexingModeIncludingHistory;
             JSType type;
             TypeInfo::InlineTypeFlags inlineTypeFlags;
             CellState defaultCellState;
         } fields;
-        int32_t word1;
-        int32_t word2;
+        struct {
+            int32_t word1;
+            int32_t word2;
+        } words;
+        int64_t doubleWord;
 
-        Data() { word2 = 0xbbadbeef; }
+        Data() { doubleWord = 0xbbadbeef; }
     };
 
     Data u;
