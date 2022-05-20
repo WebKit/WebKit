@@ -47,6 +47,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactPtr.h>
+#include <wtf/CompactRefPtr.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -973,11 +974,12 @@ private:
 
     WriteBarrier<JSCell> m_previousOrRareData;
 
-    RefPtr<UniquedStringImpl> m_transitionPropertyName;
+    CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
 
     CompactPtr<const ClassInfo> m_classInfo;
 #if PLATFORM(IOS_FAMILY)
     static_assert(sizeof(m_classInfo) == 4);
+    static_assert(sizeof(m_transitionPropertyName) == 4);
 #endif
 
     StructureTransitionTable m_transitionTable;

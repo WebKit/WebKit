@@ -811,6 +811,7 @@
 		FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
+		FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFEE46F42825DF80003BC981 /* CompactPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FFEE46F32825DF80003BC981 /* CompactPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -1715,6 +1716,7 @@
 		FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackPointer.cpp; sourceTree = "<group>"; };
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
+		FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactRefPtr.h; sourceTree = "<group>"; };
 		FFEE46F32825DF80003BC981 /* CompactPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPtr.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1877,6 +1879,7 @@
 		A876DBD6151816E500DADB95 /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */,
 				2CDED0F018115C3F004DBA70 /* cf */,
 				E4A0AD3B1A96251900536DF6 /* cocoa */,
 				37C7CC281EA40A54007BD956 /* darwin */,
@@ -3013,6 +3016,7 @@
 				DDF306DB27C08654006A526F /* MetadataSPI.h in Headers */,
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
 				DD3DC96227A4BF8E007E5B61 /* NakedPtr.h in Headers */,
+				FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */,
 				DD3DC98A27A4BF8E007E5B61 /* NakedRef.h in Headers */,
 				DD3DC8D827A4BF8E007E5B61 /* NaturalLoops.h in Headers */,
 				DD3DC8AC27A4BF8E007E5B61 /* NeverDestroyed.h in Headers */,

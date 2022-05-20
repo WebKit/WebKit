@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <cstdint>
+#include <utility>
+#include <wtf/RawPtrTraits.h>
+#include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
+
+namespace WTF {
+
+template<typename T>
+class Compacted {
+    WTF_MAKE_FAST_ALLOCATED;
+#if PLATFORM(IOS_FAMILY)
+    static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
+    using CompactedStorageType = uint32_t;
+#else
+    using CompactedStorageType = T*;
+#endif
+
+public:
+    Compacted()
+    {
+        set(nullptr);
+    }
+
+    Compacted(nullptr_t)
+    {
+        set(nullptr);
+    }
+
+    Compacted(T* ptr)
+    {
+        set(ptr);
+    }
+
+    Compacted<T>& operator=(T* ptr)
+    {
+        set(ptr);
+        return *this;
+    }
+
+    bool operator!() const { return !get(); }
+
+    explicit operator bool() const { return !!get(); }
+
+    T* get() const
+    {
+        return decode(m_ptr);
+    }
+
+    void set(T* ptr)
+    {
+        m_ptr = encode(ptr);
+    }
+
+    template<class U>
+    T* exchange(U&& newValue)
+    {
+        T* oldValue = get();
+        set(std::forward<U>(newValue));
+        return oldValue;
+    }
+
+    void swap(nullptr_t) { set(nullptr); }
+
+    void swap(Compacted& other)
+    {
+        T* t1 = get();
+        T* t2 = other.get();
+        set(t2);
+        other.set(t1);
+    }
+
+    void swap(T* t2)
+    {
+        T* t1 = get();
+        swap(t1, t2);
+        set(t1);
+    }
+
+    ALWAYS_INLINE constexpr CompactedStorageType encode(T* ptr) const
+    {
+#if PLATFORM(IOS_FAMILY)
+        ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & 0xF));
+        return static_cast<uint32_t>(reinterpret_cast<uintptr_t>(ptr) >> 4);
+#else
+        return ptr;
+#endif
+    }
+
+    ALWAYS_INLINE constexpr T* decode(const CompactedStorageType& ptr) const
+    {
+#if PLATFORM(IOS_FAMILY)
+        return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << 4);
+#else
+        return ptr;
+#endif
+    }
+
+private:
+    CompactedStorageType m_ptr;
+};
+
+template<typename T>
+struct GetPtrHelper<Compacted<T>> {
+    using PtrType = T*;
+    static T* getPtr(const Compacted<T>& p) { return const_cast<T*>(p.get()); }
+};
+
+template<typename T>
+struct IsSmartPtr<Compacted<T>> {
+    static constexpr bool value = true;
+};
+
+template<typename T>
+struct CompactRefPtrTraits {
+    template<typename U> using RebindTraits = RawPtrTraits<U>;
+
+    using StorageType = Compacted<T>;
+
+    template<typename U>
+    static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
+
+    template<typename Other>
+    static ALWAYS_INLINE void swap(StorageType& a, Other& b) { a.swap(b); }
+
+    static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
+
+    static StorageType hashTableDeletedValue() { return bitwise_cast<StorageType>(static_cast<uintptr_t>(-1)); }
+    static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr == hashTableDeletedValue(); }
+};
+
+template<typename T>
+using CompactRefPtr = RefPtr<T, CompactRefPtrTraits<T>>;
+
+} // namespace WTF
+
+using WTF::CompactRefPtr;
