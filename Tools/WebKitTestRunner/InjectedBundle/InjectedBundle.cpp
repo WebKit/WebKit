@@ -192,6 +192,9 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        m_accessibilityIsolatedTreeMode = booleanValue(messageBodyDictionary, "IsAccessibilityIsolatedTreeEnabled");
+#endif
         WKBundlePagePostMessage(page, toWK("Ack").get(), toWK("BeginTest").get());
         beginTesting(messageBodyDictionary, BegingTestingMode::New);
         return;
@@ -205,10 +208,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        m_accessibilityIsolatedTreeMode = booleanValue(messageBodyDictionary, "AccessibilityIsolatedTree");
-#endif
-        
         auto allowedHostsValue = value(messageBodyDictionary, "AllowedHosts");
         if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
             m_allowedHosts.clear();

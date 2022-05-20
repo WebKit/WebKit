@@ -1020,10 +1020,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         WKArrayAppendItem(allowedHostsValue.get(), toWK(host.c_str()).get());
     setValue(resetMessageBody, "AllowedHosts", allowedHostsValue);
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    setValue(resetMessageBody, "AccessibilityIsolatedTree", options.accessibilityIsolatedTreeMode());
-#endif
-
     auto jscOptions = options.jscOptions();
     if (!jscOptions.empty())
         setValue(resetMessageBody, "JSCOptions", jscOptions.c_str());

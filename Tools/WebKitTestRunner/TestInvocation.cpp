@@ -133,6 +133,9 @@ bool TestInvocation::shouldLogHistoryClientCallbacks() const
 WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary()
 {
     auto beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    setValue(beginTestMessageBody, "IsAccessibilityIsolatedTreeEnabled", options().accessibilityIsolatedTreeMode());
+#endif
     setValue(beginTestMessageBody, "UseFlexibleViewport", options().useFlexibleViewport());
     setValue(beginTestMessageBody, "DumpPixels", m_dumpPixels);
     setValue(beginTestMessageBody, "Timeout", static_cast<uint64_t>(m_timeout.milliseconds()));
