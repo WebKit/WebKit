@@ -46,12 +46,6 @@ namespace WebCore {
 
 namespace DisplayList {
 
-enum class AsTextFlag : uint8_t {
-    IncludesPlatformOperations      = 1 << 0,
-    IncludesResourceIdentifiers     = 1 << 1,
-    DecomposesDrawGlyphs            = 1 << 2,
-};
-
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
     friend class RecorderImpl;

@@ -28,6 +28,12 @@
 namespace WebCore {
 namespace DisplayList {
 
+enum class AsTextFlag : uint8_t {
+    IncludesPlatformOperations      = 1 << 0,
+    IncludesResourceIdentifiers     = 1 << 1,
+    DecomposesDrawGlyphs            = 1 << 2,
+};
+
 enum class ItemType : uint8_t {
     Save,
     Restore,

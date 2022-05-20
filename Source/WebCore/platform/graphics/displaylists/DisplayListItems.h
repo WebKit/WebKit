@@ -55,6 +55,7 @@ struct ImagePaintingOptions;
 
 namespace DisplayList {
 
+enum class AsTextFlag : uint8_t;
 struct ItemHandle;
 
 /* isInlineItem indicates whether the object needs to be passed through IPC::Encoder in order to serialize,
@@ -2051,67 +2052,80 @@ size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem&);
 ItemType displayListItemType(const DisplayListItem&);
 
 #if !LOG_DISABLED
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Translate&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Rotate&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Scale&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetCTM&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ConcatenateCTM&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetInlineFillColor&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetInlineStrokeColor&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetStrokeThickness&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetState&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineCap&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineDash&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetLineJoin&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const SetMiterLimit&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Clip&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipOut&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipToImageBuffer&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipOutToPath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClipPath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFilteredImageBuffer&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawGlyphs&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawImageBuffer&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawNativeImage&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawSystemImage&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawPattern&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawLine&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawLinesForText&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawDotsForDocumentMarker&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawEllipse&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawPath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFocusRingPath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DrawFocusRingRects&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithColor&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithGradient&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillCompositedRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRoundedRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillRectWithRoundedHole&);
+WEBCORE_EXPORT void dumpItem(TextStream&, const Translate&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const Rotate&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const Scale&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetCTM&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ConcatenateCTM&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetInlineFillColor&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetInlineStrokeColor&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetStrokeThickness&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetState&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetLineCap&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetLineDash&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetLineJoin&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const SetMiterLimit&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const Clip&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOut&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ClipToImageBuffer&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOutToPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ClipPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFilteredImageBuffer&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawGlyphs&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawImageBuffer&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawNativeImage&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawSystemImage&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawPattern&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawLine&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawLinesForText&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawDotsForDocumentMarker&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawEllipse&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFocusRingPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFocusRingRects&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillRectWithColor&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillRectWithGradient&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillCompositedRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillRoundedRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillRectWithRoundedHole&, OptionSet<AsTextFlag>);
 #if ENABLE(INLINE_PATH_DATA)
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillLine&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillArc&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillQuadCurve&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillBezierCurve&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeArc&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeQuadCurve&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeBezierCurve&);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillLine&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillArc&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillQuadCurve&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillBezierCurve&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeArc&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeQuadCurve&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeBezierCurve&, OptionSet<AsTextFlag>);
 #endif // ENABLE(INLINE_PATH_DATA)
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillPath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FillEllipse&);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillEllipse&, OptionSet<AsTextFlag>);
 #if ENABLE(VIDEO)
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PaintFrameForMedia&);
+WEBCORE_EXPORT void dumpItem(TextStream&, const PaintFrameForMedia&, OptionSet<AsTextFlag>);
 #endif // ENABLE(VIDEO)
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokePath&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeEllipse&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StrokeLine&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ClearRect&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const BeginTransparencyLayer&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ApplyDeviceScaleFactor&);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokePath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeEllipse&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeLine&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ClearRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const BeginTransparencyLayer&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ApplyDeviceScaleFactor&, OptionSet<AsTextFlag>);
 
-TextStream& operator<<(TextStream&, ItemHandle);
+template <typename T>
+TextStream& operator<<(TextStream& ts, const T& item)
+{
+    dumpItem(ts, item, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
+    return ts;
+}
+
+void dumpItemHandle(TextStream&, const ItemHandle&, OptionSet<AsTextFlag>);
+
+inline TextStream& operator<<(TextStream& ts, const ItemHandle& itemHandle)
+{
+    dumpItemHandle(ts, itemHandle, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
+    return ts;
+}
 #endif
 
 } // namespace DisplayList
