@@ -119,14 +119,14 @@ TEST(WTF_CompactRefPtr, Basic)
         EXPECT_EQ(nullptr, ptr.get());
         EXPECT_EQ(false, static_cast<bool>(ptr));
     }
-    EXPECT_STREQ("ref() deref() ", takeLogStr().c_str());
+    EXPECT_STREQ("", takeLogStr().c_str());
 
     {
         CompactRefPtr<AlignedRefLogger> ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
         EXPECT_EQ(true, !ptr);
     }
-    EXPECT_STREQ("ref() deref() ", takeLogStr().c_str());
+    EXPECT_STREQ("", takeLogStr().c_str());
 }
 
 TEST(WTF_CompactRefPtr, AssignPassRefToCompactRefPtr)
