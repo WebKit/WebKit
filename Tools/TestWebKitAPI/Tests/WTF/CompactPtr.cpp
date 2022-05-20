@@ -114,7 +114,7 @@ TEST(WTF_CompactPtr, Basic)
     {
         CompactPtr<AlignedRefLogger> ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
-        EXPECT_EQ(true, static_cast<bool>(!ptr));
+        EXPECT_EQ(true, !ptr);
     }
 }
 
