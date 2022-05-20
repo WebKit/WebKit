@@ -113,6 +113,20 @@ TEST(WTF_CompactRefPtr, Basic)
         EXPECT_EQ(nullptr, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        CompactRefPtr<AlignedRefLogger> ptr(nullptr);
+        EXPECT_EQ(nullptr, ptr.get());
+        EXPECT_EQ(false, static_cast<bool>(ptr));
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        CompactRefPtr<AlignedRefLogger> ptr = nullptr;
+        EXPECT_EQ(nullptr, ptr.get());
+        EXPECT_EQ(true, static_cast<bool>(!ptr));
+    }
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_CompactRefPtr, AssignPassRefToCompactRefPtr)
@@ -411,7 +425,7 @@ TEST(WTF_CompactRefPtr, ReturnValue)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-struct ConstRefCounted alignas(16)
+struct alignas(16) ConstRefCounted
     : RefCounted<ConstRefCounted> {
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
