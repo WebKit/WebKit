@@ -1081,7 +1081,8 @@ static bool isUniversalKeyword(StringView string)
     return equalLettersIgnoringASCIICase(string, "initial"_s)
         || equalLettersIgnoringASCIICase(string, "inherit"_s)
         || equalLettersIgnoringASCIICase(string, "unset"_s)
-        || equalLettersIgnoringASCIICase(string, "revert"_s);
+        || equalLettersIgnoringASCIICase(string, "revert"_s)
+        || equalLettersIgnoringASCIICase(string, "revert-layer"_s);
 }
 
 static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView string, const CSSParserContext& context)
