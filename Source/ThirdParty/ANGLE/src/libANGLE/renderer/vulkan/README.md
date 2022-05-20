@@ -63,7 +63,7 @@ In this example we'll be recording a buffer copy command:
     access.onBufferTransferRead(srcBuffer);
 
     // Get a pointer to a secondary command buffer for command recording.
-    vk::CommandBuffer *commandBuffer;
+    vk::OutsideRenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
     // Record the copy command into the secondary buffer. We're done!

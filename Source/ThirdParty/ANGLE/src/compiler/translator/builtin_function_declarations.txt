@@ -596,7 +596,7 @@ GROUP BEGIN Texture {"queryFunction": true}
       ivec2 textureSize(gsampler2DMS);
     DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
       ivec2 textureSize(gsampler2DMS);
-    DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
       ivec3 textureSize(gsampler2DMSArray);
     DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
       ivec3 textureSize(gsampler2DMSArray);
@@ -631,7 +631,7 @@ GROUP BEGIN Texture {"queryFunction": true}
       gvec4 texelFetch(gsampler2DMS, ivec2, int);
     DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
       gvec4 texelFetch(gsampler2DMS, ivec2, int);
-    DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
       gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
     DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
       gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
@@ -1104,7 +1104,7 @@ GROUP BEGIN Image {"queryFunction": true}
     int imageSamples(readonly writeonly gimage2DMSArray);
 
   GROUP BEGIN Atomic {"queryFunction": true}
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         uint imageAtomicAdd(IMAGE_PARAMS, uint);
         int imageAtomicAdd(IMAGE_PARAMS, int);
         uint imageAtomicMin(IMAGE_PARAMS, uint);
@@ -1119,9 +1119,9 @@ GROUP BEGIN Image {"queryFunction": true}
         int imageAtomicXor(IMAGE_PARAMS, int);
         uint imageAtomicExchange(IMAGE_PARAMS, uint);
         int imageAtomicExchange(IMAGE_PARAMS, int);
-      DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
         int imageAtomicExchange(IMAGE_PARAMS, float);
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         uint imageAtomicCompSwap(IMAGE_PARAMS, uint, uint);
         int imageAtomicCompSwap(IMAGE_PARAMS, int, int);
       DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_shader_image_atomic", "suffix": "Ext"}

@@ -333,14 +333,14 @@ std::string LogMessage::getMessage() const
 }
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
-priv::FmtHexHelper<HRESULT> FmtHR(HRESULT value)
+priv::FmtHexHelper<HRESULT, char> FmtHR(HRESULT value)
 {
-    return priv::FmtHexHelper<HRESULT>("HRESULT: ", value);
+    return priv::FmtHexHelper<HRESULT, char>("HRESULT: ", value);
 }
 
-priv::FmtHexHelper<DWORD> FmtErr(DWORD value)
+priv::FmtHexHelper<DWORD, char> FmtErr(DWORD value)
 {
-    return priv::FmtHexHelper<DWORD>("error: ", value);
+    return priv::FmtHexHelper<DWORD, char>("error: ", value);
 }
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
 

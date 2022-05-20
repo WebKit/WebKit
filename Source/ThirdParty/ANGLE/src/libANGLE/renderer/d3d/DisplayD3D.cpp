@@ -371,11 +371,11 @@ std::string DisplayD3D::getVendorString()
     return std::string();
 }
 
-std::string DisplayD3D::getVersionString()
+std::string DisplayD3D::getVersionString(bool includeFullVersion)
 {
     if (mRenderer)
     {
-        return mRenderer->getVersionString();
+        return mRenderer->getVersionString(includeFullVersion);
     }
     return std::string();
 }

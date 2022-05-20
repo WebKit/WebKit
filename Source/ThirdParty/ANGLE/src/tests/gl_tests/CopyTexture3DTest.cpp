@@ -109,6 +109,7 @@ class CopyTexture3DTest : public ANGLETest
             case GL_RG8:
             case GL_RGB8:
             case GL_RGBA8:
+            case GL_RGBX8_ANGLE:
             case GL_SRGB8:
             case GL_RGB565:
             case GL_SRGB8_ALPHA8:
@@ -719,6 +720,16 @@ void CopyTexture3DTest::testUnsignedByteFormats(const GLenum testTarget)
                  GLColor(99, 82, 57, 0));
         testCopy(testTarget, kColorUnAlpha, GL_RGB5_A1, GL_UNSIGNED_BYTE, false, false, true,
                  GLColor(221, 167, 110, 255));
+
+        if (IsGLExtensionEnabled("GL_ANGLE_rgbx_internal_format"))
+        {
+            testCopy(testTarget, kColorNoAlpha, GL_RGBX8_ANGLE, GL_UNSIGNED_BYTE, false, false,
+                     false, GLColor(250, 200, 150, 255));
+            testCopy(testTarget, kColorPreAlpha, GL_RGBX8_ANGLE, GL_UNSIGNED_BYTE, false, true,
+                     false, GLColor(98, 78, 59, 255));
+            testCopy(testTarget, kColorUnAlpha, GL_RGBX8_ANGLE, GL_UNSIGNED_BYTE, false, false,
+                     true, GLColor(221, 167, 110, 255));
+        }
     }
 
     {

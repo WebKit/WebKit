@@ -10046,6 +10046,31 @@ CallCapture CapturePointSizePointerOES(const State &glState,
     return CallCapture(angle::EntryPoint::GLPointSizePointerOES, std::move(paramBuffer));
 }
 
+CallCapture CapturePrimitiveBoundingBoxOES(const State &glState,
+                                           bool isCallValid,
+                                           GLfloat minX,
+                                           GLfloat minY,
+                                           GLfloat minZ,
+                                           GLfloat minW,
+                                           GLfloat maxX,
+                                           GLfloat maxY,
+                                           GLfloat maxZ,
+                                           GLfloat maxW)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("minX", ParamType::TGLfloat, minX);
+    paramBuffer.addValueParam("minY", ParamType::TGLfloat, minY);
+    paramBuffer.addValueParam("minZ", ParamType::TGLfloat, minZ);
+    paramBuffer.addValueParam("minW", ParamType::TGLfloat, minW);
+    paramBuffer.addValueParam("maxX", ParamType::TGLfloat, maxX);
+    paramBuffer.addValueParam("maxY", ParamType::TGLfloat, maxY);
+    paramBuffer.addValueParam("maxZ", ParamType::TGLfloat, maxZ);
+    paramBuffer.addValueParam("maxW", ParamType::TGLfloat, maxW);
+
+    return CallCapture(angle::EntryPoint::GLPrimitiveBoundingBoxOES, std::move(paramBuffer));
+}
+
 CallCapture CaptureQueryMatrixxOES(const State &glState,
                                    bool isCallValid,
                                    GLfixed *mantissa,

@@ -68,8 +68,8 @@ TType *TransposeMatrixType(const TType *type)
 
     SetColumnMajor(newType);
 
-    newType->setPrimarySize(static_cast<unsigned char>(type->getRows()));
-    newType->setSecondarySize(static_cast<unsigned char>(type->getCols()));
+    newType->setPrimarySize(type->getRows());
+    newType->setSecondarySize(type->getCols());
 
     return newType;
 }
@@ -912,8 +912,8 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
 
                 // Default the secondary indices to include every row.  If there's a secondary
                 // subscript provided, it will override this.
-                int rows = previousAncestorType.getRows();
-                for (int r = 0; r < rows; ++r)
+                const uint8_t rows = previousAncestorType.getRows();
+                for (uint8_t r = 0; r < rows; ++r)
                 {
                     secondaryIndices.push_back(CreateIndexNode(r));
                 }

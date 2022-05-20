@@ -74,6 +74,7 @@
             "D32_FLOAT": "MTLPixelFormatDepth32Float",
             "S8_UINT": "MTLPixelFormatStencil8",
             "D32_FLOAT_S8X24_UINT": "MTLPixelFormatDepth32Float_Stencil8",
+            "B10G10R10A2_UNORM": "MTLPixelFormatBGR10A2Unorm",
             "R10G10B10A2_UINT": "MTLPixelFormatRGB10A2Uint",
             "R10G10B10A2_UNORM": "MTLPixelFormatRGB10A2Unorm",
             "R11G11B10_FLOAT": "MTLPixelFormatRG11B10Float",
@@ -104,20 +105,20 @@
             "EAC_R11_SNORM_BLOCK": "MTLPixelFormatEAC_R11Snorm",
             "EAC_R11G11_UNORM_BLOCK": "MTLPixelFormatEAC_RG11Unorm",
             "EAC_R11G11_SNORM_BLOCK": "MTLPixelFormatEAC_RG11Snorm",
-            "ASTC_4x4_SRGB_BLOCK" : "MTLPixelFormatASTC_4x4_sRGB",
-            "ASTC_5x4_SRGB_BLOCK" : "MTLPixelFormatASTC_5x4_sRGB",
-            "ASTC_5x5_SRGB_BLOCK" : "MTLPixelFormatASTC_5x5_sRGB",
-            "ASTC_6x5_SRGB_BLOCK" : "MTLPixelFormatASTC_6x5_sRGB",
-            "ASTC_6x6_SRGB_BLOCK" : "MTLPixelFormatASTC_6x6_sRGB",
-            "ASTC_8x5_SRGB_BLOCK" : "MTLPixelFormatASTC_8x5_sRGB",
-            "ASTC_8x6_SRGB_BLOCK" : "MTLPixelFormatASTC_8x6_sRGB",
-            "ASTC_8x8_SRGB_BLOCK" : "MTLPixelFormatASTC_8x8_sRGB",
-            "ASTC_10x5_SRGB_BLOCK" : "MTLPixelFormatASTC_10x5_sRGB",
-            "ASTC_10x6_SRGB_BLOCK" : "MTLPixelFormatASTC_10x6_sRGB",
-            "ASTC_10x8_SRGB_BLOCK" : "MTLPixelFormatASTC_10x8_sRGB",
-            "ASTC_10x10_SRGB_BLOCK" : "MTLPixelFormatASTC_10x10_sRGB",
-            "ASTC_12x10_SRGB_BLOCK" : "MTLPixelFormatASTC_12x10_sRGB",
-            "ASTC_12x12_SRGB_BLOCK" : "MTLPixelFormatASTC_12x12_sRGB"
+            "ASTC_4x4_SRGB_BLOCK": "MTLPixelFormatASTC_4x4_sRGB",
+            "ASTC_5x4_SRGB_BLOCK": "MTLPixelFormatASTC_5x4_sRGB",
+            "ASTC_5x5_SRGB_BLOCK": "MTLPixelFormatASTC_5x5_sRGB",
+            "ASTC_6x5_SRGB_BLOCK": "MTLPixelFormatASTC_6x5_sRGB",
+            "ASTC_6x6_SRGB_BLOCK": "MTLPixelFormatASTC_6x6_sRGB",
+            "ASTC_8x5_SRGB_BLOCK": "MTLPixelFormatASTC_8x5_sRGB",
+            "ASTC_8x6_SRGB_BLOCK": "MTLPixelFormatASTC_8x6_sRGB",
+            "ASTC_8x8_SRGB_BLOCK": "MTLPixelFormatASTC_8x8_sRGB",
+            "ASTC_10x5_SRGB_BLOCK": "MTLPixelFormatASTC_10x5_sRGB",
+            "ASTC_10x6_SRGB_BLOCK": "MTLPixelFormatASTC_10x6_sRGB",
+            "ASTC_10x8_SRGB_BLOCK": "MTLPixelFormatASTC_10x8_sRGB",
+            "ASTC_10x10_SRGB_BLOCK": "MTLPixelFormatASTC_10x10_sRGB",
+            "ASTC_12x10_SRGB_BLOCK": "MTLPixelFormatASTC_12x10_sRGB",
+            "ASTC_12x12_SRGB_BLOCK": "MTLPixelFormatASTC_12x12_sRGB"
         },
         "map_sim": {
             "ETC1_R8G8B8_UNORM_BLOCK": "MTLPixelFormatETC2_RGB8",
@@ -247,8 +248,6 @@
         "d24s8_fallbacks_mac": {
             "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
         },
-        "fallbacks_ios": {
-        },
         "caps": {
             "MTLPixelFormatA8Unorm":{
                 "filterable": "true",
@@ -356,7 +355,7 @@
             },
             "MTLPixelFormatRGBA8Unorm_sRGB":{
                 "filterable": "true",
-                "writable": "display->supportsAppleGPUFamily(2)",
+                "writable": "display->supportsAppleGPUFamily(2) && !display->isSimulator()",
                 "blendable": "true",
                 "multisample": "true",
                 "resolve": "true",
@@ -380,7 +379,7 @@
             },
             "MTLPixelFormatBGRA8Unorm_sRGB":{
                 "filterable": "true",
-                "writable": "display->supportsAppleGPUFamily(2)",
+                "writable": "display->supportsAppleGPUFamily(2) && !display->isSimulator()",
                 "blendable": "true",
                 "multisample": "true",
                 "resolve": "true",
@@ -888,7 +887,7 @@
                 "filterable": "display->supportsAppleGPUFamily(2)"
             }
         },
-        "caps_ios_spcific" :
+        "caps_ios_specific" :
         {
             "MTLPixelFormatASTC_4x4_HDR":{
                 "filterable": "display->supportsAppleGPUFamily(6)"

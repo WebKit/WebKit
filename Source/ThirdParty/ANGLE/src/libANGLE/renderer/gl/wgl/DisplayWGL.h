@@ -140,6 +140,7 @@ class DisplayWGL : public DisplayGL
     HMODULE mD3d11Module;
     HANDLE mD3D11DeviceHandle;
     ID3D11Device *mD3D11Device;
+    ID3D11Device1 *mD3D11Device1;
 
     struct D3DObjectHandle
     {

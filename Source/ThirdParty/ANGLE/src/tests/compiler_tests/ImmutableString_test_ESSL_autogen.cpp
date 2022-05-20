@@ -1681,9 +1681,11 @@ TEST(ImmutableStringTest, ScriptGeneratedHashesMatch)
     ASSERT_EQ(0x0000065au, ImmutableString("gl_TessLevelOuter").mangledNameHash());
     ASSERT_EQ(0x0000065bu, ImmutableString("gl_TessLevelInner").mangledNameHash());
     ASSERT_EQ(0x0000065cu, ImmutableString("gl_out").mangledNameHash());
-    ASSERT_EQ(0x0000065du, ImmutableString("gl_BoundingBoxEXT").mangledNameHash());
-    ASSERT_EQ(0x0000065eu, ImmutableString("gl_TessCoord").mangledNameHash());
-    ASSERT_EQ(0x0000065fu, ImmutableString("gl_ViewID_OVR").mangledNameHash());
+    ASSERT_EQ(0x0000065du, ImmutableString("gl_BoundingBox").mangledNameHash());
+    ASSERT_EQ(0x0000065eu, ImmutableString("gl_BoundingBoxEXT").mangledNameHash());
+    ASSERT_EQ(0x0000065fu, ImmutableString("gl_BoundingBoxOES").mangledNameHash());
+    ASSERT_EQ(0x00000660u, ImmutableString("gl_TessCoord").mangledNameHash());
+    ASSERT_EQ(0x00000661u, ImmutableString("gl_ViewID_OVR").mangledNameHash());
     ASSERT_EQ(0x00000000u, ImmutableString("radians").unmangledNameHash());
     ASSERT_EQ(0x00000001u, ImmutableString("degrees").unmangledNameHash());
     ASSERT_EQ(0x00000002u, ImmutableString("sin").unmangledNameHash());

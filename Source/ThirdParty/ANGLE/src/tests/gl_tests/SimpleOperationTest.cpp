@@ -154,6 +154,27 @@ TEST_P(SimpleOperationTest, BlendingRenderState)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Tests getting the GL_BLEND_EQUATION integer
+TEST_P(SimpleOperationTest, BlendEquationGetInteger)
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    constexpr std::array<GLenum, 5> equations = {GL_FUNC_ADD, GL_FUNC_SUBTRACT,
+                                                 GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX};
+
+    for (GLenum equation : equations)
+    {
+        glBlendEquation(equation);
+
+        GLint currentEquation;
+        glGetIntegerv(GL_BLEND_EQUATION, &currentEquation);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_EQ(currentEquation, static_cast<GLint>(equation));
+    }
+}
+
 TEST_P(SimpleOperationTest, CompileVertexShader)
 {
     GLuint shader = CompileShader(GL_VERTEX_SHADER, kBasicVertexShader);

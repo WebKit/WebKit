@@ -13,6 +13,7 @@
 #include <spirv_msl.hpp>
 
 #include "common/apple_platform_utils.h"
+#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 

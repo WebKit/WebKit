@@ -173,6 +173,21 @@ TEST_P(ContextNoErrorTest, InvalidGetIntegerDoesNotCrash)
     EXPECT_EQ(value, 1);
 }
 
+// Test that we ignore an invalid texture type when EGL_KHR_create_context_no_error is enabled.
+TEST_P(ContextNoErrorTest, InvalidTextureType)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
+
+    GLTexture texture;
+    constexpr GLenum kInvalidTextureType = 0;
+
+    glBindTexture(kInvalidTextureType, texture);
+    ASSERT_GL_NO_ERROR();
+
+    glTexParameteri(kInvalidTextureType, GL_TEXTURE_BASE_LEVEL, 0);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ContextNoErrorTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextNoErrorTest31);

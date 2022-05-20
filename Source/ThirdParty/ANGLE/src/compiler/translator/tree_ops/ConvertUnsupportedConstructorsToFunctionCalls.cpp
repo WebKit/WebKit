@@ -59,10 +59,10 @@ void AppendVectorFromScalarArgument(const TType &type,
                                     TFunction &function,
                                     TIntermSequence *returnCtorArgs)
 {
-    const int vectorSize = type.getNominalSize();
-    const TVariable *var = function.getParam(0);
-    TIntermSymbol *v     = new TIntermSymbol(var);
-    for (int i = 0; i < vectorSize; ++i)
+    const uint8_t vectorSize = type.getNominalSize();
+    const TVariable *var     = function.getParam(0);
+    TIntermSymbol *v         = new TIntermSymbol(var);
+    for (uint8_t i = 0; i < vectorSize; ++i)
     {
         returnCtorArgs->push_back(v->deepCopy());
     }
@@ -77,8 +77,8 @@ void AppendValuesFromMultipleArguments(int numValuesNeeded,
 {
     size_t numParameters = function.getParamCount();
     size_t paramIndex    = 0;
-    int colIndex         = 0;
-    int rowIndex         = 0;
+    uint8_t colIndex     = 0;
+    uint8_t rowIndex     = 0;
 
     for (int i = 0; i < numValuesNeeded && paramIndex < numParameters; ++i)
     {
@@ -122,13 +122,13 @@ void AppendMatrixFromScalarArgument(const TType &type,
                                     TFunction &function,
                                     TIntermSequence *returnCtorArgs)
 {
-    const TVariable *var = function.getParam(0);
-    TIntermSymbol *v     = new TIntermSymbol(var);
-    const int numCols    = type.getNominalSize();
-    const int numRows    = type.getSecondarySize();
-    for (int col = 0; col < numCols; ++col)
+    const TVariable *var  = function.getParam(0);
+    TIntermSymbol *v      = new TIntermSymbol(var);
+    const uint8_t numCols = type.getNominalSize();
+    const uint8_t numRows = type.getSecondarySize();
+    for (uint8_t col = 0; col < numCols; ++col)
     {
-        for (int row = 0; row < numRows; ++row)
+        for (uint8_t row = 0; row < numRows; ++row)
         {
             if (col == row)
             {
@@ -149,15 +149,15 @@ void AppendMatrixFromMatrixArgument(const TType &type,
                                     TFunction &function,
                                     TIntermSequence *returnCtorArgs)
 {
-    const TVariable *var = function.getParam(0);
-    TIntermSymbol *v     = new TIntermSymbol(var);
-    const int dstCols    = type.getNominalSize();
-    const int dstRows    = type.getSecondarySize();
-    const int srcCols    = v->getNominalSize();
-    const int srcRows    = v->getSecondarySize();
-    for (int dstCol = 0; dstCol < dstCols; ++dstCol)
+    const TVariable *var  = function.getParam(0);
+    TIntermSymbol *v      = new TIntermSymbol(var);
+    const uint8_t dstCols = type.getNominalSize();
+    const uint8_t dstRows = type.getSecondarySize();
+    const uint8_t srcCols = v->getNominalSize();
+    const uint8_t srcRows = v->getSecondarySize();
+    for (uint8_t dstCol = 0; dstCol < dstCols; ++dstCol)
     {
-        for (int dstRow = 0; dstRow < dstRows; ++dstRow)
+        for (uint8_t dstRow = 0; dstRow < dstRows; ++dstRow)
         {
             if (dstRow < srcRows && dstCol < srcCols)
             {
@@ -252,8 +252,7 @@ class Rebuild : public TIntermRebuild
         {
             TIntermTyped &arg = *arguments[i]->getAsTyped();
             TType *argType    = new TType(arg.getBasicType(), arg.getPrecision(), EvqParamIn,
-                                       static_cast<unsigned char>(arg.getNominalSize()),
-                                       static_cast<unsigned char>(arg.getSecondarySize()));
+                                       arg.getNominalSize(), arg.getSecondarySize());
             TVariable *var    = CreateTempVariable(&mSymbolTable, argType);
             function->addParameter(var);
         }

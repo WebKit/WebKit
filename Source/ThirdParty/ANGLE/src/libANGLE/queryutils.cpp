@@ -1119,6 +1119,21 @@ bool IsTextureEnvEnumParameter(TextureEnvParameter pname)
     }
 }
 
+void GetShaderProgramId(ProgramPipeline *programPipeline, ShaderType shaderType, GLint *params)
+{
+    ASSERT(params);
+
+    *params = 0;
+    if (programPipeline)
+    {
+        const Program *program = programPipeline->getShaderProgram(shaderType);
+        if (program)
+        {
+            *params = program->id().value;
+        }
+    }
+}
+
 }  // namespace
 
 void QueryFramebufferAttachmentParameteriv(const Context *context,
@@ -1690,6 +1705,9 @@ void QueryFramebufferParameteriv(const Framebuffer *framebuffer, GLenum pname, G
         case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
             *params = framebuffer->getDefaultLayers();
             break;
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
+            *params = ConvertToGLBoolean(framebuffer->getFlipY());
+            break;
         default:
             UNREACHABLE();
             break;
@@ -1843,6 +1861,9 @@ void SetFramebufferParameteri(const Context *context,
             break;
         case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
             framebuffer->setDefaultLayers(param);
+            break;
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
+            framebuffer->setFlipY(ConvertToBool(param));
             break;
         default:
             UNREACHABLE();
@@ -3050,6 +3071,7 @@ bool GetQueryParameterInfo(const State &glState,
     const Caps &caps             = glState.getCaps();
     const Extensions &extensions = glState.getExtensions();
     GLint clientMajorVersion     = glState.getClientMajorVersion();
+    EGLenum clientType           = glState.getClientType();
 
     // Please note: the query type returned for DEPTH_CLEAR_VALUE in this implementation
     // is FLOAT rather than INT, as would be suggested by the GL ES 2.0 spec. This is due
@@ -3279,7 +3301,7 @@ bool GetQueryParameterInfo(const State &glState,
             {
                 break;
             }
-            if (!extensions.clipDistanceAPPLE)
+            if (!extensions.clipDistanceAPPLE && !extensions.clipCullDistanceEXT)
             {
                 // NOTE(hqle): if client version is 1. GL_MAX_CLIP_DISTANCES_EXT is equal
                 // to GL_MAX_CLIP_PLANES which is a valid enum.
@@ -3307,7 +3329,7 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         case GL_PRIMITIVE_BOUNDING_BOX:
-            if (!extensions.primitiveBoundingBoxEXT)
+            if (!extensions.primitiveBoundingBoxAny())
             {
                 return false;
             }
@@ -3316,11 +3338,24 @@ bool GetQueryParameterInfo(const State &glState,
             return true;
     }
 
-    if (glState.getClientType() == EGL_OPENGL_API)
+    if (clientType == EGL_OPENGL_API ||
+        (clientType == EGL_OPENGL_ES_API && glState.getClientVersion() >= Version(3, 2)))
     {
         switch (pname)
         {
             case GL_CONTEXT_FLAGS:
+            {
+                *type      = GL_INT;
+                *numParams = 1;
+                return true;
+            }
+        }
+    }
+
+    if (clientType == EGL_OPENGL_API)
+    {
+        switch (pname)
+        {
             case GL_CONTEXT_PROFILE_MASK:
             {
                 *type      = GL_INT;
@@ -3951,15 +3986,7 @@ void QueryProgramPipelineiv(const Context *context,
         {
             // the name of the current program object for the vertex shader type of the program
             // pipeline object is returned in params
-            *params = 0;
-            if (programPipeline)
-            {
-                const Program *program = programPipeline->getShaderProgram(ShaderType::Vertex);
-                if (program)
-                {
-                    *params = program->id().value;
-                }
-            }
+            GetShaderProgramId(programPipeline, ShaderType::Vertex, params);
             break;
         }
 
@@ -3967,15 +3994,23 @@ void QueryProgramPipelineiv(const Context *context,
         {
             // the name of the current program object for the fragment shader type of the program
             // pipeline object is returned in params
-            *params = 0;
-            if (programPipeline)
-            {
-                const Program *program = programPipeline->getShaderProgram(ShaderType::Fragment);
-                if (program)
-                {
-                    *params = program->id().value;
-                }
-            }
+            GetShaderProgramId(programPipeline, ShaderType::Fragment, params);
+            break;
+        }
+
+        case GL_TESS_CONTROL_SHADER:
+        {
+            // the name of the current program object for the tessellation control shader type of
+            // the program pipeline object is returned in params
+            GetShaderProgramId(programPipeline, ShaderType::TessControl, params);
+            break;
+        }
+
+        case GL_TESS_EVALUATION_SHADER:
+        {
+            // the name of the current program object for the tessellation evaluation shader type of
+            // the program pipeline object is returned in params
+            GetShaderProgramId(programPipeline, ShaderType::TessEvaluation, params);
             break;
         }
 
@@ -3983,15 +4018,15 @@ void QueryProgramPipelineiv(const Context *context,
         {
             // the name of the current program object for the compute shader type of the program
             // pipeline object is returned in params
-            *params = 0;
-            if (programPipeline)
-            {
-                const Program *program = programPipeline->getShaderProgram(ShaderType::Compute);
-                if (program)
-                {
-                    *params = program->id().value;
-                }
-            }
+            GetShaderProgramId(programPipeline, ShaderType::Compute, params);
+            break;
+        }
+
+        case GL_GEOMETRY_SHADER:
+        {
+            // the name of the current program object for the geometry shader type of the program
+            // pipeline object is returned in params
+            GetShaderProgramId(programPipeline, ShaderType::Geometry, params);
             break;
         }
 

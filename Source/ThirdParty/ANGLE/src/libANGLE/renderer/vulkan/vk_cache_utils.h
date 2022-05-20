@@ -434,8 +434,10 @@ static_assert(kPackedStencilOpSize == 4, "Size check failed");
 
 struct DepthStencilEnableFlags final
 {
-    uint8_t depthTest : 2;  // these only need one bit each. the extra is used as padding.
-    uint8_t depthWrite : 2;
+    uint8_t viewportNegativeOneToOne : 1;
+
+    uint8_t depthTest : 1;
+    uint8_t depthWrite : 2;  // these only need one bit each. the extra is used as padding.
     uint8_t depthBoundsTest : 2;
     uint8_t stencilTest : 2;
 };
@@ -519,6 +521,14 @@ struct PackedExtent final
     uint16_t height;
 };
 
+struct PackedDither final
+{
+    static_assert(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS <= 8,
+                  "2 bits per draw buffer is needed for dither emulation");
+    uint16_t emulatedDitherControl;
+    uint16_t unused;
+};
+
 constexpr size_t kPackedInputAssemblyAndColorBlendStateSize =
     sizeof(PackedInputAssemblyAndColorBlendStateInfo);
 static_assert(kPackedInputAssemblyAndColorBlendStateSize == 56, "Size check failed");
@@ -526,7 +536,7 @@ static_assert(kPackedInputAssemblyAndColorBlendStateSize == 56, "Size check fail
 constexpr size_t kGraphicsPipelineDescSumOfSizes =
     kVertexInputAttributesSize + kRenderPassDescSize + kPackedRasterizationAndMultisampleStateSize +
     kPackedDepthStencilStateSize + kPackedInputAssemblyAndColorBlendStateSize +
-    sizeof(PackedExtent);
+    sizeof(PackedExtent) + sizeof(PackedDither);
 
 // Number of dirty bits in the dirty bit set.
 constexpr size_t kGraphicsPipelineDirtyBitBytes = 4;
@@ -586,9 +596,13 @@ class GraphicsPipelineDesc final
                            GLuint relativeOffset);
 
     // Input assembly info
+    void setTopology(gl::PrimitiveMode drawMode);
     void updateTopology(GraphicsPipelineTransitionBits *transition, gl::PrimitiveMode drawMode);
     void updatePrimitiveRestartEnabled(GraphicsPipelineTransitionBits *transition,
                                        bool primitiveRestartEnabled);
+
+    // Viewport states
+    void updateDepthClipControl(GraphicsPipelineTransitionBits *transition, bool negativeOneToOne);
 
     // Raster states
     void setCullMode(VkCullModeFlagBits cullMode);
@@ -622,6 +636,11 @@ class GraphicsPipelineDesc final
                               const RenderPassDesc &renderPassDesc);
 
     // Blend states
+    void setSingleBlend(uint32_t colorIndexGL,
+                        bool enabled,
+                        VkBlendOp op,
+                        VkBlendFactor srcFactor,
+                        VkBlendFactor dstFactor);
     void updateBlendEnabled(GraphicsPipelineTransitionBits *transition,
                             gl::DrawBufferMask blendEnabledMask);
     void updateBlendColor(GraphicsPipelineTransitionBits *transition, const gl::ColorF &color);
@@ -632,6 +651,7 @@ class GraphicsPipelineDesc final
                               const gl::BlendStateExt &blendStateExt,
                               gl::DrawBufferMask attachmentMask);
     void resetBlendFuncsAndEquations(GraphicsPipelineTransitionBits *transition,
+                                     const gl::BlendStateExt &blendStateExt,
                                      gl::DrawBufferMask previousAttachmentsMask,
                                      gl::DrawBufferMask newAttachmentsMask);
     void setColorWriteMasks(gl::BlendStateExt::ColorMaskStorage::Type colorMasks,
@@ -710,6 +730,9 @@ class GraphicsPipelineDesc final
                             uint32_t height);
     const PackedExtent &getDrawableSize() const { return mDrawableSize; }
 
+    void updateEmulatedDitherControl(GraphicsPipelineTransitionBits *transition, uint16_t value);
+    uint32_t getEmulatedDitherControl() const { return mDither.emulatedDitherControl; }
+
   private:
     void updateSubpass(GraphicsPipelineTransitionBits *transition, uint32_t subpass);
 
@@ -719,6 +742,7 @@ class GraphicsPipelineDesc final
     PackedDepthStencilStateInfo mDepthStencilStateInfo;
     PackedInputAssemblyAndColorBlendStateInfo mInputAssemblyAndColorBlendStateInfo;
     PackedExtent mDrawableSize;
+    PackedDither mDither;
 };
 
 // Verify the packed pipeline description has no gaps in the packing.
@@ -750,7 +774,7 @@ class DescriptorSetLayoutDesc final
     bool operator==(const DescriptorSetLayoutDesc &other) const;
 
     void update(uint32_t bindingIndex,
-                VkDescriptorType type,
+                VkDescriptorType descriptorType,
                 uint32_t count,
                 VkShaderStageFlags stages,
                 const Sampler *immutableSampler);
@@ -785,15 +809,16 @@ constexpr size_t kMaxDescriptorSetLayouts = 4;
 
 struct PackedPushConstantRange
 {
-    uint32_t offset;
-    uint32_t size;
+    uint8_t offset;
+    uint8_t size;
+    uint16_t stageMask;
 };
+
+static_assert(sizeof(PackedPushConstantRange) == sizeof(uint32_t), "Unexpected Size");
 
 template <typename T>
 using DescriptorSetArray              = angle::PackedEnumMap<DescriptorSetIndex, T>;
 using DescriptorSetLayoutPointerArray = DescriptorSetArray<BindingPointer<DescriptorSetLayout>>;
-template <typename T>
-using PushConstantRangeArray = gl::ShaderMap<T>;
 
 class PipelineLayoutDesc final
 {
@@ -808,26 +833,24 @@ class PipelineLayoutDesc final
 
     void updateDescriptorSetLayout(DescriptorSetIndex setIndex,
                                    const DescriptorSetLayoutDesc &desc);
-    void updatePushConstantRange(gl::ShaderType shaderType, uint32_t offset, uint32_t size);
+    void updatePushConstantRange(VkShaderStageFlags stageMask, uint32_t offset, uint32_t size);
 
-    const PushConstantRangeArray<PackedPushConstantRange> &getPushConstantRanges() const;
+    const PackedPushConstantRange &getPushConstantRange() const { return mPushConstantRange; }
 
   private:
     DescriptorSetArray<DescriptorSetLayoutDesc> mDescriptorSetLayouts;
-    PushConstantRangeArray<PackedPushConstantRange> mPushConstantRanges;
+    PackedPushConstantRange mPushConstantRange;
+    ANGLE_MAYBE_UNUSED uint32_t mPadding;
 
     // Verify the arrays are properly packed.
     static_assert(sizeof(decltype(mDescriptorSetLayouts)) ==
                       (sizeof(DescriptorSetLayoutDesc) * kMaxDescriptorSetLayouts),
                   "Unexpected size");
-    static_assert(sizeof(decltype(mPushConstantRanges)) ==
-                      (sizeof(PackedPushConstantRange) * angle::EnumSize<gl::ShaderType>()),
-                  "Unexpected size");
 };
 
 // Verify the structure is properly packed.
-static_assert(sizeof(PipelineLayoutDesc) == (sizeof(DescriptorSetArray<DescriptorSetLayoutDesc>) +
-                                             sizeof(gl::ShaderMap<PackedPushConstantRange>)),
+static_assert(sizeof(PipelineLayoutDesc) == sizeof(DescriptorSetArray<DescriptorSetLayoutDesc>) +
+                                                sizeof(PackedPushConstantRange) + sizeof(uint32_t),
               "Unexpected Size");
 
 struct YcbcrConversionDesc final
@@ -1093,112 +1116,149 @@ struct ImageOrBufferViewSubresourceSerial
     ImageSubresourceRange subresource;
 };
 
-static_assert(sizeof(ImageOrBufferViewSubresourceSerial) == sizeof(uint64_t), "Size mismatch");
-
 constexpr ImageOrBufferViewSubresourceSerial kInvalidImageOrBufferViewSubresourceSerial = {
     kInvalidImageOrBufferViewSerial, kInvalidImageSubresourceRange};
 
-class TextureDescriptorDesc
+// Generic description of a descriptor set. Used as a key when indexing descriptor set caches. The
+// key storage is an angle:FixedVector. Beyond a certain fixed size we'll end up using heap memory
+// to store keys. Currently we specialize the structure for three use cases: uniforms, textures,
+// and other shader resources. Because of the way the specialization works we can't currently cache
+// programs that use some types of resources.
+class DescriptorSetDesc
 {
   public:
-    TextureDescriptorDesc();
-    ~TextureDescriptorDesc();
+    DescriptorSetDesc()  = default;
+    ~DescriptorSetDesc() = default;
 
-    TextureDescriptorDesc(const TextureDescriptorDesc &other);
-    TextureDescriptorDesc &operator=(const TextureDescriptorDesc &other);
+    DescriptorSetDesc(const DescriptorSetDesc &other) : mPayload(other.mPayload) {}
 
-    void update(size_t index,
-                ImageOrBufferViewSubresourceSerial viewSerial,
-                SamplerSerial samplerSerial);
-    size_t hash() const;
-    void reset();
-
-    bool operator==(const TextureDescriptorDesc &other) const;
-
-    // Note: this is an exclusive index. If there is one index it will return "1".
-    uint32_t getMaxIndex() const { return mMaxIndex; }
-
-  private:
-    uint32_t mMaxIndex;
-
-    ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
-    struct TexUnitSerials
+    DescriptorSetDesc &operator=(const DescriptorSetDesc &other)
     {
-        ImageOrBufferViewSubresourceSerial view;
-        SamplerSerial sampler;
-    };
-    gl::ActiveTextureArray<TexUnitSerials> mSerials;
-    ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
-};
-
-class UniformsAndXfbDescriptorDesc
-{
-  public:
-    UniformsAndXfbDescriptorDesc();
-    ~UniformsAndXfbDescriptorDesc();
-
-    UniformsAndXfbDescriptorDesc(const UniformsAndXfbDescriptorDesc &other);
-    UniformsAndXfbDescriptorDesc &operator=(const UniformsAndXfbDescriptorDesc &other);
-
-    BufferSerial getDefaultUniformBufferSerial() const
-    {
-        return mBufferSerials[kDefaultUniformBufferIndex];
+        mPayload = other.mPayload;
+        return *this;
     }
+
+    size_t hash() const;
+
+    void reset() { mPayload.clear(); }
+
+    bool operator==(const DescriptorSetDesc &other) const
+    {
+        return (mPayload.size() == other.mPayload.size()) &&
+               (memcmp(mPayload.data(), other.mPayload.data(),
+                       mPayload.size() * sizeof(mPayload[0])) == 0);
+    }
+
+    // Specific helpers for uniforms/xfb descriptors.
+    static constexpr size_t kDefaultUniformBufferWordOffset = 0;
+    static constexpr size_t kXfbBufferSerialWordOffset      = 1;
+    static constexpr size_t kXfbBufferOffsetWordOffset      = 2;
+    static constexpr size_t kXfbWordStride                  = 2;
+
     void updateDefaultUniformBuffer(BufferSerial bufferSerial)
     {
-        mBufferSerials[kDefaultUniformBufferIndex] = bufferSerial;
-        mBufferCount = std::max(mBufferCount, static_cast<uint32_t>(1));
+        setBufferSerial(kDefaultUniformBufferWordOffset, 1, 0, bufferSerial);
     }
+
     void updateTransformFeedbackBuffer(size_t xfbIndex,
                                        BufferSerial bufferSerial,
                                        VkDeviceSize bufferOffset)
     {
-        uint32_t bufferIndex        = static_cast<uint32_t>(xfbIndex) + 1;
-        mBufferSerials[bufferIndex] = bufferSerial;
-
-        ASSERT(static_cast<uint64_t>(bufferOffset) <=
-               static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
-        mXfbBufferOffsets[xfbIndex] = static_cast<uint32_t>(bufferOffset);
-
-        mBufferCount = std::max(mBufferCount, (bufferIndex + 1));
+        setBufferSerial(kXfbBufferSerialWordOffset, kXfbWordStride, xfbIndex, bufferSerial);
+        setClamped64BitValue(kXfbBufferOffsetWordOffset, kXfbWordStride, xfbIndex, bufferOffset);
     }
-    size_t hash() const;
-    void reset();
 
-    bool operator==(const UniformsAndXfbDescriptorDesc &other) const;
-
-  private:
-    uint32_t mBufferCount;
-    // The array index 0 is used for default uniform buffer
-    static constexpr size_t kDefaultUniformBufferIndex = 0;
-    static constexpr size_t kDefaultUniformBufferCount = 1;
-    static constexpr size_t kMaxBufferCount =
-        kDefaultUniformBufferCount + gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS;
-    std::array<BufferSerial, kMaxBufferCount> mBufferSerials;
-    std::array<uint32_t, gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS> mXfbBufferOffsets;
-};
-
-class ShaderBuffersDescriptorDesc
-{
-  public:
-    ShaderBuffersDescriptorDesc();
-    ~ShaderBuffersDescriptorDesc();
-
-    ShaderBuffersDescriptorDesc(const ShaderBuffersDescriptorDesc &other);
-    ShaderBuffersDescriptorDesc &operator=(const ShaderBuffersDescriptorDesc &other);
-
-    size_t hash() const;
-    void reset();
-
-    bool operator==(const ShaderBuffersDescriptorDesc &other) const;
-
-    ANGLE_INLINE void appendBufferSerial(BufferSerial bufferSerial)
+    // Specific helpers for texture descriptors.
+    static constexpr size_t kImageOrBufferViewWordOffset     = 0;
+    static constexpr size_t kImageSubresourceRangeWordOffset = 1;
+    static constexpr size_t kSamplerSerialWordOffset         = 2;
+    static constexpr size_t kTextureWordStride               = 3;
+    void updateTexture(size_t textureUnit,
+                       ImageOrBufferViewSubresourceSerial imageOrBufferViewSubresource,
+                       SamplerSerial samplerSerial)
     {
-        mPayload.push_back(bufferSerial.getValue());
+        setImageOrBufferViewSerial(kImageOrBufferViewWordOffset, kTextureWordStride, textureUnit,
+                                   imageOrBufferViewSubresource.viewSerial);
+        setImageSubresourceRange(kImageSubresourceRangeWordOffset, kTextureWordStride, textureUnit,
+                                 imageOrBufferViewSubresource.subresource);
+        setSamplerSerial(kSamplerSerialWordOffset, kTextureWordStride, textureUnit, samplerSerial);
     }
-    ANGLE_INLINE void append32BitValue(uint32_t value) { mPayload.push_back(value); }
+
+    // Specific helpers for the shader resources descriptors.
+    void appendBufferSerial(BufferSerial bufferSerial)
+    {
+        append32BitValue(bufferSerial.getValue());
+    }
+
+    void append32BitValue(uint32_t value) { mPayload.push_back(value); }
+
+    void appendClamped64BitValue(uint64_t value)
+    {
+        ASSERT(value <= static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
+        append32BitValue(static_cast<uint32_t>(value));
+    }
 
   private:
+    void setBufferSerial(size_t wordOffset,
+                         size_t wordStride,
+                         size_t elementIndex,
+                         BufferSerial bufferSerial)
+    {
+        set32BitValue(wordOffset, wordStride, elementIndex, bufferSerial.getValue());
+    }
+
+    void setImageOrBufferViewSerial(size_t wordOffset,
+                                    size_t wordStride,
+                                    size_t elementIndex,
+                                    ImageOrBufferViewSerial imageOrBufferViewSerial)
+    {
+        set32BitValue(wordOffset, wordStride, elementIndex, imageOrBufferViewSerial.getValue());
+    }
+
+    void setImageSubresourceRange(size_t wordOffset,
+                                  size_t wordStride,
+                                  size_t elementIndex,
+                                  ImageSubresourceRange subresourceRange)
+    {
+        static_assert(sizeof(ImageSubresourceRange) == sizeof(uint32_t));
+
+        uint32_t value32bits;
+        memcpy(&value32bits, &subresourceRange, sizeof(uint32_t));
+        set32BitValue(wordOffset, wordStride, elementIndex, value32bits);
+    }
+
+    void setSamplerSerial(size_t wordOffset,
+                          size_t wordStride,
+                          size_t elementIndex,
+                          SamplerSerial samplerSerial)
+    {
+        set32BitValue(wordOffset, wordStride, elementIndex, samplerSerial.getValue());
+    }
+
+    void set32BitValue(size_t wordOffset, size_t wordStride, size_t elementIndex, uint32_t value)
+    {
+        size_t wordIndex = wordOffset + wordStride * elementIndex;
+        ensureCapacity(wordIndex + 1);
+        mPayload[wordIndex] = value;
+    }
+
+    void setClamped64BitValue(size_t wordOffset,
+                              size_t wordStride,
+                              size_t elementIndex,
+                              uint64_t value)
+    {
+        ASSERT(value <= static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()));
+        set32BitValue(wordOffset, wordStride, elementIndex, static_cast<uint32_t>(value));
+    }
+
+    void ensureCapacity(size_t capacity)
+    {
+        if (mPayload.size() < capacity)
+        {
+            mPayload.resize(capacity, 0);
+        }
+    }
+
     // After a preliminary minimum size, use heap memory.
     static constexpr size_t kFastBufferWordLimit = 32;
     angle::FastVector<uint32_t, kFastBufferWordLimit> mPayload;
@@ -1392,21 +1452,9 @@ struct hash<rx::vk::ImageSubresourceRange>
 };
 
 template <>
-struct hash<rx::vk::TextureDescriptorDesc>
+struct hash<rx::vk::DescriptorSetDesc>
 {
-    size_t operator()(const rx::vk::TextureDescriptorDesc &key) const { return key.hash(); }
-};
-
-template <>
-struct hash<rx::vk::UniformsAndXfbDescriptorDesc>
-{
-    size_t operator()(const rx::vk::UniformsAndXfbDescriptorDesc &key) const { return key.hash(); }
-};
-
-template <>
-struct hash<rx::vk::ShaderBuffersDescriptorDesc>
-{
-    size_t operator()(const rx::vk::ShaderBuffersDescriptorDesc &key) const { return key.hash(); }
+    size_t operator()(const rx::vk::DescriptorSetDesc &key) const { return key.hash(); }
 };
 
 template <>
@@ -1472,6 +1520,7 @@ class CacheStats final : angle::NonCopyable
     {
         mHitCount += stats.mHitCount;
         mMissCount += stats.mMissCount;
+        mSize = stats.mSize;
     }
 
     uint64_t getHitCount() const { return mHitCount; }
@@ -1489,15 +1538,21 @@ class CacheStats final : angle::NonCopyable
         }
     }
 
+    ANGLE_INLINE void incrementSize() { ++mSize; }
+
+    ANGLE_INLINE uint64_t getSize() const { return mSize; }
+
     void reset()
     {
         mHitCount  = 0;
         mMissCount = 0;
+        mSize      = 0;
     }
 
   private:
     uint64_t mHitCount;
     uint64_t mMissCount;
+    uint64_t mSize;
 };
 
 template <VulkanCacheType CacheType>
@@ -1731,45 +1786,55 @@ class DriverUniformsDescriptorSetCache final
 
     ANGLE_INLINE void clear() { mPayload.clear(); }
 
+    size_t getSize() const { return mPayload.size(); }
+
   private:
-    angle::FastIntegerMap<VkDescriptorSet> mPayload;
+    static constexpr uint32_t kFastMapSize = 16;
+    angle::FastUnorderedMap<uint32_t, VkDescriptorSet, kFastMapSize> mPayload;
 };
 
 // Templated Descriptors Cache
-template <typename Key, VulkanCacheType CacheType>
-class DescriptorSetCache final : public HasCacheStats<CacheType>
+class DescriptorSetCache final : angle::NonCopyable
 {
   public:
     DescriptorSetCache() = default;
-    ~DescriptorSetCache() override { ASSERT(mPayload.empty()); }
+    ~DescriptorSetCache() { ASSERT(mPayload.empty()); }
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(RendererVk *rendererVk, VulkanCacheType cacheType);
 
-    ANGLE_INLINE bool get(const Key &desc, VkDescriptorSet *descriptorSet)
+    ANGLE_INLINE bool get(const vk::DescriptorSetDesc &desc, VkDescriptorSet *descriptorSet)
     {
         auto iter = mPayload.find(desc);
         if (iter != mPayload.end())
         {
             *descriptorSet = iter->second;
-            this->mCacheStats.hit();
+            mCacheStats.hit();
             return true;
         }
-        this->mCacheStats.miss();
+        mCacheStats.miss();
         return false;
     }
 
-    ANGLE_INLINE void insert(const Key &desc, VkDescriptorSet descriptorSet)
+    ANGLE_INLINE void insert(const vk::DescriptorSetDesc &desc, VkDescriptorSet descriptorSet)
     {
         mPayload.emplace(desc, descriptorSet);
+        mCacheStats.incrementSize();
+    }
+
+    template <typename Accumulator>
+    void accumulateCacheStats(VulkanCacheType cacheType, Accumulator *accumulator)
+    {
+        accumulator->accumulateCacheStats(cacheType, mCacheStats);
     }
 
   private:
-    angle::HashMap<Key, VkDescriptorSet> mPayload;
+    angle::HashMap<vk::DescriptorSetDesc, VkDescriptorSet> mPayload;
+    CacheStats mCacheStats;
 };
 
 // Only 1 driver uniform binding is used.
 constexpr uint32_t kReservedDriverUniformBindingCount = 1;
-// There is 1 default uniform binding used per stage.  Currently, a maxium of three stages are
+// There is 1 default uniform binding used per stage.  Currently, a maximum of three stages are
 // supported.
 constexpr uint32_t kReservedPerStageDefaultUniformBindingCount = 1;
 constexpr uint32_t kReservedDefaultUniformBindingCount         = 3;

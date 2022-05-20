@@ -240,15 +240,15 @@ Name SymbolEnv::TemplateName::fullName(std::string &buffer) const
                         buffer += type.getBasicString();
                         if (type.isVector())
                         {
-                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getNominalSize());
+                            snprintf(argBuffer, sizeof(argBuffer), "%u", type.getNominalSize());
                             buffer += argBuffer;
                         }
                         else if (type.isMatrix())
                         {
-                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getCols());
+                            snprintf(argBuffer, sizeof(argBuffer), "%u", type.getCols());
                             buffer += argBuffer;
                             buffer += "x";
-                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getRows());
+                            snprintf(argBuffer, sizeof(argBuffer), "%u", type.getRows());
                             buffer += argBuffer;
                         }
                     }

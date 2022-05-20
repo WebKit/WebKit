@@ -229,31 +229,33 @@ list of supported EGL extensions in ANGLE's front-end see
 Supported extension data is stored in the ANGLE repo as JSON files in
 [`scripts/extension_data`](../scripts/extension_data). The JSON data is
 sourced from public ANGLE test runs. Look for `angle_end2end_tests` in a bot
-run: [example link](https://ci.chromium.org/ui/p/angle/builders/ci/win-clang-x64-rel/8183/overview).
+run: [example link](https://ci.chromium.org/ui/p/angle/builders/ci/win-test/520/overview).
 Search for "`angle_end2end_tests`", then click on the "cas output" and find
-`GLinfo_ES3_2_Vulkan.json`.
+`GLinfo_ES3_2_Vulkan.json` or `GLinfo_ES3_1_Vulkan_SwiftShader.json` for
+SwiftShader.
 
-The Pixel 4 and GLES 3 NVIDIA and Intel data is automatically updated using
+All data except for GLES 1 is automatically updated using
 the [`update_extension_data.py`](../scripts/update_extension_data.py) script.
 To use it first authenticate to the `bb` and `luci-go` tools by running `bb
 auth-login` and `./tools/luci-go/swarming login`. Then run the script and
 re-run [code generation][CodeGen].
 
-The GLES 1 and SwiftShader data is currently manually updated. Find the relevant
+The GLES 1 data is currently manually updated. Find the relevant
 file from the task output (see above) and overwrite the correspoding file.
 Re-run [code generation][CodeGen] and create a CL as per our normal process.
 
 To add a new configuration, first retrieve the JSON data, modify
 [`gen_extensions.py`](../src/libANGLE/gen_extensions.py) as necessary, then
 run [`scripts/run_code_generation.py`][CodeGen] to refresh generated files.
+Also update `update_extension_data.py` as necessary.
 
 [CodeGen]: ../scripts/run_code_generation.py
 """
 
 _MD_GLES_GPU_CONFIGS = [
-    'NVIDIA P400 Win10',
+    'NVIDIA 1660 Win10',
     'Intel 630 Win10',
-    'NVIDIA P400 Linux',
+    'NVIDIA 1660 Linux',
     'Intel 630 Linux',
     'SwiftShader Win10',
     'Pixel 4 Android 11',
@@ -344,9 +346,9 @@ def sort_by_ext_name(ext_infos):
 def get_ext_support(ext_name, gpu_data):
 
     def s(ext, support):
-        CHECKMARK = '&#10004;'
-        CROSS = '&#10060;'
-        return CHECKMARK if ext in support['Extensions'] else CROSS
+        SUPPORT_SYM = '&#x2714;'
+        NOSUPPORT_SYM = ''
+        return SUPPORT_SYM if ext in support['Extensions'] else NOSUPPORT_SYM
 
     return ' | '.join([s(ext_name, support) for support in gpu_data])
 

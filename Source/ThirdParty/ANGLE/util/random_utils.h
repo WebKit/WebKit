@@ -70,6 +70,15 @@ inline void FillVectorWithRandomUBytes(std::vector<uint8_t> *data)
     FillVectorWithRandomUBytes(&rng, data);
 }
 
+inline Vector3 RandomVec3(int seed, float minValue, float maxValue)
+{
+    RNG rng(seed);
+    srand(seed);
+    return Vector3(rng.randomFloatBetween(minValue, maxValue),
+                   rng.randomFloatBetween(minValue, maxValue),
+                   rng.randomFloatBetween(minValue, maxValue));
+}
+
 inline Vector4 RandomVec4(int seed, float minValue, float maxValue)
 {
     RNG rng(seed);

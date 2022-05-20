@@ -682,6 +682,9 @@ void GenerateCaps(IDirect3D9 *d3d9,
     // textureRgEXT is emulated and not performant.
     extensions->textureRgEXT = false;
 
+    // GL_KHR_parallel_shader_compile
+    extensions->parallelShaderCompileKHR = true;
+
     D3DADAPTER_IDENTIFIER9 adapterId = {};
     if (SUCCEEDED(d3d9->GetAdapterIdentifier(adapter, 0, &adapterId)))
     {

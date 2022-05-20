@@ -78,6 +78,14 @@ class OffscreenSurfaceVk : public SurfaceVk
 
     vk::ImageHelper *getColorAttachmentImage();
 
+    egl::Error lockSurface(const egl::Display *display,
+                           EGLint usageHint,
+                           bool preservePixels,
+                           uint8_t **bufferPtrOut,
+                           EGLint *bufferPitchOut) override;
+    egl::Error unlockSurface(const egl::Display *display, bool preservePixels) override;
+    EGLint origin() const override;
+
   protected:
     struct AttachmentImage final : angle::NonCopyable
     {
@@ -106,6 +114,9 @@ class OffscreenSurfaceVk : public SurfaceVk
 
     AttachmentImage mColorAttachment;
     AttachmentImage mDepthStencilAttachment;
+
+    // EGL_KHR_lock_surface3
+    vk::BufferHelper mLockBufferHelper;
 };
 
 // Data structures used in WindowSurfaceVk
@@ -158,6 +169,7 @@ struct SwapchainImage : angle::NonCopyable
     vk::ImageHelper image;
     vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
+    vk::Framebuffer fetchFramebuffer;
 
     // A circular array of semaphores used for presenting this image.
     static constexpr size_t kPresentHistorySize = kSwapHistorySize + 1;
@@ -165,6 +177,12 @@ struct SwapchainImage : angle::NonCopyable
     uint64_t mFrameNumber = 0;
 };
 }  // namespace impl
+
+enum class FramebufferFetchMode
+{
+    Disabled,
+    Enabled,
+};
 
 class WindowSurfaceVk : public SurfaceVk
 {
@@ -182,6 +200,7 @@ class WindowSurfaceVk : public SurfaceVk
                                             FramebufferAttachmentRenderTarget **rtOut) override;
     FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
                                               const gl::FramebufferState &state) override;
+    egl::Error prepareSwap(const gl::Context *context) override;
     egl::Error swap(const gl::Context *context) override;
     egl::Error swapWithDamage(const gl::Context *context,
                               const EGLint *rects,
@@ -223,7 +242,10 @@ class WindowSurfaceVk : public SurfaceVk
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
 
+    vk::Framebuffer &chooseFramebuffer();
+
     angle::Result getCurrentFramebuffer(ContextVk *context,
+                                        FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
                                         vk::Framebuffer **framebufferOut);
 
@@ -247,7 +269,18 @@ class WindowSurfaceVk : public SurfaceVk
         return (mSwapchainPresentMode == VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR);
     }
 
+    egl::Error lockSurface(const egl::Display *display,
+                           EGLint usageHint,
+                           bool preservePixels,
+                           uint8_t **bufferPtrOut,
+                           EGLint *bufferPitchOut) override;
+    egl::Error unlockSurface(const egl::Display *display, bool preservePixels) override;
+    EGLint origin() const override;
+
+    angle::Result onSharedPresentContextFlush(const gl::Context *context);
+
   protected:
+    angle::Result prepareSwapImpl(const gl::Context *context);
     angle::Result swapImpl(const gl::Context *context,
                            const EGLint *rects,
                            EGLint n_rects,
@@ -374,6 +407,12 @@ class WindowSurfaceVk : public SurfaceVk
 
     // EGL_EXT_buffer_age: Track frame count.
     uint64_t mFrameCount;
+
+    // EGL_KHR_lock_surface3
+    vk::BufferHelper mLockBufferHelper;
+
+    // GL_EXT_shader_framebuffer_fetch
+    FramebufferFetchMode mFramebufferFetchMode = FramebufferFetchMode::Disabled;
 };
 
 }  // namespace rx

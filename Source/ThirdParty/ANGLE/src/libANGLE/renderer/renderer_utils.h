@@ -448,6 +448,15 @@ class ResetBaseVertexBaseInstance : angle::NonCopyable
 angle::FormatID ConvertToSRGB(angle::FormatID formatID);
 angle::FormatID ConvertToLinear(angle::FormatID formatID);
 bool IsOverridableLinearFormat(angle::FormatID formatID);
+
+enum class PipelineType
+{
+    Graphics = 0,
+    Compute  = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
 }  // namespace rx
 
 // MultiDraw macro patterns

@@ -296,6 +296,8 @@ deqp_gles3_sources = [
   "$deqp_path/modules/gles3/functional/es3fDepthTests.hpp",
   "$deqp_path/modules/gles3/functional/es3fDitheringTests.cpp",
   "$deqp_path/modules/gles3/functional/es3fDitheringTests.hpp",
+  "$deqp_path/modules/gles3/functional/es3fDrawBuffersIndexedTests.cpp",
+  "$deqp_path/modules/gles3/functional/es3fDrawBuffersIndexedTests.hpp",
   "$deqp_path/modules/gles3/functional/es3fDrawTests.cpp",
   "$deqp_path/modules/gles3/functional/es3fDrawTests.hpp",
   "$deqp_path/modules/gles3/functional/es3fFboApiTests.cpp",
@@ -528,9 +530,12 @@ deqp_gles3_sources = [
   "$deqp_path/modules/gles3/tes3InfoTests.hpp",
   "$deqp_path/modules/gles3/tes3TestCase.cpp",
   "$deqp_path/modules/gles3/tes3TestCase.hpp",
+  "$deqp_path/modules/gles3/tes3TestCaseWrapper.hpp",
   "$deqp_path/modules/gles3/tes3TestPackage.cpp",
   "$deqp_path/modules/gles3/tes3TestPackage.hpp",
   "$deqp_path/modules/gles3/tes3TestPackageEntry.cpp",
+  "$deqp_path/modules/gles3/tgl45es3TestPackage.cpp",
+  "$deqp_path/modules/gles3/tgl45es3TestPackage.hpp",
 ]
 
 deqp_gles31_sources = [
@@ -554,8 +559,6 @@ deqp_gles31_sources = [
   "$deqp_path/modules/gles31/functional/es31fDebugTests.hpp",
   "$deqp_path/modules/gles31/functional/es31fDefaultVertexArrayObjectTests.cpp",
   "$deqp_path/modules/gles31/functional/es31fDefaultVertexArrayObjectTests.hpp",
-  "$deqp_path/modules/gles31/functional/es31fDrawBuffersIndexedTests.cpp",
-  "$deqp_path/modules/gles31/functional/es31fDrawBuffersIndexedTests.hpp",
   "$deqp_path/modules/gles31/functional/es31fDrawElementsBaseVertexTests.cpp",
   "$deqp_path/modules/gles31/functional/es31fDrawElementsBaseVertexTests.hpp",
   "$deqp_path/modules/gles31/functional/es31fDrawTests.cpp",
@@ -741,9 +744,12 @@ deqp_gles31_sources = [
   "$deqp_path/modules/gles31/tes31InfoTests.hpp",
   "$deqp_path/modules/gles31/tes31TestCase.cpp",
   "$deqp_path/modules/gles31/tes31TestCase.hpp",
+  "$deqp_path/modules/gles31/tes31TestCaseWrapper.hpp",
   "$deqp_path/modules/gles31/tes31TestPackage.cpp",
   "$deqp_path/modules/gles31/tes31TestPackage.hpp",
   "$deqp_path/modules/gles31/tes31TestPackageEntry.cpp",
+  "$deqp_path/modules/gles31/tgl45es31TestPackage.cpp",
+  "$deqp_path/modules/gles31/tgl45es31TestPackage.hpp",
 
   # Overrides
   "deqp_support/tes31Context_override.cpp",  # 3688/3687: Override to prevent

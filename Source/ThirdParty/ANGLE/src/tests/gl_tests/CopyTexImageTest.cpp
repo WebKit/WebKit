@@ -40,13 +40,13 @@ class CopyTexImageTest : public ANGLETest
 
     void testTearDown() override { glDeleteProgram(mTextureProgram); }
 
-    void initializeResources(GLenum format, GLenum type)
+    void initializeResources(GLenum internalFormat, GLenum format, GLenum type)
     {
         for (size_t i = 0; i < kFboCount; ++i)
         {
             glBindTexture(GL_TEXTURE_2D, mFboTextures[i]);
-            glTexImage2D(GL_TEXTURE_2D, 0, format, kFboSizes[i], kFboSizes[i], 0, format, type,
-                         nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, kFboSizes[i], kFboSizes[i], 0, format,
+                         type, nullptr);
 
             // Disable mipmapping
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -61,6 +61,11 @@ class CopyTexImageTest : public ANGLETest
         }
 
         ASSERT_GL_NO_ERROR();
+    }
+
+    void initializeResources(GLenum format, GLenum type)
+    {
+        initializeResources(format, format, type);
     }
 
     void verifyResults(GLuint texture,
@@ -90,6 +95,33 @@ class CopyTexImageTest : public ANGLETest
         EXPECT_PIXEL_NEAR((xs + xe) / 2, (ys + ye) / 2, data[0], data[1], data[2], data[3], 1.0);
     }
 
+    void verifyCheckeredResults(GLuint texture,
+                                const GLubyte data0[4],
+                                const GLubyte data1[4],
+                                const GLubyte data2[4],
+                                const GLubyte data3[4],
+                                GLint fboWidth,
+                                GLint fboHeight)
+    {
+        glViewport(0, 0, fboWidth, fboHeight);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // Draw a quad with the target texture
+        glUseProgram(mTextureProgram);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(mTextureUniformLocation, 0);
+
+        drawQuad(mTextureProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+        // Expect that the rendered quad has the same color as the source texture
+        EXPECT_PIXEL_EQ(fboWidth / 4, fboHeight / 4, data0[0], data0[1], data0[2], data0[3]);
+        EXPECT_PIXEL_EQ(fboWidth / 4, 3 * fboHeight / 4, data1[0], data1[1], data1[2], data1[3]);
+        EXPECT_PIXEL_EQ(3 * fboWidth / 4, fboHeight / 4, data2[0], data2[1], data2[2], data2[3]);
+        EXPECT_PIXEL_EQ(3 * fboWidth / 4, 3 * fboHeight / 4, data3[0], data3[1], data3[2],
+                        data3[3]);
+    }
+
     void runCopyTexImageTest(GLenum format, GLubyte expected[3][4])
     {
         GLTexture tex;
@@ -113,6 +145,47 @@ class CopyTexImageTest : public ANGLETest
             ASSERT_GL_NO_ERROR();
 
             verifyResults(tex, expected[i], kFboSizes[i], 0, 0, kFboSizes[i], kFboSizes[i]);
+        }
+    }
+
+    // x, y, width, height specify the portion of fbo to be copied into tex.
+    // flip_y specifies if the glCopyTextImage must be done from y-flipped fbo.
+    void runCopyTexImageTestCheckered(GLenum format,
+                                      const uint32_t x[3],
+                                      const uint32_t y[3],
+                                      const uint32_t width[3],
+                                      const uint32_t height[3],
+                                      const GLubyte expectedData0[4],
+                                      const GLubyte expectedData1[4],
+                                      const GLubyte expectedData2[4],
+                                      const GLubyte expectedData3[4],
+                                      bool mesaFlipY)
+    {
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Perform the copy multiple times.
+        for (size_t i = 0; i < kFboCount; ++i)
+        {
+            glViewport(0, 0, kFboSizes[i], kFboSizes[i]);
+            glBindFramebuffer(GL_FRAMEBUFFER, mFbos[i]);
+
+            ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                             essl1_shaders::fs::Checkered());
+            drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+            EXPECT_GL_NO_ERROR();
+
+            if (mesaFlipY)
+                glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x[i], y[i], width[i], height[i], 0);
+            ASSERT_GL_NO_ERROR();
+
+            verifyCheckeredResults(tex, expectedData0, expectedData1, expectedData2, expectedData3,
+                                   kFboSizes[i], kFboSizes[i]);
         }
     }
 
@@ -317,6 +390,20 @@ TEST_P(CopyTexImageTest, SubImageRGBToL)
 
     initializeResources(GL_RGB, GL_UNSIGNED_BYTE);
     runCopyTexSubImageTest(GL_LUMINANCE, expected);
+}
+
+TEST_P(CopyTexImageTest, RGBXToL)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_rgbx_internal_format"));
+
+    GLubyte expected[3][4] = {
+        {64, 64, 64, 255},
+        {255, 255, 255, 255},
+        {127, 127, 127, 255},
+    };
+
+    initializeResources(GL_RGBX8_ANGLE, GL_RGB, GL_UNSIGNED_BYTE);
+    runCopyTexImageTest(GL_LUMINANCE, expected);
 }
 
 // Read default framebuffer with glCopyTexImage2D().
@@ -564,6 +651,107 @@ TEST_P(CopyTexImageTest, CopyTexSubImageFrom3DTexureOES)
     {
         EXPECT_PIXEL_COLOR_EQ(slice, 0, fboPixels[slice]);
     }
+}
+
+// Tests image copy from y-flipped fbo works.
+TEST_P(CopyTexImageTest, CopyTexImageMesaYFlip)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+
+    std::array<uint32_t, 3> copyOrigin{0};
+    std::array<uint32_t, 3> copySize;
+    for (size_t i = 0; i < kFboCount; i++)
+        copySize[i] = kFboSizes[i];
+
+    initializeResources(GL_RGBA, GL_UNSIGNED_BYTE);
+    runCopyTexImageTestCheckered(GL_RGBA, copyOrigin.data(), copyOrigin.data(), copySize.data(),
+                                 copySize.data(), GLColor::green.data(), GLColor::red.data(),
+                                 GLColor::yellow.data(), GLColor::blue.data(),
+                                 true /* mesaFlipY */);
+}
+
+// Tests image partial copy from y-flipped fbo works.
+TEST_P(CopyTexImageTest, CopyTexImageMesaYFlipPartial)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+
+    std::array<uint32_t, kFboCount> copyX;
+    std::array<uint32_t, kFboCount> copyY{0};
+    std::array<uint32_t, kFboCount> copyWidth;
+    std::array<uint32_t, kFboCount> copyHeight;
+
+    for (size_t i = 0; i < kFboCount; i++)
+    {
+        copyX[i]      = kFboSizes[i] / 2;
+        copyHeight[i] = kFboSizes[i];
+    }
+    copyWidth = copyX;
+
+    initializeResources(GL_RGBA, GL_UNSIGNED_BYTE);
+    runCopyTexImageTestCheckered(GL_RGBA, copyX.data(), copyY.data(), copyWidth.data(),
+                                 copyHeight.data(), GLColor::yellow.data(), GLColor::blue.data(),
+                                 GLColor::yellow.data(), GLColor::blue.data(),
+                                 true /* mesaFlipY */);
+}
+
+// Tests subimage copy from y-flipped fbo works.
+TEST_P(CopyTexImageTest, CopyTexSubImageMesaYFlip)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
+
+    GLuint format = GL_RGBA;
+    initializeResources(format, GL_UNSIGNED_BYTE);
+
+    glViewport(0, 0, kFboSizes[0], kFboSizes[0]);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFbos[0]);
+
+    ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::Checkered());
+    drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Create the texture with copy of the first fbo.
+    glBindFramebuffer(GL_FRAMEBUFFER, mFbos[0]);
+    glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, format, 0, 0, kFboSizes[0], kFboSizes[0], 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure out-of-bound writes to the texture return invalid value.
+    glBindFramebuffer(GL_FRAMEBUFFER, mFbos[1]);
+    drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
+
+    // xoffset < 0 and yoffset < 0
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, -1, -1, 0, 0, kFboSizes[0], kFboSizes[0]);
+    ASSERT_GL_ERROR(GL_INVALID_VALUE);
+
+    // xoffset + width > w and yoffset + height > h
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 1, 1, 0, 0, kFboSizes[0], kFboSizes[0]);
+    ASSERT_GL_ERROR(GL_INVALID_VALUE);
+
+    // xoffset + width > w and yoffset + height > h, out of bounds
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, -1, -1, 1 + kFboSizes[0], 1 + kFboSizes[0]);
+    ASSERT_GL_ERROR(GL_INVALID_VALUE);
+
+    // Copy the second fbo over a portion of the image.
+    GLint offset = kFboSizes[0] / 2;
+    GLint extent = kFboSizes[0] - offset;
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, offset, offset, kFboSizes[1] / 2, kFboSizes[1] / 2,
+                        extent, extent);
+    ASSERT_GL_NO_ERROR();
+
+    // Only part of the image is changed.
+    verifyCheckeredResults(tex, GLColor::green.data(), GLColor::red.data(), GLColor::yellow.data(),
+                           GLColor::blue.data(), kFboSizes[0], kFboSizes[0]);
 }
 
 // specialization of CopyTexImageTest is added so that some tests can be explicitly run with an ES3

@@ -11,7 +11,7 @@
 # 1 "temp_master_source.metal"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 396 "<built-in>" 3
+# 433 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
 # 1 "temp_master_source.metal" 2
@@ -834,9 +834,11 @@ kernel void genTriFanIndicesFromArray(uint idx [[thread_position_in_grid]],
 
     uint vertexIdx = options.firstVertex + 2 + idx;
 
-    output[3 * idx] = options.firstVertex;
-    output[3 * idx + 1] = vertexIdx - 1;
-    output[3 * idx + 2] = vertexIdx;
+
+
+    output[3 * idx ] = vertexIdx - 1;
+    output[3 * idx + 1] = vertexIdx;
+    output[3 * idx + 2] = options.firstVertex;
 }
 
 inline uint getIndexU32(uint offset,
@@ -3371,23 +3373,219 @@ kernel void fixIndexBuffer(
                 onOutIndex = prim;
                 break;
             case 0x01U:
-                onIndex = prim * 2 + 0;
-                onOutIndex = prim * 2 + 0;
+                onIndex = prim * 2;
+                onOutIndex = prim * 2;
                 break;
             case 0x03U:
                 onIndex = prim;
-                onOutIndex = prim * 2 + 0;
+                onOutIndex = prim * 2;
                 break;
             case 0x04U:
-                onIndex = prim * 3 + 0;
-                onOutIndex = prim * 3 + 0;
+                onIndex = prim * 3;
+                onOutIndex = prim * 3;
                 break;
             case 0x05U:
                 onIndex = prim;
-                onOutIndex = prim * 3 + 0;
+                onOutIndex = prim * 3;
                 break;
         }
         outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
+    }
+}
+
+
+
+static inline void generatePrimitive(
+                                   device ushort *outIndexBufferUint16,
+                                   device uint *outIndexBufferUint32,
+                                   const uint firstVertex,
+                                   const uint indexCount,
+                                   thread uint &baseIndex,
+                                   uint onIndex,
+                                   uint primCount,
+                                   thread uint &onOutIndex
+                                   )
+{
+    if(baseIndex > onIndex) return;
+# 284 "./rewrite_indices.metal"
+    switch(fixIndexBufferMode)
+    {
+        case 0x00U:
+        {
+            ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = onIndex + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = onIndex + firstVertex; } onOutIndex++; });
+        }
+        break;
+        case 0x01U:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+        }
+        break;
+        case 0x02U:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = (onIndex + 1) % primCount;
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+        }
+        break;
+        case 0x03U:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+        }
+        break;
+        case 0x04U:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            auto tmpIndex2 = onIndex + 2;
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+            }
+        }
+        break;
+        case 0x05U:
+        {
+            uint isOdd = ((onIndex - baseIndex) & 1);
+            auto tmpIndex0 = onIndex + 0 + isOdd;
+            auto tmpIndex1 = onIndex + 1 - isOdd;
+            auto tmpIndex2 = onIndex + 2;
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                if(isOdd)
+                {
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                }
+                else
+                {
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                }
+            }
+
+            assert(onOutIndex <= (onIndex + 1) * 3);
+            assert(onOutIndex <= (indexCount - 2) * 3);
+            break;
+        }
+        case 0x06U:
+        {
+            auto tmpIndex0 = 0;
+            auto tmpIndex1 = onIndex + 1;
+            auto tmpIndex2 = onIndex + 2;
+
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2 + firstVertex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0 + firstVertex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0 + firstVertex; } onOutIndex++; });
+            }
+        }
+        break;
+
+    }
+
+}
+
+
+
+kernel void genIndexBuffer(
+                           device ushort *outIndexBufferUint16 [[ buffer(1), function_constant(outIndexBufferIsUint16) ]],
+                           device uint *outIndexBufferUint32 [[ buffer(1), function_constant(outIndexBufferIsUint32) ]],
+                           constant uint &indexCount [[ buffer(2) ]],
+                           constant uint &primCount [[ buffer(3) ]],
+                           constant uint &firstVertex [[ buffer(4) ]],
+                           uint prim [[thread_position_in_grid]])
+{
+    uint baseIndex = 0;
+    uint onIndex = onIndex;
+    uint onOutIndex = onOutIndex;
+    if(prim < primCount)
+    {
+        switch(fixIndexBufferMode)
+        {
+            case 0x00U:
+                onIndex = prim;
+                onOutIndex = prim;
+                break;
+            case 0x01U:
+                onIndex = prim * 2;
+                onOutIndex = prim * 2;
+                break;
+            case 0x03U:
+                onIndex = prim;
+                onOutIndex = prim * 2;
+                break;
+            case 0x02U:
+                onIndex = prim;
+                onOutIndex = prim * 2;
+                break;
+            case 0x04U:
+                onIndex = prim * 3;
+                onOutIndex = prim * 3;
+                break;
+            case 0x05U:
+                onIndex = prim;
+                onOutIndex = prim * 3;
+                break;
+            case 0x06U:
+                onIndex = prim;
+                onOutIndex = prim * 3;
+                break;
+        }
+        generatePrimitive(outIndexBufferUint16, outIndexBufferUint32, firstVertex, indexCount, baseIndex, onIndex, primCount, onOutIndex);
     }
 }
 # 8 "temp_master_source.metal" 2

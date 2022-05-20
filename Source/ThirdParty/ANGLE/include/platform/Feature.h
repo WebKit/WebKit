@@ -25,6 +25,7 @@ namespace angle
 
 enum class FeatureCategory
 {
+    AppWorkarounds,
     FrontendWorkarounds,
     FrontendFeatures,
     OpenGLWorkarounds,

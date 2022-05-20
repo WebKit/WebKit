@@ -70,20 +70,20 @@ constexpr char kSupportPath[] = "src/tests/deqp_support/";
 #define OPENGL_CTS_DIR(PATH) "external/openglcts/data/mustpass/gles/" PATH
 
 const char *gCaseListFiles[] = {
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles2-master.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles3-master.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles31-master.txt"),
-    "/android/cts/master/egl-master.txt",
-    OPENGL_CTS_DIR("khronos_mustpass/master/gles2-khr-master.txt"),
-    OPENGL_CTS_DIR("khronos_mustpass/master/gles3-khr-master.txt"),
-    OPENGL_CTS_DIR("khronos_mustpass/master/gles31-khr-master.txt"),
-    OPENGL_CTS_DIR("khronos_mustpass/master/gles32-khr-master.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-landscape.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-reverse-portrait.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles3-rotate-reverse-landscape.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles31-rotate-landscape.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles31-rotate-reverse-portrait.txt"),
-    OPENGL_CTS_DIR("aosp_mustpass/master/gles31-rotate-reverse-landscape.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles2-master.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles3-master.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles31-master.txt"),
+    "/android/cts/main/egl-master.txt",
+    OPENGL_CTS_DIR("khronos_mustpass/main/gles2-khr-master.txt"),
+    OPENGL_CTS_DIR("khronos_mustpass/main/gles3-khr-master.txt"),
+    OPENGL_CTS_DIR("khronos_mustpass/main/gles31-khr-master.txt"),
+    OPENGL_CTS_DIR("khronos_mustpass/main/gles32-khr-master.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles3-rotate-landscape.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles3-rotate-reverse-portrait.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles3-rotate-reverse-landscape.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles31-rotate-landscape.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles31-rotate-reverse-portrait.txt"),
+    OPENGL_CTS_DIR("aosp_mustpass/main/gles31-rotate-reverse-landscape.txt"),
 };
 
 #undef OPENGL_CTS_DIR

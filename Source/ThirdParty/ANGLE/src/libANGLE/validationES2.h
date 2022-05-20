@@ -158,7 +158,10 @@ ANGLE_INLINE bool ValidateBindTexture(const Context *context,
     Texture *textureObject = context->getTexture(texture);
     if (textureObject && textureObject->getType() != target)
     {
-        context->validationError(entryPoint, GL_INVALID_OPERATION, err::kTextureTargetMismatch);
+        context->validationErrorF(
+            entryPoint, GL_INVALID_OPERATION, err::kTextureTargetMismatchWithLabel,
+            static_cast<uint8_t>(target), static_cast<uint8_t>(textureObject->getType()),
+            textureObject->getLabel().c_str());
         return false;
     }
 

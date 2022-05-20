@@ -124,9 +124,6 @@ angle::Result IOSurfaceSurfaceVkMac::initializeImpl(DisplayVk *displayVk)
                                           mState.isRobustResourceInitEnabled(),
                                           mState.hasProtectedContent()));
 
-    mColorAttachment.image.initStagingBuffer(
-        renderer, renderer->getMinImportedHostPointerAlignment(), vk::kStagingBufferFlags,
-        IOSurfaceGetBytesPerRowOfPlane(mIOSurface, mPlane) * mHeight);
     mColorRenderTarget.init(&mColorAttachment.image, &mColorAttachment.imageViews, nullptr, nullptr,
                             gl::LevelIndex(0), 0, 1, RenderTargetTransience::Default);
 
@@ -188,7 +185,7 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
     angle::Result result = mColorAttachment.image.stageSubresourceUpdate(
         contextVk, gl::ImageIndex::Make2D(0),
         gl::Extents(static_cast<int>(width), pixelUnpack.imageHeight, 1), gl::Offset(),
-        internalFormatInfo, pixelUnpack, nullptr, kIOSurfaceFormats[mFormatIndex].type,
+        internalFormatInfo, pixelUnpack, kIOSurfaceFormats[mFormatIndex].type,
         reinterpret_cast<uint8_t *>(source), format, vk::ImageAccess::Renderable);
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);
@@ -221,9 +218,9 @@ egl::Error IOSurfaceSurfaceVkMac::releaseTexImage(const gl::Context *context, EG
     PackPixelsParams params(bounds, dstFormat, static_cast<GLuint>(outputRowPitchInBytes),
                             contextVk->isViewportFlipEnabledForDrawFBO(), nullptr, 0);
 
-    result = mColorAttachment.image.readPixels(
-        contextVk, bounds, params, VK_IMAGE_ASPECT_COLOR_BIT, gl::LevelIndex(0), 0,
-        IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane), contextVk->getStagingBuffer());
+    result = mColorAttachment.image.readPixels(contextVk, bounds, params, VK_IMAGE_ASPECT_COLOR_BIT,
+                                               gl::LevelIndex(0), 0,
+                                               IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane));
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);
 

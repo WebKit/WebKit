@@ -760,11 +760,30 @@ bool TParseContext::checkIsNotReserved(const TSourceLoc &line, const ImmutableSt
     }
     if (identifier.contains("__"))
     {
-        error(line,
-              "identifiers containing two consecutive underscores (__) are reserved as "
-              "possible future keywords",
-              identifier);
-        return false;
+        if (sh::IsWebGLBasedSpec(mShaderSpec))
+        {
+            error(line,
+                  "identifiers containing two consecutive underscores (__) are reserved as "
+                  "possible future keywords",
+                  identifier);
+            return false;
+        }
+        else
+        {
+            // Using double underscores is allowed, but may result in unintended behaviors, so a
+            // warning is issued.
+            // OpenGL ES Shader Language 3.2 specification:
+            // > 3.7. Keywords
+            // > ...
+            // > In addition, all identifiers containing two consecutive underscores (__) are
+            // > reserved for use by underlying software layers. Defining such a name in a shader
+            // > does not itself result in an error, but may result in unintended behaviors that
+            // > stem from having multiple definitions of the same name.
+            warning(line,
+                    "all identifiers containing two consecutive underscores (__) are reserved - "
+                    "unintented behaviors are possible",
+                    identifier.data());
+        }
     }
     return true;
 }
@@ -4263,7 +4282,12 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
     const TVector<unsigned int> *arraySizes,
     const TSourceLoc &arraySizesLine)
 {
-    checkIsNotReserved(nameLine, blockName);
+    const bool isGLPerVertex = blockName == "gl_PerVertex";
+    // gl_PerVertex is allowed to be redefined and therefore not reserved
+    if (!isGLPerVertex)
+    {
+        checkIsNotReserved(nameLine, blockName);
+    }
 
     TTypeQualifier typeQualifier = typeQualifierBuilder.getVariableTypeQualifier(mDiagnostics);
 
@@ -4569,9 +4593,14 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         }
     }
 
-    TInterfaceBlock *interfaceBlock = new TInterfaceBlock(
-        &symbolTable, blockName, fieldList, blockLayoutQualifier, SymbolType::UserDefined);
-    if (!symbolTable.declare(interfaceBlock))
+    SymbolType instanceSymbolType = SymbolType::UserDefined;
+    if (isGLPerVertex)
+    {
+        instanceSymbolType = SymbolType::BuiltIn;
+    }
+    TInterfaceBlock *interfaceBlock = new TInterfaceBlock(&symbolTable, blockName, fieldList,
+                                                          blockLayoutQualifier, instanceSymbolType);
+    if (!symbolTable.declare(interfaceBlock) && isUniformOrBuffer)
     {
         error(nameLine, "redefinition of an interface block name", blockName);
     }
@@ -4607,8 +4636,21 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
 
             fieldType->setQualifier(typeQualifier.qualifier);
 
+            SymbolType symbolType = SymbolType::UserDefined;
+            if (field->name() == "gl_Position" || field->name() == "gl_PointSize" ||
+                field->name() == "gl_ClipDistance" || field->name() == "gl_CullDistance")
+            {
+                // These builtins can be redifined only when used within a redefiend gl_PerVertex
+                // block
+                if (interfaceBlock->name() != "gl_PerVertex")
+                {
+                    error(field->line(), "redefinition in an invalid interface block",
+                          field->name());
+                }
+                symbolType = SymbolType::BuiltIn;
+            }
             TVariable *fieldVariable =
-                new TVariable(&symbolTable, field->name(), fieldType, SymbolType::UserDefined);
+                new TVariable(&symbolTable, field->name(), fieldType, symbolType);
             if (!symbolTable.declare(fieldVariable))
             {
                 error(field->line(), "redefinition of an interface block member name",
@@ -5604,6 +5646,16 @@ TStorageQualifierWrapper *TParseContext::parseInOutQualifier(const TSourceLoc &l
 {
     if (!declaringFunction())
     {
+        if (mShaderVersion < 300 && !IsDesktopGLSpec(mShaderSpec))
+        {
+            error(loc, "storage qualifier supported in GLSL ES 3.00 and above only", "inout");
+        }
+
+        if (getShaderType() != GL_FRAGMENT_SHADER)
+        {
+            error(loc, "storage qualifier isn't supported in non-fragment shaders", "inout");
+        }
+
         if (isExtensionEnabled(TExtension::EXT_shader_framebuffer_fetch) ||
             isExtensionEnabled(TExtension::EXT_shader_framebuffer_fetch_non_coherent))
         {
@@ -5629,7 +5681,6 @@ TLayoutQualifier TParseContext::joinLayoutQualifiers(TLayoutQualifier leftQualif
 TDeclarator *TParseContext::parseStructDeclarator(const ImmutableString &identifier,
                                                   const TSourceLoc &loc)
 {
-    checkIsNotReserved(loc, identifier);
     return new TDeclarator(identifier, loc);
 }
 
@@ -5637,7 +5688,6 @@ TDeclarator *TParseContext::parseStructArrayDeclarator(const ImmutableString &id
                                                        const TSourceLoc &loc,
                                                        const TVector<unsigned int> *arraySizes)
 {
-    checkIsNotReserved(loc, identifier);
     return new TDeclarator(identifier, arraySizes, loc);
 }
 
@@ -5725,8 +5775,17 @@ TFieldList *TParseContext::addStructDeclaratorList(const TPublicType &typeSpecif
             type->makeArrays(*declarator->arraySizes());
         }
 
-        TField *field =
-            new TField(type, declarator->name(), declarator->line(), SymbolType::UserDefined);
+        SymbolType symbolType = SymbolType::UserDefined;
+        if (declarator->name() == "gl_Position" || declarator->name() == "gl_PointSize" ||
+            declarator->name() == "gl_ClipDistance" || declarator->name() == "gl_CullDistance")
+        {
+            symbolType = SymbolType::BuiltIn;
+        }
+        else
+        {
+            checkIsNotReserved(typeSpecifier.getLine(), declarator->name());
+        }
+        TField *field = new TField(type, declarator->name(), declarator->line(), symbolType);
         checkIsBelowStructNestingLimit(typeSpecifier.getLine(), *field);
         fieldList->push_back(field);
     }

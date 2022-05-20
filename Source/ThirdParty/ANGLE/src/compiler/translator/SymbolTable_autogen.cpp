@@ -2923,7 +2923,6 @@ constexpr const TSymbolUniqueId BuiltInId::gl_SecondaryFragColorEXT;
 constexpr const TSymbolUniqueId BuiltInId::gl_SecondaryFragDataEXT;
 constexpr const TSymbolUniqueId BuiltInId::gl_FragDepthEXT;
 constexpr const TSymbolUniqueId BuiltInId::gl_LastFragData;
-constexpr const TSymbolUniqueId BuiltInId::gl_LastFragDataNonCoherent;
 constexpr const TSymbolUniqueId BuiltInId::gl_LastFragColor;
 constexpr const TSymbolUniqueId BuiltInId::gl_LastFragDataNV;
 constexpr const TSymbolUniqueId BuiltInId::gl_LastFragColorARM;
@@ -2995,12 +2994,16 @@ constexpr const TSymbolUniqueId BuiltInId::gl_inTCS;
 constexpr const TSymbolUniqueId BuiltInId::gl_inTCSES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_outTCS;
 constexpr const TSymbolUniqueId BuiltInId::gl_outTCSES3_2;
+constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxTCS;
+constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxTCSES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_PerVertexOutTcsBlock;
 constexpr const TSymbolUniqueId BuiltInId::gl_PerVertexOutTcsBlockES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_PositionTCS;
 constexpr const TSymbolUniqueId BuiltInId::gl_PositionTCSES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxEXTTCS;
 constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxEXTTCSES3_2;
+constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxOESTCS;
+constexpr const TSymbolUniqueId BuiltInId::gl_BoundingBoxOESTCSES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_PatchVerticesInTES;
 constexpr const TSymbolUniqueId BuiltInId::gl_PatchVerticesInTESES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_PrimitiveIDTES;
@@ -3022,7 +3025,7 @@ constexpr const TSymbolUniqueId BuiltInId::gl_PositionTES;
 constexpr const TSymbolUniqueId BuiltInId::gl_PositionTESES3_2;
 constexpr const TSymbolUniqueId BuiltInId::gl_ViewID_OVR;
 
-const int TSymbolTable::kLastBuiltInId = 3068;
+const int TSymbolTable::kLastBuiltInId = 3071;
 
 namespace BuiltInName
 {
@@ -3114,7 +3117,9 @@ constexpr const ImmutableString fwidthExt("fwidth");
 constexpr const ImmutableString fwidthFine("fwidthFine");
 constexpr const ImmutableString gl_BaseInstance("gl_BaseInstance");
 constexpr const ImmutableString gl_BaseVertex("gl_BaseVertex");
+constexpr const ImmutableString gl_BoundingBox("gl_BoundingBox");
 constexpr const ImmutableString gl_BoundingBoxEXT("gl_BoundingBoxEXT");
+constexpr const ImmutableString gl_BoundingBoxOES("gl_BoundingBoxOES");
 constexpr const ImmutableString gl_ClipDistance("gl_ClipDistance");
 constexpr const ImmutableString gl_CullDistance("gl_CullDistance");
 constexpr const ImmutableString gl_DepthRange("gl_DepthRange");
@@ -31312,12 +31317,15 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&textureSize_00b),
     Rule::Get<Spec::ESSL, 300, Shader::ALL, EXT_INDEX(ANGLE_texture_multisample)>(
         &textureSizeExt_00b),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureSize_00Q),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&textureSize_00Q),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00Q),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureSize_00W),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&textureSize_00W),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00W),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureSize_00c),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&textureSize_00c),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00c),
@@ -31402,12 +31410,15 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&texelFetch_00b10D00D),
     Rule::Get<Spec::ESSL, 300, Shader::ALL, EXT_INDEX(ANGLE_texture_multisample)>(
         &texelFetchExt_00b10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&texelFetch_00Q20D00D),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&texelFetch_00Q20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00Q20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&texelFetch_00W20D00D),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&texelFetch_00W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&texelFetch_00c20D00D),
     Rule::Get<Spec::GLSL, 150, Shader::ALL, 0>(&texelFetch_00c20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00c20D00D),
@@ -32503,1686 +32514,2247 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageLoad_01G20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageLoad_01R20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageLoad_01c20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAdd_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAdd_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAddExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMin_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMin_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMinExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicMax_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicMax_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicMaxExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicAnd_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicAnd_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicAndExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicOr_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicOr_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicOrExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicXor_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicXor_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicXorExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_00z10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_00z10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00z10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01K10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01K10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01K10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01V10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01V10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01V10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01A20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01A20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01A20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01L20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01L20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01L20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01W20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01W20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01W20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01C20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01C20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01C20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01N20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01N20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01N20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Y20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01J00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01J00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01J00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01U00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01U00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01U00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01f00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01f00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01f00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01B20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01B20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01B20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01M20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01M20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01M20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01X20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01X20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01X20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01H20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01H20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01H20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01S20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01S20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01S20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01d20D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01d20D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01d20D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01O00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01O00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01O00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Z00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01E10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01E10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01P10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01P10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01P10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01a10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01a10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01a10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01I10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01I10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01I10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01T10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01T10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01T10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01e10D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01e10D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01e10D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01F10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Q10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01b10D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01G20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01R20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01c20D00D00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_00z10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_00z10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00z10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01K10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01K10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01K10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01V10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01V10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01V10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01A20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01A20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01A20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01L20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01L20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01L20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01W20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01W20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01W20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01C20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01C20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01C20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01N20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01N20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01N20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Y20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01J00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01J00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01J00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01U00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01U00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01U00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01f00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01f00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01f00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01B20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01B20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01B20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01M20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01M20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01M20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01X20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01X20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01X20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01H20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01H20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01H20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01S20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01S20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01S20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01d20D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01d20D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01d20D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01O00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01O00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01O00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Z00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01E10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01E10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01P10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01P10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01P10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01a10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01a10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01a10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01I10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01I10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01I10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01T10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01T10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01T10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01e10D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01e10D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01e10D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01F10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Q10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01b10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01G20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01R20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01c20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_00z10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_00z10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_00z10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01K10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01K10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01K10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01V10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01V10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01V10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01A20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01A20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01A20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01L20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01L20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01L20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01W20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01W20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01W20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01C20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01C20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01C20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01N20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01N20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01N20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01Y20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Y20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01J00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01J00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01J00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01U00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01U00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01U00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01f00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01f00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01f00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01B20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01B20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01B20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01M20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01M20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01M20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01X20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01X20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01X20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01H20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01H20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01H20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01S20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01S20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01S20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01d20D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01d20D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01d20D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01O00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01O00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01O00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01Z00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Z00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01E10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01E10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01E10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01P10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01P10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01P10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01a10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01a10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01a10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01I10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01I10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01I10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01T10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01T10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01T10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01e10D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01e10D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01e10D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01F10D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01F10D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01Q10D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01Q10D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01b10D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01b10D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01G20D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01G20D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01R20D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01R20D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00B),
     Rule::Get<Spec::GLSL, 450, Shader::ALL, 0>(&imageAtomicExchange_01c20D00D00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicExchangeExt_01c20D00D00B),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_00z10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_00z10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_00z10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01K10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01K10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01K10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01V10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01V10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01V10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01A20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01A20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01A20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01L20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01L20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01L20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01W20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01W20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01W20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01C20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01C20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01C20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01N20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01N20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01N20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Y20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Y20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Y20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01J00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01J00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01J00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01U00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01U00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01U00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01f00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01f00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01f00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01B20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01B20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01B20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01M20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01M20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01M20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01X20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01X20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01X20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01H20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01H20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01H20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01S20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01S20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01S20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01d20D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01d20D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01d20D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01O00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01O00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01O00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Z00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Z00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Z00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01E10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01E10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01E10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01P10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01P10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01P10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01a10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01a10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01a10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01I10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01I10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01I10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01T10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01T10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01T10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01e10D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01e10D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01e10D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01F10D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01F10D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01F10D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Q10D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Q10D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Q10D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01b10D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01b10D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01b10D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01G20D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01G20D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01G20D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01R20D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01R20D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01R20D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01c20D00D00E00E),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01c20D00D00E00E),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01c20D00D00E00E),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_00z10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_00z10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_00z10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01K10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01K10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01K10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01V10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01V10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01V10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01A20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01A20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01A20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01L20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01L20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01L20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01W20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01W20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01W20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01C20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01C20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01C20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01N20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01N20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01N20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Y20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Y20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Y20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01J00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01J00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01J00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01U00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01U00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01U00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01f00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01f00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01f00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01B20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01B20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01B20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01M20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01M20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01M20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01X20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01X20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01X20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01H20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01H20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01H20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01S20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01S20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01S20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01d20D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01d20D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01d20D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01O00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01O00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01O00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Z00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Z00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Z00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01E10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01E10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01E10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01P10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01P10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01P10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01a10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01a10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01a10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01I10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01I10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01I10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01T10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01T10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01T10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01e10D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01e10D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01e10D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01F10D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01F10D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01F10D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01Q10D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01Q10D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01Q10D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01b10D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01b10D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01b10D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01G20D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01G20D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01G20D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01R20D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01R20D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01R20D00D00D00D),
+    Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&imageAtomicCompSwap_01c20D00D00D00D),
     Rule::Get<Spec::GLSL, 420, Shader::ALL, 0>(&imageAtomicCompSwap_01c20D00D00D00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_shader_image_atomic)>(
         &imageAtomicCompSwapExt_01c20D00D00D00D),
@@ -34503,8 +35075,7 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL,
               100,
               Shader::FRAGMENT,
-              EXT_INDEX(EXT_shader_framebuffer_fetch_non_coherent)>(
-        &TableBase::m_gl_LastFragDataNonCoherent),
+              EXT_INDEX(EXT_shader_framebuffer_fetch_non_coherent)>(&TableBase::m_gl_LastFragData),
     Rule::Get<Spec::ESSL, 100, Shader::FRAGMENT, EXT_INDEX(NV_shader_framebuffer_fetch)>(
         &TableBase::m_gl_LastFragDataNV),
     Rule::Get<Spec::ESSL, 100, Shader::FRAGMENT, EXT_INDEX(NV_shader_framebuffer_fetch)>(
@@ -34717,11 +35288,20 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_outTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_outTES),
+    Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxTCSES3_2),
+    Rule::Get<Spec::GLSL, 0, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxTCSES3_2),
+    Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_BoundingBoxTCS),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &TableBase::m_gl_BoundingBoxEXTTCSES3_2),
     Rule::Get<Spec::GLSL, 0, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxEXTTCSES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_BoundingBoxEXTTCS),
+    Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
+        &TableBase::m_gl_BoundingBoxOESTCSES3_2),
+    Rule::Get<Spec::GLSL, 0, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxOESTCSES3_2),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_BoundingBoxOESTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, 0>(&BuiltInVariable::kgl_TessCoord),
     Rule::Get<Spec::GLSL, 0, Shader::TESS_EVALUATION_EXT, 0>(&BuiltInVariable::kgl_TessCoord),
     Rule::Get<Spec::ESSL, 300, Shader::NOT_COMPUTE, EXT_INDEX(OVR_multiview)>(
@@ -36906,7 +37486,9 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "gl_TessLevelOuter",
                                          "gl_TessLevelInner",
                                          "gl_out",
+                                         "gl_BoundingBox",
                                          "gl_BoundingBoxEXT",
+                                         "gl_BoundingBoxOES",
                                          "gl_TessCoord",
                                          "gl_ViewID_OVR"};
 
@@ -37721,1378 +38303,1380 @@ constexpr uint16_t kMangledOffsets[] = {
     1404,  // textureSize_00V
     1407,  // textureSize_00b
     1410,  // textureSize_00Q
-    1412,  // textureSize_00W
-    1414,  // textureSize_00c
-    1416,  // textureSize_00M00D
-    1417,  // textureSize_00N00D
-    1418,  // textureProjLod_00I20B00B
-    1420,  // textureProjLod_00R20B00B
-    1422,  // textureProjLod_00X20B00B
-    1424,  // textureProjLod_00I30B00B
-    1426,  // textureProjLod_00R30B00B
-    1428,  // textureProjLod_00X30B00B
-    1430,  // textureProjLod_00J30B00B
-    1432,  // textureProjLod_00S30B00B
-    1434,  // textureProjLod_00Y30B00B
-    1436,  // textureProjLod_00d30B00B
-    1438,  // textureProjLod_00g10B00B
-    1439,  // textureProjLod_00o10B00B
-    1440,  // textureProjLod_00t10B00B
-    1441,  // textureProjLod_00g30B00B
-    1442,  // textureProjLod_00o30B00B
-    1443,  // textureProjLod_00t30B00B
-    1444,  // textureProjLod_00m30B00B
-    1445,  // texelFetch_00I10D00D
-    1447,  // texelFetch_00R10D00D
-    1449,  // texelFetch_00X10D00D
-    1451,  // texelFetch_00J20D00D
-    1453,  // texelFetch_00S20D00D
-    1455,  // texelFetch_00Y20D00D
-    1457,  // texelFetch_00L20D00D
-    1459,  // texelFetch_00U20D00D
-    1461,  // texelFetch_00a20D00D
-    1463,  // texelFetch_00g00D00D
-    1464,  // texelFetch_00o00D00D
-    1465,  // texelFetch_00t00D00D
-    1466,  // texelFetch_00O10D
-    1467,  // texelFetch_00q10D
-    1468,  // texelFetch_00v10D
-    1469,  // texelFetch_00h10D00D
-    1470,  // texelFetch_00p10D00D
-    1471,  // texelFetch_00u10D00D
-    1472,  // texelFetch_00j00D
-    1476,  // texelFetch_00r00D
-    1480,  // texelFetch_00w00D
-    1484,  // texelFetch_00P10D00D
-    1487,  // texelFetch_00V10D00D
-    1490,  // texelFetch_00b10D00D
-    1493,  // texelFetch_00Q20D00D
-    1495,  // texelFetch_00W20D00D
-    1497,  // texelFetch_00c20D00D
-    1499,  // texelFetch_00M10D00D
-    1500,  // texelFetch_00N10D00D
-    1501,  // textureGrad_00I10B10B10B
-    1503,  // textureGrad_00R10B10B10B
-    1505,  // textureGrad_00X10B10B10B
-    1507,  // textureGrad_00J20B20B20B
-    1509,  // textureGrad_00S20B20B20B
-    1511,  // textureGrad_00Y20B20B20B
-    1513,  // textureGrad_00K20B20B20B
-    1515,  // textureGrad_00T20B20B20B
-    1517,  // textureGrad_00Z20B20B20B
-    1519,  // textureGrad_00I00B00B00B
-    1520,  // textureGrad_00R00B00B00B
-    1521,  // textureGrad_00X00B00B00B
-    1522,  // textureGrad_00O10B10B10B
-    1523,  // textureGrad_00q10B10B10B
-    1524,  // textureGrad_00v10B10B10B
-    1525,  // textureGrad_00n20B10B10B
-    1526,  // textureGrad_00d20B10B10B
-    1528,  // textureGrad_00e30B20B20B
-    1530,  // textureGrad_00L20B10B10B
-    1532,  // textureGrad_00U20B10B10B
-    1534,  // textureGrad_00a20B10B10B
-    1536,  // textureGrad_00f30B10B10B
-    1538,  // textureGrad_00m20B00B00B
-    1539,  // textureGrad_00h10B00B00B
-    1540,  // textureGrad_00p10B00B00B
-    1541,  // textureGrad_00u10B00B00B
-    1542,  // textureGrad_00i20B00B00B
-    1543,  // textureGrad_00k30B20B20B
-    1547,  // textureGrad_00s30B20B20B
-    1551,  // textureGrad_00x30B20B20B
-    1555,  // textureProjGrad_00I20B10B10B
-    1557,  // textureProjGrad_00R20B10B10B
-    1559,  // textureProjGrad_00X20B10B10B
-    1561,  // textureProjGrad_00I30B10B10B
-    1563,  // textureProjGrad_00R30B10B10B
-    1565,  // textureProjGrad_00X30B10B10B
-    1567,  // textureProjGrad_00J30B20B20B
-    1569,  // textureProjGrad_00S30B20B20B
-    1571,  // textureProjGrad_00Y30B20B20B
-    1573,  // textureProjGrad_00d30B10B10B
-    1575,  // textureProjGrad_00g10B00B00B
-    1576,  // textureProjGrad_00o10B00B00B
-    1577,  // textureProjGrad_00t10B00B00B
-    1578,  // textureProjGrad_00g30B00B00B
-    1579,  // textureProjGrad_00o30B00B00B
-    1580,  // textureProjGrad_00t30B00B00B
-    1581,  // textureProjGrad_00m30B00B00B
-    1582,  // textureProjGrad_00O20B10B10B
-    1583,  // textureProjGrad_00q20B10B10B
-    1584,  // textureProjGrad_00v20B10B10B
-    1585,  // textureProjGrad_00O30B10B10B
-    1586,  // textureProjGrad_00q30B10B10B
-    1587,  // textureProjGrad_00v30B10B10B
-    1588,  // textureProjGrad_00n30B10B10B
-    1589,  // textureQueryLevels_00g
-    1590,  // textureQueryLevels_00o
-    1591,  // textureQueryLevels_00t
-    1592,  // textureQueryLevels_00I
-    1593,  // textureQueryLevels_00R
-    1594,  // textureQueryLevels_00X
-    1595,  // textureQueryLevels_00J
-    1596,  // textureQueryLevels_00S
-    1597,  // textureQueryLevels_00Y
-    1598,  // textureQueryLevels_00K
-    1599,  // textureQueryLevels_00T
-    1600,  // textureQueryLevels_00Z
-    1601,  // textureQueryLevels_00h
-    1602,  // textureQueryLevels_00p
-    1603,  // textureQueryLevels_00u
-    1604,  // textureQueryLevels_00L
-    1605,  // textureQueryLevels_00U
-    1606,  // textureQueryLevels_00a
-    1607,  // textureQueryLevels_00k
-    1608,  // textureQueryLevels_00s
-    1609,  // textureQueryLevels_00x
-    1610,  // textureQueryLevels_00m
-    1611,  // textureQueryLevels_00d
-    1612,  // textureQueryLevels_00e
-    1613,  // textureQueryLevels_00i
-    1614,  // textureQueryLevels_00f
-    1615,  // textureQueryLevels_00l
-    1616,  // textureSamples_00P
-    1617,  // textureSamples_00V
-    1618,  // textureSamples_00b
-    1619,  // textureSamples_00Q
-    1620,  // textureSamples_00W
-    1621,  // textureSamples_00c
-    1622,  // texture_00I10B00B
-    1624,  // texture_00R10B00B
-    1626,  // texture_00X10B00B
-    1628,  // texture_00J20B00B
-    1630,  // texture_00S20B00B
-    1632,  // texture_00Y20B00B
-    1634,  // texture_00K20B00B
-    1636,  // texture_00T20B00B
-    1638,  // texture_00Z20B00B
-    1640,  // texture_00L20B00B
-    1642,  // texture_00U20B00B
-    1644,  // texture_00a20B00B
-    1646,  // textureProj_00I20B00B
-    1648,  // textureProj_00R20B00B
-    1650,  // textureProj_00X20B00B
-    1652,  // textureProj_00I30B00B
-    1654,  // textureProj_00R30B00B
-    1656,  // textureProj_00X30B00B
-    1658,  // textureProj_00J30B00B
-    1660,  // textureProj_00S30B00B
-    1662,  // textureProj_00Y30B00B
-    1664,  // texture_00d20B00B
-    1666,  // texture_00e30B00B
-    1668,  // textureProj_00d30B00B
-    1670,  // texture_00g00B00B
-    1671,  // texture_00o00B00B
-    1672,  // texture_00t00B00B
-    1673,  // texture_00m20B00B
-    1674,  // texture_00h20B00B
-    1675,  // texture_00p20B00B
-    1676,  // texture_00u20B00B
-    1677,  // texture_00i20B00B
-    1678,  // texture_00f30B00B
-    1679,  // textureProj_00g10B00B
-    1680,  // textureProj_00o10B00B
-    1681,  // textureProj_00t10B00B
-    1682,  // textureProj_00g30B00B
-    1683,  // textureProj_00o30B00B
-    1684,  // textureProj_00t30B00B
-    1685,  // textureProj_00m30B00B
-    1686,  // texture_00k30B00B
-    1690,  // texture_00s30B00B
-    1694,  // texture_00x30B00B
-    1698,  // texture_00M10B00B
-    1699,  // textureProj_00M20B00B
-    1700,  // textureProj_00M30B00B
-    1701,  // texture_00N10B00B
-    1702,  // textureProj_00N20B00B
-    1703,  // textureProj_00N30B00B
-    1704,  // textureQueryLod_00g00B
-    1705,  // textureQueryLod_00o00B
-    1706,  // textureQueryLod_00t00B
-    1707,  // textureQueryLod_00I10B
-    1708,  // textureQueryLod_00R10B
-    1709,  // textureQueryLod_00X10B
-    1710,  // textureQueryLod_00J20B
-    1711,  // textureQueryLod_00S20B
-    1712,  // textureQueryLod_00Y20B
-    1713,  // textureQueryLod_00K20B
-    1714,  // textureQueryLod_00T20B
-    1715,  // textureQueryLod_00Z20B
-    1716,  // textureQueryLod_00h00B
-    1717,  // textureQueryLod_00p00B
-    1718,  // textureQueryLod_00u00B
-    1719,  // textureQueryLod_00L10B
-    1720,  // textureQueryLod_00U10B
-    1721,  // textureQueryLod_00a10B
-    1722,  // textureQueryLod_00k20B
-    1723,  // textureQueryLod_00s20B
-    1724,  // textureQueryLod_00x20B
-    1725,  // textureQueryLod_00m00B
-    1726,  // textureQueryLod_00d10B
-    1727,  // textureQueryLod_00e20B
-    1728,  // textureQueryLod_00i00B
-    1729,  // textureQueryLod_00f10B
-    1730,  // textureQueryLod_00l20B
-    1731,  // textureOffset_00I10B10D
-    1733,  // textureOffset_00R10B10D
-    1735,  // textureOffset_00X10B10D
-    1737,  // textureOffset_00J20B20D
-    1739,  // textureOffset_00S20B20D
-    1741,  // textureOffset_00Y20B20D
-    1743,  // textureOffset_00d20B10D
-    1745,  // textureOffset_00L20B10D
-    1747,  // textureOffset_00U20B10D
-    1749,  // textureOffset_00a20B10D
-    1751,  // textureOffset_00g00B00D
-    1752,  // textureOffset_00o00B00D
-    1753,  // textureOffset_00t00B00D
-    1754,  // textureOffset_00O10B10D
-    1755,  // textureOffset_00q10B10D
-    1756,  // textureOffset_00v10B10D
-    1757,  // textureOffset_00n20B10D
-    1758,  // textureOffset_00m20B00D
-    1759,  // textureOffset_00h10B00D
-    1760,  // textureOffset_00p10B00D
-    1761,  // textureOffset_00u10B00D
-    1762,  // textureOffset_00i20B00D
-    1763,  // textureOffset_00f30B10D
-    1764,  // textureProjOffset_00I20B10D
-    1766,  // textureProjOffset_00R20B10D
-    1768,  // textureProjOffset_00X20B10D
-    1770,  // textureProjOffset_00I30B10D
-    1772,  // textureProjOffset_00R30B10D
-    1774,  // textureProjOffset_00X30B10D
-    1776,  // textureProjOffset_00J30B20D
-    1778,  // textureProjOffset_00S30B20D
-    1780,  // textureProjOffset_00Y30B20D
-    1782,  // textureProjOffset_00d30B10D
-    1784,  // textureProjOffset_00g10B00D
-    1785,  // textureProjOffset_00o10B00D
-    1786,  // textureProjOffset_00t10B00D
-    1787,  // textureProjOffset_00g30B00D
-    1788,  // textureProjOffset_00o30B00D
-    1789,  // textureProjOffset_00t30B00D
-    1790,  // textureProjOffset_00O20B10D
-    1791,  // textureProjOffset_00q20B10D
-    1792,  // textureProjOffset_00v20B10D
-    1793,  // textureProjOffset_00O30B10D
-    1794,  // textureProjOffset_00q30B10D
-    1795,  // textureProjOffset_00v30B10D
-    1796,  // textureProjOffset_00n30B10D
-    1797,  // textureProjOffset_00m30B00D
-    1798,  // textureLodOffset_00I10B00B10D
-    1800,  // textureLodOffset_00R10B00B10D
-    1802,  // textureLodOffset_00X10B00B10D
-    1804,  // textureLodOffset_00J20B00B20D
-    1806,  // textureLodOffset_00S20B00B20D
-    1808,  // textureLodOffset_00Y20B00B20D
-    1810,  // textureLodOffset_00d20B00B10D
-    1812,  // textureLodOffset_00L20B00B10D
-    1814,  // textureLodOffset_00U20B00B10D
-    1816,  // textureLodOffset_00a20B00B10D
-    1818,  // textureLodOffset_00g00B00B00D
-    1819,  // textureLodOffset_00o00B00B00D
-    1820,  // textureLodOffset_00t00B00B00D
-    1821,  // textureLodOffset_00m20B00B00D
-    1822,  // textureLodOffset_00h10B00B00D
-    1823,  // textureLodOffset_00p10B00B00D
-    1824,  // textureLodOffset_00u10B00B00D
-    1825,  // textureLodOffset_00i20B00B00D
-    1826,  // textureProjLodOffset_00I20B00B10D
-    1828,  // textureProjLodOffset_00R20B00B10D
-    1830,  // textureProjLodOffset_00X20B00B10D
-    1832,  // textureProjLodOffset_00I30B00B10D
-    1834,  // textureProjLodOffset_00R30B00B10D
-    1836,  // textureProjLodOffset_00X30B00B10D
-    1838,  // textureProjLodOffset_00J30B00B20D
-    1840,  // textureProjLodOffset_00S30B00B20D
-    1842,  // textureProjLodOffset_00Y30B00B20D
-    1844,  // textureProjLodOffset_00d30B00B10D
-    1846,  // textureProjLodOffset_00g10B00B00D
-    1847,  // textureProjLodOffset_00o10B00B00D
-    1848,  // textureProjLodOffset_00t10B00B00D
-    1849,  // textureProjLodOffset_00g30B00B00D
-    1850,  // textureProjLodOffset_00o30B00B00D
-    1851,  // textureProjLodOffset_00t30B00B00D
-    1852,  // textureProjLodOffset_00m30B00B00D
-    1853,  // texelFetchOffset_00I10D00D10D
-    1855,  // texelFetchOffset_00R10D00D10D
-    1857,  // texelFetchOffset_00X10D00D10D
-    1859,  // texelFetchOffset_00J20D00D20D
-    1861,  // texelFetchOffset_00S20D00D20D
-    1863,  // texelFetchOffset_00Y20D00D20D
-    1865,  // texelFetchOffset_00L20D00D10D
-    1867,  // texelFetchOffset_00U20D00D10D
-    1869,  // texelFetchOffset_00a20D00D10D
-    1871,  // texelFetchOffset_00g00D00D00D
-    1872,  // texelFetchOffset_00o00D00D00D
-    1873,  // texelFetchOffset_00t00D00D00D
-    1874,  // texelFetchOffset_00O10D10D
-    1875,  // texelFetchOffset_00q10D10D
-    1876,  // texelFetchOffset_00v10D10D
-    1877,  // texelFetchOffset_00h10D00D00D
-    1878,  // texelFetchOffset_00p10D00D00D
-    1879,  // texelFetchOffset_00u10D00D00D
-    1880,  // textureGradOffset_00I10B10B10B10D
-    1882,  // textureGradOffset_00R10B10B10B10D
-    1884,  // textureGradOffset_00X10B10B10B10D
-    1886,  // textureGradOffset_00J20B20B20B20D
-    1888,  // textureGradOffset_00S20B20B20B20D
-    1890,  // textureGradOffset_00Y20B20B20B20D
-    1892,  // textureGradOffset_00d20B10B10B10D
-    1894,  // textureGradOffset_00L20B10B10B10D
-    1896,  // textureGradOffset_00U20B10B10B10D
-    1898,  // textureGradOffset_00a20B10B10B10D
-    1900,  // textureGradOffset_00f30B10B10B10D
-    1902,  // textureGradOffset_00g00B00B00B00D
-    1903,  // textureGradOffset_00o00B00B00B00D
-    1904,  // textureGradOffset_00t00B00B00B00D
-    1905,  // textureGradOffset_00O10B10B10B10D
-    1906,  // textureGradOffset_00q10B10B10B10D
-    1907,  // textureGradOffset_00v10B10B10B10D
-    1908,  // textureGradOffset_00n20B10B10B10D
-    1909,  // textureGradOffset_00m20B00B00B00D
-    1910,  // textureGradOffset_00h10B00B00B00D
-    1911,  // textureGradOffset_00p10B00B00B00D
-    1912,  // textureGradOffset_00u10B00B00B00D
-    1913,  // textureGradOffset_00i20B00B00B00D
-    1914,  // textureProjGradOffset_00I20B10B10B10D
-    1916,  // textureProjGradOffset_00R20B10B10B10D
-    1918,  // textureProjGradOffset_00X20B10B10B10D
-    1920,  // textureProjGradOffset_00I30B10B10B10D
-    1922,  // textureProjGradOffset_00R30B10B10B10D
-    1924,  // textureProjGradOffset_00X30B10B10B10D
-    1926,  // textureProjGradOffset_00J30B20B20B20D
-    1928,  // textureProjGradOffset_00S30B20B20B20D
-    1930,  // textureProjGradOffset_00Y30B20B20B20D
-    1932,  // textureProjGradOffset_00d30B10B10B10D
-    1934,  // textureProjGradOffset_00g10B00B00B00D
-    1935,  // textureProjGradOffset_00o10B00B00B00D
-    1936,  // textureProjGradOffset_00t10B00B00B00D
-    1937,  // textureProjGradOffset_00g30B00B00B00D
-    1938,  // textureProjGradOffset_00o30B00B00B00D
-    1939,  // textureProjGradOffset_00t30B00B00B00D
-    1940,  // textureProjGradOffset_00O20B10B10B10D
-    1941,  // textureProjGradOffset_00q20B10B10B10D
-    1942,  // textureProjGradOffset_00v20B10B10B10D
-    1943,  // textureProjGradOffset_00O30B10B10B10D
-    1944,  // textureProjGradOffset_00q30B10B10B10D
-    1945,  // textureProjGradOffset_00v30B10B10B10D
-    1946,  // textureProjGradOffset_00n30B10B10B10D
-    1947,  // textureProjGradOffset_00m30B00B00B00D
-    1948,  // textureOffset_00I10B10D00B
-    1950,  // textureOffset_00R10B10D00B
-    1952,  // textureOffset_00X10B10D00B
-    1954,  // textureOffset_00J20B20D00B
-    1956,  // textureOffset_00S20B20D00B
-    1958,  // textureOffset_00Y20B20D00B
-    1960,  // textureOffset_00d20B10D00B
-    1962,  // textureOffset_00L20B10D00B
-    1964,  // textureOffset_00U20B10D00B
-    1966,  // textureOffset_00a20B10D00B
-    1968,  // textureOffset_00g00B00D00B
-    1969,  // textureOffset_00o00B00D00B
-    1970,  // textureOffset_00t00B00D00B
-    1971,  // textureOffset_00m20B00D00B
-    1972,  // textureOffset_00h10B00D00B
-    1973,  // textureOffset_00p10B00D00B
-    1974,  // textureOffset_00u10B00D00B
-    1975,  // textureOffset_00i20B00D00B
-    1976,  // textureProjOffset_00I20B10D00B
-    1978,  // textureProjOffset_00R20B10D00B
-    1980,  // textureProjOffset_00X20B10D00B
-    1982,  // textureProjOffset_00I30B10D00B
-    1984,  // textureProjOffset_00R30B10D00B
-    1986,  // textureProjOffset_00X30B10D00B
-    1988,  // textureProjOffset_00J30B20D00B
-    1990,  // textureProjOffset_00S30B20D00B
-    1992,  // textureProjOffset_00Y30B20D00B
-    1994,  // textureProjOffset_00d30B10D00B
-    1996,  // textureProjOffset_00g10B00D00B
-    1997,  // textureProjOffset_00o10B00D00B
-    1998,  // textureProjOffset_00t10B00D00B
-    1999,  // textureProjOffset_00g30B00D00B
-    2000,  // textureProjOffset_00o30B00D00B
-    2001,  // textureProjOffset_00t30B00D00B
-    2002,  // textureProjOffset_00m30B00D00B
-    2003,  // textureGather_00I10B
-    2005,  // textureGather_00R10B
-    2007,  // textureGather_00X10B
-    2009,  // textureGather_00I10B00D
-    2011,  // textureGather_00R10B00D
-    2013,  // textureGather_00X10B00D
-    2015,  // textureGather_00L20B
-    2017,  // textureGather_00U20B
-    2019,  // textureGather_00a20B
-    2021,  // textureGather_00L20B00D
-    2023,  // textureGather_00U20B00D
-    2025,  // textureGather_00a20B00D
-    2027,  // textureGather_00K20B
-    2029,  // textureGather_00T20B
-    2031,  // textureGather_00Z20B
-    2033,  // textureGather_00K20B00D
-    2035,  // textureGather_00T20B00D
-    2037,  // textureGather_00Z20B00D
-    2039,  // textureGather_00k30B
-    2043,  // textureGather_00s30B
-    2047,  // textureGather_00x30B
-    2051,  // textureGather_00k30B00D
-    2055,  // textureGather_00s30B00D
-    2059,  // textureGather_00x30B00D
-    2063,  // textureGather_00l30B00B
-    2067,  // textureGather_00O20B
-    2068,  // textureGather_00q20B
-    2069,  // textureGather_00v20B
-    2070,  // textureGather_00O20B00D
-    2071,  // textureGather_00q20B00D
-    2072,  // textureGather_00v20B00D
-    2073,  // textureGather_00n10B00B
-    2074,  // textureGather_00d10B
-    2075,  // textureGather_00d10B00B
-    2077,  // textureGather_00f20B
-    2078,  // textureGather_00f20B00B
-    2080,  // textureGather_00e20B
-    2081,  // textureGather_00e20B00B
-    2083,  // textureGatherOffset_00I10B10D
-    2085,  // textureGatherOffset_00R10B10D
-    2087,  // textureGatherOffset_00X10B10D
-    2089,  // textureGatherOffset_00L20B10D
-    2091,  // textureGatherOffset_00U20B10D
-    2093,  // textureGatherOffset_00a20B10D
-    2095,  // textureGatherOffset_00d10B00B10D
-    2097,  // textureGatherOffset_00f20B00B10D
-    2099,  // textureGatherOffset_00O10B10D
-    2100,  // textureGatherOffset_00q10B10D
-    2101,  // textureGatherOffset_00v10B10D
-    2102,  // textureGatherOffset_00n10B00B10D
-    2103,  // textureGatherOffset_00I10B10D00D
-    2105,  // textureGatherOffset_00R10B10D00D
-    2107,  // textureGatherOffset_00X10B10D00D
-    2109,  // textureGatherOffset_00L20B10D00D
-    2111,  // textureGatherOffset_00U20B10D00D
-    2113,  // textureGatherOffset_00a20B10D00D
-    2115,  // textureGatherOffset_00O10B10D00D
-    2116,  // textureGatherOffset_00q10B10D00D
-    2117,  // textureGatherOffset_00v10B10D00D
-    2118,  // textureGatherOffsets_00I10B10Dx4
-    2121,  // textureGatherOffsets_00R10B10Dx4
-    2124,  // textureGatherOffsets_00X10B10Dx4
-    2127,  // textureGatherOffsets_00L20B10Dx4
-    2130,  // textureGatherOffsets_00U20B10Dx4
-    2133,  // textureGatherOffsets_00a20B10Dx4
-    2136,  // textureGatherOffsets_00d10B00B10Dx4
-    2139,  // textureGatherOffsets_00f20B00B10Dx4
-    2142,  // textureGatherOffsets_00O10B10Dx4
-    2143,  // textureGatherOffsets_00q10B10Dx4
-    2144,  // textureGatherOffsets_00v10B10Dx4
-    2145,  // textureGatherOffsets_00n10B00B10Dx4
-    2146,  // textureGatherOffsets_00I10B10Dx400D
-    2149,  // textureGatherOffsets_00R10B10Dx400D
-    2152,  // textureGatherOffsets_00X10B10Dx400D
-    2155,  // textureGatherOffsets_00L20B10Dx400D
-    2158,  // textureGatherOffsets_00U20B10Dx400D
-    2161,  // textureGatherOffsets_00a20B10Dx400D
-    2164,  // textureGatherOffsets_00O10B10Dx400D
-    2165,  // textureGatherOffsets_00q10B10Dx400D
-    2166,  // textureGatherOffsets_00v10B10Dx400D
-    2167,  // rgb_2_yuv_20B00H
-    2168,  // yuv_2_rgb_20B00H
-    2169,  // dFdx_00B
-    2172,  // dFdx_10B
-    2175,  // dFdx_20B
-    2178,  // dFdx_30B
-    2181,  // dFdy_00B
-    2184,  // dFdy_10B
-    2187,  // dFdy_20B
-    2190,  // dFdy_30B
-    2193,  // fwidth_00B
-    2196,  // fwidth_10B
-    2199,  // fwidth_20B
-    2202,  // fwidth_30B
-    2205,  // dFdxFine_00B
-    2206,  // dFdxFine_10B
-    2207,  // dFdxFine_20B
-    2208,  // dFdxFine_30B
-    2209,  // dFdyFine_00B
-    2210,  // dFdyFine_10B
-    2211,  // dFdyFine_20B
-    2212,  // dFdyFine_30B
-    2213,  // dFdxCoarse_00B
-    2214,  // dFdxCoarse_10B
-    2215,  // dFdxCoarse_20B
-    2216,  // dFdxCoarse_30B
-    2217,  // dFdyCoarse_00B
-    2218,  // dFdyCoarse_10B
-    2219,  // dFdyCoarse_20B
-    2220,  // dFdyCoarse_30B
-    2221,  // fwidthFine_00B
-    2222,  // fwidthFine_10B
-    2223,  // fwidthFine_20B
-    2224,  // fwidthFine_30B
-    2225,  // fwidthCoarse_00B
-    2226,  // fwidthCoarse_10B
-    2227,  // fwidthCoarse_20B
-    2228,  // fwidthCoarse_30B
-    2229,  // interpolateAtCentroid_00B
-    2232,  // interpolateAtCentroid_10B
-    2235,  // interpolateAtCentroid_20B
-    2238,  // interpolateAtCentroid_30B
-    2241,  // interpolateAtSample_00B00D
-    2244,  // interpolateAtSample_10B00D
-    2247,  // interpolateAtSample_20B00D
-    2250,  // interpolateAtSample_30B00D
-    2253,  // interpolateAtOffset_00B10B
-    2256,  // interpolateAtOffset_10B10B
-    2259,  // interpolateAtOffset_20B10B
-    2262,  // interpolateAtOffset_30B10B
-    2265,  // atomicCounter_00G
-    2267,  // atomicCounterIncrement_00G
-    2269,  // atomicCounterDecrement_00G
-    2271,  // atomicCounterAdd_00G00E
-    2272,  // atomicCounterSubtract_00G00E
-    2273,  // atomicCounterMin_00G00E
-    2274,  // atomicCounterMax_00G00E
-    2275,  // atomicCounterAnd_00G00E
-    2276,  // atomicCounterOr_00G00E
-    2277,  // atomicCounterXor_00G00E
-    2278,  // atomicCounterExchange_00G00E
-    2279,  // atomicCounterCompSwap_00G00E00E
-    2280,  // atomicAdd_00E00E
-    2282,  // atomicAdd_00D00D
-    2284,  // atomicMin_00E00E
-    2286,  // atomicMin_00D00D
-    2288,  // atomicMax_00E00E
-    2290,  // atomicMax_00D00D
-    2292,  // atomicAnd_00E00E
-    2294,  // atomicAnd_00D00D
-    2296,  // atomicOr_00E00E
-    2298,  // atomicOr_00D00D
-    2300,  // atomicXor_00E00E
-    2302,  // atomicXor_00D00D
-    2304,  // atomicExchange_00E00E
-    2306,  // atomicExchange_00D00D
-    2308,  // atomicCompSwap_00E00E00E
-    2310,  // atomicCompSwap_00D00D00D
-    2312,  // imageSize_00z
-    2314,  // imageSize_01K
-    2316,  // imageSize_01V
-    2318,  // imageSize_01A
-    2320,  // imageSize_01L
-    2322,  // imageSize_01W
-    2324,  // imageSize_01B
-    2326,  // imageSize_01M
-    2328,  // imageSize_01X
-    2330,  // imageSize_01C
-    2332,  // imageSize_01N
-    2334,  // imageSize_01Y
-    2336,  // imageSize_01H
-    2340,  // imageSize_01S
-    2344,  // imageSize_01d
-    2348,  // imageSize_01J
-    2352,  // imageSize_01U
-    2356,  // imageSize_01f
-    2360,  // imageSize_01D
-    2361,  // imageSize_01O
-    2362,  // imageSize_01Z
-    2363,  // imageSize_01I
-    2364,  // imageSize_01T
-    2365,  // imageSize_01e
-    2366,  // imageSize_01E
-    2367,  // imageSize_01P
-    2368,  // imageSize_01a
-    2369,  // imageSize_01F
-    2370,  // imageSize_01Q
-    2371,  // imageSize_01b
-    2372,  // imageSize_01G
-    2373,  // imageSize_01R
-    2374,  // imageSize_01c
-    2375,  // imageSamples_01F
-    2376,  // imageSamples_01Q
-    2377,  // imageSamples_01b
-    2378,  // imageSamples_01G
-    2379,  // imageSamples_01R
-    2380,  // imageSamples_01c
-    2381,  // imageStore_00z10D30B
-    2383,  // imageStore_01K10D30D
-    2385,  // imageStore_01V10D30E
-    2387,  // imageStore_01A20D30B
-    2389,  // imageStore_01L20D30D
-    2391,  // imageStore_01W20D30E
-    2393,  // imageStore_01B20D30B
-    2395,  // imageStore_01M20D30D
-    2397,  // imageStore_01X20D30E
-    2399,  // imageStore_01C20D30B
-    2401,  // imageStore_01N20D30D
-    2403,  // imageStore_01Y20D30E
-    2405,  // imageStore_01H20D30B
-    2409,  // imageStore_01S20D30D
-    2413,  // imageStore_01d20D30E
-    2417,  // imageStore_01J00D30B
-    2421,  // imageStore_01U00D30D
-    2425,  // imageStore_01f00D30E
-    2429,  // imageStore_01D00D30B
-    2430,  // imageStore_01O00D30D
-    2431,  // imageStore_01Z00D30E
-    2432,  // imageStore_01E10D30B
-    2433,  // imageStore_01P10D30D
-    2434,  // imageStore_01a10D30E
-    2435,  // imageStore_01I10D30B
-    2436,  // imageStore_01T10D30D
-    2437,  // imageStore_01e10D30E
-    2438,  // imageStore_01F10D00D30B
-    2439,  // imageStore_01Q10D00D30D
-    2440,  // imageStore_01b10D00D30E
-    2441,  // imageStore_01G20D00D30B
-    2442,  // imageStore_01R20D00D30D
-    2443,  // imageStore_01c20D00D30E
-    2444,  // imageLoad_00z10D
-    2446,  // imageLoad_01K10D
-    2448,  // imageLoad_01V10D
-    2450,  // imageLoad_01A20D
-    2452,  // imageLoad_01L20D
-    2454,  // imageLoad_01W20D
-    2456,  // imageLoad_01B20D
-    2458,  // imageLoad_01M20D
-    2460,  // imageLoad_01X20D
-    2462,  // imageLoad_01C20D
-    2464,  // imageLoad_01N20D
-    2466,  // imageLoad_01Y20D
-    2468,  // imageLoad_01H20D
-    2472,  // imageLoad_01S20D
-    2476,  // imageLoad_01d20D
-    2480,  // imageLoad_01J00D
-    2484,  // imageLoad_01U00D
-    2488,  // imageLoad_01f00D
-    2492,  // imageLoad_01D00D
-    2493,  // imageLoad_01O00D
-    2494,  // imageLoad_01Z00D
-    2495,  // imageLoad_01E10D
-    2496,  // imageLoad_01P10D
-    2497,  // imageLoad_01a10D
-    2498,  // imageLoad_01I10D
-    2499,  // imageLoad_01T10D
-    2500,  // imageLoad_01e10D
-    2501,  // imageLoad_01F10D00D
-    2502,  // imageLoad_01Q10D00D
-    2503,  // imageLoad_01b10D00D
-    2504,  // imageLoad_01G20D00D
-    2505,  // imageLoad_01R20D00D
-    2506,  // imageLoad_01c20D00D
-    2507,  // imageAtomicAdd_00z10D00E
-    2509,  // imageAtomicAdd_01K10D00E
-    2511,  // imageAtomicAdd_01V10D00E
-    2513,  // imageAtomicAdd_01A20D00E
-    2515,  // imageAtomicAdd_01L20D00E
-    2517,  // imageAtomicAdd_01W20D00E
-    2519,  // imageAtomicAdd_01C20D00E
-    2521,  // imageAtomicAdd_01N20D00E
-    2523,  // imageAtomicAdd_01Y20D00E
-    2525,  // imageAtomicAdd_01J00D00E
-    2527,  // imageAtomicAdd_01U00D00E
-    2529,  // imageAtomicAdd_01f00D00E
-    2531,  // imageAtomicAdd_01B20D00E
-    2533,  // imageAtomicAdd_01M20D00E
-    2535,  // imageAtomicAdd_01X20D00E
-    2537,  // imageAtomicAdd_01H20D00E
-    2539,  // imageAtomicAdd_01S20D00E
-    2541,  // imageAtomicAdd_01d20D00E
-    2543,  // imageAtomicAdd_01D00D00E
-    2545,  // imageAtomicAdd_01O00D00E
-    2547,  // imageAtomicAdd_01Z00D00E
-    2549,  // imageAtomicAdd_01E10D00E
-    2551,  // imageAtomicAdd_01P10D00E
-    2553,  // imageAtomicAdd_01a10D00E
-    2555,  // imageAtomicAdd_01I10D00E
-    2557,  // imageAtomicAdd_01T10D00E
-    2559,  // imageAtomicAdd_01e10D00E
-    2561,  // imageAtomicAdd_01F10D00D00E
-    2563,  // imageAtomicAdd_01Q10D00D00E
-    2565,  // imageAtomicAdd_01b10D00D00E
-    2567,  // imageAtomicAdd_01G20D00D00E
-    2569,  // imageAtomicAdd_01R20D00D00E
-    2571,  // imageAtomicAdd_01c20D00D00E
-    2573,  // imageAtomicAdd_00z10D00D
-    2575,  // imageAtomicAdd_01K10D00D
-    2577,  // imageAtomicAdd_01V10D00D
-    2579,  // imageAtomicAdd_01A20D00D
-    2581,  // imageAtomicAdd_01L20D00D
-    2583,  // imageAtomicAdd_01W20D00D
-    2585,  // imageAtomicAdd_01C20D00D
-    2587,  // imageAtomicAdd_01N20D00D
-    2589,  // imageAtomicAdd_01Y20D00D
-    2591,  // imageAtomicAdd_01J00D00D
-    2593,  // imageAtomicAdd_01U00D00D
-    2595,  // imageAtomicAdd_01f00D00D
-    2597,  // imageAtomicAdd_01B20D00D
-    2599,  // imageAtomicAdd_01M20D00D
-    2601,  // imageAtomicAdd_01X20D00D
-    2603,  // imageAtomicAdd_01H20D00D
-    2605,  // imageAtomicAdd_01S20D00D
-    2607,  // imageAtomicAdd_01d20D00D
-    2609,  // imageAtomicAdd_01D00D00D
-    2611,  // imageAtomicAdd_01O00D00D
-    2613,  // imageAtomicAdd_01Z00D00D
-    2615,  // imageAtomicAdd_01E10D00D
-    2617,  // imageAtomicAdd_01P10D00D
-    2619,  // imageAtomicAdd_01a10D00D
-    2621,  // imageAtomicAdd_01I10D00D
-    2623,  // imageAtomicAdd_01T10D00D
-    2625,  // imageAtomicAdd_01e10D00D
-    2627,  // imageAtomicAdd_01F10D00D00D
-    2629,  // imageAtomicAdd_01Q10D00D00D
-    2631,  // imageAtomicAdd_01b10D00D00D
-    2633,  // imageAtomicAdd_01G20D00D00D
-    2635,  // imageAtomicAdd_01R20D00D00D
-    2637,  // imageAtomicAdd_01c20D00D00D
-    2639,  // imageAtomicMin_00z10D00E
-    2641,  // imageAtomicMin_01K10D00E
-    2643,  // imageAtomicMin_01V10D00E
-    2645,  // imageAtomicMin_01A20D00E
-    2647,  // imageAtomicMin_01L20D00E
-    2649,  // imageAtomicMin_01W20D00E
-    2651,  // imageAtomicMin_01C20D00E
-    2653,  // imageAtomicMin_01N20D00E
-    2655,  // imageAtomicMin_01Y20D00E
-    2657,  // imageAtomicMin_01J00D00E
-    2659,  // imageAtomicMin_01U00D00E
-    2661,  // imageAtomicMin_01f00D00E
-    2663,  // imageAtomicMin_01B20D00E
-    2665,  // imageAtomicMin_01M20D00E
-    2667,  // imageAtomicMin_01X20D00E
-    2669,  // imageAtomicMin_01H20D00E
-    2671,  // imageAtomicMin_01S20D00E
-    2673,  // imageAtomicMin_01d20D00E
-    2675,  // imageAtomicMin_01D00D00E
-    2677,  // imageAtomicMin_01O00D00E
-    2679,  // imageAtomicMin_01Z00D00E
-    2681,  // imageAtomicMin_01E10D00E
-    2683,  // imageAtomicMin_01P10D00E
-    2685,  // imageAtomicMin_01a10D00E
-    2687,  // imageAtomicMin_01I10D00E
-    2689,  // imageAtomicMin_01T10D00E
-    2691,  // imageAtomicMin_01e10D00E
-    2693,  // imageAtomicMin_01F10D00D00E
-    2695,  // imageAtomicMin_01Q10D00D00E
-    2697,  // imageAtomicMin_01b10D00D00E
-    2699,  // imageAtomicMin_01G20D00D00E
-    2701,  // imageAtomicMin_01R20D00D00E
-    2703,  // imageAtomicMin_01c20D00D00E
-    2705,  // imageAtomicMin_00z10D00D
-    2707,  // imageAtomicMin_01K10D00D
-    2709,  // imageAtomicMin_01V10D00D
-    2711,  // imageAtomicMin_01A20D00D
-    2713,  // imageAtomicMin_01L20D00D
-    2715,  // imageAtomicMin_01W20D00D
-    2717,  // imageAtomicMin_01C20D00D
-    2719,  // imageAtomicMin_01N20D00D
-    2721,  // imageAtomicMin_01Y20D00D
-    2723,  // imageAtomicMin_01J00D00D
-    2725,  // imageAtomicMin_01U00D00D
-    2727,  // imageAtomicMin_01f00D00D
-    2729,  // imageAtomicMin_01B20D00D
-    2731,  // imageAtomicMin_01M20D00D
-    2733,  // imageAtomicMin_01X20D00D
-    2735,  // imageAtomicMin_01H20D00D
-    2737,  // imageAtomicMin_01S20D00D
-    2739,  // imageAtomicMin_01d20D00D
-    2741,  // imageAtomicMin_01D00D00D
-    2743,  // imageAtomicMin_01O00D00D
-    2745,  // imageAtomicMin_01Z00D00D
-    2747,  // imageAtomicMin_01E10D00D
-    2749,  // imageAtomicMin_01P10D00D
-    2751,  // imageAtomicMin_01a10D00D
-    2753,  // imageAtomicMin_01I10D00D
-    2755,  // imageAtomicMin_01T10D00D
-    2757,  // imageAtomicMin_01e10D00D
-    2759,  // imageAtomicMin_01F10D00D00D
-    2761,  // imageAtomicMin_01Q10D00D00D
-    2763,  // imageAtomicMin_01b10D00D00D
-    2765,  // imageAtomicMin_01G20D00D00D
-    2767,  // imageAtomicMin_01R20D00D00D
-    2769,  // imageAtomicMin_01c20D00D00D
-    2771,  // imageAtomicMax_00z10D00E
-    2773,  // imageAtomicMax_01K10D00E
-    2775,  // imageAtomicMax_01V10D00E
-    2777,  // imageAtomicMax_01A20D00E
-    2779,  // imageAtomicMax_01L20D00E
-    2781,  // imageAtomicMax_01W20D00E
-    2783,  // imageAtomicMax_01C20D00E
-    2785,  // imageAtomicMax_01N20D00E
-    2787,  // imageAtomicMax_01Y20D00E
-    2789,  // imageAtomicMax_01J00D00E
-    2791,  // imageAtomicMax_01U00D00E
-    2793,  // imageAtomicMax_01f00D00E
-    2795,  // imageAtomicMax_01B20D00E
-    2797,  // imageAtomicMax_01M20D00E
-    2799,  // imageAtomicMax_01X20D00E
-    2801,  // imageAtomicMax_01H20D00E
-    2803,  // imageAtomicMax_01S20D00E
-    2805,  // imageAtomicMax_01d20D00E
-    2807,  // imageAtomicMax_01D00D00E
-    2809,  // imageAtomicMax_01O00D00E
-    2811,  // imageAtomicMax_01Z00D00E
-    2813,  // imageAtomicMax_01E10D00E
-    2815,  // imageAtomicMax_01P10D00E
-    2817,  // imageAtomicMax_01a10D00E
-    2819,  // imageAtomicMax_01I10D00E
-    2821,  // imageAtomicMax_01T10D00E
-    2823,  // imageAtomicMax_01e10D00E
-    2825,  // imageAtomicMax_01F10D00D00E
-    2827,  // imageAtomicMax_01Q10D00D00E
-    2829,  // imageAtomicMax_01b10D00D00E
-    2831,  // imageAtomicMax_01G20D00D00E
-    2833,  // imageAtomicMax_01R20D00D00E
-    2835,  // imageAtomicMax_01c20D00D00E
-    2837,  // imageAtomicMax_00z10D00D
-    2839,  // imageAtomicMax_01K10D00D
-    2841,  // imageAtomicMax_01V10D00D
-    2843,  // imageAtomicMax_01A20D00D
-    2845,  // imageAtomicMax_01L20D00D
-    2847,  // imageAtomicMax_01W20D00D
-    2849,  // imageAtomicMax_01C20D00D
-    2851,  // imageAtomicMax_01N20D00D
-    2853,  // imageAtomicMax_01Y20D00D
-    2855,  // imageAtomicMax_01J00D00D
-    2857,  // imageAtomicMax_01U00D00D
-    2859,  // imageAtomicMax_01f00D00D
-    2861,  // imageAtomicMax_01B20D00D
-    2863,  // imageAtomicMax_01M20D00D
-    2865,  // imageAtomicMax_01X20D00D
-    2867,  // imageAtomicMax_01H20D00D
-    2869,  // imageAtomicMax_01S20D00D
-    2871,  // imageAtomicMax_01d20D00D
-    2873,  // imageAtomicMax_01D00D00D
-    2875,  // imageAtomicMax_01O00D00D
-    2877,  // imageAtomicMax_01Z00D00D
-    2879,  // imageAtomicMax_01E10D00D
-    2881,  // imageAtomicMax_01P10D00D
-    2883,  // imageAtomicMax_01a10D00D
-    2885,  // imageAtomicMax_01I10D00D
-    2887,  // imageAtomicMax_01T10D00D
-    2889,  // imageAtomicMax_01e10D00D
-    2891,  // imageAtomicMax_01F10D00D00D
-    2893,  // imageAtomicMax_01Q10D00D00D
-    2895,  // imageAtomicMax_01b10D00D00D
-    2897,  // imageAtomicMax_01G20D00D00D
-    2899,  // imageAtomicMax_01R20D00D00D
-    2901,  // imageAtomicMax_01c20D00D00D
-    2903,  // imageAtomicAnd_00z10D00E
-    2905,  // imageAtomicAnd_01K10D00E
-    2907,  // imageAtomicAnd_01V10D00E
-    2909,  // imageAtomicAnd_01A20D00E
-    2911,  // imageAtomicAnd_01L20D00E
-    2913,  // imageAtomicAnd_01W20D00E
-    2915,  // imageAtomicAnd_01C20D00E
-    2917,  // imageAtomicAnd_01N20D00E
-    2919,  // imageAtomicAnd_01Y20D00E
-    2921,  // imageAtomicAnd_01J00D00E
-    2923,  // imageAtomicAnd_01U00D00E
-    2925,  // imageAtomicAnd_01f00D00E
-    2927,  // imageAtomicAnd_01B20D00E
-    2929,  // imageAtomicAnd_01M20D00E
-    2931,  // imageAtomicAnd_01X20D00E
-    2933,  // imageAtomicAnd_01H20D00E
-    2935,  // imageAtomicAnd_01S20D00E
-    2937,  // imageAtomicAnd_01d20D00E
-    2939,  // imageAtomicAnd_01D00D00E
-    2941,  // imageAtomicAnd_01O00D00E
-    2943,  // imageAtomicAnd_01Z00D00E
-    2945,  // imageAtomicAnd_01E10D00E
-    2947,  // imageAtomicAnd_01P10D00E
-    2949,  // imageAtomicAnd_01a10D00E
-    2951,  // imageAtomicAnd_01I10D00E
-    2953,  // imageAtomicAnd_01T10D00E
-    2955,  // imageAtomicAnd_01e10D00E
-    2957,  // imageAtomicAnd_01F10D00D00E
-    2959,  // imageAtomicAnd_01Q10D00D00E
-    2961,  // imageAtomicAnd_01b10D00D00E
-    2963,  // imageAtomicAnd_01G20D00D00E
-    2965,  // imageAtomicAnd_01R20D00D00E
-    2967,  // imageAtomicAnd_01c20D00D00E
-    2969,  // imageAtomicAnd_00z10D00D
-    2971,  // imageAtomicAnd_01K10D00D
-    2973,  // imageAtomicAnd_01V10D00D
-    2975,  // imageAtomicAnd_01A20D00D
-    2977,  // imageAtomicAnd_01L20D00D
-    2979,  // imageAtomicAnd_01W20D00D
-    2981,  // imageAtomicAnd_01C20D00D
-    2983,  // imageAtomicAnd_01N20D00D
-    2985,  // imageAtomicAnd_01Y20D00D
-    2987,  // imageAtomicAnd_01J00D00D
-    2989,  // imageAtomicAnd_01U00D00D
-    2991,  // imageAtomicAnd_01f00D00D
-    2993,  // imageAtomicAnd_01B20D00D
-    2995,  // imageAtomicAnd_01M20D00D
-    2997,  // imageAtomicAnd_01X20D00D
-    2999,  // imageAtomicAnd_01H20D00D
-    3001,  // imageAtomicAnd_01S20D00D
-    3003,  // imageAtomicAnd_01d20D00D
-    3005,  // imageAtomicAnd_01D00D00D
-    3007,  // imageAtomicAnd_01O00D00D
-    3009,  // imageAtomicAnd_01Z00D00D
-    3011,  // imageAtomicAnd_01E10D00D
-    3013,  // imageAtomicAnd_01P10D00D
-    3015,  // imageAtomicAnd_01a10D00D
-    3017,  // imageAtomicAnd_01I10D00D
-    3019,  // imageAtomicAnd_01T10D00D
-    3021,  // imageAtomicAnd_01e10D00D
-    3023,  // imageAtomicAnd_01F10D00D00D
-    3025,  // imageAtomicAnd_01Q10D00D00D
-    3027,  // imageAtomicAnd_01b10D00D00D
-    3029,  // imageAtomicAnd_01G20D00D00D
-    3031,  // imageAtomicAnd_01R20D00D00D
-    3033,  // imageAtomicAnd_01c20D00D00D
-    3035,  // imageAtomicOr_00z10D00E
-    3037,  // imageAtomicOr_01K10D00E
-    3039,  // imageAtomicOr_01V10D00E
-    3041,  // imageAtomicOr_01A20D00E
-    3043,  // imageAtomicOr_01L20D00E
-    3045,  // imageAtomicOr_01W20D00E
-    3047,  // imageAtomicOr_01C20D00E
-    3049,  // imageAtomicOr_01N20D00E
-    3051,  // imageAtomicOr_01Y20D00E
-    3053,  // imageAtomicOr_01J00D00E
-    3055,  // imageAtomicOr_01U00D00E
-    3057,  // imageAtomicOr_01f00D00E
-    3059,  // imageAtomicOr_01B20D00E
-    3061,  // imageAtomicOr_01M20D00E
-    3063,  // imageAtomicOr_01X20D00E
-    3065,  // imageAtomicOr_01H20D00E
-    3067,  // imageAtomicOr_01S20D00E
-    3069,  // imageAtomicOr_01d20D00E
-    3071,  // imageAtomicOr_01D00D00E
-    3073,  // imageAtomicOr_01O00D00E
-    3075,  // imageAtomicOr_01Z00D00E
-    3077,  // imageAtomicOr_01E10D00E
-    3079,  // imageAtomicOr_01P10D00E
-    3081,  // imageAtomicOr_01a10D00E
-    3083,  // imageAtomicOr_01I10D00E
-    3085,  // imageAtomicOr_01T10D00E
-    3087,  // imageAtomicOr_01e10D00E
-    3089,  // imageAtomicOr_01F10D00D00E
-    3091,  // imageAtomicOr_01Q10D00D00E
-    3093,  // imageAtomicOr_01b10D00D00E
-    3095,  // imageAtomicOr_01G20D00D00E
-    3097,  // imageAtomicOr_01R20D00D00E
-    3099,  // imageAtomicOr_01c20D00D00E
-    3101,  // imageAtomicOr_00z10D00D
-    3103,  // imageAtomicOr_01K10D00D
-    3105,  // imageAtomicOr_01V10D00D
-    3107,  // imageAtomicOr_01A20D00D
-    3109,  // imageAtomicOr_01L20D00D
-    3111,  // imageAtomicOr_01W20D00D
-    3113,  // imageAtomicOr_01C20D00D
-    3115,  // imageAtomicOr_01N20D00D
-    3117,  // imageAtomicOr_01Y20D00D
-    3119,  // imageAtomicOr_01J00D00D
-    3121,  // imageAtomicOr_01U00D00D
-    3123,  // imageAtomicOr_01f00D00D
-    3125,  // imageAtomicOr_01B20D00D
-    3127,  // imageAtomicOr_01M20D00D
-    3129,  // imageAtomicOr_01X20D00D
-    3131,  // imageAtomicOr_01H20D00D
-    3133,  // imageAtomicOr_01S20D00D
-    3135,  // imageAtomicOr_01d20D00D
-    3137,  // imageAtomicOr_01D00D00D
-    3139,  // imageAtomicOr_01O00D00D
-    3141,  // imageAtomicOr_01Z00D00D
-    3143,  // imageAtomicOr_01E10D00D
-    3145,  // imageAtomicOr_01P10D00D
-    3147,  // imageAtomicOr_01a10D00D
-    3149,  // imageAtomicOr_01I10D00D
-    3151,  // imageAtomicOr_01T10D00D
-    3153,  // imageAtomicOr_01e10D00D
-    3155,  // imageAtomicOr_01F10D00D00D
-    3157,  // imageAtomicOr_01Q10D00D00D
-    3159,  // imageAtomicOr_01b10D00D00D
-    3161,  // imageAtomicOr_01G20D00D00D
-    3163,  // imageAtomicOr_01R20D00D00D
-    3165,  // imageAtomicOr_01c20D00D00D
-    3167,  // imageAtomicXor_00z10D00E
-    3169,  // imageAtomicXor_01K10D00E
-    3171,  // imageAtomicXor_01V10D00E
-    3173,  // imageAtomicXor_01A20D00E
-    3175,  // imageAtomicXor_01L20D00E
-    3177,  // imageAtomicXor_01W20D00E
-    3179,  // imageAtomicXor_01C20D00E
-    3181,  // imageAtomicXor_01N20D00E
-    3183,  // imageAtomicXor_01Y20D00E
-    3185,  // imageAtomicXor_01J00D00E
-    3187,  // imageAtomicXor_01U00D00E
-    3189,  // imageAtomicXor_01f00D00E
-    3191,  // imageAtomicXor_01B20D00E
-    3193,  // imageAtomicXor_01M20D00E
-    3195,  // imageAtomicXor_01X20D00E
-    3197,  // imageAtomicXor_01H20D00E
-    3199,  // imageAtomicXor_01S20D00E
-    3201,  // imageAtomicXor_01d20D00E
-    3203,  // imageAtomicXor_01D00D00E
-    3205,  // imageAtomicXor_01O00D00E
-    3207,  // imageAtomicXor_01Z00D00E
-    3209,  // imageAtomicXor_01E10D00E
-    3211,  // imageAtomicXor_01P10D00E
-    3213,  // imageAtomicXor_01a10D00E
-    3215,  // imageAtomicXor_01I10D00E
-    3217,  // imageAtomicXor_01T10D00E
-    3219,  // imageAtomicXor_01e10D00E
-    3221,  // imageAtomicXor_01F10D00D00E
-    3223,  // imageAtomicXor_01Q10D00D00E
-    3225,  // imageAtomicXor_01b10D00D00E
-    3227,  // imageAtomicXor_01G20D00D00E
-    3229,  // imageAtomicXor_01R20D00D00E
-    3231,  // imageAtomicXor_01c20D00D00E
-    3233,  // imageAtomicXor_00z10D00D
-    3235,  // imageAtomicXor_01K10D00D
-    3237,  // imageAtomicXor_01V10D00D
-    3239,  // imageAtomicXor_01A20D00D
-    3241,  // imageAtomicXor_01L20D00D
-    3243,  // imageAtomicXor_01W20D00D
-    3245,  // imageAtomicXor_01C20D00D
-    3247,  // imageAtomicXor_01N20D00D
-    3249,  // imageAtomicXor_01Y20D00D
-    3251,  // imageAtomicXor_01J00D00D
-    3253,  // imageAtomicXor_01U00D00D
-    3255,  // imageAtomicXor_01f00D00D
-    3257,  // imageAtomicXor_01B20D00D
-    3259,  // imageAtomicXor_01M20D00D
-    3261,  // imageAtomicXor_01X20D00D
-    3263,  // imageAtomicXor_01H20D00D
-    3265,  // imageAtomicXor_01S20D00D
-    3267,  // imageAtomicXor_01d20D00D
-    3269,  // imageAtomicXor_01D00D00D
-    3271,  // imageAtomicXor_01O00D00D
-    3273,  // imageAtomicXor_01Z00D00D
-    3275,  // imageAtomicXor_01E10D00D
-    3277,  // imageAtomicXor_01P10D00D
-    3279,  // imageAtomicXor_01a10D00D
-    3281,  // imageAtomicXor_01I10D00D
-    3283,  // imageAtomicXor_01T10D00D
-    3285,  // imageAtomicXor_01e10D00D
-    3287,  // imageAtomicXor_01F10D00D00D
-    3289,  // imageAtomicXor_01Q10D00D00D
-    3291,  // imageAtomicXor_01b10D00D00D
-    3293,  // imageAtomicXor_01G20D00D00D
-    3295,  // imageAtomicXor_01R20D00D00D
-    3297,  // imageAtomicXor_01c20D00D00D
-    3299,  // imageAtomicExchange_00z10D00E
-    3301,  // imageAtomicExchange_01K10D00E
-    3303,  // imageAtomicExchange_01V10D00E
-    3305,  // imageAtomicExchange_01A20D00E
-    3307,  // imageAtomicExchange_01L20D00E
-    3309,  // imageAtomicExchange_01W20D00E
-    3311,  // imageAtomicExchange_01C20D00E
-    3313,  // imageAtomicExchange_01N20D00E
-    3315,  // imageAtomicExchange_01Y20D00E
-    3317,  // imageAtomicExchange_01J00D00E
-    3319,  // imageAtomicExchange_01U00D00E
-    3321,  // imageAtomicExchange_01f00D00E
-    3323,  // imageAtomicExchange_01B20D00E
-    3325,  // imageAtomicExchange_01M20D00E
-    3327,  // imageAtomicExchange_01X20D00E
-    3329,  // imageAtomicExchange_01H20D00E
-    3331,  // imageAtomicExchange_01S20D00E
-    3333,  // imageAtomicExchange_01d20D00E
-    3335,  // imageAtomicExchange_01D00D00E
-    3337,  // imageAtomicExchange_01O00D00E
-    3339,  // imageAtomicExchange_01Z00D00E
-    3341,  // imageAtomicExchange_01E10D00E
-    3343,  // imageAtomicExchange_01P10D00E
-    3345,  // imageAtomicExchange_01a10D00E
-    3347,  // imageAtomicExchange_01I10D00E
-    3349,  // imageAtomicExchange_01T10D00E
-    3351,  // imageAtomicExchange_01e10D00E
-    3353,  // imageAtomicExchange_01F10D00D00E
-    3355,  // imageAtomicExchange_01Q10D00D00E
-    3357,  // imageAtomicExchange_01b10D00D00E
-    3359,  // imageAtomicExchange_01G20D00D00E
-    3361,  // imageAtomicExchange_01R20D00D00E
-    3363,  // imageAtomicExchange_01c20D00D00E
-    3365,  // imageAtomicExchange_00z10D00D
-    3367,  // imageAtomicExchange_01K10D00D
-    3369,  // imageAtomicExchange_01V10D00D
-    3371,  // imageAtomicExchange_01A20D00D
-    3373,  // imageAtomicExchange_01L20D00D
-    3375,  // imageAtomicExchange_01W20D00D
-    3377,  // imageAtomicExchange_01C20D00D
-    3379,  // imageAtomicExchange_01N20D00D
-    3381,  // imageAtomicExchange_01Y20D00D
-    3383,  // imageAtomicExchange_01J00D00D
-    3385,  // imageAtomicExchange_01U00D00D
-    3387,  // imageAtomicExchange_01f00D00D
-    3389,  // imageAtomicExchange_01B20D00D
-    3391,  // imageAtomicExchange_01M20D00D
-    3393,  // imageAtomicExchange_01X20D00D
-    3395,  // imageAtomicExchange_01H20D00D
-    3397,  // imageAtomicExchange_01S20D00D
-    3399,  // imageAtomicExchange_01d20D00D
-    3401,  // imageAtomicExchange_01D00D00D
-    3403,  // imageAtomicExchange_01O00D00D
-    3405,  // imageAtomicExchange_01Z00D00D
-    3407,  // imageAtomicExchange_01E10D00D
-    3409,  // imageAtomicExchange_01P10D00D
-    3411,  // imageAtomicExchange_01a10D00D
-    3413,  // imageAtomicExchange_01I10D00D
-    3415,  // imageAtomicExchange_01T10D00D
-    3417,  // imageAtomicExchange_01e10D00D
-    3419,  // imageAtomicExchange_01F10D00D00D
-    3421,  // imageAtomicExchange_01Q10D00D00D
-    3423,  // imageAtomicExchange_01b10D00D00D
-    3425,  // imageAtomicExchange_01G20D00D00D
-    3427,  // imageAtomicExchange_01R20D00D00D
-    3429,  // imageAtomicExchange_01c20D00D00D
-    3431,  // imageAtomicExchange_00z10D00B
-    3433,  // imageAtomicExchange_01K10D00B
-    3435,  // imageAtomicExchange_01V10D00B
-    3437,  // imageAtomicExchange_01A20D00B
-    3439,  // imageAtomicExchange_01L20D00B
-    3441,  // imageAtomicExchange_01W20D00B
-    3443,  // imageAtomicExchange_01C20D00B
-    3445,  // imageAtomicExchange_01N20D00B
-    3447,  // imageAtomicExchange_01Y20D00B
-    3449,  // imageAtomicExchange_01J00D00B
-    3451,  // imageAtomicExchange_01U00D00B
-    3453,  // imageAtomicExchange_01f00D00B
-    3455,  // imageAtomicExchange_01B20D00B
-    3457,  // imageAtomicExchange_01M20D00B
-    3459,  // imageAtomicExchange_01X20D00B
-    3461,  // imageAtomicExchange_01H20D00B
-    3463,  // imageAtomicExchange_01S20D00B
-    3465,  // imageAtomicExchange_01d20D00B
-    3467,  // imageAtomicExchange_01D00D00B
-    3469,  // imageAtomicExchange_01O00D00B
-    3471,  // imageAtomicExchange_01Z00D00B
-    3473,  // imageAtomicExchange_01E10D00B
-    3475,  // imageAtomicExchange_01P10D00B
-    3477,  // imageAtomicExchange_01a10D00B
-    3479,  // imageAtomicExchange_01I10D00B
-    3481,  // imageAtomicExchange_01T10D00B
-    3483,  // imageAtomicExchange_01e10D00B
-    3485,  // imageAtomicExchange_01F10D00D00B
-    3487,  // imageAtomicExchange_01Q10D00D00B
-    3489,  // imageAtomicExchange_01b10D00D00B
-    3491,  // imageAtomicExchange_01G20D00D00B
-    3493,  // imageAtomicExchange_01R20D00D00B
-    3495,  // imageAtomicExchange_01c20D00D00B
-    3497,  // imageAtomicCompSwap_00z10D00E00E
-    3499,  // imageAtomicCompSwap_01K10D00E00E
-    3501,  // imageAtomicCompSwap_01V10D00E00E
-    3503,  // imageAtomicCompSwap_01A20D00E00E
-    3505,  // imageAtomicCompSwap_01L20D00E00E
-    3507,  // imageAtomicCompSwap_01W20D00E00E
-    3509,  // imageAtomicCompSwap_01C20D00E00E
-    3511,  // imageAtomicCompSwap_01N20D00E00E
-    3513,  // imageAtomicCompSwap_01Y20D00E00E
-    3515,  // imageAtomicCompSwap_01J00D00E00E
-    3517,  // imageAtomicCompSwap_01U00D00E00E
-    3519,  // imageAtomicCompSwap_01f00D00E00E
-    3521,  // imageAtomicCompSwap_01B20D00E00E
-    3523,  // imageAtomicCompSwap_01M20D00E00E
-    3525,  // imageAtomicCompSwap_01X20D00E00E
-    3527,  // imageAtomicCompSwap_01H20D00E00E
-    3529,  // imageAtomicCompSwap_01S20D00E00E
-    3531,  // imageAtomicCompSwap_01d20D00E00E
-    3533,  // imageAtomicCompSwap_01D00D00E00E
-    3535,  // imageAtomicCompSwap_01O00D00E00E
-    3537,  // imageAtomicCompSwap_01Z00D00E00E
-    3539,  // imageAtomicCompSwap_01E10D00E00E
-    3541,  // imageAtomicCompSwap_01P10D00E00E
-    3543,  // imageAtomicCompSwap_01a10D00E00E
-    3545,  // imageAtomicCompSwap_01I10D00E00E
-    3547,  // imageAtomicCompSwap_01T10D00E00E
-    3549,  // imageAtomicCompSwap_01e10D00E00E
-    3551,  // imageAtomicCompSwap_01F10D00D00E00E
-    3553,  // imageAtomicCompSwap_01Q10D00D00E00E
-    3555,  // imageAtomicCompSwap_01b10D00D00E00E
-    3557,  // imageAtomicCompSwap_01G20D00D00E00E
-    3559,  // imageAtomicCompSwap_01R20D00D00E00E
-    3561,  // imageAtomicCompSwap_01c20D00D00E00E
-    3563,  // imageAtomicCompSwap_00z10D00D00D
-    3565,  // imageAtomicCompSwap_01K10D00D00D
-    3567,  // imageAtomicCompSwap_01V10D00D00D
-    3569,  // imageAtomicCompSwap_01A20D00D00D
-    3571,  // imageAtomicCompSwap_01L20D00D00D
-    3573,  // imageAtomicCompSwap_01W20D00D00D
-    3575,  // imageAtomicCompSwap_01C20D00D00D
-    3577,  // imageAtomicCompSwap_01N20D00D00D
-    3579,  // imageAtomicCompSwap_01Y20D00D00D
-    3581,  // imageAtomicCompSwap_01J00D00D00D
-    3583,  // imageAtomicCompSwap_01U00D00D00D
-    3585,  // imageAtomicCompSwap_01f00D00D00D
-    3587,  // imageAtomicCompSwap_01B20D00D00D
-    3589,  // imageAtomicCompSwap_01M20D00D00D
-    3591,  // imageAtomicCompSwap_01X20D00D00D
-    3593,  // imageAtomicCompSwap_01H20D00D00D
-    3595,  // imageAtomicCompSwap_01S20D00D00D
-    3597,  // imageAtomicCompSwap_01d20D00D00D
-    3599,  // imageAtomicCompSwap_01D00D00D00D
-    3601,  // imageAtomicCompSwap_01O00D00D00D
-    3603,  // imageAtomicCompSwap_01Z00D00D00D
-    3605,  // imageAtomicCompSwap_01E10D00D00D
-    3607,  // imageAtomicCompSwap_01P10D00D00D
-    3609,  // imageAtomicCompSwap_01a10D00D00D
-    3611,  // imageAtomicCompSwap_01I10D00D00D
-    3613,  // imageAtomicCompSwap_01T10D00D00D
-    3615,  // imageAtomicCompSwap_01e10D00D00D
-    3617,  // imageAtomicCompSwap_01F10D00D00D00D
-    3619,  // imageAtomicCompSwap_01Q10D00D00D00D
-    3621,  // imageAtomicCompSwap_01b10D00D00D00D
-    3623,  // imageAtomicCompSwap_01G20D00D00D00D
-    3625,  // imageAtomicCompSwap_01R20D00D00D00D
-    3627,  // imageAtomicCompSwap_01c20D00D00D00D
-    3629,  // noise1_00B
-    3630,  // noise1_10B
-    3631,  // noise1_20B
-    3632,  // noise1_30B
-    3633,  // noise2_00B
-    3634,  // noise2_10B
-    3635,  // noise2_20B
-    3636,  // noise2_30B
-    3637,  // noise3_00B
-    3638,  // noise3_10B
-    3639,  // noise3_20B
-    3640,  // noise3_30B
-    3641,  // noise4_00B
-    3642,  // noise4_10B
-    3643,  // noise4_20B
-    3644,  // noise4_30B
-    3645,  // memoryBarrier_
-    3647,  // memoryBarrierAtomicCounter_
-    3649,  // memoryBarrierBuffer_
-    3651,  // memoryBarrierImage_
-    3653,  // barrier_
-    3657,  // memoryBarrierShared_
-    3659,  // groupMemoryBarrier_
-    3661,  // EmitVertex_
-    3665,  // EndPrimitive_
-    3669,  // EmitStreamVertex_00D
-    3670,  // EndStreamPrimitive_00D
-    3671,  // subpassLoad_01g
-    3673,  // subpassLoad_01h
-    3675,  // subpassLoad_01i
-    3677,  // subpassLoad_01j00D
-    3679,  // subpassLoad_01k00D
-    3681,  // subpassLoad_01l00D
-    3683,  // anyInvocation_00F
-    3684,  // allInvocations_00F
-    3685,  // allInvocationsEqual_00F
-    3686,  // gl_DepthRangeParameters
-    3688,  // gl_DepthRange
-    3690,  // gl_NumSamples
-    3693,  // gl_MaxVertexAttribs
-    3695,  // gl_MaxVertexUniformVectors
-    3697,  // gl_MaxVertexTextureImageUnits
-    3699,  // gl_MaxCombinedTextureImageUnits
-    3701,  // gl_MaxTextureImageUnits
-    3703,  // gl_MaxFragmentUniformVectors
-    3705,  // gl_MaxVaryingVectors
-    3707,  // gl_MaxDrawBuffers
-    3709,  // gl_MaxDualSourceDrawBuffersEXT
-    3710,  // gl_MaxVertexOutputVectors
-    3712,  // gl_MaxFragmentInputVectors
-    3714,  // gl_MinProgramTexelOffset
-    3716,  // gl_MaxProgramTexelOffset
-    3718,  // gl_MaxImageUnits
-    3720,  // gl_MaxVertexImageUniforms
-    3722,  // gl_MaxFragmentImageUniforms
-    3724,  // gl_MaxComputeImageUniforms
-    3726,  // gl_MaxCombinedImageUniforms
-    3728,  // gl_MaxCombinedShaderOutputResources
-    3730,  // gl_MaxComputeWorkGroupCount
-    3732,  // gl_MaxComputeWorkGroupSize
-    3734,  // gl_MaxComputeUniformComponents
-    3736,  // gl_MaxComputeTextureImageUnits
-    3738,  // gl_MaxComputeAtomicCounters
-    3740,  // gl_MaxComputeAtomicCounterBuffers
-    3742,  // gl_MaxVertexAtomicCounters
-    3744,  // gl_MaxFragmentAtomicCounters
-    3746,  // gl_MaxCombinedAtomicCounters
-    3748,  // gl_MaxAtomicCounterBindings
-    3750,  // gl_MaxVertexAtomicCounterBuffers
-    3752,  // gl_MaxFragmentAtomicCounterBuffers
-    3754,  // gl_MaxCombinedAtomicCounterBuffers
-    3756,  // gl_MaxAtomicCounterBufferSize
-    3758,  // gl_MaxGeometryInputComponents
-    3762,  // gl_MaxGeometryOutputComponents
-    3766,  // gl_MaxGeometryImageUniforms
-    3770,  // gl_MaxGeometryTextureImageUnits
-    3774,  // gl_MaxGeometryOutputVertices
-    3778,  // gl_MaxGeometryTotalOutputComponents
-    3782,  // gl_MaxGeometryUniformComponents
-    3786,  // gl_MaxGeometryAtomicCounters
-    3790,  // gl_MaxGeometryAtomicCounterBuffers
-    3794,  // gl_MaxTessControlInputComponents
-    3797,  // gl_MaxTessControlOutputComponents
-    3800,  // gl_MaxTessControlTextureImageUnits
-    3803,  // gl_MaxTessControlUniformComponents
-    3806,  // gl_MaxTessControlTotalOutputComponents
-    3809,  // gl_MaxTessControlImageUniforms
-    3812,  // gl_MaxTessControlAtomicCounters
-    3815,  // gl_MaxTessControlAtomicCounterBuffers
-    3818,  // gl_MaxTessPatchComponents
-    3821,  // gl_MaxPatchVertices
-    3824,  // gl_MaxTessGenLevel
-    3827,  // gl_MaxTessEvaluationInputComponents
-    3830,  // gl_MaxTessEvaluationOutputComponents
-    3833,  // gl_MaxTessEvaluationTextureImageUnits
-    3836,  // gl_MaxTessEvaluationUniformComponents
-    3839,  // gl_MaxTessEvaluationImageUniforms
-    3842,  // gl_MaxTessEvaluationAtomicCounters
-    3845,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    3848,  // gl_MaxSamples
-    3851,  // gl_MaxClipDistances
-    3852,  // gl_MaxCullDistances
-    3853,  // gl_MaxCombinedClipAndCullDistances
-    3854,  // gl_FragCoord
-    3858,  // gl_FrontFacing
-    3860,  // gl_PointCoord
-    3862,  // gl_FragColor
-    3864,  // gl_FragData
-    3866,  // gl_FragDepth
-    3868,  // gl_HelperInvocation
-    3870,  // gl_SecondaryFragColorEXT
-    3871,  // gl_SecondaryFragDataEXT
-    3872,  // gl_FragDepthEXT
-    3873,  // gl_LastFragData
-    3876,  // gl_LastFragColor
-    3877,  // gl_LastFragColorARM
-    3878,  // gl_PrimitiveID
-    3892,  // gl_Layer
-    3900,  // gl_SampleID
-    3903,  // gl_SamplePosition
-    3906,  // gl_SampleMaskIn
-    3909,  // gl_SampleMask
-    3912,  // gl_CullDistance
-    3914,  // gl_ClipDistance
-    3916,  // gl_Position
-    3928,  // gl_PointSize
-    3932,  // gl_InstanceID
-    3934,  // Empty
-    3934,  // gl_VertexID
-    3936,  // Empty
-    3936,  // Empty
-    3936,  // gl_DrawID
-    3937,  // gl_BaseVertex
-    3938,  // gl_BaseInstance
-    3939,  // angle_BaseVertex
-    3940,  // angle_BaseInstance
-    3941,  // gl_NumWorkGroups
-    3943,  // gl_WorkGroupSize
-    3945,  // gl_WorkGroupID
-    3947,  // gl_LocalInvocationID
-    3949,  // gl_GlobalInvocationID
-    3951,  // gl_LocalInvocationIndex
-    3953,  // gl_PrimitiveIDIn
-    3957,  // gl_InvocationID
-    3964,  // gl_PerVertex
-    3974,  // gl_in
-    3984,  // gl_PatchVerticesIn
-    3990,  // gl_TessLevelOuter
-    3996,  // gl_TessLevelInner
-    4002,  // gl_out
-    4008,  // gl_BoundingBoxEXT
-    4011,  // gl_TessCoord
-    4013,  // gl_ViewID_OVR
+    1413,  // textureSize_00W
+    1416,  // textureSize_00c
+    1419,  // textureSize_00M00D
+    1420,  // textureSize_00N00D
+    1421,  // textureProjLod_00I20B00B
+    1423,  // textureProjLod_00R20B00B
+    1425,  // textureProjLod_00X20B00B
+    1427,  // textureProjLod_00I30B00B
+    1429,  // textureProjLod_00R30B00B
+    1431,  // textureProjLod_00X30B00B
+    1433,  // textureProjLod_00J30B00B
+    1435,  // textureProjLod_00S30B00B
+    1437,  // textureProjLod_00Y30B00B
+    1439,  // textureProjLod_00d30B00B
+    1441,  // textureProjLod_00g10B00B
+    1442,  // textureProjLod_00o10B00B
+    1443,  // textureProjLod_00t10B00B
+    1444,  // textureProjLod_00g30B00B
+    1445,  // textureProjLod_00o30B00B
+    1446,  // textureProjLod_00t30B00B
+    1447,  // textureProjLod_00m30B00B
+    1448,  // texelFetch_00I10D00D
+    1450,  // texelFetch_00R10D00D
+    1452,  // texelFetch_00X10D00D
+    1454,  // texelFetch_00J20D00D
+    1456,  // texelFetch_00S20D00D
+    1458,  // texelFetch_00Y20D00D
+    1460,  // texelFetch_00L20D00D
+    1462,  // texelFetch_00U20D00D
+    1464,  // texelFetch_00a20D00D
+    1466,  // texelFetch_00g00D00D
+    1467,  // texelFetch_00o00D00D
+    1468,  // texelFetch_00t00D00D
+    1469,  // texelFetch_00O10D
+    1470,  // texelFetch_00q10D
+    1471,  // texelFetch_00v10D
+    1472,  // texelFetch_00h10D00D
+    1473,  // texelFetch_00p10D00D
+    1474,  // texelFetch_00u10D00D
+    1475,  // texelFetch_00j00D
+    1479,  // texelFetch_00r00D
+    1483,  // texelFetch_00w00D
+    1487,  // texelFetch_00P10D00D
+    1490,  // texelFetch_00V10D00D
+    1493,  // texelFetch_00b10D00D
+    1496,  // texelFetch_00Q20D00D
+    1499,  // texelFetch_00W20D00D
+    1502,  // texelFetch_00c20D00D
+    1505,  // texelFetch_00M10D00D
+    1506,  // texelFetch_00N10D00D
+    1507,  // textureGrad_00I10B10B10B
+    1509,  // textureGrad_00R10B10B10B
+    1511,  // textureGrad_00X10B10B10B
+    1513,  // textureGrad_00J20B20B20B
+    1515,  // textureGrad_00S20B20B20B
+    1517,  // textureGrad_00Y20B20B20B
+    1519,  // textureGrad_00K20B20B20B
+    1521,  // textureGrad_00T20B20B20B
+    1523,  // textureGrad_00Z20B20B20B
+    1525,  // textureGrad_00I00B00B00B
+    1526,  // textureGrad_00R00B00B00B
+    1527,  // textureGrad_00X00B00B00B
+    1528,  // textureGrad_00O10B10B10B
+    1529,  // textureGrad_00q10B10B10B
+    1530,  // textureGrad_00v10B10B10B
+    1531,  // textureGrad_00n20B10B10B
+    1532,  // textureGrad_00d20B10B10B
+    1534,  // textureGrad_00e30B20B20B
+    1536,  // textureGrad_00L20B10B10B
+    1538,  // textureGrad_00U20B10B10B
+    1540,  // textureGrad_00a20B10B10B
+    1542,  // textureGrad_00f30B10B10B
+    1544,  // textureGrad_00m20B00B00B
+    1545,  // textureGrad_00h10B00B00B
+    1546,  // textureGrad_00p10B00B00B
+    1547,  // textureGrad_00u10B00B00B
+    1548,  // textureGrad_00i20B00B00B
+    1549,  // textureGrad_00k30B20B20B
+    1553,  // textureGrad_00s30B20B20B
+    1557,  // textureGrad_00x30B20B20B
+    1561,  // textureProjGrad_00I20B10B10B
+    1563,  // textureProjGrad_00R20B10B10B
+    1565,  // textureProjGrad_00X20B10B10B
+    1567,  // textureProjGrad_00I30B10B10B
+    1569,  // textureProjGrad_00R30B10B10B
+    1571,  // textureProjGrad_00X30B10B10B
+    1573,  // textureProjGrad_00J30B20B20B
+    1575,  // textureProjGrad_00S30B20B20B
+    1577,  // textureProjGrad_00Y30B20B20B
+    1579,  // textureProjGrad_00d30B10B10B
+    1581,  // textureProjGrad_00g10B00B00B
+    1582,  // textureProjGrad_00o10B00B00B
+    1583,  // textureProjGrad_00t10B00B00B
+    1584,  // textureProjGrad_00g30B00B00B
+    1585,  // textureProjGrad_00o30B00B00B
+    1586,  // textureProjGrad_00t30B00B00B
+    1587,  // textureProjGrad_00m30B00B00B
+    1588,  // textureProjGrad_00O20B10B10B
+    1589,  // textureProjGrad_00q20B10B10B
+    1590,  // textureProjGrad_00v20B10B10B
+    1591,  // textureProjGrad_00O30B10B10B
+    1592,  // textureProjGrad_00q30B10B10B
+    1593,  // textureProjGrad_00v30B10B10B
+    1594,  // textureProjGrad_00n30B10B10B
+    1595,  // textureQueryLevels_00g
+    1596,  // textureQueryLevels_00o
+    1597,  // textureQueryLevels_00t
+    1598,  // textureQueryLevels_00I
+    1599,  // textureQueryLevels_00R
+    1600,  // textureQueryLevels_00X
+    1601,  // textureQueryLevels_00J
+    1602,  // textureQueryLevels_00S
+    1603,  // textureQueryLevels_00Y
+    1604,  // textureQueryLevels_00K
+    1605,  // textureQueryLevels_00T
+    1606,  // textureQueryLevels_00Z
+    1607,  // textureQueryLevels_00h
+    1608,  // textureQueryLevels_00p
+    1609,  // textureQueryLevels_00u
+    1610,  // textureQueryLevels_00L
+    1611,  // textureQueryLevels_00U
+    1612,  // textureQueryLevels_00a
+    1613,  // textureQueryLevels_00k
+    1614,  // textureQueryLevels_00s
+    1615,  // textureQueryLevels_00x
+    1616,  // textureQueryLevels_00m
+    1617,  // textureQueryLevels_00d
+    1618,  // textureQueryLevels_00e
+    1619,  // textureQueryLevels_00i
+    1620,  // textureQueryLevels_00f
+    1621,  // textureQueryLevels_00l
+    1622,  // textureSamples_00P
+    1623,  // textureSamples_00V
+    1624,  // textureSamples_00b
+    1625,  // textureSamples_00Q
+    1626,  // textureSamples_00W
+    1627,  // textureSamples_00c
+    1628,  // texture_00I10B00B
+    1630,  // texture_00R10B00B
+    1632,  // texture_00X10B00B
+    1634,  // texture_00J20B00B
+    1636,  // texture_00S20B00B
+    1638,  // texture_00Y20B00B
+    1640,  // texture_00K20B00B
+    1642,  // texture_00T20B00B
+    1644,  // texture_00Z20B00B
+    1646,  // texture_00L20B00B
+    1648,  // texture_00U20B00B
+    1650,  // texture_00a20B00B
+    1652,  // textureProj_00I20B00B
+    1654,  // textureProj_00R20B00B
+    1656,  // textureProj_00X20B00B
+    1658,  // textureProj_00I30B00B
+    1660,  // textureProj_00R30B00B
+    1662,  // textureProj_00X30B00B
+    1664,  // textureProj_00J30B00B
+    1666,  // textureProj_00S30B00B
+    1668,  // textureProj_00Y30B00B
+    1670,  // texture_00d20B00B
+    1672,  // texture_00e30B00B
+    1674,  // textureProj_00d30B00B
+    1676,  // texture_00g00B00B
+    1677,  // texture_00o00B00B
+    1678,  // texture_00t00B00B
+    1679,  // texture_00m20B00B
+    1680,  // texture_00h20B00B
+    1681,  // texture_00p20B00B
+    1682,  // texture_00u20B00B
+    1683,  // texture_00i20B00B
+    1684,  // texture_00f30B00B
+    1685,  // textureProj_00g10B00B
+    1686,  // textureProj_00o10B00B
+    1687,  // textureProj_00t10B00B
+    1688,  // textureProj_00g30B00B
+    1689,  // textureProj_00o30B00B
+    1690,  // textureProj_00t30B00B
+    1691,  // textureProj_00m30B00B
+    1692,  // texture_00k30B00B
+    1696,  // texture_00s30B00B
+    1700,  // texture_00x30B00B
+    1704,  // texture_00M10B00B
+    1705,  // textureProj_00M20B00B
+    1706,  // textureProj_00M30B00B
+    1707,  // texture_00N10B00B
+    1708,  // textureProj_00N20B00B
+    1709,  // textureProj_00N30B00B
+    1710,  // textureQueryLod_00g00B
+    1711,  // textureQueryLod_00o00B
+    1712,  // textureQueryLod_00t00B
+    1713,  // textureQueryLod_00I10B
+    1714,  // textureQueryLod_00R10B
+    1715,  // textureQueryLod_00X10B
+    1716,  // textureQueryLod_00J20B
+    1717,  // textureQueryLod_00S20B
+    1718,  // textureQueryLod_00Y20B
+    1719,  // textureQueryLod_00K20B
+    1720,  // textureQueryLod_00T20B
+    1721,  // textureQueryLod_00Z20B
+    1722,  // textureQueryLod_00h00B
+    1723,  // textureQueryLod_00p00B
+    1724,  // textureQueryLod_00u00B
+    1725,  // textureQueryLod_00L10B
+    1726,  // textureQueryLod_00U10B
+    1727,  // textureQueryLod_00a10B
+    1728,  // textureQueryLod_00k20B
+    1729,  // textureQueryLod_00s20B
+    1730,  // textureQueryLod_00x20B
+    1731,  // textureQueryLod_00m00B
+    1732,  // textureQueryLod_00d10B
+    1733,  // textureQueryLod_00e20B
+    1734,  // textureQueryLod_00i00B
+    1735,  // textureQueryLod_00f10B
+    1736,  // textureQueryLod_00l20B
+    1737,  // textureOffset_00I10B10D
+    1739,  // textureOffset_00R10B10D
+    1741,  // textureOffset_00X10B10D
+    1743,  // textureOffset_00J20B20D
+    1745,  // textureOffset_00S20B20D
+    1747,  // textureOffset_00Y20B20D
+    1749,  // textureOffset_00d20B10D
+    1751,  // textureOffset_00L20B10D
+    1753,  // textureOffset_00U20B10D
+    1755,  // textureOffset_00a20B10D
+    1757,  // textureOffset_00g00B00D
+    1758,  // textureOffset_00o00B00D
+    1759,  // textureOffset_00t00B00D
+    1760,  // textureOffset_00O10B10D
+    1761,  // textureOffset_00q10B10D
+    1762,  // textureOffset_00v10B10D
+    1763,  // textureOffset_00n20B10D
+    1764,  // textureOffset_00m20B00D
+    1765,  // textureOffset_00h10B00D
+    1766,  // textureOffset_00p10B00D
+    1767,  // textureOffset_00u10B00D
+    1768,  // textureOffset_00i20B00D
+    1769,  // textureOffset_00f30B10D
+    1770,  // textureProjOffset_00I20B10D
+    1772,  // textureProjOffset_00R20B10D
+    1774,  // textureProjOffset_00X20B10D
+    1776,  // textureProjOffset_00I30B10D
+    1778,  // textureProjOffset_00R30B10D
+    1780,  // textureProjOffset_00X30B10D
+    1782,  // textureProjOffset_00J30B20D
+    1784,  // textureProjOffset_00S30B20D
+    1786,  // textureProjOffset_00Y30B20D
+    1788,  // textureProjOffset_00d30B10D
+    1790,  // textureProjOffset_00g10B00D
+    1791,  // textureProjOffset_00o10B00D
+    1792,  // textureProjOffset_00t10B00D
+    1793,  // textureProjOffset_00g30B00D
+    1794,  // textureProjOffset_00o30B00D
+    1795,  // textureProjOffset_00t30B00D
+    1796,  // textureProjOffset_00O20B10D
+    1797,  // textureProjOffset_00q20B10D
+    1798,  // textureProjOffset_00v20B10D
+    1799,  // textureProjOffset_00O30B10D
+    1800,  // textureProjOffset_00q30B10D
+    1801,  // textureProjOffset_00v30B10D
+    1802,  // textureProjOffset_00n30B10D
+    1803,  // textureProjOffset_00m30B00D
+    1804,  // textureLodOffset_00I10B00B10D
+    1806,  // textureLodOffset_00R10B00B10D
+    1808,  // textureLodOffset_00X10B00B10D
+    1810,  // textureLodOffset_00J20B00B20D
+    1812,  // textureLodOffset_00S20B00B20D
+    1814,  // textureLodOffset_00Y20B00B20D
+    1816,  // textureLodOffset_00d20B00B10D
+    1818,  // textureLodOffset_00L20B00B10D
+    1820,  // textureLodOffset_00U20B00B10D
+    1822,  // textureLodOffset_00a20B00B10D
+    1824,  // textureLodOffset_00g00B00B00D
+    1825,  // textureLodOffset_00o00B00B00D
+    1826,  // textureLodOffset_00t00B00B00D
+    1827,  // textureLodOffset_00m20B00B00D
+    1828,  // textureLodOffset_00h10B00B00D
+    1829,  // textureLodOffset_00p10B00B00D
+    1830,  // textureLodOffset_00u10B00B00D
+    1831,  // textureLodOffset_00i20B00B00D
+    1832,  // textureProjLodOffset_00I20B00B10D
+    1834,  // textureProjLodOffset_00R20B00B10D
+    1836,  // textureProjLodOffset_00X20B00B10D
+    1838,  // textureProjLodOffset_00I30B00B10D
+    1840,  // textureProjLodOffset_00R30B00B10D
+    1842,  // textureProjLodOffset_00X30B00B10D
+    1844,  // textureProjLodOffset_00J30B00B20D
+    1846,  // textureProjLodOffset_00S30B00B20D
+    1848,  // textureProjLodOffset_00Y30B00B20D
+    1850,  // textureProjLodOffset_00d30B00B10D
+    1852,  // textureProjLodOffset_00g10B00B00D
+    1853,  // textureProjLodOffset_00o10B00B00D
+    1854,  // textureProjLodOffset_00t10B00B00D
+    1855,  // textureProjLodOffset_00g30B00B00D
+    1856,  // textureProjLodOffset_00o30B00B00D
+    1857,  // textureProjLodOffset_00t30B00B00D
+    1858,  // textureProjLodOffset_00m30B00B00D
+    1859,  // texelFetchOffset_00I10D00D10D
+    1861,  // texelFetchOffset_00R10D00D10D
+    1863,  // texelFetchOffset_00X10D00D10D
+    1865,  // texelFetchOffset_00J20D00D20D
+    1867,  // texelFetchOffset_00S20D00D20D
+    1869,  // texelFetchOffset_00Y20D00D20D
+    1871,  // texelFetchOffset_00L20D00D10D
+    1873,  // texelFetchOffset_00U20D00D10D
+    1875,  // texelFetchOffset_00a20D00D10D
+    1877,  // texelFetchOffset_00g00D00D00D
+    1878,  // texelFetchOffset_00o00D00D00D
+    1879,  // texelFetchOffset_00t00D00D00D
+    1880,  // texelFetchOffset_00O10D10D
+    1881,  // texelFetchOffset_00q10D10D
+    1882,  // texelFetchOffset_00v10D10D
+    1883,  // texelFetchOffset_00h10D00D00D
+    1884,  // texelFetchOffset_00p10D00D00D
+    1885,  // texelFetchOffset_00u10D00D00D
+    1886,  // textureGradOffset_00I10B10B10B10D
+    1888,  // textureGradOffset_00R10B10B10B10D
+    1890,  // textureGradOffset_00X10B10B10B10D
+    1892,  // textureGradOffset_00J20B20B20B20D
+    1894,  // textureGradOffset_00S20B20B20B20D
+    1896,  // textureGradOffset_00Y20B20B20B20D
+    1898,  // textureGradOffset_00d20B10B10B10D
+    1900,  // textureGradOffset_00L20B10B10B10D
+    1902,  // textureGradOffset_00U20B10B10B10D
+    1904,  // textureGradOffset_00a20B10B10B10D
+    1906,  // textureGradOffset_00f30B10B10B10D
+    1908,  // textureGradOffset_00g00B00B00B00D
+    1909,  // textureGradOffset_00o00B00B00B00D
+    1910,  // textureGradOffset_00t00B00B00B00D
+    1911,  // textureGradOffset_00O10B10B10B10D
+    1912,  // textureGradOffset_00q10B10B10B10D
+    1913,  // textureGradOffset_00v10B10B10B10D
+    1914,  // textureGradOffset_00n20B10B10B10D
+    1915,  // textureGradOffset_00m20B00B00B00D
+    1916,  // textureGradOffset_00h10B00B00B00D
+    1917,  // textureGradOffset_00p10B00B00B00D
+    1918,  // textureGradOffset_00u10B00B00B00D
+    1919,  // textureGradOffset_00i20B00B00B00D
+    1920,  // textureProjGradOffset_00I20B10B10B10D
+    1922,  // textureProjGradOffset_00R20B10B10B10D
+    1924,  // textureProjGradOffset_00X20B10B10B10D
+    1926,  // textureProjGradOffset_00I30B10B10B10D
+    1928,  // textureProjGradOffset_00R30B10B10B10D
+    1930,  // textureProjGradOffset_00X30B10B10B10D
+    1932,  // textureProjGradOffset_00J30B20B20B20D
+    1934,  // textureProjGradOffset_00S30B20B20B20D
+    1936,  // textureProjGradOffset_00Y30B20B20B20D
+    1938,  // textureProjGradOffset_00d30B10B10B10D
+    1940,  // textureProjGradOffset_00g10B00B00B00D
+    1941,  // textureProjGradOffset_00o10B00B00B00D
+    1942,  // textureProjGradOffset_00t10B00B00B00D
+    1943,  // textureProjGradOffset_00g30B00B00B00D
+    1944,  // textureProjGradOffset_00o30B00B00B00D
+    1945,  // textureProjGradOffset_00t30B00B00B00D
+    1946,  // textureProjGradOffset_00O20B10B10B10D
+    1947,  // textureProjGradOffset_00q20B10B10B10D
+    1948,  // textureProjGradOffset_00v20B10B10B10D
+    1949,  // textureProjGradOffset_00O30B10B10B10D
+    1950,  // textureProjGradOffset_00q30B10B10B10D
+    1951,  // textureProjGradOffset_00v30B10B10B10D
+    1952,  // textureProjGradOffset_00n30B10B10B10D
+    1953,  // textureProjGradOffset_00m30B00B00B00D
+    1954,  // textureOffset_00I10B10D00B
+    1956,  // textureOffset_00R10B10D00B
+    1958,  // textureOffset_00X10B10D00B
+    1960,  // textureOffset_00J20B20D00B
+    1962,  // textureOffset_00S20B20D00B
+    1964,  // textureOffset_00Y20B20D00B
+    1966,  // textureOffset_00d20B10D00B
+    1968,  // textureOffset_00L20B10D00B
+    1970,  // textureOffset_00U20B10D00B
+    1972,  // textureOffset_00a20B10D00B
+    1974,  // textureOffset_00g00B00D00B
+    1975,  // textureOffset_00o00B00D00B
+    1976,  // textureOffset_00t00B00D00B
+    1977,  // textureOffset_00m20B00D00B
+    1978,  // textureOffset_00h10B00D00B
+    1979,  // textureOffset_00p10B00D00B
+    1980,  // textureOffset_00u10B00D00B
+    1981,  // textureOffset_00i20B00D00B
+    1982,  // textureProjOffset_00I20B10D00B
+    1984,  // textureProjOffset_00R20B10D00B
+    1986,  // textureProjOffset_00X20B10D00B
+    1988,  // textureProjOffset_00I30B10D00B
+    1990,  // textureProjOffset_00R30B10D00B
+    1992,  // textureProjOffset_00X30B10D00B
+    1994,  // textureProjOffset_00J30B20D00B
+    1996,  // textureProjOffset_00S30B20D00B
+    1998,  // textureProjOffset_00Y30B20D00B
+    2000,  // textureProjOffset_00d30B10D00B
+    2002,  // textureProjOffset_00g10B00D00B
+    2003,  // textureProjOffset_00o10B00D00B
+    2004,  // textureProjOffset_00t10B00D00B
+    2005,  // textureProjOffset_00g30B00D00B
+    2006,  // textureProjOffset_00o30B00D00B
+    2007,  // textureProjOffset_00t30B00D00B
+    2008,  // textureProjOffset_00m30B00D00B
+    2009,  // textureGather_00I10B
+    2011,  // textureGather_00R10B
+    2013,  // textureGather_00X10B
+    2015,  // textureGather_00I10B00D
+    2017,  // textureGather_00R10B00D
+    2019,  // textureGather_00X10B00D
+    2021,  // textureGather_00L20B
+    2023,  // textureGather_00U20B
+    2025,  // textureGather_00a20B
+    2027,  // textureGather_00L20B00D
+    2029,  // textureGather_00U20B00D
+    2031,  // textureGather_00a20B00D
+    2033,  // textureGather_00K20B
+    2035,  // textureGather_00T20B
+    2037,  // textureGather_00Z20B
+    2039,  // textureGather_00K20B00D
+    2041,  // textureGather_00T20B00D
+    2043,  // textureGather_00Z20B00D
+    2045,  // textureGather_00k30B
+    2049,  // textureGather_00s30B
+    2053,  // textureGather_00x30B
+    2057,  // textureGather_00k30B00D
+    2061,  // textureGather_00s30B00D
+    2065,  // textureGather_00x30B00D
+    2069,  // textureGather_00l30B00B
+    2073,  // textureGather_00O20B
+    2074,  // textureGather_00q20B
+    2075,  // textureGather_00v20B
+    2076,  // textureGather_00O20B00D
+    2077,  // textureGather_00q20B00D
+    2078,  // textureGather_00v20B00D
+    2079,  // textureGather_00n10B00B
+    2080,  // textureGather_00d10B
+    2081,  // textureGather_00d10B00B
+    2083,  // textureGather_00f20B
+    2084,  // textureGather_00f20B00B
+    2086,  // textureGather_00e20B
+    2087,  // textureGather_00e20B00B
+    2089,  // textureGatherOffset_00I10B10D
+    2091,  // textureGatherOffset_00R10B10D
+    2093,  // textureGatherOffset_00X10B10D
+    2095,  // textureGatherOffset_00L20B10D
+    2097,  // textureGatherOffset_00U20B10D
+    2099,  // textureGatherOffset_00a20B10D
+    2101,  // textureGatherOffset_00d10B00B10D
+    2103,  // textureGatherOffset_00f20B00B10D
+    2105,  // textureGatherOffset_00O10B10D
+    2106,  // textureGatherOffset_00q10B10D
+    2107,  // textureGatherOffset_00v10B10D
+    2108,  // textureGatherOffset_00n10B00B10D
+    2109,  // textureGatherOffset_00I10B10D00D
+    2111,  // textureGatherOffset_00R10B10D00D
+    2113,  // textureGatherOffset_00X10B10D00D
+    2115,  // textureGatherOffset_00L20B10D00D
+    2117,  // textureGatherOffset_00U20B10D00D
+    2119,  // textureGatherOffset_00a20B10D00D
+    2121,  // textureGatherOffset_00O10B10D00D
+    2122,  // textureGatherOffset_00q10B10D00D
+    2123,  // textureGatherOffset_00v10B10D00D
+    2124,  // textureGatherOffsets_00I10B10Dx4
+    2127,  // textureGatherOffsets_00R10B10Dx4
+    2130,  // textureGatherOffsets_00X10B10Dx4
+    2133,  // textureGatherOffsets_00L20B10Dx4
+    2136,  // textureGatherOffsets_00U20B10Dx4
+    2139,  // textureGatherOffsets_00a20B10Dx4
+    2142,  // textureGatherOffsets_00d10B00B10Dx4
+    2145,  // textureGatherOffsets_00f20B00B10Dx4
+    2148,  // textureGatherOffsets_00O10B10Dx4
+    2149,  // textureGatherOffsets_00q10B10Dx4
+    2150,  // textureGatherOffsets_00v10B10Dx4
+    2151,  // textureGatherOffsets_00n10B00B10Dx4
+    2152,  // textureGatherOffsets_00I10B10Dx400D
+    2155,  // textureGatherOffsets_00R10B10Dx400D
+    2158,  // textureGatherOffsets_00X10B10Dx400D
+    2161,  // textureGatherOffsets_00L20B10Dx400D
+    2164,  // textureGatherOffsets_00U20B10Dx400D
+    2167,  // textureGatherOffsets_00a20B10Dx400D
+    2170,  // textureGatherOffsets_00O10B10Dx400D
+    2171,  // textureGatherOffsets_00q10B10Dx400D
+    2172,  // textureGatherOffsets_00v10B10Dx400D
+    2173,  // rgb_2_yuv_20B00H
+    2174,  // yuv_2_rgb_20B00H
+    2175,  // dFdx_00B
+    2178,  // dFdx_10B
+    2181,  // dFdx_20B
+    2184,  // dFdx_30B
+    2187,  // dFdy_00B
+    2190,  // dFdy_10B
+    2193,  // dFdy_20B
+    2196,  // dFdy_30B
+    2199,  // fwidth_00B
+    2202,  // fwidth_10B
+    2205,  // fwidth_20B
+    2208,  // fwidth_30B
+    2211,  // dFdxFine_00B
+    2212,  // dFdxFine_10B
+    2213,  // dFdxFine_20B
+    2214,  // dFdxFine_30B
+    2215,  // dFdyFine_00B
+    2216,  // dFdyFine_10B
+    2217,  // dFdyFine_20B
+    2218,  // dFdyFine_30B
+    2219,  // dFdxCoarse_00B
+    2220,  // dFdxCoarse_10B
+    2221,  // dFdxCoarse_20B
+    2222,  // dFdxCoarse_30B
+    2223,  // dFdyCoarse_00B
+    2224,  // dFdyCoarse_10B
+    2225,  // dFdyCoarse_20B
+    2226,  // dFdyCoarse_30B
+    2227,  // fwidthFine_00B
+    2228,  // fwidthFine_10B
+    2229,  // fwidthFine_20B
+    2230,  // fwidthFine_30B
+    2231,  // fwidthCoarse_00B
+    2232,  // fwidthCoarse_10B
+    2233,  // fwidthCoarse_20B
+    2234,  // fwidthCoarse_30B
+    2235,  // interpolateAtCentroid_00B
+    2238,  // interpolateAtCentroid_10B
+    2241,  // interpolateAtCentroid_20B
+    2244,  // interpolateAtCentroid_30B
+    2247,  // interpolateAtSample_00B00D
+    2250,  // interpolateAtSample_10B00D
+    2253,  // interpolateAtSample_20B00D
+    2256,  // interpolateAtSample_30B00D
+    2259,  // interpolateAtOffset_00B10B
+    2262,  // interpolateAtOffset_10B10B
+    2265,  // interpolateAtOffset_20B10B
+    2268,  // interpolateAtOffset_30B10B
+    2271,  // atomicCounter_00G
+    2273,  // atomicCounterIncrement_00G
+    2275,  // atomicCounterDecrement_00G
+    2277,  // atomicCounterAdd_00G00E
+    2278,  // atomicCounterSubtract_00G00E
+    2279,  // atomicCounterMin_00G00E
+    2280,  // atomicCounterMax_00G00E
+    2281,  // atomicCounterAnd_00G00E
+    2282,  // atomicCounterOr_00G00E
+    2283,  // atomicCounterXor_00G00E
+    2284,  // atomicCounterExchange_00G00E
+    2285,  // atomicCounterCompSwap_00G00E00E
+    2286,  // atomicAdd_00E00E
+    2288,  // atomicAdd_00D00D
+    2290,  // atomicMin_00E00E
+    2292,  // atomicMin_00D00D
+    2294,  // atomicMax_00E00E
+    2296,  // atomicMax_00D00D
+    2298,  // atomicAnd_00E00E
+    2300,  // atomicAnd_00D00D
+    2302,  // atomicOr_00E00E
+    2304,  // atomicOr_00D00D
+    2306,  // atomicXor_00E00E
+    2308,  // atomicXor_00D00D
+    2310,  // atomicExchange_00E00E
+    2312,  // atomicExchange_00D00D
+    2314,  // atomicCompSwap_00E00E00E
+    2316,  // atomicCompSwap_00D00D00D
+    2318,  // imageSize_00z
+    2320,  // imageSize_01K
+    2322,  // imageSize_01V
+    2324,  // imageSize_01A
+    2326,  // imageSize_01L
+    2328,  // imageSize_01W
+    2330,  // imageSize_01B
+    2332,  // imageSize_01M
+    2334,  // imageSize_01X
+    2336,  // imageSize_01C
+    2338,  // imageSize_01N
+    2340,  // imageSize_01Y
+    2342,  // imageSize_01H
+    2346,  // imageSize_01S
+    2350,  // imageSize_01d
+    2354,  // imageSize_01J
+    2358,  // imageSize_01U
+    2362,  // imageSize_01f
+    2366,  // imageSize_01D
+    2367,  // imageSize_01O
+    2368,  // imageSize_01Z
+    2369,  // imageSize_01I
+    2370,  // imageSize_01T
+    2371,  // imageSize_01e
+    2372,  // imageSize_01E
+    2373,  // imageSize_01P
+    2374,  // imageSize_01a
+    2375,  // imageSize_01F
+    2376,  // imageSize_01Q
+    2377,  // imageSize_01b
+    2378,  // imageSize_01G
+    2379,  // imageSize_01R
+    2380,  // imageSize_01c
+    2381,  // imageSamples_01F
+    2382,  // imageSamples_01Q
+    2383,  // imageSamples_01b
+    2384,  // imageSamples_01G
+    2385,  // imageSamples_01R
+    2386,  // imageSamples_01c
+    2387,  // imageStore_00z10D30B
+    2389,  // imageStore_01K10D30D
+    2391,  // imageStore_01V10D30E
+    2393,  // imageStore_01A20D30B
+    2395,  // imageStore_01L20D30D
+    2397,  // imageStore_01W20D30E
+    2399,  // imageStore_01B20D30B
+    2401,  // imageStore_01M20D30D
+    2403,  // imageStore_01X20D30E
+    2405,  // imageStore_01C20D30B
+    2407,  // imageStore_01N20D30D
+    2409,  // imageStore_01Y20D30E
+    2411,  // imageStore_01H20D30B
+    2415,  // imageStore_01S20D30D
+    2419,  // imageStore_01d20D30E
+    2423,  // imageStore_01J00D30B
+    2427,  // imageStore_01U00D30D
+    2431,  // imageStore_01f00D30E
+    2435,  // imageStore_01D00D30B
+    2436,  // imageStore_01O00D30D
+    2437,  // imageStore_01Z00D30E
+    2438,  // imageStore_01E10D30B
+    2439,  // imageStore_01P10D30D
+    2440,  // imageStore_01a10D30E
+    2441,  // imageStore_01I10D30B
+    2442,  // imageStore_01T10D30D
+    2443,  // imageStore_01e10D30E
+    2444,  // imageStore_01F10D00D30B
+    2445,  // imageStore_01Q10D00D30D
+    2446,  // imageStore_01b10D00D30E
+    2447,  // imageStore_01G20D00D30B
+    2448,  // imageStore_01R20D00D30D
+    2449,  // imageStore_01c20D00D30E
+    2450,  // imageLoad_00z10D
+    2452,  // imageLoad_01K10D
+    2454,  // imageLoad_01V10D
+    2456,  // imageLoad_01A20D
+    2458,  // imageLoad_01L20D
+    2460,  // imageLoad_01W20D
+    2462,  // imageLoad_01B20D
+    2464,  // imageLoad_01M20D
+    2466,  // imageLoad_01X20D
+    2468,  // imageLoad_01C20D
+    2470,  // imageLoad_01N20D
+    2472,  // imageLoad_01Y20D
+    2474,  // imageLoad_01H20D
+    2478,  // imageLoad_01S20D
+    2482,  // imageLoad_01d20D
+    2486,  // imageLoad_01J00D
+    2490,  // imageLoad_01U00D
+    2494,  // imageLoad_01f00D
+    2498,  // imageLoad_01D00D
+    2499,  // imageLoad_01O00D
+    2500,  // imageLoad_01Z00D
+    2501,  // imageLoad_01E10D
+    2502,  // imageLoad_01P10D
+    2503,  // imageLoad_01a10D
+    2504,  // imageLoad_01I10D
+    2505,  // imageLoad_01T10D
+    2506,  // imageLoad_01e10D
+    2507,  // imageLoad_01F10D00D
+    2508,  // imageLoad_01Q10D00D
+    2509,  // imageLoad_01b10D00D
+    2510,  // imageLoad_01G20D00D
+    2511,  // imageLoad_01R20D00D
+    2512,  // imageLoad_01c20D00D
+    2513,  // imageAtomicAdd_00z10D00E
+    2516,  // imageAtomicAdd_01K10D00E
+    2519,  // imageAtomicAdd_01V10D00E
+    2522,  // imageAtomicAdd_01A20D00E
+    2525,  // imageAtomicAdd_01L20D00E
+    2528,  // imageAtomicAdd_01W20D00E
+    2531,  // imageAtomicAdd_01C20D00E
+    2534,  // imageAtomicAdd_01N20D00E
+    2537,  // imageAtomicAdd_01Y20D00E
+    2540,  // imageAtomicAdd_01J00D00E
+    2543,  // imageAtomicAdd_01U00D00E
+    2546,  // imageAtomicAdd_01f00D00E
+    2549,  // imageAtomicAdd_01B20D00E
+    2552,  // imageAtomicAdd_01M20D00E
+    2555,  // imageAtomicAdd_01X20D00E
+    2558,  // imageAtomicAdd_01H20D00E
+    2561,  // imageAtomicAdd_01S20D00E
+    2564,  // imageAtomicAdd_01d20D00E
+    2567,  // imageAtomicAdd_01D00D00E
+    2570,  // imageAtomicAdd_01O00D00E
+    2573,  // imageAtomicAdd_01Z00D00E
+    2576,  // imageAtomicAdd_01E10D00E
+    2579,  // imageAtomicAdd_01P10D00E
+    2582,  // imageAtomicAdd_01a10D00E
+    2585,  // imageAtomicAdd_01I10D00E
+    2588,  // imageAtomicAdd_01T10D00E
+    2591,  // imageAtomicAdd_01e10D00E
+    2594,  // imageAtomicAdd_01F10D00D00E
+    2597,  // imageAtomicAdd_01Q10D00D00E
+    2600,  // imageAtomicAdd_01b10D00D00E
+    2603,  // imageAtomicAdd_01G20D00D00E
+    2606,  // imageAtomicAdd_01R20D00D00E
+    2609,  // imageAtomicAdd_01c20D00D00E
+    2612,  // imageAtomicAdd_00z10D00D
+    2615,  // imageAtomicAdd_01K10D00D
+    2618,  // imageAtomicAdd_01V10D00D
+    2621,  // imageAtomicAdd_01A20D00D
+    2624,  // imageAtomicAdd_01L20D00D
+    2627,  // imageAtomicAdd_01W20D00D
+    2630,  // imageAtomicAdd_01C20D00D
+    2633,  // imageAtomicAdd_01N20D00D
+    2636,  // imageAtomicAdd_01Y20D00D
+    2639,  // imageAtomicAdd_01J00D00D
+    2642,  // imageAtomicAdd_01U00D00D
+    2645,  // imageAtomicAdd_01f00D00D
+    2648,  // imageAtomicAdd_01B20D00D
+    2651,  // imageAtomicAdd_01M20D00D
+    2654,  // imageAtomicAdd_01X20D00D
+    2657,  // imageAtomicAdd_01H20D00D
+    2660,  // imageAtomicAdd_01S20D00D
+    2663,  // imageAtomicAdd_01d20D00D
+    2666,  // imageAtomicAdd_01D00D00D
+    2669,  // imageAtomicAdd_01O00D00D
+    2672,  // imageAtomicAdd_01Z00D00D
+    2675,  // imageAtomicAdd_01E10D00D
+    2678,  // imageAtomicAdd_01P10D00D
+    2681,  // imageAtomicAdd_01a10D00D
+    2684,  // imageAtomicAdd_01I10D00D
+    2687,  // imageAtomicAdd_01T10D00D
+    2690,  // imageAtomicAdd_01e10D00D
+    2693,  // imageAtomicAdd_01F10D00D00D
+    2696,  // imageAtomicAdd_01Q10D00D00D
+    2699,  // imageAtomicAdd_01b10D00D00D
+    2702,  // imageAtomicAdd_01G20D00D00D
+    2705,  // imageAtomicAdd_01R20D00D00D
+    2708,  // imageAtomicAdd_01c20D00D00D
+    2711,  // imageAtomicMin_00z10D00E
+    2714,  // imageAtomicMin_01K10D00E
+    2717,  // imageAtomicMin_01V10D00E
+    2720,  // imageAtomicMin_01A20D00E
+    2723,  // imageAtomicMin_01L20D00E
+    2726,  // imageAtomicMin_01W20D00E
+    2729,  // imageAtomicMin_01C20D00E
+    2732,  // imageAtomicMin_01N20D00E
+    2735,  // imageAtomicMin_01Y20D00E
+    2738,  // imageAtomicMin_01J00D00E
+    2741,  // imageAtomicMin_01U00D00E
+    2744,  // imageAtomicMin_01f00D00E
+    2747,  // imageAtomicMin_01B20D00E
+    2750,  // imageAtomicMin_01M20D00E
+    2753,  // imageAtomicMin_01X20D00E
+    2756,  // imageAtomicMin_01H20D00E
+    2759,  // imageAtomicMin_01S20D00E
+    2762,  // imageAtomicMin_01d20D00E
+    2765,  // imageAtomicMin_01D00D00E
+    2768,  // imageAtomicMin_01O00D00E
+    2771,  // imageAtomicMin_01Z00D00E
+    2774,  // imageAtomicMin_01E10D00E
+    2777,  // imageAtomicMin_01P10D00E
+    2780,  // imageAtomicMin_01a10D00E
+    2783,  // imageAtomicMin_01I10D00E
+    2786,  // imageAtomicMin_01T10D00E
+    2789,  // imageAtomicMin_01e10D00E
+    2792,  // imageAtomicMin_01F10D00D00E
+    2795,  // imageAtomicMin_01Q10D00D00E
+    2798,  // imageAtomicMin_01b10D00D00E
+    2801,  // imageAtomicMin_01G20D00D00E
+    2804,  // imageAtomicMin_01R20D00D00E
+    2807,  // imageAtomicMin_01c20D00D00E
+    2810,  // imageAtomicMin_00z10D00D
+    2813,  // imageAtomicMin_01K10D00D
+    2816,  // imageAtomicMin_01V10D00D
+    2819,  // imageAtomicMin_01A20D00D
+    2822,  // imageAtomicMin_01L20D00D
+    2825,  // imageAtomicMin_01W20D00D
+    2828,  // imageAtomicMin_01C20D00D
+    2831,  // imageAtomicMin_01N20D00D
+    2834,  // imageAtomicMin_01Y20D00D
+    2837,  // imageAtomicMin_01J00D00D
+    2840,  // imageAtomicMin_01U00D00D
+    2843,  // imageAtomicMin_01f00D00D
+    2846,  // imageAtomicMin_01B20D00D
+    2849,  // imageAtomicMin_01M20D00D
+    2852,  // imageAtomicMin_01X20D00D
+    2855,  // imageAtomicMin_01H20D00D
+    2858,  // imageAtomicMin_01S20D00D
+    2861,  // imageAtomicMin_01d20D00D
+    2864,  // imageAtomicMin_01D00D00D
+    2867,  // imageAtomicMin_01O00D00D
+    2870,  // imageAtomicMin_01Z00D00D
+    2873,  // imageAtomicMin_01E10D00D
+    2876,  // imageAtomicMin_01P10D00D
+    2879,  // imageAtomicMin_01a10D00D
+    2882,  // imageAtomicMin_01I10D00D
+    2885,  // imageAtomicMin_01T10D00D
+    2888,  // imageAtomicMin_01e10D00D
+    2891,  // imageAtomicMin_01F10D00D00D
+    2894,  // imageAtomicMin_01Q10D00D00D
+    2897,  // imageAtomicMin_01b10D00D00D
+    2900,  // imageAtomicMin_01G20D00D00D
+    2903,  // imageAtomicMin_01R20D00D00D
+    2906,  // imageAtomicMin_01c20D00D00D
+    2909,  // imageAtomicMax_00z10D00E
+    2912,  // imageAtomicMax_01K10D00E
+    2915,  // imageAtomicMax_01V10D00E
+    2918,  // imageAtomicMax_01A20D00E
+    2921,  // imageAtomicMax_01L20D00E
+    2924,  // imageAtomicMax_01W20D00E
+    2927,  // imageAtomicMax_01C20D00E
+    2930,  // imageAtomicMax_01N20D00E
+    2933,  // imageAtomicMax_01Y20D00E
+    2936,  // imageAtomicMax_01J00D00E
+    2939,  // imageAtomicMax_01U00D00E
+    2942,  // imageAtomicMax_01f00D00E
+    2945,  // imageAtomicMax_01B20D00E
+    2948,  // imageAtomicMax_01M20D00E
+    2951,  // imageAtomicMax_01X20D00E
+    2954,  // imageAtomicMax_01H20D00E
+    2957,  // imageAtomicMax_01S20D00E
+    2960,  // imageAtomicMax_01d20D00E
+    2963,  // imageAtomicMax_01D00D00E
+    2966,  // imageAtomicMax_01O00D00E
+    2969,  // imageAtomicMax_01Z00D00E
+    2972,  // imageAtomicMax_01E10D00E
+    2975,  // imageAtomicMax_01P10D00E
+    2978,  // imageAtomicMax_01a10D00E
+    2981,  // imageAtomicMax_01I10D00E
+    2984,  // imageAtomicMax_01T10D00E
+    2987,  // imageAtomicMax_01e10D00E
+    2990,  // imageAtomicMax_01F10D00D00E
+    2993,  // imageAtomicMax_01Q10D00D00E
+    2996,  // imageAtomicMax_01b10D00D00E
+    2999,  // imageAtomicMax_01G20D00D00E
+    3002,  // imageAtomicMax_01R20D00D00E
+    3005,  // imageAtomicMax_01c20D00D00E
+    3008,  // imageAtomicMax_00z10D00D
+    3011,  // imageAtomicMax_01K10D00D
+    3014,  // imageAtomicMax_01V10D00D
+    3017,  // imageAtomicMax_01A20D00D
+    3020,  // imageAtomicMax_01L20D00D
+    3023,  // imageAtomicMax_01W20D00D
+    3026,  // imageAtomicMax_01C20D00D
+    3029,  // imageAtomicMax_01N20D00D
+    3032,  // imageAtomicMax_01Y20D00D
+    3035,  // imageAtomicMax_01J00D00D
+    3038,  // imageAtomicMax_01U00D00D
+    3041,  // imageAtomicMax_01f00D00D
+    3044,  // imageAtomicMax_01B20D00D
+    3047,  // imageAtomicMax_01M20D00D
+    3050,  // imageAtomicMax_01X20D00D
+    3053,  // imageAtomicMax_01H20D00D
+    3056,  // imageAtomicMax_01S20D00D
+    3059,  // imageAtomicMax_01d20D00D
+    3062,  // imageAtomicMax_01D00D00D
+    3065,  // imageAtomicMax_01O00D00D
+    3068,  // imageAtomicMax_01Z00D00D
+    3071,  // imageAtomicMax_01E10D00D
+    3074,  // imageAtomicMax_01P10D00D
+    3077,  // imageAtomicMax_01a10D00D
+    3080,  // imageAtomicMax_01I10D00D
+    3083,  // imageAtomicMax_01T10D00D
+    3086,  // imageAtomicMax_01e10D00D
+    3089,  // imageAtomicMax_01F10D00D00D
+    3092,  // imageAtomicMax_01Q10D00D00D
+    3095,  // imageAtomicMax_01b10D00D00D
+    3098,  // imageAtomicMax_01G20D00D00D
+    3101,  // imageAtomicMax_01R20D00D00D
+    3104,  // imageAtomicMax_01c20D00D00D
+    3107,  // imageAtomicAnd_00z10D00E
+    3110,  // imageAtomicAnd_01K10D00E
+    3113,  // imageAtomicAnd_01V10D00E
+    3116,  // imageAtomicAnd_01A20D00E
+    3119,  // imageAtomicAnd_01L20D00E
+    3122,  // imageAtomicAnd_01W20D00E
+    3125,  // imageAtomicAnd_01C20D00E
+    3128,  // imageAtomicAnd_01N20D00E
+    3131,  // imageAtomicAnd_01Y20D00E
+    3134,  // imageAtomicAnd_01J00D00E
+    3137,  // imageAtomicAnd_01U00D00E
+    3140,  // imageAtomicAnd_01f00D00E
+    3143,  // imageAtomicAnd_01B20D00E
+    3146,  // imageAtomicAnd_01M20D00E
+    3149,  // imageAtomicAnd_01X20D00E
+    3152,  // imageAtomicAnd_01H20D00E
+    3155,  // imageAtomicAnd_01S20D00E
+    3158,  // imageAtomicAnd_01d20D00E
+    3161,  // imageAtomicAnd_01D00D00E
+    3164,  // imageAtomicAnd_01O00D00E
+    3167,  // imageAtomicAnd_01Z00D00E
+    3170,  // imageAtomicAnd_01E10D00E
+    3173,  // imageAtomicAnd_01P10D00E
+    3176,  // imageAtomicAnd_01a10D00E
+    3179,  // imageAtomicAnd_01I10D00E
+    3182,  // imageAtomicAnd_01T10D00E
+    3185,  // imageAtomicAnd_01e10D00E
+    3188,  // imageAtomicAnd_01F10D00D00E
+    3191,  // imageAtomicAnd_01Q10D00D00E
+    3194,  // imageAtomicAnd_01b10D00D00E
+    3197,  // imageAtomicAnd_01G20D00D00E
+    3200,  // imageAtomicAnd_01R20D00D00E
+    3203,  // imageAtomicAnd_01c20D00D00E
+    3206,  // imageAtomicAnd_00z10D00D
+    3209,  // imageAtomicAnd_01K10D00D
+    3212,  // imageAtomicAnd_01V10D00D
+    3215,  // imageAtomicAnd_01A20D00D
+    3218,  // imageAtomicAnd_01L20D00D
+    3221,  // imageAtomicAnd_01W20D00D
+    3224,  // imageAtomicAnd_01C20D00D
+    3227,  // imageAtomicAnd_01N20D00D
+    3230,  // imageAtomicAnd_01Y20D00D
+    3233,  // imageAtomicAnd_01J00D00D
+    3236,  // imageAtomicAnd_01U00D00D
+    3239,  // imageAtomicAnd_01f00D00D
+    3242,  // imageAtomicAnd_01B20D00D
+    3245,  // imageAtomicAnd_01M20D00D
+    3248,  // imageAtomicAnd_01X20D00D
+    3251,  // imageAtomicAnd_01H20D00D
+    3254,  // imageAtomicAnd_01S20D00D
+    3257,  // imageAtomicAnd_01d20D00D
+    3260,  // imageAtomicAnd_01D00D00D
+    3263,  // imageAtomicAnd_01O00D00D
+    3266,  // imageAtomicAnd_01Z00D00D
+    3269,  // imageAtomicAnd_01E10D00D
+    3272,  // imageAtomicAnd_01P10D00D
+    3275,  // imageAtomicAnd_01a10D00D
+    3278,  // imageAtomicAnd_01I10D00D
+    3281,  // imageAtomicAnd_01T10D00D
+    3284,  // imageAtomicAnd_01e10D00D
+    3287,  // imageAtomicAnd_01F10D00D00D
+    3290,  // imageAtomicAnd_01Q10D00D00D
+    3293,  // imageAtomicAnd_01b10D00D00D
+    3296,  // imageAtomicAnd_01G20D00D00D
+    3299,  // imageAtomicAnd_01R20D00D00D
+    3302,  // imageAtomicAnd_01c20D00D00D
+    3305,  // imageAtomicOr_00z10D00E
+    3308,  // imageAtomicOr_01K10D00E
+    3311,  // imageAtomicOr_01V10D00E
+    3314,  // imageAtomicOr_01A20D00E
+    3317,  // imageAtomicOr_01L20D00E
+    3320,  // imageAtomicOr_01W20D00E
+    3323,  // imageAtomicOr_01C20D00E
+    3326,  // imageAtomicOr_01N20D00E
+    3329,  // imageAtomicOr_01Y20D00E
+    3332,  // imageAtomicOr_01J00D00E
+    3335,  // imageAtomicOr_01U00D00E
+    3338,  // imageAtomicOr_01f00D00E
+    3341,  // imageAtomicOr_01B20D00E
+    3344,  // imageAtomicOr_01M20D00E
+    3347,  // imageAtomicOr_01X20D00E
+    3350,  // imageAtomicOr_01H20D00E
+    3353,  // imageAtomicOr_01S20D00E
+    3356,  // imageAtomicOr_01d20D00E
+    3359,  // imageAtomicOr_01D00D00E
+    3362,  // imageAtomicOr_01O00D00E
+    3365,  // imageAtomicOr_01Z00D00E
+    3368,  // imageAtomicOr_01E10D00E
+    3371,  // imageAtomicOr_01P10D00E
+    3374,  // imageAtomicOr_01a10D00E
+    3377,  // imageAtomicOr_01I10D00E
+    3380,  // imageAtomicOr_01T10D00E
+    3383,  // imageAtomicOr_01e10D00E
+    3386,  // imageAtomicOr_01F10D00D00E
+    3389,  // imageAtomicOr_01Q10D00D00E
+    3392,  // imageAtomicOr_01b10D00D00E
+    3395,  // imageAtomicOr_01G20D00D00E
+    3398,  // imageAtomicOr_01R20D00D00E
+    3401,  // imageAtomicOr_01c20D00D00E
+    3404,  // imageAtomicOr_00z10D00D
+    3407,  // imageAtomicOr_01K10D00D
+    3410,  // imageAtomicOr_01V10D00D
+    3413,  // imageAtomicOr_01A20D00D
+    3416,  // imageAtomicOr_01L20D00D
+    3419,  // imageAtomicOr_01W20D00D
+    3422,  // imageAtomicOr_01C20D00D
+    3425,  // imageAtomicOr_01N20D00D
+    3428,  // imageAtomicOr_01Y20D00D
+    3431,  // imageAtomicOr_01J00D00D
+    3434,  // imageAtomicOr_01U00D00D
+    3437,  // imageAtomicOr_01f00D00D
+    3440,  // imageAtomicOr_01B20D00D
+    3443,  // imageAtomicOr_01M20D00D
+    3446,  // imageAtomicOr_01X20D00D
+    3449,  // imageAtomicOr_01H20D00D
+    3452,  // imageAtomicOr_01S20D00D
+    3455,  // imageAtomicOr_01d20D00D
+    3458,  // imageAtomicOr_01D00D00D
+    3461,  // imageAtomicOr_01O00D00D
+    3464,  // imageAtomicOr_01Z00D00D
+    3467,  // imageAtomicOr_01E10D00D
+    3470,  // imageAtomicOr_01P10D00D
+    3473,  // imageAtomicOr_01a10D00D
+    3476,  // imageAtomicOr_01I10D00D
+    3479,  // imageAtomicOr_01T10D00D
+    3482,  // imageAtomicOr_01e10D00D
+    3485,  // imageAtomicOr_01F10D00D00D
+    3488,  // imageAtomicOr_01Q10D00D00D
+    3491,  // imageAtomicOr_01b10D00D00D
+    3494,  // imageAtomicOr_01G20D00D00D
+    3497,  // imageAtomicOr_01R20D00D00D
+    3500,  // imageAtomicOr_01c20D00D00D
+    3503,  // imageAtomicXor_00z10D00E
+    3506,  // imageAtomicXor_01K10D00E
+    3509,  // imageAtomicXor_01V10D00E
+    3512,  // imageAtomicXor_01A20D00E
+    3515,  // imageAtomicXor_01L20D00E
+    3518,  // imageAtomicXor_01W20D00E
+    3521,  // imageAtomicXor_01C20D00E
+    3524,  // imageAtomicXor_01N20D00E
+    3527,  // imageAtomicXor_01Y20D00E
+    3530,  // imageAtomicXor_01J00D00E
+    3533,  // imageAtomicXor_01U00D00E
+    3536,  // imageAtomicXor_01f00D00E
+    3539,  // imageAtomicXor_01B20D00E
+    3542,  // imageAtomicXor_01M20D00E
+    3545,  // imageAtomicXor_01X20D00E
+    3548,  // imageAtomicXor_01H20D00E
+    3551,  // imageAtomicXor_01S20D00E
+    3554,  // imageAtomicXor_01d20D00E
+    3557,  // imageAtomicXor_01D00D00E
+    3560,  // imageAtomicXor_01O00D00E
+    3563,  // imageAtomicXor_01Z00D00E
+    3566,  // imageAtomicXor_01E10D00E
+    3569,  // imageAtomicXor_01P10D00E
+    3572,  // imageAtomicXor_01a10D00E
+    3575,  // imageAtomicXor_01I10D00E
+    3578,  // imageAtomicXor_01T10D00E
+    3581,  // imageAtomicXor_01e10D00E
+    3584,  // imageAtomicXor_01F10D00D00E
+    3587,  // imageAtomicXor_01Q10D00D00E
+    3590,  // imageAtomicXor_01b10D00D00E
+    3593,  // imageAtomicXor_01G20D00D00E
+    3596,  // imageAtomicXor_01R20D00D00E
+    3599,  // imageAtomicXor_01c20D00D00E
+    3602,  // imageAtomicXor_00z10D00D
+    3605,  // imageAtomicXor_01K10D00D
+    3608,  // imageAtomicXor_01V10D00D
+    3611,  // imageAtomicXor_01A20D00D
+    3614,  // imageAtomicXor_01L20D00D
+    3617,  // imageAtomicXor_01W20D00D
+    3620,  // imageAtomicXor_01C20D00D
+    3623,  // imageAtomicXor_01N20D00D
+    3626,  // imageAtomicXor_01Y20D00D
+    3629,  // imageAtomicXor_01J00D00D
+    3632,  // imageAtomicXor_01U00D00D
+    3635,  // imageAtomicXor_01f00D00D
+    3638,  // imageAtomicXor_01B20D00D
+    3641,  // imageAtomicXor_01M20D00D
+    3644,  // imageAtomicXor_01X20D00D
+    3647,  // imageAtomicXor_01H20D00D
+    3650,  // imageAtomicXor_01S20D00D
+    3653,  // imageAtomicXor_01d20D00D
+    3656,  // imageAtomicXor_01D00D00D
+    3659,  // imageAtomicXor_01O00D00D
+    3662,  // imageAtomicXor_01Z00D00D
+    3665,  // imageAtomicXor_01E10D00D
+    3668,  // imageAtomicXor_01P10D00D
+    3671,  // imageAtomicXor_01a10D00D
+    3674,  // imageAtomicXor_01I10D00D
+    3677,  // imageAtomicXor_01T10D00D
+    3680,  // imageAtomicXor_01e10D00D
+    3683,  // imageAtomicXor_01F10D00D00D
+    3686,  // imageAtomicXor_01Q10D00D00D
+    3689,  // imageAtomicXor_01b10D00D00D
+    3692,  // imageAtomicXor_01G20D00D00D
+    3695,  // imageAtomicXor_01R20D00D00D
+    3698,  // imageAtomicXor_01c20D00D00D
+    3701,  // imageAtomicExchange_00z10D00E
+    3704,  // imageAtomicExchange_01K10D00E
+    3707,  // imageAtomicExchange_01V10D00E
+    3710,  // imageAtomicExchange_01A20D00E
+    3713,  // imageAtomicExchange_01L20D00E
+    3716,  // imageAtomicExchange_01W20D00E
+    3719,  // imageAtomicExchange_01C20D00E
+    3722,  // imageAtomicExchange_01N20D00E
+    3725,  // imageAtomicExchange_01Y20D00E
+    3728,  // imageAtomicExchange_01J00D00E
+    3731,  // imageAtomicExchange_01U00D00E
+    3734,  // imageAtomicExchange_01f00D00E
+    3737,  // imageAtomicExchange_01B20D00E
+    3740,  // imageAtomicExchange_01M20D00E
+    3743,  // imageAtomicExchange_01X20D00E
+    3746,  // imageAtomicExchange_01H20D00E
+    3749,  // imageAtomicExchange_01S20D00E
+    3752,  // imageAtomicExchange_01d20D00E
+    3755,  // imageAtomicExchange_01D00D00E
+    3758,  // imageAtomicExchange_01O00D00E
+    3761,  // imageAtomicExchange_01Z00D00E
+    3764,  // imageAtomicExchange_01E10D00E
+    3767,  // imageAtomicExchange_01P10D00E
+    3770,  // imageAtomicExchange_01a10D00E
+    3773,  // imageAtomicExchange_01I10D00E
+    3776,  // imageAtomicExchange_01T10D00E
+    3779,  // imageAtomicExchange_01e10D00E
+    3782,  // imageAtomicExchange_01F10D00D00E
+    3785,  // imageAtomicExchange_01Q10D00D00E
+    3788,  // imageAtomicExchange_01b10D00D00E
+    3791,  // imageAtomicExchange_01G20D00D00E
+    3794,  // imageAtomicExchange_01R20D00D00E
+    3797,  // imageAtomicExchange_01c20D00D00E
+    3800,  // imageAtomicExchange_00z10D00D
+    3803,  // imageAtomicExchange_01K10D00D
+    3806,  // imageAtomicExchange_01V10D00D
+    3809,  // imageAtomicExchange_01A20D00D
+    3812,  // imageAtomicExchange_01L20D00D
+    3815,  // imageAtomicExchange_01W20D00D
+    3818,  // imageAtomicExchange_01C20D00D
+    3821,  // imageAtomicExchange_01N20D00D
+    3824,  // imageAtomicExchange_01Y20D00D
+    3827,  // imageAtomicExchange_01J00D00D
+    3830,  // imageAtomicExchange_01U00D00D
+    3833,  // imageAtomicExchange_01f00D00D
+    3836,  // imageAtomicExchange_01B20D00D
+    3839,  // imageAtomicExchange_01M20D00D
+    3842,  // imageAtomicExchange_01X20D00D
+    3845,  // imageAtomicExchange_01H20D00D
+    3848,  // imageAtomicExchange_01S20D00D
+    3851,  // imageAtomicExchange_01d20D00D
+    3854,  // imageAtomicExchange_01D00D00D
+    3857,  // imageAtomicExchange_01O00D00D
+    3860,  // imageAtomicExchange_01Z00D00D
+    3863,  // imageAtomicExchange_01E10D00D
+    3866,  // imageAtomicExchange_01P10D00D
+    3869,  // imageAtomicExchange_01a10D00D
+    3872,  // imageAtomicExchange_01I10D00D
+    3875,  // imageAtomicExchange_01T10D00D
+    3878,  // imageAtomicExchange_01e10D00D
+    3881,  // imageAtomicExchange_01F10D00D00D
+    3884,  // imageAtomicExchange_01Q10D00D00D
+    3887,  // imageAtomicExchange_01b10D00D00D
+    3890,  // imageAtomicExchange_01G20D00D00D
+    3893,  // imageAtomicExchange_01R20D00D00D
+    3896,  // imageAtomicExchange_01c20D00D00D
+    3899,  // imageAtomicExchange_00z10D00B
+    3902,  // imageAtomicExchange_01K10D00B
+    3905,  // imageAtomicExchange_01V10D00B
+    3908,  // imageAtomicExchange_01A20D00B
+    3911,  // imageAtomicExchange_01L20D00B
+    3914,  // imageAtomicExchange_01W20D00B
+    3917,  // imageAtomicExchange_01C20D00B
+    3920,  // imageAtomicExchange_01N20D00B
+    3923,  // imageAtomicExchange_01Y20D00B
+    3926,  // imageAtomicExchange_01J00D00B
+    3929,  // imageAtomicExchange_01U00D00B
+    3932,  // imageAtomicExchange_01f00D00B
+    3935,  // imageAtomicExchange_01B20D00B
+    3938,  // imageAtomicExchange_01M20D00B
+    3941,  // imageAtomicExchange_01X20D00B
+    3944,  // imageAtomicExchange_01H20D00B
+    3947,  // imageAtomicExchange_01S20D00B
+    3950,  // imageAtomicExchange_01d20D00B
+    3953,  // imageAtomicExchange_01D00D00B
+    3956,  // imageAtomicExchange_01O00D00B
+    3959,  // imageAtomicExchange_01Z00D00B
+    3962,  // imageAtomicExchange_01E10D00B
+    3965,  // imageAtomicExchange_01P10D00B
+    3968,  // imageAtomicExchange_01a10D00B
+    3971,  // imageAtomicExchange_01I10D00B
+    3974,  // imageAtomicExchange_01T10D00B
+    3977,  // imageAtomicExchange_01e10D00B
+    3980,  // imageAtomicExchange_01F10D00D00B
+    3983,  // imageAtomicExchange_01Q10D00D00B
+    3986,  // imageAtomicExchange_01b10D00D00B
+    3989,  // imageAtomicExchange_01G20D00D00B
+    3992,  // imageAtomicExchange_01R20D00D00B
+    3995,  // imageAtomicExchange_01c20D00D00B
+    3998,  // imageAtomicCompSwap_00z10D00E00E
+    4001,  // imageAtomicCompSwap_01K10D00E00E
+    4004,  // imageAtomicCompSwap_01V10D00E00E
+    4007,  // imageAtomicCompSwap_01A20D00E00E
+    4010,  // imageAtomicCompSwap_01L20D00E00E
+    4013,  // imageAtomicCompSwap_01W20D00E00E
+    4016,  // imageAtomicCompSwap_01C20D00E00E
+    4019,  // imageAtomicCompSwap_01N20D00E00E
+    4022,  // imageAtomicCompSwap_01Y20D00E00E
+    4025,  // imageAtomicCompSwap_01J00D00E00E
+    4028,  // imageAtomicCompSwap_01U00D00E00E
+    4031,  // imageAtomicCompSwap_01f00D00E00E
+    4034,  // imageAtomicCompSwap_01B20D00E00E
+    4037,  // imageAtomicCompSwap_01M20D00E00E
+    4040,  // imageAtomicCompSwap_01X20D00E00E
+    4043,  // imageAtomicCompSwap_01H20D00E00E
+    4046,  // imageAtomicCompSwap_01S20D00E00E
+    4049,  // imageAtomicCompSwap_01d20D00E00E
+    4052,  // imageAtomicCompSwap_01D00D00E00E
+    4055,  // imageAtomicCompSwap_01O00D00E00E
+    4058,  // imageAtomicCompSwap_01Z00D00E00E
+    4061,  // imageAtomicCompSwap_01E10D00E00E
+    4064,  // imageAtomicCompSwap_01P10D00E00E
+    4067,  // imageAtomicCompSwap_01a10D00E00E
+    4070,  // imageAtomicCompSwap_01I10D00E00E
+    4073,  // imageAtomicCompSwap_01T10D00E00E
+    4076,  // imageAtomicCompSwap_01e10D00E00E
+    4079,  // imageAtomicCompSwap_01F10D00D00E00E
+    4082,  // imageAtomicCompSwap_01Q10D00D00E00E
+    4085,  // imageAtomicCompSwap_01b10D00D00E00E
+    4088,  // imageAtomicCompSwap_01G20D00D00E00E
+    4091,  // imageAtomicCompSwap_01R20D00D00E00E
+    4094,  // imageAtomicCompSwap_01c20D00D00E00E
+    4097,  // imageAtomicCompSwap_00z10D00D00D
+    4100,  // imageAtomicCompSwap_01K10D00D00D
+    4103,  // imageAtomicCompSwap_01V10D00D00D
+    4106,  // imageAtomicCompSwap_01A20D00D00D
+    4109,  // imageAtomicCompSwap_01L20D00D00D
+    4112,  // imageAtomicCompSwap_01W20D00D00D
+    4115,  // imageAtomicCompSwap_01C20D00D00D
+    4118,  // imageAtomicCompSwap_01N20D00D00D
+    4121,  // imageAtomicCompSwap_01Y20D00D00D
+    4124,  // imageAtomicCompSwap_01J00D00D00D
+    4127,  // imageAtomicCompSwap_01U00D00D00D
+    4130,  // imageAtomicCompSwap_01f00D00D00D
+    4133,  // imageAtomicCompSwap_01B20D00D00D
+    4136,  // imageAtomicCompSwap_01M20D00D00D
+    4139,  // imageAtomicCompSwap_01X20D00D00D
+    4142,  // imageAtomicCompSwap_01H20D00D00D
+    4145,  // imageAtomicCompSwap_01S20D00D00D
+    4148,  // imageAtomicCompSwap_01d20D00D00D
+    4151,  // imageAtomicCompSwap_01D00D00D00D
+    4154,  // imageAtomicCompSwap_01O00D00D00D
+    4157,  // imageAtomicCompSwap_01Z00D00D00D
+    4160,  // imageAtomicCompSwap_01E10D00D00D
+    4163,  // imageAtomicCompSwap_01P10D00D00D
+    4166,  // imageAtomicCompSwap_01a10D00D00D
+    4169,  // imageAtomicCompSwap_01I10D00D00D
+    4172,  // imageAtomicCompSwap_01T10D00D00D
+    4175,  // imageAtomicCompSwap_01e10D00D00D
+    4178,  // imageAtomicCompSwap_01F10D00D00D00D
+    4181,  // imageAtomicCompSwap_01Q10D00D00D00D
+    4184,  // imageAtomicCompSwap_01b10D00D00D00D
+    4187,  // imageAtomicCompSwap_01G20D00D00D00D
+    4190,  // imageAtomicCompSwap_01R20D00D00D00D
+    4193,  // imageAtomicCompSwap_01c20D00D00D00D
+    4196,  // noise1_00B
+    4197,  // noise1_10B
+    4198,  // noise1_20B
+    4199,  // noise1_30B
+    4200,  // noise2_00B
+    4201,  // noise2_10B
+    4202,  // noise2_20B
+    4203,  // noise2_30B
+    4204,  // noise3_00B
+    4205,  // noise3_10B
+    4206,  // noise3_20B
+    4207,  // noise3_30B
+    4208,  // noise4_00B
+    4209,  // noise4_10B
+    4210,  // noise4_20B
+    4211,  // noise4_30B
+    4212,  // memoryBarrier_
+    4214,  // memoryBarrierAtomicCounter_
+    4216,  // memoryBarrierBuffer_
+    4218,  // memoryBarrierImage_
+    4220,  // barrier_
+    4224,  // memoryBarrierShared_
+    4226,  // groupMemoryBarrier_
+    4228,  // EmitVertex_
+    4232,  // EndPrimitive_
+    4236,  // EmitStreamVertex_00D
+    4237,  // EndStreamPrimitive_00D
+    4238,  // subpassLoad_01g
+    4240,  // subpassLoad_01h
+    4242,  // subpassLoad_01i
+    4244,  // subpassLoad_01j00D
+    4246,  // subpassLoad_01k00D
+    4248,  // subpassLoad_01l00D
+    4250,  // anyInvocation_00F
+    4251,  // allInvocations_00F
+    4252,  // allInvocationsEqual_00F
+    4253,  // gl_DepthRangeParameters
+    4255,  // gl_DepthRange
+    4257,  // gl_NumSamples
+    4260,  // gl_MaxVertexAttribs
+    4262,  // gl_MaxVertexUniformVectors
+    4264,  // gl_MaxVertexTextureImageUnits
+    4266,  // gl_MaxCombinedTextureImageUnits
+    4268,  // gl_MaxTextureImageUnits
+    4270,  // gl_MaxFragmentUniformVectors
+    4272,  // gl_MaxVaryingVectors
+    4274,  // gl_MaxDrawBuffers
+    4276,  // gl_MaxDualSourceDrawBuffersEXT
+    4277,  // gl_MaxVertexOutputVectors
+    4279,  // gl_MaxFragmentInputVectors
+    4281,  // gl_MinProgramTexelOffset
+    4283,  // gl_MaxProgramTexelOffset
+    4285,  // gl_MaxImageUnits
+    4287,  // gl_MaxVertexImageUniforms
+    4289,  // gl_MaxFragmentImageUniforms
+    4291,  // gl_MaxComputeImageUniforms
+    4293,  // gl_MaxCombinedImageUniforms
+    4295,  // gl_MaxCombinedShaderOutputResources
+    4297,  // gl_MaxComputeWorkGroupCount
+    4299,  // gl_MaxComputeWorkGroupSize
+    4301,  // gl_MaxComputeUniformComponents
+    4303,  // gl_MaxComputeTextureImageUnits
+    4305,  // gl_MaxComputeAtomicCounters
+    4307,  // gl_MaxComputeAtomicCounterBuffers
+    4309,  // gl_MaxVertexAtomicCounters
+    4311,  // gl_MaxFragmentAtomicCounters
+    4313,  // gl_MaxCombinedAtomicCounters
+    4315,  // gl_MaxAtomicCounterBindings
+    4317,  // gl_MaxVertexAtomicCounterBuffers
+    4319,  // gl_MaxFragmentAtomicCounterBuffers
+    4321,  // gl_MaxCombinedAtomicCounterBuffers
+    4323,  // gl_MaxAtomicCounterBufferSize
+    4325,  // gl_MaxGeometryInputComponents
+    4329,  // gl_MaxGeometryOutputComponents
+    4333,  // gl_MaxGeometryImageUniforms
+    4337,  // gl_MaxGeometryTextureImageUnits
+    4341,  // gl_MaxGeometryOutputVertices
+    4345,  // gl_MaxGeometryTotalOutputComponents
+    4349,  // gl_MaxGeometryUniformComponents
+    4353,  // gl_MaxGeometryAtomicCounters
+    4357,  // gl_MaxGeometryAtomicCounterBuffers
+    4361,  // gl_MaxTessControlInputComponents
+    4364,  // gl_MaxTessControlOutputComponents
+    4367,  // gl_MaxTessControlTextureImageUnits
+    4370,  // gl_MaxTessControlUniformComponents
+    4373,  // gl_MaxTessControlTotalOutputComponents
+    4376,  // gl_MaxTessControlImageUniforms
+    4379,  // gl_MaxTessControlAtomicCounters
+    4382,  // gl_MaxTessControlAtomicCounterBuffers
+    4385,  // gl_MaxTessPatchComponents
+    4388,  // gl_MaxPatchVertices
+    4391,  // gl_MaxTessGenLevel
+    4394,  // gl_MaxTessEvaluationInputComponents
+    4397,  // gl_MaxTessEvaluationOutputComponents
+    4400,  // gl_MaxTessEvaluationTextureImageUnits
+    4403,  // gl_MaxTessEvaluationUniformComponents
+    4406,  // gl_MaxTessEvaluationImageUniforms
+    4409,  // gl_MaxTessEvaluationAtomicCounters
+    4412,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    4415,  // gl_MaxSamples
+    4418,  // gl_MaxClipDistances
+    4419,  // gl_MaxCullDistances
+    4420,  // gl_MaxCombinedClipAndCullDistances
+    4421,  // gl_FragCoord
+    4425,  // gl_FrontFacing
+    4427,  // gl_PointCoord
+    4429,  // gl_FragColor
+    4431,  // gl_FragData
+    4433,  // gl_FragDepth
+    4435,  // gl_HelperInvocation
+    4437,  // gl_SecondaryFragColorEXT
+    4438,  // gl_SecondaryFragDataEXT
+    4439,  // gl_FragDepthEXT
+    4440,  // gl_LastFragData
+    4443,  // gl_LastFragColor
+    4444,  // gl_LastFragColorARM
+    4445,  // gl_PrimitiveID
+    4459,  // gl_Layer
+    4467,  // gl_SampleID
+    4470,  // gl_SamplePosition
+    4473,  // gl_SampleMaskIn
+    4476,  // gl_SampleMask
+    4479,  // gl_CullDistance
+    4481,  // gl_ClipDistance
+    4483,  // gl_Position
+    4495,  // gl_PointSize
+    4499,  // gl_InstanceID
+    4501,  // Empty
+    4501,  // gl_VertexID
+    4503,  // Empty
+    4503,  // Empty
+    4503,  // gl_DrawID
+    4504,  // gl_BaseVertex
+    4505,  // gl_BaseInstance
+    4506,  // angle_BaseVertex
+    4507,  // angle_BaseInstance
+    4508,  // gl_NumWorkGroups
+    4510,  // gl_WorkGroupSize
+    4512,  // gl_WorkGroupID
+    4514,  // gl_LocalInvocationID
+    4516,  // gl_GlobalInvocationID
+    4518,  // gl_LocalInvocationIndex
+    4520,  // gl_PrimitiveIDIn
+    4524,  // gl_InvocationID
+    4531,  // gl_PerVertex
+    4541,  // gl_in
+    4551,  // gl_PatchVerticesIn
+    4557,  // gl_TessLevelOuter
+    4563,  // gl_TessLevelInner
+    4569,  // gl_out
+    4575,  // gl_BoundingBox
+    4578,  // gl_BoundingBoxEXT
+    4581,  // gl_BoundingBoxOES
+    4584,  // gl_TessCoord
+    4586,  // gl_ViewID_OVR
 };
 
 using Ext = TExtension;
@@ -40446,17 +41030,11 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     TType *type_gl_LastFragData = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1);
     type_gl_LastFragData->makeArray(resources.MaxDrawBuffers);
     type_gl_LastFragData->realize();
-    m_gl_LastFragData =
-        new TVariable(BuiltInId::gl_LastFragData, BuiltInName::gl_LastFragData, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_shader_framebuffer_fetch}},
-                      type_gl_LastFragData);
-    TType *type_gl_LastFragDataNonCoherent = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1);
-    type_gl_LastFragDataNonCoherent->makeArray(resources.MaxDrawBuffers);
-    type_gl_LastFragDataNonCoherent->realize();
-    m_gl_LastFragDataNonCoherent = new TVariable(
-        BuiltInId::gl_LastFragDataNonCoherent, BuiltInName::gl_LastFragData, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_shader_framebuffer_fetch_non_coherent}},
-        type_gl_LastFragDataNonCoherent);
+    m_gl_LastFragData = new TVariable(
+        BuiltInId::gl_LastFragData, BuiltInName::gl_LastFragData, SymbolType::BuiltIn,
+        std::array<TExtension, 2u>{{TExtension::EXT_shader_framebuffer_fetch,
+                                    TExtension::EXT_shader_framebuffer_fetch_non_coherent}},
+        type_gl_LastFragData);
     TType *type_gl_LastFragDataNV = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1);
     type_gl_LastFragDataNV->makeArray(resources.MaxDrawBuffers);
     type_gl_LastFragDataNV->realize();
@@ -40640,6 +41218,18 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_outTCSES3_2 =
         new TVariable(BuiltInId::gl_outTCSES3_2, BuiltInName::gl_out, SymbolType::BuiltIn,
                       std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_outTCSES3_2);
+    TType *type_gl_BoundingBoxTCS = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxTCS->makeArray(2u);
+    type_gl_BoundingBoxTCS->realize();
+    m_gl_BoundingBoxTCS = new TVariable(
+        BuiltInId::gl_BoundingBoxTCS, BuiltInName::gl_BoundingBox, SymbolType::BuiltIn,
+        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, type_gl_BoundingBoxTCS);
+    TType *type_gl_BoundingBoxTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxTCSES3_2->makeArray(2u);
+    type_gl_BoundingBoxTCSES3_2->realize();
+    m_gl_BoundingBoxTCSES3_2 = new TVariable(
+        BuiltInId::gl_BoundingBoxTCSES3_2, BuiltInName::gl_BoundingBox, SymbolType::BuiltIn,
+        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_BoundingBoxTCSES3_2);
     TFieldList *fields_gl_PerVertexOutTcsBlock = new TFieldList();
     fields_gl_PerVertexOutTcsBlock->push_back(
         new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1), BuiltInName::gl_Position,
@@ -40667,19 +41257,32 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_PositionTCSES3_2 = new TVariable(
         BuiltInId::gl_PositionTCSES3_2, BuiltInName::gl_Position, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_PositionTCSES3_2);
-    TType *type_gl_BoundingBoxEXTTCS = new TType(EbtFloat, EbpHigh, EvqBoundingBoxEXT, 4);
-    type_gl_BoundingBoxEXTTCS->makeArray(4u);
+    TType *type_gl_BoundingBoxEXTTCS = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxEXTTCS->makeArray(2u);
     type_gl_BoundingBoxEXTTCS->realize();
     m_gl_BoundingBoxEXTTCS = new TVariable(
         BuiltInId::gl_BoundingBoxEXTTCS, BuiltInName::gl_BoundingBoxEXT, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
         type_gl_BoundingBoxEXTTCS);
-    TType *type_gl_BoundingBoxEXTTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBoxEXT, 4);
-    type_gl_BoundingBoxEXTTCSES3_2->makeArray(4u);
+    TType *type_gl_BoundingBoxEXTTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxEXTTCSES3_2->makeArray(2u);
     type_gl_BoundingBoxEXTTCSES3_2->realize();
     m_gl_BoundingBoxEXTTCSES3_2 = new TVariable(
         BuiltInId::gl_BoundingBoxEXTTCSES3_2, BuiltInName::gl_BoundingBoxEXT, SymbolType::BuiltIn,
         std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_BoundingBoxEXTTCSES3_2);
+    TType *type_gl_BoundingBoxOESTCS = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxOESTCS->makeArray(2u);
+    type_gl_BoundingBoxOESTCS->realize();
+    m_gl_BoundingBoxOESTCS = new TVariable(
+        BuiltInId::gl_BoundingBoxOESTCS, BuiltInName::gl_BoundingBoxOES, SymbolType::BuiltIn,
+        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        type_gl_BoundingBoxOESTCS);
+    TType *type_gl_BoundingBoxOESTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
+    type_gl_BoundingBoxOESTCSES3_2->makeArray(2u);
+    type_gl_BoundingBoxOESTCSES3_2->realize();
+    m_gl_BoundingBoxOESTCSES3_2 = new TVariable(
+        BuiltInId::gl_BoundingBoxOESTCSES3_2, BuiltInName::gl_BoundingBoxOES, SymbolType::BuiltIn,
+        std::array<TExtension, 1u>{{TExtension::UNDEFINED}}, type_gl_BoundingBoxOESTCSES3_2);
     TType *type_gl_TessLevelOuterTES = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1);
     type_gl_TessLevelOuterTES->makeArray(4u);
     type_gl_TessLevelOuterTES->realize();
@@ -40780,7 +41383,7 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 2181 - 1)
+    if (nameHash == 2183 - 1)
         return ArraySize(BuiltInArray::kRules);
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
@@ -40792,7 +41395,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shader
         return nullptr;
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 2181)
+    if (nameHash >= 2183)
         return nullptr;
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];

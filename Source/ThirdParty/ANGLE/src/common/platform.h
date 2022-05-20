@@ -168,6 +168,13 @@
 #    endif
 #endif
 
+// Define ANGLE_WITH_MSAN macro.
+#if defined(__has_feature)
+#    if __has_feature(memory_sanitizer)
+#        define ANGLE_WITH_MSAN 1
+#    endif
+#endif
+
 // Define ANGLE_WITH_TSAN macro.
 #if defined(__has_feature)
 #    if __has_feature(thread_sanitizer)

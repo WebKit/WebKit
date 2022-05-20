@@ -303,8 +303,8 @@ static bool CompareBy(Compare op, const T &x, const T &y)
     }
 }
 
-template <TBasicType BT, Compare Cmp, int MatchDim, int NewDim>
-static int SaturateVectorOf(const TField &field)
+template <TBasicType BT, Compare Cmp, uint8_t MatchDim, uint8_t NewDim>
+static uint8_t SaturateVectorOf(const TField &field)
 {
     static_assert(NewDim >= MatchDim, "");
 
@@ -357,20 +357,20 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
             config.inlineArray            = Pred::True;
             config.splitMatrixColumns     = Pred::True;
             config.inlineStruct           = Pred::True;
-            config.saturateScalarOrVector = [](const TField &field) {
+            config.saturateScalarOrVector = [](const TField &field) -> uint8_t {
                 if (field.type()->getQualifier() == TQualifier::EvqSampleMask)
                 {
                     return 1;
                 }
-                if (int s = SaturateVectorOf<TBasicType::EbtInt, LT, 4, 4>(field))
+                if (uint8_t s = SaturateVectorOf<TBasicType::EbtInt, LT, 4, 4>(field))
                 {
                     return s;
                 }
-                if (int s = SaturateVectorOf<TBasicType::EbtUInt, LT, 4, 4>(field))
+                if (uint8_t s = SaturateVectorOf<TBasicType::EbtUInt, LT, 4, 4>(field))
                 {
                     return s;
                 }
-                if (int s = SaturateVectorOf<TBasicType::EbtFloat, LT, 4, 4>(field))
+                if (uint8_t s = SaturateVectorOf<TBasicType::EbtFloat, LT, 4, 4>(field))
                 {
                     return s;
                 }

@@ -1513,6 +1513,93 @@ TEST_P(BufferStorageTestES3, VertexBufferMapped)
     EXPECT_GL_NO_ERROR();
 }
 
+void TestPageSharingBuffers(std::function<void(void)> swapCallback,
+                            size_t bufferSize,
+                            const std::array<Vector3, 6> &quadVertices,
+                            GLint positionLocation)
+{
+    size_t dataSize = sizeof(GLfloat) * quadVertices.size() * 3;
+
+    if (bufferSize == 0)
+    {
+        bufferSize = dataSize;
+    }
+
+    constexpr size_t bufferCount = 10;
+
+    std::vector<GLBuffer> buffers(bufferCount);
+    std::vector<void *> mapPointers(bufferCount);
+
+    // Init and map
+    for (uint32_t i = 0; i < bufferCount; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i].get());
+
+        glBufferStorageEXT(GL_ARRAY_BUFFER, bufferSize, nullptr,
+                           GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT |
+                               GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+
+        glEnableVertexAttribArray(positionLocation);
+
+        mapPointers[i] = glMapBufferRange(
+            GL_ARRAY_BUFFER, 0, bufferSize,
+            GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+        ASSERT_NE(nullptr, mapPointers[i]);
+    }
+
+    // Write, draw and unmap
+    for (uint32_t i = 0; i < bufferCount; i++)
+    {
+        memcpy(mapPointers[i], reinterpret_cast<const void *>(quadVertices.data()), dataSize);
+
+        // Write something to last float
+        if (bufferSize > dataSize + sizeof(GLfloat))
+        {
+            size_t lastPosition = bufferSize / sizeof(GLfloat) - 1;
+            reinterpret_cast<float *>(mapPointers[i])[lastPosition] = 1.0f;
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i].get());
+        glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, quadVertices.size());
+        EXPECT_PIXEL_COLOR_EQ(8, 8, GLColor::red);
+        swapCallback();
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
+}
+
+// Create multiple persistently mapped coherent buffers of different sizes that will likely share a
+// page. Map all buffers together and unmap each buffer after writing to it and using it for a draw.
+// This tests the behaviour of the coherent buffer tracker in frame capture when buffers that share
+// a page are written to after the other one is removed.
+TEST_P(BufferStorageTestES3, PageSharingBuffers)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ASSERT_NE(program, 0u);
+
+    glUseProgram(program);
+
+    auto quadVertices = GetQuadVertices();
+
+    std::function<void(void)> swapCallback = [this]() { swapBuffers(); };
+
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    TestPageSharingBuffers(swapCallback, 0, quadVertices, positionLocation);
+    TestPageSharingBuffers(swapCallback, 1000, quadVertices, positionLocation);
+    TestPageSharingBuffers(swapCallback, 4096, quadVertices, positionLocation);
+    TestPageSharingBuffers(swapCallback, 6144, quadVertices, positionLocation);
+    TestPageSharingBuffers(swapCallback, 40960, quadVertices, positionLocation);
+
+    glDeleteProgram(program);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 class BufferStorageTestES3Threaded : public ANGLETest
 {
   protected:

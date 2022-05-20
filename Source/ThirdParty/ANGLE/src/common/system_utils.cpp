@@ -47,8 +47,8 @@ std::string GetEnvironmentVarOrAndroidProperty(const char *variableName, const c
     return GetEnvironmentVarOrUnCachedAndroidProperty(variableName, propertyName);
 }
 
-// Call out to 'getprop' on a shell to get an Android property.  If the value was set, set an
-// environment variable with that value.  Return the value of the environment variable.
+// On Android call out to 'getprop' on a shell to get an Android property.  On desktop, return
+// the value of the environment variable.
 std::string GetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
                                                        const char *propertyName)
 {
@@ -67,13 +67,31 @@ std::string GetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
             &propertyValue);
     }
 
-    // Set the environment variable with the value.
-    SetEnvironmentVar(variableName, propertyValue.c_str());
     return propertyValue;
 #else
     // Return the environment variable's value.
     return GetEnvironmentVar(variableName);
 #endif  // ANGLE_PLATFORM_ANDROID
+}
+
+// Look up a property and add it to the application's environment.
+// Adding to the env is a performance optimization, as getting properties is expensive.
+// This should only be used in non-Release paths, i.e. when using FrameCapture or DebugUtils.
+// It can cause race conditions in stress testing. See http://anglebug.com/6822
+std::string GetAndSetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
+                                                             const char *propertyName)
+{
+    std::string value = GetEnvironmentVarOrUnCachedAndroidProperty(variableName, propertyName);
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    if (!value.empty())
+    {
+        // Set the environment variable with the value to improve future lookups (avoids
+        SetEnvironmentVar(variableName, value.c_str());
+    }
+#endif
+
+    return value;
 }
 
 bool GetBoolEnvironmentVar(const char *variableName)
@@ -140,4 +158,52 @@ std::string ConcatenatePath(std::string first, std::string second)
 PageFaultHandler::PageFaultHandler(PageFaultCallback callback) : mCallback(callback) {}
 PageFaultHandler::~PageFaultHandler() {}
 
+Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
+{
+    void *libraryHandle = OpenSystemLibraryAndGetError(libraryName, searchType, nullptr);
+    return new Library(libraryHandle);
+}
+
+Library *OpenSharedLibraryWithExtension(const char *libraryName, SearchType searchType)
+{
+    void *libraryHandle =
+        OpenSystemLibraryWithExtensionAndGetError(libraryName, searchType, nullptr);
+    return new Library(libraryHandle);
+}
+
+Library *OpenSharedLibraryAndGetError(const char *libraryName,
+                                      SearchType searchType,
+                                      std::string *errorOut)
+{
+    void *libraryHandle = OpenSystemLibraryAndGetError(libraryName, searchType, errorOut);
+    return new Library(libraryHandle);
+}
+
+Library *OpenSharedLibraryWithExtensionAndGetError(const char *libraryName,
+                                                   SearchType searchType,
+                                                   std::string *errorOut)
+{
+    void *libraryHandle =
+        OpenSystemLibraryWithExtensionAndGetError(libraryName, searchType, errorOut);
+    return new Library(libraryHandle);
+}
+
+void *OpenSystemLibrary(const char *libraryName, SearchType searchType)
+{
+    return OpenSystemLibraryAndGetError(libraryName, searchType, nullptr);
+}
+
+void *OpenSystemLibraryWithExtension(const char *libraryName, SearchType searchType)
+{
+    return OpenSystemLibraryWithExtensionAndGetError(libraryName, searchType, nullptr);
+}
+
+void *OpenSystemLibraryAndGetError(const char *libraryName,
+                                   SearchType searchType,
+                                   std::string *errorOut)
+{
+    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
+    return OpenSystemLibraryWithExtensionAndGetError(libraryWithExtension.c_str(), searchType,
+                                                     errorOut);
+}
 }  // namespace angle

@@ -327,6 +327,85 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
         return true;
     }
 
+    // Check for all non-format-based completeness rules
+    if (!computeSamplerCompletenessForCopyImage(samplerState, state))
+    {
+        return false;
+    }
+
+    const ImageDesc &baseImageDesc = getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel());
+
+    // According to es 3.1 spec, texture is justified as incomplete if sized internalformat is
+    // unfilterable(table 20.11) and filter is not GL_NEAREST(8.16). The default value of minFilter
+    // is NEAREST_MIPMAP_LINEAR and magFilter is LINEAR(table 20.11,). For multismaple texture,
+    // filter state of multisample texture is ignored(11.1.3.3). So it shouldn't be judged as
+    // incomplete texture. So, we ignore filtering for multisample texture completeness here.
+    if (!IsMultisampled(mType) &&
+        !baseImageDesc.format.info->filterSupport(state.getClientVersion(),
+                                                  state.getExtensions()) &&
+        !IsPointSampled(samplerState))
+    {
+        return false;
+    }
+
+    // OpenGLES 3.0.2 spec section 3.8.13 states that a texture is not mipmap complete if:
+    // The internalformat specified for the texture arrays is a sized internal depth or
+    // depth and stencil format (see table 3.13), the value of TEXTURE_COMPARE_-
+    // MODE is NONE, and either the magnification filter is not NEAREST or the mini-
+    // fication filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
+    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
+        state.getClientMajorVersion() >= 3)
+    {
+        // Note: we restrict this validation to sized types. For the OES_depth_textures
+        // extension, due to some underspecification problems, we must allow linear filtering
+        // for legacy compatibility with WebGL 1.
+        // See http://crbug.com/649200
+        if (samplerState.getCompareMode() == GL_NONE && baseImageDesc.format.info->sized)
+        {
+            if ((samplerState.getMinFilter() != GL_NEAREST &&
+                 samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
+                samplerState.getMagFilter() != GL_NEAREST)
+            {
+                return false;
+            }
+        }
+    }
+
+    // OpenGLES 3.1 spec section 8.16 states that a texture is not mipmap complete if:
+    // The internalformat specified for the texture is DEPTH_STENCIL format, the value of
+    // DEPTH_STENCIL_TEXTURE_MODE is STENCIL_INDEX, and either the magnification filter is
+    // not NEAREST or the minification filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
+    // However, the ES 3.1 spec differs from the statement above, because it is incorrect.
+    // See the issue at https://github.com/KhronosGroup/OpenGL-API/issues/33.
+    // For multismaple texture, filter state of multisample texture is ignored(11.1.3.3).
+    // So it shouldn't be judged as incomplete texture. So, we ignore filtering for multisample
+    // texture completeness here.
+    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
+        mDepthStencilTextureMode == GL_STENCIL_INDEX)
+    {
+        if ((samplerState.getMinFilter() != GL_NEAREST &&
+             samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
+            samplerState.getMagFilter() != GL_NEAREST)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// CopyImageSubData has more lax rules for texture completeness: format-based completeness rules are
+// ignored, so a texture can still be considered complete even if it violates format-specific
+// conditions
+bool TextureState::computeSamplerCompletenessForCopyImage(const SamplerState &samplerState,
+                                                          const State &state) const
+{
+    // Buffer textures cannot be incomplete.
+    if (mType == TextureType::Buffer)
+    {
+        return true;
+    }
+
     if (!mImmutableFormat && mBaseLevel > mMaxLevel)
     {
         return false;
@@ -346,18 +425,6 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
         return false;
     }
 
-    // According to es 3.1 spec, texture is justified as incomplete if sized internalformat is
-    // unfilterable(table 20.11) and filter is not GL_NEAREST(8.16). The default value of minFilter
-    // is NEAREST_MIPMAP_LINEAR and magFilter is LINEAR(table 20.11,). For multismaple texture,
-    // filter state of multisample texture is ignored(11.1.3.3). So it shouldn't be judged as
-    // incomplete texture. So, we ignore filtering for multisample texture completeness here.
-    if (!IsMultisampled(mType) &&
-        !baseImageDesc.format.info->filterSupport(state.getClientVersion(),
-                                                  state.getExtensions()) &&
-        !IsPointSampled(samplerState))
-    {
-        return false;
-    }
     bool npotSupport = state.getExtensions().textureNpotOES || state.getClientMajorVersion() >= 3;
     if (!npotSupport)
     {
@@ -415,49 +482,6 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
         }
 
         if (samplerState.getMinFilter() != GL_LINEAR && samplerState.getMinFilter() != GL_NEAREST)
-        {
-            return false;
-        }
-    }
-
-    // OpenGLES 3.0.2 spec section 3.8.13 states that a texture is not mipmap complete if:
-    // The internalformat specified for the texture arrays is a sized internal depth or
-    // depth and stencil format (see table 3.13), the value of TEXTURE_COMPARE_-
-    // MODE is NONE, and either the magnification filter is not NEAREST or the mini-
-    // fication filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
-    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
-        state.getClientMajorVersion() >= 3)
-    {
-        // Note: we restrict this validation to sized types. For the OES_depth_textures
-        // extension, due to some underspecification problems, we must allow linear filtering
-        // for legacy compatibility with WebGL 1.
-        // See http://crbug.com/649200
-        if (samplerState.getCompareMode() == GL_NONE && baseImageDesc.format.info->sized)
-        {
-            if ((samplerState.getMinFilter() != GL_NEAREST &&
-                 samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
-                samplerState.getMagFilter() != GL_NEAREST)
-            {
-                return false;
-            }
-        }
-    }
-
-    // OpenGLES 3.1 spec section 8.16 states that a texture is not mipmap complete if:
-    // The internalformat specified for the texture is DEPTH_STENCIL format, the value of
-    // DEPTH_STENCIL_TEXTURE_MODE is STENCIL_INDEX, and either the magnification filter is
-    // not NEAREST or the minification filter is neither NEAREST nor NEAREST_MIPMAP_NEAREST.
-    // However, the ES 3.1 spec differs from the statement above, because it is incorrect.
-    // See the issue at https://github.com/KhronosGroup/OpenGL-API/issues/33.
-    // For multismaple texture, filter state of multisample texture is ignored(11.1.3.3).
-    // So it shouldn't be judged as incomplete texture. So, we ignore filtering for multisample
-    // texture completeness here.
-    if (!IsMultisampled(mType) && baseImageDesc.format.info->depthBits > 0 &&
-        mDepthStencilTextureMode == GL_STENCIL_INDEX)
-    {
-        if ((samplerState.getMinFilter() != GL_NEAREST &&
-             samplerState.getMinFilter() != GL_NEAREST_MIPMAP_NEAREST) ||
-            samplerState.getMagFilter() != GL_NEAREST)
         {
             return false;
         }
@@ -2125,6 +2149,16 @@ bool Texture::isSamplerComplete(const Context *context, const Sampler *optionalS
     }
 
     return mCompletenessCache.samplerComplete;
+}
+
+// CopyImageSubData requires that we ignore format-based completeness rules
+bool Texture::isSamplerCompleteForCopyImage(const Context *context,
+                                            const Sampler *optionalSampler) const
+{
+    const gl::SamplerState &samplerState =
+        optionalSampler ? optionalSampler->getSamplerState() : mState.mSamplerState;
+    const gl::State &contextState = context->getState();
+    return mState.computeSamplerCompletenessForCopyImage(samplerState, contextState);
 }
 
 Texture::SamplerCompletenessCache::SamplerCompletenessCache()

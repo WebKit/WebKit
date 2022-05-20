@@ -163,11 +163,9 @@ const char *getBasicString(TBasicType t)
 // TType implementation.
 TType::TType() : TType(EbtVoid, 0, 0) {}
 
-TType::TType(TBasicType t, unsigned char ps, unsigned char ss)
-    : TType(t, EbpUndefined, EvqGlobal, ps, ss)
-{}
+TType::TType(TBasicType t, uint8_t ps, uint8_t ss) : TType(t, EbpUndefined, EvqGlobal, ps, ss) {}
 
-TType::TType(TBasicType t, TPrecision p, TQualifier q, unsigned char ps, unsigned char ss)
+TType::TType(TBasicType t, TPrecision p, TQualifier q, uint8_t ps, uint8_t ss)
     : TType(t, p, q, ps, ss, TSpan<const unsigned int>(), nullptr)
 {}
 
@@ -632,7 +630,7 @@ void TType::setBasicType(TBasicType t)
     }
 }
 
-void TType::setPrimarySize(unsigned char ps)
+void TType::setPrimarySize(uint8_t ps)
 {
     if (primarySize != ps)
     {
@@ -642,7 +640,7 @@ void TType::setPrimarySize(unsigned char ps)
     }
 }
 
-void TType::setSecondarySize(unsigned char ss)
+void TType::setSecondarySize(uint8_t ss)
 {
     if (secondarySize != ss)
     {

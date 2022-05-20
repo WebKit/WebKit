@@ -45,7 +45,9 @@ class ShareGroupVk : public ShareGroupImpl
         mResourceUseLists.emplace_back(std::move(resourceUseList));
     }
 
-    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer, uint32_t memoryTypeIndex);
+    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer,
+                                         VkDeviceSize size,
+                                         uint32_t memoryTypeIndex);
     void pruneDefaultBufferPools(RendererVk *renderer);
     bool isDueForBufferPoolPrune();
 
@@ -65,6 +67,11 @@ class ShareGroupVk : public ShareGroupImpl
 
     // The per shared group buffer pools that all buffers should sub-allocate from.
     vk::BufferPoolPointerArray mDefaultBufferPools;
+
+    // The pool dedicated for small allocations that uses faster buddy algorithm
+    std::unique_ptr<vk::BufferPool> mSmallBufferPool;
+    static constexpr VkDeviceSize kMaxSizeToUseSmallBufferPool = 256;
+
     // The system time when last pruneEmptyBuffer gets called.
     double mLastPruneTime;
 };
@@ -88,7 +95,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     std::string getRendererDescription() override;
     std::string getVendorString() override;
-    std::string getVersionString() override;
+    std::string getVersionString(bool includeFullVersion) override;
 
     DeviceImpl *createDevice() override;
 

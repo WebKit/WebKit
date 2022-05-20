@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # Copyright 2018 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -44,12 +44,12 @@ def load_enums(path):
         enums_dict = json.loads(map_file.read(), object_pairs_hook=OrderedDict)
 
     enums = []
-    for (enum_name, value_list) in enums_dict.iteritems():
+    for (enum_name, value_list) in enums_dict.items():
 
         values = []
         i = 0
 
-        for (value_name, value_gl_name) in value_list.iteritems():
+        for (value_name, value_gl_name) in value_list.items():
             values.append(EnumValue(value_name, value_gl_name, i))
             i += 1
 
@@ -253,9 +253,9 @@ def main():
             ]
 
         if sys.argv[1] == 'inputs':
-            print ','.join(inputs)
+            print(','.join(inputs))
         elif sys.argv[1] == 'outputs':
-            print ','.join(outputs)
+            print(','.join(outputs))
         else:
             print('Invalid script parameters')
             return 1

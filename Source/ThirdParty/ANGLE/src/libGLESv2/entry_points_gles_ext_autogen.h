@@ -20,6 +20,8 @@
 
 extern "C" {
 
+// GL_ANDROID_extension_pack_es31a
+
 // GL_ANGLE_base_vertex_base_instance
 ANGLE_EXPORT void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceANGLE(GLenum mode,
                                                                       GLint first,
@@ -1156,6 +1158,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_UseProgramStagesEXT(GLuint pipeline,
                                                      GLuint program);
 ANGLE_EXPORT void GL_APIENTRY GL_ValidateProgramPipelineEXT(GLuint pipeline);
 
+// GL_EXT_shader_framebuffer_fetch
+
 // GL_EXT_shader_framebuffer_fetch_non_coherent
 ANGLE_EXPORT void GL_APIENTRY GL_FramebufferFetchBarrierEXT();
 
@@ -1518,6 +1522,16 @@ ANGLE_EXPORT void GL_APIENTRY GL_PointSizePointerOES(GLenum type,
                                                      const void *pointer);
 
 // GL_OES_point_sprite
+
+// GL_OES_primitive_bounding_box
+ANGLE_EXPORT void GL_APIENTRY GL_PrimitiveBoundingBoxOES(GLfloat minX,
+                                                         GLfloat minY,
+                                                         GLfloat minZ,
+                                                         GLfloat minW,
+                                                         GLfloat maxX,
+                                                         GLfloat maxY,
+                                                         GLfloat maxZ,
+                                                         GLfloat maxW);
 
 // GL_OES_query_matrix
 ANGLE_EXPORT GLbitfield GL_APIENTRY GL_QueryMatrixxOES(GLfixed *mantissa, GLint *exponent);

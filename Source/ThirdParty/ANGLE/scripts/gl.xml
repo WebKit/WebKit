@@ -801,7 +801,6 @@ typedef unsigned int GLhandleARB;
             <enum name="GL_BLEND"/>
             <enum name="GL_BLEND_COLOR_EXT"/>
             <enum name="GL_BLEND_DST"/>
-            <enum name="GL_BLEND_EQUATION_EXT"/>
             <enum name="GL_BLEND_SRC"/>
             <enum name="GL_BLUE_BIAS"/>
             <enum name="GL_BLUE_BITS"/>

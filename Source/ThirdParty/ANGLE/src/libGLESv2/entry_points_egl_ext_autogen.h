@@ -79,6 +79,9 @@ ANGLE_EXPORT void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLCo
 ANGLE_EXPORT void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
 ANGLE_EXPORT void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy);
 
+// EGL_ANGLE_prepare_swap_buffers
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface);
+
 // EGL_ANGLE_program_cache_control
 ANGLE_EXPORT EGLint EGLAPIENTRY EGL_ProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib);
 ANGLE_EXPORT void EGLAPIENTRY EGL_ProgramCacheQueryANGLE(EGLDisplay dpy,
@@ -199,6 +202,12 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
                                                           EGLint attribute,
                                                           EGLAttribKHR *value);
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface);
+
+// EGL_KHR_partial_update
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
+                                                           EGLSurface surface,
+                                                           EGLint *rects,
+                                                           EGLint n_rects);
 
 // EGL_KHR_reusable_sync
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy,

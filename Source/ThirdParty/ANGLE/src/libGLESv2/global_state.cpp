@@ -26,6 +26,9 @@ namespace
 ANGLE_REQUIRE_CONSTANT_INIT std::atomic<angle::GlobalMutex *> g_Mutex(nullptr);
 static_assert(std::is_trivially_destructible<decltype(g_Mutex)>::value,
               "global mutex is not trivially destructible");
+ANGLE_REQUIRE_CONSTANT_INIT std::atomic<angle::GlobalMutex *> g_SurfaceMutex(nullptr);
+static_assert(std::is_trivially_destructible<decltype(g_SurfaceMutex)>::value,
+              "global mutex is not trivially destructible");
 
 ANGLE_REQUIRE_CONSTANT_INIT gl::Context *g_LastContext(nullptr);
 static_assert(std::is_trivially_destructible<decltype(g_LastContext)>::value,
@@ -84,17 +87,27 @@ Thread *AllocateCurrentThread()
     return thread;
 }
 
-void AllocateMutex()
+void AllocateGlobalMutex(std::atomic<angle::GlobalMutex *> &mutex)
 {
-    if (g_Mutex == nullptr)
+    if (mutex == nullptr)
     {
         std::unique_ptr<angle::GlobalMutex> newMutex(new angle::GlobalMutex());
         angle::GlobalMutex *expected = nullptr;
-        if (g_Mutex.compare_exchange_strong(expected, newMutex.get()))
+        if (mutex.compare_exchange_strong(expected, newMutex.get()))
         {
             newMutex.release();
         }
     }
+}
+
+void AllocateMutex()
+{
+    AllocateGlobalMutex(g_Mutex);
+}
+
+void AllocateSurfaceMutex()
+{
+    AllocateGlobalMutex(g_SurfaceMutex);
 }
 
 }  // anonymous namespace
@@ -135,6 +148,12 @@ angle::GlobalMutex &GetGlobalMutex()
 {
     AllocateMutex();
     return *g_Mutex;
+}
+
+angle::GlobalMutex &GetGlobalSurfaceMutex()
+{
+    AllocateSurfaceMutex();
+    return *g_SurfaceMutex;
 }
 
 gl::Context *GetGlobalLastContext()
@@ -216,6 +235,19 @@ namespace egl
 
 namespace
 {
+
+void DeallocateGlobalMutex(std::atomic<angle::GlobalMutex *> &mutex)
+{
+    angle::GlobalMutex *toDelete = mutex.exchange(nullptr);
+    if (!mutex)
+        return;
+    {
+        // Wait for toDelete to become released by other threads before deleting.
+        std::lock_guard<angle::GlobalMutex> lock(*toDelete);
+    }
+    SafeDelete(toDelete);
+}
+
 void DeallocateCurrentThread()
 {
     SafeDelete(gCurrentThread);
@@ -223,12 +255,12 @@ void DeallocateCurrentThread()
 
 void DeallocateMutex()
 {
-    angle::GlobalMutex *mutex = g_Mutex.exchange(nullptr);
-    {
-        // Wait for the mutex to become released by other threads before deleting.
-        std::lock_guard<angle::GlobalMutex> lock(*mutex);
-    }
-    SafeDelete(mutex);
+    DeallocateGlobalMutex(g_Mutex);
+}
+
+void DeallocateSurfaceMutex()
+{
+    DeallocateGlobalMutex(g_SurfaceMutex);
 }
 
 bool InitializeProcess()
@@ -241,6 +273,7 @@ bool InitializeProcess()
 void TerminateProcess()
 {
     DeallocateDebug();
+    DeallocateSurfaceMutex();
     DeallocateMutex();
     DeallocateCurrentThread();
 }

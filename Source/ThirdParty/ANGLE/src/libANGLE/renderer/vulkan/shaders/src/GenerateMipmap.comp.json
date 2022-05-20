@@ -7,8 +7,8 @@
         "GenerateMipmap.comp.json: Build parameters for GenerateMipmap.comp."
     ],
     "MaxSupportedDest": [
-        "DestSize4",
-        "DestSize6"
+        [ "DestSize4", "--target-env", "vulkan1.1" ],
+        [ "DestSize6", "--target-env", "vulkan1.1" ]
     ],
     "Format": [
         "IsRGBA8",

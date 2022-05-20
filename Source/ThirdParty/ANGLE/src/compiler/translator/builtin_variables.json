@@ -854,17 +854,7 @@
                 "variables":{
                     "gl_LastFragData":{
                         "essl_level":"ESSL1_BUILTINS",
-                        "essl_extension":"EXT_shader_framebuffer_fetch",
-                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1); {type_name}->makeArray(resources.MaxDrawBuffers);"
-                    }
-                }
-            },
-            "EXTShaderFramebufferFetchNonCoherent":{
-                "variables":{
-                    "gl_LastFragData":{
-                        "essl_level":"ESSL1_BUILTINS",
-                        "suffix":"NonCoherent",
-                        "essl_extension":"EXT_shader_framebuffer_fetch_non_coherent",
+                        "essl_extension":"EXT_shader_framebuffer_fetch, EXT_shader_framebuffer_fetch_non_coherent",
                         "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpMedium, EvqLastFragData, 4, 1); {type_name}->makeArray(resources.MaxDrawBuffers);"
                     }
                 }
@@ -1384,6 +1374,13 @@
                 "essl_extension":"EXT_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
+            },
+            "gl_BoundingBox":{
+                "suffix":"TCS",
+                "essl_level":"ESSL3_2_BUILTINS",
+                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
+                "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
             }
         },
         "subgroups":{
@@ -1421,7 +1418,18 @@
                         "essl_level":"ESSL3_1_BUILTINS",
                         "essl_extension":"EXT_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
-                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBoxEXT, 4); {type_name}->makeArray(4u);"
+                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
+                    }
+                }
+            },
+            "OESPrimitiveBoundingBox":{
+                "variables":{
+                    "gl_BoundingBoxOES":{
+                        "suffix":"TCS",
+                        "essl_level":"ESSL3_1_BUILTINS",
+                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
+                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
                     }
                 }
             }

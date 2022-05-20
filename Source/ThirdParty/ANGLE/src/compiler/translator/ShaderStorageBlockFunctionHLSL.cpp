@@ -70,8 +70,8 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOLoadFunctionBody(
         }
         else
         {
-            out << " = " << convertString << "buffer.Load" << ssboFunction.type.getNominalSize()
-                << "(loc));\n";
+            out << " = " << convertString << "buffer.Load"
+                << static_cast<uint32_t>(ssboFunction.type.getNominalSize()) << "(loc));\n";
         }
     }
     else if (ssboFunction.type.isMatrix())
@@ -79,12 +79,12 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOLoadFunctionBody(
         if (ssboFunction.rowMajor)
         {
             out << ";";
-            out << "    float" << ssboFunction.type.getRows() << "x" << ssboFunction.type.getCols()
-                << " tmp_ = {";
-            for (int rowIndex = 0; rowIndex < ssboFunction.type.getRows(); rowIndex++)
+            out << "    float" << static_cast<uint32_t>(ssboFunction.type.getRows()) << "x"
+                << static_cast<uint32_t>(ssboFunction.type.getCols()) << " tmp_ = {";
+            for (uint8_t rowIndex = 0; rowIndex < ssboFunction.type.getRows(); rowIndex++)
             {
-                out << "asfloat(buffer.Load" << ssboFunction.type.getCols() << "(loc + "
-                    << rowIndex * ssboFunction.matrixStride << ")), ";
+                out << "asfloat(buffer.Load" << static_cast<uint32_t>(ssboFunction.type.getCols())
+                    << "(loc + " << rowIndex * ssboFunction.matrixStride << ")), ";
             }
             out << "};\n";
             out << "    result = transpose(tmp_);\n";
@@ -92,10 +92,10 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOLoadFunctionBody(
         else
         {
             out << " = {";
-            for (int columnIndex = 0; columnIndex < ssboFunction.type.getCols(); columnIndex++)
+            for (uint8_t columnIndex = 0; columnIndex < ssboFunction.type.getCols(); columnIndex++)
             {
-                out << "asfloat(buffer.Load" << ssboFunction.type.getRows() << "(loc + "
-                    << columnIndex * ssboFunction.matrixStride << ")), ";
+                out << "asfloat(buffer.Load" << static_cast<uint32_t>(ssboFunction.type.getRows())
+                    << "(loc + " << columnIndex * ssboFunction.matrixStride << ")), ";
             }
             out << "};\n";
         }
@@ -131,10 +131,12 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOStoreFunctionBody(
     }
     else if (ssboFunction.type.isVector())
     {
-        out << "    uint" << ssboFunction.type.getNominalSize() << " _value;\n";
+        out << "    uint" << static_cast<uint32_t>(ssboFunction.type.getNominalSize())
+            << " _value;\n";
         if (ssboFunction.type.getBasicType() == EbtBool)
         {
-            out << "    _value = uint" << ssboFunction.type.getNominalSize() << "(value);\n";
+            out << "    _value = uint" << static_cast<uint32_t>(ssboFunction.type.getNominalSize())
+                << "(value);\n";
         }
         else
         {
@@ -157,29 +159,31 @@ void ShaderStorageBlockFunctionHLSL::OutputSSBOStoreFunctionBody(
         }
         else
         {
-            out << "    buffer.Store" << ssboFunction.type.getNominalSize() << "(loc, _value);\n";
+            out << "    buffer.Store" << static_cast<uint32_t>(ssboFunction.type.getNominalSize())
+                << "(loc, _value);\n";
         }
     }
     else if (ssboFunction.type.isMatrix())
     {
         if (ssboFunction.rowMajor)
         {
-            out << "    float" << ssboFunction.type.getRows() << "x" << ssboFunction.type.getCols()
+            out << "    float" << static_cast<uint32_t>(ssboFunction.type.getRows()) << "x"
+                << static_cast<uint32_t>(ssboFunction.type.getCols())
                 << " tmp_ = transpose(value);\n";
-            for (int rowIndex = 0; rowIndex < ssboFunction.type.getRows(); rowIndex++)
+            for (uint8_t rowIndex = 0; rowIndex < ssboFunction.type.getRows(); rowIndex++)
             {
-                out << "    buffer.Store" << ssboFunction.type.getCols() << "(loc + "
-                    << rowIndex * ssboFunction.matrixStride << ", asuint(tmp_[" << rowIndex
-                    << "]));\n";
+                out << "    buffer.Store" << static_cast<uint32_t>(ssboFunction.type.getCols())
+                    << "(loc + " << rowIndex * ssboFunction.matrixStride << ", asuint(tmp_["
+                    << static_cast<uint32_t>(rowIndex) << "]));\n";
             }
         }
         else
         {
-            for (int columnIndex = 0; columnIndex < ssboFunction.type.getCols(); columnIndex++)
+            for (uint8_t columnIndex = 0; columnIndex < ssboFunction.type.getCols(); columnIndex++)
             {
-                out << "    buffer.Store" << ssboFunction.type.getRows() << "(loc + "
-                    << columnIndex * ssboFunction.matrixStride << ", asuint(value[" << columnIndex
-                    << "]));\n";
+                out << "    buffer.Store" << static_cast<uint32_t>(ssboFunction.type.getRows())
+                    << "(loc + " << columnIndex * ssboFunction.matrixStride << ", asuint(value["
+                    << static_cast<uint32_t>(columnIndex) << "]));\n";
             }
         }
     }
@@ -315,7 +319,7 @@ TString ShaderStorageBlockFunctionHLSL::registerShaderStorageBlockFunction(
     {
         if (ssboFunction.type.getNominalSize() > 1)
         {
-            for (int index = 0; index < ssboFunction.type.getNominalSize(); index++)
+            for (uint8_t index = 0; index < ssboFunction.type.getNominalSize(); index++)
             {
                 ssboFunction.swizzleOffsets.push_back(index);
             }

@@ -117,7 +117,7 @@ std::string DisplayNULL::getVendorString()
     return "NULL";
 }
 
-std::string DisplayNULL::getVersionString()
+std::string DisplayNULL::getVersionString(bool includeFullVersion)
 {
     return std::string();
 }

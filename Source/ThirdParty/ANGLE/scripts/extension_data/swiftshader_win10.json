@@ -1,8 +1,8 @@
 {
     "Vendor": "Google Inc. (Google)",
-    "Version": "OpenGL ES 3.1.0 (ANGLE 2.1.16782 git hash: 368c0ce94472)",
+    "Version": "OpenGL ES 3.1.0 (ANGLE 2.1.17589 git hash: 6f1c39b52b4f)",
     "Renderer": "ANGLE (Google, Vulkan 1.2.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
-    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.10 (ANGLE 2.1.16782 git hash: 368c0ce94472)",
+    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.10 (ANGLE 2.1.17589 git hash: 6f1c39b52b4f)",
     "Extensions": [
         "GL_ANGLE_base_vertex_base_instance",
         "GL_ANGLE_base_vertex_base_instance_shader_builtin",
@@ -22,9 +22,13 @@
         "GL_ANGLE_program_cache_control",
         "GL_ANGLE_relaxed_vertex_attribute_type",
         "GL_ANGLE_request_extension",
+        "GL_ANGLE_rgbx_internal_format",
         "GL_ANGLE_robust_client_memory",
+        "GL_ANGLE_robust_fragment_shader_output",
         "GL_ANGLE_texture_compression_dxt3",
         "GL_ANGLE_texture_compression_dxt5",
+        "GL_ANGLE_texture_usage",
+        "GL_ANGLE_vulkan_image",
         "GL_ANGLE_yuv_internal_format",
         "GL_APPLE_clip_distance",
         "GL_CHROMIUM_bind_generates_resource",
@@ -55,12 +59,12 @@
         "GL_EXT_instanced_arrays",
         "GL_EXT_map_buffer_range",
         "GL_EXT_memory_object",
-        "GL_EXT_multisampled_render_to_texture",
-        "GL_EXT_multisampled_render_to_texture2",
+        "GL_EXT_multi_draw_indirect",
         "GL_EXT_occlusion_query_boolean",
         "GL_EXT_primitive_bounding_box",
         "GL_EXT_read_format_bgra",
         "GL_EXT_sRGB",
+        "GL_EXT_sRGB_write_control",
         "GL_EXT_semaphore",
         "GL_EXT_separate_shader_objects",
         "GL_EXT_shader_framebuffer_fetch_non_coherent",
@@ -144,5 +148,5 @@
         "GL_OVR_multiview",
         "GL_OVR_multiview2"
     ],
-    "DateRecorded": "September 23, 2021"
+    "DateRecorded": "December 28, 2021"
 }

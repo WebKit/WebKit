@@ -875,11 +875,11 @@ const TConstantUnion *TIntermAggregate::getConstantValue() const
         {
             if (isMatrix())
             {
-                int resultCols = getType().getCols();
-                int resultRows = getType().getRows();
-                for (int col = 0; col < resultCols; ++col)
+                const uint8_t resultCols = getType().getCols();
+                const uint8_t resultRows = getType().getRows();
+                for (uint8_t col = 0; col < resultCols; ++col)
                 {
-                    for (int row = 0; row < resultRows; ++row)
+                    for (uint8_t row = 0; row < resultRows; ++row)
                     {
                         if (col == row)
                         {
@@ -907,13 +907,13 @@ const TConstantUnion *TIntermAggregate::getConstantValue() const
         else if (isMatrix() && argumentTyped->isMatrix())
         {
             // The special case of constructing a matrix from a matrix.
-            int argumentCols = argumentTyped->getType().getCols();
-            int argumentRows = argumentTyped->getType().getRows();
-            int resultCols   = getType().getCols();
-            int resultRows   = getType().getRows();
-            for (int col = 0; col < resultCols; ++col)
+            const uint8_t argumentCols = argumentTyped->getType().getCols();
+            const uint8_t argumentRows = argumentTyped->getType().getRows();
+            const uint8_t resultCols   = getType().getCols();
+            const uint8_t resultRows   = getType().getRows();
+            for (uint8_t col = 0; col < resultCols; ++col)
             {
-                for (int row = 0; row < resultRows; ++row)
+                for (uint8_t row = 0; row < resultRows; ++row)
                 {
                     if (col < argumentCols && row < argumentRows)
                     {
@@ -1417,8 +1417,8 @@ void TIntermUnary::promote()
             break;
         case EOpTranspose:
             ASSERT(resultType.getBasicType() == EbtFloat);
-            resultType.setPrimarySize(static_cast<unsigned char>(mOperand->getType().getRows()));
-            resultType.setSecondarySize(static_cast<unsigned char>(mOperand->getType().getCols()));
+            resultType.setPrimarySize(mOperand->getType().getRows());
+            resultType.setSecondarySize(mOperand->getType().getCols());
             break;
         case EOpIsinf:
         case EOpIsnan:
@@ -1690,9 +1690,9 @@ void TIntermSwizzle::promote()
     if (mOperand->getQualifier() == EvqConst)
         resultQualifier = EvqConst;
 
-    auto numFields = mSwizzleOffsets.size();
+    size_t numFields = mSwizzleOffsets.size();
     setType(TType(mOperand->getBasicType(), EbpUndefined, resultQualifier,
-                  static_cast<unsigned char>(numFields)));
+                  static_cast<uint8_t>(numFields)));
     propagatePrecision(derivePrecision());
 }
 
@@ -1856,7 +1856,7 @@ void TIntermBinary::promote()
 
     ASSERT(mLeft->isArray() == mRight->isArray());
 
-    const int nominalSize = std::max(mLeft->getNominalSize(), mRight->getNominalSize());
+    const uint8_t nominalSize = std::max(mLeft->getNominalSize(), mRight->getNominalSize());
 
     switch (mOp)
     {
@@ -1865,23 +1865,23 @@ void TIntermBinary::promote()
         case EOpMatrixTimesScalar:
             if (mRight->isMatrix())
             {
-                getTypePointer()->setPrimarySize(static_cast<unsigned char>(mRight->getCols()));
-                getTypePointer()->setSecondarySize(static_cast<unsigned char>(mRight->getRows()));
+                getTypePointer()->setPrimarySize(mRight->getCols());
+                getTypePointer()->setSecondarySize(mRight->getRows());
             }
             break;
         case EOpMatrixTimesVector:
-            getTypePointer()->setPrimarySize(static_cast<unsigned char>(mLeft->getRows()));
+            getTypePointer()->setPrimarySize(mLeft->getRows());
             getTypePointer()->setSecondarySize(1);
             break;
         case EOpMatrixTimesMatrix:
-            getTypePointer()->setPrimarySize(static_cast<unsigned char>(mRight->getCols()));
-            getTypePointer()->setSecondarySize(static_cast<unsigned char>(mLeft->getRows()));
+            getTypePointer()->setPrimarySize(mRight->getCols());
+            getTypePointer()->setSecondarySize(mLeft->getRows());
             break;
         case EOpVectorTimesScalar:
-            getTypePointer()->setPrimarySize(static_cast<unsigned char>(nominalSize));
+            getTypePointer()->setPrimarySize(nominalSize);
             break;
         case EOpVectorTimesMatrix:
-            getTypePointer()->setPrimarySize(static_cast<unsigned char>(mRight->getCols()));
+            getTypePointer()->setPrimarySize(mRight->getCols());
             ASSERT(getType().getSecondarySize() == 1);
             break;
         case EOpMulAssign:
@@ -1916,10 +1916,10 @@ void TIntermBinary::promote()
         case EOpBitwiseOrAssign:
         {
             ASSERT(!mLeft->isArray() && !mRight->isArray());
-            const int secondarySize =
+            const uint8_t secondarySize =
                 std::max(mLeft->getSecondarySize(), mRight->getSecondarySize());
-            getTypePointer()->setPrimarySize(static_cast<unsigned char>(nominalSize));
-            getTypePointer()->setSecondarySize(static_cast<unsigned char>(secondarySize));
+            getTypePointer()->setPrimarySize(nominalSize);
+            getTypePointer()->setSecondarySize(secondarySize);
             break;
         }
         case EOpEqual:
@@ -1960,6 +1960,15 @@ void TIntermBinary::promote()
 // Derive precision from children nodes
 TPrecision TIntermBinary::derivePrecision() const
 {
+    // Assignments use the type and precision of the lvalue-expression
+    // GLSL ES spec section 5.8: Assignments
+    // "The assignment operator stores the value of rvalue-expression into the l-value and returns
+    // an r-value with the type and precision of lvalue-expression."
+    if (IsAssignment(mOp))
+    {
+        return mLeft->getPrecision();
+    }
+
     const TPrecision higherPrecision =
         GetHigherPrecision(mLeft->getPrecision(), mRight->getPrecision());
 
@@ -2071,7 +2080,7 @@ const TConstantUnion *TIntermConstantUnion::FoldIndexing(const TType &type,
     else if (type.isMatrix())
     {
         ASSERT(index < type.getCols());
-        int size = type.getRows();
+        const uint8_t size = type.getRows();
         return &constArray[size * index];
     }
     else if (type.isVector())
@@ -2425,20 +2434,20 @@ const TConstantUnion *TIntermConstantUnion::FoldBinary(TOperator op,
             // TODO(jmadll): This code should check for overflows.
             ASSERT(leftType.getBasicType() == EbtFloat && rightType.getBasicType() == EbtFloat);
 
-            const int leftCols   = leftType.getCols();
-            const int leftRows   = leftType.getRows();
-            const int rightCols  = rightType.getCols();
-            const int rightRows  = rightType.getRows();
-            const int resultCols = rightCols;
-            const int resultRows = leftRows;
+            const uint8_t leftCols   = leftType.getCols();
+            const uint8_t leftRows   = leftType.getRows();
+            const uint8_t rightCols  = rightType.getCols();
+            const uint8_t rightRows  = rightType.getRows();
+            const uint8_t resultCols = rightCols;
+            const uint8_t resultRows = leftRows;
 
             resultArray = new TConstantUnion[resultCols * resultRows];
-            for (int row = 0; row < resultRows; row++)
+            for (uint8_t row = 0; row < resultRows; row++)
             {
-                for (int column = 0; column < resultCols; column++)
+                for (uint8_t column = 0; column < resultCols; column++)
                 {
                     resultArray[resultRows * column + row].setFConst(0.0f);
-                    for (int i = 0; i < leftCols; i++)
+                    for (uint8_t i = 0; i < leftCols; i++)
                     {
                         resultArray[resultRows * column + row].setFConst(
                             resultArray[resultRows * column + row].getFConst() +
@@ -2598,15 +2607,15 @@ const TConstantUnion *TIntermConstantUnion::FoldBinary(TOperator op,
             // TODO(jmadll): This code should check for overflows.
             ASSERT(rightType.getBasicType() == EbtFloat);
 
-            const int matrixCols = leftType.getCols();
-            const int matrixRows = leftType.getRows();
+            const uint8_t matrixCols = leftType.getCols();
+            const uint8_t matrixRows = leftType.getRows();
 
             resultArray = new TConstantUnion[matrixRows];
 
-            for (int matrixRow = 0; matrixRow < matrixRows; matrixRow++)
+            for (uint8_t matrixRow = 0; matrixRow < matrixRows; matrixRow++)
             {
                 resultArray[matrixRow].setFConst(0.0f);
-                for (int col = 0; col < matrixCols; col++)
+                for (uint8_t col = 0; col < matrixCols; col++)
                 {
                     resultArray[matrixRow].setFConst(
                         resultArray[matrixRow].getFConst() +
@@ -2622,15 +2631,15 @@ const TConstantUnion *TIntermConstantUnion::FoldBinary(TOperator op,
             // TODO(jmadll): This code should check for overflows.
             ASSERT(leftType.getBasicType() == EbtFloat);
 
-            const int matrixCols = rightType.getCols();
-            const int matrixRows = rightType.getRows();
+            const uint8_t matrixCols = rightType.getCols();
+            const uint8_t matrixRows = rightType.getRows();
 
             resultArray = new TConstantUnion[matrixCols];
 
-            for (int matrixCol = 0; matrixCol < matrixCols; matrixCol++)
+            for (uint8_t matrixCol = 0; matrixCol < matrixCols; matrixCol++)
             {
                 resultArray[matrixCol].setFConst(0.0f);
-                for (int matrixRow = 0; matrixRow < matrixRows; matrixRow++)
+                for (uint8_t matrixRow = 0; matrixRow < matrixRows; matrixRow++)
                 {
                     resultArray[matrixCol].setFConst(
                         resultArray[matrixCol].getFConst() +
@@ -2816,7 +2825,7 @@ TConstantUnion *TIntermConstantUnion::foldUnaryNonComponentWise(TOperator op)
         case EOpDeterminant:
         {
             ASSERT(getType().getBasicType() == EbtFloat);
-            unsigned int size = getType().getNominalSize();
+            const uint8_t size = getType().getNominalSize();
             ASSERT(size >= 2 && size <= 4);
             resultArray = new TConstantUnion();
             resultArray->setFConst(GetMatrix(operandArray, size).determinant());
@@ -2826,7 +2835,7 @@ TConstantUnion *TIntermConstantUnion::foldUnaryNonComponentWise(TOperator op)
         case EOpInverse:
         {
             ASSERT(getType().getBasicType() == EbtFloat);
-            unsigned int size = getType().getNominalSize();
+            const uint8_t size = getType().getNominalSize();
             ASSERT(size >= 2 && size <= 4);
             resultArray                 = new TConstantUnion[objectSize];
             angle::Matrix<float> result = GetMatrix(operandArray, size).inverse();
@@ -3799,8 +3808,8 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
                    (*arguments)[1]->getAsTyped()->isMatrix());
             // Perform component-wise matrix multiplication.
             resultArray                 = new TConstantUnion[maxObjectSize];
-            int rows                    = (*arguments)[0]->getAsTyped()->getRows();
-            int cols                    = (*arguments)[0]->getAsTyped()->getCols();
+            const uint8_t rows          = (*arguments)[0]->getAsTyped()->getRows();
+            const uint8_t cols          = (*arguments)[0]->getAsTyped()->getCols();
             angle::Matrix<float> lhs    = GetMatrix(unionArrays[0], rows, cols);
             angle::Matrix<float> rhs    = GetMatrix(unionArrays[1], rows, cols);
             angle::Matrix<float> result = lhs.compMult(rhs);

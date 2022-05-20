@@ -372,7 +372,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
 
     options |= additionalOptions;
 
-    auto workerThreadPool = context->getWorkerThreadPool();
+    auto workerThreadPool = context->getShaderCompileThreadPool();
 
     const std::string &source = mState.getSource();
 

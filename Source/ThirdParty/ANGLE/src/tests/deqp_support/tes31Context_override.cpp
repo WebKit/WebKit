@@ -34,8 +34,8 @@ Context::Context (tcu::TestContext& testCtx, glu::ApiType apiType)
     {
         // \todo [2016-11-15 pyry] Many tests (erroneously) inspect context type
         //                         during test hierarchy construction. We should fix that
-        //                         and revert dummy context to advertise unknown context type.
-        m_renderCtx = new glu::DummyRenderContext(glu::ContextType(glu::ApiType::es(3,1)));
+        //                         and revert empty context to advertise unknown context type.
+        m_renderCtx = new glu::EmptyRenderContext(glu::ContextType(glu::ApiType::es(3,1)));
     }
 }
 

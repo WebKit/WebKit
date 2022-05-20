@@ -98,11 +98,11 @@ std::string DisplayVk::getVendorString()
     return std::string();
 }
 
-std::string DisplayVk::getVersionString()
+std::string DisplayVk::getVersionString(bool includeFullVersion)
 {
     if (mRenderer)
     {
-        return mRenderer->getVersionString();
+        return mRenderer->getVersionString(includeFullVersion);
     }
     return std::string();
 }
@@ -222,6 +222,25 @@ egl::Error DisplayVk::validateImageClientBuffer(const gl::Context *context,
                 return egl::EglBadParameter() << "clientBuffer is invalid.";
             }
 
+            GLenum internalFormat =
+                static_cast<GLenum>(attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_NONE));
+            switch (internalFormat)
+            {
+                case GL_RGBA:
+                case GL_BGRA_EXT:
+                case GL_RGB:
+                case GL_RED_EXT:
+                case GL_RG_EXT:
+                case GL_RGB10_A2_EXT:
+                case GL_R16_EXT:
+                case GL_RG16_EXT:
+                case GL_NONE:
+                    break;
+                default:
+                    return egl::EglBadParameter() << "Invalid EGLImage texture internal format: 0x"
+                                                  << std::hex << internalFormat;
+            }
+
             uint64_t hi = static_cast<uint64_t>(attribs.get(EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE));
             uint64_t lo = static_cast<uint64_t>(attribs.get(EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE));
             uint64_t info = ((hi & 0xffffffff) << 32) | (lo & 0xffffffff);
@@ -324,6 +343,9 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
         getRenderer()->getFeatures().supportsSharedPresentableImageExtension.enabled;
 
     outExtensions->vulkanImageANGLE = true;
+
+    outExtensions->lockSurface3KHR =
+        getRenderer()->getFeatures().supportsLockSurfaceExtension.enabled;
 }
 
 void DisplayVk::generateCaps(egl::Caps *outCaps) const
@@ -402,23 +424,47 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
         }
     }
 
+    if (mSmallBufferPool)
+    {
+        mSmallBufferPool->destroy(renderer);
+    }
+
     mPipelineLayoutCache.destroy(renderer);
     mDescriptorSetLayoutCache.destroy(renderer);
 
     ASSERT(mResourceUseLists.empty());
 }
 
-vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer, uint32_t memoryTypeIndex)
+vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
+                                                   VkDeviceSize size,
+                                                   uint32_t memoryTypeIndex)
 {
-    if (!mDefaultBufferPools[memoryTypeIndex])
+    if (size <= kMaxSizeToUseSmallBufferPool &&
+        memoryTypeIndex ==
+            renderer->getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility::Visible))
     {
-        vk::BufferMemoryAllocator &bufferMemoryAllocator = renderer->getBufferMemoryAllocator();
+        if (!mSmallBufferPool)
+        {
+            const vk::Allocator &allocator = renderer->getAllocator();
+            VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
 
-        VkBufferUsageFlags usageFlags = GetDefaultBufferUsageFlags(renderer);
+            VkMemoryPropertyFlags memoryPropertyFlags;
+            allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
+
+            std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
+            pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::BUDDY, usageFlags, 0,
+                                memoryTypeIndex, memoryPropertyFlags);
+            mSmallBufferPool = std::move(pool);
+        }
+        return mSmallBufferPool.get();
+    }
+    else if (!mDefaultBufferPools[memoryTypeIndex])
+    {
+        const vk::Allocator &allocator = renderer->getAllocator();
+        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
 
         VkMemoryPropertyFlags memoryPropertyFlags;
-        bufferMemoryAllocator.getMemoryTypeProperties(renderer, memoryTypeIndex,
-                                                      &memoryPropertyFlags);
+        allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
 
         std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
         pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::GENERAL, usageFlags, 0,
@@ -439,6 +485,10 @@ void ShareGroupVk::pruneDefaultBufferPools(RendererVk *renderer)
         {
             pool->pruneEmptyBuffers(renderer);
         }
+    }
+    if (mSmallBufferPool)
+    {
+        mSmallBufferPool->pruneEmptyBuffers(renderer);
     }
 }
 

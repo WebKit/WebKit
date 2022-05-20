@@ -407,7 +407,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
             }
         }
     }
-    auto workerPool = context->getWorkerThreadPool();
+    auto workerPool = context->getShaderCompileThreadPool();
     auto linkTask   = std::make_shared<LinkTask>([this](std::string &infoLog) {
         std::string workerInfoLog;
         ScopedWorkerContextGL worker(mRenderer.get(), &workerInfoLog);

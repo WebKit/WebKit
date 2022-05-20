@@ -55,6 +55,7 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
                                                       const gl::FramebufferState &state) = 0;
     virtual egl::Error makeCurrent(const gl::Context *context);
     virtual egl::Error unMakeCurrent(const gl::Context *context);
+    virtual egl::Error prepareSwap(const gl::Context *);
     virtual egl::Error swap(const gl::Context *context) = 0;
     virtual egl::Error swapWithDamage(const gl::Context *context,
                                       const EGLint *rects,

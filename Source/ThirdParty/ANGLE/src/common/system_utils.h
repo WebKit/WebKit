@@ -14,6 +14,7 @@
 
 #include <functional>
 #include <string>
+#include <string_view>
 
 namespace angle
 {
@@ -32,6 +33,8 @@ bool GetBoolEnvironmentVar(const char *variableName);
 std::string GetEnvironmentVar(const char *variableName);
 std::string GetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
                                                        const char *propertyName);
+std::string GetAndSetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
+                                                             const char *propertyName);
 std::string GetEnvironmentVarOrAndroidProperty(const char *variableName, const char *propertyName);
 const char *GetPathSeparatorForEnvironmentVar();
 bool PrependPathToEnvironmentVar(const char *variableName, const char *path);
@@ -56,21 +59,6 @@ bool RunApp(const std::vector<const char *> &args,
             std::string *stderrOut,
             int *exitCodeOut);
 
-class Library : angle::NonCopyable
-{
-  public:
-    virtual ~Library() {}
-    virtual void *getSymbol(const char *symbolName) = 0;
-    virtual void *getNative() const                 = 0;
-    virtual std::string getPath() const             = 0;
-
-    template <typename FuncT>
-    void getAs(const char *symbolName, FuncT *funcOut)
-    {
-        *funcOut = reinterpret_cast<FuncT>(getSymbol(symbolName));
-    }
-};
-
 // Use SYSTEM_DIR to bypass loading ANGLE libraries with the same name as system DLLS
 // (e.g. opengl32.dll)
 enum class SearchType
@@ -81,6 +69,84 @@ enum class SearchType
     SystemDir,
     // Get a reference to an already loaded shared library.
     AlreadyLoaded,
+};
+
+void *OpenSystemLibrary(const char *libraryName, SearchType searchType);
+void *OpenSystemLibraryWithExtension(const char *libraryName, SearchType searchType);
+void *OpenSystemLibraryAndGetError(const char *libraryName,
+                                   SearchType searchType,
+                                   std::string *errorOut);
+void *OpenSystemLibraryWithExtensionAndGetError(const char *libraryName,
+                                                SearchType searchType,
+                                                std::string *errorOut);
+
+void *GetLibrarySymbol(void *libraryHandle, const char *symbolName);
+std::string GetLibraryPath(void *libraryHandle);
+void CloseSystemLibrary(void *libraryHandle);
+
+class Library : angle::NonCopyable
+{
+  public:
+    Library() {}
+    Library(void *libraryHandle) : mLibraryHandle(libraryHandle) {}
+    ~Library() { close(); }
+
+    ANGLE_NO_DISCARD bool open(const char *libraryName, SearchType searchType)
+    {
+        close();
+        mLibraryHandle = OpenSystemLibrary(libraryName, searchType);
+        return mLibraryHandle != nullptr;
+    }
+
+    ANGLE_NO_DISCARD bool openWithExtension(const char *libraryName, SearchType searchType)
+    {
+        close();
+        mLibraryHandle = OpenSystemLibraryWithExtension(libraryName, searchType);
+        return mLibraryHandle != nullptr;
+    }
+
+    ANGLE_NO_DISCARD bool openAndGetError(const char *libraryName,
+                                          SearchType searchType,
+                                          std::string *errorOut)
+    {
+        close();
+        mLibraryHandle = OpenSystemLibraryAndGetError(libraryName, searchType, errorOut);
+        return mLibraryHandle != nullptr;
+    }
+
+    ANGLE_NO_DISCARD bool openWithExtensionAndGetError(const char *libraryName,
+                                                       SearchType searchType,
+                                                       std::string *errorOut)
+    {
+        close();
+        mLibraryHandle =
+            OpenSystemLibraryWithExtensionAndGetError(libraryName, searchType, errorOut);
+        return mLibraryHandle != nullptr;
+    }
+
+    void close()
+    {
+        if (mLibraryHandle)
+        {
+            CloseSystemLibrary(mLibraryHandle);
+            mLibraryHandle = nullptr;
+        }
+    }
+
+    void *getSymbol(const char *symbolName) { return GetLibrarySymbol(mLibraryHandle, symbolName); }
+
+    void *getNative() const { return mLibraryHandle; }
+
+    std::string getPath() const { return GetLibraryPath(mLibraryHandle); }
+
+    template <typename FuncT>
+    void getAs(const char *symbolName, FuncT *funcOut)
+    {
+        *funcOut = reinterpret_cast<FuncT>(getSymbol(symbolName));
+    }
+
+  private:
+    void *mLibraryHandle = nullptr;
 };
 
 Library *OpenSharedLibrary(const char *libraryName, SearchType searchType);
@@ -135,6 +201,13 @@ class PageFaultHandler : angle::NonCopyable
 // Creates single instance page fault handler
 PageFaultHandler *CreatePageFaultHandler(PageFaultCallback callback);
 
+#ifdef ANGLE_PLATFORM_WINDOWS
+// Convert an UTF-16 wstring to an UTF-8 string.
+std::string Narrow(const std::wstring_view &utf16);
+
+// Convert an UTF-8 string to an UTF-16 wstring.
+std::wstring Widen(const std::string_view &utf8);
+#endif
 }  // namespace angle
 
 #endif  // COMMON_SYSTEM_UTILS_H_

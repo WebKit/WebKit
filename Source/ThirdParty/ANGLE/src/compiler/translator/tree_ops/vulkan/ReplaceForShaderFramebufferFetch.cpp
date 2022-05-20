@@ -99,13 +99,13 @@ bool InputAttachmentReferenceTraverser::visitDeclaration(Visit visit, TIntermDec
 
     if (symbol->getType().getQualifier() == EvqFragmentInOut)
     {
-        unsigned int inputAttachmentIdx = symbol->getType().getLayoutQualifier().location;
+        const unsigned int inputAttachmentIdx = symbol->getType().getLayoutQualifier().location;
 
         if (symbol->getType().isArray())
         {
             for (unsigned int index = 0; index < symbol->getType().getOutermostArraySize(); index++)
             {
-                unsigned int realInputAttachmentIdx = inputAttachmentIdx + index;
+                const unsigned int realInputAttachmentIdx = inputAttachmentIdx + index;
                 setInputAttachmentIndex(realInputAttachmentIdx);
             }
         }
@@ -308,7 +308,7 @@ class ReplaceSubpassInputUtils
 
     TIntermNode *assignSubpassLoad(TIntermTyped *resultVar,
                                    TIntermTyped *inputAttachmentSymbol,
-                                   const int targetVecSize);
+                                   const uint8_t targetVecSize);
     TIntermNode *loadInputAttachmentDataImpl(const size_t arraySize,
                                              const unsigned int inputAttachmentIndex,
                                              const TVariable *loadInputAttachmentDataVar);
@@ -392,7 +392,7 @@ void ReplaceSubpassInputUtils::addInputAttachmentUniform(const unsigned int inpu
 
 TIntermNode *ReplaceSubpassInputUtils::assignSubpassLoad(TIntermTyped *resultVar,
                                                          TIntermTyped *inputAttachmentSymbol,
-                                                         const int targetVecSize)
+                                                         const uint8_t targetVecSize)
 {
     TIntermSequence *subpassArguments = new TIntermSequence();
     subpassArguments->push_back(inputAttachmentSymbol);
@@ -407,7 +407,7 @@ TIntermNode *ReplaceSubpassInputUtils::assignSubpassLoad(TIntermTyped *resultVar
     if (targetVecSize < 4)
     {
         TVector<int> fieldOffsets(targetVecSize);
-        for (int i = 0; i < targetVecSize; i++)
+        for (uint8_t i = 0; i < targetVecSize; i++)
         {
             fieldOffsets[i] = i;
         }
@@ -687,7 +687,7 @@ ANGLE_NO_DISCARD bool ReplaceInOutVariables(TCompiler *compiler,
     unsigned int maxInputAttachmentIndex = 0;
     bool usedNonConstIndex               = false;
 
-    // Get informations for gl_LastFragData
+    // Get informations for inout variables
     InputAttachmentReferenceTraverser informationTraverser(
         &declaredInOutVarMap, &maxInputAttachmentIndex, &constIndices, &usedNonConstIndex);
     root->traverse(&informationTraverser);
@@ -705,7 +705,6 @@ ANGLE_NO_DISCARD bool ReplaceInOutVariables(TCompiler *compiler,
     {
         return false;
     }
-
     std::map<unsigned int, const TVariable *> toBeReplaced;
     std::map<unsigned int, const TVariable *> newOutVarArray;
     for (auto originInOutVarIter : declaredInOutVarMap)
@@ -715,12 +714,12 @@ ANGLE_NO_DISCARD bool ReplaceInOutVariables(TCompiler *compiler,
 
         TType *newOutVarType = new TType(originInOutVar->getType());
 
-        // We just want to use the original variable decorated with a inout qualifier, except
-        // the qualifier itself. The qualifier will be changed from inout to out.
+        // We just want to use the original variable, but without an out qualifier instead of inout.
+        ASSERT(originInOutVar->getName() != "gl_LastFragData");
         newOutVarType->setQualifier(EvqFragmentOut);
 
         TVariable *newOutVar = new TVariable(symbolTable, originInOutVar->getName(), newOutVarType,
-                                             SymbolType::UserDefined);
+                                             originInOutVar->variable().symbolType());
         newOutVarArray[inputAttachmentIndex] = newOutVar;
         replaceSubpassInputUtils.declareVariablesForFetch(inputAttachmentIndex,
                                                           newOutVarArray[inputAttachmentIndex]);
@@ -746,12 +745,7 @@ ANGLE_NO_DISCARD bool ReplaceInOutVariables(TCompiler *compiler,
     // 4) Replace previous 'inout' variable with newly created 'inout' variable
     ReplaceVariableTraverser replaceTraverser(replacementMap);
     root->traverse(&replaceTraverser);
-    if (!replaceTraverser.updateTree(compiler, root))
-    {
-        return false;
-    }
-
-    return true;
+    return replaceTraverser.updateTree(compiler, root);
 }
 
 }  // namespace sh

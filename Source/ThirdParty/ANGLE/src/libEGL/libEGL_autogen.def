@@ -96,6 +96,9 @@ EXPORTS
     eglReacquireHighPowerGPUANGLE
     eglReleaseHighPowerGPUANGLE
 
+    ; EGL_ANGLE_prepare_swap_buffers
+    eglPrepareSwapBuffersANGLE
+
     ; EGL_ANGLE_program_cache_control
     eglProgramCacheGetAttribANGLE
     eglProgramCachePopulateANGLE
@@ -150,6 +153,9 @@ EXPORTS
     eglLockSurfaceKHR
     eglQuerySurface64KHR
     eglUnlockSurfaceKHR
+
+    ; EGL_KHR_partial_update
+    eglSetDamageRegionKHR
 
     ; EGL_KHR_reusable_sync
     eglSignalSyncKHR
