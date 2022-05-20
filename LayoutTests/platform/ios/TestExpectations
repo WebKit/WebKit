@@ -3631,6 +3631,9 @@ webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions-iframe-sam
 webkit.org/b/240579 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
+webkit.org/b/240579 http/wpt/push-api/pushEvent.any.serviceworker.html [ Skip ]
+webkit.org/b/240579 http/wpt/push-api/pushManager.any.html [ Skip ]
+webkit.org/b/240579 http/wpt/push-api/pushManager.any.serviceworker.html [ Skip ]
 
 webkit.org/b/240654 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/240654 fast/forms/ios/focus-ring-size.html [ ImageOnlyFailure ]
