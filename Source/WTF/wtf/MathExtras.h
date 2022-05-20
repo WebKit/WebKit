@@ -468,7 +468,7 @@ constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
 // From https://stackoverflow.com/questions/3407012/rounding-up-to-the-nearest-multiple-of-a-number
 constexpr uint32_t roundUpToPowerOfTwoMultiple(uint32_t numToRound, uint32_t multiple)
 {
-    assert(multiple && ((multiple & (multiple - 1)) == 0));
+    assert(multiple && !(multiple & (multiple - 1));
     return (numToRound + multiple - 1) & -multiple;
 }
 
