@@ -76,6 +76,11 @@ class MacOSLayoutTraits extends LayoutTraits
     {
         return true;
     }
+
+    supportsTouches()
+    {
+        return false;
+    }
     
     toString()
     {

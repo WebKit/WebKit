@@ -91,6 +91,13 @@ class LayoutTraits
         return false;
     }
 
+    supportsTouches()
+    {
+        // Can be overridden by subclasses.
+
+        return GestureRecognizer.SupportsTouches;
+    }
+
     additionalControlScaleFactor()
     {
         return 1;

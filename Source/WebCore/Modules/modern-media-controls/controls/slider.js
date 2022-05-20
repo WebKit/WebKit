@@ -209,7 +209,7 @@ class Slider extends LayoutNode
     _interactionEndTarget()
     {
         const mediaControls = this.parentOfType(MediaControls);
-        if (GestureRecognizer.SupportsTouches)
+        if (mediaControls?.layoutTraits.supportsTouches())
             return mediaControls.element;
         return (!mediaControls || !mediaControls.layoutTraits.isFullscreen) ? window : mediaControls.element;
     }

@@ -8,13 +8,19 @@ description("Testing <code>ButtonsContainer</code> buttons property.");
 
 window.jsTestIsAsync = true;
 
+const layoutDelegate = { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) };
+
 const container = new ButtonsContainer({
     leftMargin: 20,
     rightMargin: 20,
     buttonMargin: 10
 });
 
-container.children = [new Button, new Button, new Button];
+container.children = [
+    new Button({ layoutDelegate }),
+    new Button({ layoutDelegate }),
+    new Button({ layoutDelegate }),
+];
 
 scheduler.frameDidFire = function()
 {

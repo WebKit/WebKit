@@ -41,7 +41,7 @@ class RangeButton extends Button
 
         this._indicator.visible = false;
 
-        if (GestureRecognizer.SupportsTouches)
+        if (this.layoutTraits.supportsTouches())
             this._tapGestureRecognizer.enabled = false;
         else
             this.element.removeEventListener("click", this);
