@@ -277,7 +277,7 @@ float toPositiveAngle(float angle)
 }
 
 // Compute acute angle from vertical axis
-static float toRelatedAcuteAngle(float angle)
+float toRelatedAcuteAngle(float angle)
 {
     angle = toPositiveAngle(angle);
     if (angle < 90)
@@ -287,14 +287,22 @@ static float toRelatedAcuteAngle(float angle)
     return std::abs(360 - angle);
 }
 
-RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect& boundingRect, const FloatPoint& position)
+RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect& box, const FloatPoint& position)
 {
     // Compute distance to each side of the containing box
     double top = std::abs(position.y());
-    double bottom = std::abs(position.y() - boundingRect.height());
+    double bottom = std::abs(position.y() - box.height());
     double left = std::abs(position.x());
-    double right = std::abs(position.x() - boundingRect.width());
+    double right = std::abs(position.x() - box.width());
     return RectEdges<double>(top, right, bottom, left);
+}
+
+std::array<FloatPoint, 4> verticesForBox(const FloatRect& box, const FloatPoint position)
+{
+    return { FloatPoint(-position.x(), -position.y()),
+        FloatPoint(box.width() - position.x(), -position.y()),
+        FloatPoint(box.width() - position.x(), box.height() - position.y()),
+        FloatPoint(-position.x(), box.height() - position.y()) };
 }
 
 double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)

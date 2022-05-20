@@ -196,8 +196,9 @@ public:
         return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
     }
 
-    const Path pathForReferenceRect() const;
+    const Path pathForReferenceRect(const FloatRect& elementRect, const FloatPoint& anchor, const OffsetRotation rotation) const;
     double lengthForPath() const;
+    double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
     
     void setContainingBlockReferenceRect(const FloatRect& boundingRect)
     {

@@ -1563,7 +1563,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
     // (implemented in unapplyTransformOrigin)
 }
 
-static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation)
+static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation, const FloatPoint& anchor, OffsetRotation rotation)
 {
     switch (operation.type()) {
     case PathOperation::Shape:
@@ -1575,7 +1575,7 @@ static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const 
     case PathOperation::Box:
         return downcast<BoxPathOperation>(operation).getPath();
     case PathOperation::Ray:
-        return downcast<RayPathOperation>(operation).pathForReferenceRect();
+        return downcast<RayPathOperation>(operation).pathForReferenceRect(box, anchor, rotation);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1604,18 +1604,19 @@ void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, cons
     if (!offsetPath())
         return;
 
+    auto transformOrigin = floatPointForLengthPoint(transformOriginXY(), boundingBox.size()) + boundingBox.location();
+    auto anchor = transformOrigin;
+    if (!offsetAnchor().x().isAuto())
+        anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
+    
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = getPathFromPathOperation(boundingBox, *offsetPath());
+    auto path = getPathFromPathOperation(boundingBox, *offsetPath(), anchor, offsetRotate());
     if (!path)
         return;
     auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());
     transform.translate(traversalState.current().x(), traversalState.current().y());
 
     // Shift element to the anchor specified by offset-anchor.
-    auto transformOrigin = floatPointForLengthPoint(transformOriginXY(), boundingBox.size()) + boundingBox.location();
-    auto anchor = transformOrigin;
-    if (!offsetAnchor().x().isAuto())
-        anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
     transform.translate(-anchor.x(), -anchor.y());
 
     auto shiftToOrigin = anchor - transformOrigin;
