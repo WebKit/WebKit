@@ -986,8 +986,8 @@ private:
 
     static_assert(firstOutOfLineOffset < 256);
 
-    uint32_t m_propertyHash; // macOS|iOS: 4 bytes
-    TinyBloomFilter<WTF::Compacted<nullptr_t>::StorageSize> m_seenProperties; // macOS: 8 bytes, iOS: 4 bytes
+    uint32_t m_propertyHash;
+    TinyBloomFilter<WTF::Compacted<uint32_t>::StorageSize> m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
