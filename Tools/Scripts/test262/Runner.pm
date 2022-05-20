@@ -37,6 +37,7 @@ use File::Temp qw(tempfile tempdir);
 use File::Spec::Functions qw(abs2rel);
 use File::Basename qw(dirname);
 use File::Path qw(mkpath);
+use File::Copy qw(copy);
 use Cwd qw(abs_path);
 use FindBin;
 use Env qw(DYLD_FRAMEWORK_PATH);
@@ -44,6 +45,7 @@ use Config;
 use Time::HiRes qw(time);
 use IO::Handle;
 use IO::Select;
+use webkitdirs;
 
 my $Bin;
 BEGIN {
@@ -104,11 +106,6 @@ sub LoadFile {
     return Load(do { local $/; <$IN> });
 }
 
-my $webkitdirIsAvailable;
-if (eval {require webkitdirs; 1;}) {
-    webkitdirs->import(qw(executableProductDir setConfiguration));
-    $webkitdirIsAvailable = 1;
-}
 my $podIsAvailable;
 if (eval {require Pod::Usage; 1;}) {
     Pod::Usage->import();
@@ -151,8 +148,6 @@ my $tempdir = tempdir();
 my ($deffh, $deffile) = getTempFile();
 
 my $startTime = time();
-
-main();
 
 sub processCLI {
     my $help = 0;
@@ -212,7 +207,7 @@ sub processCLI {
 
     if ($stats || $failingOnly) {
         # If not supplied, try to find the results file in expected directory
-        $resultsFile ||= abs_path("$resultsDir/results.yaml");
+        $resultsFile ||= "$resultsDir/results.yaml";
 
         if ($failingOnly && ! -e $resultsFile) {
             die "Error: cannot find results file to run failing tests," .
@@ -433,6 +428,7 @@ sub main {
                 print $readyChild "$file\n";
                 if (!$noProgress) {
                     print "[$completedFiles/$numFiles]\r";
+                    STDOUT->flush() if (isWindows());
                 }
                 $activeChildren++;
             } elsif (!$activeChildren) {
@@ -563,13 +559,13 @@ sub main {
         mkpath($resultsDir);
     }
 
-    $resultsFile = abs_path("$resultsDir/results.yaml");
+    $resultsFile = "$resultsDir/results.yaml";
 
     DumpFile($resultsFile, \@results);
     print "Saved all the results in $resultsFile\n";
 
     my $styleCss = abs_path("$Bin/report.css");
-    qx/cp $styleCss $resultsDir/;
+    copy($styleCss, $resultsDir);
     summarizeResults();
     printHTMLResults(\%failed, $totalRun, $failcount, $newfailcount, $skipfilecount);
 
@@ -633,21 +629,10 @@ sub parseError {
 sub getBuildPath {
     my ($release) = @_;
 
-    my $jsc;
+    my $webkit_config = $release ? 'Release' : 'Debug';
+    setConfiguration($webkit_config);
 
-    if ($webkitdirIsAvailable) {
-        my $webkit_config = $release ? 'Release' : 'Debug';
-        setConfiguration($webkit_config);
-        my $jscDir = executableProductDir();
-
-        $jsc = $jscDir . '/jsc';
-        $jsc = $jscDir . '/JavaScriptCore.framework/Helpers/jsc' if (! -e $jsc);
-        $jsc = $jscDir . '/bin/jsc' if (! -e $jsc);
-
-        # Sets the Env DYLD_FRAMEWORK_PATH, abs_path will remove any extra '/' character
-        $DYLD_FRAMEWORK_PATH = abs_path(dirname($jsc)) if (-e $jsc);
-    }
-
+    my $jsc = jscPath(jscProductDir());
     if (! $jsc || ! -e $jsc) {
         # If we cannot find jsc using webkitdirs, look in path
         $jsc = qx(which jsc);
@@ -657,6 +642,9 @@ sub getBuildPath {
             die("Cannot find jsc, try with --release or specify with --jsc <path>.\n\n");
         }
     }
+
+    # Sets the Env DYLD_FRAMEWORK_PATH, abs_path will remove any extra '/' character
+    $DYLD_FRAMEWORK_PATH = abs_path(dirname($jsc)) if (-e $jsc);
 
     return $jsc;
 }
@@ -825,10 +813,10 @@ sub runTest {
     my $defaultHarness = '';
     $defaultHarness = $deffile if $scenario ne 'raw';
 
-    my $prefix = $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH) : "";
+    my $prefix = !isWindows() && $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH) : "";
     my $execTimeStart = time();
 
-    my $result = qx($prefix $JSC $args $defaultHarness $includesfile '$prefixFile$filename');
+    my $result = qx($prefix $JSC $args $defaultHarness $includesfile $prefixFile$filename);
     my $execTime = time() - $execTimeStart;
 
     chomp $result;
@@ -1010,9 +998,9 @@ sub summarizeResults {
     if (! -e $resultsDir) {
         mkpath($resultsDir);
     }
-    $summaryTxtFile = abs_path("$resultsDir/summary.txt");
-    $summaryFile = abs_path("$resultsDir/summary.yaml");
-    my $summaryHTMLFile = abs_path("$resultsDir/summary.html");
+    $summaryTxtFile = "$resultsDir/summary.txt";
+    $summaryFile = "$resultsDir/summary.yaml";
+    my $summaryHTMLFile = "$resultsDir/summary.html";
 
     my %byfeature;
     my %bypath;
@@ -1232,7 +1220,7 @@ sub printHTMLResults {
         mkpath($resultsDir);
     }
 
-    my $indexHTML = abs_path("$resultsDir/index.html");
+    my $indexHTML = "$resultsDir/index.html";
     open(my $htmlfh, '>', $indexHTML) or die $!;
 
     print $htmlfh qq{<html><head>

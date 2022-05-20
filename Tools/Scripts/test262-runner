@@ -71,4 +71,4 @@ BEGIN {
 
 use Runner;
 
-exit 0;
+Test262::Runner::main();
