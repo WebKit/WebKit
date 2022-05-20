@@ -441,7 +441,7 @@ Automation may create pull requests and forks in unexpected locations
             else:
                 sys.stderr.write(warning)
 
-        if not forking:
+        if not forking or forking == 'No':
             return result
 
         if cls.github(args, rmt, **kwargs):

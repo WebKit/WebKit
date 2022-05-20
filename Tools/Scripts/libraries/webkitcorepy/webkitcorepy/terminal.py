@@ -65,7 +65,7 @@ class Terminal(object):
                 if index >= 0 and index < len(options):
                     response = options[index]
 
-            if not strict:
+            if not strict and len(response) > 0:
                 for option in options:
                     if option.lower().startswith(response.lower()):
                         response = option
