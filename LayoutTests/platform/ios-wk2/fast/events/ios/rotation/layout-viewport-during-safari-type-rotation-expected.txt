@@ -3,12 +3,18 @@ layoutViewport: 0, 0 - 390 x 797
 visualViewport: 0, 0 - 390 x 797
 client rect of fixed object:0, 0 - 390 x 797
 
-In resize event handler:
-layoutViewport: 0, 0 - 390 x 797
-visualViewport: 0, 0 - 390 x 390
-client rect of fixed object:0, 0 - 390 x 797
-
 In orientationchange event handler:
+(This will trigger the resize handler by forcing a layout.)
+layoutViewport: 0, 0 - 600 x 800
+visualViewport: 0, 0 - 600 x 800
+client rect of fixed object:0, 0 - 600 x 800
+
+In resize event handler:
+layoutViewport: 0, 0 - 600 x 800
+visualViewport: 0, 0 - 600 x 800
+client rect of fixed object:0, 0 - 600 x 800
+
+In resize event handler:
 layoutViewport: 0, 0 - 844 x 390
 visualViewport: 0, 0 - 844 x 390
 client rect of fixed object:0, 0 - 844 x 390
