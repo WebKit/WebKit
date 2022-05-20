@@ -5104,7 +5104,7 @@ imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html
 imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 
 # Display list logging is only available in debug
-[ Release ] fast/text/glyph-display-list-color.html [ Skip ]
+[ Release ] fast/text/glyph-display-lists [ Skip ]
 
 # Plugins
 # FIXME: Remove these tests.
