@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -386,6 +386,61 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             return IntRange();
         }
+    }
+
+    template<typename T>
+    IntRange sExt()
+    {
+        ASSERT(m_min >= INT32_MIN);
+        ASSERT(m_max <= INT32_MAX);
+        int64_t typeMin = std::numeric_limits<T>::min();
+        int64_t typeMax = std::numeric_limits<T>::max();
+        auto min = m_min;
+        auto max = m_max;
+
+        if (typeMin <= min && min <= typeMax
+            && typeMin <= max && max <= typeMax)
+            return IntRange(min, max);
+
+        // Given type T with N bits, signed extension will turn bit N-1 as
+        // a sign bit. If bits N-1 upwards are identical for both min and max,
+        // then we're guaranteed that even after the sign extension, min and
+        // max will still be in increasing order.
+        //
+        // For example, when T is int8_t, the space of numbers from highest to
+        // lowest are as follows (in binary bits):
+        //
+        //      highest     0 111 1111  ^
+        //                    ...       |
+        //            1     0 000 0001  |   top segment
+        //            0     0 000 0000  v
+        //
+        //           -1     1 111 1111  ^
+        //           -2     1 111 1110  |   bottom segment
+        //                    ...       |
+        //       lowest     1 000 0000  v
+        //
+        // Note that if we exclude the sign bit, the range is made up of 2 segments
+        // of contiguous increasing numbers. If min and max are both in the same
+        // segment before the sign extension, then min and max will continue to be
+        // in a contiguous segment after the sign extension. Only when min and max
+        // spans across more than 1 of these segments, will min and max no longer
+        // be guaranteed to be in a contiguous range after the sign extension.
+        //
+        // Hence, we can check if bits N-1 and up are identical for the range min
+        // and max. If so, then the new min and max can be be computed by simply
+        // applying sign extension to their original values.
+
+        constexpr unsigned numberOfBits = countOfBits<T>;
+        constexpr int64_t segmentMask = (1ll << (numberOfBits - 1)) - 1;
+        constexpr int64_t topBitsMask = ~segmentMask;
+        int64_t minTopBits = topBitsMask & min;
+        int64_t maxTopBits = topBitsMask & max;
+
+        if (minTopBits == maxTopBits)
+            return IntRange(static_cast<int64_t>(static_cast<T>(min)), static_cast<int64_t>(static_cast<T>(max)));
+
+        return top<T>();
     }
 
     IntRange zExt32()
@@ -2765,9 +2820,11 @@ private:
                 rangeFor(value->child(1), timeToLive - 1), value->type());
 
         case SExt8:
+            return rangeFor(value->child(0), timeToLive - 1).sExt<int8_t>();
         case SExt16:
+            return rangeFor(value->child(0), timeToLive - 1).sExt<int16_t>();
         case SExt32:
-            return rangeFor(value->child(0), timeToLive - 1);
+            return rangeFor(value->child(0), timeToLive - 1).sExt<int32_t>();
 
         case ZExt32:
             return rangeFor(value->child(0), timeToLive - 1).zExt32();
