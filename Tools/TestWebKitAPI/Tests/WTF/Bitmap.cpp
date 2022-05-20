@@ -1169,7 +1169,7 @@ void testBitmapOperatorBitOrAssignmentImpl(size_t size, const Bitmap& bitmap1, c
 
     temp |= bitmap2;
     for (size_t i = 0; i < size; ++i)
-        EXPECT_EQ(temp.get(i), bitmap1.get(i) | bitmap2.get(i));
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) || bitmap2.get(i));
 
     temp1 = temp;
     EXPECT_TRUE(temp1 == temp);
@@ -1237,7 +1237,7 @@ void testBitmapOperatorBitAndAssignmentImpl(size_t size, const Bitmap& bitmap1, 
 
     temp &= bitmap2;
     for (size_t i = 0; i < size; ++i)
-        EXPECT_EQ(temp.get(i), bitmap1.get(i) & bitmap2.get(i));
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) && bitmap2.get(i));
 
     EXPECT_TRUE(!temp.isEmpty());
     temp1 = temp;
