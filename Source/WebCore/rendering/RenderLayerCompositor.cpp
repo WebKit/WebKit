@@ -2839,6 +2839,25 @@ const char* RenderLayerCompositor::logOneReasonForCompositing(const RenderLayer&
 }
 #endif
 
+
+static bool canUseDescendantClippingLayer(const RenderLayer& layer)
+{
+    if (layer.isolatesCompositedBlending())
+        return false;
+
+    // We can only use the "descendant clipping layer" strategy when the clip rect is entirely within
+    // the border box, because of interactions with border-radius clipping and compositing.
+    if (auto* renderer = layer.renderBox(); renderer && renderer->hasClip()) {
+        auto borderBoxRect = renderer->borderBoxRect();
+        auto clipRect = renderer->clipRect({ }, nullptr);
+        
+        bool clipRectInsideBorderRect = intersection(borderBoxRect, clipRect) == clipRect;
+        return clipRectInsideBorderRect;
+    }
+
+    return true;
+}
+
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,
 // up to the enclosing compositing ancestor. This is required because compositing layers are parented
 // according to the z-order hierarchy, yet clipping goes down the renderer hierarchy.
@@ -2857,7 +2876,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer, const RenderLa
     // in this case it is not allowed to clipsCompositingDescendants() and each of its children
     // will be clippedByAncestor()s, including the compositingAncestor.
     auto* computeClipRoot = compositingAncestor;
-    if (!compositingAncestor->isolatesCompositedBlending()) {
+    if (canUseDescendantClippingLayer(*compositingAncestor)) {
         computeClipRoot = nullptr;
         auto* parent = &layer;
         while (parent) {
@@ -2873,7 +2892,8 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer, const RenderLa
             return false;
     }
 
-    return !layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, TemporaryClipRects)).isInfinite(); // FIXME: Incorrect for CSS regions.
+    auto backgroundClipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, TemporaryClipRects));
+    return !backgroundClipRect.isInfinite(); // FIXME: Incorrect for CSS regions.
 }
 
 bool RenderLayerCompositor::updateAncestorClippingStack(const RenderLayer& layer, const RenderLayer* compositingAncestor) const
@@ -2913,8 +2933,8 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
         if (&ancestorLayer == compositingAncestor) {
         
             if (haveNonScrollableClippingIntermediateLayer)
-                pushNonScrollableClip(*currentClippedLayer, ancestorLayer, ancestorLayer.isolatesCompositedBlending() ? RespectOverflowClip : IgnoreOverflowClip);
-            else if (ancestorLayer.isolatesCompositedBlending() && newStack.isEmpty())
+                pushNonScrollableClip(*currentClippedLayer, ancestorLayer, !canUseDescendantClippingLayer(ancestorLayer) ? RespectOverflowClip : IgnoreOverflowClip);
+            else if (!canUseDescendantClippingLayer(ancestorLayer) && newStack.isEmpty())
                 pushNonScrollableClip(*currentClippedLayer, ancestorLayer, RespectOverflowClip);
 
             return AncestorTraversal::Stop;
@@ -2988,7 +3008,13 @@ bool RenderLayerCompositor::isCompositedSubframeRenderer(const RenderObject& ren
 // into the hierarchy between this layer and its children in the z-order hierarchy.
 bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer& layer)
 {
-    return layer.hasCompositingDescendant() && layer.renderer().hasClipOrNonVisibleOverflow() && !layer.isolatesCompositedBlending() && !layer.hasCompositedNonContainedDescendants();
+    if (!(layer.hasCompositingDescendant() && layer.renderer().hasClipOrNonVisibleOverflow()))
+        return false;
+
+    if (layer.hasCompositedNonContainedDescendants())
+        return false;
+
+    return canUseDescendantClippingLayer(layer);
 }
 
 bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObject& renderer) const
