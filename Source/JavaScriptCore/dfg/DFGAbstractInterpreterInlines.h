@@ -750,6 +750,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueRep: {
         JSValue value = forNode(node->child1()).value();
         if (value) {
+            if (node->child1().useKind() == Int52RepUse) {
+                if (auto int32 = value.tryGetAsInt32())
+                    value = jsNumber(*int32);
+            }
             setConstant(node, value);
             break;
         }

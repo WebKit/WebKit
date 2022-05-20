@@ -1,3 +1,18 @@
+2022-04-02  Keith Miller  <keith_miller@apple.com>
+
+        AI should do int32 optimization in ValueRep
+        https://bugs.webkit.org/show_bug.cgi?id=238699
+
+        Reviewed by Saam Barati.
+
+        When constant folding an int52 into a ValueRep AI doesn't
+        do our normal int32 boxing optimization. I'm not sure if
+        it matters since I couldn't find a test but it probably
+        doesn't hurt.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2022-03-21  Saam Barati  <sbarati@apple.com>
 
         Fix bug in Relationship::mergeImpl
