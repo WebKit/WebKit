@@ -42,7 +42,7 @@ public:
     static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
     using StorageSize = uint32_t;
 #else
-    using StorageSize = T*;
+    using StorageSize = uintptr_t;
 #endif
     static constexpr bool isCompactedType = true;
 
@@ -123,9 +123,9 @@ public:
     {
 #if PLATFORM(IOS_FAMILY)
         ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & 0xF));
-        return static_cast<uint32_t>(reinterpret_cast<uintptr_t>(ptr) >> 4);
+        return static_cast<StorageSize>(reinterpret_cast<uintptr_t>(ptr) >> 4);
 #else
-        return ptr;
+        return reinterpret_cast<StorageSize>(ptr);
 #endif
     }
 
@@ -134,7 +134,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
         return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << 4);
 #else
-        return ptr;
+        return reinterpret_cast<T*>(ptr);
 #endif
     }
 

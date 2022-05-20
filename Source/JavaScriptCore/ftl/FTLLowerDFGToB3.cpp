@@ -16835,7 +16835,7 @@ IGNORE_CLANG_WARNINGS_END
             object, m_heaps.JSCell_usefulBytes);
     }
 
-    LValue emitEncodeStructure(LValue structure)
+    LValue encodeStructure(LValue structure)
     {
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
         return m_out.castToInt32(m_out.lShr(structure, m_out.constInt32(StructureID::encodeShiftAmount)));
@@ -16852,7 +16852,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        LValue id = emitEncodeStructure(structure);
+        LValue id = encodeStructure(structure);
         m_out.store32(id, object, m_heaps.JSCell_structureID);
 
         LValue blob = m_out.load32(structure, m_heaps.Structure_indexingModeIncludingHistory);

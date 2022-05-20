@@ -1925,15 +1925,18 @@ public:
 #endif
     }
 
-#if PLATFORM(IOS_FAMILY)
     Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
     {
+#if PLATFORM(IOS_FAMILY)
         ASSERT(left != scratch);
         load32(right, scratch);
         lshift64(TrustedImm32(4), scratch);
         return branchPtr(cond, left, Address(scratch));
-    }
+#else
+        (void)scratch;
+        return branchPtr(cond, left, right);
 #endif
+    }   
 
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);

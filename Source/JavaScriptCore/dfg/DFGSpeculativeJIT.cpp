@@ -14863,11 +14863,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
     m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
-#if PLATFORM(IOS_FAMILY)
     slowCases.append(m_jit.branchCompactPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
-#else
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
-#endif
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_graph, globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 
@@ -14916,11 +14912,7 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
     m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(JSClass::info()), scratch1GPR);
-#if PLATFORM(IOS_FAMILY)
     slowCases.append(m_jit.branchCompactPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
-#else
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
-#endif
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_graph, globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 

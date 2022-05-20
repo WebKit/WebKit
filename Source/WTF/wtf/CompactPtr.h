@@ -25,10 +25,7 @@
 
 #pragma once
 
-#include <cstdint>
-#include <utility>
 #include <wtf/CompactRefPtr.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
