@@ -31,9 +31,10 @@ import re
 import sys
 
 from webkitcorepy import StringIO, string_utils
+from webkitscmpy import local
 
 from webkitpy.common.config import urls
-from webkitpy.common.checkout.changelog import ChangeLog, parse_bug_id_from_changelog
+from webkitpy.common.checkout.changelog import ChangeLog, ChangeLogEntry, parse_bug_id_from_changelog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.memoized import memoized
@@ -93,41 +94,19 @@ for l in lines[1:]:
         changelog_file = StringIO(changelog_contents.decode("utf-8", "ignore"))
         return ChangeLog.parse_latest_entry_from_file(changelog_file)
 
-    def changelog_entries_for_revision(self, revision, changed_files=None):
-        if not changed_files:
-            changed_files = self._scm.changed_files_for_revision(revision)
-        # FIXME: This gets confused if ChangeLog files are moved, as
-        # deletes are still "changed files" per changed_files_for_revision.
-        # FIXME: For now we hack around this by caching any exceptions
-        # which result from having deleted files included the changed_files list.
-        changelog_entries = []
-        for path in changed_files:
-            if not self.is_path_to_changelog(path):
-                continue
-            try:
-                changelog_entries.append(self._latest_entry_for_changelog_at_revision(path, revision))
-            except ScriptError:
-                pass
-        return changelog_entries
-
     def _changelog_data_for_revision(self, revision):
-        changed_files = self._scm.changed_files_for_revision(revision)
-        changelog_entries = self.changelog_entries_for_revision(revision, changed_files=changed_files)
-        # Assume for now that the first entry has everything we need:
-        # FIXME: This will throw an exception if there were no ChangeLogs.
-        if not len(changelog_entries):
-            return None
-        changelog_entry = changelog_entries[0]
+        repo = local.Scm.from_path(self._scm.checkout_root)
+        commit = repo.commit(revision=revision)
+
         return {
-            "bug_id": changelog_entry.bug_id(),
-            "author_name": changelog_entry.author_name(),
-            "author_email": changelog_entry.author_email(),
-            "author": changelog_entry.author(),
-            "bug_description": changelog_entry.bug_description(),
-            "reviewer_text": changelog_entry.reviewer_text(),
-            "reviewer": changelog_entry.reviewer(),
-            "contents": changelog_entry.contents(),
-            "changed_files": changed_files,
+            "bug_id": parse_bug_id_from_changelog(commit.message),
+            "author_name": commit.author.name,
+            "author_email": commit.author.email,
+            "author": commit.author,
+            "contents": commit.message,
+            "reviewer": ChangeLogEntry._parse_reviewer_text(commit.message)[0],
+            "bug_description": commit.message.splitlines()[0],
+            "changed_files": self._scm.changed_files_for_revision(revision),
         }
 
     @memoized

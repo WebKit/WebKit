@@ -333,9 +333,9 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
                 # We use the earliest revision for the bug info
                 if revision == earliest_revision:
                     state["bug_blocked"] = commit_info.bug_id()
-                    cc_list = sorted([party.bugzilla_email()
+                    cc_list = sorted([party.email
                             for party in commit_info.responsible_parties()
-                            if party.bugzilla_email()])
+                            if getattr(party, 'email', None)])
                     # FIXME: We should used the list as the canonical representation.
                     state["bug_cc"] = ",".join(cc_list)
                 description_list.append(commit_info.bug_description())

@@ -74,6 +74,10 @@ class Contributor(object):
         # which might not be right.
         return self.emails[0]
 
+    @property
+    def email(self):
+        self.bugzilla_email()
+
     def __str__(self):
         return string_utils.encode(u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0])), target_type=str)
 
