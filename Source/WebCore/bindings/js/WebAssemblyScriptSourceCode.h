@@ -27,40 +27,23 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "CachedResourceHandle.h"
-#include "CachedScript.h"
-#include "CachedScriptFetcher.h"
-#include "SharedBuffer.h"
+#include "AbstractScriptSourceCode.h"
 #include "WebAssemblyCachedScriptSourceProvider.h"
 #include "WebAssemblyScriptBufferSourceProvider.h"
-#include <JavaScriptCore/SourceCode.h>
-#include <JavaScriptCore/SourceProvider.h>
-#include <wtf/RefPtr.h>
-#include <wtf/URL.h>
 
 namespace WebCore {
 
-class WebAssemblyScriptSourceCode {
+class WebAssemblyScriptSourceCode : public AbstractScriptSourceCode {
 public:
     WebAssemblyScriptSourceCode(CachedScript* cachedScript, Ref<CachedScriptFetcher>&& scriptFetcher)
-        : m_provider(WebAssemblyCachedScriptSourceProvider::create(cachedScript, WTFMove(scriptFetcher)))
-        , m_code(m_provider.copyRef())
-        , m_cachedScript(cachedScript)
+        : AbstractScriptSourceCode(WebAssemblyCachedScriptSourceProvider::create(cachedScript, WTFMove(scriptFetcher)), cachedScript)
     {
     }
 
     WebAssemblyScriptSourceCode(const ScriptBuffer& source, URL&& url, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(WebAssemblyScriptBufferSourceProvider::create(source, WTFMove(url), WTFMove(scriptFetcher)))
-        , m_code(m_provider.copyRef())
+        : AbstractScriptSourceCode(WebAssemblyScriptBufferSourceProvider::create(source, WTFMove(url), WTFMove(scriptFetcher)), nullptr)
     {
     }
-
-    const JSC::SourceCode& jsSourceCode() const { return m_code; }
-
-private:
-    Ref<JSC::SourceProvider> m_provider;
-    JSC::SourceCode m_code;
-    CachedResourceHandle<CachedScript> m_cachedScript;
 };
 
 } // namespace WebCore

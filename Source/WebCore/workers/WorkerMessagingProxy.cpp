@@ -113,7 +113,7 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 }
 
-void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, const String& name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
+void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, const String& name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags, const String& mimeType)
 {
     // FIXME: This need to be revisited when we support nested worker one day
     ASSERT(m_scriptExecutionContext);
@@ -129,7 +129,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 #if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
 #endif
-        initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { })
+        initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { }),
+        mimeType
     };
     auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, runtimeFlags);
 

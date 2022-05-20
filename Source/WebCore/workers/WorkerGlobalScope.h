@@ -30,6 +30,7 @@
 #include "CacheStorageConnection.h"
 #include "ClientOrigin.h"
 #include "ImageBitmap.h"
+#include "ScriptBufferSourceProvider.h"
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
 #include "WindowOrWorkerGlobalScope.h"
@@ -156,7 +157,7 @@ public:
     void releaseMemory(Synchronous);
     static void releaseMemoryInWorkers(Synchronous);
 
-    void setMainScriptSourceProvider(ScriptBufferSourceProvider&);
+    void setMainScriptSourceProvider(AbstractScriptBufferHolder&);
     void addImportedScriptSourceProvider(const URL&, ScriptBufferSourceProvider&);
 
     ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin()->data() }; }
@@ -216,7 +217,7 @@ private:
     RefPtr<Performance> m_performance;
     mutable RefPtr<Crypto> m_crypto;
 
-    WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
+    WeakPtr<AbstractScriptBufferHolder> m_mainScriptSourceProvider;
     MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
 
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;

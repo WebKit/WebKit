@@ -82,6 +82,7 @@ public:
     std::optional<ServiceWorkerData> serviceWorkerData;
 #endif
     ScriptExecutionContextIdentifier clientIdentifier;
+    String mimeType;
 
     WorkerParameters isolatedCopy() const;
 };

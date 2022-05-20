@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WorkerOrWorkletScriptController.h"
 
+#include "AbstractScriptSourceCode.h"
 #include "CommonVM.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
@@ -40,7 +41,6 @@
 #include "JSSharedWorkerGlobalScope.h"
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
-#include "ScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerConsoleClient.h"
 #include "WorkerModuleScriptLoader.h"
@@ -202,7 +202,7 @@ void WorkerOrWorkletScriptController::disableWebAssembly(const String& errorMess
     m_globalScopeWrapper->setWebAssemblyEnabled(false, errorMessage);
 }
 
-void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)
+void WorkerOrWorkletScriptController::evaluate(const AbstractScriptSourceCode& sourceCode, String* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
@@ -220,7 +220,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     }
 }
 
-void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage)
+void WorkerOrWorkletScriptController::evaluate(const AbstractScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
@@ -270,7 +270,7 @@ JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(JSC::AbstractModule
     return moduleRecord.evaluate(&globalObject, awaitedValue, resumeMode);
 }
 
-bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetcher& scriptFetcher, const ScriptSourceCode& sourceCode)
+bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetcher& scriptFetcher, const AbstractScriptSourceCode& sourceCode)
 {
     if (isExecutionForbidden())
         return false;
@@ -378,7 +378,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     return success;
 }
 
-void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher& scriptFetcher, const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)
+void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher& scriptFetcher, const AbstractScriptSourceCode& sourceCode, String* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
