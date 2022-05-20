@@ -61,8 +61,6 @@ private:
     WebCore::IntSize backendSize() const final;
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) const final;
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const final;
-    void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
-    void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) final;
     String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution) const final;
     Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const final;
     std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const final;

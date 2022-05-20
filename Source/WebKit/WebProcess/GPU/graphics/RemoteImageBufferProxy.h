@@ -50,6 +50,7 @@ template<typename BackendType>
 class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::m_backend;
+    using BaseConcreteImageBuffer::canMapBackingStore;
     using BaseConcreteImageBuffer::m_renderingResourceIdentifier;
     using BaseConcreteImageBuffer::resolutionScale;
 
@@ -174,10 +175,14 @@ protected:
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy copyBehavior = WebCore::CopyBackingStore) const final
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
+
+        if (canMapBackingStore())
+            return BaseConcreteImageBuffer::copyNativeImage(copyBehavior);
+
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, WebCore::PreserveResolution::Yes);
         if (!bitmap)
@@ -185,10 +190,14 @@ protected:
         return WebCore::NativeImage::create(bitmap->createPlatformImage(WebCore::DontCopyBackingStore));
     }
 
-    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) const final
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy copyBehavior = WebCore::CopyBackingStore, WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) const final
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
+
+        if (canMapBackingStore())
+            return BaseConcreteImageBuffer::copyImage(copyBehavior, preserveResolution);
+
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, preserveResolution);
         if (!bitmap)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,18 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBacke
 void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
 {
     m_surface->setOwnershipIdentity(resourceOwner);
+}
+
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
+{
+    auto currentSeed = m_surface->seed();
+
+    // Invalidate the cached image before getting a new one because GPUProcess might
+    // have drawn something to the IOSurface since last time this function was called.
+    if (std::exchange(m_lastSeedWhenCopyingImage, currentSeed) != currentSeed)
+        invalidateCachedNativeImage();
+
+    return ImageBufferIOSurfaceBackend::copyNativeImage(copyBehavior);
 }
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 
@@ -169,17 +170,24 @@ protected:
 
     void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
+        FloatRect srcRectScaled = srcRect;
+        srcRectScaled.scale(resolutionScale());
+
         if (auto* backend = ensureBackendCreated()) {
-            flushDrawingContext();
-            backend->draw(destContext, destRect, srcRect, options);
+            if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
+                destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+            backend->finalizeDrawIntoContext(destContext);
         }
     }
 
     void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options) override
     {
+        FloatRect adjustedSrcRect = srcRect;
+        adjustedSrcRect.scale(resolutionScale());
+
         if (auto* backend = ensureBackendCreated()) {
-            flushDrawingContext();
-            backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
+            if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
+                image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
         }
     }
 
@@ -203,13 +211,17 @@ protected:
 
     void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
+        FloatRect adjustedSrcRect = srcRect;
+        adjustedSrcRect.scale(resolutionScale());
+
         ASSERT(&destContext != &context());
         if (auto* backend = ensureBackendCreated()) {
-            flushDrawingContext();
-            backend->drawConsuming(destContext, destRect, srcRect, options);
+            auto backendSize = backend->backendSize();
+            if (auto image = sinkIntoNativeImage())
+                destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
         }
     }
-    
+
     void clipToMask(GraphicsContext& destContext, const FloatRect& destRect) override
     {
         if (auto* backend = ensureBackendCreated()) {

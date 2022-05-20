@@ -108,15 +108,12 @@ public:
 
     virtual IntSize backendSize() const { return { }; }
 
+    virtual void finalizeDrawIntoContext(GraphicsContext&) { }
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const = 0;
 
-    WEBCORE_EXPORT virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
-    WEBCORE_EXPORT virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) = 0;
-
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT virtual RefPtr<Image> sinkIntoImage(PreserveResolution);
-    WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 

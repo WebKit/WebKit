@@ -37,8 +37,6 @@ class ProcessIdentity;
 
 namespace WebKit {
 
-class ShareableBitmap;
-
 class ImageBufferShareableMappedIOSurfaceBackend final : public WebCore::ImageBufferIOSurfaceBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableMappedIOSurfaceBackend);
@@ -55,6 +53,10 @@ public:
 private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
+
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
+
+    mutable WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
 };
 
 } // namespace WebKit
