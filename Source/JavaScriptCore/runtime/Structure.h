@@ -234,9 +234,9 @@ private:
 public:
     StructureID id() const 
     {
-#if PLATFORM(IOS_FAMILY)
-        static_assert(sizeof(*this) == 96);
-#endif
+// #if PLATFORM(IOS_FAMILY)
+//         static_assert(sizeof(*this) == 96);
+// #endif
         return StructureID::encode(this);
     }
 

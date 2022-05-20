@@ -39,7 +39,7 @@ class Compacted {
 
 public:
 #if PLATFORM(IOS_FAMILY)
-    static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
+    // static_assert(MACH_VM_MAX_ADDRESS <= (1ull << 36));
     using StorageSize = uint32_t;
 #else
     using StorageSize = uintptr_t;
