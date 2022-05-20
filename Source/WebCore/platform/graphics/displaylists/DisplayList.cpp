@@ -110,16 +110,20 @@ bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle ite
 String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+#if !LOG_DISABLED
     for (auto displayListItem : *this) {
         auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         if (!shouldDumpForFlags(flags, item))
             continue;
 
         TextStream::GroupScope group(stream);
-        stream << item;
+        dumpItemHandle(stream, item, flags);
         if (item.isDrawingItem())
             stream << " extent " << extent;
     }
+#else
+    UNUSED_PARAM(flags);
+#endif
     return stream.release();
 }
 
@@ -128,13 +132,16 @@ void DisplayList::dump(TextStream& ts) const
     TextStream::GroupScope group(ts);
     ts << "display list";
 
+#if !LOG_DISABLED
     for (auto displayListItem : *this) {
         auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
-        ts << item;
+        dumpItemHandle(ts, item, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
         if (item.isDrawingItem())
             ts << " extent " << extent;
     }
+#endif
+
     ts.startGroup();
     ts << "size in bytes: " << sizeInBytes();
     ts.endGroup();
