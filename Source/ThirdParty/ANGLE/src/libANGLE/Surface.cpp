@@ -96,6 +96,8 @@ Surface::Surface(EGLint surfaceType,
       mIsCurrentOnAnyContext(false),
       mLockBufferPtr(nullptr),
       mLockBufferPitch(0),
+      mBufferAgeQueriedSinceLastSwap(false),
+      mIsDamageRegionSet(false),
       mInitState(gl::InitState::Initialized),
       mImplObserverBinding(this, kSurfaceImplSubjectIndex)
 {
@@ -175,6 +177,10 @@ void Surface::postSwap(const gl::Context *context)
         mInitState = gl::InitState::MayNeedInit;
         onStateChange(angle::SubjectMessage::SubjectChanged);
     }
+
+    mBufferAgeQueriedSinceLastSwap = false;
+
+    mIsDamageRegionSet = false;
 }
 
 Error Surface::initialize(const Display *display)
@@ -609,7 +615,7 @@ GLuint Surface::getId() const
     return 0;
 }
 
-Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
+Error Surface::getBufferAgeImpl(const gl::Context *context, EGLint *age) const
 {
     // When EGL_BUFFER_PRESERVED, the previous frame contents are copied to
     // current frame, so the buffer age is always 1.
@@ -622,6 +628,16 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
         return egl::NoError();
     }
     return mImplementation->getBufferAge(context, age);
+}
+
+Error Surface::getBufferAge(const gl::Context *context, EGLint *age)
+{
+    Error err = getBufferAgeImpl(context, age);
+    if (!err.isError())
+    {
+        mBufferAgeQueriedSinceLastSwap = true;
+    }
+    return err;
 }
 
 std::unique_ptr<gl::Framebuffer> Surface::createDefaultFramebuffer(const gl::Context *context,
@@ -819,6 +835,11 @@ WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
     : Surface(EGL_WINDOW_BIT, config, attribs, robustResourceInit)
 {
     mImplementation = implFactory->createWindowSurface(mState, window, attribs);
+}
+
+void Surface::setDamageRegion(const EGLint *rects, EGLint n_rects)
+{
+    mIsDamageRegionSet = true;
 }
 
 WindowSurface::~WindowSurface() {}

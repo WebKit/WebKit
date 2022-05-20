@@ -1222,7 +1222,9 @@ Result SerializeTextureData(JsonSerializer *json,
         ASSERT(index.getType() == gl::TextureType::_2D || index.getType() == gl::TextureType::_3D ||
                index.getType() == gl::TextureType::_2DArray ||
                index.getType() == gl::TextureType::CubeMap ||
-               index.getType() == gl::TextureType::CubeMapArray);
+               index.getType() == gl::TextureType::CubeMapArray ||
+               index.getType() == gl::TextureType::_2DMultisampleArray ||
+               index.getType() == gl::TextureType::_2DMultisample);
 
         GLenum glFormat = format.format;
         GLenum glType   = format.type;

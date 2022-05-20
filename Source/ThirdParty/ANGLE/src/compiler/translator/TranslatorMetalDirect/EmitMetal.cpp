@@ -1839,6 +1839,10 @@ void GenMetalTraverser::emitFunctionParameter(const TFunction &func, const TVari
         {
             mOut << " [[instance_id]]";
         }
+        else if (Name(param) == kBaseInstanceName)
+        {
+            mOut << " [[base_instance]]";
+        }
     }
 }
 

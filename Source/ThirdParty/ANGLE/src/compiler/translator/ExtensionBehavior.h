@@ -46,6 +46,7 @@ enum class TExtension : uint8_t
     EXT_texture_buffer,
     EXT_texture_cube_map_array,
     EXT_YUV_target,
+    KHR_blend_equation_advanced,
     NV_EGL_stream_consumer_external,
     NV_shader_framebuffer_fetch,
     NV_shader_noperspective_interpolation,

@@ -10,3 +10,4 @@ vulkan_data_subdir = angle_data_dir
 vulkan_gen_subdir = "angle/vulkan"
 
 vulkan_use_x11 = angle_use_x11
+vulkan_use_wayland = angle_use_wayland

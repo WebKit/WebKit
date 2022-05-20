@@ -449,13 +449,13 @@ void FastVector<T, N, Storage>::ensure_capacity(size_t capacity)
 }
 
 template <class Key, class Value, size_t N>
-class FastUnorderedMap final
+class FlatUnorderedMap final
 {
   public:
     using Pair = std::pair<Key, Value>;
 
-    FastUnorderedMap() {}
-    ~FastUnorderedMap() {}
+    FlatUnorderedMap() {}
+    ~FlatUnorderedMap() {}
 
     void insert(Key key, Value value)
     {
@@ -497,11 +497,11 @@ class FastUnorderedMap final
 };
 
 template <class T, size_t N>
-class FastUnorderedSet final
+class FlatUnorderedSet final
 {
   public:
-    FastUnorderedSet() {}
-    ~FastUnorderedSet() {}
+    FlatUnorderedSet() {}
+    ~FlatUnorderedSet() {}
 
     bool empty() const { return mData.empty(); }
 

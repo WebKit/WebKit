@@ -514,6 +514,12 @@ void EGLAPIENTRY eglHandleGPUSwitchANGLE(EGLDisplay dpy)
     return EGL_HandleGPUSwitchANGLE(dpy);
 }
 
+void EGLAPIENTRY eglForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLint gpuIDLow)
+{
+    EnsureEGLLoaded();
+    return EGL_ForceGPUSwitchANGLE(dpy, gpuIDHigh, gpuIDLow);
+}
+
 // EGL_ANGLE_prepare_swap_buffers
 EGLBoolean EGLAPIENTRY eglPrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
 {
@@ -642,6 +648,28 @@ EGLBoolean EGLAPIENTRY eglQueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribute
 {
     EnsureEGLLoaded();
     return EGL_QueryDisplayAttribEXT(dpy, attribute, value);
+}
+
+// EGL_EXT_image_dma_buf_import_modifiers
+EGLBoolean EGLAPIENTRY eglQueryDmaBufFormatsEXT(EGLDisplay dpy,
+                                                EGLint max_formats,
+                                                EGLint *formats,
+                                                EGLint *num_formats)
+{
+    EnsureEGLLoaded();
+    return EGL_QueryDmaBufFormatsEXT(dpy, max_formats, formats, num_formats);
+}
+
+EGLBoolean EGLAPIENTRY eglQueryDmaBufModifiersEXT(EGLDisplay dpy,
+                                                  EGLint format,
+                                                  EGLint max_modifiers,
+                                                  EGLuint64KHR *modifiers,
+                                                  EGLBoolean *external_only,
+                                                  EGLint *num_modifiers)
+{
+    EnsureEGLLoaded();
+    return EGL_QueryDmaBufModifiersEXT(dpy, format, max_modifiers, modifiers, external_only,
+                                       num_modifiers);
 }
 
 // EGL_EXT_platform_base

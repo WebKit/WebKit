@@ -773,7 +773,7 @@
             <param><ptype>GLsizei</ptype> <name>count</name></param>
             <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
             <param>const <ptype>GLvoid</ptype> *<name>indices</name></param>
-            <param><ptype>GLsizei</ptype> <name>instanceCounts</name></param>
+            <param><ptype>GLsizei</ptype> <name>instanceCount</name></param>
             <param><ptype>GLint</ptype> <name>baseVertex</name></param>
             <param><ptype>GLuint</ptype> <name>baseInstance</name></param>
         </command>

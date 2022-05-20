@@ -6232,7 +6232,7 @@ void SimpleStateChangeTest::drawToFboWithCulling(const GLenum frontFace, bool ea
 
     // Clear the surface FBO to initialize it to a known value
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(GLColor::red.R, GLColor::red.G, GLColor::red.B, GLColor::red.A);
+    glClearColor(kFloatRed.R, kFloatRed.G, kFloatRed.B, kFloatRed.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -6462,7 +6462,7 @@ TEST_P(SimpleStateChangeTest, DrawArraysWithZeroSizedElementArrayBuffer)
 // Validates GL_RASTERIZER_DISCARD state is tracked correctly
 TEST_P(SimpleStateChangeTestES3, RasterizerDiscardState)
 {
-    glClearColor(GLColor::red.R, GLColor::red.G, GLColor::red.B, GLColor::red.A);
+    glClearColor(kFloatRed.R, kFloatRed.G, kFloatRed.B, kFloatRed.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -6490,6 +6490,162 @@ TEST_P(SimpleStateChangeTestES3, RasterizerDiscardState)
     drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that early return on binding the same texture is functional
+TEST_P(SimpleStateChangeTestES3, BindingSameTexture)
+{
+    // Create two 1x1 textures
+    constexpr GLsizei kSize           = 2;
+    std::array<GLColor, kSize> colors = {GLColor::yellow, GLColor::cyan};
+
+    GLTexture tex[kSize];
+    // Bind texture 0 and 1 to active textures 0 and 1 and set data
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, colors[0].data());
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, colors[1].data());
+
+    // Create simple program and query sampler location
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    ASSERT(program.valid());
+    glUseProgram(program);
+    GLint textureLocation = glGetUniformLocation(program, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, textureLocation);
+
+    // Draw using active texture 0.
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(textureLocation, 0);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, colors[0]);
+
+    // Draw using active texture 1.
+    glActiveTexture(GL_TEXTURE1);
+    glUniform1i(textureLocation, 1);
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, colors[1]);
+
+    // Rebind the same texture to texture unit 1 and expect same color
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+    glUniform1i(textureLocation, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, colors[1]);
+
+    // Rebind the same texture to texture unit 0 and expect same color
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(textureLocation, 0);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, colors[0]);
+}
+
+// Test that early return on binding the same sampler is functional
+TEST_P(SimpleStateChangeTestES3, BindingSameSampler)
+{
+    // Create 2 samplers with different filtering.
+    constexpr GLsizei kNumSamplers = 2;
+    GLSampler samplers[kNumSamplers];
+
+    // Init sampler0
+    glBindSampler(0, samplers[0]);
+    glSamplerParameteri(samplers[0], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glSamplerParameteri(samplers[0], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Init sampler1
+    glBindSampler(1, samplers[1]);
+    glSamplerParameteri(samplers[1], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glSamplerParameteri(samplers[1], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ASSERT_GL_NO_ERROR();
+
+    // Create a simple 2x1 texture with black and white colors
+    std::array<GLColor, 2> colors = {{GLColor::black, GLColor::white}};
+
+    GLTexture tex;
+    // Bind the same texture to texture units 0 and 1
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, colors.data());
+
+    // Create a program that uses 2 samplers.
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D baseSampler;
+uniform sampler2D overrideSampler;
+void main()
+{
+    gl_FragColor = texture2D(baseSampler, v_texCoord);
+    gl_FragColor = texture2D(overrideSampler, v_texCoord);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
+    glUseProgram(program);
+    GLint baseSamplerLoc     = glGetUniformLocation(program, "baseSampler");
+    GLint overrideSamplerLoc = glGetUniformLocation(program, "overrideSampler");
+
+    // Bind samplers to texture units 0 and 1
+    glBindSampler(0, samplers[0]);
+    glBindSampler(1, samplers[1]);
+    glUniform1i(baseSamplerLoc, 0);
+    glUniform1i(overrideSamplerLoc, 1);
+    drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    // A gradient should have been rendered since "overrideSampler" has linear filter,
+    // we should not expect a solid black or white color.
+    EXPECT_NE(angle::ReadColor(getWindowWidth() / 2, getWindowHeight() / 2), GLColor::black);
+    EXPECT_NE(angle::ReadColor(getWindowWidth() / 2, getWindowHeight() / 2), GLColor::white);
+
+    // Switch sampler bindings
+    glBindSampler(1, samplers[0]);
+    glBindSampler(0, samplers[1]);
+    drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    // Now that "overrideSampler" has nearest filter expect solid colors.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::white);
+
+    // Rebind the same samplers again and expect same output
+    glBindSampler(1, samplers[0]);
+    glBindSampler(0, samplers[1]);
+    drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::white);
+}
+
+// Test that early return on binding the same buffer is functional
+TEST_P(SimpleStateChangeTestES3, BindingSameBuffer)
+{
+    GLushort indexData[] = {0, 1, 2, 3};
+
+    GLBuffer elementArrayBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_SHORT, 0);
+
+    std::vector<GLColor> colors0(kWindowSize * kWindowSize);
+    glReadPixels(0, 0, kWindowSize, kWindowSize, GL_RGBA, GL_UNSIGNED_BYTE, colors0.data());
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_SHORT, 0);
+    std::vector<GLColor> colors1(kWindowSize * kWindowSize);
+    glReadPixels(0, 0, kWindowSize, kWindowSize, GL_RGBA, GL_UNSIGNED_BYTE, colors1.data());
+
+    EXPECT_EQ(colors0, colors1);
 }
 
 class ImageRespecificationTest : public ANGLETest

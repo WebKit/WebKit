@@ -208,6 +208,36 @@ typedef unsigned int GLhandleARB;
             <enum name="GL_FUNC_ADD"/>
             <enum name="GL_FUNC_REVERSE_SUBTRACT"/>
             <enum name="GL_FUNC_SUBTRACT"/>
+            <enum name="GL_MULTIPLY"/>
+            <enum name="GL_MULTIPLY_KHR"/>
+            <enum name="GL_SCREEN"/>
+            <enum name="GL_SCREEN_KHR"/>
+            <enum name="GL_OVERLAY"/>
+            <enum name="GL_OVERLAY_KHR"/>
+            <enum name="GL_DARKEN"/>
+            <enum name="GL_DARKEN_KHR"/>
+            <enum name="GL_LIGHTEN"/>
+            <enum name="GL_LIGHTEN_KHR"/>
+            <enum name="GL_COLORDODGE"/>
+            <enum name="GL_COLORDODGE_KHR"/>
+            <enum name="GL_COLORBURN"/>
+            <enum name="GL_COLORBURN_KHR"/>
+            <enum name="GL_HARDLIGHT"/>
+            <enum name="GL_HARDLIGHT_KHR"/>
+            <enum name="GL_SOFTLIGHT"/>
+            <enum name="GL_SOFTLIGHT_KHR"/>
+            <enum name="GL_DIFFERENCE"/>
+            <enum name="GL_DIFFERENCE_KHR"/>
+            <enum name="GL_EXCLUSION"/>
+            <enum name="GL_EXCLUSION_KHR"/>
+            <enum name="GL_HSL_HUE"/>
+            <enum name="GL_HSL_HUE_KHR"/>
+            <enum name="GL_HSL_SATURATION"/>
+            <enum name="GL_HSL_SATURATION_KHR"/>
+            <enum name="GL_HSL_COLOR"/>
+            <enum name="GL_HSL_COLOR_KHR"/>
+            <enum name="GL_HSL_LUMINOSITY"/>
+            <enum name="GL_HSL_LUMINOSITY_KHR"/>
         </group>
 
         <group name="Boolean">

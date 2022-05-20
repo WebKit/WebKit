@@ -20,6 +20,402 @@ using namespace angle;
 namespace gl
 {
 
+CallCapture CaptureBeginPerfMonitorAMD(const State &glState, bool isCallValid, GLuint monitor)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("monitor", ParamType::TGLuint, monitor);
+
+    return CallCapture(angle::EntryPoint::GLBeginPerfMonitorAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureDeletePerfMonitorsAMD(const State &glState,
+                                         bool isCallValid,
+                                         GLsizei n,
+                                         GLuint *monitors)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
+
+    if (isCallValid)
+    {
+        ParamCapture monitorsParam("monitors", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, monitors, &monitorsParam.value);
+        CaptureDeletePerfMonitorsAMD_monitors(glState, isCallValid, n, monitors, &monitorsParam);
+        paramBuffer.addParam(std::move(monitorsParam));
+    }
+    else
+    {
+        ParamCapture monitorsParam("monitors", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &monitorsParam.value);
+        paramBuffer.addParam(std::move(monitorsParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLDeletePerfMonitorsAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureEndPerfMonitorAMD(const State &glState, bool isCallValid, GLuint monitor)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("monitor", ParamType::TGLuint, monitor);
+
+    return CallCapture(angle::EntryPoint::GLEndPerfMonitorAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGenPerfMonitorsAMD(const State &glState,
+                                      bool isCallValid,
+                                      GLsizei n,
+                                      GLuint *monitors)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
+
+    if (isCallValid)
+    {
+        ParamCapture monitorsParam("monitors", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, monitors, &monitorsParam.value);
+        CaptureGenPerfMonitorsAMD_monitors(glState, isCallValid, n, monitors, &monitorsParam);
+        paramBuffer.addParam(std::move(monitorsParam));
+    }
+    else
+    {
+        ParamCapture monitorsParam("monitors", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &monitorsParam.value);
+        paramBuffer.addParam(std::move(monitorsParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGenPerfMonitorsAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorCounterDataAMD(const State &glState,
+                                                bool isCallValid,
+                                                GLuint monitor,
+                                                GLenum pname,
+                                                GLsizei dataSize,
+                                                GLuint *data,
+                                                GLint *bytesWritten)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("monitor", ParamType::TGLuint, monitor);
+    paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("dataSize", ParamType::TGLsizei, dataSize);
+
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, data, &dataParam.value);
+        CaptureGetPerfMonitorCounterDataAMD_data(glState, isCallValid, monitor, pname, dataSize,
+                                                 data, bytesWritten, &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr), &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture bytesWrittenParam("bytesWritten", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, bytesWritten, &bytesWrittenParam.value);
+        CaptureGetPerfMonitorCounterDataAMD_bytesWritten(
+            glState, isCallValid, monitor, pname, dataSize, data, bytesWritten, &bytesWrittenParam);
+        paramBuffer.addParam(std::move(bytesWrittenParam));
+    }
+    else
+    {
+        ParamCapture bytesWrittenParam("bytesWritten", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr),
+                       &bytesWrittenParam.value);
+        paramBuffer.addParam(std::move(bytesWrittenParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorCounterDataAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorCounterInfoAMD(const State &glState,
+                                                bool isCallValid,
+                                                GLuint group,
+                                                GLuint counter,
+                                                GLenum pname,
+                                                void *data)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("group", ParamType::TGLuint, group);
+    paramBuffer.addValueParam("counter", ParamType::TGLuint, counter);
+    paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
+
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TvoidPointer);
+        InitParamValue(ParamType::TvoidPointer, data, &dataParam.value);
+        CaptureGetPerfMonitorCounterInfoAMD_data(glState, isCallValid, group, counter, pname, data,
+                                                 &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TvoidPointer);
+        InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorCounterInfoAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorCounterStringAMD(const State &glState,
+                                                  bool isCallValid,
+                                                  GLuint group,
+                                                  GLuint counter,
+                                                  GLsizei bufSize,
+                                                  GLsizei *length,
+                                                  GLchar *counterString)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("group", ParamType::TGLuint, group);
+    paramBuffer.addValueParam("counter", ParamType::TGLuint, counter);
+    paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
+
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetPerfMonitorCounterStringAMD_length(glState, isCallValid, group, counter, bufSize,
+                                                     length, counterString, &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture counterStringParam("counterString", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, counterString, &counterStringParam.value);
+        CaptureGetPerfMonitorCounterStringAMD_counterString(glState, isCallValid, group, counter,
+                                                            bufSize, length, counterString,
+                                                            &counterStringParam);
+        paramBuffer.addParam(std::move(counterStringParam));
+    }
+    else
+    {
+        ParamCapture counterStringParam("counterString", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr),
+                       &counterStringParam.value);
+        paramBuffer.addParam(std::move(counterStringParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorCounterStringAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorCountersAMD(const State &glState,
+                                             bool isCallValid,
+                                             GLuint group,
+                                             GLint *numCounters,
+                                             GLint *maxActiveCounters,
+                                             GLsizei counterSize,
+                                             GLuint *counters)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("group", ParamType::TGLuint, group);
+
+    if (isCallValid)
+    {
+        ParamCapture numCountersParam("numCounters", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, numCounters, &numCountersParam.value);
+        CaptureGetPerfMonitorCountersAMD_numCounters(glState, isCallValid, group, numCounters,
+                                                     maxActiveCounters, counterSize, counters,
+                                                     &numCountersParam);
+        paramBuffer.addParam(std::move(numCountersParam));
+    }
+    else
+    {
+        ParamCapture numCountersParam("numCounters", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr),
+                       &numCountersParam.value);
+        paramBuffer.addParam(std::move(numCountersParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture maxActiveCountersParam("maxActiveCounters", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, maxActiveCounters, &maxActiveCountersParam.value);
+        CaptureGetPerfMonitorCountersAMD_maxActiveCounters(glState, isCallValid, group, numCounters,
+                                                           maxActiveCounters, counterSize, counters,
+                                                           &maxActiveCountersParam);
+        paramBuffer.addParam(std::move(maxActiveCountersParam));
+    }
+    else
+    {
+        ParamCapture maxActiveCountersParam("maxActiveCounters", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr),
+                       &maxActiveCountersParam.value);
+        paramBuffer.addParam(std::move(maxActiveCountersParam));
+    }
+
+    paramBuffer.addValueParam("counterSize", ParamType::TGLsizei, counterSize);
+
+    if (isCallValid)
+    {
+        ParamCapture countersParam("counters", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, counters, &countersParam.value);
+        CaptureGetPerfMonitorCountersAMD_counters(glState, isCallValid, group, numCounters,
+                                                  maxActiveCounters, counterSize, counters,
+                                                  &countersParam);
+        paramBuffer.addParam(std::move(countersParam));
+    }
+    else
+    {
+        ParamCapture countersParam("counters", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &countersParam.value);
+        paramBuffer.addParam(std::move(countersParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorCountersAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorGroupStringAMD(const State &glState,
+                                                bool isCallValid,
+                                                GLuint group,
+                                                GLsizei bufSize,
+                                                GLsizei *length,
+                                                GLchar *groupString)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("group", ParamType::TGLuint, group);
+    paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
+
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetPerfMonitorGroupStringAMD_length(glState, isCallValid, group, bufSize, length,
+                                                   groupString, &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture groupStringParam("groupString", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, groupString, &groupStringParam.value);
+        CaptureGetPerfMonitorGroupStringAMD_groupString(glState, isCallValid, group, bufSize,
+                                                        length, groupString, &groupStringParam);
+        paramBuffer.addParam(std::move(groupStringParam));
+    }
+    else
+    {
+        ParamCapture groupStringParam("groupString", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr),
+                       &groupStringParam.value);
+        paramBuffer.addParam(std::move(groupStringParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorGroupStringAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPerfMonitorGroupsAMD(const State &glState,
+                                           bool isCallValid,
+                                           GLint *numGroups,
+                                           GLsizei groupsSize,
+                                           GLuint *groups)
+{
+    ParamBuffer paramBuffer;
+
+    if (isCallValid)
+    {
+        ParamCapture numGroupsParam("numGroups", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, numGroups, &numGroupsParam.value);
+        CaptureGetPerfMonitorGroupsAMD_numGroups(glState, isCallValid, numGroups, groupsSize,
+                                                 groups, &numGroupsParam);
+        paramBuffer.addParam(std::move(numGroupsParam));
+    }
+    else
+    {
+        ParamCapture numGroupsParam("numGroups", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr),
+                       &numGroupsParam.value);
+        paramBuffer.addParam(std::move(numGroupsParam));
+    }
+
+    paramBuffer.addValueParam("groupsSize", ParamType::TGLsizei, groupsSize);
+
+    if (isCallValid)
+    {
+        ParamCapture groupsParam("groups", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, groups, &groupsParam.value);
+        CaptureGetPerfMonitorGroupsAMD_groups(glState, isCallValid, numGroups, groupsSize, groups,
+                                              &groupsParam);
+        paramBuffer.addParam(std::move(groupsParam));
+    }
+    else
+    {
+        ParamCapture groupsParam("groups", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &groupsParam.value);
+        paramBuffer.addParam(std::move(groupsParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPerfMonitorGroupsAMD, std::move(paramBuffer));
+}
+
+CallCapture CaptureSelectPerfMonitorCountersAMD(const State &glState,
+                                                bool isCallValid,
+                                                GLuint monitor,
+                                                GLboolean enable,
+                                                GLuint group,
+                                                GLint numCounters,
+                                                GLuint *counterList)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("monitor", ParamType::TGLuint, monitor);
+    paramBuffer.addValueParam("enable", ParamType::TGLboolean, enable);
+    paramBuffer.addValueParam("group", ParamType::TGLuint, group);
+    paramBuffer.addValueParam("numCounters", ParamType::TGLint, numCounters);
+
+    if (isCallValid)
+    {
+        ParamCapture counterListParam("counterList", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, counterList, &counterListParam.value);
+        CaptureSelectPerfMonitorCountersAMD_counterList(glState, isCallValid, monitor, enable,
+                                                        group, numCounters, counterList,
+                                                        &counterListParam);
+        paramBuffer.addParam(std::move(counterListParam));
+    }
+    else
+    {
+        ParamCapture counterListParam("counterList", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &counterListParam.value);
+        paramBuffer.addParam(std::move(counterListParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLSelectPerfMonitorCountersAMD, std::move(paramBuffer));
+}
+
 CallCapture CaptureDrawArraysInstancedBaseInstanceANGLE(const State &glState,
                                                         bool isCallValid,
                                                         PrimitiveMode modePacked,
@@ -46,7 +442,7 @@ CallCapture CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE(const State 
                                                                     GLsizei count,
                                                                     DrawElementsType typePacked,
                                                                     const GLvoid *indices,
-                                                                    GLsizei instanceCounts,
+                                                                    GLsizei instanceCount,
                                                                     GLint baseVertex,
                                                                     GLuint baseInstance)
 {
@@ -61,8 +457,8 @@ CallCapture CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE(const State 
         ParamCapture indicesParam("indices", ParamType::TGLvoidConstPointer);
         InitParamValue(ParamType::TGLvoidConstPointer, indices, &indicesParam.value);
         CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE_indices(
-            glState, isCallValid, modePacked, count, typePacked, indices, instanceCounts,
-            baseVertex, baseInstance, &indicesParam);
+            glState, isCallValid, modePacked, count, typePacked, indices, instanceCount, baseVertex,
+            baseInstance, &indicesParam);
         paramBuffer.addParam(std::move(indicesParam));
     }
     else
@@ -73,7 +469,7 @@ CallCapture CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE(const State 
         paramBuffer.addParam(std::move(indicesParam));
     }
 
-    paramBuffer.addValueParam("instanceCounts", ParamType::TGLsizei, instanceCounts);
+    paramBuffer.addValueParam("instanceCount", ParamType::TGLsizei, instanceCount);
     paramBuffer.addValueParam("baseVertex", ParamType::TGLint, baseVertex);
     paramBuffer.addValueParam("baseInstance", ParamType::TGLuint, baseInstance);
 

@@ -36,7 +36,7 @@ Overlay::Overlay(rx::GLImplFactory *factory)
 {}
 Overlay::~Overlay() = default;
 
-angle::Result Overlay::init(const Context *context)
+void Overlay::init()
 {
     initOverlayWidgets();
     mLastPerSecondUpdate = angle::GetCurrentSystemTime();
@@ -46,14 +46,6 @@ angle::Result Overlay::init(const Context *context)
         [](const std::unique_ptr<overlay::Widget> &widget) { return widget.get() != nullptr; }));
 
     enableOverlayWidgetsFromEnvironment();
-
-    bool success = false;
-    ANGLE_TRY(mImplementation->init(context, &success));
-    if (!success)
-    {
-        mState.mEnabledWidgetCount = 0;
-    }
-    return angle::Result::Continue;
 }
 
 void Overlay::destroy(const gl::Context *context)

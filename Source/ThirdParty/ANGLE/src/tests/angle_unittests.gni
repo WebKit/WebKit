@@ -108,6 +108,7 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/ImmutableString_test.cpp",
   "compiler_tests/InitOutputVariables_test.cpp",
   "compiler_tests/IntermNode_test.cpp",
+  "compiler_tests/KHR_blend_equation_advanced_test.cpp",
   "compiler_tests/NV_draw_buffers_test.cpp",
   "compiler_tests/OES_sample_variables_test.cpp",
   "compiler_tests/OES_standard_derivatives_test.cpp",

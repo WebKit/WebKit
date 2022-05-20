@@ -29,6 +29,7 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
 
     void resetNativeWindow() override;
     EGLNativeWindowType getNativeWindow() const override;
+    void *getPlatformExtension() override;
     EGLNativeDisplayType getNativeDisplay() const override;
 
     void messageLoop() override;

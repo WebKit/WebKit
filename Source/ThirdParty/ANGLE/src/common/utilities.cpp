@@ -269,7 +269,7 @@ std::string GetGLSLTypeString(GLenum type)
             return "mat4";
         default:
             UNREACHABLE();
-            return nullptr;
+            return "";
     }
 }
 

@@ -48,8 +48,8 @@ void Overlay::initOverlayWidgets()
             widget->coords[1] = offsetY;
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
-            widget->color[0]  = 0.498039215686f;
-            widget->color[1]  = 0.749019607843f;
+            widget->color[0]  = 0.4980392156862745f;
+            widget->color[1]  = 0.7490196078431373f;
             widget->color[2]  = 1.0f;
             widget->color[3]  = 1.0f;
         }
@@ -118,10 +118,10 @@ void Overlay::initOverlayWidgets()
             widget->coords[1] = offsetY;
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
-            widget->color[0]  = 0.294117647059f;
-            widget->color[1]  = 0.78431372549f;
+            widget->color[0]  = 0.29411764705882354f;
+            widget->color[1]  = 0.7843137254901961f;
             widget->color[2]  = 0.0f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanRenderPassCount].reset(widget);
         {
@@ -139,8 +139,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[1] = std::max(offsetY - height, 1);
             widget->description.coords[2] = offsetX + width;
             widget->description.coords[3] = offsetY;
-            widget->description.color[0]  = 0.294117647059f;
-            widget->description.color[1]  = 0.78431372549f;
+            widget->description.color[0]  = 0.29411764705882354f;
+            widget->description.color[1]  = 0.7843137254901961f;
             widget->description.color[2]  = 0.0f;
             widget->description.color[3]  = 1.0f;
         }
@@ -162,9 +162,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX;
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 1.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanRenderPassBufferCount].reset(widget);
         {
@@ -183,8 +183,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = std::min(offsetX + width, -1);
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 1.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -205,9 +205,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX;
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 1.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanSecondaryCommandBufferPoolWaste].reset(widget);
         {
@@ -226,8 +226,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = std::min(offsetX + width, -1);
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 1.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -247,10 +247,10 @@ void Overlay::initOverlayWidgets()
             widget->coords[1] = offsetY;
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
-            widget->color[0]  = 0.294117647059f;
-            widget->color[1]  = 0.78431372549f;
+            widget->color[0]  = 0.29411764705882354f;
+            widget->color[1]  = 0.7843137254901961f;
             widget->color[2]  = 0.0f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanWriteDescriptorSetCount].reset(widget);
         {
@@ -268,8 +268,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[1] = std::max(offsetY - height, 1);
             widget->description.coords[2] = offsetX + width;
             widget->description.coords[3] = offsetY;
-            widget->description.color[0]  = 0.294117647059f;
-            widget->description.color[1]  = 0.78431372549f;
+            widget->description.color[0]  = 0.29411764705882354f;
+            widget->description.color[1]  = 0.7843137254901961f;
             widget->description.color[2]  = 0.0f;
             widget->description.color[3]  = 1.0f;
         }
@@ -292,8 +292,8 @@ void Overlay::initOverlayWidgets()
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 1.0f;
             widget->color[1]  = 0.0f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDescriptorSetAllocations].reset(widget);
         {
@@ -313,7 +313,7 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 1.0f;
             widget->description.color[1]  = 0.0f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -335,8 +335,8 @@ void Overlay::initOverlayWidgets()
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 1.0f;
             widget->color[1]  = 0.0f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanShaderBufferDSHitRate].reset(widget);
         {
@@ -356,7 +356,7 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 1.0f;
             widget->description.color[1]  = 0.0f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -377,9 +377,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX;
             widget->coords[3] = offsetY;
             widget->color[0]  = 0.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDynamicBufferAllocations].reset(widget);
         {
@@ -398,8 +398,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = offsetX;
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 0.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -420,9 +420,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 0.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 0.725490196078f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.7254901960784313f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDescriptorCacheSize].reset(widget);
         {
@@ -441,8 +441,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = offsetX + width;
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 0.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -463,9 +463,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 0.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 0.294117647059f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanTextureDescriptorCacheSize].reset(widget);
         {
@@ -484,8 +484,8 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = offsetX + width;
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 0.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
     }
@@ -506,9 +506,9 @@ void Overlay::initOverlayWidgets()
             widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
             widget->color[0]  = 0.0f;
-            widget->color[1]  = 0.78431372549f;
-            widget->color[2]  = 1.17647058824f;
-            widget->color[3]  = 0.78431372549f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 1.1764705882352942f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanUniformDescriptorCacheSize].reset(widget);
         {
@@ -527,10 +527,33 @@ void Overlay::initOverlayWidgets()
             widget->description.coords[2] = offsetX + width;
             widget->description.coords[3] = offsetY;
             widget->description.color[0]  = 0.0f;
-            widget->description.color[1]  = 0.78431372549f;
-            widget->description.color[2]  = 0.294117647059f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
             widget->description.color[3]  = 1.0f;
         }
+    }
+
+    {
+        Count *widget = new Count;
+        {
+            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
+            const int32_t offsetX  = 10;
+            const int32_t offsetY  = 100;
+            const int32_t width    = 30 * (kFontGlyphWidth >> fontSize);
+            const int32_t height   = (kFontGlyphHeight >> fontSize);
+
+            widget->type      = WidgetType::Count;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 1.0f;
+            widget->color[2]  = 1.0f;
+            widget->color[3]  = 1.0f;
+        }
+        mState.mOverlayWidgets[WidgetId::VulkanDescriptorCacheKeySize].reset(widget);
     }
 }
 

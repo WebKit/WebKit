@@ -21,18 +21,6 @@ namespace rx
 OverlayVk::OverlayVk(const gl::OverlayState &state) : OverlayImpl(state) {}
 OverlayVk::~OverlayVk() = default;
 
-angle::Result OverlayVk::init(const gl::Context *context, bool *successOut)
-{
-    *successOut = false;
-
-    ContextVk *contextVk = vk::GetImpl(context);
-    ANGLE_TRY(createFont(contextVk));
-
-    ANGLE_TRY(contextVk->flushImpl(nullptr, RenderPassClosureReason::OverlayFontCreation));
-    *successOut = true;
-    return angle::Result::Continue;
-}
-
 void OverlayVk::onDestroy(const gl::Context *context)
 {
     RendererVk *renderer = vk::GetImpl(context)->getRenderer();
@@ -122,6 +110,12 @@ angle::Result OverlayVk::onPresent(ContextVk *contextVk,
     if (mState.getEnabledWidgetCount() == 0)
     {
         return angle::Result::Continue;
+    }
+
+    // Lazily initialize the font on first use
+    if (!mFontImage.valid())
+    {
+        ANGLE_TRY(createFont(contextVk));
     }
 
     RendererVk *renderer = contextVk->getRenderer();

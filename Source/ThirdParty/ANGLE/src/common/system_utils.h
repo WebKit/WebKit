@@ -164,6 +164,8 @@ bool IsDebuggerAttached();
 // Calls system APIs to break into the debugger.
 void BreakDebugger();
 
+uint64_t GetProcessMemoryUsageKB();
+
 bool ProtectMemory(uintptr_t start, size_t size);
 bool UnprotectMemory(uintptr_t start, size_t size);
 

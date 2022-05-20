@@ -745,6 +745,10 @@ config("angle_backend_config") {
     defines += [ "ANGLE_EXPOSE_NON_CONFORMANT_EXTENSIONS_AND_VERSIONS" ]
   }
 
+  if (angle_use_spirv_gen_through_glslang) {
+    defines += [ "ANGLE_USE_SPIRV_GENERATION_THROUGH_GLSLANG" ]
+  }
+
   configs = []
 
   if (angle_enable_d3d11) {

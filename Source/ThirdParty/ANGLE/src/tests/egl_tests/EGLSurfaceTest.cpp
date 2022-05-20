@@ -927,14 +927,14 @@ TEST_P(EGLSurfaceTest3, MakeCurrentDifferentSurfaces)
     // Must be after the eglMakeCurrent() so the renderer string is initialized.
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsAndroid());
 
-    glClearColor(GLColor::red.R, GLColor::red.G, GLColor::red.B, GLColor::red.A);
+    glClearColor(kFloatRed.R, kFloatRed.G, kFloatRed.B, kFloatRed.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // Use different surfaces for draw and read, read should stay the same
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, secondPbufferSurface, firstPbufferSurface, mContext));
-    glClearColor(GLColor::blue.R, GLColor::blue.G, GLColor::blue.B, GLColor::blue.A);
+    glClearColor(kFloatBlue.R, kFloatBlue.G, kFloatBlue.B, kFloatBlue.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -1256,7 +1256,7 @@ TEST_P(EGLSurfaceTest3, BlitBetweenSurfaces)
     // Must be after the eglMakeCurrent() so the renderer string is initialized.
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && (IsAndroid() || IsWindows()));
 
-    glClearColor(GLColor::red.R, GLColor::red.G, GLColor::red.B, GLColor::red.A);
+    glClearColor(kFloatRed.R, kFloatRed.G, kFloatRed.B, kFloatRed.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
 
@@ -1306,14 +1306,14 @@ TEST_P(EGLSurfaceTest3, BlitBetweenSurfacesWithDeferredClear)
     // Must be after the eglMakeCurrent() so the renderer string is initialized.
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && (IsAndroid() || IsWindows()));
 
-    glClearColor(GLColor::red.R, GLColor::red.G, GLColor::red.B, GLColor::red.A);
+    glClearColor(kFloatRed.R, kFloatRed.G, kFloatRed.B, kFloatRed.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
     // Force the clear to be flushed
     EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
 
     // Clear to green, but don't read it back so the clear is deferred.
-    glClearColor(GLColor::green.R, GLColor::green.G, GLColor::green.B, GLColor::green.A);
+    glClearColor(kFloatGreen.R, kFloatGreen.G, kFloatGreen.B, kFloatGreen.A);
     glClear(GL_COLOR_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
 

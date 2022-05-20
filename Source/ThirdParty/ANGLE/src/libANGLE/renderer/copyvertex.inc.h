@@ -9,6 +9,49 @@
 namespace rx
 {
 
+// Returns an aligned buffer to read the input from
+template <typename T, size_t inputComponentCount>
+inline const T *GetAlignedOffsetInput(const T *offsetInput, T *alignedElement)
+{
+    if (reinterpret_cast<uintptr_t>(offsetInput) % sizeof(T) != 0)
+    {
+        // Applications may pass in arbitrarily aligned buffers as input.
+        // Certain architectures have restrictions regarding unaligned reads. Specifically, we crash
+        // on armeabi-v7a devices with a SIGBUS error when performing such operations. arm64 and
+        // x86-64 devices do not appear to have such issues.
+        //
+        // The workaround is to detect if the input buffer is unaligned and if so, perform a
+        // byte-wise copy of the unaligned portion and a memcpy of the rest of the buffer.
+        uint8_t *alignedBuffer               = reinterpret_cast<uint8_t *>(&alignedElement[0]);
+        uintptr_t unalignedInputStartAddress = reinterpret_cast<uintptr_t>(offsetInput);
+        constexpr size_t kAlignmentMinusOne  = sizeof(T) - 1;
+        uintptr_t alignedInputStartAddress =
+            (reinterpret_cast<uintptr_t>(offsetInput) + kAlignmentMinusOne) & ~(kAlignmentMinusOne);
+        ASSERT(alignedInputStartAddress >= unalignedInputStartAddress);
+
+        const size_t totalBytesToCopy     = sizeof(T) * inputComponentCount;
+        const size_t unalignedBytesToCopy = alignedInputStartAddress - unalignedInputStartAddress;
+        ASSERT(totalBytesToCopy >= unalignedBytesToCopy);
+
+        // byte-wise copy of unaligned portion
+        for (size_t i = 0; i < unalignedBytesToCopy; i++)
+        {
+            alignedBuffer[i] = reinterpret_cast<const uint8_t *>(&offsetInput[0])[i];
+        }
+
+        // memcpy remaining buffer
+        memcpy(&alignedBuffer[unalignedBytesToCopy],
+               &reinterpret_cast<const uint8_t *>(&offsetInput[0])[unalignedBytesToCopy],
+               totalBytesToCopy - unalignedBytesToCopy);
+
+        return alignedElement;
+    }
+    else
+    {
+        return offsetInput;
+    }
+}
+
 template <typename T,
           size_t inputComponentCount,
           size_t outputComponentCount,
@@ -28,7 +71,11 @@ inline void CopyNativeVertexData(const uint8_t *input, size_t stride, size_t cou
         for (size_t i = 0; i < count; i++)
         {
             const T *offsetInput = reinterpret_cast<const T *>(input + (i * stride));
-            T *offsetOutput      = reinterpret_cast<T *>(output) + i * outputComponentCount;
+            T offsetInputAligned[inputComponentCount];
+            offsetInput =
+                GetAlignedOffsetInput<T, inputComponentCount>(offsetInput, &offsetInputAligned[0]);
+
+            T *offsetOutput = reinterpret_cast<T *>(output) + i * outputComponentCount;
 
             memcpy(offsetOutput, offsetInput, attribSize);
         }
@@ -41,7 +88,12 @@ inline void CopyNativeVertexData(const uint8_t *input, size_t stride, size_t cou
     for (size_t i = 0; i < count; i++)
     {
         const T *offsetInput = reinterpret_cast<const T *>(input + (i * stride));
-        T *offsetOutput      = reinterpret_cast<T *>(output) + i * outputComponentCount;
+        T offsetInputAligned[inputComponentCount];
+        ASSERT(sizeof(offsetInputAligned) == attribSize);
+        offsetInput =
+            GetAlignedOffsetInput<T, inputComponentCount>(offsetInput, &offsetInputAligned[0]);
+
+        T *offsetOutput = reinterpret_cast<T *>(output) + i * outputComponentCount;
 
         memcpy(offsetOutput, offsetInput, attribSize);
 
@@ -195,6 +247,10 @@ inline void CopyToFloatVertexData(const uint8_t *input,
         const T *offsetInput = reinterpret_cast<const T *>(input + (stride * i));
         outputType *offsetOutput =
             reinterpret_cast<outputType *>(output) + i * outputComponentCount;
+
+        T offsetInputAligned[inputComponentCount];
+        offsetInput =
+            GetAlignedOffsetInput<T, inputComponentCount>(offsetInput, &offsetInputAligned[0]);
 
         for (size_t j = 0; j < inputComponentCount; j++)
         {

@@ -433,6 +433,113 @@ TEST_P(IndexBufferOffsetTest, DrawAtDifferentOffsetAlignments)
     EXPECT_GL_NO_ERROR();
 }
 
+// Draw with the same element buffer, but with two different types of data.
+TEST_P(IndexBufferOffsetTest, DrawWithSameBufferButDifferentTypes)
+{
+    GLubyte indexData8[]   = {0, 1, 2};
+    GLushort indexData16[] = {1, 2, 3};
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    // Create element buffer and fill offset 0 with data from indexData8 and offset 512 with data
+    // from indexData16
+    GLBuffer buffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4096, nullptr, GL_DYNAMIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indexData8), indexData8);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 512, sizeof(indexData16), indexData16);
+
+    // Draw with 8 bit index data
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(0));
+    // Draw with 16 bits index buffer
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(512));
+
+    // Check the upper left triangle
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 4, GLColor::red);
+    // Check the down right triangle
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Draw with GL_LINE_LOOP and followed by GL_TRIANGLES, all using the same element buffer.
+TEST_P(IndexBufferOffsetTest, DrawWithSameBufferButDifferentModes)
+{
+    GLushort indexDataLineLoop[] = {0, 1, 2};
+    GLushort indexDataTriangle[] = {1, 2, 3};
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    // Create element buffer and fill offset 0 with data from indexData8 and offset 512 with data
+    // from indexData16
+    GLBuffer buffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4096, nullptr, GL_DYNAMIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indexDataLineLoop), indexDataLineLoop);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 512, sizeof(indexDataTriangle), indexDataTriangle);
+
+    // Draw line loop
+    glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT, 0);
+    // Draw triangle
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(512));
+
+    // Check the down right triangle
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Draw with GL_LINE_LOOP and followed by GL_TRIANGLES, all using the same element buffer.
+TEST_P(IndexBufferOffsetTest, DrawArraysLineLoopFollowedByDrawElementsTriangle)
+{
+    GLuint indexDataLineLoop[] = {0, 1, 2};
+    GLuint indexDataTriangle[] = {1, 2, 3};
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    // Create element buffer and fill offset 0 with data from indexDataLineLoop and offset 512 with
+    // data from indexDataTriangle
+    GLBuffer buffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4096, nullptr, GL_DYNAMIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indexDataLineLoop), indexDataLineLoop);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 512, sizeof(indexDataTriangle), indexDataTriangle);
+
+    // First call drawElements with the same primitive and type as the final drawElement call.
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, reinterpret_cast<void *>(0));
+    // Then drawArray with line loop to trigger the special handling of line loop.
+    glDrawArrays(GL_LINE_LOOP, 0, 3);
+    // Finally drawElements with triangle and same type to ensure the element buffer state that was
+    // modified by line loop draw call gets restored properly.
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, reinterpret_cast<void *>(512));
+
+    // Check the down right triangle
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Uses index buffer offset and 2 drawElement calls one of the other with different counts,
 // makes sure the second drawElement call will have its data available.
 TEST_P(IndexBufferOffsetTest, DrawWithDifferentCountsSameOffset)

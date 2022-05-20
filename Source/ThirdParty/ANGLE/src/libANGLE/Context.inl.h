@@ -160,6 +160,13 @@ ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
 {
     Buffer *bufferObject =
         mState.mBufferManager->checkBufferAllocation(mImplementation.get(), buffer);
+
+    // Early return if rebinding the same buffer
+    if (bufferObject == mState.getTargetBuffer(target))
+    {
+        return;
+    }
+
     mState.setBufferBinding(this, target, bufferObject);
     mStateCache.onBufferBindingChange(this);
 }

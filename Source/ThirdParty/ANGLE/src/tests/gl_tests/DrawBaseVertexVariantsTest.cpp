@@ -444,6 +444,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(DrawBaseVertexVariantsTest,
                                  DrawBaseVertexVariantsTestPrint,
                                  testing::ValuesIn(kBufferDataUsage),
                                  ES3_D3D11(),
+                                 ES3_METAL(),
                                  ES3_OPENGL(),
                                  ES3_OPENGLES(),
                                  ES3_VULKAN());

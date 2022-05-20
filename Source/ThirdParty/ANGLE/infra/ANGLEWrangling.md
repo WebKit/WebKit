@@ -4,7 +4,7 @@ As an ANGLE Sheriff. Your job is to:
 
  1. Keep the [ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders) in good
     working order.
- 1. Control and monitor the [ANGLE auto-rollers](#task-3_the-auto_rollers).
+ 1. Control and monitor the [ANGLE auto-rollers](#the-auto-rollers).
  1. Keep the [ANGLE Standalone Testers](README.md) in good working order.
  1. Keep the [SwANGLE Try Waterfall](https://luci-milo.appspot.com/p/chromium/g/tryserver.chromium.swangle/builders) in good
     working order.

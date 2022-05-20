@@ -216,6 +216,39 @@ TEST_P(DXT1CompressedTextureTest, CompressedTexStorage)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test validation of non block sizes, width 672 and height 114 and multiple mip levels
+TEST_P(DXT1CompressedTextureTest, NonBlockSizesMipLevels)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture.get());
+
+    constexpr GLuint kWidth  = 674;
+    constexpr GLuint kHeight = 114;
+
+    // From EXT_texture_compression_s3tc specifications:
+    // When an S3TC image with a width of <w>, height of <h>, and block size of
+    // <blocksize> (8 or 16 bytes) is decoded, the corresponding image size (in
+    // bytes) is:
+    //     ceil(<w>/4) * ceil(<h>/4) * blocksize.
+    constexpr GLuint kImageSize = ((kWidth + 3) / 4) * ((kHeight + 3) / 4) * 8;
+
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, kWidth, kHeight, 0,
+                           kImageSize, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLuint kImageSize1 = ((kWidth / 2 + 3) / 4) * ((kHeight / 2 + 3) / 4) * 8;
+    glCompressedTexImage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, kWidth / 2,
+                           kHeight / 2, 0, kImageSize1, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLuint kImageSize2 = ((kWidth / 4 + 3) / 4) * ((kHeight / 4 + 3) / 4) * 8;
+    glCompressedTexImage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, kWidth / 4,
+                           kHeight / 4, 0, kImageSize2, nullptr);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test validation of glCompressedTexSubImage2D with DXT formats
 TEST_P(DXT1CompressedTextureTest, CompressedTexSubImageValidation)
 {

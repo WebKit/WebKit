@@ -23,6 +23,10 @@ struct PipelineScoped
     // May coincide with `internal`, but may also diverge from `internal`.
     const T *external = nullptr;
 
+    // Extra data that is configured to talk externally to the program.
+    // Used only for adjusting Metal's InstanceId.
+    const T *externalExtra = nullptr;
+
     // Data that is configured to talk internally within the program.
     // May coincide with `external`, but may also diverge from `external`.
     const T *internal = nullptr;

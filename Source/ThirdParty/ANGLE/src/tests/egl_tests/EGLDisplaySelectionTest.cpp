@@ -14,6 +14,7 @@
 #include "common/string_utils.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/ANGLETest.h"
+#include "test_utils/system_info_util.h"
 #include "util/OSWindow.h"
 
 using namespace angle;
@@ -25,51 +26,15 @@ class EGLDisplaySelectionTest : public ANGLETest
 
   protected:
     // Returns the index of the low or high power GPU in SystemInfo depending on the argument.
-    int findGPU(bool lowPower)
+    int findGPU(bool lowPower) const
     {
-        if (mSystemInfo.gpus.size() < 2)
-        {
-            return 0;
-        }
-        for (int i = 0; i < static_cast<int>(mSystemInfo.gpus.size()); ++i)
-        {
-            if (lowPower && IsIntel(mSystemInfo.gpus[i].vendorId))
-            {
-                return i;
-            }
-            // Return the high power GPU, i.e any non-intel GPU
-            else if (!lowPower && !IsIntel(mSystemInfo.gpus[i].vendorId))
-            {
-                return i;
-            }
-        }
-        // Can't find GPU
-        ASSERT(false);
-        return 0;
+        if (lowPower)
+            return FindLowPowerGPU(mSystemInfo);
+        return FindHighPowerGPU(mSystemInfo);
     }
 
     // Returns the index of the active GPU in SystemInfo based on the renderer string.
-    int findActiveGPU()
-    {
-        char *renderer = (char *)glGetString(GL_RENDERER);
-        std::string rendererString(renderer);
-        for (int i = 0; i < static_cast<int>(mSystemInfo.gpus.size()); ++i)
-        {
-            std::vector<std::string> vendorTokens;
-            angle::SplitStringAlongWhitespace(VendorName(mSystemInfo.gpus[i].vendorId),
-                                              &vendorTokens);
-            for (std::string &token : vendorTokens)
-            {
-                if (rendererString.find(token) != std::string::npos)
-                {
-                    return i;
-                }
-            }
-        }
-        // Can't find active GPU
-        ASSERT(false);
-        return 0;
-    }
+    int findActiveGPU() const { return FindActiveOpenGLGPU(mSystemInfo); }
 
     SystemInfo mSystemInfo;
 };
@@ -512,8 +477,9 @@ class EGLDisplaySelectionTestDeviceId : public EGLDisplaySelectionTestNoFixture
   protected:
     void initializeDisplayWithDeviceId(EGLDisplay *display, uint64_t deviceId)
     {
-        GLenum platformType = GetParam().getRenderer();
-        GLenum deviceType   = GetParam().getDeviceType();
+        GLenum platformType          = GetParam().getRenderer();
+        GLenum deviceType            = GetParam().getDeviceType();
+        GLint displayPowerPreference = GetParam().eglParameters.displayPowerPreference;
 
         EGLAttrib high = ((deviceId >> 32) & 0xFFFFFFFF);
         EGLAttrib low  = (deviceId & 0xFFFFFFFF);
@@ -531,6 +497,11 @@ class EGLDisplaySelectionTestDeviceId : public EGLDisplaySelectionTestNoFixture
         displayAttributes.push_back(high);
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE);
         displayAttributes.push_back(low);
+        if (displayPowerPreference != EGL_DONT_CARE)
+        {
+            displayAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
+            displayAttributes.push_back(displayPowerPreference);
+        }
         displayAttributes.push_back(EGL_NONE);
 
         *display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
@@ -549,6 +520,8 @@ class EGLDisplaySelectionTestDeviceId : public EGLDisplaySelectionTestNoFixture
 TEST_P(EGLDisplaySelectionTestDeviceId, DeviceId)
 {
     ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_device_id"));
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_display_power_preference") &&
+                       GetParam().eglParameters.displayPowerPreference != EGL_DONT_CARE);
 
     initializeWindow();
 
@@ -572,6 +545,40 @@ TEST_P(EGLDisplaySelectionTestDeviceId, DeviceId)
     terminateWindow();
 }
 
+TEST_P(EGLDisplaySelectionTestDeviceId, DeviceIdConcurrently)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_device_id"));
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_display_power_preference") &&
+                       GetParam().eglParameters.displayPowerPreference != EGL_DONT_CARE);
+
+    initializeWindow();
+    struct ContextForDevice
+    {
+        EGLDisplay display{};
+        EGLContext context{};
+    };
+    std::vector<ContextForDevice> contexts(mSystemInfo.gpus.size());
+
+    for (size_t i = 0; i < contexts.size(); i++)
+    {
+        auto &display = contexts[i].display;
+        auto &context = contexts[i].context;
+        initializeDisplayWithDeviceId(&display, mSystemInfo.gpus[i].systemDeviceId);
+        initializeContextForDisplay(display, &context);
+        eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
+        ASSERT_EQ(static_cast<int>(i), findActiveGPU());
+    }
+    for (auto &context : contexts)
+    {
+        // Terminate the displays
+        terminateContext(context.display, context.context);
+        eglMakeCurrent(context.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        terminateDisplay(context.display);
+    }
+
+    terminateWindow();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLDisplaySelectionTest);
 ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTest,
                        WithLowPowerGPU(ES2_METAL()),
@@ -589,4 +596,8 @@ ANGLE_INSTANTIATE_TEST(EGLDisplaySelectionTestDeviceId,
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES3_D3D11()),
                        WithNoFixture(ES2_METAL()),
-                       WithNoFixture(ES3_METAL()));
+                       WithNoFixture(ES3_METAL()),
+                       WithNoFixture(WithLowPowerGPU(ES2_METAL())),
+                       WithNoFixture(WithLowPowerGPU(ES3_METAL())),
+                       WithNoFixture(WithHighPowerGPU(ES2_METAL())),
+                       WithNoFixture(WithHighPowerGPU(ES3_METAL())));

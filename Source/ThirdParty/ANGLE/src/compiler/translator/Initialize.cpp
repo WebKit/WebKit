@@ -185,6 +185,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::ANDROID_extension_pack_es31a] = EBhUndefined;
     }
+    if (resources.KHR_blend_equation_advanced)
+    {
+        extBehavior[TExtension::KHR_blend_equation_advanced] = EBhUndefined;
+    }
 }
 
 void ResetExtensionBehavior(const ShBuiltInResources &resources,

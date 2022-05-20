@@ -106,8 +106,11 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     virtual void saveScreenshot(const std::string &screenshotName) {}
     virtual void computeGPUTime() {}
 
-    double printResults();
     void calibrateStepsToRun(RunLoopPolicy policy);
+
+    void processResults();
+    void processClockResult(const char *metric, double resultSeconds);
+    void processMemoryResult(const char *metric, uint64_t resultKB);
 
     std::string mName;
     std::string mBackend;
@@ -122,6 +125,14 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     int mIterationsPerStep;
     bool mRunning;
     std::vector<double> mTestTrialResults;
+
+    struct CounterInfo
+    {
+        std::string name;
+        std::vector<GLuint> samples;
+    };
+    angle::HashMap<GLuint, CounterInfo> mPerfCounterInfo;
+    std::vector<uint64_t> mProcessMemoryUsageKBSamples;
 };
 
 enum class SurfaceType
@@ -190,6 +201,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     void endGLTraceEvent(const char *name, double hostTimeSec);
 
     void disableTestHarnessSwap() { mSwapEnabled = false; }
+    void updatePerfCounters();
 
     bool mIsTimestampQueryAvailable;
 
@@ -203,6 +215,8 @@ class ANGLERenderTest : public ANGLEPerfTest
     void computeGPUTime() override;
 
     bool areExtensionPrerequisitesFulfilled() const;
+
+    void initPerfCounters();
 
     GLWindowBase *mGLWindow;
     OSWindow *mOSWindow;

@@ -89,6 +89,93 @@ struct SaveFileHelper
     std::string mFilePath;
 };
 
+// AMD_performance_monitor helpers.
+constexpr char kPerfMonitorExtensionName[] = "GL_AMD_performance_monitor";
+
+struct PerfMonitorCounter
+{
+    PerfMonitorCounter();
+    ~PerfMonitorCounter();
+
+    std::string name;
+    uint32_t value;
+};
+using PerfMonitorCounters = std::vector<PerfMonitorCounter>;
+
+struct PerfMonitorCounterGroup
+{
+    PerfMonitorCounterGroup();
+    ~PerfMonitorCounterGroup();
+
+    std::string name;
+    PerfMonitorCounters counters;
+};
+using PerfMonitorCounterGroups = std::vector<PerfMonitorCounterGroup>;
+
+uint32_t GetPerfMonitorCounterIndex(const PerfMonitorCounters &counters, const std::string &name);
+const PerfMonitorCounter &GetPerfMonitorCounter(const PerfMonitorCounters &counters,
+                                                const std::string &name);
+PerfMonitorCounter &GetPerfMonitorCounter(PerfMonitorCounters &counters, const std::string &name);
+uint32_t GetPerfMonitorCounterGroupIndex(const PerfMonitorCounterGroups &groups,
+                                         const std::string &name);
+const PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(const PerfMonitorCounterGroups &groups,
+                                                          const std::string &name);
+PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(PerfMonitorCounterGroups &groups,
+                                                    const std::string &name);
+
+struct PerfMonitorTriplet
+{
+    uint32_t group;
+    uint32_t counter;
+    uint32_t value;
+};
+
+#define ANGLE_VK_PERF_COUNTERS_X(FN)              \
+    FN(primaryBuffers)                            \
+    FN(renderPasses)                              \
+    FN(submittedFrames)                           \
+    FN(writeDescriptorSets)                       \
+    FN(flushedOutsideRenderPassCommandBuffers)    \
+    FN(resolveImageCommands)                      \
+    FN(depthClears)                               \
+    FN(depthLoads)                                \
+    FN(depthStores)                               \
+    FN(stencilClears)                             \
+    FN(stencilLoads)                              \
+    FN(stencilStores)                             \
+    FN(colorAttachmentUnresolves)                 \
+    FN(depthAttachmentUnresolves)                 \
+    FN(stencilAttachmentUnresolves)               \
+    FN(colorAttachmentResolves)                   \
+    FN(depthAttachmentResolves)                   \
+    FN(stencilAttachmentResolves)                 \
+    FN(readOnlyDepthStencilRenderPasses)          \
+    FN(descriptorSetAllocations)                  \
+    FN(descriptorSetCacheTotalSize)               \
+    FN(descriptorSetCacheKeySizeBytes)            \
+    FN(uniformsAndXfbDescriptorSetCacheHits)      \
+    FN(uniformsAndXfbDescriptorSetCacheMisses)    \
+    FN(uniformsAndXfbDescriptorSetCacheTotalSize) \
+    FN(textureDescriptorSetCacheHits)             \
+    FN(textureDescriptorSetCacheMisses)           \
+    FN(textureDescriptorSetCacheTotalSize)        \
+    FN(shaderBuffersDescriptorSetCacheHits)       \
+    FN(shaderBuffersDescriptorSetCacheMisses)     \
+    FN(shaderBuffersDescriptorSetCacheTotalSize)  \
+    FN(buffersGhosted)                            \
+    FN(vertexArraySyncStateCalls)                 \
+    FN(allocateNewBufferBlockCalls)               \
+    FN(dynamicBufferAllocations)
+
+#define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint32_t COUNTER;
+
+struct VulkanPerfCounters
+{
+    ANGLE_VK_PERF_COUNTERS_X(ANGLE_DECLARE_PERF_COUNTER)
+};
+
+#undef ANGLE_DECLARE_PERF_COUNTER
+
 }  // namespace angle
 
 template <typename T, size_t N>

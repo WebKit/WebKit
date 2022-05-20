@@ -8,8 +8,13 @@
 #include "common/FastVector.h"
 #include "system_utils.h"
 
-#include <windows.h>
 #include <array>
+
+// Must be included in this order.
+// clang-format off
+#include <windows.h>
+#include <psapi.h>
+// clang-format on
 
 namespace angle
 {
@@ -218,5 +223,13 @@ PageFaultHandler *CreatePageFaultHandler(PageFaultCallback callback)
 {
     gWin32PageFaultHandler = new Win32PageFaultHandler(callback);
     return gWin32PageFaultHandler;
+}
+
+uint64_t GetProcessMemoryUsageKB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    ::GetProcessMemoryInfo(::GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&pmc),
+                           sizeof(pmc));
+    return static_cast<uint64_t>(pmc.PrivateUsage) / 1024ull;
 }
 }  // namespace angle

@@ -58,17 +58,18 @@ struct EGLPlatformParameters
 
     auto tie() const
     {
-        return std::tie(
-            renderer, majorVersion, minorVersion, deviceType, presentPath, debugLayersEnabled,
-            transformFeedbackFeature, allocateNonZeroMemoryFeature,
-            emulateCopyTexImage2DFromRenderbuffers, shaderStencilOutputFeature,
-            genMultipleMipsPerPassFeature, platformMethods, robustness, emulatedPrerotation,
-            asyncCommandQueueFeatureVulkan, hasExplicitMemBarrierFeatureMtl,
-            hasCheapRenderPassFeatureMtl, forceBufferGPUStorageFeatureMtl,
-            supportsVulkanViewportFlip, supportsVulkanMultiDrawIndirect,
-            WithVulkanPreferCPUForBufferSubData, emulatedVAOs, generateSPIRVThroughGlslang,
-            captureLimits, forceRobustResourceInit, directMetalGeneration, forceInitShaderVariables,
-            forceVulkanFallbackFormat, displayPowerPreference, forceSubmitImmutableTextureUpdates);
+        return std::tie(renderer, majorVersion, minorVersion, deviceType, presentPath,
+                        debugLayersEnabled, transformFeedbackFeature, allocateNonZeroMemoryFeature,
+                        emulateCopyTexImage2DFromRenderbuffers, shaderStencilOutputFeature,
+                        genMultipleMipsPerPassFeature, platformMethods, robustness,
+                        emulatedPrerotation, asyncCommandQueueFeatureVulkan,
+                        hasExplicitMemBarrierFeatureMtl, hasCheapRenderPassFeatureMtl,
+                        forceBufferGPUStorageFeatureMtl, supportsVulkanViewportFlip,
+                        supportsVulkanMultiDrawIndirect, WithVulkanPreferCPUForBufferSubData,
+                        emulatedVAOs, generateSPIRVThroughGlslang, captureLimits,
+                        forceRobustResourceInit, directMetalGeneration, forceInitShaderVariables,
+                        forceVulkanFallbackFormat, displayPowerPreference,
+                        forceSubmitImmutableTextureUpdates, createPipelineDuringLink);
     }
 
     EGLint renderer                               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
@@ -100,6 +101,7 @@ struct EGLPlatformParameters
     EGLint forceVulkanFallbackFormat              = EGL_DONT_CARE;
     EGLint displayPowerPreference                 = EGL_DONT_CARE;
     EGLint forceSubmitImmutableTextureUpdates     = EGL_DONT_CARE;
+    EGLint createPipelineDuringLink               = EGL_DONT_CARE;
 
     angle::PlatformMethods *platformMethods = nullptr;
 };

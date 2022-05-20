@@ -793,6 +793,8 @@ TEST_P(OcclusionQueriesNoSurfaceTestES3, SwitchingContextsWithQuery)
         EGL_NONE,
     };
 
+    // The following GL objects are implicitly deleted in
+    // ContextInfo's destructor before the EGLContext is manually destroyed
     struct ContextInfo
     {
         EGLContext context;

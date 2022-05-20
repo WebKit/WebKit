@@ -29,6 +29,9 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
     if (angle_shared_libvulkan) {
       defines = [ "ANGLE_SHARED_LIBVULKAN=1" ]
     }
+    if (angle_use_wayland) {
+      include_dirs = [ "$angle_wayland_dir/src" ]
+    }
   }
 
   angle_source_set("angle_vulkan_headers") {

@@ -7,27 +7,10 @@
 // For now we only log Vulkan test expectations. More back-ends can follow as we need them.
 
 // Depth/stencil related failures due to Vulkan driver bugs.
-3683 VULKAN ANDROID : KHR-GLES3.packed_depth_stencil.*.depth24_stencil8 = FAIL
-3683 VULKAN ANDROID : KHR-GLES3.packed_depth_stencil.*.depth32f_stencil8 = FAIL
-
-// glCopyTexImage from 3D textures is failing and getting the following Vulkan Validation errors:
-//
-//  ImageView must not be a 2D or 2DArray view of a 3D image. The Vulkan spec states:
-//  imageView must not be 2D or 2D array image view created from a 3D image
-//
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_texture2d = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_negx = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_negy = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_negz = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_posx = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_posy = FAIL
-3836 VULKAN NOSAN : KHR-GLES3.copy_tex_image_conversions.required.texture3d_cubemap_posz = FAIL
+3683 VULKAN ANDROID : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
 
 // Test bug - fails in ASAN
 6678 : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
-
-// New failures with latest dEQP roll (2021-03-05)
-5722 VULKAN : KHR-GLES3.framebuffer_completeness.rbo_and_texture_expect_zero_numsamples = FAIL
 
 5976 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 

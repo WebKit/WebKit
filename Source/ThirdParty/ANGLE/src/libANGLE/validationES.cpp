@@ -559,6 +559,33 @@ unsigned int GetSamplerParameterCount(GLenum pname)
     return pname == GL_TEXTURE_BORDER_COLOR ? 4 : 1;
 }
 
+const char *ValidateProgramDrawAdvancedBlendState(const Context *context, Program *program)
+{
+    const State &state = context->getState();
+    const BlendEquationBitSet &supportedBlendEquations =
+        program->getState().getAdvancedBlendEquations();
+    const DrawBufferMask &enabledDrawBufferMask = state.getBlendStateExt().mEnabledMask;
+
+    for (size_t blendEnabledBufferIndex : enabledDrawBufferMask)
+    {
+        const gl::BlendEquationType &enabledBlendEquation = gl::FromGLenum<gl::BlendEquationType>(
+            state.getBlendStateExt().getEquationColorIndexed(blendEnabledBufferIndex));
+
+        if (enabledBlendEquation < gl::BlendEquationType::Multiply ||
+            enabledBlendEquation > gl::BlendEquationType::HslLuminosity)
+        {
+            continue;
+        }
+
+        if (!supportedBlendEquations.test(enabledBlendEquation))
+        {
+            return gl::err::kBlendEquationNotEnabled;
+        }
+    }
+
+    return nullptr;
+}
+
 ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
                                                    const Extensions &extensions,
                                                    Program *program)
@@ -616,7 +643,15 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         }
     }
 
-    return nullptr;
+    // Enabled blend equation validation
+    const char *errorString = nullptr;
+
+    if (extensions.blendEquationAdvancedKHR)
+    {
+        errorString = ValidateProgramDrawAdvancedBlendState(context, program);
+    }
+
+    return errorString;
 }
 }  // anonymous namespace
 
@@ -1030,18 +1065,14 @@ bool ValidImageSizeParameters(const Context *context,
     return true;
 }
 
-bool ValidCompressedDimension(GLsizei size, GLuint blockSize, GLint level)
+bool ValidCompressedBaseLevel(GLsizei size, GLuint blockSize, GLint level)
 {
-    return (level > 0) || (size % blockSize == 0);
-}
-
-bool ValidCompressedBaseLevelForWebGL(GLsizei size, GLuint blockSize, GLint level)
-{
-    // Avoid C++ undefined behavior.
-    constexpr int maxValidShifts = 31;
-    if (level > maxValidShifts)
-        return false;
-    return ((size << level) % blockSize) == 0;
+    // Already checked in ValidMipLevel.
+    ASSERT(level < 32);
+    // This function is used only for 4x4 BC formats.
+    ASSERT(blockSize == 4);
+    // Use the constant value to avoid division.
+    return ((size << level) % 4) == 0;
 }
 
 bool ValidCompressedImageSize(const Context *context,
@@ -1081,28 +1112,26 @@ bool ValidCompressedImageSize(const Context *context,
 
     if (CompressedTextureFormatRequiresExactSize(internalFormat))
     {
-        // In WebGL compatibility mode, enforce that the base level implied
+        // In WebGL compatibility mode and D3D, enforce that the base level implied
         // by the compressed texture's mip level would conform to the block
-        // size. This is more strict than the non-WebGL check.
-        if (context->isWebGL())
+        // size.
+        if (context->isWebGL() || context->getLimitations().compressedBaseMipLevelMultipleOfFour)
         {
-            if (!ValidCompressedBaseLevelForWebGL(width, formatInfo.compressedBlockWidth, level) ||
-                !ValidCompressedBaseLevelForWebGL(height, formatInfo.compressedBlockHeight,
-                                                  level) ||
-                !ValidCompressedBaseLevelForWebGL(depth, formatInfo.compressedBlockDepth, level))
+            // This check is performed only for BC formats.
+            ASSERT(formatInfo.compressedBlockDepth == 1);
+            if (!ValidCompressedBaseLevel(width, formatInfo.compressedBlockWidth, level) ||
+                !ValidCompressedBaseLevel(height, formatInfo.compressedBlockHeight, level))
             {
                 return false;
             }
         }
-        else
-        {
-            if (!ValidCompressedDimension(width, formatInfo.compressedBlockWidth, level) ||
-                !ValidCompressedDimension(height, formatInfo.compressedBlockHeight, level) ||
-                !ValidCompressedDimension(depth, formatInfo.compressedBlockDepth, level))
-            {
-                return false;
-            }
-        }
+        // non-WebGL and non-D3D check is not necessary for the following formats
+        // From EXT_texture_compression_s3tc specification:
+        // If the width or height is not a multiple of four, there will be 4x4 blocks at the edge of
+        // the image that contain "extra" texels that are not part of the image. From
+        // EXT_texture_compression_bptc & EXT_texture_compression_rgtc specification: If an
+        // RGTC/BPTC image has a width or height that is not a multiple of four, the data
+        // corresponding to texels outside the image are irrelevant and undefined.
     }
 
     return true;
@@ -4105,6 +4134,30 @@ const char *ValidateDrawStates(const Context *context)
         }
     }
 
+    // Advanced blend equation can only be enabled for a single render target.
+    const BlendStateExt &blendStateExt = state.getBlendStateExt();
+    if (blendStateExt.mUsesAdvancedBlendEquationMask.any())
+    {
+        const size_t drawBufferCount            = framebuffer->getDrawbufferStateCount();
+        uint32_t advancedBlendRenderTargetCount = 0;
+
+        for (size_t drawBufferIndex : blendStateExt.mUsesAdvancedBlendEquationMask)
+        {
+            if (drawBufferIndex < drawBufferCount &&
+                framebuffer->getDrawBufferState(drawBufferIndex) != GL_NONE &&
+                blendStateExt.mEnabledMask.test(drawBufferIndex) &&
+                blendStateExt.mUsesAdvancedBlendEquationMask.test(drawBufferIndex))
+            {
+                ++advancedBlendRenderTargetCount;
+            }
+        }
+
+        if (advancedBlendRenderTargetCount > 1)
+        {
+            return kAdvancedBlendEquationWithMRT;
+        }
+    }
+
     if (context->getStateCache().hasAnyEnabledClientAttrib())
     {
         if (extensions.webglCompatibilityANGLE || !state.areClientArraysEnabled())
@@ -4183,6 +4236,14 @@ const char *ValidateDrawStates(const Context *context)
                     !executable->hasLinkedShaderStage(ShaderType::TessEvaluation))
                 {
                     return kTessellationShaderRequiresBothControlAndEvaluation;
+                }
+            }
+
+            if (state.isTransformFeedbackActive())
+            {
+                if (!ValidateProgramExecutableXFBBuffersPresent(context, executable))
+                {
+                    return kTransformFeedbackBufferMissing;
                 }
             }
         }
@@ -8446,4 +8507,21 @@ bool ValidateInvalidateTextureANGLE(const Context *context,
     return true;
 }
 
+bool ValidateProgramExecutableXFBBuffersPresent(const Context *context,
+                                                const ProgramExecutable *programExecutable)
+{
+    size_t programXfbCount = programExecutable->getTransformFeedbackBufferCount();
+    const TransformFeedback *transformFeedback = context->getState().getCurrentTransformFeedback();
+    for (size_t programXfbIndex = 0; programXfbIndex < programXfbCount; ++programXfbIndex)
+    {
+        const OffsetBindingPointer<Buffer> &buffer =
+            transformFeedback->getIndexedBuffer(programXfbIndex);
+        if (!buffer.get())
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 }  // namespace gl

@@ -3978,6 +3978,44 @@ void main (void)
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests that we don't produce undefined behaviour when deleting a current XFB buffer.
+TEST_P(TransformFeedbackTest, DeleteTransformFeedbackBuffer)
+{
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl1_shaders::vs::Simple(),
+                                        essl1_shaders::fs::Green(), {"gl_Position"},
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    GLBuffer buf;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
+    std::vector<uint8_t> bufData(100000, 0);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, bufData.size(), bufData.data(), GL_DYNAMIC_COPY);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+    glBeginTransformFeedback(GL_POINTS);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    buf.reset();
+    glDrawArrays(GL_POINTS, 0, 1);
+}
+
+// Same as the above, with a paused transform feedback.
+TEST_P(TransformFeedbackTest, DeletePausedTransformFeedbackBuffer)
+{
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl1_shaders::vs::Simple(),
+                                        essl1_shaders::fs::Green(), {"gl_Position"},
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, 3, nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer);
+
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    buffer.reset();
+    glDrawArrays(GL_POINTS, 0, 1);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3(TransformFeedbackTest);
 

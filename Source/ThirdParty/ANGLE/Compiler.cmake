@@ -27,6 +27,7 @@ set(angle_translator_sources
     "include/GLES3/gl3platform.h"
     "include/KHR/khrplatform.h"
     "include/angle_gl.h"
+    "src/compiler/translator/BaseTypes.cpp"
     "src/compiler/translator/BaseTypes.h"
     "src/compiler/translator/BuiltInFunctionEmulator.cpp"
     "src/compiler/translator/BuiltInFunctionEmulator.h"

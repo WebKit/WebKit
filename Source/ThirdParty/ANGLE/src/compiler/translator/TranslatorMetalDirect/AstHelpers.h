@@ -54,6 +54,14 @@ const TFunction &CloneFunctionAndPrependParam(TSymbolTable &symbolTable,
                                               const TFunction &oldFunc,
                                               const TVariable &newParam);
 
+// Clones a function and prepends the provided two parameters.
+// If `idGen` is null, the original function must be discarded from the AST.
+const TFunction &CloneFunctionAndPrependTwoParams(TSymbolTable &symbolTable,
+                                                  IdGen *idGen,
+                                                  const TFunction &oldFunc,
+                                                  const TVariable &newParam1,
+                                                  const TVariable &newParam2);
+
 // Clones a function and appends the provided extra parameters.
 // If `idGen` is null, the original function must be discarded from the AST.
 const TFunction &CloneFunctionAndAppendParams(TSymbolTable &symbolTable,

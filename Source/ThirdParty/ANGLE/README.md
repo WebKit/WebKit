@@ -35,7 +35,7 @@ ANGLE has received the following certifications with the Vulkan backend:
 * OpenGL ES 3.0: ANGLE 2.1.0.f18ff947360d (Feb, 2020)
 * OpenGL ES 3.1: ANGLE 2.1.0.f5dace0f1e57 (Jul, 2020)
 
-ANGLE also provides an implementation of the EGL 1.4 specification.
+ANGLE also provides an implementation of the EGL 1.5 specification.
 
 ANGLE is used as the default WebGL backend for both Google Chrome and Mozilla Firefox on Windows
 platforms. Chrome uses ANGLE for all graphics rendering on Windows, including the accelerated

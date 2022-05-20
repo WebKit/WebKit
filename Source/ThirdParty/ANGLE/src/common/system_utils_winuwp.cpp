@@ -108,4 +108,10 @@ PageFaultHandler *CreatePageFaultHandler(PageFaultCallback callback)
 {
     return new UwpPageFaultHandler(callback);
 }
+
+uint64_t GetProcessMemoryUsageKB()
+{
+    // Not available on UWP.
+    return 0;
+}
 }  // namespace angle

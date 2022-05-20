@@ -227,6 +227,16 @@ TEST_P(FenceSyncTest, BasicQueries)
     EXPECT_EQ(0, value);
 }
 
+// Test usage of glGetSynciv with nullptr as length
+TEST_P(FenceSyncTest, NullLength)
+{
+    GLint value = 0;
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glGetSynciv(sync, GL_SYNC_STATUS, 1, nullptr, &value);
+    glDeleteSync(sync);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that basic usage works and doesn't generate errors or crash
 TEST_P(FenceSyncTest, BasicOperations)
 {

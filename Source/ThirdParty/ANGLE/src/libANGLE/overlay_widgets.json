@@ -212,6 +212,15 @@
                 "font": "small",
                 "length": 90
             }
+        },
+        {
+            "name": "VulkanDescriptorCacheKeySize",
+            "comment": "Total size of all keys in the descriptor set caches",
+            "type": "Count",
+            "color": [255, 255, 255, 255],
+            "coords": [10, 100],
+            "font": "small",
+            "length": 30
         }
     ]
 }

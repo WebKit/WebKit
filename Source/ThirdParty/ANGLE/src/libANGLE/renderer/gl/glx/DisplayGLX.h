@@ -100,6 +100,8 @@ class DisplayGLX : public DisplayGL
 
     RendererGL *getRenderer() const override;
 
+    bool isX11() const override;
+
   private:
     egl::Error initializeContext(glx::FBConfig config,
                                  const egl::AttributeMap &eglAttributes,
