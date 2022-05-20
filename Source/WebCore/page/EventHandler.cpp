@@ -444,7 +444,7 @@ void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 static void setSelectionIfNeeded(FrameSelection& selection, const VisibleSelection& newSelection)
 {
     if (selection.selection() != newSelection && selection.shouldChangeSelection(newSelection))
-        selection.setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+        selection.setSelection(newSelection);
 }
 
 static inline bool dispatchSelectStart(Node* node)

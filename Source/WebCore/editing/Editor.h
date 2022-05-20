@@ -126,8 +126,6 @@ enum class TemporarySelectionOption : uint8_t {
     DelegateMainFrameScroll = 1 << 5,
     
     RevealSelectionBounds = 1 << 6,
-
-    UserTriggered = 1 << 7,
 };
 
 class TemporarySelectionChange {

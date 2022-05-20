@@ -8,4 +8,7 @@ Testing both hit testing and painting of selection.
 Testing both hit testing and painting of selection.
 Testing both hit testing and painting of selection.
 Testing both hit testing and painting of selection.
-(repaint rects (rect 774 38 18 79) )
+(repaint rects
+  (rect 774 38 18 79)
+)
+
