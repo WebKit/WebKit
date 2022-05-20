@@ -1004,8 +1004,7 @@ end
 def bytecodeCacheTemplate
     if ($hostOS == "darwin")
         return "bytecode-cache"
-    elsif ($hostOS == "linux" && $architecture != "mips")
-        # FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
+    elsif ($hostOS == "linux")
         return "bytecode-cacheXXXXXX"
     end
     nil

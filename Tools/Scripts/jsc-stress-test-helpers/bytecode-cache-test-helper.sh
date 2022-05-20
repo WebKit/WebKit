@@ -25,17 +25,16 @@ set -e
 
 mysys() {
     set +e
-    eval "$*"
+    "$@"
     exitCode=$?
     if [ $exitCode != 0 ]; then
-        echo "Command '$*' failed"
+        echo "Command '$@' failed"
         exit $exitCode
     fi
 }
 
 fileTemplate=$1
 shift
-rest="$@"
 
 diskCachePath=$(mktemp -d -t "$fileTemplate")
 
