@@ -30,8 +30,12 @@
 
 #include <Metal/Metal.h>
 
+#include <Metal/Metal.hpp>
+
 #include <wtf/Assertions.h>
 
 #include <wtf/DisallowCType.h>
 
 #include <wtf/Platform.h>
+
+#include <wtf/RetainPtr.h>
