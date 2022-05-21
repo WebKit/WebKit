@@ -56,17 +56,18 @@ static FloatRect absoluteBoundingRectForRange(const SimpleRange& range)
 
 static std::optional<InteractionRegion> regionForElement(Element& element)
 {
-    auto& frameView = *element.document().frame()->view();
-    auto& mainFrameView = *element.document().frame()->mainFrame().view();
+    Ref document = element.document();
+    Ref frameView = *document->frame()->view();
+    Ref mainFrameView = *document->frame()->mainFrame().view();
     
     IntRect frameClipRect;
 #if PLATFORM(IOS_FAMILY)
-    frameClipRect = enclosingIntRect(frameView.exposedContentRect());
+    frameClipRect = enclosingIntRect(frameView->exposedContentRect());
 #else
-    if (auto viewExposedRect = frameView.viewExposedRect())
+    if (auto viewExposedRect = frameView->viewExposedRect())
         frameClipRect = enclosingIntRect(*viewExposedRect);
     else
-        frameClipRect = frameView.visibleContentRect();
+        frameClipRect = frameView->visibleContentRect();
 #endif
 
     auto* renderer = element.renderer();
@@ -75,8 +76,10 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
 
     Vector<FloatRect> rectsInContentCoordinates;
     InteractionRegion region;
+
+    region.elementIdentifier = document->identifierForElement(element);
+
     auto linkRange = makeRangeSelectingNode(element);
-    
     if (linkRange)
         region.hasLightBackground = estimatedBackgroundColorForRange(*linkRange, *element.document().frame()).luminance() > 0.5;
     
@@ -100,7 +103,7 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
     if (rectsInContentCoordinates.isEmpty())
         rectsInContentCoordinates = { renderer->absoluteBoundingBoxRect() };
     
-    auto layoutArea = mainFrameView.layoutSize().area();
+    auto layoutArea = mainFrameView->layoutSize().area();
     rectsInContentCoordinates = compactMap(rectsInContentCoordinates, [&] (auto rect) -> std::optional<FloatRect> {
         if (rect.area() > layoutArea / 2)
             return std::nullopt;
@@ -115,7 +118,7 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
     for (auto rect : rectsInContentCoordinates) {
         auto contentsRect = rect;
 
-        if (&frameView != &mainFrameView)
+        if (frameView.ptr() != mainFrameView.ptr())
             contentsRect.intersect(frameClipRect);
 
         if (contentsRect.isEmpty())

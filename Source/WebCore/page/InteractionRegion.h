@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ElementIdentifier.h"
 #include "FloatRect.h"
 #include "Region.h"
 
@@ -42,6 +43,7 @@ namespace WebCore {
 class Page;
 
 struct InteractionRegion {
+    ElementIdentifier elementIdentifier;
     Region regionInLayerCoordinates;
     bool hasLightBackground { false };
     float borderRadius { 0 };
@@ -54,7 +56,8 @@ struct InteractionRegion {
 
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
-    return a.regionInLayerCoordinates == b.regionInLayerCoordinates
+    return a.elementIdentifier == b.elementIdentifier
+        && a.regionInLayerCoordinates == b.regionInLayerCoordinates
         && a.hasLightBackground == b.hasLightBackground
         && a.borderRadius == b.borderRadius;
 }
@@ -66,6 +69,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 template<class Encoder>
 void InteractionRegion::encode(Encoder& encoder) const
 {
+    encoder << elementIdentifier;
     encoder << regionInLayerCoordinates;
     encoder << hasLightBackground;
     encoder << borderRadius;
@@ -74,6 +78,11 @@ void InteractionRegion::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
 {
+    std::optional<ElementIdentifier> elementIdentifier;
+    decoder >> elementIdentifier;
+    if (!elementIdentifier)
+        return std::nullopt;
+
     std::optional<Region> regionInLayerCoordinates;
     decoder >> regionInLayerCoordinates;
     if (!regionInLayerCoordinates)
@@ -90,6 +99,7 @@ std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
         return std::nullopt;
 
     return { {
+        WTFMove(*elementIdentifier),
         WTFMove(*regionInLayerCoordinates),
         WTFMove(*hasLightBackground),
         WTFMove(*borderRadius)

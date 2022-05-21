@@ -114,7 +114,7 @@ void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTran
                     [interactionRegionLayer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0, 1, 0, .3) }).get()];
 
                 setInteractionRegion(interactionRegionLayer.get(), region);
-                configureLayerForInteractionRegion(interactionRegionLayer.get(), @"WKInteractionRegion");
+                configureLayerForInteractionRegion(interactionRegionLayer.get(), makeString("WKInteractionRegion-"_s, String::number(region.elementIdentifier.toUInt64())));
 
                 [layer addSublayer:interactionRegionLayer.get()];
             }
