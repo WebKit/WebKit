@@ -2197,9 +2197,6 @@ webkit.org/b/228176 [ BigSur Monterey ] fast/text/variable-system-font-2.html [ 
 
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
-# 'transform-box' support is broken for composited elements.
-webkit.org/b/237553 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html [ ImageOnlyFailure ]
-
 # rdar://83591040
 [ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-input.html [ Crash ]
 [ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-inside-selection.html [ Crash ]

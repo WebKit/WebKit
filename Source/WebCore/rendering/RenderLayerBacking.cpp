@@ -635,16 +635,11 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
     m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
 }
 
-void RenderLayerBacking::updateTransform(const RenderStyle&)
+void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
-    // FIXME: This could use m_owningLayer.transform(), but that currently has transform-origin
-    // baked into it, and we don't want that.
     TransformationMatrix t;
-    if (m_owningLayer.hasTransform()) {
-        // FIXME: This uses the wrong, transform-box unaware, geometry.
-        renderer().applyTransform(t, renderer().style(), snapRectToDevicePixels(m_owningLayer.rendererBorderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
-        makeMatrixRenderable(t, compositor().canRender3DTransforms());
-    }
+    if (m_owningLayer.hasTransform())
+        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations);
     
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setTransform(t);
@@ -655,11 +650,17 @@ void RenderLayerBacking::updateTransform(const RenderStyle&)
 
 void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer)
 {
+    auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
     if (!renderer().hasTransformRelatedProperty()) {
-        auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
         m_graphicsLayer->setAnchorPoint(defaultAnchorPoint);
         if (m_contentsContainmentLayer)
             m_contentsContainmentLayer->setAnchorPoint(defaultAnchorPoint);
+
+        if (m_childContainmentLayer)
+            m_childContainmentLayer->setAnchorPoint(defaultAnchorPoint);
+
+        if (m_scrollContainerLayer)
+            m_scrollContainerLayer->setAnchorPoint(defaultAnchorPoint);
 
         if (m_scrolledContentsLayer)
             m_scrolledContentsLayer->setPreserves3D(false);
@@ -667,8 +668,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     }
 
     const auto deviceScaleFactor = this->deviceScaleFactor();
-    auto borderBoxRect = m_owningLayer.rendererBorderBoxRect();
-    auto transformOrigin = computeTransformOriginForPainting(borderBoxRect);
+    auto transformOrigin = m_owningLayer.transformOriginPixelSnappedIfNeeded();
     auto layerOffset = roundPointToDevicePixels(toLayoutPoint(offsetFromParentGraphicsLayer), deviceScaleFactor);
     auto anchor = FloatPoint3D {
         primaryGraphicsLayerRect.width() ? ((layerOffset.x() - primaryGraphicsLayerRect.x()) + transformOrigin.x()) / primaryGraphicsLayerRect.width() : 0.5f,
@@ -683,11 +683,14 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 
     auto removeChildrenTransformFromLayers = [&](GraphicsLayer* layerToIgnore = nullptr) {
         auto* clippingLayer = this->clippingLayer();
-        if (clippingLayer && clippingLayer != layerToIgnore)
+        if (clippingLayer && clippingLayer != layerToIgnore) {
             clippingLayer->setChildrenTransform({ });
-        
+            clippingLayer->setAnchorPoint(defaultAnchorPoint);
+        }
+
         if (m_scrollContainerLayer && m_scrollContainerLayer != layerToIgnore) {
             m_scrollContainerLayer->setChildrenTransform({ });
+            m_scrollContainerLayer->setAnchorPoint(defaultAnchorPoint);
             m_scrolledContentsLayer->setPreserves3D(false);
         }
 
@@ -700,7 +703,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         return;
     }
 
-    auto layerForChildrenTransform = [&] {
+    auto layerForChildrenTransform = [&]() -> std::tuple<GraphicsLayer*, FloatRect> {
         if (m_scrollContainerLayer) {
             ASSERT(is<RenderBox>(renderer())); // Scroll container layers are only created for RenderBox derived renderers.
             return std::make_tuple(m_scrollContainerLayer.get(), scrollContainerLayerBox(downcast<RenderBox>(renderer())));
@@ -708,19 +711,26 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         if (auto* layer = clippingLayer())
             return std::make_tuple(layer, clippingLayerBox(renderer()));
 
-        return std::make_tuple(m_graphicsLayer.get(), borderBoxRect);
+        return std::make_tuple(m_graphicsLayer.get(), renderer().transformReferenceBoxRect());
     };
 
-    auto [layerForPerspective, perspectiveRelativeBox] = layerForChildrenTransform();
-    // FIXME: perspectiveRelativeBox isn't quite right here. This needs work: webkit.org/b/211787.
-    auto perspectiveTransform = owningLayer().perspectiveTransform(perspectiveRelativeBox);
-    
-    // If we have scrolling layers, we need the children transform on m_scrollContainerLayer to
-    // affect children of m_scrolledContentsLayer, so set setPreserves3D(true).
-    if (layerForPerspective == m_scrollContainerLayer)
-        m_scrolledContentsLayer->setPreserves3D(true);
-    
-    layerForPerspective->setChildrenTransform(perspectiveTransform);
+    auto [layerForPerspective, layerForPerspectiveRect] = layerForChildrenTransform();
+    if (layerForPerspective != m_graphicsLayer) {
+        // If we have scrolling layers, we need the children transform on m_scrollContainerLayer to
+        // affect children of m_scrolledContentsLayer, so set setPreserves3D(true).
+        if (layerForPerspective == m_scrollContainerLayer)
+            m_scrolledContentsLayer->setPreserves3D(true);
+
+        auto perspectiveAnchorPoint = FloatPoint3D {
+            layerForPerspectiveRect.width() ? (transformOrigin.x() - layerForPerspectiveRect.x()) / layerForPerspectiveRect.width() : 0.5f,
+            layerForPerspectiveRect.height() ? (transformOrigin.y() - layerForPerspectiveRect.y()) / layerForPerspectiveRect.height() : 0.5f,
+            transformOrigin.z()
+        };
+
+        layerForPerspective->setAnchorPoint(perspectiveAnchorPoint);
+    }
+
+    layerForPerspective->setChildrenTransform(m_owningLayer.perspectiveTransform());
     removeChildrenTransformFromLayers(layerForPerspective);
 }
 
@@ -2978,17 +2988,6 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
     // the image. So we have to kick the animation each time; this has the downside that the
     // image will keep animating, even if its layer is not visible.
     image->startAnimation();
-}
-
-FloatPoint3D RenderLayerBacking::computeTransformOriginForPainting(const LayoutRect& borderBox) const
-{
-    const RenderStyle& style = renderer().style();
-
-    FloatPoint3D origin;
-    origin.setXY(roundPointToDevicePixels(pointForLengthPoint(style.transformOriginXY(), borderBox.size()), deviceScaleFactor()));
-    origin.setZ(style.transformOriginZ());
-
-    return origin;
 }
 
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.

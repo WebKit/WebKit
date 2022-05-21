@@ -107,8 +107,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
     if (!hasSpecifiedTransform && style) {
-        auto boundingBox = renderer()->transformReferenceBoxRect();
-        auto t = floatPointForLengthPoint(style->transformOriginXY(), boundingBox.size()) + boundingBox.location();
+        auto t = style->computeTransformOrigin(renderer()->transformReferenceBoxRect()).xy();
         matrix.translate(t);
         matrix *= transform().concatenate();
         matrix.translate(-t.x(), -t.y());

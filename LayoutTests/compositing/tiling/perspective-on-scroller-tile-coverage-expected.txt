@@ -29,8 +29,9 @@
           (children 2
             (GraphicsLayer
               (bounds origin 0.00 900.00)
+              (anchor 0.51 0.50)
               (bounds 585.00 500.00)
-              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [2.93 2.50 1.00 -0.01] [0.00 0.00 0.00 1.00])
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [3.00 2.50 1.00 -0.01] [0.00 0.00 0.00 1.00])
               (visible rect 0.00, 900.00 585.00 x 500.00)
               (coverage rect 0.00, 900.00 585.00 x 500.00)
               (intersects coverage rect 1)

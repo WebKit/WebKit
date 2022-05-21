@@ -714,8 +714,14 @@ public:
     static constexpr OptionSet<TransformOperationOption> individualTransformOperations = { TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale, TransformOperationOption::Offset };
 
     bool affectedByTransformOrigin() const;
-    FloatPoint3D applyTransformOrigin(TransformationMatrix&, const FloatRect& boundingBox) const;
+
+    FloatPoint computePerspectiveOrigin(const FloatRect& boundingBox) const;
+    void applyPerspective(TransformationMatrix&, const RenderObject&, const FloatPoint& originTranslate) const;
+
+    FloatPoint3D computeTransformOrigin(const FloatRect& boundingBox) const;
+    void applyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
     void unapplyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
+
     // applyTransform calls applyTransformOrigin(), then applyCSSTransform(), followed by unapplyTransformOrigin().
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption> = allTransformOperations) const;
     void applyCSSTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption> = allTransformOperations) const;

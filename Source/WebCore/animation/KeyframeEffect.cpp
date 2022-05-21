@@ -1992,7 +1992,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
 
     bool applyTransformOrigin = containsRotation(style.transform().operations()) || style.transform().affectedByTransformOrigin();
     if (applyTransformOrigin) {
-        transformOrigin = rendererBox.location() + floatPointForLengthPoint(style.transformOriginXY(), rendererBox.size());
+        transformOrigin = style.computeTransformOrigin(rendererBox).xy();
         // Ignore transformOriginZ because we'll bail if we encounter any 3D transforms.
         floatBounds.moveBy(-transformOrigin);
     }

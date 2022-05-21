@@ -331,9 +331,6 @@ private:
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
     LayoutSize contentOffsetInCompositingLayer() const;
-    // Result is transform origin in device pixels.
-    FloatPoint3D computeTransformOriginForPainting(const LayoutRect& borderBox) const;
-
     LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
     
     void ensureClippingStackLayers(LayerAncestorClippingStack&);

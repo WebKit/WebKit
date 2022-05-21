@@ -739,11 +739,12 @@ public:
     TransformationMatrix currentTransform(OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const;
     TransformationMatrix renderableTransform(OptionSet<PaintBehavior>) const;
     
-    // Get the perspective transform, which is applied to transformed sublayers.
-    // Returns true if the layer has a -webkit-perspective.
+    // Get the children transform (to apply a perspective on children), which is applied to transformed sublayers, but not this layer.
+    // Returns true if the layer has a perspective.
     // Note that this transform has the perspective-origin baked in.
-    TransformationMatrix perspectiveTransform(const LayoutRect& layerRect) const;
+    TransformationMatrix perspectiveTransform() const;
     FloatPoint perspectiveOrigin() const;
+    FloatPoint3D transformOriginPixelSnappedIfNeeded() const;
     bool preserves3D() const { return renderer().style().preserves3D(); }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
