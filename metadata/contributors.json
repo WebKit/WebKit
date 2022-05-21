@@ -2657,7 +2657,7 @@
       "emails" : [
          "ggaren@apple.com"
       ],
-      "expertise" : "JavaScript/ECMAScript, Performance, Memory Use / Leaks, Memory Cache, Core DOM, HTML DOM, JavaScript DOM Bindings, Web Compatibility (General), JavaScriptCore C API, FastMalloc",
+      "expertise" : "IPC, Process Model, Sandboxing, JavaScript/ECMAScript, Performance, Memory Use / Leaks, Memory Cache, Core DOM, HTML DOM, JavaScript DOM Bindings, Web Compatibility, JavaScriptCore C API, FastMalloc",
       "github" : "geoffreygaren",
       "name" : "Geoffrey Garen",
       "nicks" : [
