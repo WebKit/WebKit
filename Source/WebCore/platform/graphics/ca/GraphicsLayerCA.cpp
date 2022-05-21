@@ -429,7 +429,6 @@ static LayerDisplayListHashMap& layerDisplayListMap()
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
-    , m_usingBackdropLayerType(false)
     , m_allowsBackingStoreDetaching(true)
     , m_intersectsCoverageRect(false)
     , m_hasEverPainted(false)
@@ -1920,16 +1919,6 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
     m_contentsDisplayDelegate->display(*layer);
 }
 
-static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
-{
-    return appearance == GraphicsLayer::CustomAppearance::LightBackdrop ? PlatformCALayer::LayerTypeLightSystemBackdropLayer : PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
-}
-
-static bool isCustomBackdropLayerType(PlatformCALayer::LayerType layerType)
-{
-    return layerType == PlatformCALayer::LayerTypeLightSystemBackdropLayer || layerType == PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
-}
-
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);
@@ -1941,16 +1930,13 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-    bool needBackdropLayerType = (customAppearance() == CustomAppearance::LightBackdrop || customAppearance() == CustomAppearance::DarkBackdrop);
 
     PlatformCALayer::LayerType currentLayerType = m_layer->layerType();
     PlatformCALayer::LayerType neededLayerType = currentLayerType;
 
-    if (needBackdropLayerType)
-        neededLayerType = layerTypeForCustomBackdropAppearance(customAppearance());
-    else if (needTiledLayer)
+    if (needTiledLayer)
         neededLayerType = PlatformCALayer::LayerTypeTiledBackingLayer;
-    else if (currentLayerType == PlatformCALayer::LayerTypeTiledBackingLayer || isCustomBackdropLayerType(m_layer->layerType()))
+    else if (currentLayerType == PlatformCALayer::LayerTypeTiledBackingLayer)
         neededLayerType = PlatformCALayer::LayerTypeWebLayer;
 
     if (neededLayerType != m_layer->layerType()) {
@@ -4402,8 +4388,6 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     m_layer = createPlatformCALayer(newLayerType, this);
-
-    m_usingBackdropLayerType = isCustomBackdropLayerType(newLayerType);
 
     m_layer->adoptSublayers(*oldLayer);
 

@@ -496,12 +496,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case MediaFullScreenVolumeSliderThumbPart:
         m_value.valueID = CSSValueMediaFullscreenVolumeSliderThumb;
         break;
-    case MediaControlsLightBarBackgroundPart:
-        m_value.valueID = CSSValueMediaControlsLightBarBackground;
-        break;
-    case MediaControlsDarkBarBackgroundPart:
-        m_value.valueID = CSSValueMediaControlsDarkBarBackground;
-        break;
     case MenulistPart:
         m_value.valueID = CSSValueMenulist;
         break;

@@ -661,7 +661,6 @@ private:
     bool m_isCommittingChanges { false };
 
     bool m_needsFullRepaint : 1;
-    bool m_usingBackdropLayerType : 1;
     bool m_allowsBackingStoreDetaching : 1;
     bool m_intersectsCoverageRect : 1;
     bool m_hasEverPainted : 1;

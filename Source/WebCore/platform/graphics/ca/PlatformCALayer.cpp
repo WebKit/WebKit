@@ -249,12 +249,6 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerTypeCustom:
         ts << "custom-layer";
         break;
-    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-        ts << "light-system-backdrop-layer";
-        break;
-    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-        ts << "dark-system-backdrop-layer";
-        break;
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
         ts << "model-layer";

@@ -41,9 +41,9 @@ PASS -webkit-appearance: inner-spin-button (invalid)
 PASS -webkit-appearance: list-button (invalid)
 PASS -webkit-appearance: listitem (invalid)
 PASS -webkit-appearance: media-controls-background (invalid)
-FAIL -webkit-appearance: media-controls-dark-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-dark-bar-background"
+PASS -webkit-appearance: media-controls-dark-bar-background (invalid)
 PASS -webkit-appearance: media-controls-fullscreen-background (invalid)
-FAIL -webkit-appearance: media-controls-light-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-light-bar-background"
+PASS -webkit-appearance: media-controls-light-bar-background (invalid)
 PASS -webkit-appearance: media-current-time-display (invalid)
 PASS -webkit-appearance: media-enter-fullscreen-button (invalid)
 PASS -webkit-appearance: media-exit-fullscreen-button (invalid)
@@ -204,9 +204,9 @@ PASS appearance: inner-spin-button (invalid)
 PASS appearance: list-button (invalid)
 PASS appearance: listitem (invalid)
 PASS appearance: media-controls-background (invalid)
-FAIL appearance: media-controls-dark-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-dark-bar-background"
+PASS appearance: media-controls-dark-bar-background (invalid)
 PASS appearance: media-controls-fullscreen-background (invalid)
-FAIL appearance: media-controls-light-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-light-bar-background"
+PASS appearance: media-controls-light-bar-background (invalid)
 PASS appearance: media-current-time-display (invalid)
 PASS appearance: media-enter-fullscreen-button (invalid)
 PASS appearance: media-exit-fullscreen-button (invalid)

@@ -83,8 +83,6 @@ public:
         LayerTypeContentsProvidedLayer,
         LayerTypeBackdropLayer,
         LayerTypeShapeLayer,
-        LayerTypeLightSystemBackdropLayer,
-        LayerTypeDarkSystemBackdropLayer,
         LayerTypeScrollContainerLayer,
 #if ENABLE(MODEL_ELEMENT)
         LayerTypeModelLayer,
@@ -374,8 +372,6 @@ template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
         WebCore::PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeShapeLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeLightSystemBackdropLayer,
-        WebCore::PlatformCALayer::LayerType::LayerTypeDarkSystemBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeScrollContainerLayer,
 #if ENABLE(MODEL_ELEMENT)
         WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer,

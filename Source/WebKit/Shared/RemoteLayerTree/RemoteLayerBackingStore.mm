@@ -522,12 +522,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     case PlatformCALayer::LayerTypeBackdropLayer:
         PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, flags);
         break;
-    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-        // FIXME: These have a more complicated layer hierarchy. We need to paint into
-        // a child layer in order to see the rendered results.
-        PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, flags);
-        break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:

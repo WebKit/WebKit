@@ -42,8 +42,6 @@ enum ControlPart {
     ButtonPart,
     DefaultButtonPart,
     ListboxPart,
-    MediaControlsDarkBarBackgroundPart,
-    MediaControlsLightBarBackgroundPart,
     MediaFullScreenVolumeSliderPart,
     MediaFullScreenVolumeSliderThumbPart,
     MediaPlayButtonPart,

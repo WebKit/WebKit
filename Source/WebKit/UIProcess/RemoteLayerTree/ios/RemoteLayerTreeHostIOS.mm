@@ -62,13 +62,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeBackdropLayer:
-        return makeWithView(adoptNS([[WKSimpleBackdropView alloc] init]));
-
-    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]));
-
-    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]));
+        return makeWithView(adoptNS([[WKBackdropView alloc] init]));
 
     case PlatformCALayer::LayerTypeTransformLayer:
         return makeWithView(adoptNS([[WKTransformView alloc] init]));

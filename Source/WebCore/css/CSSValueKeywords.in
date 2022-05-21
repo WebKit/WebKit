@@ -841,8 +841,6 @@ square-button
 button
 default-button
 listbox
-media-controls-dark-bar-background
-media-controls-light-bar-background
 media-fullscreen-volume-slider
 media-fullscreen-volume-slider-thumb
 media-play-button
