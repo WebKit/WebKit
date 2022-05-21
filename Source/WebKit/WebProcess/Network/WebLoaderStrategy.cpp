@@ -830,8 +830,6 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
         return;
     }
 
-    NetworkResourceLoadParameters parameters;
-
     if (auto* document = webPage.mainFrame()->document()) {
         if (shouldPreconnectAsFirstParty == ShouldPreconnectAsFirstParty::Yes)
             request.setFirstPartyForCookies(request.url());
@@ -839,10 +837,9 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
             request.setFirstPartyForCookies(document->firstPartyForCookies());
         if (auto* loader = document->loader())
             request.setIsAppInitiated(loader->lastNavigationWasAppInitiated());
-        parameters.topOrigin = &document->topOrigin();
-        parameters.sourceOrigin = &document->securityOrigin();
     }
 
+    NetworkResourceLoadParameters parameters;
     parameters.request = WTFMove(request);
     if (parameters.request.httpUserAgent().isEmpty()) {
         // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
