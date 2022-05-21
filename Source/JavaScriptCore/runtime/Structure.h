@@ -38,14 +38,15 @@
 #include "PropertyNameArray.h"
 #include "PropertyOffset.h"
 #include "PutPropertySlot.h"
-#include "StructureIDBlob.h"
 #include "StructureRareData.h"
 #include "StructureTransitionTable.h"
-#include "TinyBloomFilter.h"
+#include "TypeInfoBlob.h"
 #include "Watchpoint.h"
 #include "WriteBarrierInlines.h"
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
+#include <wtf/CompactPtr.h>
+#include <wtf/CompactRefPtr.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -230,9 +231,9 @@ private:
     void validateFlags();
 
 public:
-    StructureID id() const { ASSERT(m_blob.structureID() == StructureID::encode(this)); return m_blob.structureID(); }
-    int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }
-    int64_t idBlob() const { return m_blob.blob(); }
+    StructureID id() const { return StructureID::encode(this); }
+
+    int32_t typeInfoBlob() const { return m_blob.blob(); }
 
     bool isProxy() const
     {
@@ -330,7 +331,7 @@ public:
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
-    const ClassInfo* classInfoForCells() const { return m_classInfo; }
+    const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
@@ -649,11 +650,6 @@ public:
     }
     void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
-    static ptrdiff_t structureIDOffset()
-    {
-        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::structureIDOffset();
-    }
-
     static ptrdiff_t prototypeOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_prototype);
@@ -676,7 +672,7 @@ public:
 
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
-        return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingModeIncludingHistoryOffset();
+        return OBJECT_OFFSETOF(Structure, m_blob) + TypeInfoBlob::indexingModeIncludingHistoryOffset();
     }
     
     static ptrdiff_t propertyTableUnsafeOffset()
@@ -957,7 +953,7 @@ private:
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.
-    StructureIDBlob m_blob;
+    TypeInfoBlob m_blob;
     TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
     uint8_t m_inlineCapacity;
@@ -966,15 +962,18 @@ private:
 
     uint32_t m_bitField;
 
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
+
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
     mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
 
     WriteBarrier<JSCell> m_previousOrRareData;
 
-    RefPtr<UniquedStringImpl> m_transitionPropertyName;
+    CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
 
-    const ClassInfo* m_classInfo;
+    CompactPtr<const ClassInfo> m_classInfo;
 
     StructureTransitionTable m_transitionTable;
 
@@ -986,11 +985,8 @@ private:
 
     static_assert(firstOutOfLineOffset < 256);
 
-    uint16_t m_transitionOffset;
-    uint16_t m_maxOffset;
-
     uint32_t m_propertyHash;
-    TinyBloomFilter m_seenProperties;
+    TinyBloomFilter<CompactPtr<ClassInfo>::StorageType> m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;

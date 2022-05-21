@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,58 +25,34 @@
 
 #pragma once
 
-namespace JSC {
+#include "Logger.h"
 
-template <typename Bits = uintptr_t>
-class TinyBloomFilter {
-public:
-    TinyBloomFilter() = default;
-    TinyBloomFilter(Bits);
+namespace TestWebKitAPI {
 
-    void add(Bits);
-    void add(TinyBloomFilter&);
-    bool ruleOut(Bits) const; // True for 0.
-    void reset();
-    Bits bits() const { return m_bits; }
+struct alignas(16) AlignedRefLogger {
+    AlignedRefLogger(const char* name)
+        : name { *name }
+    {
+    }
 
-private:
-    Bits m_bits { 0 };
+    void ref()
+    {
+        log() << "ref(" << &name << ") ";
+    }
+
+    void deref()
+    {
+        log() << "deref(" << &name << ") ";
+    }
+
+    const char& name;
 };
 
-template <typename Bits>
-inline TinyBloomFilter<Bits>::TinyBloomFilter(Bits bits)
-    : m_bits(bits)
-{
+struct DerivedAlignedRefLogger : AlignedRefLogger {
+    DerivedAlignedRefLogger(const char* name)
+        : AlignedRefLogger { name }
+    {
+    }
+};
+
 }
-
-template <typename Bits>
-inline void TinyBloomFilter<Bits>::add(Bits bits)
-{
-    m_bits |= bits;
-}
-
-template <typename Bits>
-inline void TinyBloomFilter<Bits>::add(TinyBloomFilter& other)
-{
-    m_bits |= other.m_bits;
-}
-
-template <typename Bits>
-inline bool TinyBloomFilter<Bits>::ruleOut(Bits bits) const
-{
-    if (!bits)
-        return true;
-
-    if ((bits & m_bits) != bits)
-        return true;
-
-    return false;
-}
-
-template <typename Bits>
-inline void TinyBloomFilter<Bits>::reset()
-{
-    m_bits = 0;
-}
-
-} // namespace JSC
