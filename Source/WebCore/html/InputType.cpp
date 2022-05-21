@@ -59,6 +59,7 @@
 #include "NumberInputType.h"
 #include "Page.h"
 #include "PasswordInputType.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RadioInputType.h"
 #include "RangeInputType.h"
 #include "RenderElement.h"
@@ -794,10 +795,25 @@ bool InputType::storesValueSeparateFromAttribute()
 void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    element()->setValueInternal(sanitizedValue, eventBehavior);
-    if (!valueChanged)
+    if (!valueChanged) {
+        element()->setValueInternal(sanitizedValue, eventBehavior);
         return;
-    element()->invalidateStyleForSubtree();
+    }
+
+    bool wasInRange = isInRange(element()->value());
+    bool inRange = isInRange(sanitizedValue);
+
+    bool dummy;
+    auto oldDirection = element()->directionalityIfhasDirAutoAttribute(dummy);
+
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (wasInRange != inRange)
+        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClassInRange, inRange }, { CSSSelector::PseudoClassOutOfRange, !inRange } });
+
+    element()->setValueInternal(sanitizedValue, eventBehavior);
+
+    if (oldDirection != element()->directionalityIfhasDirAutoAttribute(dummy))
+        element()->invalidateStyleInternal();
 
     switch (eventBehavior) {
     case DispatchChangeEvent:
