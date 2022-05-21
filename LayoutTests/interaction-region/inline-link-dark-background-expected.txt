@@ -1,0 +1,24 @@
+This is a link.
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #000000)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (region
+            (rect (-3,-3) width=35 height=24)
+)
+        (hasLightBackground 0)
+        (borderRadius 0.00)])
+      )
+    )
+  )
+)
+

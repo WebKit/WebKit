@@ -111,20 +111,20 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
         RoundedRect::Radii borderRadii = downcast<RenderBox>(*renderer).borderRadii();
         region.borderRadius = borderRadii.minimumRadius();
     }
-
-    region.rectsInContentCoordinates = compactMap(rectsInContentCoordinates, [&](auto rect) -> std::optional<FloatRect> {
+    
+    for (auto rect : rectsInContentCoordinates) {
         auto contentsRect = rect;
 
         if (&frameView != &mainFrameView)
             contentsRect.intersect(frameClipRect);
 
         if (contentsRect.isEmpty())
-            return std::nullopt;
+            continue;
 
-        return contentsRect;
-    });
+        region.regionInLayerCoordinates.unite(enclosingIntRect(contentsRect));
+    }
 
-    if (region.rectsInContentCoordinates.isEmpty())
+    if (region.regionInLayerCoordinates.isEmpty())
         return std::nullopt;
 
     return region;
@@ -184,6 +184,15 @@ Vector<InteractionRegion> interactionRegions(Page& page, FloatRect rect)
     }
 
     return regions;
+}
+
+TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
+{
+    ts.dumpProperty("region", interactionRegion.regionInLayerCoordinates);
+    ts.dumpProperty("hasLightBackground", interactionRegion.hasLightBackground);
+    ts.dumpProperty("borderRadius", interactionRegion.borderRadius);
+
+    return ts;
 }
 
 }

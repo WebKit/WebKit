@@ -171,10 +171,8 @@ void EventRegion::translate(const IntSize& offset)
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    for (auto& region : m_interactionRegions) {
-        for (auto& rect : region.rectsInContentCoordinates)
-            rect.move(offset);
-    }
+    for (auto& region : m_interactionRegions)
+        region.regionInLayerCoordinates.translate(offset);
 #endif
 }
 
@@ -367,6 +365,13 @@ void EventRegion::dump(TextStream& ts) const
     if (m_editableRegion && !m_editableRegion->isEmpty()) {
         ts << indent << "(editable region" << *m_editableRegion;
         ts << indent << ")\n";
+    }
+#endif
+    
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (!m_interactionRegions.isEmpty()) {
+        ts.dumpProperty("interaction regions", m_interactionRegions);
+        ts << "\n";
     }
 #endif
 }

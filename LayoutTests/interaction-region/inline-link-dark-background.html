@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        margin: 0;
+        background-color: black;
+        color: white;
+    }
+</style>
+<body>
+<a href="#">This</a> is a link.
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

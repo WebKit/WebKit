@@ -88,6 +88,7 @@ fast/media/ios [ Skip ]
 fast/dom/Range/mac [ Skip ]
 remote-layer-tree/ios [ Skip ]
 inspector/page/setScreenSizeOverride.html [ Skip ]
+interaction-region [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]

@@ -98,8 +98,8 @@ void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTran
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
 
     for (const WebCore::InteractionRegion& region : properties.eventRegion.interactionRegions()) {
-        for (FloatRect rect : region.rectsInContentCoordinates) {
-            auto layerIterator = interactionRegionLayers.find(enclosingIntRect(rect));
+        for (IntRect rect : region.regionInLayerCoordinates.rects()) {
+            auto layerIterator = interactionRegionLayers.find(rect);
 
             RetainPtr<CALayer> interactionRegionLayer;
             if (layerIterator != interactionRegionLayers.end()) {

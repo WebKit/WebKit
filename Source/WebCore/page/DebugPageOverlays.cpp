@@ -295,9 +295,9 @@ static Vector<Path> pathsForRegion(const InteractionRegion& region)
 {
     static constexpr float radius = 4;
 
-    Vector<FloatRect> rects;
-    for (auto rect : region.rectsInContentCoordinates)
-        rects.append(rect);
+    Vector<FloatRect> rects = region.regionInLayerCoordinates.rects().map([] (auto rect) -> FloatRect {
+        return rect;
+    });
     return PathUtilities::pathsWithShrinkWrappedRects(rects, std::max(region.borderRadius, radius));
 }
 
@@ -309,7 +309,7 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion()
     for (const auto& region : m_regions) {
         float area = 0;
         FloatRect boundingRect;
-        for (const auto& rect : region.rectsInContentCoordinates) {
+        for (const auto& rect : region.regionInLayerCoordinates.rects()) {
             if (boundingRect.isEmpty())
                 boundingRect = rect;
             else
@@ -433,8 +433,8 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         context.setStrokeColor(Color::green);
 
         for (const auto& region : m_regions) {
-            for (const auto& rect : region.rectsInContentCoordinates)
-            context.strokeRect(rect, 2);
+            for (const auto& rect : region.regionInLayerCoordinates.rects())
+                context.strokeRect(rect, 2);
         }
     }
 
