@@ -1090,7 +1090,8 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     ASSERT(!string.isEmpty());
 
     bool parsingDescriptor = context.enclosingRuleType && *context.enclosingRuleType != StyleRuleType::Style;
-    ASSERT(!CSSProperty::isDescriptorOnly(propertyId) || parsingDescriptor);
+    // FIXME: The "!context.enclosingRuleType" is suspicious.
+    ASSERT(!CSSProperty::isDescriptorOnly(propertyId) || parsingDescriptor || !context.enclosingRuleType);
 
     if (!CSSParserFastPaths::isKeywordPropertyID(propertyId)) {
         // All properties, including non-keyword properties, accept the CSS-wide keywords.
