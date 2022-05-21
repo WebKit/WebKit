@@ -2398,7 +2398,7 @@ void CanvasRenderingContext2DBase::drawText(const String& text, double x, double
 
     String normalizedText = normalizeSpaces(text);
     auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
-    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
+    TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, false, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
 
@@ -2520,7 +2520,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String&
 {
     String normalizedText = normalizeSpaces(text);
     auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
-    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
+    TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, false, true);
     return measureTextInternal(textRun);
 }
 

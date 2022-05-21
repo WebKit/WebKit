@@ -115,15 +115,16 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     auto hangingTrailingContentLength = m_hangingTrailingContent.length();
     for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
         auto& run = m_runs[runIndex];
-        int expansionBehavior = DefaultExpansion;
+        auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;
 
         // FIXME: Check why we don't apply expansion when whitespace is preserved.
         if (run.isText() && (!TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingContentLength)) {
             if (run.hasTextCombine())
-                expansionBehavior = ForbidLeftExpansion | ForbidRightExpansion;
+                expansionBehavior = ExpansionBehavior::forbidAll();
             else {
-                expansionBehavior = (runIsAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion) | AllowRightExpansion;
+                expansionBehavior.setLeft(runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow);
+                expansionBehavior.setRight(ExpansionBehavior::Behavior::Allow);
                 auto& textContent = *run.textContent();
                 // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
                 auto hangingTrailingContentInCurrentRun = std::min(textContent.length, hangingTrailingContentLength);
@@ -141,11 +142,9 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
         if (run.isText() || run.isBox())
             lastRunIndexWithContent = runIndex;
     }
-    // Need to fix up the last run's trailing expansion.
+    // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.
     if (lastRunIndexWithContent && runsExpansionOpportunities[*lastRunIndexWithContent]) {
-        // Turn off the trailing bits first and add the forbid trailing expansion.
-        auto leadingExpansion = runsExpansionBehaviors[*lastRunIndexWithContent] & LeftExpansionMask;
-        runsExpansionBehaviors[*lastRunIndexWithContent] = leadingExpansion | ForbidRightExpansion;
+        runsExpansionBehaviors[*lastRunIndexWithContent].setRight(ExpansionBehavior::Behavior::Forbid);
         if (runIsAfterExpansion) {
             // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
             // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.

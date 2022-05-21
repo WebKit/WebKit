@@ -34,9 +34,10 @@ struct ExpectedTextRunSize {
     float float1;
     float float2;
     float float3;
-    unsigned bitfields : 9;
+    ExpansionBehavior expansionBehavior;
+    unsigned bitfields : 5;
 };
 
-static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun is not of expected size");
+static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun should be small");
 
 }

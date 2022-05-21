@@ -207,7 +207,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
-    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
+    TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, override, true);
     return measureTextInternal(textRun);
 }
 
@@ -240,7 +240,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
-    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
+    TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
 

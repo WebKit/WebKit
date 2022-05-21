@@ -70,7 +70,7 @@ void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context.drawText(font, RenderBlock::constructTextRun(m_str, lineStyle, AllowRightExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.metricsOfPrimaryFont().ascent()));
+    context.drawText(font, RenderBlock::constructTextRun(m_str, lineStyle, ExpansionBehavior::allowRightOnly()), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.metricsOfPrimaryFont().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context.fillColor())
@@ -119,7 +119,7 @@ IntRect LegacyEllipsisBox::selectionRect() const
     const LegacyRootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect { LayoutUnit(x()), LayoutUnit(y() + rootBox.selectionTopAdjustedForPrecedingBlock()), 0_lu, rootBox.selectionHeightAdjustedForPrecedingBlock() };
-    font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, AllowRightExpansion), selectionRect);
+    font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, ExpansionBehavior::allowRightOnly()), selectionRect);
     // FIXME: use directional pixel snapping instead.
     return enclosingIntRect(selectionRect);
 }
@@ -140,7 +140,7 @@ void LegacyEllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoi
     GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), rootBox.selectionTop() + paintOffset.y(), 0_lu, rootBox.selectionHeight() };
-    TextRun run = RenderBlock::constructTextRun(m_str, style, AllowRightExpansion);
+    TextRun run = RenderBlock::constructTextRun(m_str, style, ExpansionBehavior::allowRightOnly());
     font.adjustSelectionRectForText(run, selectionRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }

@@ -488,23 +488,23 @@ const RenderCombineText* LegacyInlineTextBox::combinedText() const
 
 ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
 {
-    ExpansionBehavior leftBehavior;
+    ExpansionBehavior behavior;
+
     if (forceLeftExpansion())
-        leftBehavior = ForceLeftExpansion;
+        behavior.setLeft(ExpansionBehavior::Behavior::Force);
     else if (canHaveLeftExpansion())
-        leftBehavior = AllowLeftExpansion;
+        behavior.setLeft(ExpansionBehavior::Behavior::Allow);
     else
-        leftBehavior = ForbidLeftExpansion;
+        behavior.setLeft(ExpansionBehavior::Behavior::Forbid);
 
-    ExpansionBehavior rightBehavior;
     if (forceRightExpansion())
-        rightBehavior = ForceRightExpansion;
+        behavior.setRight(ExpansionBehavior::Behavior::Force);
     else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        rightBehavior = AllowRightExpansion;
+        behavior.setRight(ExpansionBehavior::Behavior::Allow);
     else
-        rightBehavior = ForbidRightExpansion;
+        behavior.setRight(ExpansionBehavior::Behavior::Forbid);
 
-    return leftBehavior | rightBehavior;
+    return behavior;
 }
 
 #if ENABLE(TREE_DEBUGGING)

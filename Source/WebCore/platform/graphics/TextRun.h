@@ -43,7 +43,7 @@ struct GlyphData;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_tabSize(0)
         , m_xpos(xpos)
@@ -59,7 +59,7 @@ public:
         ASSERT(!m_text.isNull());
     }
 
-    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
     {
     }
@@ -128,7 +128,7 @@ private:
     float m_horizontalGlyphStretch;
 
     float m_expansion;
-    unsigned m_expansionBehavior : 4;
+    ExpansionBehavior m_expansionBehavior;
     unsigned m_allowTabs : 1;
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.

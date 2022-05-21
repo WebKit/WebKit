@@ -673,13 +673,13 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
 
 void ComplexTextController::adjustGlyphsAndAdvances()
 {
-    bool afterExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
+    bool afterExpansion = m_run.expansionBehavior().left() == ExpansionBehavior::Behavior::Forbid;
     size_t runCount = m_complexTextRuns.size();
     bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
-    bool runForcesLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForceLeftExpansion;
-    bool runForcesRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForceRightExpansion;
-    bool runForbidsLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
-    bool runForbidsRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForbidRightExpansion;
+    bool runForcesLeftExpansion = m_run.expansionBehavior().left() == ExpansionBehavior::Behavior::Force;
+    bool runForcesRightExpansion = m_run.expansionBehavior().right() == ExpansionBehavior::Behavior::Force;
+    bool runForbidsLeftExpansion = m_run.expansionBehavior().left() == ExpansionBehavior::Behavior::Forbid;
+    bool runForbidsRightExpansion = m_run.expansionBehavior().right() == ExpansionBehavior::Behavior::Forbid;
 
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
