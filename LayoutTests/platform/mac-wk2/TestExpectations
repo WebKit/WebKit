@@ -1627,8 +1627,6 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 
 webkit.org/b/237095 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Pass Failure ]
 
-webkit.org/b/237165 [ BigSur+ Debug ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html [ Pass Crash ]
-
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
