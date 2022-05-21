@@ -34,6 +34,10 @@
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 template <typename CharType>
@@ -134,7 +138,13 @@ double parseToDoubleForNumberType(StringView string, double fallbackValue)
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
-    if (string.endsWith('.'))
+    bool allowStringsThatEndWithFullStop = false;
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotParseStringEndingWithFullStopAsFloatingPointNumber))
+        allowStringsThatEndWithFullStop = true;
+#endif
+
+    if (string.endsWith('.') && !allowStringsThatEndWithFullStop)
         return fallbackValue;
 
     bool valid = false;

@@ -44,6 +44,7 @@ enum class SDKAlignedBehavior {
     DefaultsToPassiveWheelListenersOnDocument,
     DisallowsSettingAnyXHRHeaderFromFileURLs,
     DoesNotDrainTheMicrotaskQueueWhenCallingObjC,
+    DoesNotParseStringEndingWithFullStopAsFloatingPointNumber,
     DOMWindowReuseRestriction,
     DownloadDelegatesCalledOnTheMainThread,
     DropToNavigateDisallowedByDefault,
