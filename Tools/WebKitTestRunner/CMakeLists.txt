@@ -21,10 +21,10 @@ set(WebKitTestRunner_SOURCES
 
 set(WebKitTestRunner_LIBRARIES
     TestRunnerShared
+    WebKit::WebCore
 )
 set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
-    WebCore
     WebCoreTestSupport
 )
 
