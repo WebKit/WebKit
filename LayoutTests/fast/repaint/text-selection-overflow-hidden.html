@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<script src="resources/text-based-repaint.js" type="text/javascript"></script>
 <style>
 #test {
     background-color: red;
@@ -12,11 +11,30 @@
 }
 </style>
 <script>
-    function repaintTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText(false);
+        testRunner.waitUntilDone();
+    }
+
+    function runRepaintTest() {
+        if (window.internals)
+            internals.startTrackingRepaints();
+
         getSelection().setBaseAndExtent(test, 0, test, 1);
+
+        setTimeout(function() {
+            if (window.internals) {
+                document.querySelector('#repaints').innerHTML = window.internals.repaintRectsAsText();
+                internals.stopTrackingRepaints();
+            }
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
     };
 </script>
 
 <body onload="runRepaintTest()">
     <p id="test">Should have green background</p>
+    <div id="repaints"></div>
 </body>

@@ -2431,3 +2431,5 @@ webkit.org/b/221230 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/med
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
+
+webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout

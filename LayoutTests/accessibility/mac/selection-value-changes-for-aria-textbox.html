@@ -43,12 +43,17 @@ content inside
         // Trigger selection changes.
         var s = window.getSelection();
         s.setPosition(textbox, 0);
-        for (var k = 0; k < 3; k++) {
+        requestAnimationFrame(() => {
             s.modify("move", "forward", "character");
-        }
-
-        // Trigger value change.
-        document.execCommand("InsertText", false, "hello ");
+            requestAnimationFrame(() => {
+                s.modify("move", "forward", "character");
+                requestAnimationFrame(() => {
+                    s.modify("move", "forward", "character");
+                    // Trigger value change.
+                    document.execCommand("InsertText", false, "hello ");
+                });
+            });
+        });
     }
 
 </script>

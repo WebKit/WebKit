@@ -1,0 +1,32 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 20px;
+}
+div { 
+  padding-bottom: 50px;
+}
+</style>
+<div>PASS if deselecting this</div>
+<div id=second>clears the selection visually.</div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+window.getSelection().selectAllChildren(document.body);
+setTimeout(function() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+  window.getSelection().selectAllChildren(second);
+  setTimeout(function() {
+    if (window.internals) {
+      result.innerText = internals.repaintRectsAsText().indexOf("784 70") == -1 ? "FAIL" : "PASS";
+      internals.stopTrackingRepaints();
+    }
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 0);
+}, 0);
+</script>

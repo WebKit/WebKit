@@ -258,7 +258,7 @@ TemporarySelectionChange::~TemporarySelectionChange()
 
 void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
 {
-    auto options = FrameSelection::defaultSetSelectionOptions();
+    auto options = FrameSelection::defaultSetSelectionOptions(m_options.contains(TemporarySelectionOption::UserTriggered) ? UserTriggered : NotUserTriggered);
     if (m_options & TemporarySelectionOption::DoNotSetFocus)
         options.add(FrameSelection::DoNotSetFocus);
     if (m_options & TemporarySelectionOption::RevealSelection)

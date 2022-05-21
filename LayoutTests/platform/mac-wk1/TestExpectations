@@ -1456,3 +1456,5 @@ webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
 
 webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
+webkit.org/b/231298 accessibility/mac/selection-boundary-userinfo.html [ Failure ]
+webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]

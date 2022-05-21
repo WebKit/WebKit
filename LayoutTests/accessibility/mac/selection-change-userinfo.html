@@ -195,19 +195,87 @@
         shouldBe("addedNotification", "true");
 
         textbox = document.getElementById("textbox");
-        textbox.focus();
 
         // Trigger selection changes.
         var s = window.getSelection();
-        s.setPosition(textbox, 0);
-        for (var i in gran) {
-            s.modify("move", "forward", gran[i]);
-            s.modify("move", "backward", gran[i]);
+
+        function focusTextBox() {
+            return new Promise(function(resolve, reject) {
+                setTimeout(() => {
+                    textbox.focus();
+                    resolve();
+                }, 0);
+            });
         }
-        for (var i in gran) {
-            s.setPosition(textbox, 0);
-            s.modify("extend", "forward", gran[i]);
+
+        function moveSelection(direction, granularity) {
+            return new Promise(function(resolve, reject) {
+                setTimeout(function() {
+                    s.modify("move", direction, granularity);
+                    resolve();
+                }, 0);
+            });
         }
+
+        function extendSelection(granularity) {
+            return new Promise(function(resolve, reject) {
+                setTimeout(function() {
+                    s.modify("extend", "forward", granularity);
+                    resolve();
+                }, 0);
+            });
+        }
+
+        function resetPosition() {
+            return new Promise(function(resolve, reject) {
+                setTimeout(function() {
+                    s = window.getSelection();
+                    s.setPosition(textbox, 0);
+                    resolve();
+                }, 0);
+            });
+        }
+
+        (async function() {
+            await focusTextBox();
+            await resetPosition();
+            await moveSelection("forward", gran[0]);
+            await moveSelection("backward", gran[0]);
+            await moveSelection("forward", gran[1]);
+            await moveSelection("backward", gran[1]);
+            await moveSelection("forward", gran[2]);
+            await moveSelection("backward", gran[2]);
+            await moveSelection("forward", gran[3]);
+            await moveSelection("backward", gran[3]);
+            await moveSelection("forward", gran[4]);
+            await moveSelection("backward", gran[4]);
+            await moveSelection("forward", gran[5]);
+            await moveSelection("backward", gran[5]);
+            await moveSelection("forward", gran[6]);
+            await moveSelection("backward", gran[6]);
+            await moveSelection("forward", gran[7]);
+            await moveSelection("backward", gran[7]);
+            await moveSelection("forward", gran[8]);
+            await moveSelection("backward", gran[8]);
+            await resetPosition();
+            await extendSelection(gran[0]);
+            await resetPosition();
+            await extendSelection(gran[1]);
+            await resetPosition();
+            await extendSelection(gran[2]);
+            await resetPosition();
+            await extendSelection(gran[3]);
+            await resetPosition();
+            await extendSelection(gran[4]);
+            await resetPosition();
+            await extendSelection(gran[5]);
+            await resetPosition();
+            await extendSelection(gran[6]);
+            await resetPosition();
+            await extendSelection(gran[7]);
+            await resetPosition();
+            await extendSelection(gran[8]);
+          })();
     }
 
 </script>

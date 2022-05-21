@@ -454,6 +454,11 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
+    if (!(options & IsUserTriggered)) {
+        scheduleAppearanceUpdateAfterStyleChange();
+        return;
+    }
+
     updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent);
 
     if (options & IsUserTriggered) {
@@ -462,13 +467,19 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     }
 }
 
-static void updateSelectionByUpdatingLayoutOrStyle(Document& document)
+void FrameSelection::updateSelectionAppearanceNow()
 {
+    if (!m_document || !m_document->hasLivingRenderTree())
+        return;
+
+    Ref document = *m_document;
 #if ENABLE(TEXT_CARET)
-    document.updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets();
 #else
-    document.updateStyleIfNeeded();
+    document->updateStyleIfNeeded();
 #endif
+    if (m_pendingSelectionUpdate)
+        updateAppearance();
 }
 
 void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMode)
@@ -1686,7 +1697,7 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
 {
     if (!m_document)
         return IntRect();
-    updateSelectionByUpdatingLayoutOrStyle(*m_document);
+    updateSelectionAppearanceNow();
     recomputeCaretRect();
     if (insideFixed)
         *insideFixed = m_caretInsidePositionFixed;
@@ -2244,7 +2255,7 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdate
 
     // FIXME: We shouldn't trigger a synchronous layout here.
     if (doAppearanceUpdate == ShouldUpdateAppearance::Yes && m_document)
-        updateSelectionByUpdatingLayoutOrStyle(*m_document);
+        updateSelectionAppearanceNow();
 
 #if ENABLE(TEXT_CARET)
     if (m_caretPaint) {
@@ -2347,12 +2358,12 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
     return m_document->editor().client()->shouldDeleteRange(selection.toNormalizedRange());
 }
 
-FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleContent) const
+FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleContent)
 {
     if (!m_document)
         return LayoutRect();
 
-    updateSelectionByUpdatingLayoutOrStyle(*m_document);
+    updateSelectionAppearanceNow();
     auto* renderView = m_document->renderView();
     if (!renderView)
         return LayoutRect();
@@ -2447,6 +2458,8 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
 
     if (isNone())
         return;
+
+    updateSelectionAppearanceNow();
 
     LayoutRect rect;
     bool insideFixed = false;
