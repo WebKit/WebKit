@@ -449,6 +449,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
     undefined setPaginationLineGridEnabled(boolean enabled);
+    unsigned long long lineIndexAfterPageBreak(Element element);
 
     DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
 

@@ -99,10 +99,10 @@ public:
     LineBoxIterator(const LineBox&);
 
     LineBoxIterator& operator++() { return traverseNext(); }
-    LineBoxIterator& traverseNext();
+    WEBCORE_EXPORT LineBoxIterator& traverseNext();
     LineBoxIterator& traversePrevious();
 
-    explicit operator bool() const { return !atEnd(); }
+    WEBCORE_EXPORT explicit operator bool() const;
 
     bool operator==(const LineBoxIterator&) const;
     bool operator!=(const LineBoxIterator& other) const { return !(*this == other); }
@@ -119,7 +119,7 @@ private:
     LineBox m_lineBox;
 };
 
-LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
+WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 

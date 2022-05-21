@@ -189,7 +189,7 @@ std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineCont
             atTheTopOfColumnOrPage = atTheTopOfColumnOrPage ? lineIndex == lineBreakIndex : false;
             auto isPageBreakWithLineStrut = false;
             setPageBreakForLine(lineBreakIndex, lines, flow, struts, atTheTopOfColumnOrPage, lineDoesNotFit, isPageBreakWithLineStrut);
-            isFirstLineAfterPageBreakList[lineIndex] = isPageBreakWithLineStrut;
+            isFirstLineAfterPageBreakList[lineBreakIndex] = isPageBreakWithLineStrut;
             // Recompute line positions that we already visited but widow break pushed them to a new page.
             for (auto i = lineBreakIndex; i < lines.size(); ++i)
                 lines.at(i) = computeLineTopAndBottomWithOverflow(flow, inlineContent.lines, i, struts);

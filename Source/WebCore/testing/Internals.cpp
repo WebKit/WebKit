@@ -115,6 +115,7 @@
 #include "IDBTransaction.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
+#include "InlineIteratorLineBox.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
@@ -2033,6 +2034,28 @@ ExceptionOr<void> Internals::setPaginationLineGridEnabled(bool enabled)
         return Exception { InvalidAccessError };
     document->page()->setPaginationLineGridEnabled(enabled);
     return { };
+}
+
+ExceptionOr<uint64_t> Internals::lineIndexAfterPageBreak(Element& element)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { InvalidAccessError };
+
+    element.document().updateLayoutIgnorePendingStylesheets();
+
+    if (!element.renderer() || !is<RenderBlockFlow>(element.renderer()))
+        return Exception { NotFoundError };
+    auto& blockFlow = downcast<RenderBlockFlow>(*element.renderer());
+    if (!blockFlow.childrenInline())
+        return Exception { NotFoundError };
+
+    size_t lineIndex = 0;
+    for (auto lineBox = InlineIterator::firstLineBoxFor(blockFlow); lineBox; lineBox.traverseNext(), ++lineIndex) {
+        if (lineBox->isFirstAfterPageBreak())
+            return lineIndex;
+    }
+    return Exception { NotFoundError };
 }
 
 ExceptionOr<String> Internals::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)

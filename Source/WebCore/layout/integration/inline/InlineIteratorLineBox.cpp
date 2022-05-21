@@ -66,6 +66,11 @@ LineBoxIterator& LineBoxIterator::traversePrevious()
     return *this;
 }
 
+LineBoxIterator::operator bool() const
+{
+    return !atEnd();
+}
+
 bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 {
     return m_lineBox.m_pathVariant == other.m_lineBox.m_pathVariant;

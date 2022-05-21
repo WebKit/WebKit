@@ -333,6 +333,7 @@ public:
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);
     ExceptionOr<void> setPaginationLineGridEnabled(bool);
+    ExceptionOr<uint64_t> lineIndexAfterPageBreak(Element&);
     ExceptionOr<String> configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 
     ExceptionOr<bool> wasLastChangeUserEdit(Element& textField);
