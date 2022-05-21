@@ -92,19 +92,16 @@ namespace WebCore {
 // (and un-returned) databases instances.
 
 static const char versionKey[] = "WebKitDatabaseVersionKey";
-static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
+static constexpr auto unqualifiedInfoTableName = "__WebKitDatabaseInfoTable__"_s;
 const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
-static const char* fullyQualifiedInfoTableName()
+static const String& fullyQualifiedInfoTableName()
 {
-    static const char qualifier[] = "main.";
-    static char qualifiedName[sizeof(qualifier) + sizeof(unqualifiedInfoTableName) - 1];
-
+    static LazyNeverDestroyed<String> qualifiedName;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        snprintf(qualifiedName, sizeof(qualifiedName), "%s%s", qualifier, unqualifiedInfoTableName);
+        qualifiedName.get() = MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__");
     });
-
     return qualifiedName;
 }
 
@@ -199,7 +196,7 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
     , m_filename(DatabaseManager::singleton().fullPathForDatabase(m_document->securityOrigin(), m_name))
-    , m_databaseAuthorizer(DatabaseAuthorizer::create(String::fromLatin1(unqualifiedInfoTableName)))
+    , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
     {
         Locker locker { guidLock };

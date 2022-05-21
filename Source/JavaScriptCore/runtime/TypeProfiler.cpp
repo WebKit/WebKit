@@ -53,7 +53,7 @@ void TypeProfiler::logTypesForTypeLocation(TypeLocation* location, VM& vm)
 
     dataLog("\t\t", location->m_globalVariableID == TypeProfilerReturnStatement ? "[Return Statement]" : "[Normal Statement]", "\n");
 
-    dataLog("\t\t#Local#\n\t\t", makeStringByReplacingAll(location->m_instructionTypeSet->dumpTypes(), "\n", "\n\t\t"), "\n");
+    dataLog("\t\t#Local#\n\t\t", makeStringByReplacingAll(location->m_instructionTypeSet->dumpTypes(), '\n', "\n\t\t"_s), "\n");
     if (location->m_globalTypeSet)
         dataLog("\t\t#Global#\n\t\t", makeStringByReplacingAll(location->m_globalTypeSet->dumpTypes(), '\n', "\n\t\t"_s), "\n");
 }

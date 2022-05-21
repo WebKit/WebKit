@@ -196,7 +196,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     ASSERT(copiedAttributes.method() == Method::Post || copiedAttributes.method() == Method::Get);
 
-    bool isMailtoForm = actionURL.protocolIs("mailto");
+    bool isMailtoForm = actionURL.protocolIs("mailto"_s);
     bool isMultiPartForm = false;
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(actionURL, ContentSecurityPolicy::InsecureRequestType::FormSubmission);

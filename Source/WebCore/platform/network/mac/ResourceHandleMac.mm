@@ -429,7 +429,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         request.setHTTPMethod("HEAD"_s);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     const URL& url = request.url();

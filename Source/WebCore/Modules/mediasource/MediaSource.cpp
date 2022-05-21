@@ -641,7 +641,7 @@ static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type
     };
 
     for (auto codec : type.codecs()) {
-        if (!codec.startsWith("vp09") || countPeriods(codec) != 7)
+        if (!codec.startsWith("vp09"_s) || countPeriods(codec) != 7)
             continue;
 
         auto rawType = type.raw();

@@ -138,8 +138,8 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
-    bool protocolIsBlob() const { return protocolIs("blob"); }
-    bool protocolIsData() const { return protocolIs("data"); }
+    bool protocolIsBlob() const { return protocolIs("blob"_s); }
+    bool protocolIsData() const { return protocolIs("data"_s); }
     WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
@@ -270,7 +270,7 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 // These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
 // This is especially important because valid javascript URLs are not necessarily considered valid by WTF::URL.
 
-WTF_EXPORT_PRIVATE bool protocolIs(StringView url, const char* protocol);
+WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);

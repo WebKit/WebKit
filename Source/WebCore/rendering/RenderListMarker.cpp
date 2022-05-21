@@ -499,7 +499,7 @@ static StringView listMarkerSuffix(ListStyleType type)
     case ListStyleType::UpperNorwegian:
     case ListStyleType::UpperRoman:
     case ListStyleType::Urdu:
-        return ". ";
+        return ". "_s;
     case ListStyleType::CJKDecimal:
     case ListStyleType::CJKEarthlyBranch:
     case ListStyleType::CJKHeavenlyStem:
@@ -516,18 +516,18 @@ static StringView listMarkerSuffix(ListStyleType type)
     case ListStyleType::TraditionalChineseInformal:
         return { &ideographicComma, 1 };
     case ListStyleType::EthiopicNumeric:
-        return "/ ";
+        return "/ "_s;
     case ListStyleType::KoreanHangulFormal:
     case ListStyleType::KoreanHanjaInformal:
     case ListStyleType::KoreanHanjaFormal:
-        return ", ";
+        return ", "_s;
     case ListStyleType::String:
         ASSERT_NOT_REACHED();
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return ". ";
+    return ". "_s;
 }
 
 String listMarkerText(ListStyleType type, int value)

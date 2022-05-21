@@ -638,7 +638,7 @@ uint64_t DatabaseTracker::usage(const SecurityOriginData& origin)
     String originPath = this->originPath(origin);
     uint64_t diskUsage = 0;
     for (auto& fileName : FileSystem::listDirectory(originPath)) {
-        if (fileName.endsWith(".db"))
+        if (fileName.endsWith(".db"_s))
             diskUsage += SQLiteFileSystem::databaseFileSize(FileSystem::pathByAppendingComponent(originPath, fileName));
     }
     return diskUsage;

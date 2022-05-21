@@ -660,7 +660,7 @@ static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTi
             auto fileNameLength = fileName.length();
             if (fileNameLength < 6)
                 continue;
-            if (!fileName.endsWith(".blob"))
+            if (!fileName.endsWith(".blob"_s))
                 continue;
 
             bool validFileName = true;

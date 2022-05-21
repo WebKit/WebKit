@@ -98,8 +98,8 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
             if (results.summary.blockedLoad)
                 return { };
             if (results.summary.madeHTTPS) {
-                ASSERT(validatedURL.url.protocolIs("ws"));
-                validatedURL.url.setProtocol("wss");
+                ASSERT(validatedURL.url.protocolIs("ws"_s));
+                validatedURL.url.setProtocol("wss"_s);
             }
             validatedURL.areCookiesAllowed = !results.summary.blockedCookies;
         }

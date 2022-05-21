@@ -1644,7 +1644,7 @@ RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool sh
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
 {
     auto result = consumeCustomIdent(range, shouldLowercase);
-    if (result && result->stringValue().startsWith("--"))
+    if (result && result->stringValue().startsWith("--"_s))
         return result;
     return nullptr;
 }

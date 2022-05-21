@@ -560,8 +560,8 @@ static String stripMicrosoftPrefix(const String& string)
     // This code was added to make HTML paste from Microsoft Word on Mac work, back in 2004.
     // It's a simple-minded way to ignore the CF_HTML clipboard format, just skipping over the
     // description part and parsing the entire context plus fragment.
-    if (string.startsWith("Version:")) {
-        size_t location = string.findIgnoringASCIICase("<html");
+    if (string.startsWith("Version:"_s)) {
+        size_t location = string.findIgnoringASCIICase("<html"_s);
         if (location != notFound)
             return string.substring(location);
     }

@@ -272,17 +272,17 @@
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
     if (!absoluteLinkURL.isEmpty()) {
-        if (WTF::protocolIs(absoluteLinkURL, "file")) {
+        if (WTF::protocolIs(absoluteLinkURL, "file"_s)) {
             _type = kWKImmediateActionNone;
             return nil;
         }
 
-        if (WTF::protocolIs(absoluteLinkURL, "mailto")) {
+        if (WTF::protocolIs(absoluteLinkURL, "mailto"_s)) {
             _type = kWKImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (WTF::protocolIs(absoluteLinkURL, "tel")) {
+        if (WTF::protocolIs(absoluteLinkURL, "tel"_s)) {
             _type = kWKImmediateActionTelLink;
             return [self _animationControllerForDataDetectedLink];
         }

@@ -335,7 +335,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
         // Don't bother tokenizing the value; handling that exactly right is not important.
-        result.noCache = headers.get(HTTPHeaderName::Pragma).containsIgnoringASCIICase("no-cache");
+        result.noCache = headers.get(HTTPHeaderName::Pragma).containsIgnoringASCIICase("no-cache"_s);
     }
 
     return result;
@@ -343,7 +343,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 
 static String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const ResourceRequest& request)
 {
-    return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
+    return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
 }
 
 static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const ResourceRequest& request)
@@ -351,7 +351,7 @@ static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const Re
     if (!cookieJar)
         return { };
 
-    return cookieJar->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
+    return cookieJar->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
 }
 
 static String headerValueForVary(const ResourceRequest& request, StringView headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)

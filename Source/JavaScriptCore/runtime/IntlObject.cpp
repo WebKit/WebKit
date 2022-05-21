@@ -1795,9 +1795,9 @@ static bool isValidTimeZoneNameFromICUTimeZone(StringView timeZoneName)
 {
     // Some time zone names are included in ICU, but they are not included in the IANA Time Zone Database.
     // We need to filter them out.
-    if (timeZoneName.startsWith("SystemV/"))
+    if (timeZoneName.startsWith("SystemV/"_s))
         return false;
-    if (timeZoneName.startsWith("Etc/"))
+    if (timeZoneName.startsWith("Etc/"_s))
         return isUTCEquivalent(timeZoneName);
     // IANA time zone names include '/'. Some of them are not including, but it is in backward links.
     // And ICU already resolved these backward links.

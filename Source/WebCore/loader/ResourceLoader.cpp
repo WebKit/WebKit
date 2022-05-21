@@ -871,7 +871,7 @@ bool ResourceLoader::isQuickLookResource() const
 bool ResourceLoader::isPDFJSResourceLoad() const
 {
 #if ENABLE(PDFJS)
-    if (!m_request.url().protocolIs("webkit-pdfjs-viewer"))
+    if (!m_request.url().protocolIs("webkit-pdfjs-viewer"_s))
         return false;
 
     auto* document = frame() && frame()->ownerElement() ? &frame()->ownerElement()->document() : nullptr;

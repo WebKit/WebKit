@@ -122,10 +122,10 @@ bool ContentSecurityPolicySource::portMatches(const URL& url) const
         return true;
 
     // host-source and self-source allows upgrading to a more secure scheme which allows for different ports.
-    auto defaultSecurePort = WTF::defaultPortForProtocol("https").value_or(443);
-    auto defaultInsecurePort = WTF::defaultPortForProtocol("http").value_or(80);
-    bool isUpgradeSecure = (port == defaultSecurePort) || (!port && (url.protocol() == "https" || url.protocol() == "wss"));
-    bool isCurrentUpgradable = (m_port == defaultInsecurePort) || (m_scheme == "http" && (!m_port || m_port == defaultSecurePort));
+    auto defaultSecurePort = WTF::defaultPortForProtocol("https"_s).value_or(443);
+    auto defaultInsecurePort = WTF::defaultPortForProtocol("http"_s).value_or(80);
+    bool isUpgradeSecure = (port == defaultSecurePort) || (!port && (url.protocol() == "https"_s || url.protocol() == "wss"_s));
+    bool isCurrentUpgradable = (m_port == defaultInsecurePort) || (m_scheme == "http"_s && (!m_port || m_port == defaultSecurePort));
     if (isUpgradeSecure && isCurrentUpgradable)
         return true;
 

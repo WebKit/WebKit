@@ -365,7 +365,7 @@ private:
         if (m_urlToLoad.isEmpty())
             return false;
 
-        if (protocolIs(m_urlToLoad, "data") || protocolIs(m_urlToLoad, "about"))
+        if (protocolIs(m_urlToLoad, "data"_s) || protocolIs(m_urlToLoad, "about"_s))
             return false;
 
         if (m_tagId == TagId::Link && !m_linkIsStyleSheet && !m_linkIsPreload)

@@ -108,7 +108,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
-    ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
+    ASSERT(url.protocolIs("ws"_s) || url.protocolIs("wss"_s));
 
     URL httpsURL { "https://" + m_url.host() };
     m_httpsURL = httpsURL.createCFURL();
@@ -116,7 +116,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
 #if PLATFORM(COCOA)
     // Don't check for HSTS violation for ephemeral sessions since
     // HSTS state should not transfer between regular and private browsing.
-    if (url.protocolIs("ws")
+    if (url.protocolIs("ws"_s)
         && !sessionID.isEphemeral()
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
         // Call this asynchronously because the socket stream is not fully constructed at this point.

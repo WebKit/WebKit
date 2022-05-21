@@ -1898,7 +1898,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         recomputeIsIgnored(element->parentNode());
     }
 
-    if (!attrName.localName().string().startsWith("aria-"))
+    if (!attrName.localName().string().startsWith("aria-"_s))
         return;
 
     if (attrName == aria_activedescendantAttr)

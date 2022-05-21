@@ -56,7 +56,7 @@ Ref<CookieJar> CookieJar::create(Ref<StorageSessionProvider>&& storageSessionPro
 
 IncludeSecureCookies CookieJar::shouldIncludeSecureCookies(const Document& document, const URL& url)
 {
-    return (url.protocolIs("https") && !document.foundMixedContent().contains(SecurityContext::MixedContentType::Active)) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    return (url.protocolIs("https"_s) && !document.foundMixedContent().contains(SecurityContext::MixedContentType::Active)) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
 }
 
 SameSiteInfo CookieJar::sameSiteInfo(const Document& document, IsForDOMCookieAccess isAccessForDOM)

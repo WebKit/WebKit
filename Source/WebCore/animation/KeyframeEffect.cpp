@@ -1187,8 +1187,8 @@ ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
     // the target pseudo-selector must be set to the equivalent two-colon selector (e.g. '::before').
     auto pseudoId = PseudoId::None;
     if (!pseudoElement.isNull()) {
-        auto isLegacy = pseudoElement == ":before" || pseudoElement == ":after" || pseudoElement == ":first-letter" || pseudoElement == ":first-line";
-        if (!isLegacy && !pseudoElement.startsWith("::"))
+        auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
+        if (!isLegacy && !pseudoElement.startsWith("::"_s))
             return Exception { SyntaxError };
         auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
         if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)

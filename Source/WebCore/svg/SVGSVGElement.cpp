@@ -602,14 +602,14 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     bool hadUseCurrentView = m_useCurrentView;
     m_useCurrentView = false;
 
-    if (fragmentIdentifier.startsWith("xpointer(")) {
+    if (fragmentIdentifier.startsWith("xpointer("_s)) {
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
         if (renderer && hadUseCurrentView)
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return false;
     }
 
-    if (fragmentIdentifier.startsWith("svgView(")) {
+    if (fragmentIdentifier.startsWith("svgView("_s)) {
         if (!view)
             view = &currentView(); // Create the SVGViewSpec.
         if (view->parseViewSpec(fragmentIdentifier))

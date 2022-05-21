@@ -306,7 +306,7 @@ String CanvasRenderingContext2DBase::State::fontString() const
 
     for (unsigned i = 0; i < font.familyCount(); ++i) {
         StringView family = font.familyAt(i);
-        if (family.startsWith("-webkit-"))
+        if (family.startsWith("-webkit-"_s))
             family = family.substring(8);
 
         auto separator = i ? ", " : " ";

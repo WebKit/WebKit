@@ -203,9 +203,9 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // WebKit uses many WorkQueues with common prefixes.
-        if (thread.dispatchQueueName.startsWith("com.apple.IPC.")
-            || thread.dispatchQueueName.startsWith("com.apple.WebKit.")
-            || thread.dispatchQueueName.startsWith("org.webkit."))
+        if (thread.dispatchQueueName.startsWith("com.apple.IPC."_s)
+            || thread.dispatchQueueName.startsWith("com.apple.WebKit."_s)
+            || thread.dispatchQueueName.startsWith("org.webkit."_s))
             return true;
 
         return false;

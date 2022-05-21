@@ -121,7 +121,7 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
         return true;
 
     // This is counter to the CSP3 spec which only allows HTTPS but Chromium also allows it.
-    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws") || url.protocolIs("wss") || url.protocolIs(m_policy.selfProtocol());
+    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws"_s) || url.protocolIs("wss"_s) || url.protocolIs(m_policy.selfProtocol());
     // Also not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
     if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))

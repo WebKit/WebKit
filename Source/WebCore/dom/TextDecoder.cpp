@@ -81,7 +81,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType>
 
 String TextDecoder::encoding() const
 {
-    return makeString(asASCIILowercase(m_textEncoding.name()));
+    return makeString(asASCIILowercase(StringView::fromLatin1(m_textEncoding.name())));
 }
 
 }

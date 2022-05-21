@@ -281,7 +281,7 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
 
     auto type = parsePseudoElementString(name);
     if (type == PseudoElementUnknown) {
-        if (name.startsWith("-webkit-"))
+        if (name.startsWith("-webkit-"_s))
             type = PseudoElementWebKitCustom;
     }
 

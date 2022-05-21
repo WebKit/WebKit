@@ -308,7 +308,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
     if (numeric != TriState::Indeterminate)
-        localeID.setKeywordValue("colnumeric"_s, numeric == TriState::True ? "yes" : "no");
+        localeID.setKeywordValue("colnumeric"_s, numeric == TriState::True ? "yes"_s : "no"_s);
 
     String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());

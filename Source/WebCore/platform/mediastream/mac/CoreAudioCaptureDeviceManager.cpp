@@ -148,7 +148,7 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
     CFStringRef name = nullptr;
     dataSize = sizeof(name);
     AudioObjectGetPropertyData(device.deviceID(), &address, 0, nullptr, &dataSize, &name);
-    bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio");
+    bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio"_s);
     if (name)
         CFRelease(name);
     if (isNonAggregable) {

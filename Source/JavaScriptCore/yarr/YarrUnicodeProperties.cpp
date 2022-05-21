@@ -57,7 +57,7 @@ struct HashTable {
             return -1;
 
         while (true) {
-            if (WTF::equal(key, values[valueIndex].key))
+            if (WTF::equal(key, StringView::fromLatin1(values[valueIndex].key)))
                 return values[valueIndex].index;
 
             indexEntry = index[indexEntry].next;

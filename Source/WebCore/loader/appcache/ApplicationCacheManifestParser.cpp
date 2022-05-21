@@ -156,7 +156,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
                 if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
                     continue;
                 
-                if (manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))
+                if (manifestURL.protocolIs("https"_s) && !protocolHostAndPortAreEqual(manifestURL, url))
                     continue;
                 
                 manifest.explicitURLs.add(url.string());

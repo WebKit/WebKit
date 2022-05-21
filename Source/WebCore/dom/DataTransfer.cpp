@@ -128,11 +128,11 @@ static String normalizeType(const String& type)
         return type;
 
     String lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
-    if (lowercaseType == "text" || lowercaseType.startsWith("text/plain;"))
+    if (lowercaseType == "text"_s || lowercaseType.startsWith("text/plain;"_s))
         return textPlainContentTypeAtom();
-    if (lowercaseType == "url" || lowercaseType.startsWith("text/uri-list;"))
+    if (lowercaseType == "url"_s || lowercaseType.startsWith("text/uri-list;"_s))
         return "text/uri-list"_s;
-    if (lowercaseType.startsWith("text/html;"))
+    if (lowercaseType.startsWith("text/html;"_s))
         return "text/html"_s;
 
     return lowercaseType;

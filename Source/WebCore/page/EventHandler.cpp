@@ -2338,10 +2338,10 @@ static String convertDragOperationToDropZoneOperation(std::optional<DragOperatio
 
 static bool hasDropZoneType(DataTransfer& dataTransfer, const String& keyword)
 {
-    if (keyword.startsWith("file:"))
+    if (keyword.startsWith("file:"_s))
         return dataTransfer.hasFileOfType(keyword.substring(5));
 
-    if (keyword.startsWith("string:"))
+    if (keyword.startsWith("string:"_s))
         return dataTransfer.hasStringOfType(keyword.substring(7));
 
     return false;

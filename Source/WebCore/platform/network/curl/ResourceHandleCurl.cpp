@@ -468,7 +468,7 @@ void ResourceHandle::willSendRequest()
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!newURL.protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https") && context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!newURL.protocolIs("https"_s) && protocolIs(newRequest.httpReferrer(), "https"_s) && context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         newRequest.clearHTTPReferrer();
 
     d->m_user = newURL.user();

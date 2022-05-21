@@ -546,7 +546,7 @@ bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
         return true;
 
     // When detecting +json ensure there is a non-empty type / subtype preceeding the suffix.
-    if (mimeType.endsWithIgnoringASCIICase("+json") && mimeType.length() >= 8) {
+    if (mimeType.endsWithIgnoringASCIICase("+json"_s) && mimeType.length() >= 8) {
         size_t slashPosition = mimeType.find('/');
         if (slashPosition != notFound && slashPosition > 0 && slashPosition <= mimeType.length() - 6)
             return true;
@@ -602,7 +602,7 @@ bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
     if (equalLettersIgnoringASCIICase(mimeType, "text/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "application/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s))
         return true;
 
-    if (!mimeType.endsWithIgnoringASCIICase("+xml"))
+    if (!mimeType.endsWithIgnoringASCIICase("+xml"_s))
         return false;
 
     size_t slashPosition = mimeType.find('/');

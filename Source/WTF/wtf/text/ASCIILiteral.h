@@ -51,6 +51,7 @@ public:
     constexpr const char* characters() const { return m_characters; }
     const LChar* characters8() const { return bitwise_cast<const LChar*>(m_characters); }
     size_t length() const { return strlen(m_characters); }
+    size_t isEmpty() const { return !m_characters || !*m_characters; }
 
     constexpr char characterAt(unsigned index) const { return m_characters[index]; }
 

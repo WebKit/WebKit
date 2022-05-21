@@ -38,7 +38,7 @@ namespace WebCore {
 
 static bool isSecure(DocumentLoader& documentLoader)
 {
-    if (!documentLoader.response().url().protocolIs("https"))
+    if (!documentLoader.response().url().protocolIs("https"_s))
         return false;
 
     if (!documentLoader.response().certificateInfo() || documentLoader.response().certificateInfo()->containsNonRootSHA1SignedCertificate())

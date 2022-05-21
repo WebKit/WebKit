@@ -1430,7 +1430,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagDownloadImageToDisk:
 #if PLATFORM(MAC)
-            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"_s))
                 shouldEnable = false;
 #endif
             break;
@@ -1445,7 +1445,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagDownloadVideoToDisk());
             else
                 item.setTitle(contextMenuItemTagDownloadAudioToDisk());
-            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"_s))
                 shouldEnable = false;
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:

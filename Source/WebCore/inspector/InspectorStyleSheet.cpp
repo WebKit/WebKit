@@ -379,11 +379,11 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     // rule body.
     auto commentTextView = StringView(m_parsedText).substring(startOffset, endOffset - startOffset);
     
-    ASSERT(commentTextView.startsWith("/*"));
+    ASSERT(commentTextView.startsWith("/*"_s));
     commentTextView = commentTextView.substring(2);
     
     // Require well-formed comments.
-    if (!commentTextView.endsWith("*/"))
+    if (!commentTextView.endsWith("*/"_s))
         return;
     commentTextView = commentTextView.left(commentTextView.length() - 2).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
     if (commentTextView.isEmpty())
@@ -400,7 +400,7 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     if (commentPropertyData.size() != 1)
         return;
     CSSPropertySourceData& propertyData = commentPropertyData.at(0);
-    bool parsedOk = propertyData.parsedOk || propertyData.name.startsWith("-moz-") || propertyData.name.startsWith("-o-") || propertyData.name.startsWith("-webkit-") || propertyData.name.startsWith("-ms-");
+    bool parsedOk = propertyData.parsedOk || propertyData.name.startsWith("-moz-"_s) || propertyData.name.startsWith("-o-"_s) || propertyData.name.startsWith("-webkit-"_s) || propertyData.name.startsWith("-ms-"_s);
     if (!parsedOk || propertyData.range.length() != commentText.length())
         return;
     
@@ -641,7 +641,7 @@ ExceptionOr<String> InspectorStyle::text() const
 static String lowercasePropertyName(const String& name)
 {
     // Custom properties are case-sensitive.
-    if (name.startsWith("--"))
+    if (name.startsWith("--"_s))
         return name;
     return name.convertToASCIILowercase();
 }
@@ -1139,7 +1139,7 @@ static Ref<Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String
 
 static Ref<JSON::ArrayOf<Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const Vector<const CSSSelector*> selectors)
 {
-    static NeverDestroyed<JSC::Yarr::RegularExpression> comment("/\\*[^]*?\\*/", JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineEnabled);
+    static NeverDestroyed<JSC::Yarr::RegularExpression> comment("/\\*[^]*?\\*/"_s, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineEnabled);
 
     auto result = JSON::ArrayOf<Protocol::CSS::CSSSelector>::create();
     unsigned selectorIndex = 0;

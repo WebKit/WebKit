@@ -62,7 +62,7 @@ static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
 
 static bool isWebKitInjectedScript(const String& sourceURL)
 {
-    return sourceURL.startsWith("__InjectedScript_") && sourceURL.endsWith(".js");
+    return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
 }
 
 static std::optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Protocol::ErrorString& errorString, const String& typeString)

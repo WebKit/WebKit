@@ -66,8 +66,8 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
     //                               | "*"
     // instance-length           = 1*DIGIT
 
-    static const char* prefix = "bytes ";
-    static const size_t prefixLength = 6;
+    static constexpr auto prefix = "bytes "_s;
+    static constexpr size_t prefixLength = 6;
 
     if (!headerValue.startsWith(prefix))
         return false;

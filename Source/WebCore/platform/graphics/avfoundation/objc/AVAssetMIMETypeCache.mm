@@ -78,7 +78,7 @@ bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
 
     // AVFoundation will return non-video MIME types which it claims to support, but which we
     // do not support in the <video> element. Reject all non video/, audio/, and application/ types.
-    if (!lowerCaseType.startsWith("video/") && !lowerCaseType.startsWith("audio/") && !lowerCaseType.startsWith("application/"))
+    if (!lowerCaseType.startsWith("video/"_s) && !lowerCaseType.startsWith("audio/"_s) && !lowerCaseType.startsWith("application/"_s))
         return true;
 
     // Reject types we know AVFoundation does not support that sites commonly ask about.

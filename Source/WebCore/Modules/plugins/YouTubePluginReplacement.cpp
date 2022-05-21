@@ -322,10 +322,10 @@ AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL
 
     // Append the query string if it is valid.
     return makeAtomString(
-        isYouTubeShortenedURL ? "http://www.youtube.com" : srcURLPrefix,
-        "/embed/",
+        isYouTubeShortenedURL ? "http://www.youtube.com"_s : srcURLPrefix,
+        "/embed/"_s,
         videoID,
-        query.isEmpty() ? "" : "?",
+        query.isEmpty() ? ""_s : "?"_s,
         query
     );
 }

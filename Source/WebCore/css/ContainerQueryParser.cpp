@@ -180,9 +180,9 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
         auto name = consumeFeatureName(range);
         if (name.isEmpty())
             return { };
-        if (name.startsWith("min-"))
+        if (name.startsWith("min-"_s))
             return { StringView(name).substring(4).toAtomString(), CQ::ComparisonOperator::GreaterThanOrEqual };
-        if (name.startsWith("max-"))
+        if (name.startsWith("max-"_s))
             return { StringView(name).substring(4).toAtomString(), CQ::ComparisonOperator::LessThanOrEqual };
 
         return { name, CQ::ComparisonOperator::Equal };

@@ -50,13 +50,13 @@
 
 namespace WebCore {
 
-const double secondsPerHour = 3600;
-const double secondsPerMinute = 60;
-const double secondsPerMillisecond = 0.001;
-const char* fileIdentifier = "WEBVTT";
-const unsigned fileIdentifierLength = 6;
-const unsigned regionIdentifierLength = 6;
-const unsigned styleIdentifierLength = 5;
+constexpr double secondsPerHour = 3600;
+constexpr double secondsPerMinute = 60;
+constexpr double secondsPerMillisecond = 0.001;
+constexpr auto fileIdentifier = "WEBVTT"_s;
+constexpr unsigned fileIdentifierLength = 6;
+constexpr unsigned regionIdentifierLength = 6;
+constexpr unsigned styleIdentifierLength = 5;
 
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {

@@ -220,12 +220,12 @@ static const Seconds hideMediaControlsAfterEndedDelay { 6_s };
 
 #if ENABLE(MEDIA_SOURCE)
 // URL protocol used to signal that the media source API is being used.
-static const char* mediaSourceBlobProtocol = "blob";
+static constexpr auto mediaSourceBlobProtocol = "blob"_s;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
 // URL protocol used to signal that the media stream API is being used.
-static const char* mediaStreamBlobProtocol = "blob";
+static constexpr auto mediaStreamBlobProtocol = "blob"_s;
 #endif
 
 using namespace HTMLNames;

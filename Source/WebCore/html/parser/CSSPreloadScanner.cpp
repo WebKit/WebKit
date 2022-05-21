@@ -215,7 +215,7 @@ static bool hasValidImportConditions(StringView conditions)
 
     auto end = conditions.find(')');
     if (end != notFound)
-        return end == conditions.length() - 1 && conditions.startsWith("layer(");
+        return end == conditions.length() - 1 && conditions.startsWith("layer("_s);
 
     return conditions == "layer";
 }

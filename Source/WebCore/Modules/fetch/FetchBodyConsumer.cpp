@@ -140,12 +140,12 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
         String header = String::fromUTF8(headerBegin, headerLength);
 
-        const char* contentDispositionCharacters = "Content-Disposition:";
+        constexpr auto contentDispositionCharacters = "Content-Disposition:"_s;
         size_t contentDispositionBegin = header.find(contentDispositionCharacters);
         if (contentDispositionBegin == notFound)
             return false;
         size_t contentDispositionEnd = header.find("\r\n"_s, contentDispositionBegin);
-        size_t contentDispositionParametersBegin = header.find(';', contentDispositionBegin + strlen(contentDispositionCharacters));
+        size_t contentDispositionParametersBegin = header.find(';', contentDispositionBegin + contentDispositionCharacters.length());
         if (contentDispositionParametersBegin != notFound)
             contentDispositionParametersBegin++;
 
@@ -159,8 +159,8 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         else {
             String contentType = "text/plain"_s;
 
-            const char* contentTypeCharacters = "Content-Type:";
-            size_t contentTypePrefixLength = strlen(contentTypeCharacters);
+            constexpr auto contentTypeCharacters = "Content-Type:"_s;
+            size_t contentTypePrefixLength = contentTypeCharacters.length();
             size_t contentTypeBegin = header.find(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
                 size_t contentTypeEnd = header.find("\r\n"_s, contentTypeBegin);

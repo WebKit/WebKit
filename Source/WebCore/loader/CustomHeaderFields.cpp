@@ -40,7 +40,7 @@ bool CustomHeaderFields::thirdPartyDomainsMatch(const URL& url) const
     for (const auto& domainOrPattern : thirdPartyDomains) {
         if (domainOrPattern == url.host())
             return true;
-        if (domainOrPattern.startsWith("*.")
+        if (domainOrPattern.startsWith("*."_s)
             && url.host().endsWith(StringView(domainOrPattern).substring(1))
             && domainOrPattern.length() > registrableDomainLength)
             return true;

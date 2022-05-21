@@ -65,8 +65,8 @@ static Vector<UserContentURLPattern>& originAccessPatterns() WTF_REQUIRES_LOCK(o
 
 bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
 {
-    bool referrerIsSecureURL = protocolIs(referrer, "https");
-    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
+    bool referrerIsSecureURL = protocolIs(referrer, "https"_s);
+    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http"_s);
 
     if (!referrerIsWebURL)
         return true;
@@ -74,7 +74,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
     if (!referrerIsSecureURL)
         return false;
 
-    bool URLIsSecureURL = url.protocolIs("https");
+    bool URLIsSecureURL = url.protocolIs("https"_s);
 
     return !URLIsSecureURL;
 }
@@ -150,7 +150,7 @@ String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const
     case ReferrerPolicy::NoReferrerWhenDowngrade:
     case ReferrerPolicy::StrictOrigin:
     case ReferrerPolicy::StrictOriginWhenCrossOrigin:
-        if (protocolIs(securityOrigin.protocol(), "https") && !url.protocolIs("https"))
+        if (protocolIs(securityOrigin.protocol(), "https"_s) && !url.protocolIs("https"_s))
             return "null"_s;
         break;
     case ReferrerPolicy::SameOrigin:

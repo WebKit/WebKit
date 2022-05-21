@@ -57,12 +57,12 @@ static bool schemeRequiresHost(const URL& url)
     // We expect URLs with these schemes to have authority components. If the
     // URL lacks an authority component, we get concerned and mark the origin
     // as unique.
-    return url.protocolIsInHTTPFamily() || url.protocolIs("ftp");
+    return url.protocolIsInHTTPFamily() || url.protocolIs("ftp"_s);
 }
 
 bool SecurityOrigin::shouldIgnoreHost(const URL& url)
 {
-    return url.protocolIsData() || url.protocolIsAbout() || url.protocolIsJavaScript() || url.protocolIs("file");
+    return url.protocolIsData() || url.protocolIsAbout() || url.protocolIsJavaScript() || url.protocolIs("file"_s);
 }
 
 bool SecurityOrigin::shouldUseInnerURL(const URL& url)
@@ -114,18 +114,18 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (url.hasSpecialScheme()
 #if PLATFORM(COCOA)
         || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NullOriginForNonSpecialSchemedURLs)
-        || url.protocolIs("applewebdata")
-        || url.protocolIs("x-apple-ql-id")
-        || url.protocolIs("x-apple-ql-id2")
-        || url.protocolIs("x-apple-ql-magic")
+        || url.protocolIs("applewebdata"_s)
+        || url.protocolIs("x-apple-ql-id"_s)
+        || url.protocolIs("x-apple-ql-id2"_s)
+        || url.protocolIs("x-apple-ql-magic"_s)
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        || url.protocolIs("resource")
+        || url.protocolIs("resource"_s)
 #if ENABLE(PDFJS)
-        || url.protocolIs("webkit-pdfjs-viewer")
+        || url.protocolIs("webkit-pdfjs-viewer"_s)
 #endif
 #endif
-        || url.protocolIs("blob"))
+        || url.protocolIs("blob"_s))
         return false;
 
     return !LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
@@ -134,11 +134,11 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 static bool isLoopbackIPAddress(StringView host)
 {
     // The IPv6 loopback address is 0:0:0:0:0:0:0:1, which compresses to ::1.
-    if (host == "[::1]")
+    if (host == "[::1]"_s)
         return true;
 
     // Check to see if it's a valid IPv4 address that has the form 127.*.*.*.
-    if (!host.startsWith("127."))
+    if (!host.startsWith("127."_s))
         return false;
     size_t dotsFound = 0;
     for (size_t i = 0; i < host.length(); ++i) {
@@ -608,7 +608,7 @@ bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
         return true;
 
     // FIXME: Ensure that localhost resolves to the loopback address.
-    if (equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"))
+    if (equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"_s))
         return true;
 
     return false;

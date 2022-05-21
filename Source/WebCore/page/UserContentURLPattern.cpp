@@ -87,11 +87,11 @@ bool UserContentURLPattern::parse(StringView pattern)
         m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos).toString();
         m_matchSubdomains = false;
 
-        if (m_host == "*") {
+        if (m_host == "*"_s) {
             // The pattern can be just '*', which means match all domains.
             m_host = emptyString();
             m_matchSubdomains = true;
-        } else if (m_host.startsWith("*.")) {
+        } else if (m_host.startsWith("*."_s)) {
             // The first component can be '*', which means to match all subdomains.
             m_host = m_host.substring(2); // Length of "*."
             m_matchSubdomains = true;

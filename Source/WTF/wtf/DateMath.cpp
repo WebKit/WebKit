@@ -884,14 +884,14 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
 
             skipSpacesAndComments(dateString);
 
-            if (startsWithLettersIgnoringASCIICase(dateString, "am"_s)) {
+            if (startsWithLettersIgnoringASCIICase(StringView::fromLatin1(dateString), "am"_s)) {
                 if (hour > 12)
                     return std::numeric_limits<double>::quiet_NaN();
                 if (hour == 12)
                     hour = 0;
                 dateString += 2;
                 skipSpacesAndComments(dateString);
-            } else if (startsWithLettersIgnoringASCIICase(dateString, "pm"_s)) {
+            } else if (startsWithLettersIgnoringASCIICase(StringView::fromLatin1(dateString), "pm"_s)) {
                 if (hour > 12)
                     return std::numeric_limits<double>::quiet_NaN();
                 if (hour != 12)
@@ -915,7 +915,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
     // Don't fail if the time zone is missing. 
     // Some websites omit the time zone (4275206).
     if (*dateString) {
-        if (startsWithLettersIgnoringASCIICase(dateString, "gmt"_s) || startsWithLettersIgnoringASCIICase(dateString, "utc"_s)) {
+        if (startsWithLettersIgnoringASCIICase(StringView ::fromLatin1(dateString), "gmt"_s) || startsWithLettersIgnoringASCIICase(StringView::fromLatin1(dateString), "utc"_s)) {
             dateString += 3;
             isLocalTime = false;
         }

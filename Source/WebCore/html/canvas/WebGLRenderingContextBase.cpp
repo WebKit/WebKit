@@ -188,7 +188,7 @@ namespace {
 
     bool isPrefixReserved(const String& name)
     {
-        if (name.startsWith("gl_") || name.startsWith("webgl_") || name.startsWith("_webgl_"))
+        if (name.startsWith("gl_"_s) || name.startsWith("webgl_"_s) || name.startsWith("_webgl_"_s))
             return true;
         return false;
     }
@@ -3073,7 +3073,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
         return nullptr;
     // FIXME: Do we still need this for the ANGLE backend?
     if (!isGLES2Compliant())
-        if (info.size > 1 && !info.name.endsWith("[0]"))
+        if (info.size > 1 && !info.name.endsWith("[0]"_s))
             info.name = makeString(info.name, "[0]"_s);
 
     LOG(WebGL, "Returning active uniform %d: %s", index, info.name.utf8().data());
@@ -3913,7 +3913,7 @@ RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGL
         if (!m_context->getActiveUniform(program.object(), i, info))
             return nullptr;
         // Strip "[0]" from the name if it's an array.
-        if (info.name.endsWith("[0]"))
+        if (info.name.endsWith("[0]"_s))
             info.name = info.name.left(info.name.length() - 3);
         // If it's an array, we need to iterate through each element, appending "[index]" to the name.
         for (GCGLint index = 0; index < info.size; ++index) {

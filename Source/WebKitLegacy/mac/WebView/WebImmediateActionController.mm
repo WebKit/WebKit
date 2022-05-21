@@ -273,12 +273,12 @@
     NSURL *url = _hitTestResult.absoluteLinkURL();
     String absoluteURLString = [url absoluteString];
     if (url && _hitTestResult.URLElement()) {
-        if (WTF::protocolIs(absoluteURLString, "mailto")) {
+        if (WTF::protocolIs(absoluteURLString, "mailto"_s)) {
             _type = WebImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (WTF::protocolIs(absoluteURLString, "tel")) {
+        if (WTF::protocolIs(absoluteURLString, "tel"_s)) {
             _type = WebImmediateActionTelLink;
             return [self _animationControllerForDataDetectedLink];
         }

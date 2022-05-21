@@ -710,7 +710,7 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
 
 static bool shouldReportProtocolOnly(const URL& url)
 {
-    return !url.isHierarchical() || url.protocolIs("file");
+    return !url.isHierarchical() || url.protocolIs("file"_s);
 }
 
 String ContentSecurityPolicy::createURLForReporting(const URL& url, const String& violatedDirective) const
@@ -976,7 +976,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& requ
 
 void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType) const
 {
-    if (!url.protocolIs("http") && !url.protocolIs("ws"))
+    if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
         return;
 
     bool upgradeRequest = m_insecureNavigationRequestsToUpgrade.contains(SecurityOriginData::fromURL(url));
@@ -986,11 +986,11 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     if (!upgradeRequest)
         return;
 
-    if (url.protocolIs("http"))
-        url.setProtocol("https");
+    if (url.protocolIs("http"_s))
+        url.setProtocol("https"_s);
     else {
-        ASSERT(url.protocolIs("ws"));
-        url.setProtocol("wss");
+        ASSERT(url.protocolIs("ws"_s));
+        url.setProtocol("wss"_s);
     }
 
     if (url.port() && url.port().value() == 80)
@@ -1009,10 +1009,10 @@ void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureReque
     // Store the upgrade domain as an 'insecure' protocol so we can quickly identify
     // origins we should upgrade.
     URL upgradeURL = m_scriptExecutionContext->url();
-    if (upgradeURL.protocolIs("https"))
-        upgradeURL.setProtocol("http");
-    else if (upgradeURL.protocolIs("wss"))
-        upgradeURL.setProtocol("ws");
+    if (upgradeURL.protocolIs("https"_s))
+        upgradeURL.setProtocol("http"_s);
+    else if (upgradeURL.protocolIs("wss"_s))
+        upgradeURL.setProtocol("ws"_s);
     
     m_insecureNavigationRequestsToUpgrade.add(SecurityOriginData::fromURL(upgradeURL));
 }

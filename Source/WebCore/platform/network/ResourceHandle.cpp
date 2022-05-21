@@ -282,7 +282,7 @@ bool ResourceHandle::shouldContentSniffURL(const URL& url)
         return true;
 #endif
     // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
-    return !url.protocolIs("file");
+    return !url.protocolIs("file"_s);
 }
 
 void ResourceHandle::forceContentSniffing()

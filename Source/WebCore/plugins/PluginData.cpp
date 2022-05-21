@@ -80,9 +80,9 @@ static bool shouldBePubliclyVisible(const PluginInfo& plugin)
     // are frequently accessed through the bad practice of iterating over the contents
     // of the navigator.plugins list. Luckily, these plug-ins happen to be the least
     // user-specific.
-    return plugin.name.containsIgnoringASCIICase("Shockwave")
-        || plugin.name.containsIgnoringASCIICase("QuickTime")
-        || plugin.name.containsIgnoringASCIICase("Java")
+    return plugin.name.containsIgnoringASCIICase("Shockwave"_s)
+        || plugin.name.containsIgnoringASCIICase("QuickTime"_s)
+        || plugin.name.containsIgnoringASCIICase("Java"_s)
         || isBuiltInPDFPlugIn(plugin);
 }
 

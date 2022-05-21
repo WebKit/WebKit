@@ -426,7 +426,7 @@ static bool shouldAllowExternalLoad(const URL& url)
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
-    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && urlString.endsWithIgnoringASCIICase("/etc/catalog"))
+    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && urlString.endsWithIgnoringASCIICase("/etc/catalog"_s))
         return false;
 
     // The most common DTD. There isn't much point in hammering www.w3c.org by requesting this for every XHTML document.

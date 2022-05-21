@@ -296,7 +296,7 @@ static String extractIPAddress(StringView sdp)
 static inline bool shouldIgnoreIceCandidate(const RTCIceCandidate& iceCandidate)
 {
     auto address = extractIPAddress(iceCandidate.candidate());
-    if (!address.endsWithIgnoringASCIICase(".local"))
+    if (!address.endsWithIgnoringASCIICase(".local"_s))
         return false;
 
     if (!WTF::isVersion4UUID(StringView { address }.left(address.length() - 6))) {

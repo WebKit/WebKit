@@ -35,7 +35,7 @@ namespace WebCore {
 String standardUserAgentWithApplicationName(const String& applicationName, const String&, UserAgentType)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
-    if (!osVersion.startsWith("10"))
+    if (!osVersion.startsWith("10"_s))
         osVersion = "10_15_7"_s;
     
     String appNameSuffix = applicationName.isEmpty() ? emptyString() : makeString(" ", applicationName);

@@ -176,7 +176,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     }
 
     auto path = jobData.scriptURL.path();
-    if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
+    if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scriptURL contains invalid character");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
         return;
@@ -194,7 +194,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     }
 
     path = jobData.scopeURL.path();
-    if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
+    if (path.containsIgnoringASCIICase("%2f"_s) || path.containsIgnoringASCIICase("%5c"_s)) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL contains invalid character");
         promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
         return;

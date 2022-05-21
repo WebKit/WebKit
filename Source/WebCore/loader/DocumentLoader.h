@@ -804,7 +804,7 @@ inline void DocumentLoader::didTellClientAboutLoad(const String& url)
 {
 #if !PLATFORM(COCOA)
     // Don't include data URLs here, as if a lot of data is loaded that way, we hold on to the (large) URL string for too long.
-    if (protocolIs(url, "data"))
+    if (protocolIs(url, "data"_s))
         return;
 #endif
     if (!url.isEmpty())

@@ -952,7 +952,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     request.clearHTTPUserAgent();
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+    if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s))
         request.clearHTTPReferrer();
 
     bool isCrossOrigin = !protocolHostAndPortAreEqual(m_currentRequest.url(), request.url());

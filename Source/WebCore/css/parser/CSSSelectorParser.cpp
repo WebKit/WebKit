@@ -174,7 +174,7 @@ static bool consumeLangArgumentList(std::unique_ptr<Vector<AtomString>>& argumen
     if (ident.type() != IdentToken && ident.type() != StringToken)
         return false;
     StringView string = ident.value();
-    if (string.startsWith("--"))
+    if (string.startsWith("--"_s))
         return false;
     argumentList->append(string.toAtomString());
     while (!range.atEnd() && range.peek().type() == CommaToken) {
@@ -183,7 +183,7 @@ static bool consumeLangArgumentList(std::unique_ptr<Vector<AtomString>>& argumen
         if (ident.type() != IdentToken && ident.type() != StringToken)
             return false;
         StringView string = ident.value();
-        if (string.startsWith("--"))
+        if (string.startsWith("--"_s))
             return false;
         argumentList->append(string.toAtomString());
     }

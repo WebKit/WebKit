@@ -164,7 +164,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
 
     request.redirectAsGETIfNeeded(*this, redirectResponse);
 
-    if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WTF::protocolIs(request.httpReferrer(), "https"))
+    if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && WTF::protocolIs(request.httpReferrer(), "https"_s))
         request.clearHTTPReferrer();
 
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))

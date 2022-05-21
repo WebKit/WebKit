@@ -193,7 +193,7 @@ static String resolveRelativeVirtualPath(StringView baseVirtualPath, StringView 
 {
     ASSERT(baseVirtualPath[0] == '/');
     if (!relativeVirtualPath.isEmpty() && relativeVirtualPath[0] == '/')
-        return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath("/", relativeVirtualPath.substring(1));
+        return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath("/"_s, relativeVirtualPath.substring(1));
 
     Vector<StringView> virtualPathSegments;
     for (auto segment : baseVirtualPath.split('/'))
@@ -267,7 +267,7 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
 {
     ASSERT(&entry.filesystem() == this);
 
-    auto virtualPath = resolveRelativeVirtualPath(entry.virtualPath(), "..");
+    auto virtualPath = resolveRelativeVirtualPath(entry.virtualPath(), ".."_s);
     ASSERT(virtualPath[0] == '/');
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([protectedThis = Ref { *this }, context = Ref { context }, fullPath = crossThreadCopy(WTFMove(fullPath)), virtualPath = crossThreadCopy(WTFMove(virtualPath)), completionCallback = WTFMove(completionCallback)]() mutable {

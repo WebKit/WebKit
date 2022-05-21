@@ -718,7 +718,7 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     
     // Maybe we should implement this using a character buffer instead?
     
-    if (protocolIs(string, "mailto")) {
+    if (protocolIs(string, "mailto"_s)) {
         applyHostNameFunctionToMailToURLString(string, decodeFunction, array);
         return;
     }
@@ -727,12 +727,12 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     // It comes after a "://" sequence, with scheme characters preceding.
     // If ends with the end of the string or a ":", "/", or a "?".
     // If there is a "@" character, the host part is just the part after the "@".
-    static const char* separator = "://";
+    static constexpr auto separator = "://"_s;
     auto separatorIndex = string.find(separator);
     if (separatorIndex == notFound)
         return;
 
-    unsigned authorityStart = separatorIndex + strlen(separator);
+    unsigned authorityStart = separatorIndex + separator.length();
 
     // Check that all characters before the :// are valid scheme characters.
     if (StringView { string }.left(separatorIndex).contains([](UChar character) {

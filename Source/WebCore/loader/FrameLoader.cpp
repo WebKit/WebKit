@@ -2332,7 +2332,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
 
     // FIXME: I suspect this block of code doesn't do anything.
     if (url.protocolIsInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
-        url.setPath("/");
+        url.setPath("/"_s);
 
     started();
     Ref document = *cachedFrame.document();

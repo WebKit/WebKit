@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
+static constexpr auto privateClickMeasurementTriggerAttributionPath = "/.well-known/private-click-measurement/trigger-attribution/"_s;
 static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
 static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
@@ -192,7 +192,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     }
     auto attributionTriggerData = result.value();
 
-    auto prefixLength = sizeof(privateClickMeasurementTriggerAttributionPath) - 1;
+    auto prefixLength = privateClickMeasurementTriggerAttributionPath.length();
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
         auto attributionTriggerDataUInt64 = parseInteger<uint64_t>(path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize));
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)

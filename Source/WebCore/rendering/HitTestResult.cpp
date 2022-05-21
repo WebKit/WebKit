@@ -408,7 +408,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!url.isValid())
         return URL();
 
-    if (element.serviceType() == "application/pdf" || (element.serviceType().isEmpty() && url.path().endsWithIgnoringASCIICase(".pdf")))
+    if (element.serviceType() == "application/pdf"_s || (element.serviceType().isEmpty() && url.path().endsWithIgnoringASCIICase(".pdf"_s)))
         return url;
     return URL();
 }

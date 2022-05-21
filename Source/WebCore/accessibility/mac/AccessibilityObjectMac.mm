@@ -455,7 +455,7 @@ String AccessibilityObject::rolePlatformDescription() const
         case AccessibilityRole::Video:
             return localizedMediaControlElementString("VideoElement"_s);
         case AccessibilityRole::GraphicsDocument:
-            return AXARIAContentGroupText("ARIADocument");
+            return AXARIAContentGroupText("ARIADocument"_s);
         default:
             return String();
         }

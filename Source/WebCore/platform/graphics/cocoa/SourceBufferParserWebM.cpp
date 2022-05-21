@@ -475,7 +475,7 @@ public:
         }
 
         StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
-        if (!codecID.startsWith("V_") && !codecID.startsWith("A_") && !codecID.startsWith("S_")) {
+        if (!codecID.startsWith("V_"_s) && !codecID.startsWith("A_"_s) && !codecID.startsWith("S_"_s)) {
             m_codec = emptyAtom();
             return *m_codec;
         }
@@ -1310,7 +1310,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
     for (auto& codec : codecs) {
 #if ENABLE(VP9)
-        if (codec.startsWith("vp09") || codec.startsWith("vp08") || equal(codec, "vp8") || equal(codec, "vp9")) {
+        if (codec.startsWith("vp09"_s) || codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp9"_s)) {
 
             if (!isVP9DecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;

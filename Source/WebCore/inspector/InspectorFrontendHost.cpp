@@ -446,7 +446,7 @@ void InspectorFrontendHost::openURLExternally(const String& url)
 
 void InspectorFrontendHost::revealFileExternally(const String& path)
 {
-    if (!WTF::protocolIs(path, "file"))
+    if (!WTF::protocolIs(path, "file"_s))
         return;
 
     if (m_client)

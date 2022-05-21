@@ -2301,7 +2301,7 @@ void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 
 bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 {
-    return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on");
+    return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on"_s);
 }
 
 bool Element::isJavaScriptURLAttribute(const Attribute& attribute) const

@@ -992,7 +992,7 @@ String serializePreservingVisualAppearance(const VisibleSelection& selection, Re
 
 static bool shouldPreserveMSOLists(StringView markup)
 {
-    if (!markup.startsWith("<html xmlns:"))
+    if (!markup.startsWith("<html xmlns:"_s))
         return false;
     auto tagClose = markup.find('>');
     if (tagClose == notFound)

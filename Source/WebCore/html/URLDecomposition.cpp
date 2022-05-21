@@ -59,7 +59,7 @@ String URLDecomposition::username() const
 void URLDecomposition::setUsername(StringView user)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"))
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"_s))
         return;
     fullURL.setUser(user);
     setFullURL(fullURL);
@@ -73,7 +73,7 @@ String URLDecomposition::password() const
 void URLDecomposition::setPassword(StringView password)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"))
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"_s))
         return;
     fullURL.setPassword(password);
     setFullURL(fullURL);
@@ -97,7 +97,7 @@ static unsigned countASCIIDigits(StringView string)
 void URLDecomposition::setHost(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (value.isEmpty() && !fullURL.protocolIs("file") && fullURL.hasSpecialScheme())
+    if (value.isEmpty() && !fullURL.protocolIs("file"_s) && fullURL.hasSpecialScheme())
         return;
 
     size_t separator = value.reverseFind(':');
@@ -150,7 +150,7 @@ void URLDecomposition::setHostname(StringView value)
 {
     auto fullURL = this->fullURL();
     auto host = removeAllLeadingSolidusCharacters(value);
-    if (host.isEmpty() && !fullURL.protocolIs("file") && fullURL.hasSpecialScheme())
+    if (host.isEmpty() && !fullURL.protocolIs("file"_s) && fullURL.hasSpecialScheme())
         return;
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;

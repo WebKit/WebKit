@@ -2656,48 +2656,48 @@ String AccessibilityObject::ariaLandmarkRoleDescription() const
 {
     switch (roleValue()) {
     case AccessibilityRole::LandmarkBanner:
-        return AXARIAContentGroupText("ARIALandmarkBanner");
+        return AXARIAContentGroupText("ARIALandmarkBanner"_s);
     case AccessibilityRole::LandmarkComplementary:
-        return AXARIAContentGroupText("ARIALandmarkComplementary");
+        return AXARIAContentGroupText("ARIALandmarkComplementary"_s);
     case AccessibilityRole::LandmarkContentInfo:
-        return AXARIAContentGroupText("ARIALandmarkContentInfo");
+        return AXARIAContentGroupText("ARIALandmarkContentInfo"_s);
     case AccessibilityRole::LandmarkMain:
-        return AXARIAContentGroupText("ARIALandmarkMain");
+        return AXARIAContentGroupText("ARIALandmarkMain"_s);
     case AccessibilityRole::LandmarkNavigation:
-        return AXARIAContentGroupText("ARIALandmarkNavigation");
+        return AXARIAContentGroupText("ARIALandmarkNavigation"_s);
     case AccessibilityRole::LandmarkDocRegion:
     case AccessibilityRole::LandmarkRegion:
-        return AXARIAContentGroupText("ARIALandmarkRegion");
+        return AXARIAContentGroupText("ARIALandmarkRegion"_s);
     case AccessibilityRole::LandmarkSearch:
-        return AXARIAContentGroupText("ARIALandmarkSearch");
+        return AXARIAContentGroupText("ARIALandmarkSearch"_s);
     case AccessibilityRole::ApplicationAlert:
-        return AXARIAContentGroupText("ARIAApplicationAlert");
+        return AXARIAContentGroupText("ARIAApplicationAlert"_s);
     case AccessibilityRole::ApplicationAlertDialog:
-        return AXARIAContentGroupText("ARIAApplicationAlertDialog");
+        return AXARIAContentGroupText("ARIAApplicationAlertDialog"_s);
     case AccessibilityRole::ApplicationDialog:
-        return AXARIAContentGroupText("ARIAApplicationDialog");
+        return AXARIAContentGroupText("ARIAApplicationDialog"_s);
     case AccessibilityRole::ApplicationLog:
-        return AXARIAContentGroupText("ARIAApplicationLog");
+        return AXARIAContentGroupText("ARIAApplicationLog"_s);
     case AccessibilityRole::ApplicationMarquee:
-        return AXARIAContentGroupText("ARIAApplicationMarquee");
+        return AXARIAContentGroupText("ARIAApplicationMarquee"_s);
     case AccessibilityRole::ApplicationStatus:
-        return AXARIAContentGroupText("ARIAApplicationStatus");
+        return AXARIAContentGroupText("ARIAApplicationStatus"_s);
     case AccessibilityRole::ApplicationTimer:
-        return AXARIAContentGroupText("ARIAApplicationTimer");
+        return AXARIAContentGroupText("ARIAApplicationTimer"_s);
     case AccessibilityRole::Document:
-        return AXARIAContentGroupText("ARIADocument");
+        return AXARIAContentGroupText("ARIADocument"_s);
     case AccessibilityRole::DocumentArticle:
-        return AXARIAContentGroupText("ARIADocumentArticle");
+        return AXARIAContentGroupText("ARIADocumentArticle"_s);
     case AccessibilityRole::DocumentMath:
-        return AXARIAContentGroupText("ARIADocumentMath");
+        return AXARIAContentGroupText("ARIADocumentMath"_s);
     case AccessibilityRole::DocumentNote:
-        return AXARIAContentGroupText("ARIADocumentNote");
+        return AXARIAContentGroupText("ARIADocumentNote"_s);
     case AccessibilityRole::UserInterfaceTooltip:
-        return AXARIAContentGroupText("ARIAUserInterfaceTooltip");
+        return AXARIAContentGroupText("ARIAUserInterfaceTooltip"_s);
     case AccessibilityRole::TabPanel:
-        return AXARIAContentGroupText("ARIATabPanel");
+        return AXARIAContentGroupText("ARIATabPanel"_s);
     case AccessibilityRole::WebApplication:
-        return AXARIAContentGroupText("ARIAWebApplication");
+        return AXARIAContentGroupText("ARIAWebApplication"_s);
     default:
         return String();
     }

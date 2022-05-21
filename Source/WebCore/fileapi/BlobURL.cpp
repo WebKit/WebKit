@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-const char* kBlobProtocol = "blob";
+static constexpr auto kBlobProtocol = "blob"_s;
 
 URL BlobURL::createPublicURL(SecurityOrigin* securityOrigin)
 {

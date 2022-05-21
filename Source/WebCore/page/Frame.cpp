@@ -384,7 +384,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w");
+    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w"_s);
     StringBuilder pattern;
     pattern.append('(');
     for (unsigned i = 0, numLabels = labels.size(); i < numLabels; i++) {
@@ -507,7 +507,7 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     String mutableStringToMatch = stringToMatch;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"), " ");
+    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"_s), " "_s);
     mutableStringToMatch = makeStringByReplacingAll(mutableStringToMatch, '_', ' ');
     
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);

@@ -218,9 +218,9 @@ bool PageLoadState::hasOnlySecureContent(const Data& data)
         return false;
 
     if (data.state == State::Provisional)
-        return WTF::protocolIs(data.provisionalURL, "https");
+        return WTF::protocolIs(data.provisionalURL, "https"_s);
 
-    return WTF::protocolIs(data.url, "https");
+    return WTF::protocolIs(data.url, "https"_s);
 }
 
 bool PageLoadState::hasOnlySecureContent() const

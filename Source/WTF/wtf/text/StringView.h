@@ -66,9 +66,13 @@ public:
     StringView(const StringImpl*);
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
-    StringView(const char*);
     StringView(const char*, unsigned length);
     StringView(ASCIILiteral);
+
+    // FIXME: Make private once all call sites have been ported to fromLatin1.
+    StringView(const char*);
+
+    ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
     static StringView empty();
 
@@ -242,16 +246,16 @@ bool startsWithLettersIgnoringASCIICase(StringView, ASCIILiteral);
 inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, const LChar *b);
 inline bool operator==(StringView a, const char *b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
-inline bool operator==(const char* a, StringView b) { return equal(b, a); }
-inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, reinterpret_cast<const LChar*>(b.characters())); }
+inline bool operator==(const char* a, StringView b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
+inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, b); }
 inline bool operator==(ASCIILiteral a, StringView b) { return equal(b, a); }
 
 inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
 inline bool operator!=(StringView a, const LChar* b) { return !equal(a, b); }
-inline bool operator!=(StringView a, const char* b) { return !equal(a, b); }
-inline bool operator!=(StringView a, ASCIILiteral b) { return !equal(a, b.characters()); }
+inline bool operator!=(StringView a, const char* b) { return !equal(a, reinterpret_cast<const LChar*>(b)); }
+inline bool operator!=(StringView a, ASCIILiteral b) { return !equal(a, b); }
 inline bool operator!=(const LChar* a, StringView b) { return !equal(b, a); }
-inline bool operator!=(const char* a, StringView b) { return !equal(b, a); }
+inline bool operator!=(const char* a, StringView b) { return !equal(b, reinterpret_cast<const LChar*>(a)); }
 inline bool operator!=(ASCIILiteral a, StringView b) { return !equal(b, a); }
 
 struct StringViewWithUnderlyingString;
@@ -712,6 +716,11 @@ inline bool equal(StringView a, const LChar* b)
     if (a.is8Bit())
         return equal(a.characters8(), b, aLength);
     return equal(a.characters16(), b, aLength);
+}
+
+ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
+{
+    return equal(a, b.characters8());
 }
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)

@@ -253,9 +253,9 @@ private:
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
-    NEVER_INLINE String formatNumberValue(StringView) const;
-    NEVER_INLINE String formatIntegerValue(StringView) const;
-    NEVER_INLINE String formatInfiniteOrNanValue(StringView suffix) const;
+    NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;
+    NEVER_INLINE String formatIntegerValue(ASCIILiteral suffix) const;
+    NEVER_INLINE String formatInfiniteOrNanValue(ASCIILiteral suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);

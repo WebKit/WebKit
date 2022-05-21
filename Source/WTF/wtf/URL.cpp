@@ -112,12 +112,12 @@ StringView URL::lastPathComponent() const
 bool URL::hasSpecialScheme() const
 {
     // https://url.spec.whatwg.org/#special-scheme
-    return protocolIs("ftp")
-        || protocolIs("file")
-        || protocolIs("http")
-        || protocolIs("https")
-        || protocolIs("ws")
-        || protocolIs("wss");
+    return protocolIs("ftp"_s)
+        || protocolIs("file"_s)
+        || protocolIs("http"_s)
+        || protocolIs("https"_s)
+        || protocolIs("ws"_s)
+        || protocolIs("wss"_s);
 }
 
 unsigned URL::pathStart() const
@@ -681,8 +681,8 @@ void URL::setPath(StringView path)
 
     parse(makeString(
         StringView(m_string).left(pathStart()),
-        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"))) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1U < pathStart()) ? "" : "/",
-        !hasSpecialScheme() && host().isEmpty() && path.startsWith("//") && path.length() > 2 ? "/." : "",
+        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"_s))) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1U < pathStart()) ? ""_s : "/"_s,
+        !hasSpecialScheme() && host().isEmpty() && path.startsWith("//"_s) && path.length() > 2 ? "/."_s : ""_s,
         escapePathWithoutCopying(path),
         StringView(m_string).substring(m_pathEnd)
     ));
@@ -781,9 +781,10 @@ bool URL::isHierarchical() const
     return m_string[m_schemeEnd + 1] == '/';
 }
 
-static bool protocolIsInternal(StringView string, const char* protocol)
+static bool protocolIsInternal(StringView string, ASCIILiteral protocolLiteral)
 {
-    assertProtocolIsGood(protocol);
+    assertProtocolIsGood(protocolLiteral);
+    auto* protocol = protocolLiteral.characters();
     bool isLeading = true;
     for (auto codeUnit : string.codeUnits()) {
         if (isLeading) {
@@ -806,7 +807,7 @@ static bool protocolIsInternal(StringView string, const char* protocol)
     return false;
 }
 
-bool protocolIs(StringView string, const char* protocol)
+bool protocolIs(StringView string, ASCIILiteral protocol)
 {
     return protocolIsInternal(string, protocol);
 }
@@ -847,12 +848,12 @@ bool URL::isLocalFile() const
     // and including feed would allow feeds to potentially let someone's blog
     // read the contents of the clipboard on a drag, even without a drop.
     // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
-    return protocolIs("file");
+    return protocolIs("file"_s);
 }
 
 bool protocolIsJavaScript(StringView string)
 {
-    return protocolIsInternal(string, "javascript");
+    return protocolIsInternal(string, "javascript"_s);
 }
 
 bool protocolIsInFTPFamily(StringView url)
@@ -903,7 +904,7 @@ const URL& aboutSrcDocURL()
 
 bool URL::protocolIsAbout() const
 {
-    return protocolIs("about");
+    return protocolIs("about"_s);
 }
 
 bool portAllowed(const URL& url)
@@ -1007,11 +1008,11 @@ bool portAllowed(const URL& url)
         return true;
 
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
-    if ((port.value() == 21 || port.value() == 22) && url.protocolIs("ftp"))
+    if ((port.value() == 21 || port.value() == 22) && url.protocolIs("ftp"_s))
         return true;
 
     // Allow any port number in a file URL, since the port number is ignored.
-    if (url.protocolIs("file"))
+    if (url.protocolIs("file"_s))
         return true;
 
     return false;
@@ -1019,7 +1020,7 @@ bool portAllowed(const URL& url)
 
 String mimeTypeFromDataURL(StringView dataURL)
 {
-    ASSERT(protocolIsInternal(dataURL, "data"));
+    ASSERT(protocolIsInternal(dataURL, "data"_s));
 
     // FIXME: What's the right behavior when the URL has a comma first, but a semicolon later?
     // Currently this code will break at the semicolon in that case; should add a test.
@@ -1077,12 +1078,12 @@ StringView URL::fragmentIdentifierWithLeadingNumberSign() const
 
 bool URL::isAboutBlank() const
 {
-    return protocolIsAbout() && path() == "blank";
+    return protocolIsAbout() && path() == "blank"_s;
 }
 
 bool URL::isAboutSrcDoc() const
 {
-    return protocolIsAbout() && path() == "srcdoc";
+    return protocolIsAbout() && path() == "srcdoc"_s;
 }
 
 TextStream& operator<<(TextStream& ts, const URL& url)

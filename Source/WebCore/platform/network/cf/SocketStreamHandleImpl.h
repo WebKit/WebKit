@@ -72,7 +72,7 @@ private:
     static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef);
     static CFStringRef copyPACExecutionDescription(void*);
 
-    bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
+    bool shouldUseSSL() const { return m_url.protocolIs("wss"_s); }
     unsigned short port() const;
 
     void addCONNECTCredentials(CFHTTPMessageRef response);

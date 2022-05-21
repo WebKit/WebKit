@@ -859,7 +859,7 @@ CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(Ca
         return RevalidationDecision::YesDueToCachePolicy;
 
     case CachePolicy::Revalidate:
-        if (m_response.cacheControlContainsImmutable() && m_response.url().protocolIs("https")) {
+        if (m_response.cacheControlContainsImmutable() && m_response.url().protocolIs("https"_s)) {
             if (isExpired())
                 return RevalidationDecision::YesDueToExpired;
             return RevalidationDecision::No;

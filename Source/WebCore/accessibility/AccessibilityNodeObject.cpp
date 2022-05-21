@@ -596,12 +596,12 @@ bool AccessibilityNodeObject::isSearchField() const
 
     // Check the node name of the input type, sometimes it's "search".
     const AtomString& nameAttribute = getAttribute(nameAttr);
-    if (nameAttribute.containsIgnoringASCIICase("search"))
+    if (nameAttribute.containsIgnoringASCIICase("search"_s))
         return true;
 
     // Check the form action and the name, which will sometimes be "search".
     auto* form = inputElement.form();
-    if (form && (form->name().containsIgnoringASCIICase("search") || form->action().containsIgnoringASCIICase("search")))
+    if (form && (form->name().containsIgnoringASCIICase("search"_s) || form->action().containsIgnoringASCIICase("search"_s)))
         return true;
 
     return false;

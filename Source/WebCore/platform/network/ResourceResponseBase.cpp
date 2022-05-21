@@ -501,7 +501,7 @@ bool ResourceResponseBase::isHTTP09() const
 {
     lazyInit(AllFields);
 
-    return m_httpVersion.startsWith("HTTP/0.9");
+    return m_httpVersion.startsWith("HTTP/0.9"_s);
 }
 
 String ResourceResponseBase::httpHeaderField(StringView name) const

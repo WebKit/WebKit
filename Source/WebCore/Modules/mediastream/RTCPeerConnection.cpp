@@ -401,7 +401,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
 
             urls.removeAllMatching([&](auto& urlString) {
                 URL url { URL { }, urlString };
-                if (url.path().endsWithIgnoringASCIICase(".local") || !portAllowed(url)) {
+                if (url.path().endsWithIgnoringASCIICase(".local"_s) || !portAllowed(url)) {
                     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, RTCPeerConnectionIceErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, { }, { }, WTFMove(urlString), 701, "URL is not allowed"_s));
                     return true;
                 }
@@ -416,7 +416,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
             for (auto& serverURL : serverURLs) {
                 if (serverURL.isNull())
                     return Exception { TypeError, "Bad ICE server URL"_s };
-                if (serverURL.protocolIs("turn") || serverURL.protocolIs("turns")) {
+                if (serverURL.protocolIs("turn"_s) || serverURL.protocolIs("turns"_s)) {
                     if (server.credential.isNull() || server.username.isNull())
                         return Exception { InvalidAccessError, "TURN/TURNS server requires both username and credential"_s };
                     // https://tools.ietf.org/html/rfc8489#section-14.3
@@ -425,7 +425,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                         if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
                             return Exception { TypeError, "TURN/TURNS username and/or credential are too long"_s };
                     }
-                } else if (!serverURL.protocolIs("stun"))
+                } else if (!serverURL.protocolIs("stun"_s))
                     return Exception { NotSupportedError, "ICE server protocol not supported"_s };
             }
             if (serverURLs.size())

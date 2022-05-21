@@ -61,10 +61,10 @@ ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url
 {
     if (auto* resource = m_subresources.get(url.string()))
         return resource;
-    if (!url.protocolIs("https"))
+    if (!url.protocolIs("https"_s))
         return nullptr;
     URL httpURL = url;
-    httpURL.setProtocol("http");
+    httpURL.setProtocol("http"_s);
     return m_subresources.get(httpURL.string());
 }
 

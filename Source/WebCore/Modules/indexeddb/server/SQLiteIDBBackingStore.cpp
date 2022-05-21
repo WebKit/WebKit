@@ -1058,7 +1058,7 @@ uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& director
     for (auto& dbDirectoryName : FileSystem::listDirectory(directory)) {
         auto dbDirectoryPath = FileSystem::pathByAppendingComponent(directory, dbDirectoryName);
         for (auto& fileName : FileSystem::listDirectory(dbDirectoryPath)) {
-            if (fileName.endsWith(".sqlite3"))
+            if (fileName.endsWith(".sqlite3"_s))
                 diskUsage += SQLiteFileSystem::databaseFileSize(FileSystem::pathByAppendingComponent(dbDirectoryPath, fileName));
         }
     }

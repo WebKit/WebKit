@@ -90,10 +90,10 @@ public:
         //  header := [<mediatype>][;base64]
         //  mediatype := [<mimetype>][;charset=<charsettype>]
 
-        const char dataString[] = "data:";
+        constexpr auto dataString = "data:"_s;
         ASSERT(url.string().startsWith(dataString));
 
-        size_t headerStart = strlen(dataString);
+        size_t headerStart = dataString.length();
         size_t headerEnd = url.string().find(',', headerStart);
         if (headerEnd == notFound)
             return false;

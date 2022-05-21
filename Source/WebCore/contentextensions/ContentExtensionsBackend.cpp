@@ -237,7 +237,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 results.summary.hasNotifications = true;
                 result.notifications.append(actionData.string);
             }, [&](const MakeHTTPSAction&) {
-                if ((url.protocolIs("http") || url.protocolIs("ws"))
+                if ((url.protocolIs("http"_s) || url.protocolIs("ws"_s))
                     && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol()))) {
                     results.summary.madeHTTPS = true;
                     result.madeHTTPS = true;
@@ -271,8 +271,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 
     if (currentDocument) {
         if (results.summary.madeHTTPS) {
-            ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
-            String newProtocol = url.protocolIs("http") ? "https"_s : "wss"_s;
+            ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
+            String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from ", url.string(), " to ", newProtocol));
         }
         if (results.summary.blockedLoad) {
@@ -309,7 +309,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
             }, [&](const NotifyAction&) {
                 // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
             }, [&](const MakeHTTPSAction&) {
-                if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
+                if ((url.protocolIs("http"_s) || url.protocolIs("ws"_s)) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                     results.summary.madeHTTPS = true;
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
@@ -337,13 +337,13 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
 
     if (results.summary.madeHTTPS) {
         const URL& originalURL = request.url();
-        ASSERT(originalURL.protocolIs("http"));
+        ASSERT(originalURL.protocolIs("http"_s));
         ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
 
         URL newURL = originalURL;
-        newURL.setProtocol("https");
+        newURL.setProtocol("https"_s);
         if (originalURL.port())
-            newURL.setPort(WTF::defaultPortForProtocol("https").value());
+            newURL.setPort(WTF::defaultPortForProtocol("https"_s).value());
         request.setURL(newURL);
     }
 

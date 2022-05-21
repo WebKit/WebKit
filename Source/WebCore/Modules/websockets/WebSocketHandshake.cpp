@@ -76,7 +76,7 @@ static String resourceName(const URL& url)
 
 static String hostName(const URL& url, bool secure)
 {
-    ASSERT(url.protocolIs("wss") == secure);
+    ASSERT(url.protocolIs("wss"_s) == secure);
     if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443)))
         return makeString(asASCIILowercase(url.host()), ':', url.port().value());
     return url.host().convertToASCIILowercase();
@@ -113,7 +113,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
 WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated)
     : m_url(url)
     , m_clientProtocol(protocol)
-    , m_secure(m_url.protocolIs("wss"))
+    , m_secure(m_url.protocolIs("wss"_s))
     , m_mode(Incomplete)
     , m_userAgent(userAgent)
     , m_clientOrigin(clientOrigin)
@@ -314,7 +314,7 @@ void WebSocketHandshake::addExtensionProcessor(std::unique_ptr<WebSocketExtensio
 URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
     URL url = m_url.isolatedCopy();
-    bool couldSetProtocol = url.setProtocol(m_secure ? "https" : "http");
+    bool couldSetProtocol = url.setProtocol(m_secure ? "https"_s : "http"_s);
     ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     return url;
 }
@@ -323,12 +323,12 @@ URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 // "The HTTP version MUST be at least 1.1."
 static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 {
-    constexpr char preamble[] = "HTTP/";
+    constexpr auto preamble = "HTTP/"_s;
     if (!httpStatusLine.startsWith(preamble))
         return false;
 
     // Check that there is a version number which should be at least three characters after "HTTP/"
-    unsigned preambleLength = strlen(preamble);
+    unsigned preambleLength = preamble.length();
     if (httpStatusLine.length() < preambleLength + 3)
         return false;
 
