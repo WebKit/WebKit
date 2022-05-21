@@ -74,12 +74,13 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
                 *reason = "Node is scheduled to be used in an async script invocation)";
             return true;
         }
+        return visitor.containsOpaqueRoot(node.traverseToOpaqueRoot());
     }
 
     if (UNLIKELY(reason))
         *reason = "Connected node";
 
-    return visitor.containsOpaqueRoot(root(node));
+    return visitor.containsOpaqueRoot(&node.document());
 }
 
 JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* node) const

@@ -2639,8 +2639,9 @@ bool Node::inRenderedDocument() const
     return isConnected() && document().hasLivingRenderTree();
 }
 
-void* Node::opaqueRootSlow() const
+void* Node::traverseToOpaqueRoot() const
 {
+    ASSERT_WITH_MESSAGE(!isConnected(), "Call opaqueRoot() or document() when the node is connected");
     const Node* node = this;
     for (;;) {
         const Node* nextNode = node->parentOrShadowHostNode();

@@ -267,6 +267,7 @@ public:
     Node& getRootNode(const GetRootNodeOptions&) const;
     
     void* opaqueRoot() const;
+    void* traverseToOpaqueRoot() const;
 
     void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
@@ -716,8 +717,6 @@ private:
 
     void adjustStyleValidity(Style::Validity, Style::InvalidationMode);
 
-    void* opaqueRootSlow() const;
-
     static void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
@@ -852,7 +851,7 @@ inline void* Node::opaqueRoot() const
     // https://bugs.webkit.org/show_bug.cgi?id=165713
     if (isConnected())
         return &document();
-    return opaqueRootSlow();
+    return traverseToOpaqueRoot();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
