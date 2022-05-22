@@ -32,8 +32,8 @@ PASS \t preserved ("<span style='white-space:pre'>abc\tdef")
 PASS Leading whitespace removed ("<div style='white-space:pre-line'> abc")
 PASS Trailing whitespace removed ("<div style='white-space:pre-line'>abc ")
 PASS Internal whitespace collapsed ("<div style='white-space:pre-line'>abc  def")
-FAIL \n preserved ("<div style='white-space:pre-line'>abc\ndef") assert_equals: innerText expected "abc\ndef" but got "abc def"
-FAIL \r converted to newline ("<div style='white-space:pre-line'>abc\rdef") assert_equals: innerText expected "abc\ndef" but got "abc def"
+PASS \n preserved ("<div style='white-space:pre-line'>abc\ndef")
+PASS \r converted to newline ("<div style='white-space:pre-line'>abc\rdef")
 PASS \t converted to space ("<div style='white-space:pre-line'>abc\tdef")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span> def")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span></span> def")
