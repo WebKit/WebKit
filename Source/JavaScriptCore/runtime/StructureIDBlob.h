@@ -32,21 +32,23 @@
 
 namespace JSC {
 
-class TypeInfoBlob {
+class StructureIDBlob {
     friend class LLIntOffsetsExtractor;
 public:
-    TypeInfoBlob() = default;
+    StructureIDBlob() = default;
 
-    TypeInfoBlob(IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
+    StructureIDBlob(StructureID structureID, IndexingType indexingModeIncludingHistory, const TypeInfo& typeInfo)
     {
+        u.fields.structureID = structureID;
         u.fields.indexingModeIncludingHistory = indexingModeIncludingHistory;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
         u.fields.defaultCellState = CellState::DefinitelyWhite;
     }
 
-    void operator=(const TypeInfoBlob& other) { u.word = other.u.word; }
-
+    void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
+    
+    StructureID structureID() const { return u.fields.structureID; }
     IndexingType indexingModeIncludingHistory() const { return u.fields.indexingModeIncludingHistory; }
     Dependency fencedIndexingModeIncludingHistory(IndexingType& indexingType)
     {
@@ -57,25 +59,37 @@ public:
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return u.fields.inlineTypeFlags; }
     
     TypeInfo typeInfo(TypeInfo::OutOfLineTypeFlags outOfLineTypeFlags) const { return TypeInfo(type(), inlineTypeFlags(), outOfLineTypeFlags); }
-
-    int32_t blob() const { return u.word; }
+    
+    int32_t blobExcludingStructureID() const { return u.words.word2; }
+    int64_t blob() const { return u.doubleWord; }
+    
+    static ptrdiff_t structureIDOffset()
+    {
+        return OBJECT_OFFSETOF(StructureIDBlob, u.fields.structureID);
+    }
 
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
-        return OBJECT_OFFSETOF(TypeInfoBlob, u.fields.indexingModeIncludingHistory);
+        return OBJECT_OFFSETOF(StructureIDBlob, u.fields.indexingModeIncludingHistory);
     }
 
 private:
     union Data {
         struct {
+            // FIXME: We should remove this since the structureID can be directly computed from the Structure*
+            StructureID structureID;
             IndexingType indexingModeIncludingHistory;
             JSType type;
             TypeInfo::InlineTypeFlags inlineTypeFlags;
             CellState defaultCellState;
         } fields;
-        int32_t word;
+        struct {
+            int32_t word1;
+            int32_t word2;
+        } words;
+        int64_t doubleWord;
 
-        Data() { word = 0xbbadbeef; }
+        Data() { doubleWord = 0xbbadbeef; }
     };
 
     Data u;

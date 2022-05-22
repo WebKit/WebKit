@@ -16831,7 +16831,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_out.store32(m_out.constInt32(structure->id().bits()), object, m_heaps.JSCell_structureID);
         m_out.store32(
-            m_out.constInt32(structure->typeInfoBlob()),
+            m_out.constInt32(structure->objectInitializationBlob()),
             object, m_heaps.JSCell_usefulBytes);
     }
 
@@ -16852,7 +16852,8 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        LValue id = encodeStructure(structure);
+        // LValue id = encodeStructure(structure);
+        LValue id = m_out.load32(structure, m_heaps.Structure_structureID);
         m_out.store32(id, object, m_heaps.JSCell_structureID);
 
         LValue blob = m_out.load32(structure, m_heaps.Structure_indexingModeIncludingHistory);

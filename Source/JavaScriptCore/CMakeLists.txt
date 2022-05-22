@@ -1176,7 +1176,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureCache.h
     runtime/StructureChain.h
     runtime/StructureID.h
-    runtime/TypeInfoBlob.h
+    runtime/StructureIDBlob.h
     runtime/StructureInlines.h
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h

@@ -197,7 +197,7 @@ inline void Structure::validateFlags() { }
 
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
-    , m_blob(indexingType, typeInfo)
+    , m_blob(StructureID::encode(this), indexingType, typeInfo)
     , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
     , m_inlineCapacity(inlineCapacity)
     , m_bitField(0)
@@ -268,7 +268,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
-    m_blob = TypeInfoBlob(0, typeInfo);
+    m_blob = StructureIDBlob(StructureID::encode(this), 0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
@@ -309,7 +309,8 @@ Structure::Structure(VM& vm, Structure* previous)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = previous->typeInfo();
-    m_blob = TypeInfoBlob(previous->indexingModeIncludingHistory(), typeInfo);
+    m_blob = StructureIDBlob(StructureID::encode(this), previous->indexingModeIncludingHistory(), typeInfo);
+    // m_blob = StructureIDBlob(previous->indexingModeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());
