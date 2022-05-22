@@ -1925,7 +1925,7 @@ public:
         for (unsigned i = 0; i < outOfLineCapacity; ++i)
             storeTrustedValue(JSValue(), Address(butterflyGPR, -sizeof(IndexingHeader) - (i + 1) * sizeof(EncodedJSValue)));
     }
-
+    
 //     void loadCompactPtr(Address address, GPRReg dest)
 //     {
 // #if HAVE(36BIT_ADDRESS)

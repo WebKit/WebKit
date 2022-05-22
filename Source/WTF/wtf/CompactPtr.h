@@ -23,206 +23,206 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// #pragma once
 
-#include <cstdint>
-#include <utility>
-#include <wtf/RawPtrTraits.h>
-#include <wtf/StdLibExtras.h>
+// #include <cstdint>
+// #include <utility>
+// #include <wtf/RawPtrTraits.h>
+// #include <wtf/StdLibExtras.h>
 
-namespace WTF {
+// namespace WTF {
 
-#if CPU(ADDRESS64)
-#if CPU(ARM64) && OS(DARWIN)
-#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
-#define HAVE_36BIT_ADDRESS 1
-#endif
-#endif
-#endif // CPU(ADDRESS64)
+// #if CPU(ADDRESS64)
+// #if CPU(ARM64) && OS(DARWIN)
+// #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
+// #define HAVE_36BIT_ADDRESS 1
+// #endif
+// #endif
+// #endif // CPU(ADDRESS64)
 
-template <typename T>
-class CompactPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+// template <typename T>
+// class CompactPtr {
+//     WTF_MAKE_FAST_ALLOCATED;
 
-public:
-#if HAVE(36BIT_ADDRESS)
-    // The CompactPtr algorithm relies on being able to shift
-    // a 36-bit address right by 4 in order to fit in 32-bits.
-    // The only way this is an ok thing to do without information
-    // loss is if the if the address is always 16 bytes aligned i.e.
-    // the lower 4 bits is always 0.
-    using StorageType = uint32_t;
-#else
-    using StorageType = uintptr_t;
-#endif
-    static constexpr bool isCompactedType = true;
+// public:
+// #if HAVE(36BIT_ADDRESS)
+//     // The CompactPtr algorithm relies on being able to shift
+//     // a 36-bit address right by 4 in order to fit in 32-bits.
+//     // The only way this is an ok thing to do without information
+//     // loss is if the if the address is always 16 bytes aligned i.e.
+//     // the lower 4 bits is always 0.
+//     using StorageType = uint32_t;
+// #else
+//     using StorageType = uintptr_t;
+// #endif
+//     static constexpr bool isCompactedType = true;
 
-    ALWAYS_INLINE constexpr CompactPtr() { set(nullptr); }
+//     ALWAYS_INLINE constexpr CompactPtr() { set(nullptr); }
 
-    ALWAYS_INLINE constexpr CompactPtr(std::nullptr_t) { set(nullptr); }
+//     ALWAYS_INLINE constexpr CompactPtr(std::nullptr_t) { set(nullptr); }
 
-    ALWAYS_INLINE CompactPtr(T* ptr) { set(ptr); }
+//     ALWAYS_INLINE CompactPtr(T* ptr) { set(ptr); }
 
-    ALWAYS_INLINE CompactPtr(const CompactPtr& o) : m_ptr(o.m_ptr) { }
+//     ALWAYS_INLINE CompactPtr(const CompactPtr& o) : m_ptr(o.m_ptr) { }
 
-    template <typename X>
-    ALWAYS_INLINE CompactPtr(const CompactPtr<X>& o) : m_ptr(o.m_ptr) { }
+//     template <typename X>
+//     ALWAYS_INLINE CompactPtr(const CompactPtr<X>& o) : m_ptr(o.m_ptr) { }
 
-    ALWAYS_INLINE CompactPtr(CompactPtr&& o) : m_ptr(o.m_ptr) { }
+//     ALWAYS_INLINE CompactPtr(CompactPtr&& o) : m_ptr(o.m_ptr) { }
 
-    template <typename X>
-    ALWAYS_INLINE CompactPtr(CompactPtr<X>&& o) : m_ptr(o.m_ptr) { }
+//     template <typename X>
+//     ALWAYS_INLINE CompactPtr(CompactPtr<X>&& o) : m_ptr(o.m_ptr) { }
 
-    ALWAYS_INLINE ~CompactPtr() = default;
+//     ALWAYS_INLINE ~CompactPtr() = default;
 
-    T& operator*() const { return *get(); }
+//     T& operator*() const { return *get(); }
 
-    ALWAYS_INLINE T* operator->() const { return get(); }
+//     ALWAYS_INLINE T* operator->() const { return get(); }
 
-    bool operator!() const { return !get(); }
+//     bool operator!() const { return !get(); }
 
-    explicit operator bool() const { return !!get(); }
+//     explicit operator bool() const { return !!get(); }
 
-    CompactPtr<T>& operator=(std::nullptr_t)
-    {
-        exchange(nullptr);
-        return *this;
-    }
+//     CompactPtr<T>& operator=(std::nullptr_t)
+//     {
+//         exchange(nullptr);
+//         return *this;
+//     }
 
-    CompactPtr<T>& operator=(const CompactPtr& o)
-    {
-        CompactPtr copy = o;
-        swap(copy);
-        return *this;
-    }
+//     CompactPtr<T>& operator=(const CompactPtr& o)
+//     {
+//         CompactPtr copy = o;
+//         swap(copy);
+//         return *this;
+//     }
 
-    template <typename X>
-    CompactPtr<T>& operator=(const CompactPtr<X>& o)
-    {
-        CompactPtr copy = o;
-        swap(copy);
-        return *this;
-    }
+//     template <typename X>
+//     CompactPtr<T>& operator=(const CompactPtr<X>& o)
+//     {
+//         CompactPtr copy = o;
+//         swap(copy);
+//         return *this;
+//     }
 
-    CompactPtr<T>& operator=(T* optr)
-    {
-        CompactPtr copy = optr;
-        swap(copy);
-        return *this;
-    }
+//     CompactPtr<T>& operator=(T* optr)
+//     {
+//         CompactPtr copy = optr;
+//         swap(copy);
+//         return *this;
+//     }
 
-    CompactPtr<T>& operator=(CompactPtr&& o)
-    {
-        CompactPtr copy = o;
-        swap(copy);
-        return *this;
-    }
+//     CompactPtr<T>& operator=(CompactPtr&& o)
+//     {
+//         CompactPtr copy = o;
+//         swap(copy);
+//         return *this;
+//     }
 
-    template <typename X>
-    CompactPtr<T>& operator=(CompactPtr<X>&& o)
-    {
-        CompactPtr copy = o;
-        swap(copy);
-        return *this;
-    }
+//     template <typename X>
+//     CompactPtr<T>& operator=(CompactPtr<X>&& o)
+//     {
+//         CompactPtr copy = o;
+//         swap(copy);
+//         return *this;
+//     }
 
-    T* get() const { return decode(m_ptr); }
+//     T* get() const { return decode(m_ptr); }
 
-    void set(T* ptr) { m_ptr = encode(ptr); }
+//     void set(T* ptr) { m_ptr = encode(ptr); }
 
-    template <class U>
-    T* exchange(U&& newValue)
-    {
-        T* oldValue = get();
-        set(std::forward<U>(newValue));
-        return oldValue;
-    }
+//     template <class U>
+//     T* exchange(U&& newValue)
+//     {
+//         T* oldValue = get();
+//         set(std::forward<U>(newValue));
+//         return oldValue;
+//     }
 
-    void swap(nullptr_t) { set(nullptr); }
+//     void swap(nullptr_t) { set(nullptr); }
 
-    void swap(CompactPtr& other) { std::swap(m_ptr, other.m_ptr); }
+//     void swap(CompactPtr& other) { std::swap(m_ptr, other.m_ptr); }
 
-    template <typename Other, typename = std::enable_if_t<Other::isCompactedType>>
-    void swap(Other& other)
-    {
-        T* t1 = get();
-        T* t2 = other.get();
-        set(t2);
-        other.set(t1);
-    }
+//     template <typename Other, typename = std::enable_if_t<Other::isCompactedType>>
+//     void swap(Other& other)
+//     {
+//         T* t1 = get();
+//         T* t2 = other.get();
+//         set(t2);
+//         other.set(t1);
+//     }
 
-    void swap(T* t2)
-    {
-        T* t1 = get();
-        std::swap(t1, t2);
-        set(t1);
-    }
+//     void swap(T* t2)
+//     {
+//         T* t1 = get();
+//         std::swap(t1, t2);
+//         set(t1);
+//     }
 
-    static ALWAYS_INLINE constexpr StorageType encode(uintptr_t ptr)
-    {
-#if HAVE(36BIT_ADDRESS)
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(!(ptr & alignmentMask));
-        return static_cast<uint32_t>(ptr >> bitsShift);
-#else
-        return ptr;
-#endif
-    }
+//     static ALWAYS_INLINE constexpr StorageType encode(uintptr_t ptr)
+//     {
+// #if HAVE(36BIT_ADDRESS)
+//         ASSERT_UNDER_CONSTEXPR_CONTEXT(!(ptr & alignmentMask));
+//         return static_cast<uint32_t>(ptr >> bitsShift);
+// #else
+//         return ptr;
+// #endif
+//     }
 
-    ALWAYS_INLINE constexpr StorageType encode(T* ptr) const
-    {
-        return encode(reinterpret_cast<uintptr_t>(ptr));
-    }
+//     ALWAYS_INLINE constexpr StorageType encode(T* ptr) const
+//     {
+//         return encode(reinterpret_cast<uintptr_t>(ptr));
+//     }
 
-    ALWAYS_INLINE constexpr T* decode(const StorageType& ptr) const
-    {
-#if HAVE(36BIT_ADDRESS)
-        return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
-#else
-        return reinterpret_cast<T*>(ptr);
-#endif
-    }
+//     ALWAYS_INLINE constexpr T* decode(const StorageType& ptr) const
+//     {
+// #if HAVE(36BIT_ADDRESS)
+//         return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+// #else
+//         return reinterpret_cast<T*>(ptr);
+// #endif
+//     }
 
-private:
-    template <typename X>
-    friend class CompactPtr;
+// private:
+//     template <typename X>
+//     friend class CompactPtr;
 
-    static constexpr uint32_t bitsShift = 4;
-    static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
+//     static constexpr uint32_t bitsShift = 4;
+//     static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
 
-    StorageType m_ptr;
-};
+//     StorageType m_ptr;
+// };
 
-template <typename T>
-struct GetPtrHelper<CompactPtr<T>> {
-    using PtrType = T*;
-    static T* getPtr(const CompactPtr<T>& p) { return const_cast<T*>(p.get()); }
-};
+// template <typename T>
+// struct GetPtrHelper<CompactPtr<T>> {
+//     using PtrType = T*;
+//     static T* getPtr(const CompactPtr<T>& p) { return const_cast<T*>(p.get()); }
+// };
 
-template <typename T>
-struct IsSmartPtr<CompactPtr<T>> {
-    static constexpr bool value = true;
-};
+// template <typename T>
+// struct IsSmartPtr<CompactPtr<T>> {
+//     static constexpr bool value = true;
+// };
 
-template <typename T>
-struct CompactPtrTraits {
-    template <typename U>
-    using RebindTraits = RawPtrTraits<U>;
+// template <typename T>
+// struct CompactPtrTraits {
+//     template <typename U>
+//     using RebindTraits = RawPtrTraits<U>;
 
-    using StorageType = CompactPtr<T>;
+//     using StorageType = CompactPtr<T>;
 
-    template <typename U>
-    static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
+//     template <typename U>
+//     static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
 
-    template <typename Other>
-    static ALWAYS_INLINE void swap(StorageType& a, Other& b) { a.swap(b); }
+//     template <typename Other>
+//     static ALWAYS_INLINE void swap(StorageType& a, Other& b) { a.swap(b); }
 
-    static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
+//     static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
 
-    static StorageType hashTableDeletedValue() { return bitwise_cast<StorageType>(static_cast<uintptr_t>(-1)); }
-    static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr == hashTableDeletedValue(); }
-};
+//     static StorageType hashTableDeletedValue() { return bitwise_cast<StorageType>(static_cast<uintptr_t>(-1)); }
+//     static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr == hashTableDeletedValue(); }
+// };
 
-} // namespace WTF
+// } // namespace WTF
 
-using WTF::CompactPtr;
-using WTF::CompactPtrTraits;
+// using WTF::CompactPtr;
+// using WTF::CompactPtrTraits;

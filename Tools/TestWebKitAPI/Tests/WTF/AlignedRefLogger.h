@@ -29,30 +29,30 @@
 
 namespace TestWebKitAPI {
 
-struct alignas(16) AlignedRefLogger {
-    AlignedRefLogger(const char* name)
-        : name { *name }
-    {
-    }
+// struct alignas(16) AlignedRefLogger {
+//     AlignedRefLogger(const char* name)
+//         : name { *name }
+//     {
+//     }
 
-    void ref()
-    {
-        log() << "ref(" << &name << ") ";
-    }
+//     void ref()
+//     {
+//         log() << "ref(" << &name << ") ";
+//     }
 
-    void deref()
-    {
-        log() << "deref(" << &name << ") ";
-    }
+//     void deref()
+//     {
+//         log() << "deref(" << &name << ") ";
+//     }
 
-    const char& name;
-};
+//     const char& name;
+// };
 
-struct DerivedAlignedRefLogger : AlignedRefLogger {
-    DerivedAlignedRefLogger(const char* name)
-        : AlignedRefLogger { name }
-    {
-    }
-};
+// struct DerivedAlignedRefLogger : AlignedRefLogger {
+//     DerivedAlignedRefLogger(const char* name)
+//         : AlignedRefLogger { name }
+//     {
+//     }
+// };
 
 }

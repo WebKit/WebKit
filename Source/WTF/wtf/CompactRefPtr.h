@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include <wtf/CompactPtr.h>
-#include <wtf/RefPtr.h>
+// #include <wtf/CompactPtr.h>
+// #include <wtf/RefPtr.h>
 
-namespace WTF {
+// namespace WTF {
 
-template <typename T>
-using CompactRefPtr = RefPtr<T, CompactPtrTraits<T>>;
+// template <typename T>
+// using CompactRefPtr = RefPtr<T, CompactPtrTraits<T>>;
 
-} // namespace WTF
+// } // namespace WTF
 
-using WTF::CompactRefPtr;
+// using WTF::CompactRefPtr;
