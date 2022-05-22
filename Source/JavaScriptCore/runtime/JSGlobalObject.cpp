@@ -647,6 +647,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_setAddWatchpointSet(IsWatched)
     , m_arrayJoinWatchpointSet(IsWatched)
     , m_numberToStringWatchpointSet(IsWatched)
+    , m_structureCacheClearedWatchpoint(IsWatched)
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
     , m_customGetterFunctionSet(vm)
@@ -1961,24 +1962,57 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(object)) {
+    auto checkStructureHasRelevantGlobalObject = [&](Structure* structure) -> bool {
+        if (hasBrokenIndexing(structure->indexingType())) {
+            bool isRelevantGlobalObject =
+                (mode == BadTimeFinderMode::SingleGlobal
+                    ? m_globalObject == structure->globalObject()
+                    : m_globalObjects->contains(structure->globalObject()))
+                || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInAffectedGlobalObject(asObject(structure->storedPrototype())));
+            return isRelevantGlobalObject;
+        }
+        return false;
+    };
+
+    if (object->inherits<JSFunction>()) {
+        JSFunction* function = jsCast<JSFunction*>(object);
         if (FunctionRareData* rareData = function->rareData()) {
             // We only use this to cache JSFinalObjects. They do not start off with a broken indexing type.
             ASSERT(!(rareData->objectAllocationStructure() && hasBrokenIndexing(rareData->objectAllocationStructure()->indexingType())));
 
             if (Structure* structure = rareData->internalFunctionAllocationStructure()) {
-                if (hasBrokenIndexing(structure->indexingType())) {
-                    bool isRelevantGlobalObject =
-                        (mode == BadTimeFinderMode::SingleGlobal
-                            ? m_globalObject == structure->globalObject()
-                            : m_globalObjects->contains(structure->globalObject()))
-                        || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInAffectedGlobalObject(asObject(structure->storedPrototype())));
-                    if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
-                        return IterationStatus::Done; // Bailing early and let the MultipleGlobals path handle everything.
-                    if (isRelevantGlobalObject)
-                        rareData->clearInternalFunctionAllocationProfile("have a bad time breaking internal function allocation");
-                }
+                bool isRelevantGlobalObject = checkStructureHasRelevantGlobalObject(structure);
+                if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
+                    return IterationStatus::Done; // Bailing early and let the MultipleGlobals path handle everything.
+                if (isRelevantGlobalObject)
+                    rareData->clearInternalFunctionAllocationProfile("have a bad time breaking internal function allocation");
             }
+        }
+    }
+
+    if (object->inherits<JSGlobalObject>()) {
+        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(object);
+        // If this globalObject is already having a bad time, then structures in its StructureCache
+        // does not affect on this new JSGlobalObject's haveABadTime since they are already slow mode.
+        if (!globalObject->isHavingABadTime()) {
+            VM& vm = globalObject->vm();
+            ASSERT(vm.heap.isDeferred());
+            bool willClear = false;
+            globalObject->structureCache().forEach([&](Structure* structure) {
+                bool isRelevantGlobalObject = checkStructureHasRelevantGlobalObject(structure);
+                if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
+                    return IterationStatus::Done;
+                if (isRelevantGlobalObject)
+                    willClear = true;
+                return IterationStatus::Continue;
+            });
+            if (mode == BadTimeFinderMode::SingleGlobal && m_needsMultiGlobalsScan)
+                return IterationStatus::Done; // Bailing early and let the MultipleGlobals path handle everything.
+
+            // StructureCache contains Structures which is no longer valid after relevant JSGlobalObject's haveABadTime.
+            // We do not make such a JSGlobalObject status haveABadTime since still its own objects are intact.
+            if (willClear)
+                globalObject->clearStructureCache(vm);
         }
     }
 
@@ -2022,7 +2056,7 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     // W_SC, R_BT, R_SC, W_BT: ^ Same
     // W_SC, R_BT, W_BT, R_SC: ^ Same
     // W_SC, W_BT, R_BT, R_SC: No watchpoint is installed, but we could not see old structures from the cache.
-    m_structureCache.clear(); // We may be caching array structures in here.
+    clearStructureCache(vm);
 
     // Make sure that all JSArray allocations that load the appropriate structure from
     // this object now load a structure that uses SlowPut.
@@ -2050,6 +2084,12 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     m_havingABadTimeWatchpoint->fireAll(vm, "Having a bad time");
     ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
 };
+
+void JSGlobalObject::clearStructureCache(VM& vm)
+{
+    m_structureCache.clear(); // We may be caching array structures in here.
+    m_structureCacheClearedWatchpoint.fireAll(vm, "Clearing StructureCache");
+}
 
 void JSGlobalObject::haveABadTime(VM& vm)
 {

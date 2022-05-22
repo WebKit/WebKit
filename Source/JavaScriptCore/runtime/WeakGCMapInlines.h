@@ -28,6 +28,7 @@
 #include "HeapInlines.h"
 #include "WeakGCMap.h"
 #include "WeakInlines.h"
+#include <wtf/IterationStatus.h>
 
 namespace JSC {
 
@@ -72,6 +73,19 @@ NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::pruneStale
     m_map.removeIf([](typename HashMapType::KeyValuePairType& entry) {
         return !entry.value;
     });
+}
+
+template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+template<typename Func>
+inline void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::forEach(Func func)
+{
+    ASSERT(m_vm.heap.isDeferred());
+    for (auto& entry : m_map) {
+        if (entry.value) {
+            if (func(entry.value.get()) == IterationStatus::Done)
+                return;
+        }
+    }
 }
 
 } // namespace JSC

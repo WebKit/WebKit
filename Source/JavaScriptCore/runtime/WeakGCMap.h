@@ -103,6 +103,9 @@ public:
 
     void pruneStaleEntries() final;
 
+    template<typename Func>
+    void forEach(Func);
+
 private:
     HashMapType m_map;
     VM& m_vm;
