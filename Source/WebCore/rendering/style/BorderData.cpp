@@ -40,8 +40,11 @@ bool BorderData::isEquivalentForPainting(const BorderData& other, bool currentCo
     if (!currentColorDiffers)
         return true;
 
-    auto borderHasCurrentColor = RenderStyle::isCurrentColor(m_top.color()) || RenderStyle::isCurrentColor(m_right.color()) || RenderStyle::isCurrentColor(m_bottom.color()) || RenderStyle::isCurrentColor(m_left.color());
-    return !borderHasCurrentColor;
+    auto visibleBorderHasCurrentColor = (m_top.isVisible() && RenderStyle::isCurrentColor(m_top.color()))
+        || (m_right.isVisible() && RenderStyle::isCurrentColor(m_right.color()))
+        || (m_bottom.isVisible() && RenderStyle::isCurrentColor(m_bottom.color()))
+        || (m_left.isVisible() && RenderStyle::isCurrentColor(m_left.color()));
+    return !visibleBorderHasCurrentColor;
 }
 
 TextStream& operator<<(TextStream& ts, const BorderValue& borderValue)
