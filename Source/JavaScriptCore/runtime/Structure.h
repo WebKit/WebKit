@@ -966,6 +966,12 @@ private:
 
     uint32_t m_bitField;
 
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
+
+    uint32_t m_propertyHash;
+    TinyBloomFilter m_seenProperties;
+
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
     mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
@@ -985,12 +991,6 @@ private:
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
     static_assert(firstOutOfLineOffset < 256);
-
-    uint16_t m_transitionOffset;
-    uint16_t m_maxOffset;
-
-    uint32_t m_propertyHash;
-    TinyBloomFilter m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
