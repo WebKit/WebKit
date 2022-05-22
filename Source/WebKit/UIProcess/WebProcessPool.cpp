@@ -1616,7 +1616,21 @@ void WebProcessPool::handleMessage(IPC::Connection& connection, const String& me
     auto* webProcessProxy = webProcessProxyFromConnection(connection, m_processes);
     if (!webProcessProxy)
         return;
-    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
+
+    RefPtr<API::Object> messageBodyObject = webProcessProxy->transformHandlesToObjects(messageBody.object());
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    API::Dictionary& messageDict = *static_cast<API::Dictionary*>(messageBodyObject.get());
+    CString messageNameUTF8 = messageName.utf8();
+    if (!g_strcmp0(messageNameUTF8.data() + strlen("WebPage."), "DidInitiateLoadForResource")) {
+        WebPageProxy* page = static_cast<WebPageProxy*>(messageDict.get(String::fromUTF8("Page")));
+        RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient->getInjectedBundleInitializationUserDataByPage(*this, *page);
+        if (injectedBundleInitializationUserData) {
+            UserData userData = UserData(webProcessProxy->transformObjectsToHandles(injectedBundleInitializationUserData.get()));
+            webProcessProxy->send(Messages::WebProcess::InitializeWebExtensions(userData), 0);
+        }
+    }
+#endif
+    m_injectedBundleClient->didReceiveMessageFromInjectedBundle(*this, messageName, messageBodyObject.get());
 }
 
 void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&& completionHandler)

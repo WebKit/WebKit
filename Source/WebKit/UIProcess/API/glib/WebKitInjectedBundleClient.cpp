@@ -174,6 +174,17 @@ private:
         return API::String::create(String::fromUTF8(dataString.get()));
     }
 
+    RefPtr<API::Object> getInjectedBundleInitializationUserDataByPage(WebProcessPool&, WebPageProxy& page) override
+    {
+        if (WebKitWebView* webView = webkitWebContextGetWebViewForPage(m_webContext, &page))
+            if (!webkitWebViewHasMainResource(webView)) {
+                GRefPtr<GVariant> data = webkitWebViewInitializeWebExtensions(webView);
+                GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));
+                return API::String::create(String::fromUTF8(dataString.get()));
+            }
+        return nullptr;
+    }
+
     WebKitWebContext* m_webContext;
 };
 

@@ -293,9 +293,7 @@ struct _WebKitWebViewClass {
                                                 WebKitWebProcessTerminationReason reason);
     gboolean   (* user_message_received)       (WebKitWebView               *web_view,
                                                 WebKitUserMessage           *message);
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
+    void       (* initialize_web_extensions)   (WebKitWebView               *web_view);
 };
 
 WEBKIT_API GType
@@ -638,6 +636,11 @@ webkit_web_view_get_display_capture_state            (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_set_display_capture_state            (WebKitWebView             *web_view,
                                                       WebKitMediaCaptureState    state);
+
+WEBKIT_API void
+webkit_web_view_set_web_extensions_initialization_user_data
+                                                    (WebKitWebView              *web_view,
+                                                     GVariant                   *user_data);
 
 G_END_DECLS
 

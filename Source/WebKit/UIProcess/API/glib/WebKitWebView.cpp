@@ -173,6 +173,8 @@ enum {
 
     USER_MESSAGE_RECEIVED,
 
+    INITIALIZE_WEB_EXTENSIONS,
+
     LAST_SIGNAL
 };
 
@@ -320,6 +322,8 @@ struct _WebKitWebViewPrivate {
     double textScaleFactor;
 
     bool isWebProcessResponsive;
+
+    GRefPtr<GVariant> webExtensionsInitializationUserData;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -2316,6 +2320,27 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         WEBKIT_TYPE_USER_MESSAGE);
+
+    /**
+     * WebKitWebView::initialize-web-extensions:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     *
+     * This signal is emitted when a main resource load request is received from a
+     * #WebKitWebPage corresponding to @web_view for the first time.
+     *
+     * This is a good place to initialize the #WebKitExtension with some user data
+     * using webkit_web_view_set_web_extensions_initialization_user_data().
+     *
+     * Since: 2.38
+     */
+    signals[INITIALIZE_WEB_EXTENSIONS] =
+        g_signal_new("initialize-web-extensions",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, initialize_web_extensions),
+        0, 0,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE, 0);
 }
 
 static void webkitWebViewCompleteAuthenticationRequest(WebKitWebView* webView)
@@ -2346,6 +2371,14 @@ void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>
 #elif PLATFORM(WPE)
     webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
 #endif
+}
+
+void webkit_web_view_set_web_extensions_initialization_user_data(WebKitWebView* webView, GVariant* userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(userData);
+
+    webView->priv->webExtensionsInitializationUserData = userData;
 }
 
 WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
@@ -2499,6 +2532,18 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
     gdk_threads_enter();
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
+}
+
+bool webkitWebViewHasMainResource(WebKitWebView* webView)
+{
+    return webView->priv->mainResource != nullptr;
+}
+
+GVariant* webkitWebViewInitializeWebExtensions(WebKitWebView* webView)
+{
+    g_signal_emit(webView, signals[INITIALIZE_WEB_EXTENSIONS], 0, NULL);
+    return g_variant_new("(mv)",
+        webView->priv->webExtensionsInitializationUserData.get());
 }
 
 void webkitWebViewClosePage(WebKitWebView* webView)

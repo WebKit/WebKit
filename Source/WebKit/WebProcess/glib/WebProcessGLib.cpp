@@ -77,6 +77,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
+void WebProcess::initializeWebExtensions(const UserData& userData)
+{
+    if (auto* extension = WebKitExtensionManager::singleton().extension())
+        webkitWebExtensionDidInitializeWebExtension(extension, transformHandlesToObjects(userData.object()).get());
+}
+
 void WebProcess::stopRunLoop()
 {
     // Pages are normally closed after Close message is received from the UI

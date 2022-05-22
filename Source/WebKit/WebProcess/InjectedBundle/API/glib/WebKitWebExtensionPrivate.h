@@ -26,4 +26,5 @@
 
 WebKitWebExtension* webkitWebExtensionCreate(WebKit::InjectedBundle*);
 void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension*, WebKit::UserMessage&&);
+void webkitWebExtensionDidInitializeWebExtension(WebKitWebExtension*, API::Object*);
 WK_EXPORT void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension*);

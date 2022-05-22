@@ -28,6 +28,7 @@
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include "WKBundleAPICast.h"
 #include <WebCore/GCController.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
@@ -110,11 +111,44 @@ using namespace WebKit;
  *   // ...
  * }
  * ```
+ *
+ * To send user data related to a particular #WebKitWebView, you can also use
+ * the #WebKitWebView::initialize-web-extensions signal in combination with
+ * webkit_web_view_set_web_extensions_initialization_user_data():
+ *
+ * ```c
+ * g_signal_connect(view, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions), user_data);
+ *
+ * static void
+ * initialize_web_extensions (WebKitWebView *view, gpointer user_data)
+ * {
+ *     webkit_web_view_set_web_extensions_initialization_user_data (view, g_variant_new_uint32 (unique_id++));
+ * }
+ * ```
+ *
+ * The user data can be recovered later by using the #WebKitWebExtension::initialize-web-extensions signal
+ * in the extension code:
+ *
+ * ```c
+ * static void
+ * web_extension_initialize_callback (WebKitWebExtension *extension,
+ *                                    GVariant           *init_data,
+ *                                    gpointer            user_data)
+ * {
+ *     g_print ("Web extension initialized\n");
+ * }
+ *
+ * g_signal_connect (extension, "initialize-web-extensions",
+ *                   G_CALLBACK (web_extension_initialize_callback),
+ *                   NULL);
+ *
+ * ```
  */
 
 enum {
     PAGE_CREATED,
     USER_MESSAGE_RECEIVED,
+    INITIALIZE_WEB_EXTENSIONS,
 
     LAST_SIGNAL
 };
@@ -172,6 +206,27 @@ static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
         WEBKIT_TYPE_USER_MESSAGE);
+
+    /**
+     * WebKitWebExtension::initialize-web-extensions:
+     * @extension: the #WebKitWebExtension on which the signal is emitted
+     * @userData: the #GVariant object received
+     *
+     * This signal is emitted when a main resource load is initiated. The
+     * #GVariant user data comes from a webkit_web_view_set_web_extensions_initialization_user_data()
+     * called over the #WebKitWebView corresponding to @extension.
+     *
+     * Since: 2.38
+     */
+    signals[INITIALIZE_WEB_EXTENSIONS] = g_signal_new(
+        "initialize-web-extensions",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        nullptr, nullptr,
+        g_cclosure_marshal_VOID__VARIANT,
+        G_TYPE_NONE, 1,
+        G_TYPE_VARIANT | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
 class WebExtensionInjectedBundleClient final : public API::InjectedBundle::Client {
@@ -220,6 +275,29 @@ void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension* extension, User
     // Sink the floating ref.
     GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), [](UserMessage&&) { });
     g_signal_emit(extension, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get());
+}
+
+static void parseUserData(API::Object* userData, GRefPtr<GVariant>& initializationUserData)
+{
+    ASSERT(userData->type() == API::Object::Type::String);
+
+    CString userDataString = static_cast<API::String*>(userData)->string().utf8();
+    GRefPtr<GVariant> variant = g_variant_parse(nullptr, userDataString.data(),
+        userDataString.data() + userDataString.length(), nullptr, nullptr);
+
+    ASSERT(variant);
+
+    GVariant* data = nullptr;
+    g_variant_get(variant.get(), "(mv)", &data);
+
+    initializationUserData = adoptGRef(data);
+}
+
+void webkitWebExtensionDidInitializeWebExtension(WebKitWebExtension* extension, API::Object* userDataObject)
+{
+    GRefPtr<GVariant> userData;
+    parseUserData(userDataObject, userData);
+    g_signal_emit(extension, signals[INITIALIZE_WEB_EXTENSIONS], 0, userData.get());
 }
 
 void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension* extension)
