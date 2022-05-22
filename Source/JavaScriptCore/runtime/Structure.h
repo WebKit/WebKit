@@ -995,7 +995,7 @@ private:
 
     uint32_t m_propertyHash;
     // TinyBloomFilter<CompactPtr<ClassInfo>::StorageType> m_seenProperties;
-    TinyBloomFilter<> m_seenProperties;
+    TinyBloomFilter m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
