@@ -1915,28 +1915,28 @@ public:
             storeTrustedValue(JSValue(), Address(butterflyGPR, -sizeof(IndexingHeader) - (i + 1) * sizeof(EncodedJSValue)));
     }
 
-    void loadCompactPtr(Address address, GPRReg dest)
-    {
-#if HAVE(36BIT_ADDRESS)
-        load32(address, dest);
-        lshift64(TrustedImm32(4), dest);
-#else
-        loadPtr(address, dest);
-#endif
-    }
+//     void loadCompactPtr(Address address, GPRReg dest)
+//     {
+// #if HAVE(36BIT_ADDRESS)
+//         load32(address, dest);
+//         lshift64(TrustedImm32(4), dest);
+// #else
+//         loadPtr(address, dest);
+// #endif
+//     }
 
-    Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
-    {
-#if HAVE(36BIT_ADDRESS)
-        ASSERT(left != scratch);
-        load32(right, scratch);
-        lshift64(TrustedImm32(4), scratch);
-        return branchPtr(cond, left, Address(scratch));
-#else
-        UNUSED_PARAM(scratch);
-        return branchPtr(cond, left, right);
-#endif
-    }   
+//     Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
+//     {
+// #if HAVE(36BIT_ADDRESS)
+//         ASSERT(left != scratch);
+//         load32(right, scratch);
+//         lshift64(TrustedImm32(4), scratch);
+//         return branchPtr(cond, left, Address(scratch));
+// #else
+//         UNUSED_PARAM(scratch);
+//         return branchPtr(cond, left, right);
+// #endif
+//     }   
 
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
