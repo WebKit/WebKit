@@ -986,6 +986,7 @@ private:
 
     static_assert(firstOutOfLineOffset < 256);
 
+
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;
 
