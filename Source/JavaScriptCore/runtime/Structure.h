@@ -46,8 +46,6 @@
 #include "WriteBarrierInlines.h"
 #include <wtf/Atomics.h>
 #include <wtf/CompactPointerTuple.h>
-#include <wtf/CompactPtr.h>
-#include <wtf/CompactRefPtr.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -994,7 +992,6 @@ private:
     static_assert(firstOutOfLineOffset < 256);
 
     uint32_t m_propertyHash;
-    // TinyBloomFilter<CompactPtr<ClassInfo>::StorageType> m_seenProperties;
     TinyBloomFilter m_seenProperties;
 
     friend class VMInspector;

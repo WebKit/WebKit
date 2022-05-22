@@ -1809,7 +1809,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
             // Structure check covers var injection since we don't cache structures for anything but the GlobalObject. Additionally, resolve_scope handles checking for the var injection.
             jit.loadPtr(Address(metadataGPR, OpGetFromScope::Metadata::offsetOfStructure()), scratchGPR);
             slowCase.append(jit.branchTestPtr(Zero, scratchGPR));
-            // jit.emitEncodeStructure(scratchGPR, scratchGPR);
             jit.load32(Address(scratchGPR, Structure::structureIDOffset()), scratchGPR);
             slowCase.append(jit.branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratchGPR));
 
@@ -1983,7 +1982,6 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             loadPtrFromMetadata(bytecode, OpPutToScope::Metadata::offsetOfStructure(), scratchGPR1);
             emitGetVirtualRegisterPayload(scope, scopeGPR);
             addSlowCase(branchTestPtr(Zero, scratchGPR1));
-            // emitEncodeStructure(scratchGPR1, scratchGPR1);
             load32(Address(scratchGPR1, Structure::structureIDOffset()), scratchGPR1);
             addSlowCase(branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratchGPR1));
 

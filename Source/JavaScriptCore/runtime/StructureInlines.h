@@ -33,7 +33,6 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
-#include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace JSC {

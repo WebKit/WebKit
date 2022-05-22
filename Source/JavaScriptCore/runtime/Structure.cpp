@@ -310,7 +310,6 @@ Structure::Structure(VM& vm, Structure* previous)
  
     TypeInfo typeInfo = previous->typeInfo();
     m_blob = StructureIDBlob(StructureID::encode(this), previous->indexingModeIncludingHistory(), typeInfo);
-    // m_blob = StructureIDBlob(previous->indexingModeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());
