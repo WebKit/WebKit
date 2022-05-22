@@ -331,7 +331,7 @@ public:
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
-    const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
+    const ClassInfo* classInfoForCells() const { return m_classInfo; }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
@@ -971,9 +971,11 @@ private:
 
     WriteBarrier<JSCell> m_previousOrRareData;
 
-    CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
+    // CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
+    RefPtr<UniquedStringImpl>  m_transitionPropertyName;
 
-    CompactPtr<const ClassInfo> m_classInfo;
+    // CompactPtr<const ClassInfo> m_classInfo;
+    const ClassInfo* m_classInfo;
 
     StructureTransitionTable m_transitionTable;
 
@@ -986,7 +988,8 @@ private:
     static_assert(firstOutOfLineOffset < 256);
 
     uint32_t m_propertyHash;
-    TinyBloomFilter<CompactPtr<ClassInfo>::StorageType> m_seenProperties;
+    // TinyBloomFilter<CompactPtr<ClassInfo>::StorageType> m_seenProperties;
+    TinyBloomFilter<> m_seenProperties;
 
     friend class VMInspector;
     friend class JSDollarVMHelper;
