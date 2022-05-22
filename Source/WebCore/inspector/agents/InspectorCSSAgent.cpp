@@ -993,9 +993,10 @@ void InspectorCSSAgent::nodeLayoutContextTypeChanged(Node& node, RenderObject* n
         return;
 
     auto nodeId = domAgent->boundNodeId(&node);
-    if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All)
+    if (!nodeId && m_layoutContextTypeChangedMode == Protocol::CSS::LayoutContextTypeChangedMode::All) {
+        // FIXME: <https://webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
         nodeId = domAgent->identifierForNode(node);
-
+    }
     if (!nodeId)
         return;
 

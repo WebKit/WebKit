@@ -32,18 +32,17 @@
 
 WI.DOMNode = class DOMNode extends WI.Object
 {
-    constructor(payload, {ownerDocument, isInShadowTree} = {})
+    constructor(domManager, doc, isInShadowTree, payload)
     {
         super();
 
         this._destroyed = false;
 
-        this._isInShadowTree = !!isInShadowTree;
+        this._domManager = domManager;
+        this._isInShadowTree = isInShadowTree;
 
         this.id = payload.nodeId;
-
-        console.assert(!(this.id in WI.domManager._idToDOMNode), this);
-        WI.domManager._idToDOMNode[this.id] = this;
+        this._domManager._idToDOMNode[this.id] = this;
 
         this._nodeType = payload.nodeType;
         this._nodeName = payload.nodeName;
@@ -57,8 +56,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._layoutOverlayShowing = false;
         this._layoutOverlayColorSetting = null;
 
-        this.ownerDocument = this._nodeType === Node.DOCUMENT_NODE ? this : ownerDocument;
-        console.assert(this.ownerDocument, this);
+        if (this._nodeType === Node.DOCUMENT_NODE)
+            this.ownerDocument = this;
+        else
+            this.ownerDocument = doc;
 
         this._frame = null;
 
@@ -93,8 +94,9 @@ WI.DOMNode = class DOMNode extends WI.Object
         // we have both shadowRoots and child nodes.
         this._shadowRoots = [];
         if (payload.shadowRoots) {
-            for (let shadowRootPayload of payload.shadowRoots) {
-                let node = WI.DOMNode.newOrExistingFromPayload(shadowRootPayload, {ownerDocument: this.ownerDocument, isInShadowTree: true});
+            for (var i = 0; i < payload.shadowRoots.length; ++i) {
+                var root = payload.shadowRoots[i];
+                var node = new WI.DOMNode(this._domManager, this.ownerDocument, true, root);
                 node.parentNode = this;
                 this._shadowRoots.push(node);
             }
@@ -111,21 +113,21 @@ WI.DOMNode = class DOMNode extends WI.Object
             this._customElementState = null;
 
         if (payload.templateContent) {
-            this._templateContent = WI.DOMNode.newOrExistingFromPayload(payload.templateContent, {ownerDocument: this.ownerDocument});
+            this._templateContent = new WI.DOMNode(this._domManager, this.ownerDocument, false, payload.templateContent);
             this._templateContent.parentNode = this;
         }
 
         this._pseudoElements = new Map;
         if (payload.pseudoElements) {
-            for (let pseudoElementPayload of payload.pseudoElements) {
-                let node = WI.DOMNode.newOrExistingFromPayload(pseudoElementPayload, {ownerDocument: this.ownerDocument, isInShadowTree: this._isInShadowTree});
+            for (var i = 0; i < payload.pseudoElements.length; ++i) {
+                var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payload.pseudoElements[i]);
                 node.parentNode = this;
                 this._pseudoElements.set(node.pseudoType(), node);
             }
         }
 
         if (payload.contentDocument) {
-            this._contentDocument = WI.DOMNode.newOrExistingFromPayload(payload.contentDocument);
+            this._contentDocument = new WI.DOMNode(this._domManager, null, false, payload.contentDocument);
             this._children = [this._contentDocument];
             this._renumber();
         }
@@ -160,12 +162,6 @@ WI.DOMNode = class DOMNode extends WI.Object
     }
 
     // Static
-
-    static newOrExistingFromPayload(payload, {ownerDocument, isInShadowTree} = {})
-    {
-        // FIXME: <webkit.org/b/238947> Don't send node payloads to the frontend for already-bound nodes.
-        return WI.domManager.nodeForId(payload.nodeId) || new WI.DOMNode(payload, {ownerDocument, isInShadowTree});
-    }
 
     static resetDefaultLayoutOverlayConfiguration()
     {
@@ -1072,7 +1068,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     _insertChild(prev, payload)
     {
-        let node = WI.DOMNode.newOrExistingFromPayload(payload, {ownerDocument: this.ownerDocument, isInShadowTree: this._isInShadowTree});
+        var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payload);
         if (!prev) {
             if (!this._children) {
                 // First node
@@ -1105,9 +1101,10 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
 
         this._children = this._shadowRoots.slice();
-        for (let payload of payloads)
-            this._children.push(WI.DOMNode.newOrExistingFromPayload(payload, {ownerDocument: this.ownerDocument, isInShadowTree: this._isInShadowTree}));
-
+        for (var i = 0; i < payloads.length; ++i) {
+            var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payloads[i]);
+            this._children.push(node);
+        }
         this._renumber();
     }
 

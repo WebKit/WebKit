@@ -1,12 +1,4 @@
 TestPage.registerInitializer(() => {
-    function handleDOMNodeDidChange(event) {
-        let breakpoint = event.target;
-        if (breakpoint.domNode)
-            InspectorTest.log(`Breakpoint "domNode" set to "${breakpoint.domNode.displayName}".`);
-        else
-            InspectorTest.log(`Breakpoint "domNode" set to "null".`);
-    };
-
     InspectorTest.DOMBreakpoint = {};
 
     InspectorTest.DOMBreakpoint.teardown = function(resolve, reject) {
@@ -17,10 +9,7 @@ TestPage.registerInitializer(() => {
     };
 
     InspectorTest.DOMBreakpoint.createBreakpoint = function(domNode, type) {
-        let breakpoint = new WI.DOMBreakpoint(domNode, type);
-        breakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, handleDOMNodeDidChange);
-
-        return InspectorTest.DOMBreakpoint.addBreakpoint(breakpoint);
+        return InspectorTest.DOMBreakpoint.addBreakpoint(new WI.DOMBreakpoint(domNode, type));
     };
 
     InspectorTest.DOMBreakpoint.addBreakpoint = function(breakpoint) {
@@ -66,10 +55,4 @@ TestPage.registerInitializer(() => {
             });
         });
     };
-
-    // To prevent spurious `Breakpoint "domNode" set to "null".` logging upon removing breakpoints, we should remove the
-    // event listener before the breakpoint has removed its DOM node.
-    WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, (event) => {
-        event.data.breakpoint.removeEventListener(WI.DOMBreakpoint.Event.DOMNodeDidChange, handleDOMNodeDidChange);
-    });
 });

@@ -362,7 +362,8 @@ void InspectorDOMAgent::reset()
         m_revalidateStyleAttrTask->reset();
     m_document = nullptr;
 
-    m_destroyedNodeIdentifiers.clear();
+    m_destroyedDetachedNodeIdentifiers.clear();
+    m_destroyedAttachedNodeIdentifiers.clear();
     if (m_destroyedNodesTimer.isActive())
         m_destroyedNodesTimer.stop();
 }
@@ -399,12 +400,45 @@ void InspectorDOMAgent::relayoutDocument()
 
 Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
 {
-    // Node binding is later balanced in `willDestroyDOMNode` which will remove the binding upon destruction.
     return m_nodeToId.ensure(node, [&] {
         auto id = m_lastNodeId++;
         m_idToNode.set(id, node);
         return id;
     }).iterator->value;
+}
+
+void InspectorDOMAgent::unbind(Node& node)
+{
+    auto id = m_nodeToId.take(node);
+    if (!id)
+        return;
+
+    m_idToNode.remove(id);
+
+    if (node.isFrameOwnerElement()) {
+        const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(&node);
+        if (Document* contentDocument = frameOwner->contentDocument())
+            unbind(*contentDocument);
+    }
+
+    if (is<Element>(node)) {
+        Element& element = downcast<Element>(node);
+        if (ShadowRoot* root = element.shadowRoot())
+            unbind(*root);
+        if (PseudoElement* beforeElement = element.beforePseudoElement())
+            unbind(*beforeElement);
+        if (PseudoElement* afterElement = element.afterPseudoElement())
+            unbind(*afterElement);
+    }
+
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+        cssAgent->didRemoveDOMNode(node, id);
+
+    if (m_childrenRequested.remove(id)) {
+        // FIXME: Would be better to do this iteratively rather than recursively.
+        for (Node* child = innerFirstChild(&node); child; child = innerNextSibling(child))
+            unbind(*child);
+    }
 }
 
 Node* InspectorDOMAgent::assertNode(Protocol::ErrorString& errorString, Protocol::DOM::NodeId nodeId)
@@ -2418,6 +2452,7 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     // Re-add frame owner element together with its new children.
     auto parentId = boundNodeId(innerParentNode(frameOwner.get()));
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
+    unbind(*frameOwner);
 
     auto value = buildObjectForNode(frameOwner.get(), 0);
     Node* previousSibling = innerPreviousSibling(frameOwner.get());
@@ -2475,6 +2510,9 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
     if (containsOnlyHTMLWhitespace(&node))
         return;
 
+    // We could be attaching existing subtree. Forget the bindings.
+    unbind(node);
+
     ContainerNode* parent = node.parentNode();
 
     auto parentId = boundNodeId(parent);
@@ -2506,12 +2544,14 @@ void InspectorDOMAgent::didRemoveDOMNode(Node& node)
     if (!parentId)
         return;
 
+    // FIXME: <webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
     if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.
         if (innerChildNodeCount(parent) == 1)
             m_frontendDispatcher->childNodeCountUpdated(parentId, 0);
     } else
         m_frontendDispatcher->childNodeRemoved(parentId, boundNodeId(&node));
+    unbind(node);
 }
 
 void InspectorDOMAgent::willDestroyDOMNode(Node& node)
@@ -2532,7 +2572,12 @@ void InspectorDOMAgent::willDestroyDOMNode(Node& node)
     // This can be called in response to GC. Due to the single-process model used in WebKit1, the
     // event must be dispatched from a timer to prevent the frontend from making JS allocations
     // while the GC is still active.
-    m_destroyedNodeIdentifiers.append(nodeId);
+
+    // FIXME: <webkit.org/b/189687> Unify m_destroyedAttachedNodeIdentifiers and m_destroyedDetachedNodeIdentifiers.
+    if (auto parentId = boundNodeId(node.parentNode()))
+        m_destroyedAttachedNodeIdentifiers.append({ parentId, nodeId });
+    else
+        m_destroyedDetachedNodeIdentifiers.append(nodeId);
 
     if (!m_destroyedNodesTimer.isActive())
         m_destroyedNodesTimer.startOneShot(0_s);
@@ -2540,7 +2585,16 @@ void InspectorDOMAgent::willDestroyDOMNode(Node& node)
 
 void InspectorDOMAgent::destroyedNodesTimerFired()
 {
-    for (auto nodeId : std::exchange(m_destroyedNodeIdentifiers, { }))
+    for (auto& [parentId, nodeId] : std::exchange(m_destroyedAttachedNodeIdentifiers, { })) {
+        if (!m_childrenRequested.contains(parentId)) {
+            auto* parent = nodeForId(parentId);
+            if (parent && innerChildNodeCount(parent) == 1)
+                m_frontendDispatcher->childNodeCountUpdated(parentId, 0);
+        } else
+            m_frontendDispatcher->childNodeRemoved(parentId, nodeId);
+    }
+    
+    for (auto nodeId : std::exchange(m_destroyedDetachedNodeIdentifiers, { }))
         m_frontendDispatcher->willDestroyDOMNode(nodeId);
 }
 
@@ -2680,6 +2734,7 @@ void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
     auto parentId = boundNodeId(parent);
     ASSERT(parentId);
 
+    unbind(pseudoElement);
     m_frontendDispatcher->pseudoElementRemoved(parentId, pseudoElementId);
 }
 
