@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingConstraints.h"
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
 #include "FlexRect.h"
@@ -53,7 +54,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
+    void sizeAndPlaceFlexItems(const ConstraintsForFlexContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
 
     struct LogicalFlexItem {
@@ -63,7 +64,7 @@ private:
     };
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     LogicalFlexItems convertFlexItemsToLogicalSpace();
-    void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForInFlowContent&);
+    void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForFlexContent&);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }

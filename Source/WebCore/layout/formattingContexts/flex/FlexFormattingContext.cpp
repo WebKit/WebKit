@@ -52,7 +52,7 @@ FlexFormattingContext::FlexFormattingContext(const ContainerBox& formattingConte
 void FlexFormattingContext::layoutInFlowContent(const ConstraintsForInFlowContent& constraints)
 {
     computeIntrinsicWidthConstraintsForFlexItems();
-    sizeAndPlaceFlexItems(constraints);
+    sizeAndPlaceFlexItems(downcast<ConstraintsForFlexContent>(constraints));
 }
 
 LayoutUnit FlexFormattingContext::usedContentHeight() const
@@ -66,7 +66,7 @@ IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstrain
     return { };
 }
 
-void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowContent& constraints)
+void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();
     auto& formattingGeometry = this->formattingGeometry();
@@ -168,7 +168,7 @@ FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsT
     return logicalFlexItemList;
 }
 
-void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logicalFlexItemList, const ConstraintsForInFlowContent& constraints)
+void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();
     auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
@@ -238,7 +238,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
         };
         growFlexItemIfApplicable();
     }
-    setFlexItemsGeometry(logicalFlexItemList, constraints);
+    setFlexItemsGeometry(logicalFlexItemList, downcast<ConstraintsForFlexContent>(constraints));
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingConstraints.h"
 #include "FlexFormattingContext.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
@@ -116,10 +117,13 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 void FlexLayout::layout()
 {
     auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox());
-    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
+    auto rootBoxLogicalHeight = rootLayoutBox().style().logicalHeight();
+    auto availableVerticalSpace = std::optional<LayoutUnit> { rootBoxLogicalHeight.isFixed() ? std::make_optional(rootBoxLogicalHeight.value()) : std::nullopt };
+    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace };
 
-    flexFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop() });
+    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
+    flexFormattingContext.layoutInFlowContentForIntegration(constraints);
 
     updateRenderers();
 }
