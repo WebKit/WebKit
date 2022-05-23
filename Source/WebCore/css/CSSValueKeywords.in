@@ -851,10 +851,6 @@ progress-bar
 slider-horizontal
 slider-vertical
 searchfield
-relevancy-level-indicator
-continuous-capacity-level-indicator
-discrete-capacity-level-indicator
-rating-level-indicator
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif

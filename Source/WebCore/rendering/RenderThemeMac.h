@@ -208,7 +208,6 @@ private:
     NSCell *listButton() const;
 #endif
 
-    NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
     NSLevelIndicatorCell *levelIndicatorFor(const RenderMeter&) const;
 
     int minimumProgressBarHeight(const RenderStyle&) const;

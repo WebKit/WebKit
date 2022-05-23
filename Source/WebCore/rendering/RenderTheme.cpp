@@ -314,10 +314,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case ProgressBarPart:
         return adjustProgressBarStyle(style, element);
     case MeterPart:
-    case RelevancyLevelIndicatorPart:
-    case ContinuousCapacityLevelIndicatorPart:
-    case DiscreteCapacityLevelIndicatorPart:
-    case RatingLevelIndicatorPart:
         return adjustMeterStyle(style, element);
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
@@ -519,10 +515,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case MenulistPart:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
     case MeterPart:
-    case RelevancyLevelIndicatorPart:
-    case ContinuousCapacityLevelIndicatorPart:
-    case DiscreteCapacityLevelIndicatorPart:
-    case RatingLevelIndicatorPart:
         return paintMeter(box, paintInfo, integralSnappedRect);
     case ProgressBarPart:
         return paintProgressBar(box, paintInfo, integralSnappedRect);
@@ -616,10 +608,6 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case ButtonPart:
     case MenulistPart:
     case MeterPart:
-    case RelevancyLevelIndicatorPart:
-    case ContinuousCapacityLevelIndicatorPart:
-    case DiscreteCapacityLevelIndicatorPart:
-    case RatingLevelIndicatorPart:
     case ProgressBarPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
@@ -693,10 +681,6 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         paintSearchFieldDecorations(box, paintInfo, integralSnappedRect);
         break;
     case MeterPart:
-    case RelevancyLevelIndicatorPart:
-    case ContinuousCapacityLevelIndicatorPart:
-    case DiscreteCapacityLevelIndicatorPart:
-    case RatingLevelIndicatorPart:
     case ProgressBarPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
@@ -895,10 +879,6 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     case MenulistPart:
     case ProgressBarPart:
     case MeterPart:
-    case RelevancyLevelIndicatorPart:
-    case ContinuousCapacityLevelIndicatorPart:
-    case DiscreteCapacityLevelIndicatorPart:
-    case RatingLevelIndicatorPart:
     // FIXME: SearchFieldPart should be included here when making search fields style-able.
     case TextFieldPart:
     case TextAreaPart:

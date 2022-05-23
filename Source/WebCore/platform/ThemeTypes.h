@@ -52,10 +52,6 @@ enum ControlPart {
     SliderHorizontalPart,
     SliderVerticalPart,
     SearchFieldPart,
-    RelevancyLevelIndicatorPart,
-    ContinuousCapacityLevelIndicatorPart,
-    DiscreteCapacityLevelIndicatorPart,
-    RatingLevelIndicatorPart,
 #if ENABLE(APPLE_PAY)
     ApplePayButtonPart,
 #endif

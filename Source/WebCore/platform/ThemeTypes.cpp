@@ -63,10 +63,6 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
     case SearchFieldResultsButtonPart: ts << "search-field-results-button-part"; break;
     case SearchFieldCancelButtonPart: ts << "search-field-cancel-button-part"; break;
     case TextFieldPart: ts << "text-field-part"; break;
-    case RelevancyLevelIndicatorPart: ts << "relevancy-level-indicator-part"; break;
-    case ContinuousCapacityLevelIndicatorPart: ts << "continuous-capacity-level-indicator-part"; break;
-    case DiscreteCapacityLevelIndicatorPart: ts << "discrete-capacity-level-indicator-part"; break;
-    case RatingLevelIndicatorPart: ts << "rating-level-indicator-part"; break;
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart: ts << "image-controls-button-part"; break;
 #endif
