@@ -222,7 +222,10 @@ TryMallocReturnValue tryFastMalloc(size_t n)
 {
     FAIL_IF_EXCEEDS_LIMIT(n);
     ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
-    return malloc(n);
+    void* result = malloc(n);
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "tryFastMalloc result is not 16 bytes alignment");
+    return result;
 }
 
 void* fastMalloc(size_t n) 
@@ -232,7 +235,8 @@ void* fastMalloc(size_t n)
     void* result = malloc(n);
     if (!result)
         CRASH();
-
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "fastMalloc result is not 16 bytes alignment");
     return result;
 }
 
@@ -240,7 +244,10 @@ TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
 {
     FAIL_IF_EXCEEDS_LIMIT(n_elements * element_size);
     ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
-    return calloc(n_elements, element_size);
+    void* result = calloc(n_elements, element_size);
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "tryFastCalloc result is not 16 bytes alignment");
+    return result;
 }
 
 void* fastCalloc(size_t n_elements, size_t element_size)
@@ -250,7 +257,8 @@ void* fastCalloc(size_t n_elements, size_t element_size)
     void* result = calloc(n_elements, element_size);
     if (!result)
         CRASH();
-
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "fastCalloc result is not 16 bytes alignment");
     return result;
 }
 
@@ -266,6 +274,8 @@ void* fastRealloc(void* p, size_t n)
     void* result = realloc(p, n);
     if (!result)
         CRASH();
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "fastRealloc result is not 16 bytes alignment");
     return result;
 }
 
@@ -273,7 +283,10 @@ TryMallocReturnValue tryFastRealloc(void* p, size_t n)
 {
     FAIL_IF_EXCEEDS_LIMIT(n);
     ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
-    return realloc(p, n);
+    void* result = realloc(p, n);
+    if (reinterpret_cast<uintptr_t>(result) & 0xF)
+        fprintf(stderr, "tryFastRealloc result is not 16 bytes alignment");
+    return result;
 }
 
 void releaseFastMallocFreeMemory() { }

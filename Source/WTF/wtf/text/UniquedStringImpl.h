@@ -35,9 +35,18 @@ class UniquedStringImpl : public StringImpl {
 private:
     UniquedStringImpl() = delete;
 protected:
-    UniquedStringImpl(CreateSymbolTag, const LChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
-    UniquedStringImpl(CreateSymbolTag, const UChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
-    UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
+    UniquedStringImpl(CreateSymbolTag, const LChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) {
+        if (reinterpret_cast<uintptr_t>(this) & 0xF)
+            fprintf(stderr, "StringImp is not 16 bytes alignment");
+    }
+    UniquedStringImpl(CreateSymbolTag, const UChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { 
+        if (reinterpret_cast<uintptr_t>(this) & 0xF)
+            fprintf(stderr, "StringImp is not 16 bytes alignment");
+    }
+    UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { 
+        if (reinterpret_cast<uintptr_t>(this) & 0xF)
+            fprintf(stderr, "StringImp is not 16 bytes alignment");
+    }
 };
 
 #if ASSERT_ENABLED

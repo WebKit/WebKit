@@ -44,6 +44,8 @@ ExternalStringImpl::ExternalStringImpl(const LChar* characters, unsigned length,
 {
     ASSERT(m_free);
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length, ExternalStringImplFreeFunction&& free)
@@ -52,6 +54,8 @@ ExternalStringImpl::ExternalStringImpl(const UChar* characters, unsigned length,
 {
     ASSERT(m_free);
     m_hashAndFlags = (m_hashAndFlags & ~s_hashMaskBufferOwnership) | BufferExternal;
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 } // namespace WTF

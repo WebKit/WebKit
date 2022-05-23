@@ -132,7 +132,7 @@ struct StringStats {
 
 #endif
 
-class StringImplShape {
+class alignas(16) StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
@@ -785,6 +785,8 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
     , m_data8(data8)
     , m_hashAndFlags(hashAndFlags)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const UChar* data16, unsigned hashAndFlags)
@@ -793,6 +795,8 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
     , m_data16(data16)
     , m_hashAndFlags(hashAndFlags)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
@@ -801,6 +805,8 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
     , m_data8Char(characters)
     , m_hashAndFlags(hashAndFlags)
 {
+    // if (reinterpret_cast<uintptr_t>(this) & 0xF)
+    //     fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
@@ -809,6 +815,8 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
     , m_data16Char(characters)
     , m_hashAndFlags(hashAndFlags)
 {
+    // if (reinterpret_cast<uintptr_t>(this) & 0xF)
+    //     fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
@@ -861,25 +869,34 @@ template<bool isSpecialCharacter(UChar)> inline bool StringImpl::isAllSpecialCha
 inline StringImpl::StringImpl(unsigned length, Force8Bit)
     : StringImplShape(s_refCountIncrement, length, tailPointer<LChar>(), s_hashFlag8BitBuffer | StringNormal | BufferInternal)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
     ASSERT(m_data8);
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
+
 }
 
 inline StringImpl::StringImpl(unsigned length)
     : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), s_hashZeroValue | StringNormal | BufferInternal)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
     ASSERT(m_data16);
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
+
 }
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, static_cast<const LChar*>(nullptr), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
+
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data8 = characters.leakPtr();
     else {
@@ -892,15 +909,20 @@ inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned leng
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
+
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, ConstructWithoutCopyingTag)
     : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferInternal)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
+
     ASSERT(m_data16);
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
+
 }
 
 inline StringImpl::StringImpl(const LChar* characters, unsigned length, ConstructWithoutCopyingTag)
@@ -910,6 +932,9 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
+
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 template<typename Malloc>
@@ -928,6 +953,9 @@ inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned leng
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
+
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
@@ -941,6 +969,9 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<Stri
     substringBuffer() = &base.leakRef();
 
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
+
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
@@ -954,6 +985,9 @@ inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<Stri
     substringBuffer() = &base.leakRef();
 
     STRING_STATS_ADD_16BIT_STRING2(m_length, true);
+
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 template<size_t inlineCapacity> inline Ref<StringImpl> StringImpl::create8BitIfPossible(const Vector<UChar, inlineCapacity>& vector)
@@ -1145,25 +1179,34 @@ inline UChar StringImpl::at(unsigned i) const
 inline StringImpl::StringImpl(CreateSymbolTag, const LChar* characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, characters, s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
     ASSERT(is8Bit());
     ASSERT(m_data8);
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
+
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag, const UChar* characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
     ASSERT(!is8Bit());
     ASSERT(m_data16);
     STRING_STATS_ADD_16BIT_STRING2(m_length, true);
+
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag)
     : StringImplShape(s_refCountIncrement, 0, empty()->characters8(), s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
+    if (reinterpret_cast<uintptr_t>(this) & 0xF)
+        fprintf(stderr, "StringImp is not 16 bytes alignment");
     ASSERT(is8Bit());
     ASSERT(m_data8);
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
+
 }
 
 template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> tailElementCount)
@@ -1231,12 +1274,16 @@ template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::Static
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
         s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {
+    // if (reinterpret_cast<uintptr_t>(this) & 0xF)
+    //     fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
         s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {
+    // if (reinterpret_cast<uintptr_t>(this) & 0xF)
+    //     fprintf(stderr, "StringImp is not 16 bytes alignment");
 }
 
 inline StringImpl::StaticStringImpl::operator StringImpl&()
