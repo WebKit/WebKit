@@ -1296,9 +1296,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
     jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-    unsigned extraStackNeeded = 0;
-    if (unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes())
-        extraStackNeeded = stackAlignmentBytes() - stackMisalignment;
+    constexpr unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes();
+    constexpr unsigned extraStackNeeded = stackMisalignment ? stackAlignmentBytes() - stackMisalignment : 0;
     
     // We need to forward all of the arguments that we were passed. We aren't allowed to do a tail
     // call here as far as I can tell. At least not so long as the generic path doesn't do a tail
@@ -1430,9 +1429,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
     jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-    unsigned extraStackNeeded = 0;
-    if (unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes())
-        extraStackNeeded = stackAlignmentBytes() - stackMisalignment;
+    constexpr unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes();
+    constexpr unsigned extraStackNeeded = stackMisalignment ? stackAlignmentBytes() - stackMisalignment : 0;
 
     // We need to forward all of the arguments that we were passed. We aren't allowed to do a tail
     // call here as far as I can tell. At least not so long as the generic path doesn't do a tail
@@ -1593,11 +1591,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     jit.call(GPRInfo::regT2, JSEntryPtrTag);
 
     // Wrap return value
-#if USE(JSVALUE64)
-    JSValueRegs resultRegs(GPRInfo::returnValueGPR);
-#else
-    JSValueRegs resultRegs(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-#endif
+    constexpr JSValueRegs resultRegs = JSRInfo::returnValueJSR;
 
     CCallHelpers::JumpList resultIsPrimitive;
     resultIsPrimitive.append(jit.branchIfNotCell(resultRegs));
