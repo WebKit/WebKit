@@ -5522,11 +5522,11 @@
    },
    {
       "emails" : [
+         "philn@igalia.com",
          "pnormand@igalia.com",
-         "philn@webkit.org",
-         "philn@igalia.com"
+         "philn@webkit.org"
       ],
-      "expertise" : "WebKitGTK, WPE, Media support (focused on the GStreamer implementation)",
+      "expertise" : "WebKitGTK, WPE, Media support (focused on the GStreamer implementation), Flatpak SDK",
       "github" : "philn",
       "name" : "Philippe Normand",
       "nicks" : [
