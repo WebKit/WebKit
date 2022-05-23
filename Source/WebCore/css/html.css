@@ -436,7 +436,6 @@ input {
 #endif
 
 input[type="search"] {
-    appearance: auto;
     box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid -webkit-control-background;
@@ -450,22 +449,8 @@ input::-webkit-textfield-decoration-container {
     content: none !important;
 }
 
-input[type="search"]::-webkit-search-cancel-button {
-    appearance: auto;
-    display: block;
-    flex: none;
-    align-self: flex-start;
-    margin: auto 0;
-}
-
-input[type="search"]::-webkit-search-decoration {
-    appearance: auto;
-    display: block;
-    flex: none;
-    align-self: flex-start;
-    margin: auto 0;
-}
-
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-results-decoration {
     appearance: auto;
     display: block;
@@ -486,7 +471,6 @@ input[type="search"]::-webkit-search-results-button {
 
 #if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
 input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
-    appearance: auto;
     align-items: center;
     display: inline-flex;
     overflow: hidden;
@@ -817,12 +801,10 @@ input:is([type="radio"], [type="checkbox"]) {
 }
 
 input:is([type="button"], [type="submit"], [type="reset"]) {
-    appearance: auto;
     white-space: pre;
 }
 
 input[type="file"]::file-selector-button {
-    appearance: auto;
     white-space: nowrap;
     margin: 0;
     font-size: inherit;
@@ -868,7 +850,6 @@ button[type="menu"], button[type="menu"]:active {
 #endif
 
 input[type="range"] {
-    appearance: auto;
     padding: initial;
     border: initial;
     margin: 2px;
@@ -960,7 +941,6 @@ area, param {
 }
 
 input[type="checkbox"] {
-    appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     box-sizing: border-box;
 #else
@@ -1009,7 +989,6 @@ input:is([type="checkbox"], [type="radio"]):checked:disabled {
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input[type="radio"] {
-    appearance: auto;
     box-sizing: border-box;
 }
 #endif
@@ -1078,7 +1057,6 @@ select {
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 select:is([size], [multiple]), select[size][multiple] {
-    appearance: auto;
     align-items: flex-start;
     border: 1px inset gray;
     border-radius: initial;
@@ -1086,7 +1064,6 @@ select:is([size], [multiple]), select[size][multiple] {
 }
 
 select:is([size=""], [size="0"], [size="1"]) {
-    appearance: auto;
     align-items: center;
     border: 1px solid;
     border-radius: 5px;
