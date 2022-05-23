@@ -286,6 +286,8 @@ accessibility/model-element-attributes.html [ Skip ]
 # AccessibilityUIElement::isInCell().
 accessibility/ancestor-computation.html [ Skip ]
 
+# Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
+accessibility/aria-modal-with-text-crash.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
 
 # TODO Conic gradients
