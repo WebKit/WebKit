@@ -64,6 +64,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Box.h>
 #import <wtf/FixedVector.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -705,6 +706,10 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     // FIXME: Which ones of these need to be done in the process swap case and which ones in the exit case?
     [self _hidePasswordView];
     [self _cancelAnimatedResize];
+
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+    [self _invalidateResizeAssertions];
+#endif
 
     if (_gestureController)
         _gestureController->disconnectFromProcess();
@@ -1562,6 +1567,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_page->hasRunningProcess() && self.window)
         _page->setIsInMultitaskingMode(self._isInMultitaskingMode);
 #endif
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+    [self _invalidateResizeAssertions];
+#endif
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque
@@ -2014,13 +2022,34 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     if (_resizeAssertions.isEmpty()) {
-        [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
+        auto didInvalidateResizeAssertions = Box<bool>::create(false);
+
+        [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self), didInvalidateResizeAssertions] {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
 
+            if (*didInvalidateResizeAssertions)
+                return;
+
             [strongSelf _invalidateResizeAssertions];
+
+            *didInvalidateResizeAssertions = true;
         }).get()];
+
+        RunLoop::main().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), didInvalidateResizeAssertions] {
+            auto strongSelf = weakSelf.get();
+            WKWEBVIEW_RELEASE_LOG("WKWebview %p next visible content rect update took too long; clearing resize assertions", strongSelf.get());
+            if (!strongSelf)
+                return;
+
+            if (*didInvalidateResizeAssertions)
+                return;
+
+            [strongSelf _invalidateResizeAssertions];
+
+            *didInvalidateResizeAssertions = true;
+        });
     }
 
     _resizeAssertions.append(retainPtr([windowScene _holdLiveResizeSnapshotForReason:reason]));
