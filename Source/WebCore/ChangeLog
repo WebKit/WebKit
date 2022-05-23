@@ -1,3 +1,17 @@
+2022-04-24  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] Disable new demuxers based on adaptivedemux2
+        https://bugs.webkit.org/show_bug.cgi?id=239701
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The new demuxers based on adaptivedemux2 cannot be used in WebKit yet because this new base
+        class does not abstract away network access. They can't work in a sandboxed media process,
+        so demote their rank in order to prevent decodebin3 from auto-plugging them.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::registerWebKitGStreamerElements):
+
 2022-05-16  Loïc Le Page  <llepage@igalia.com>
 
         REGRESSION(r294104): [GStreamer][VideoCapture] Webcam raw streams may hang up the video capture pipeline
