@@ -751,6 +751,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
     case CSSPropertyAppearance: {
+        if (valueID == CSSValueDefaultButton)
+            return context.useSystemAppearance;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (valueID == CSSValueAttachment || valueID == CSSValueBorderlessAttachment)
             return context.attachmentEnabled;
