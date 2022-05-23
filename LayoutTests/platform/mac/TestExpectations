@@ -2301,3 +2301,5 @@ webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
 webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 
 webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout
+
+webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]

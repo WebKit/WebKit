@@ -1533,8 +1533,6 @@ webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volum
 
 webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout Failure ]
 
-webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
-
 webkit.org/b/228796 [ BigSur+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
