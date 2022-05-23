@@ -494,3 +494,14 @@ webkit.org/b/156069 http/wpt/html/semantics/text-level-semantics/the-a-element/a
 
 # TestRunner::addChromeInputField() and focusWebView() not implemented
 fast/forms/focus-option-control-on-page.html [ Skip ]
+
+http/tests/download/basic-ascii.html [ Failure ]
+http/tests/download/convert-cached-load-to-download.html [ Failure ]
+http/tests/download/default-encoding.html [ Failure ]
+http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
+http/tests/download/inherited-encoding.html [ Failure ]
+http/tests/download/literal-utf-8.html [ Failure ]
+
+fast/text/embed-at-end-of-pre-wrap-line.html [ Failure ]
+fast/text/whitespace/pre-wrap-line-test.html [ Failure ]
+fast/text/whitespace/pre-wrap-spaces-after-newline.html [ Failure ]
