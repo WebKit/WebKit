@@ -1,0 +1,42 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that stream processing drains autorelease pool if needed for the platform</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const defaultTimeout = 1000;
+    const bufferSize = 100;
+    const streamTesterID = 447;
+    for (const processTarget of IPC.processTargets) {
+        const streamConnection = IPC.createStreamClientConnection(processTarget, bufferSize);
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
+            { type: 'uint64_t', value: streamTesterID },
+            { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },
+        ]);
+        const arguments = IPC.waitForMessage(processTarget, streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
+
+        // Test starts here.
+        try {
+            let result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, defaultTimeout, []);
+            let previousValue = result.arguments[0];
+
+            assert_equals(previousValue.type, "int32_t", `for ${ processTarget }`);
+            assert_equals(previousValue.value, 1, `for ${ processTarget }`);
+            // Autoreleasepool drains between message processing. Add an idle wait so that it no
+            // messages are posted, so the pool drains.
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, defaultTimeout, []);
+            previousValue = result.arguments[0];
+            assert_equals(previousValue.type, "int32_t", `for ${ processTarget }`);
+            assert_equals(previousValue.value, 1, `for ${ processTarget }`);
+        } finally {
+            IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseStreamTester.name, defaultTimeout, [{ type: 'uint64_t', value: streamTesterID }]);
+        }
+    }
+});
+</script>
+</body>

@@ -34,6 +34,10 @@
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
 
+#if USE(FOUNDATION)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace WebKit {
 
 RefPtr<IPCStreamTester> IPCStreamTester::create(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer&& stream)
@@ -101,6 +105,36 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
     completionHandler(value);
 }
 
+#if USE(FOUNDATION)
+
+namespace {
+struct UseCountHolder {
+    std::shared_ptr<bool> value;
+};
+}
+
+static void releaseUseCountHolder(CFAllocatorRef, const void* value)
+{
+    delete static_cast<const UseCountHolder*>(value);
+}
+
+#endif
+
+void IPCStreamTester::checkAutoreleasePool(CompletionHandler<void(int32_t)>&& completionHandler)
+{
+    if (!m_autoreleasePoolCheckValue)
+        m_autoreleasePoolCheckValue = std::make_shared<bool>(true);
+    completionHandler(m_autoreleasePoolCheckValue.use_count());
+
+#if USE(FOUNDATION)
+    static const CFArrayCallBacks arrayCallbacks {
+        .release = releaseUseCountHolder,
+    };
+    const void* values[] = { new UseCountHolder { m_autoreleasePoolCheckValue } };
+    CFArrayRef releaseDetector = CFArrayCreate(kCFAllocatorDefault, values, 1, &arrayCallbacks);
+    CFAutorelease(releaseDetector);
+#endif
+}
 }
 
 #endif

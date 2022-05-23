@@ -26,6 +26,10 @@
 #include "config.h"
 #include "StreamConnectionWorkQueue.h"
 
+#if USE(FOUNDATION)
+#include <wtf/AutodrainedPool.h>
+#endif
+
 namespace IPC {
 
 StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
@@ -120,6 +124,9 @@ void StreamConnectionWorkQueue::processStreams()
     constexpr size_t defaultMessageLimit = 1000;
     bool hasMoreToProcess = false;
     do {
+#if USE(FOUNDATION)
+        AutodrainedPool perProcessingIterationPool;
+#endif
         Deque<WTF::Function<void()>> functions;
         Vector<Ref<StreamServerConnection>> connections;
         {
