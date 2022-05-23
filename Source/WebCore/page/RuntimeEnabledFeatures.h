@@ -150,6 +150,8 @@ public:
     bool webRTCPlatformUDPSocketsEnabled() const { return m_isWebRTCPlatformUDPSocketsEnabled; }
     void setWebRTCPlatformUDPSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformUDPSocketsEnabled = isEnabled; }
 #endif
+    bool webRTCAudioLatencyAdaptationEnabled() const { return m_isWebRTCAudioLatencyAdaptationEnabled; }
+    void setWebRTCAudioLatencyAdaptationEnabled(bool isEnabled) { m_isWebRTCAudioLatencyAdaptationEnabled = isEnabled; }
 
 #if ENABLE(DATALIST_ELEMENT)
     bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
@@ -314,6 +316,7 @@ private:
     bool m_isWebRTCPlatformTCPSocketsEnabled { false };
     bool m_isWebRTCPlatformUDPSocketsEnabled { false };
 #endif
+    bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
 
 #if ENABLE(DATALIST_ELEMENT)
     bool m_isDataListElementEnabled { false };

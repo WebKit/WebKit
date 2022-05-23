@@ -976,6 +976,17 @@ WebAPIStatisticsEnabled:
     WebKit:
       default: false
 
+WebRTCAudioLatencyAdaptationEnabled:
+  type: bool
+  humanReadableName: "WebRTC Audio Latency Adaptation"
+  humanReadableDescription: "Enable WebRTC Audio Latency Adaptation"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCDTMFEnabled:
   type: bool

@@ -28,10 +28,16 @@
 
 #import "AudioSampleBufferList.h"
 #import "Logging.h"
+#import "RuntimeEnabledFeatures.h"
 #import <AudioToolbox/AudioConverter.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
+
+AudioSampleDataConverter::AudioSampleDataConverter()
+    : m_latencyAdaptationEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCAudioLatencyAdaptationEnabled())
+{
+}
 
 AudioSampleDataConverter::~AudioSampleDataConverter()
 {
@@ -75,6 +81,9 @@ OSStatus AudioSampleDataConverter::setFormats(const CAAudioStreamDescription& in
 
 bool AudioSampleDataConverter::updateBufferedAmount(size_t currentBufferedAmount, size_t pushedSampleSize)
 {
+    if (!m_latencyAdaptationEnabled)
+        return !!m_selectedConverter;
+
     if (currentBufferedAmount) {
         if (m_selectedConverter == m_regularConverter) {
             if (currentBufferedAmount <= m_lowBufferSize) {

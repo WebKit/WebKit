@@ -38,7 +38,7 @@ class PlatformAudioData;
 class AudioSampleDataConverter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AudioSampleDataConverter() = default;
+    AudioSampleDataConverter();
     ~AudioSampleDataConverter();
 
     OSStatus setFormats(const CAAudioStreamDescription& inputDescription, const CAAudioStreamDescription& outputDescription);
@@ -66,6 +66,7 @@ private:
         AudioConverterRef m_audioConverter { nullptr };
     };
 
+    bool m_latencyAdaptationEnabled { true };
     Converter m_lowConverter;
     Converter m_regularConverter;
     Converter m_highConverter;
