@@ -2,15 +2,15 @@
 # This file is put in the public domain.
 # Daniel Nylander <po@danielnylander.se>, 2009, 2010.
 # Josef Andersson <l10nl18nsweja@gmail.com>, 2015, 2017.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2021.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2021, 2022.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: webkitgtk+\n"
+"Project-Id-Version: webkitgtk\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
 "product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2021-07-22 15:47+0000\n"
-"PO-Revision-Date: 2021-07-23 02:38+0200\n"
+"POT-Creation-Date: 2022-05-13 03:29+0000\n"
+"PO-Revision-Date: 2022-05-04 21:04+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: ../LocalizedStringsGtk.cpp:43
 msgid "Copy Link Loc_ation"
@@ -139,987 +139,922 @@ msgstr[0] "Använd inte fler än ett tecken"
 msgstr[1] "Använd inte fler än %d tecken"
 
 # Filen finns på https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/LocalizedStrings.cpp
-#: ../../LocalizedStrings.cpp:97
+#: ../../LocalizedStrings.cpp:162
 msgctxt "alt text for <input> elements with no alt, title, or value"
 msgid "Submit"
 msgstr "Skicka"
 
-#: ../../LocalizedStrings.cpp:102
+#: ../../LocalizedStrings.cpp:167
 msgid "Reset"
 msgstr "Återställ"
 
-#: ../../LocalizedStrings.cpp:107
+#: ../../LocalizedStrings.cpp:172
 msgid "This is a searchable index. Enter search keywords: "
 msgstr "Detta är ett sökbart index. Ange söknyckelord: "
 
-#: ../../LocalizedStrings.cpp:113
+#: ../../LocalizedStrings.cpp:178
 msgid "Submit"
 msgstr "Skicka"
 
-#: ../../LocalizedStrings.cpp:118
+#: ../../LocalizedStrings.cpp:183
 msgid "Choose File"
 msgstr "Välj fil"
 
-#: ../../LocalizedStrings.cpp:123
+#: ../../LocalizedStrings.cpp:188
 msgid "Choose Files"
 msgstr "Välj filer"
 
-#: ../../LocalizedStrings.cpp:128
+#: ../../LocalizedStrings.cpp:193
 msgid "no file selected"
 msgstr "ingen fil vald"
 
-#: ../../LocalizedStrings.cpp:133
+#: ../../LocalizedStrings.cpp:198
 msgid "no files selected"
 msgstr "inga filer valda"
 
-#: ../../LocalizedStrings.cpp:138
+#: ../../LocalizedStrings.cpp:203
 msgid "Details"
 msgstr "Detaljer"
 
-#: ../../LocalizedStrings.cpp:145
+#: ../../LocalizedStrings.cpp:210
 msgid "Open Link in New _Window"
 msgstr "Öppna länk i nytt _fönster"
 
-#: ../../LocalizedStrings.cpp:150
+#: ../../LocalizedStrings.cpp:215
 msgid "_Download Linked File"
 msgstr "_Hämta länkad fil"
 
-#: ../../LocalizedStrings.cpp:156
+#: ../../LocalizedStrings.cpp:221
 msgid "Copy Link"
 msgstr "Kopiera länk"
 
-#: ../../LocalizedStrings.cpp:162
+#: ../../LocalizedStrings.cpp:227
 msgid "Open _Image in New Window"
 msgstr "Öppna _bild i nytt fönster"
 
-#: ../../LocalizedStrings.cpp:168
+#: ../../LocalizedStrings.cpp:233
 msgid "Download Image"
 msgstr "Hämta bild"
 
-#: ../../LocalizedStrings.cpp:174
+#: ../../LocalizedStrings.cpp:239
 msgid "Cop_y Image"
 msgstr "Kop_iera bild"
 
-#: ../../LocalizedStrings.cpp:179
+#: ../../LocalizedStrings.cpp:244
 msgid "Open _Frame in New Window"
 msgstr "Öppna _ram i nytt fönster"
 
-#: ../../LocalizedStrings.cpp:184
+#: ../../LocalizedStrings.cpp:249
 msgid "_Copy"
 msgstr "_Kopiera"
 
-#: ../../LocalizedStrings.cpp:189
+#: ../../LocalizedStrings.cpp:254
 msgid "_Back"
 msgstr "_Bakåt"
 
-#: ../../LocalizedStrings.cpp:194
+#: ../../LocalizedStrings.cpp:259
 msgid "_Forward"
 msgstr "_Framåt"
 
-#: ../../LocalizedStrings.cpp:199
+#: ../../LocalizedStrings.cpp:264
 msgid "_Stop"
 msgstr "_Stopp"
 
-#: ../../LocalizedStrings.cpp:204
+#: ../../LocalizedStrings.cpp:269
 msgid "_Reload"
 msgstr "_Uppdatera"
 
-#: ../../LocalizedStrings.cpp:209
+#: ../../LocalizedStrings.cpp:274
 msgid "Cu_t"
 msgstr "Klipp u_t"
 
-#: ../../LocalizedStrings.cpp:214
+#: ../../LocalizedStrings.cpp:279
 msgid "_Paste"
 msgstr "_Klistra in"
 
-#: ../../LocalizedStrings.cpp:219
+#: ../../LocalizedStrings.cpp:284
 msgid "No Guesses Found"
 msgstr "Inga gissningar hittades"
 
-#: ../../LocalizedStrings.cpp:224
+#: ../../LocalizedStrings.cpp:289
 msgid "_Ignore Spelling"
 msgstr "_Ignorera stavfel"
 
-#: ../../LocalizedStrings.cpp:229
+#: ../../LocalizedStrings.cpp:294
 msgid "_Learn Spelling"
 msgstr "_Lär stavning"
 
-#: ../../LocalizedStrings.cpp:238
-#, c-format
-msgid "Look Up “%s”"
-msgstr "Identifiera ”%s”"
-
-#: ../../LocalizedStrings.cpp:240
+#: ../../LocalizedStrings.cpp:305
 msgid "Look Up “<selection>”"
 msgstr "Identifiera ”<selection>”"
 
-#: ../../LocalizedStrings.cpp:256
+#: ../../LocalizedStrings.cpp:321
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: ../../LocalizedStrings.cpp:261
+#: ../../LocalizedStrings.cpp:326
 msgid "Ignore _Grammar"
 msgstr "Ignorera _grammatikfel"
 
-#: ../../LocalizedStrings.cpp:266
+#: ../../LocalizedStrings.cpp:331
 msgid "Spelling and _Grammar"
 msgstr "Stavning och _grammatik"
 
-#: ../../LocalizedStrings.cpp:272
+#: ../../LocalizedStrings.cpp:337
 msgid "_Show Spelling and Grammar"
 msgstr "_Visa stavning och grammatik"
 
-#: ../../LocalizedStrings.cpp:273
+#: ../../LocalizedStrings.cpp:338
 msgid "_Hide Spelling and Grammar"
 msgstr "_Dölj stavning och grammatik"
 
-#: ../../LocalizedStrings.cpp:278
+#: ../../LocalizedStrings.cpp:343
 msgid "_Check Document Now"
 msgstr "_Kontrollera dokumentet nu"
 
-#: ../../LocalizedStrings.cpp:283
+#: ../../LocalizedStrings.cpp:348
 msgid "Check Spelling While _Typing"
 msgstr "Kontrollera stavning vid _inmatning"
 
-#: ../../LocalizedStrings.cpp:288
+#: ../../LocalizedStrings.cpp:353
 msgid "Check _Grammar With Spelling"
 msgstr "Kontrollera _grammatik med stavning"
 
-#: ../../LocalizedStrings.cpp:293
+#: ../../LocalizedStrings.cpp:358
 msgid "_Font"
 msgstr "_Typsnitt"
 
-#: ../../LocalizedStrings.cpp:298
+#: ../../LocalizedStrings.cpp:363
 msgid "_Bold"
 msgstr "_Fet"
 
-#: ../../LocalizedStrings.cpp:303
+#: ../../LocalizedStrings.cpp:368
 msgid "_Italic"
 msgstr "_Kursiv"
 
-#: ../../LocalizedStrings.cpp:308
+#: ../../LocalizedStrings.cpp:373
 msgid "_Underline"
 msgstr "_Understruken"
 
-#: ../../LocalizedStrings.cpp:313
+#: ../../LocalizedStrings.cpp:378
 msgid "_Outline"
 msgstr "K_ontur"
 
-#: ../../LocalizedStrings.cpp:319
+#: ../../LocalizedStrings.cpp:384
 msgid "Paragraph Direction"
 msgstr "Riktning på stycke"
 
-#: ../../LocalizedStrings.cpp:324
+#: ../../LocalizedStrings.cpp:389
 msgid "Selection Direction"
 msgstr "Riktningsval"
 
-#: ../../LocalizedStrings.cpp:329
+#: ../../LocalizedStrings.cpp:394
 msgid "Default"
 msgstr "Standardvärde"
 
-#: ../../LocalizedStrings.cpp:334
+#: ../../LocalizedStrings.cpp:399
 msgid "Left to Right"
 msgstr "Vänster till höger"
 
-#: ../../LocalizedStrings.cpp:339
+#: ../../LocalizedStrings.cpp:404
 msgid "Right to Left"
 msgstr "Höger till vänster"
 
-#: ../../LocalizedStrings.cpp:345
+#: ../../LocalizedStrings.cpp:410
 msgid "Open _Video in New Window"
 msgstr "Öppna _video i nytt fönster"
 
-#: ../../LocalizedStrings.cpp:350
+#: ../../LocalizedStrings.cpp:415
 msgid "Open _Audio in New Window"
 msgstr "Öppna ljud i nytt _fönster"
 
-#: ../../LocalizedStrings.cpp:355
+#: ../../LocalizedStrings.cpp:420
 msgid "Download _Video"
 msgstr "Hämta _video"
 
-#: ../../LocalizedStrings.cpp:360
+#: ../../LocalizedStrings.cpp:425
 msgid "Download _Audio"
 msgstr "Hämta _ljud"
 
-#: ../../LocalizedStrings.cpp:366
+#: ../../LocalizedStrings.cpp:431
 msgid "Copy Video Address"
 msgstr "Kopiera videoadress"
 
-#: ../../LocalizedStrings.cpp:371
+#: ../../LocalizedStrings.cpp:436
 msgid "Copy Audio Address"
 msgstr "Kopiera ljudadress"
 
-#: ../../LocalizedStrings.cpp:376
+#: ../../LocalizedStrings.cpp:441
 msgid "Controls"
 msgstr "Kontroller"
 
-#: ../../LocalizedStrings.cpp:381
+#: ../../LocalizedStrings.cpp:446
 msgid "Show Controls"
 msgstr "Visa kontroller"
 
-#: ../../LocalizedStrings.cpp:386
+#: ../../LocalizedStrings.cpp:451
 msgid "Hide Controls"
 msgstr "Dölj kontroller"
 
-#: ../../LocalizedStrings.cpp:391
+#: ../../LocalizedStrings.cpp:456
 msgid "Loop"
 msgstr "Upprepa"
 
-#: ../../LocalizedStrings.cpp:396
+#: ../../LocalizedStrings.cpp:461
 msgid "Enter Full Screen"
 msgstr "Helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:401
+#: ../../LocalizedStrings.cpp:466
 msgctxt "Video Exit Full Screen context menu item"
 msgid "Exit Full Screen"
 msgstr "Avsluta helskärm"
 
-#: ../../LocalizedStrings.cpp:407
+#: ../../LocalizedStrings.cpp:472
 msgid "_Play"
 msgstr "_Spela"
 
-#: ../../LocalizedStrings.cpp:412
+#: ../../LocalizedStrings.cpp:477
 msgid "_Pause"
 msgstr "_Pausa"
 
-#: ../../LocalizedStrings.cpp:417
+#: ../../LocalizedStrings.cpp:482
 msgid "_Mute"
 msgstr "_Tysta"
 
-#: ../../LocalizedStrings.cpp:422
+#: ../../LocalizedStrings.cpp:487
 msgid "Inspect _Element"
 msgstr "Inspektera _element"
 
-#: ../../LocalizedStrings.cpp:428
+#: ../../LocalizedStrings.cpp:493
 msgid "_Search the Web"
 msgstr "_Sök på webben"
 
-#: ../../LocalizedStrings.cpp:438
+#: ../../LocalizedStrings.cpp:503
 msgid "No recent searches"
 msgstr "Inga tidigare sökningar"
 
-#: ../../LocalizedStrings.cpp:443
+#: ../../LocalizedStrings.cpp:508
 msgid "Recent Searches"
 msgstr "Tidigare sökningar"
 
-#: ../../LocalizedStrings.cpp:448
+#: ../../LocalizedStrings.cpp:513
 msgid "Clear Recent Searches"
 msgstr "Töm tidigare sökningar"
 
-#: ../../LocalizedStrings.cpp:455
+#: ../../LocalizedStrings.cpp:520
 msgid "HTML content"
 msgstr "HTML-innehåll"
 
-#: ../../LocalizedStrings.cpp:460
+#: ../../LocalizedStrings.cpp:525
 msgid "link"
 msgstr "länk"
 
-#: ../../LocalizedStrings.cpp:465
+#: ../../LocalizedStrings.cpp:530
 msgid "list marker"
 msgstr "listmarkör"
 
-#: ../../LocalizedStrings.cpp:470
+#: ../../LocalizedStrings.cpp:535
 msgid "image map"
 msgstr "bildkarta"
 
-#: ../../LocalizedStrings.cpp:475
+#: ../../LocalizedStrings.cpp:540
 msgid "heading"
 msgstr "rubrik"
 
 # En färgväljare. https://developer.apple.com/documentation/appkit/nscolorwell
-#: ../../LocalizedStrings.cpp:480
+#: ../../LocalizedStrings.cpp:545
 msgid "color well"
 msgstr "färgväljare"
 
-#: ../../LocalizedStrings.cpp:485
+#: ../../LocalizedStrings.cpp:550
 msgid "definition"
 msgstr "definition"
 
-#: ../../LocalizedStrings.cpp:490
+#: ../../LocalizedStrings.cpp:555
 msgid "description list"
 msgstr "beskrivningslista"
 
-#: ../../LocalizedStrings.cpp:495
+#: ../../LocalizedStrings.cpp:560
 msgid "term"
 msgstr "term"
 
-#: ../../LocalizedStrings.cpp:500
+#: ../../LocalizedStrings.cpp:565
 msgid "description"
 msgstr "beskrivning"
 
-#: ../../LocalizedStrings.cpp:505
+#: ../../LocalizedStrings.cpp:570
 msgid "details"
 msgstr "detaljer"
 
-#: ../../LocalizedStrings.cpp:510
+#: ../../LocalizedStrings.cpp:575
 msgid "summary"
 msgstr "sammanfattning"
 
-#: ../../LocalizedStrings.cpp:515
+#: ../../LocalizedStrings.cpp:580
 msgid "footer"
 msgstr "sidfot"
 
-#: ../../LocalizedStrings.cpp:520
+#: ../../LocalizedStrings.cpp:585
 msgid "file upload button"
 msgstr "knapp för att skicka upp fil"
 
-#: ../../LocalizedStrings.cpp:525
+#: ../../LocalizedStrings.cpp:590
 msgid "output"
 msgstr "utdata"
 
-#: ../../LocalizedStrings.cpp:530
+#: ../../LocalizedStrings.cpp:595
 msgid "attachment"
 msgstr "bilaga"
 
-#: ../../LocalizedStrings.cpp:535
+#: ../../LocalizedStrings.cpp:600
 msgid "cancel"
 msgstr "avbryt"
 
-#: ../../LocalizedStrings.cpp:540
+#: ../../LocalizedStrings.cpp:605
 msgid "feed"
 msgstr "kanal"
 
-#: ../../LocalizedStrings.cpp:545
+#: ../../LocalizedStrings.cpp:610
 msgid "figure"
 msgstr "figur"
 
-#: ../../LocalizedStrings.cpp:550
+#: ../../LocalizedStrings.cpp:615
 msgid "email field"
 msgstr "e-postfält"
 
-#: ../../LocalizedStrings.cpp:555
+#: ../../LocalizedStrings.cpp:620
 msgid "telephone number field"
 msgstr "telefonnummersfält"
 
-#: ../../LocalizedStrings.cpp:560
+#: ../../LocalizedStrings.cpp:625
 msgid "URL field"
 msgstr "URL-fält"
 
-#: ../../LocalizedStrings.cpp:565
+#: ../../LocalizedStrings.cpp:630
 msgid "date field"
 msgstr "datumfält"
 
-#: ../../LocalizedStrings.cpp:570
+#: ../../LocalizedStrings.cpp:635
 msgid "time field"
 msgstr "tidsfält"
 
-#: ../../LocalizedStrings.cpp:575
+#: ../../LocalizedStrings.cpp:640
 msgid "date and time field"
 msgstr "datum- och tidsfält"
 
-#: ../../LocalizedStrings.cpp:580
+#: ../../LocalizedStrings.cpp:645
 msgid "month and year field"
 msgstr "månads- och årsfält"
 
-#: ../../LocalizedStrings.cpp:585
+#: ../../LocalizedStrings.cpp:650
 msgid "number field"
 msgstr "nummerfält"
 
-#: ../../LocalizedStrings.cpp:590
+#: ../../LocalizedStrings.cpp:655
 msgid "week and year field"
 msgstr "vecko- och årsfält"
 
-#: ../../LocalizedStrings.cpp:596
+#: ../../LocalizedStrings.cpp:661
 msgid "alert"
 msgstr "varning"
 
-#: ../../LocalizedStrings.cpp:598
+#: ../../LocalizedStrings.cpp:663
 msgid "web alert dialog"
 msgstr "webbvarningsdialog"
 
-#: ../../LocalizedStrings.cpp:600
+#: ../../LocalizedStrings.cpp:665
 msgid "web dialog"
 msgstr "webbdialog"
 
-#: ../../LocalizedStrings.cpp:602
+#: ../../LocalizedStrings.cpp:667
 msgid "log"
 msgstr "logg"
 
 # Aria-roll motsvarande HTML-taggen <marquee>
-#: ../../LocalizedStrings.cpp:604
+#: ../../LocalizedStrings.cpp:669
 msgid "marquee"
 msgstr "marquee"
 
-#: ../../LocalizedStrings.cpp:606
+#: ../../LocalizedStrings.cpp:671
 msgid "application status"
 msgstr "applikationsstatus"
 
-#: ../../LocalizedStrings.cpp:608
+#: ../../LocalizedStrings.cpp:673
 msgid "timer"
 msgstr "tidtagare"
 
-#: ../../LocalizedStrings.cpp:610
+#: ../../LocalizedStrings.cpp:675
 msgid "document"
 msgstr "dokument"
 
-#: ../../LocalizedStrings.cpp:612
+#: ../../LocalizedStrings.cpp:677
 msgid "article"
 msgstr "artikel"
 
-#: ../../LocalizedStrings.cpp:614
+#: ../../LocalizedStrings.cpp:679
 msgid "note"
 msgstr "anteckning"
 
-#: ../../LocalizedStrings.cpp:616
+#: ../../LocalizedStrings.cpp:681
 msgid "web application"
 msgstr "webbapplikation"
 
-#: ../../LocalizedStrings.cpp:618
+#: ../../LocalizedStrings.cpp:683
 msgid "banner"
 msgstr "banderoll"
 
-#: ../../LocalizedStrings.cpp:620
+#: ../../LocalizedStrings.cpp:685
 msgid "complementary"
 msgstr "kompletterande"
 
-#: ../../LocalizedStrings.cpp:622
+#: ../../LocalizedStrings.cpp:687
 msgid "content information"
 msgstr "innehållsinformation"
 
-#: ../../LocalizedStrings.cpp:624
+#: ../../LocalizedStrings.cpp:689
 msgid "main"
 msgstr "huvuddel"
 
-#: ../../LocalizedStrings.cpp:626
+#: ../../LocalizedStrings.cpp:691
 msgid "navigation"
 msgstr "navigering"
 
-#: ../../LocalizedStrings.cpp:628
+#: ../../LocalizedStrings.cpp:693
 msgid "region"
 msgstr "region"
 
-#: ../../LocalizedStrings.cpp:630
+#: ../../LocalizedStrings.cpp:695
 msgid "search"
 msgstr "sök"
 
-#: ../../LocalizedStrings.cpp:632
+#: ../../LocalizedStrings.cpp:697
 msgid "tooltip"
 msgstr "inforuta"
 
-#: ../../LocalizedStrings.cpp:634
+#: ../../LocalizedStrings.cpp:699
 msgid "tab panel"
 msgstr "flikpanel"
 
-#: ../../LocalizedStrings.cpp:636
+#: ../../LocalizedStrings.cpp:701
 msgid "math"
 msgstr "matematik"
 
-#: ../../LocalizedStrings.cpp:642
+#: ../../LocalizedStrings.cpp:707
 msgid "separator"
 msgstr "avskiljare"
 
 # https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Mark_role
-#: ../../LocalizedStrings.cpp:647
+#: ../../LocalizedStrings.cpp:712
 msgid "highlighted"
 msgstr "markerad"
 
-#: ../../LocalizedStrings.cpp:652
+#: ../../LocalizedStrings.cpp:717
 msgid "press"
 msgstr "tryck"
 
-#: ../../LocalizedStrings.cpp:657
+#: ../../LocalizedStrings.cpp:722
 msgid "select"
 msgstr "välj"
 
-#: ../../LocalizedStrings.cpp:662
+#: ../../LocalizedStrings.cpp:727
 msgid "activate"
 msgstr "aktivera"
 
-#: ../../LocalizedStrings.cpp:667
+#: ../../LocalizedStrings.cpp:732
 msgid "uncheck"
 msgstr "avmarkera"
 
-#: ../../LocalizedStrings.cpp:672
+#: ../../LocalizedStrings.cpp:737
 msgid "check"
 msgstr "markera"
 
-#: ../../LocalizedStrings.cpp:677
+#: ../../LocalizedStrings.cpp:742
 msgid "jump"
 msgstr "hoppa"
 
-#: ../../LocalizedStrings.cpp:701
+#: ../../LocalizedStrings.cpp:766
 msgid "Apple Pay"
 msgstr "Apple Pay"
 
-#: ../../LocalizedStrings.cpp:706
+#: ../../LocalizedStrings.cpp:771
 msgid "Buy with Apple Pay"
 msgstr "Köp med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:711
+#: ../../LocalizedStrings.cpp:776
 msgid "Set up with Apple Pay"
 msgstr "Konfigurera med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:716
+#: ../../LocalizedStrings.cpp:781
 msgid "Donate with Apple Pay"
 msgstr "Donera med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:721
+#: ../../LocalizedStrings.cpp:786
 msgid "Check out with Apple Pay"
 msgstr "Checka ut med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:726
+#: ../../LocalizedStrings.cpp:791
 msgid "Book with Apple Pay"
 msgstr "Boka med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:731
+#: ../../LocalizedStrings.cpp:796
 msgid "Subscribe with Apple Pay"
 msgstr "Prenumerera med Apple Pay"
 
 # add money to a card, account, or payment system
-#: ../../LocalizedStrings.cpp:737
+#: ../../LocalizedStrings.cpp:802
 msgid "Reload with Apple Pay"
 msgstr "Ladda med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:741
+#: ../../LocalizedStrings.cpp:806
 msgid "Add money with Apple Pay"
 msgstr "Lägg till pengar med Apple Pay"
 
 # add money to a card, account, or
 # payment system
-#: ../../LocalizedStrings.cpp:745
+#: ../../LocalizedStrings.cpp:810
 msgid "Top up with Apple Pay"
 msgstr "Fyll på med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:749
+#: ../../LocalizedStrings.cpp:814
 msgid "Order with Apple Pay"
 msgstr "Beställ med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:753
+#: ../../LocalizedStrings.cpp:818
 msgid "Rent with Apple Pay"
 msgstr "Hyr med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:757
+#: ../../LocalizedStrings.cpp:822
 msgid "Support with Apple Pay"
 msgstr "Stöd med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:761
+#: ../../LocalizedStrings.cpp:826
 msgid "Contribute with Apple Pay"
 msgstr "Bidra med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:765
+#: ../../LocalizedStrings.cpp:830
 msgid "Tip with Apple Pay"
 msgstr "Ge dricks med Apple Pay"
 
-#: ../../LocalizedStrings.cpp:772
+#: ../../LocalizedStrings.cpp:837
 msgid "password AutoFill"
 msgstr "autofyll lösenord"
 
-#: ../../LocalizedStrings.cpp:777
+#: ../../LocalizedStrings.cpp:842
 msgid "contact info AutoFill"
 msgstr "autofyll kontaktinfo"
 
-#: ../../LocalizedStrings.cpp:782
+#: ../../LocalizedStrings.cpp:847
 msgid "strong password AutoFill"
 msgstr "autofyll starkt lösenord"
 
-#: ../../LocalizedStrings.cpp:787
+#: ../../LocalizedStrings.cpp:852
 msgid "credit card AutoFill"
 msgstr "autofyll kreditkort"
 
-#: ../../LocalizedStrings.cpp:792
+#: ../../LocalizedStrings.cpp:857
 msgid "Strong Password"
 msgstr "Starkt lösenord"
 
-#: ../../LocalizedStrings.cpp:797
+#: ../../LocalizedStrings.cpp:862
 msgid "Missing Plug-in"
 msgstr "Saknar insticksmodul"
 
-#: ../../LocalizedStrings.cpp:802
+#: ../../LocalizedStrings.cpp:867
 msgid "Plug-in Failure"
 msgstr "Insticksmodul misslyckades"
 
-#: ../../LocalizedStrings.cpp:807
+#: ../../LocalizedStrings.cpp:872
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:812
+#: ../../LocalizedStrings.cpp:877
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:817
+#: ../../LocalizedStrings.cpp:882
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Insticksmodul stöds ej"
 
-#: ../../LocalizedStrings.cpp:822
+#: ../../LocalizedStrings.cpp:887
 msgctxt ""
 "Label text to be used when a plug-in was blocked from loading because it was "
 "too small"
 msgid "Plug-In too small"
 msgstr "Insticksmodulen för liten"
 
-#: ../../LocalizedStrings.cpp:827
-#, c-format
-msgid "%d files"
-msgstr "%d filer"
-
-#: ../../LocalizedStrings.cpp:832
+#: ../../LocalizedStrings.cpp:897
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Okänd"
 
-#: ../../LocalizedStrings.cpp:851
-#, c-format
-msgid "%s %d×%d pixels"
-msgstr "%s %d×%d bildpunkter"
-
-#: ../../LocalizedStrings.cpp:853
-#, c-format
-msgid "<filename> %d×%d pixels"
-msgstr "<filnamn> %d×%d bildpunkter"
-
-#: ../../LocalizedStrings.cpp:859
+#: ../../LocalizedStrings.cpp:924
 msgid "Loading…"
 msgstr "Läser in…"
 
-#: ../../LocalizedStrings.cpp:864
+#: ../../LocalizedStrings.cpp:929
 msgid "Live Broadcast"
 msgstr "Live-sändning"
 
-#: ../../LocalizedStrings.cpp:870
+#: ../../LocalizedStrings.cpp:935
 msgid "audio playback"
 msgstr "ljuduppspelning"
 
-#: ../../LocalizedStrings.cpp:872
+#: ../../LocalizedStrings.cpp:937
 msgid "video playback"
 msgstr "videouppspelning"
 
-#: ../../LocalizedStrings.cpp:874
+#: ../../LocalizedStrings.cpp:939
 msgid "mute"
 msgstr "tysta"
 
-#: ../../LocalizedStrings.cpp:876
+#: ../../LocalizedStrings.cpp:941
 msgid "unmute"
 msgstr "tysta ej"
 
-#: ../../LocalizedStrings.cpp:878
+#: ../../LocalizedStrings.cpp:943
 msgid "play"
 msgstr "spela"
 
-#: ../../LocalizedStrings.cpp:880
+#: ../../LocalizedStrings.cpp:945
 msgid "pause"
 msgstr "pausa"
 
-#: ../../LocalizedStrings.cpp:882
+#: ../../LocalizedStrings.cpp:947
 msgid "movie time"
 msgstr "filmtid"
 
-#: ../../LocalizedStrings.cpp:884
+#: ../../LocalizedStrings.cpp:949
 msgid "timeline slider thumb"
 msgstr "miniatyrbild för tidslinjereglaget"
 
-#: ../../LocalizedStrings.cpp:886
+#: ../../LocalizedStrings.cpp:951
 msgid "back 30 seconds"
 msgstr "bakåt 30 sekunder"
 
-#: ../../LocalizedStrings.cpp:888
+#: ../../LocalizedStrings.cpp:953
 msgid "return to real time"
 msgstr "åter till realtid"
 
-#: ../../LocalizedStrings.cpp:890
+#: ../../LocalizedStrings.cpp:955
 msgid "elapsed time"
 msgstr "förfluten tid"
 
-#: ../../LocalizedStrings.cpp:892
+#: ../../LocalizedStrings.cpp:957
 msgid "remaining time"
 msgstr "återstående tid"
 
-#: ../../LocalizedStrings.cpp:894
+#: ../../LocalizedStrings.cpp:959
 msgid "status"
 msgstr "status"
 
-#: ../../LocalizedStrings.cpp:896
+#: ../../LocalizedStrings.cpp:961
 msgid "enter full screen"
 msgstr "helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:898
+#: ../../LocalizedStrings.cpp:963
 msgid "exit full screen"
 msgstr "avsluta helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:900
+#: ../../LocalizedStrings.cpp:965
 msgid "fast forward"
 msgstr "spola framåt"
 
-#: ../../LocalizedStrings.cpp:902
+#: ../../LocalizedStrings.cpp:967
 msgid "fast reverse"
 msgstr "spola bakåt"
 
-#: ../../LocalizedStrings.cpp:904
+#: ../../LocalizedStrings.cpp:969
 msgid "show closed captions"
 msgstr "visa undertexter"
 
-#: ../../LocalizedStrings.cpp:906
+#: ../../LocalizedStrings.cpp:971
 msgid "hide closed captions"
 msgstr "dölj undertexter"
 
-#: ../../LocalizedStrings.cpp:919
+#: ../../LocalizedStrings.cpp:984
 msgid "audio element playback controls and status display"
 msgstr "uppspelningskontroller för ljud och statusvisning"
 
-#: ../../LocalizedStrings.cpp:921
+#: ../../LocalizedStrings.cpp:986
 msgid "video element playback controls and status display"
 msgstr "uppspelningskontroller för video och statusvisning"
 
-#: ../../LocalizedStrings.cpp:923
+#: ../../LocalizedStrings.cpp:988
 msgid "mute audio tracks"
 msgstr "tysta ljudspår"
 
-#: ../../LocalizedStrings.cpp:925
+#: ../../LocalizedStrings.cpp:990
 msgid "unmute audio tracks"
 msgstr "tysta ej ljudspår"
 
-#: ../../LocalizedStrings.cpp:927
+#: ../../LocalizedStrings.cpp:992
 msgid "begin playback"
 msgstr "påbörja uppspelning"
 
-#: ../../LocalizedStrings.cpp:929
+#: ../../LocalizedStrings.cpp:994
 msgid "pause playback"
 msgstr "pausa uppspelning"
 
-#: ../../LocalizedStrings.cpp:931
+#: ../../LocalizedStrings.cpp:996
 msgid "movie time scrubber"
 msgstr "filmtids-scrubber"
 
-#: ../../LocalizedStrings.cpp:933
+#: ../../LocalizedStrings.cpp:998
 msgid "movie time scrubber thumb"
 msgstr "filmtids-scrubber miniatyrbild"
 
-#: ../../LocalizedStrings.cpp:935
+#: ../../LocalizedStrings.cpp:1000
 msgid "seek movie back 30 seconds"
 msgstr "sök bakåt 30 sekunder i film"
 
-#: ../../LocalizedStrings.cpp:937
+#: ../../LocalizedStrings.cpp:1002
 msgid "resume real time streaming"
 msgstr "återgå till realtid för strömmande film"
 
-#: ../../LocalizedStrings.cpp:939
+#: ../../LocalizedStrings.cpp:1004
 msgid "current movie time in seconds"
 msgstr "aktuell filmtid i sekunder"
 
-#: ../../LocalizedStrings.cpp:941
+#: ../../LocalizedStrings.cpp:1006
 msgid "number of seconds of movie remaining"
 msgstr "återstående sekunder av filmen"
 
-#: ../../LocalizedStrings.cpp:943
+#: ../../LocalizedStrings.cpp:1008
 msgid "current movie status"
 msgstr "aktuell filmstatus"
 
-#: ../../LocalizedStrings.cpp:945
+#: ../../LocalizedStrings.cpp:1010
 msgid "seek quickly back"
 msgstr "snabbsök bakåt"
 
-#: ../../LocalizedStrings.cpp:947
+#: ../../LocalizedStrings.cpp:1012
 msgid "seek quickly forward"
 msgstr "snabbsök framåt"
 
-#: ../../LocalizedStrings.cpp:949
+#: ../../LocalizedStrings.cpp:1014
 msgid "Play movie in full screen mode"
 msgstr "Spela film i helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:951
+#: ../../LocalizedStrings.cpp:1016
 msgid "start displaying closed captions"
 msgstr "visa undertexter"
 
-#: ../../LocalizedStrings.cpp:953
+#: ../../LocalizedStrings.cpp:1018
 msgid "stop displaying closed captions"
 msgstr "visa inte undertexter"
 
-#: ../../LocalizedStrings.cpp:966
+#: ../../LocalizedStrings.cpp:1031
 msgid "indefinite time"
 msgstr "obestämd tid"
 
-#: ../../LocalizedStrings.cpp:975
-#, c-format
-msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
-msgstr "%1$d dagar %2$d timmar %3$d minuter %4$d sekunder"
-
-#: ../../LocalizedStrings.cpp:977
-#, c-format
-msgid "%1$d hours %2$d minutes %3$d seconds"
-msgstr "%1$d timmar %2$d minuter %3$d sekunder"
-
-#: ../../LocalizedStrings.cpp:979
-#, c-format
-msgid "%1$d minutes %2$d seconds"
-msgstr "%1$d minuter %2$d sekunder"
-
-#: ../../LocalizedStrings.cpp:980
-#, c-format
-msgid "%1$d seconds"
-msgstr "%1$d sekunder"
-
-#: ../../LocalizedStrings.cpp:985
+#: ../../LocalizedStrings.cpp:1050
 msgid "Fill out this field"
 msgstr "Fyll i detta fält"
 
-#: ../../LocalizedStrings.cpp:990
+#: ../../LocalizedStrings.cpp:1055
 msgid "Select this checkbox"
 msgstr "Välj denna kryssruta"
 
-#: ../../LocalizedStrings.cpp:995
+#: ../../LocalizedStrings.cpp:1060
 msgid "Select a file"
 msgstr "Välj fil"
 
-#: ../../LocalizedStrings.cpp:1005
+#: ../../LocalizedStrings.cpp:1070
 msgid "Select one of these options"
 msgstr "Välj ett av dessa alternativ"
 
-#: ../../LocalizedStrings.cpp:1010
+#: ../../LocalizedStrings.cpp:1075
 msgid "Select an item in the list"
 msgstr "Välj ett objekt i listan"
 
-#: ../../LocalizedStrings.cpp:1015
+#: ../../LocalizedStrings.cpp:1080
 msgid "Invalid value"
 msgstr "Ogiltigt värde"
 
-#: ../../LocalizedStrings.cpp:1020
+#: ../../LocalizedStrings.cpp:1085
 msgid "Enter an email address"
 msgstr "Ange en e-postadress"
 
-#: ../../LocalizedStrings.cpp:1030
+#: ../../LocalizedStrings.cpp:1095
 msgid "Enter a URL"
 msgstr "Ange en URL"
 
-#: ../../LocalizedStrings.cpp:1035
+#: ../../LocalizedStrings.cpp:1100
 msgid "Match the requested format"
 msgstr "Använd det begärda formatet"
 
-#: ../../LocalizedStrings.cpp:1041
-#, c-format
-msgid "Use at least %d characters"
-msgstr "Använd minst %d tecken"
-
-#: ../../LocalizedStrings.cpp:1047
-#, c-format
-msgid "Use no more than %d characters"
-msgstr "Använd inte fler än %d tecken"
-
-#: ../../LocalizedStrings.cpp:1057
-#, c-format
-msgid "Value must be greater than or equal to %s"
-msgstr "Värdet måste vara större än, eller lika med %s"
-
-#: ../../LocalizedStrings.cpp:1060
+#: ../../LocalizedStrings.cpp:1125
 msgid "range underflow"
 msgstr "intervallunderspill"
 
-#: ../../LocalizedStrings.cpp:1069
-#, c-format
-msgid "Value must be less than or equal to %s"
-msgstr "Värdet måste vara mindre än, eller lika med %s"
-
-#: ../../LocalizedStrings.cpp:1072
+#: ../../LocalizedStrings.cpp:1137
 msgid "range overflow"
 msgstr "intervallöverspill"
 
-#: ../../LocalizedStrings.cpp:1078
+#: ../../LocalizedStrings.cpp:1143
 msgid "Enter a valid value"
 msgstr "Ange ett giltigt värde"
 
-#: ../../LocalizedStrings.cpp:1083
+#: ../../LocalizedStrings.cpp:1148
 msgid "Enter a number"
 msgstr "Ange en siffra"
 
-#: ../../LocalizedStrings.cpp:1088
+#: ../../LocalizedStrings.cpp:1153
 msgid "Click to Exit Full Screen"
 msgstr "Klicka för att avsluta helskärmsläge"
 
-#: ../../LocalizedStrings.cpp:1095
+#: ../../LocalizedStrings.cpp:1160
 msgctxt "Menu item label for a audio/text track that has no other name."
 msgid "Unknown"
 msgstr "Okänt"
 
-#: ../../LocalizedStrings.cpp:1100
+#: ../../LocalizedStrings.cpp:1165
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Av"
 
-#: ../../LocalizedStrings.cpp:1105
+#: ../../LocalizedStrings.cpp:1170
 msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Auto (rekommenderad)"
 
-#: ../../LocalizedStrings.cpp:1241
+#: ../../LocalizedStrings.cpp:1306
 msgid "Snapshotted Plug-In"
 msgstr "Insticksmodul för ögonblicksbild"
 
-#: ../../LocalizedStrings.cpp:1246
+#: ../../LocalizedStrings.cpp:1311
 msgid "Click to restart"
 msgstr "Klicka för att starta om"
 
-#: ../../LocalizedStrings.cpp:1251
+#: ../../LocalizedStrings.cpp:1316
 msgid "Show in blocked plug-in"
 msgstr "Visa i blockerad insticksmodul"
 
-#: ../../LocalizedStrings.cpp:1261
-#, c-format
-msgid "%s WebCrypto Master Key"
-msgstr "%s WebCrypto-huvudnyckel"
-
-#: ../../LocalizedStrings.cpp:1263
+#: ../../LocalizedStrings.cpp:1328
 msgid "<application> WebCrypto Master Key"
 msgstr "<application> WebCrypto-huvudnyckel"
 
-#: ../../LocalizedStrings.cpp:1269
+#: ../../LocalizedStrings.cpp:1334
 msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "Används för att kryptera WebCrypto-nycklar i beständig lagring, såsom "
 "IndexedDB"
 
-#: ../../LocalizedStrings.cpp:1278
+#: ../../LocalizedStrings.cpp:1343
 msgctxt "Title of the OK button for the number pad in zoomed form controls."
 msgid "OK"
 msgstr "OK"
 
-#: ../../LocalizedStrings.cpp:1283
+#: ../../LocalizedStrings.cpp:1348
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: ../../LocalizedStrings.cpp:1288
+#: ../../LocalizedStrings.cpp:1353
 msgid "Hide"
 msgstr "Dölj"
 
-#: ../../LocalizedStrings.cpp:1293
+#: ../../LocalizedStrings.cpp:1358
 msgid "Go"
 msgstr "Gå till"
 
-#: ../../LocalizedStrings.cpp:1298
+#: ../../LocalizedStrings.cpp:1363
 msgid "Search"
 msgstr "Sök"
 
-#: ../../LocalizedStrings.cpp:1303
+#: ../../LocalizedStrings.cpp:1368
 msgctxt "Set button below date picker"
 msgid "Set"
 msgstr "Ställ in"
 
-#: ../../LocalizedStrings.cpp:1308
+#: ../../LocalizedStrings.cpp:1373
 msgctxt "Day label in date picker"
 msgid "DAY"
 msgstr "DAG"
 
-#: ../../LocalizedStrings.cpp:1313
+#: ../../LocalizedStrings.cpp:1378
 msgctxt "Month label in date picker"
 msgid "MONTH"
 msgstr "MÅNAD"
 
-#: ../../LocalizedStrings.cpp:1318
+#: ../../LocalizedStrings.cpp:1383
 msgctxt "Year label in date picker"
 msgid "YEAR"
 msgstr "ÅR"
 
-#: ../../LocalizedStrings.cpp:1326
+#: ../../LocalizedStrings.cpp:1391
 msgid "Unacceptable TLS certificate"
 msgstr "Oacceptabelt TLS-certifikat"
 
-#: ../../LocalizedStrings.cpp:1345
+#: ../../LocalizedStrings.cpp:1410
 msgid "Continue with Touch ID."
 msgstr "Fortsätt med Touch-ID."
 
@@ -1342,6 +1277,11 @@ msgctxt "Undo action name"
 msgid "Convert to Unordered List"
 msgstr "Konvertera till osorterad lista"
 
+#: ../../../editing/EditAction.cpp:146
+msgctxt "Undo action name"
+msgid "Markup Image"
+msgstr "Använd markup på bild"
+
 #: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:661
 msgid "JSC Options"
 msgstr "JSC-alternativ"
@@ -1351,7 +1291,7 @@ msgid "Show JSC Options"
 msgstr "Visa JSC-alternativ"
 
 #: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:61
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:132
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:139
 msgid "Name"
 msgstr "Namn"
 
@@ -1363,127 +1303,127 @@ msgstr "Storlek"
 msgid "Date Modified"
 msgstr "Ändringsdatum"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:152
 msgid "Context"
 msgstr "Kontext"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:154
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
 msgstr "Flaggor med kontexten för WebKitHitTestResult"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:166
 msgid "Link URI"
 msgstr "Länk-URI"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:168
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
 msgid "The link URI"
 msgstr "Länk-URI:n"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:179
 msgid "Link Title"
 msgstr "Länktitel"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:181
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
 msgid "The link title"
 msgstr "Länktiteln"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:192
 msgid "Link Label"
 msgstr "Länketikett"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:194
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
 msgid "The link label"
 msgstr "Länketiketten"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:205
 msgid "Image URI"
 msgstr "Bild-URI"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:207
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
 msgid "The image URI"
 msgstr "Bild-URI:n"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:218
 msgid "Media URI"
 msgstr "Media-URI"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:220
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
 msgid "The media URI"
 msgstr "Media-URI:n"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:98
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1184
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:446
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:456
 msgid "URI"
 msgstr "URI"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:100
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
 msgid "The URI to which the request will be made."
 msgstr "Den URI som till vilken begäran ska ske."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:105
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 msgid "The URI for which the response was made."
 msgstr "URI:n för vilken begäran skedde."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:115
 msgid "Status Code"
 msgstr "Statuskod"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:117
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
 msgid "The status code of the response as returned by the server."
 msgstr "Statuskoden för svaret som det returneras från servern."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:128
 msgid "Content Length"
 msgstr "Innehållslängd"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:130
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
 msgid "The expected content length of the response."
 msgstr "Förväntad innehållslängd för svaret."
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:141
 msgid "MIME Type"
 msgstr "MIME-typ"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:143
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
 msgid "The MIME type of the response"
 msgstr "MIME-typen för svaret"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:154
 msgid "Suggested Filename"
 msgstr "Föreslaget filnamn"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:156
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
 msgid "The suggested filename for the URI response"
 msgstr "Föreslaget filnamn för URI-svaret"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:171
 msgid "HTTP Headers"
 msgstr "HTTP-headers"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:173
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
 msgid "The HTTP headers of the response"
 msgstr "HTTP-headers för svaret"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:133
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:140
 msgid "The user message name"
 msgstr "Namnet på användarmeddelandet"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:151
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:158
 msgid "Parameters"
 msgstr "Parametrar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:152
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:159
 msgid "The user message parameters"
 msgstr "Användarmeddelandets parametrar"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:169
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:176
 msgid "File Descriptor List"
 msgstr "Filhandtagslista"
 
-#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:170
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:177
 msgid "The user message list of file descriptors"
 msgstr "Listan över filhandtag för användarmeddelandet"
 
@@ -1507,28 +1447,28 @@ msgstr "URL blockerad av enhetsrestriktioner"
 msgid "Frame load interrupted"
 msgstr "Raminläsning avbröts"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:67
+#: ../../../../WebKit/Shared/WebErrors.cpp:72
 msgid "Error handling synchronous load with custom protocol"
 msgstr "Fel vid hantering av synkron last med anpassat protokoll"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:73
+#: ../../../../WebKit/Shared/WebErrors.cpp:78
 msgid "The URL was blocked by a content filter"
 msgstr "URL blockerad av innehållsblockerare"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:79
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
 msgid "Content with specified MIME type can’t be shown"
 msgstr "Det går inte att visa innehåll med den angivna MIME-typen"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:84
+#: ../../../../WebKit/Shared/WebErrors.cpp:89
 msgid "Plug-in handled load"
 msgstr "Insticksmodulen kommer att hantera inläsning"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:90
+#: ../../../../WebKit/Shared/WebErrors.cpp:95
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2372
 msgid "Load request cancelled"
 msgstr "Inläsningsbegäran avbruten"
 
-#: ../../../../WebKit/Shared/WebErrors.cpp:95
+#: ../../../../WebKit/Shared/WebErrors.cpp:100
 msgid "File does not exist"
 msgstr "Filen finns inte"
 
@@ -1552,36 +1492,36 @@ msgstr "Identifierare"
 msgid "The automation session identifier"
 msgstr "Sessionsidentifierare för automatiseringen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:168
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:167
 msgid "Destination"
 msgstr "Destination"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:168
 msgid "The local URI to where the download will be saved"
 msgstr "Lokalt URI där hämtningar kommer att sparas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:181
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:180
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:124
 msgid "Response"
 msgstr "Svar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:181
 msgid "The response of the download"
 msgstr "Svaret för hämtningen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:198
 msgid "Estimated Progress"
 msgstr "Beräknat förlopp"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:200
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:199
 msgid "Determines the current progress of the download"
 msgstr "Fastställer aktuellt förlopp för hämtningen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:215
 msgid "Allow Overwrite"
 msgstr "Tillåt överskrivning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:217
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
 msgid "Whether the destination may be overwritten"
 msgstr "Huruvida destinationen kan skrivas över"
 
@@ -1593,16 +1533,16 @@ msgstr "Skriftattribut"
 msgid "Flags with the typing attributes"
 msgstr "Flaggor med skriftattributen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:172
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
 msgid "Favicons database not initialized yet"
 msgstr "Databasen för favicons är inte initierad än"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:181
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Sidan %s har ingen favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:188
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:191
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Okänd favicon för sidan %s"
@@ -1777,109 +1717,109 @@ msgstr "URI-svar"
 msgid "The URI response that is associated with this policy decision"
 msgstr "URI-svar associerat med detta policybeslut"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:615
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:625
 msgid "Enable JavaScript"
 msgstr "Aktivera Javascript"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:616
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:626
 msgid "Enable JavaScript."
 msgstr "Aktivera Javascript."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:630
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:640
 msgid "Auto load images"
 msgstr "Läs automatiskt in bilder"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:631
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:641
 msgid "Load images automatically."
 msgstr "Läs in bilder automatiskt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:644
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:654
 msgid "Load icons ignoring image load setting"
 msgstr "Läs in ikoner ignorerandes inställningar för bildinläsning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:645
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:655
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 "Huruvida webbplatsikoner ska läsas in och ignorera inställningar för "
 "bildinläsning."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:662
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:672
 msgid "Enable offline web application cache"
 msgstr "Aktivera frånkopplad cache för webbapplikationer"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:663
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:673
 msgid "Whether to enable offline web application cache."
 msgstr "Huruvida frånkopplad webbapplikationscache ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:679
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:689
 msgid "Enable HTML5 local storage"
 msgstr "Aktivera HTML5 lokal lagring"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:680
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:690
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "Huruvida stöd för HTML5 lokal lagring ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:692
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:702
 msgid "Enable HTML5 database"
 msgstr "Aktivera HTML5 databas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:693
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:703
 msgid "Whether to enable HTML5 database support."
 msgstr "Huruvida HTML5 databasstöd ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:706
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:716
 msgid "Enable XSS auditor"
 msgstr "Aktivera XSS-auditor"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:707
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:717
 msgid "Whether to enable the XSS auditor."
 msgstr "Huruvida XSS-auditor ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:721
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:731
 msgid "Enable frame flattening"
 msgstr "Aktivera frame flattening"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:722
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:732
 msgid "Whether to enable frame flattening."
 msgstr "Huruvida frame flattening ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:736
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:746
 msgid "Enable plugins"
 msgstr "Aktivera insticksmoduler"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:737
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:747
 msgid "Enable embedded plugin objects."
 msgstr "Aktivera inbäddade insticksobjekt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:749
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:759
 msgid "Enable Java"
 msgstr "Aktivera Java"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:750
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:760
 msgid "Whether Java support should be enabled."
 msgstr "Huruvida stöd för Java ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:763
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:773
 msgid "JavaScript can open windows automatically"
 msgstr "Javascript kan öppna fönster automatiskt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:764
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:774
 msgid "Whether JavaScript can open windows automatically."
 msgstr "Huruvida Javascript kan öppna fönster automatiskt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:779
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:789
 msgid "Enable hyperlink auditing"
 msgstr "Aktivera hyperlink auditing"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:780
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:790
 msgid "Whether <a ping> should be able to send pings."
 msgstr "Huruvida <a ping> ska kunna sända ping."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:792
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:802
 msgid "Default font family"
 msgstr "Standardfamilj för typsnitt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:793
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:803
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -1887,96 +1827,96 @@ msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som inte specificerar "
 "ett typsnitt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:806
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:816
 msgid "Monospace font family"
 msgstr "Typsnittsfamiljen monospace"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:807
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:817
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "Standardfamiljen för typsnitt som används för innehåll med monospace-"
 "typsnitt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:819
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:829
 msgid "Serif font family"
 msgstr "Typsnittsfamiljen serif"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:820
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:830
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som använder serif."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:832
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:842
 msgid "Sans-serif font family"
 msgstr "Typsnittsfamiljen sans-serif"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:833
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:843
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som använder sans-"
 "serif."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:845
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:855
 msgid "Cursive font family"
 msgstr "Typsnittsfamiljen kursiv"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:846
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:856
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som använder kursivt "
 "typsnitt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:858
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:868
 msgid "Fantasy font family"
 msgstr "Typsnittsfamiljen fantasy"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:859
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:869
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som använder fantasy-"
 "typsnitt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:871
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:881
 msgid "Pictograph font family"
 msgstr "Typsnittsfamilj för Pictograph"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:872
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:882
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Typsnittsfamilj att använda som standard för innehåll som använder "
 "pictograph-typsnitt."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:885
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:895
 msgid "Default font size"
 msgstr "Standardstorlek för typsnitt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:886
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:896
 msgid "The default font size used to display text."
 msgstr "Standardstorleken för typsnitt som används för att visa text."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:899
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:909
 msgid "Default monospace font size"
 msgstr "Standardstorlek för monospace-typsnitt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:900
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
 msgid "The default font size used to display monospace text."
 msgstr ""
 "Standardstorleken för typsnitt som används för att visa text med fast "
 "breddsteg."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:914
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:924
 msgid "Minimum font size"
 msgstr "Minimumstorlek för typsnitt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:915
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:925
 msgid "The minimum font size used to display text."
 msgstr "Minimumstorlek för typsnitt som används för att visa text."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:927
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:937
 msgid "Default charset"
 msgstr "Standardteckenuppsättning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:928
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:938
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -1984,245 +1924,245 @@ msgstr ""
 "Standardteckenuppsättningen att använda vid tolkning av innehåll med "
 "ospecificerad teckenuppsättning."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:944
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:954
 msgid "Enable private browsing"
 msgstr "Aktivera privat surfning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:945
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:955
 msgid "Whether to enable private browsing"
 msgstr "Huruvida privat surfning ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:958
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:968
 msgid "Enable developer extras"
 msgstr "Aktivera extrafunktioner för utvecklare"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:959
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:969
 msgid "Whether to enable developer extras"
 msgstr "Huruvida extrafunktioner för utvecklare ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:971
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:981
 msgid "Enable resizable text areas"
 msgstr "Aktivera storleksändringsbara textområden"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:972
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:982
 msgid "Whether to enable resizable text areas"
 msgstr "Huruvida storleksändringsbara textområden ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:987
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:997
 msgid "Enable tabs to links"
 msgstr "Aktivera flikar till länkar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:988
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:998
 msgid "Whether to enable tabs to links"
 msgstr "Huruvida flikar till länkar ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1001
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1011
 msgid "Enable DNS prefetching"
 msgstr "Aktivera DNS-förhämtning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1002
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1012
 msgid "Whether to enable DNS prefetching"
 msgstr "Huruvida DNS-förhämtning ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1014
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1024
 msgid "Enable Caret Browsing"
 msgstr "Aktivera textmarkörläge"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1015
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1025
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Huruvida hjälpmedel för förbättrad tangentbordsnavigation ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1030
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1040
 msgid "Enable Fullscreen"
 msgstr "Aktivera helskärm"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1031
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1041
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Huruvida Javascript Fullscreen API ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1043
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1053
 msgid "Print Backgrounds"
 msgstr "Skriv ut bakgrunder"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1044
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1054
 msgid "Whether background images should be drawn during printing"
 msgstr "Huruvida bakgrundsbilder ska ritas ut under utskrift"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1060
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1070
 msgid "Enable WebAudio"
 msgstr "Aktivera WebAudio"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1061
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1071
 msgid "Whether WebAudio content should be handled"
 msgstr "Huruvida WebAudio-innehåll ska hanteras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1074
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1084
 msgid "Enable WebGL"
 msgstr "Aktivera WebGL"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1075
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1085
 msgid "Whether WebGL content should be rendered"
 msgstr "Huruvida WebGL-innehåll ska renderas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1092
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1102
 msgid "Allow modal dialogs"
 msgstr "Tillåt modala dialoger"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1093
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1103
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Huruvida det är möjligt att skapa modala dialoger"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1108
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1118
 msgid "Zoom Text Only"
 msgstr "Zooma endast text"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1109
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1119
 msgid "Whether zoom level of web view changes only the text size"
 msgstr "Huruvida zoomnivån över webbvyn endast ändrar textstorlek"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1123
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1133
 msgid "JavaScript can access clipboard"
 msgstr "Javascript kan komma åt urklipp"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1124
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1134
 msgid "Whether JavaScript can access Clipboard"
 msgstr "Huruvida Javascript kan komma åt urklipp"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1140
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1150
 msgid "Media playback requires user gesture"
 msgstr "Mediauppspelning kräver användargest"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1141
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1151
 msgid "Whether media playback requires user gesture"
 msgstr "Huruvida mediauppspelning kräver en användargest"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1155
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1165
 msgid "Media playback allows inline"
 msgstr "Mediauppspelning tillåter inline"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1156
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1166
 msgid "Whether media playback allows inline"
 msgstr "Huruvida mediauppspelning tillåter inline"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1180
 msgid "Draw compositing indicators"
 msgstr "Rita ut kompositionsindikatorer"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1171
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1181
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr ""
 "Huruvida utritning av kompositionsramar och omritning av räknare ska ske"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1188
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1198
 msgid "Enable Site Specific Quirks"
 msgstr "Aktivera webbplatsspecifika speciallösningar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1189
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1199
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Aktiverar webbplatsspecifika speciallösningar för kompatibilitet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1209
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1219
 msgid "Enable page cache"
 msgstr "Aktivera sidcache"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1210
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1220
 msgid "Whether the page cache should be used"
 msgstr "Huruvida sidcachen ska användas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1229
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1239
 msgid "User agent string"
 msgstr "Sträng för användaragent"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1240
 msgid "The user agent string"
 msgstr "Strängen för användaragenten"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1242
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1252
 msgid "Enable smooth scrolling"
 msgstr "Aktivera mjuk rullning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1243
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1253
 msgid "Whether to enable smooth scrolling"
 msgstr "Huruvida mjuk rullning ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1262
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1272
 msgid "Enable accelerated 2D canvas"
 msgstr "Aktivera accelererad 2D-canvas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1263
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1273
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Huruvida accelererad 2D-canvas ska aktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1288
 msgid "Write console messages on stdout"
 msgstr "Skriv ut konsolmeddelanden till stdout"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1279
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1289
 msgid "Whether to write console messages on stdout"
 msgstr "Huruvida konsolmeddelanden ska skrivas till stdout"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1297
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1307
 msgid "Enable MediaStream"
 msgstr "Aktivera MediaStream"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1298
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1308
 msgid "Whether MediaStream content should be handled"
 msgstr "Huruvida MediaStream-innehåll ska hanteras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1323
 msgid "Enable mock capture devices"
 msgstr "Aktivera falska inspelningsenheter"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1324
 msgid "Whether we expose mock capture devices or not"
 msgstr "Huruvida vi exponerar falska inspelningsenheter eller ej"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1333
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1343
 msgid "Enable Spatial Navigation"
 msgstr "Aktivera spatial navigation"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1334
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1344
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Huruvida stöd för spatial navigation ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1352
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1362
 msgid "Enable MediaSource"
 msgstr "Aktivera MediaSource"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1353
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1363
 msgid "Whether MediaSource should be enabled."
 msgstr "Huruvida MediaSource ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1372
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1382
 msgid "Enable EncryptedMedia"
 msgstr "Aktivera EncryptedMedia"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1373
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1383
 msgid "Whether EncryptedMedia should be enabled."
 msgstr "Huruvida EncryptedMedia ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1394
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1404
 msgid "Enable MediaCapabilities"
 msgstr "Aktivera MediaCapabilities"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1395
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1405
 msgid "Whether MediaCapabilities should be enabled."
 msgstr "Huruvida MediaCapabilities ska aktiveras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1413
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1423
 msgid "Allow file access from file URLs"
 msgstr "Tillåt filåtkomst från fil-URL:er"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1414
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1424
 msgid "Whether file access is allowed from file URLs."
 msgstr "Huruvida filåtkomst tillåts från fil-URL:er."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1433
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1443
 msgid "Allow universal access from the context of file scheme URLs"
 msgstr "Tillåt allmän åtkomst från kontexten av filschema-URL:er"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1434
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1444
 msgid ""
 "Whether or not universal access is allowed from the context of file scheme "
 "URLs"
@@ -2230,53 +2170,53 @@ msgstr ""
 "Huruvida allmän åtkomst är tillåten eller ej från kontexten av filschema-URL:"
 "er"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1451
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1461
 msgid "Allow top frame navigation to data URLs"
 msgstr "Tillåt toppramsnavigering till data-URL:er"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1452
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1462
 msgid "Whether or not top frame navigation is allowed to data URLs"
 msgstr "Huruvida toppramsnavigering är tillåten till data-URL:er"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1477
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1487
 msgid "Hardware Acceleration Policy"
 msgstr "Hårdvaruaccelerationspolicy"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1478
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1488
 msgid "The policy to decide how to enable and disable hardware acceleration"
 msgstr ""
 "Policyn som avgör hur hårdvaruacceleration ska aktiveras och inaktiveras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1493
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1503
 msgid "Enable back-forward navigation gestures"
 msgstr "Aktivera navigeringsgester framåt och bakåt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1504
 msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
 msgstr ""
 "Huruvida horisontella svepgester kommer utlösa navigering framåt och bakåt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1511
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1521
 msgid "Enable JavaScript Markup"
 msgstr "Aktivera Javascript-markup"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1512
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1522
 msgid "Enable JavaScript in document markup."
-msgstr "Aktivera Javascript i dokument-markup"
+msgstr "Aktivera Javascript i dokument-markup."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1528
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1538
 msgid "Enable media"
 msgstr "Aktivera media"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1529
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1539
 msgid "Whether media content should be handled"
 msgstr "Huruvida mediainnehåll ska hanteras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1544
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1554
 msgid "Media content types requiring hardware support"
 msgstr "Mediainnehållstyper som kräver hårdvarustöd"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1545
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1555
 msgid "List of media content types requiring hardware support."
 msgstr "Lista över mediainnehållstyper som kräver hårdvarustöd."
 
@@ -2288,11 +2228,11 @@ msgstr "Sökväg till lagringskatalog"
 msgid "The directory where user content filters are stored"
 msgstr "Katalogen där användarinnehållsfilter lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:189
 msgid "Is for audio device"
 msgstr "Är för ljudenhet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:184
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:190
 msgid ""
 "Whether the media device to which the permission was requested has a "
 "microphone or not."
@@ -2300,11 +2240,11 @@ msgstr ""
 "Huruvida mediaenheten för vilken behörighet begärdes har en mikrofon eller "
 "inte."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:196
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:202
 msgid "Is for video device"
 msgstr "Är för videoenhet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:197
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:203
 msgid ""
 "Whether the media device to which the permission was requested has a video "
 "capture capability or not."
@@ -2312,47 +2252,47 @@ msgstr ""
 "Huruvida mediaenheten för vilken behörighet begärdes har "
 "videoinspelningsmöjligheter eller ej."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:496
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:304
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:509
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:307
 msgid "Local Storage Directory"
 msgstr "Lokal lagringskatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:510
 msgid "The directory where local storage data will be saved"
 msgstr "Katalogen där lokal data kommer att sparas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:512
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:525
 msgid "Website Data Manager"
 msgstr "Datahanterare för webbplats"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:513
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:526
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager associerad med detta kontext"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:534
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:547
 msgid "Swap Processes on Cross-Site Navigation"
 msgstr "Växla processer vid navigering mellan webbplatser"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:535
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:548
 msgid "Whether swap Web processes on cross-site navigations is enabled"
 msgstr ""
 "Huruvida växling mellan webbprocesser vid navigering mellan webbplatser är "
 "aktiverad"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:554
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:567
 msgid "Use system appearance for scrollbars"
 msgstr "Använd systemets utseende för rullningslister"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:555
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:568
 msgid "Whether to use system appearance for rendering scrollbars"
 msgstr ""
 "Huruvida systemets utseende ska användas för rendering av rullningslister"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:571
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:584
 msgid "Memory Pressure Settings"
 msgstr "Minnestryckinställningar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:585
 msgid ""
 "The WebKitMemoryPressureSettings applied to the web processes created by "
 "this context"
@@ -2360,18 +2300,26 @@ msgstr ""
 "De WebKitMemoryPressureSettings som tillämpas på webbprocesserna som skapas "
 "av denna kontext"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:113
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:606
+msgid "Time Zone Override"
+msgstr "Åsidosättning av tidszon"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:607
+msgid "The time zone to use instead of the system one"
+msgstr "Tidszonen att använda i stället för systemets"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
 msgid "The current active URI of the resource"
 msgstr "Aktuell aktiv URI för resursen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:126
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
 msgid "The response of the resource"
 msgstr "Resursens svar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:351
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4674
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:350
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4669
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:897
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:907
 msgid "Operation was cancelled"
 msgstr "Åtgärden avbröts"
 
@@ -2379,92 +2327,92 @@ msgstr "Åtgärden avbröts"
 msgid "Local files"
 msgstr "Lokala filer"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:269
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:272
 msgid "Base Data Directory"
 msgstr "Basdatakatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:270
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:273
 msgid "The base directory for Website data"
 msgstr "Baskatalogen för webbplatsdata"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:287
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:290
 msgid "Base Cache Directory"
 msgstr "Bascachekatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:288
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:291
 msgid "The base directory for Website cache"
 msgstr "Baskatalogen för webbplatscache"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:305
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:308
 msgid "The directory where local storage data will be stored"
 msgstr "Katalogen där lokal data kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:321
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:324
 msgid "Disk Cache Directory"
 msgstr "Diskcachekatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:322
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:325
 msgid "The directory where HTTP disk cache will be stored"
 msgstr "Katalogen där HTTP-diskcachen kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:338
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:341
 msgid "Offline Web Application Cache Directory"
 msgstr "Frånkopplad cachekatalog för webbapplikationer"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:339
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:342
 msgid "The directory where offline web application cache will be stored"
 msgstr "Katalogen där frånkopplade webbapplikationer kan lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:355
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
 msgid "IndexedDB Directory"
 msgstr "IndexedDB-katalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:356
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:359
 msgid "The directory where IndexedDB databases will be stored"
 msgstr "Katalogen där IndexedDB-databaser kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:374
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:377
 msgid "WebSQL Directory"
 msgstr "WebSQL-katalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:375
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:378
 msgid "The directory where WebSQL databases will be stored"
 msgstr "Katalogen där WebSQL-databaser kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:391
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:394
 msgid "HSTS Cache Directory"
 msgstr "HSTS-cachekatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:392
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:395
 msgid ""
 "The directory where the HTTP Strict-Transport-Security cache will be stored"
 msgstr "Katalogen där HTTP Strict-Transport-Security-cachen kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:408
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:411
 msgid "ITP Directory"
 msgstr "ITP-katalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:409
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:412
 msgid "The directory where Intelligent Tracking Prevention data will be stored"
 msgstr "Katalogen där Intelligent Tracking Prevention-data kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:425
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:428
 msgid "Service Worker Registrations Directory"
 msgstr "Katalog för registreringar av tjänstarbetare"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:426
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:429
 msgid "The directory where service workers registrations will be stored"
 msgstr "Katalogen där registreringar av tjänstarbetare kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:442
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:445
 msgid "DOM Cache directory"
 msgstr "DOM-cachekatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:443
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:446
 msgid "The directory where DOM cache will be stored"
 msgstr "Katalogen där DOM-cachen kommer att lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:463
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:466
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Huruvida WebKitWebsiteDataManager är kortlivad"
 
@@ -2617,78 +2565,78 @@ msgstr "Inspelningstillståndet för mikrofonenheten"
 msgid "The capture state of the display device"
 msgstr "Inspelningstillståndet för displayenheten"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4384
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4379
 msgid "There was an error creating the snapshot"
 msgstr "Ett fel uppstod vid skapandet av ögonblicksbilden"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4680
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4675
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:903
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:913
 #, c-format
 msgid "Message %s was not handled"
 msgstr "Meddelande %s hanterades inte"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:220
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
 msgid "Geometry"
 msgstr "Geometri"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:221
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:219
 msgid "The size and position of the window on the screen."
 msgstr "Storleken och positionen för fönstret på skärmen."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:234
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:232
 msgid "Toolbar Visible"
 msgstr "Synligt verktygsfält"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:235
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:233
 msgid "Whether the toolbar should be visible for the window."
 msgstr "Huruvida verktygsfältet ska vara synligt för fönstret."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:247
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:245
 msgid "Statusbar Visible"
 msgstr "Synligt statusfält"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:248
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:246
 msgid "Whether the statusbar should be visible for the window."
 msgstr "Huruvida statusfältet ska vara synlig för fönstret."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:260
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:258
 msgid "Scrollbars Visible"
 msgstr "Synliga rullningslister"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:261
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:259
 msgid "Whether the scrollbars should be visible for the window."
 msgstr "Huruvida rullningslisterna ska vara synliga för fönstret."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:273
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:271
 msgid "Menubar Visible"
 msgstr "Synlig menyrad"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:274
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:272
 msgid "Whether the menubar should be visible for the window."
 msgstr "Huruvida menyraden ska vara synlig för fönstret."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:286
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:284
 msgid "Locationbar Visible"
 msgstr "Synligt adressfält"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:287
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:285
 msgid "Whether the locationbar should be visible for the window."
 msgstr "Huruvida adressfältet ska vara synligt för fönstret."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:298
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:296
 msgid "Resizable"
 msgstr "Ändringsbar storlek"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:299
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:297
 msgid "Whether the window can be resized."
 msgstr "Huruvida fönstret kan storleksändras."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:311
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:309
 msgid "Fullscreen"
 msgstr "Helskärm"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:312
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:310
 msgid "Whether window will be displayed fullscreen."
 msgstr "Huruvida fönstret ska visas i helskärm."
 
@@ -2697,7 +2645,7 @@ msgid "Authentication Required"
 msgstr "Autentisering krävs"
 
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:305
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
 msgid "_Cancel"
 msgstr "_Avbryt"
 
@@ -2740,54 +2688,6 @@ msgstr "Aktuell RGBA-färg"
 msgid "The current RGBA color for the request"
 msgstr "Den aktuella RGBA-färgen för begäran"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:360
-msgid "Recent"
-msgstr "Senaste"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:398
-msgid "No Results Found"
-msgstr "Inga resultat hittades"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:407
-msgid "Try a different search"
-msgstr "Försök med en annan sökning"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:477
-msgid "Smileys & People"
-msgstr "Humörsymboler och personer"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:478
-msgid "Body & Clothing"
-msgstr "Kropp och kläder"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:479
-msgid "Animals & Nature"
-msgstr "Djur och natur"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:480
-msgid "Food & Drink"
-msgstr "Mat och dryck"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:481
-msgid "Travel & Places"
-msgstr "Resande och platser"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:482
-msgid "Activities"
-msgstr "Aktiviteter"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:483
-msgid "Objects"
-msgstr "Objekt"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:484
-msgid "Symbols"
-msgstr "Symboler"
-
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:485
-msgid "Flags"
-msgstr "Flaggor"
-
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
 msgid "Widget"
 msgstr "Gränssnittskomponent"
@@ -2800,71 +2700,71 @@ msgstr "Komponent som kommer att läggas till i utskriftsdialogen."
 msgid "Title of the widget that will be added to the print dialog."
 msgstr "Titel för komponenten som kommer att läggas till i utskriftsdialogen."
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:161
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
 msgid "Web View"
 msgstr "Webbvy"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:162
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:161
 msgid "The web view that will be printed"
 msgstr "Webbvyn som kommer att skrivas ut"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:174
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:173
 msgid "Print Settings"
 msgstr "Utskriftsinställningar"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:175
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:174
 msgid "The initial print settings for the print operation"
 msgstr "Initiala utskriftsinställningarna för utskrift"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:186
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:185
 msgid "Page Setup"
 msgstr "Sidinställning"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:187
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:186
 msgid "The initial page setup for the print operation"
 msgstr "Initiala sidinställningen för utskriftsåtgärden"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:283
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
 msgid "_Close"
 msgstr "_Stäng"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:307
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
 msgid "_OK"
 msgstr "_OK"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:314
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
 msgid "Are you sure you want to leave this page?"
 msgstr "Är du säker på att du vill lämna denna sida?"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:316
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
 msgid "Stay on Page"
 msgstr "Stanna på sidan"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:318
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
 msgid "Leave Page"
 msgstr "Lämna sidan"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:130
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:129
 msgid "Inspected URI"
 msgstr "Inspekterad URI"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:131
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:130
 msgid "The URI that is currently being inspected"
 msgstr "URI:n som för närvarande inspekteras"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:142
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:141
 msgid "Attached Height"
 msgstr "Fästhöjd"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:143
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:142
 msgid "The height that the inspector view should have when it is attached"
 msgstr "Höjden inspektören ska ha när den är fäst"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:157
 msgid "Can Attach"
 msgstr "Kan fästa"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:159
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
 msgid ""
 "Whether the inspector can be attached to the same window that contains the "
 "inspected view"
@@ -2872,7 +2772,7 @@ msgstr ""
 "Huruvida inspektören kan fästas vid samma fönster som innehåller den "
 "inspekterade vyn"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2293
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2366
 msgid "Website running in fullscreen mode"
 msgstr "Webbplats körs i helskärmsläge"
 
@@ -2916,9 +2816,84 @@ msgstr "Nod"
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:447
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:457
 msgid "The current active URI of the web page"
 msgstr "Aktuell aktiv URI för webbsidan"
+
+#~ msgid "Look Up “%s”"
+#~ msgstr "Identifiera ”%s”"
+
+#~ msgid "%d files"
+#~ msgstr "%d filer"
+
+#~ msgid "%s %d×%d pixels"
+#~ msgstr "%s %d×%d bildpunkter"
+
+#~ msgid "<filename> %d×%d pixels"
+#~ msgstr "<filnamn> %d×%d bildpunkter"
+
+#~ msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
+#~ msgstr "%1$d dagar %2$d timmar %3$d minuter %4$d sekunder"
+
+#~ msgid "%1$d hours %2$d minutes %3$d seconds"
+#~ msgstr "%1$d timmar %2$d minuter %3$d sekunder"
+
+#~ msgid "%1$d minutes %2$d seconds"
+#~ msgstr "%1$d minuter %2$d sekunder"
+
+#~ msgid "%1$d seconds"
+#~ msgstr "%1$d sekunder"
+
+#~ msgid "Use at least %d characters"
+#~ msgstr "Använd minst %d tecken"
+
+#~ msgid "Use no more than %d characters"
+#~ msgstr "Använd inte fler än %d tecken"
+
+#~ msgid "Value must be greater than or equal to %s"
+#~ msgstr "Värdet måste vara större än, eller lika med %s"
+
+#~ msgid "Value must be less than or equal to %s"
+#~ msgstr "Värdet måste vara mindre än, eller lika med %s"
+
+#~ msgid "%s WebCrypto Master Key"
+#~ msgstr "%s WebCrypto-huvudnyckel"
+
+#~ msgid "Recent"
+#~ msgstr "Senaste"
+
+#~ msgid "No Results Found"
+#~ msgstr "Inga resultat hittades"
+
+#~ msgid "Try a different search"
+#~ msgstr "Försök med en annan sökning"
+
+#~ msgid "Smileys & People"
+#~ msgstr "Humörsymboler och personer"
+
+#~ msgid "Body & Clothing"
+#~ msgstr "Kropp och kläder"
+
+#~ msgid "Animals & Nature"
+#~ msgstr "Djur och natur"
+
+#~ msgid "Food & Drink"
+#~ msgstr "Mat och dryck"
+
+#~ msgid "Travel & Places"
+#~ msgstr "Resande och platser"
+
+#~ msgid "Activities"
+#~ msgstr "Aktiviteter"
+
+#~ msgid "Objects"
+#~ msgstr "Objekt"
+
+#~ msgid "Symbols"
+#~ msgstr "Symboler"
+
+#~ msgid "Flags"
+#~ msgstr "Flaggor"
 
 #~ msgctxt "Menu item label for a text track that has no other name"
 #~ msgid "Unknown"
