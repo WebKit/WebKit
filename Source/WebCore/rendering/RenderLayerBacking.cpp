@@ -549,7 +549,6 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
-    updateCustomAppearance(style);
     updateContentsScalingFilters(style);
 }
 
@@ -784,17 +783,6 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 }
 #endif
 
-void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
-{
-    ControlPart appearance = style.effectiveAppearance();
-    if (appearance == MediaControlsLightBarBackgroundPart)
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::LightBackdrop);
-    else if (appearance == MediaControlsDarkBarBackgroundPart)
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::DarkBackdrop);
-    else
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::None);
-}
-
 void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 {
     if (!renderer().isCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
@@ -994,7 +982,6 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
-    updateCustomAppearance(style);
     updateContentsScalingFilters(style);
 }
 

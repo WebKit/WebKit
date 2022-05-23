@@ -303,8 +303,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeWithLayer(adoptNS([[CATransformLayer alloc] init]));
 
     case PlatformCALayer::LayerTypeBackdropLayer:
-    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
 #if ENABLE(FILTERS_LEVEL_2)
         return makeWithLayer(adoptNS([[CABackdropLayer alloc] init]));
 #else

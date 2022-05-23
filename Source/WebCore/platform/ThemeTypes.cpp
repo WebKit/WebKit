@@ -43,8 +43,6 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
     case DefaultButtonPart: ts << "default-button-part"; break;
     case InnerSpinButtonPart: ts << "inner-spin-button-part"; break;
     case ListboxPart: ts << "listbox-part"; break;
-    case MediaControlsDarkBarBackgroundPart: ts << "media-controls-dark-bar-background-part"; break;
-    case MediaControlsLightBarBackgroundPart: ts << "media-controls-light-bar-background-part"; break;
     case MediaFullScreenVolumeSliderPart: ts << "media-full-screen-volume-slider-part"; break;
     case MediaFullScreenVolumeSliderThumbPart: ts << "media-full-screen-volume-slider-thumb-part"; break;
     case MediaSliderPart: ts << "media-slider-part"; break;

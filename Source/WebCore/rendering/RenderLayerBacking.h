@@ -351,7 +351,6 @@ private:
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif
-    void updateCustomAppearance(const RenderStyle&);
     void updateContentsScalingFilters(const RenderStyle&);
 
     // Return the opacity value that this layer should use for compositing.
