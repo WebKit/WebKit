@@ -47,7 +47,8 @@ Ref<MediaController> MediaController::create(ScriptExecutionContext& context)
 }
 
 MediaController::MediaController(ScriptExecutionContext& context)
-    : m_paused(false)
+    : ContextDestructionObserver(&context)
+    , m_paused(false)
     , m_defaultPlaybackRate(1)
     , m_volume(1)
     , m_position(MediaPlayer::invalidTime())
@@ -58,7 +59,6 @@ MediaController::MediaController(ScriptExecutionContext& context)
     , m_clearPositionTimer(*this, &MediaController::clearPositionTimerFired)
     , m_closedCaptionsVisible(false)
     , m_clock(PAL::Clock::create())
-    , m_scriptExecutionContext(context)
     , m_timeupdateTimer(*this, &MediaController::scheduleTimeupdateEvent)
 {
 }

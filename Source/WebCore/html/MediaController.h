@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ContextDestructionObserver.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "MediaControllerInterface.h"
@@ -41,7 +42,11 @@ namespace WebCore {
 
 class HTMLMediaElement;
 
-class MediaController final : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
+class MediaController final
+    : public RefCounted<MediaController>
+    , public MediaControllerInterface
+    , public ContextDestructionObserver
+    , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(MediaController);
 public:
     static Ref<MediaController> create(ScriptExecutionContext&);
@@ -95,7 +100,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     EventTargetInterface eventTargetInterface() const final { return MediaControllerEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; };
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); };
 
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
@@ -147,7 +152,6 @@ private:
     String m_mediaGroup;
     bool m_closedCaptionsVisible;
     std::unique_ptr<PAL::Clock> m_clock;
-    ScriptExecutionContext& m_scriptExecutionContext;
     Timer m_timeupdateTimer;
     MonotonicTime m_previousTimeupdateTime;
     bool m_resetCurrentTimeInNextPlay { false };
