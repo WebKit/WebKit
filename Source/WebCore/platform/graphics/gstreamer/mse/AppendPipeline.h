@@ -51,6 +51,7 @@ public:
 
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
+    void stopParser();
     SourceBufferPrivateGStreamer& sourceBufferPrivate() { return m_sourceBufferPrivate; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
@@ -125,8 +126,6 @@ private:
     std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad, int padIndex);
     AppendPipeline::Track* tryMatchPadToExistingTrack(GstPad* demuxerSrcPad);
     void linkPadWithTrack(GstPad* demuxerSrcPad, Track&);
-
-    void resetPipeline();
 
     void consumeAppsinksAvailableSamples();
 

@@ -120,6 +120,8 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     for (auto& track : m_tracks.values())
         track->remove();
     m_hasBeenRemovedFromMediaSource = true;
+
+    m_appendPipeline->stopParser();
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
