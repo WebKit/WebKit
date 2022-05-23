@@ -1,5 +1,3 @@
-//@ defaultNoNoLLIntRun if $architecture == "arm"
-
 F = class extends Function { }
 N = class extends null { }
 
