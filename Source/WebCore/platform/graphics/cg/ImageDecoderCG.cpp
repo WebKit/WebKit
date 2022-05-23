@@ -61,6 +61,10 @@ const CFStringRef kCGImageSourceUseHardwareAcceleration = CFSTR("kCGImageSourceU
 
 const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
 
+#if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
+const CFStringRef kCGImageSourceCreateUnpremultipliedPNG = CFSTR("kCGImageSourceCreateUnpremultipliedPNG");
+#endif
+
 static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -74,6 +78,10 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 #if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
     if (ImageDecoderCG::restrictedDecodingEnabled())
         CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
+#endif
+
+#if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
+    CFDictionarySetValue(options.get(), kCGImageSourceCreateUnpremultipliedPNG, kCFBooleanTrue);
 #endif
     return options;
 }
