@@ -113,7 +113,11 @@ class Tracker(GenericTracker):
 
         def prompt():
             result = "GitHub's API\nProvide {} username and access token to create and update pull requests".format(hostname)
-            if webkitcorepy.Terminal.open_url('{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name)):
+            if webkitcorepy.Terminal.open_url(
+                '{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name),
+                prompt='Please press Return key to open the GitHub token generation web page.\n'
+                        'Options are preconfigured, set your expiration date and then click "Generate token": ',
+            ):
                 return result
             return '''{}
 Please go to {token_url} and generate a new 'Personal access token' via 'Developer settings'

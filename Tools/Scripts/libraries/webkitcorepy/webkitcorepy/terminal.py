@@ -121,12 +121,19 @@ class Terminal(object):
                 cls._atty_overrides[key] = previous
 
     @classmethod
-    def open_url(cls, url):
+    def open_url(cls, url, prompt=None):
         if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
             sys.stderr.write("'{}' is not a valid URL\n")
             return False
         if not cls.isatty(sys.stdout):
             return False
+
+        if prompt:
+            try:
+                cls.input(prompt)
+            except SystemExit:
+                sys.stderr.write('User aborted URL open\n')
+                return False
 
         if sys.platform.startswith('win'):
             process = run(['explorer', url])
