@@ -516,7 +516,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
-    auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
     auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
@@ -524,11 +524,11 @@ void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 
 void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& request, const CurlResponse& response)
 {
-    static const auto setCookieHeader = "set-cookie: ";
+    static constexpr auto setCookieHeader = "set-cookie: "_s;
 
     for (auto header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-            String setCookieString = header.right(header.length() - strlen(setCookieHeader));
+            String setCookieString = header.right(header.length() - setCookieHeader.length());
             m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
         }
     }

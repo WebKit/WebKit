@@ -84,8 +84,8 @@ public:
     const Vector<WTF::String>& alwaysRevalidatedURLSchemes() { return m_alwaysRevalidatedURLSchemes; }
     void setAlwaysRevalidatedURLSchemes(Vector<WTF::String>&& alwaysRevalidatedURLSchemes) { m_alwaysRevalidatedURLSchemes = WTFMove(alwaysRevalidatedURLSchemes); }
 
-    const Vector<WTF::CString>& additionalReadAccessAllowedPaths() { return m_additionalReadAccessAllowedPaths; }
-    void setAdditionalReadAccessAllowedPaths(Vector<WTF::CString>&& additionalReadAccessAllowedPaths) { m_additionalReadAccessAllowedPaths = additionalReadAccessAllowedPaths; }
+    const Vector<WTF::String>& additionalReadAccessAllowedPaths() { return m_additionalReadAccessAllowedPaths; }
+    void setAdditionalReadAccessAllowedPaths(Vector<WTF::String>&& additionalReadAccessAllowedPaths) { m_additionalReadAccessAllowedPaths = additionalReadAccessAllowedPaths; }
 
     bool fullySynchronousModeIsAllowedForTesting() const { return m_fullySynchronousModeIsAllowedForTesting; }
     void setFullySynchronousModeIsAllowedForTesting(bool allowed) { m_fullySynchronousModeIsAllowedForTesting = allowed; }
@@ -172,7 +172,7 @@ private:
     Vector<WTF::String> m_customClassesForParameterCoder;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
-    Vector<WTF::CString> m_additionalReadAccessAllowedPaths;
+    Vector<WTF::String> m_additionalReadAccessAllowedPaths;
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreSynchronousMessagingTimeoutsForTesting { false };
     bool m_attrStyleEnabled { false };

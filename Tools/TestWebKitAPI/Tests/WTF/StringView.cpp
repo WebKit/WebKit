@@ -328,7 +328,7 @@ TEST(WTF, StringViewEqualBasic)
     EXPECT_FALSE(a == "Hell\0");
     EXPECT_FALSE(a == "Hell");
 
-    StringView test3 = "Hello";
+    StringView test3 = "Hello"_s;
     EXPECT_TRUE(test3 == "Hello\0");
     EXPECT_TRUE(test3 == "Hello");
 }

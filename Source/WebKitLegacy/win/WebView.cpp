@@ -1324,7 +1324,7 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 {
 #if USE(CFURLCONNECTION)
     // On the Mac there's an about URL protocol implementation but Windows CFNetwork doesn't have that.
-    if (request.url().protocolIs("about"))
+    if (request.url().protocolIs("about"_s))
         return true;
 
     return CFURLProtocolCanHandleRequest(request.cfURLRequest(UpdateHTTPBody));

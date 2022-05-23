@@ -512,7 +512,7 @@ bool GStreamerRegistryScanner::isCodecSupported(Configuration configuration, con
     String codecName = slashIndex != notFound ? codec.substring(slashIndex + 1) : codec;
 
     bool supported = false;
-    if (codecName.startsWith("avc1"))
+    if (codecName.startsWith("avc1"_s))
         supported = isAVC1CodecSupported(configuration, codecName, shouldCheckForHardwareUse);
     else {
         auto& codecMap = configuration == Configuration::Decoding ? m_decoderCodecMap : m_encoderCodecMap;

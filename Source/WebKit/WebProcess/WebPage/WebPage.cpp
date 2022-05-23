@@ -2138,7 +2138,7 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
     }
 
     auto url = item.url();
-    if (url.protocolIs("file")) {
+    if (url.protocolIs("file"_s)) {
         size_t start = url.string().find(directoryName);
         if (start == WTF::notFound)
             start = 0;

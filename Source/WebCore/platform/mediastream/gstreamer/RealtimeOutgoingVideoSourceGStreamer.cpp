@@ -45,11 +45,11 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
         auto* source = reinterpret_cast<RealtimeOutgoingVideoSourceGStreamer*>(userData);
         const char* name = gst_structure_get_name(structure);
         const char* encodingName = nullptr;
-        if (equal(name, "video/x-vp8"))
+        if (!strcmp(name, "video/x-vp8"))
             encodingName = "VP8";
-        else if (equal(name, "video/x-vp9"))
+        else if (!strcmp(name, "video/x-vp9"))
             encodingName = "VP9";
-        else if (equal(name, "video/x-h264"))
+        else if (!strcmp(name, "video/x-h264"))
             encodingName = "H264";
         if (encodingName)
             gst_caps_append_structure(source->m_allowedCaps.get(), gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, "video", "encoding-name", G_TYPE_STRING, encodingName, "clock-rate", G_TYPE_INT, 90000, nullptr));
@@ -65,13 +65,13 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     auto* structure = gst_caps_get_structure(caps.get(), 0);
     GRefPtr<GstCaps> encoderCaps;
     if (const char* encodingName = gst_structure_get_string(structure, "encoding-name")) {
-        if (equal(encodingName, "VP8")) {
+        if (!strcmp(encodingName, "VP8")) {
             encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
             m_payloader = makeGStreamerElement("rtpvp8pay", nullptr);
-        } else if (equal(encodingName, "VP9")) {
+        } else if (!strcmp(encodingName, "VP9")) {
             encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
             m_payloader = makeGStreamerElement("rtpvp9pay", nullptr);
-        } else if (equal(encodingName, "H264")) {
+        } else if (!strcmp(encodingName, "H264")) {
             encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
             m_payloader = makeGStreamerElement("rtph264pay", nullptr);
             // FIXME: https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/issues/893

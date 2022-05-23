@@ -56,7 +56,7 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
         return false;
 
     const String& path = m_processPool->configuration().injectedBundlePath();
-    return !path.isEmpty() && !path.startsWith("/System/");
+    return !path.isEmpty() && !path.startsWith("/System/"_s);
 }
 
 void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)

@@ -1942,7 +1942,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     for (GCGLint i = 0; i < attributeCount; ++i) {
         ActiveInfo info;
         getActiveAttribImpl(program, i, info);
-        if (info.name.startsWith("gl_"))
+        if (info.name.startsWith("gl_"_s))
             continue;
 
         symbolCounts.filteredToActualAttributeIndexMap.append(i);
@@ -1954,7 +1954,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     for (GCGLint i = 0; i < uniformCount; ++i) {
         ActiveInfo info;
         getActiveUniformImpl(program, i, info);
-        if (info.name.startsWith("gl_"))
+        if (info.name.startsWith("gl_"_s))
             continue;
         
         symbolCounts.filteredToActualUniformIndexMap.append(i);
@@ -1967,7 +1967,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
 {
     LOG(WebGL, "Original ShaderInfoLog:\n%s", log.utf8().data());
 
-    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+");
+    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+"_s);
 
     StringBuilder processedLog;
     
@@ -1975,8 +1975,8 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
     // causes a warning in some compilers. There is no point showing
     // this warning to the user since they didn't write the code that
     // is causing it.
-    static constexpr char angleWarning[] = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n";
-    int startFrom = log.startsWith(angleWarning) ? strlen(angleWarning) : 0;
+    static constexpr auto angleWarning = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s;
+    int startFrom = log.startsWith(angleWarning) ? angleWarning.length() : 0;
     int matchedLength = 0;
 
     do {

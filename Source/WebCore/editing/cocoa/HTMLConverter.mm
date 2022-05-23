@@ -833,7 +833,7 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
         return false;
     // In the text system, text blocks (table elements) and documents (body elements)
     // have their own background colors, which should not be inherited.
-    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, CSSPropertyDisplay).startsWith("table");
+    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, CSSPropertyDisplay).startsWith("table"_s);
 }
 
 Element* HTMLConverter::_blockLevelElementForNode(Node* node)

@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DatasetDOMStringMap);
 
 static bool isValidAttributeName(const String& name)
 {
-    if (!name.startsWith("data-"))
+    if (!name.startsWith("data-"_s))
         return false;
 
     unsigned length = name.length();
@@ -73,7 +73,7 @@ static String convertAttributeNameToPropertyName(const String& name)
 
 static bool propertyNameMatchesAttributeName(const String& propertyName, const String& attributeName)
 {
-    if (!attributeName.startsWith("data-"))
+    if (!attributeName.startsWith("data-"_s))
         return false;
 
     unsigned propertyLength = propertyName.length();

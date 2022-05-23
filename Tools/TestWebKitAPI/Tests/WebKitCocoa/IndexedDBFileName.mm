@@ -160,25 +160,25 @@ static void createDirectories(StringView testName)
 
 TEST(IndexedDB, IndexedDBFileName)
 {
-    createDirectories("none");
+    createDirectories("none"_s);
     runTest();
 }
 
 TEST(IndexedDB, IndexedDBFileNameV0)
 {
-    createDirectories("v0");
+    createDirectories("v0"_s);
     runTest();
 }
 
 TEST(IndexedDB, IndexedDBFileNameV1)
 {
-    createDirectories("v1");
+    createDirectories("v1"_s);
     runTest();
 }
 
 TEST(IndexedDB, IndexedDBFileNameAPI)
 {
-    createDirectories("API");
+    createDirectories("API"_s);
     
     auto types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -212,7 +212,7 @@ TEST(IndexedDB, IndexedDBFileNameAPI)
 
 TEST(IndexedDB, IndexedDBFileHashCollision)
 {
-    createDirectories("collision");
+    createDirectories("collision"_s);
     
     auto handler = adoptNS([[IndexedDBFileNameMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

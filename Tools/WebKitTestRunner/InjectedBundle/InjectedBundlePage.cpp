@@ -689,7 +689,7 @@ void InjectedBundlePage::didFinishProgress()
     if (!injectedBundle.testRunner()->shouldDumpProgressFinishedCallback())
         return;
 
-    injectedBundle.outputText("postProgressFinishedNotification\n");
+    injectedBundle.outputText("postProgressFinishedNotification\n"_s);
 }
 
 void InjectedBundlePage::willInjectUserScriptForFrame()
@@ -802,7 +802,7 @@ void InjectedBundlePage::dump()
     auto urlRef = adoptWK(WKBundleFrameCopyURL(frame));
     String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
     auto mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(frame, urlRef.get()));
-    if (url.find("dumpAsText/") != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
+    if (url.find("dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
         injectedBundle.testRunner()->dumpAsText(false);
 
     StringBuilder stringBuilder;
@@ -990,21 +990,21 @@ void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundleFrameRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didDisplayInsecureContent\n");
+        injectedBundle.outputText("didDisplayInsecureContent\n"_s);
 }
 
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didRunInsecureContent\n");
+        injectedBundle.outputText("didRunInsecureContent\n"_s);
 }
 
 void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        injectedBundle.outputText("didDetectXSS\n");
+        injectedBundle.outputText("didDetectXSS\n"_s);
 }
 
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
@@ -1050,7 +1050,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
 
     auto redirectURL = adoptWK(WKURLResponseCopyURL(response));
     if (injectedBundle.isTestRunning() && injectedBundle.testRunner()->willSendRequestReturnsNullOnRedirect() && redirectURL) {
-        injectedBundle.outputText("Returning null for this redirect\n");
+        injectedBundle.outputText("Returning null for this redirect\n"_s);
         return nullptr;
     }
 
@@ -1342,7 +1342,7 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message)
     auto messageString = toWTFString(message);
     messageString = messageString.left(messageString.find(nullCharacter));
 
-    size_t fileProtocolStart = messageString.find("file://");
+    size_t fileProtocolStart = messageString.find("file://"_s);
     if (fileProtocolStart != WTF::notFound) {
         StringView messageStringView { messageString };
         // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.
@@ -1648,7 +1648,7 @@ bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScree
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("supportsFullScreen() == true\n");
+        injectedBundle.outputText("supportsFullScreen() == true\n"_s);
     return true;
 }
 
@@ -1663,7 +1663,7 @@ void InjectedBundlePage::enterFullScreenForElement(WKBundleNodeHandleRef element
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("enterFullScreenForElement()\n");
+        injectedBundle.outputText("enterFullScreenForElement()\n"_s);
 
     if (m_fullscreenState == EnteringFullscreen)
         return;
@@ -1695,7 +1695,7 @@ void InjectedBundlePage::exitFullScreenForElement(WKBundleNodeHandleRef elementR
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("exitFullScreenForElement()\n");
+        injectedBundle.outputText("exitFullScreenForElement()\n"_s);
 
     if (m_fullscreenState == ExitingFullscreen)
         return;
@@ -1719,21 +1719,21 @@ void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect, WKRect)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("beganEnterFullScreen()\n");
+        injectedBundle.outputText("beganEnterFullScreen()\n"_s);
 }
 
 void InjectedBundlePage::beganExitFullScreen(WKBundlePageRef, WKRect, WKRect)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("beganExitFullScreen()\n");
+        injectedBundle.outputText("beganExitFullScreen()\n"_s);
 }
 
 void InjectedBundlePage::closeFullScreen(WKBundlePageRef pageRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("closeFullScreen()\n");
+        injectedBundle.outputText("closeFullScreen()\n"_s);
 
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
         WKBundlePageWillExitFullScreen(pageRef);

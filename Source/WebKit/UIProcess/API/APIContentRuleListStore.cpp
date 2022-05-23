@@ -82,13 +82,11 @@ ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath)
 ContentRuleListStore::~ContentRuleListStore() = default;
 
 // FIXME: Remove legacyFilename in 2022 or 2023 after users have had a chance to run the updating logic.
-static const char* constructedPathPrefix(bool legacyFilename)
+static ASCIILiteral constructedPathPrefix(bool legacyFilename)
 {
-    static auto* prefix("ContentRuleList-");
-    static auto* legacyPrefix("ContentExtension-");
     if (legacyFilename)
-        return legacyPrefix;
-    return prefix;
+        return "ContentExtension-"_s;
+    return "ContentRuleList-"_s;
 }
 
 static WTF::String constructedPath(const WTF::String& base, const WTF::String& identifier, bool legacyFilename)

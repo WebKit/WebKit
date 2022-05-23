@@ -216,7 +216,7 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
         && getPDFLayerControllerClass()
         && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
             || (contentType.isEmpty()
-                && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))));
+                && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s))));
 }
 
 static String commandNameForSelectorName(const String& selectorName)
@@ -528,7 +528,7 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
         return true;
 
     // FIXME: Return true if this scheme is any one WebKit2 knows how to handle.
-    return request.url().protocolIs("applewebdata");
+    return request.url().protocolIs("applewebdata"_s);
 }
 
 void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)

@@ -40,7 +40,7 @@ namespace WebCore {
 
 static String defaultCookieJarPath()
 {
-    static const char* defaultFileName = "cookie.jar.db";
+    static constexpr auto defaultFileName = "cookie.jar.db"_s;
     char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
     if (cookieJarPath)
         return String::fromUTF8(cookieJarPath);
@@ -49,7 +49,7 @@ static String defaultCookieJarPath()
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
 #else
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192417
-    return String::fromLatin1(defaultFileName);
+    return defaultFileName;
 #endif
 }
 
@@ -58,7 +58,7 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     StringBuilder cookies;
 
     auto searchHTTPOnly = forHTTPHeader ? std::nullopt : std::optional<bool> { false };
-    auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> { false };
+    auto secure = url.protocolIs("https"_s) ? std::nullopt : std::optional<bool> { false };
 
     if (auto result = session.cookieDatabase().searchCookies(firstParty, url, searchHTTPOnly, secure, std::nullopt)) {
         for (const auto& cookie : *result) {

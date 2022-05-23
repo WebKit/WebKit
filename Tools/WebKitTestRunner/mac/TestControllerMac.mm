@@ -179,7 +179,7 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 #if ENABLE(CONTENT_EXTENSIONS)
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
-    if (!test.urlContains("contentextensions/"))
+    if (!test.urlContains("contentextensions/"_s))
         return;
 
     auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));

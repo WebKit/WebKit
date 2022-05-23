@@ -186,7 +186,7 @@ void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
 
 void ClientConnection::connectionClosed()
 {
-    broadcastDebugMessage("Connection closed");
+    broadcastDebugMessage("Connection closed"_s);
 
     RELEASE_ASSERT(m_xpcConnection);
     m_xpcConnection = nullptr;

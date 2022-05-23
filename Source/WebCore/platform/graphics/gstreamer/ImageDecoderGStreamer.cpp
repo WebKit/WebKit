@@ -104,7 +104,7 @@ bool ImageDecoderGStreamer::supportsContainerType(const String& type)
     if (!isInWebProcess())
         return false;
 
-    if (!type.startsWith("video/"))
+    if (!type.startsWith("video/"_s))
         return false;
 
     return GStreamerRegistryScanner::singleton().isContainerTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, type);
@@ -115,7 +115,7 @@ bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
 
-    if (!mimeType.startsWith("video/"))
+    if (!mimeType.startsWith("video/"_s))
         return false;
 
     // Ideally this decoder should operate only from the WebProcess (or from the GPUProcess) which

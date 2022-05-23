@@ -435,7 +435,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     setVisible(webView.get());
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate denyQuota];
@@ -445,7 +445,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     Util::run(&receivedMessage);
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.request("/main.html#fragment")];
+    [webView loadRequest:server.request("/main.html#fragment"_s)];
     [webView stringByEvaluatingJavaScript:@"doTestAgain()"];
 
     [messageHandler setExpectedMessage: @"start"];

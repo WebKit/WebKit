@@ -49,11 +49,11 @@
 namespace WebKit {
 namespace NetworkCache {
 
-static const char saltFileName[] = "salt";
-static const char versionDirectoryPrefix[] = "Version ";
-static const char recordsDirectoryName[] = "Records";
-static const char blobsDirectoryName[] = "Blobs";
-static const char blobSuffix[] = "-blob";
+static constexpr auto saltFileName = "salt"_s;
+static constexpr auto versionDirectoryPrefix = "Version "_s;
+static constexpr auto recordsDirectoryName = "Records"_s;
+static constexpr auto blobsDirectoryName = "Blobs"_s;
+static constexpr auto blobSuffix = "-blob"_s;
 
 static inline size_t maximumInlineBodySize()
 {

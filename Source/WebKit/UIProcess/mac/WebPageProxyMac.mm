@@ -435,7 +435,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     }
 
     auto sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename);
-    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf")) {
+    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"_s)) {
         WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
         return;
     }

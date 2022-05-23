@@ -825,7 +825,7 @@ static URL currentWorkingDirectory()
     DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.data());
     String directoryString(buffer.data(), lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
-    if (directoryString.startsWith("\\\\"))
+    if (directoryString.startsWith("\\\\"_s))
         return { };
 
 #else

@@ -638,7 +638,7 @@ struct ParsedRange {
         size_t min = 0;
         size_t max = 0;
         ASSERT(string.length() > 6);
-        ASSERT(string.startsWith("bytes="));
+        ASSERT(string.startsWith("bytes="_s));
         for (size_t i = 6; i < string.length(); ++i) {
             if (isASCIIDigit(string[i])) {
                 if (parsingMin)

@@ -276,12 +276,12 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
             switch (m_capabilities.proxy->socksVersion.value()) {
             case 4:
                 if (URL::hostIsIPAddress(socksURL.host()))
-                    socksURL.setProtocol("socks4");
+                    socksURL.setProtocol("socks4"_s);
                 else
-                    socksURL.setProtocol("socks4a");
+                    socksURL.setProtocol("socks4a"_s);
                 break;
             case 5:
-                socksURL.setProtocol("socks5");
+                socksURL.setProtocol("socks5"_s);
                 break;
             default:
                 break;

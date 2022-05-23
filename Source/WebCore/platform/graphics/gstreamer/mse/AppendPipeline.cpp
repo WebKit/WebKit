@@ -142,13 +142,13 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     const String& type = m_sourceBufferPrivate.type().containerType();
     GST_DEBUG("SourceBuffer containerType: %s", type.utf8().data());
     bool hasDemuxer = true;
-    if (type.endsWith("mp4") || type.endsWith("aac")) {
+    if (type.endsWith("mp4"_s) || type.endsWith("aac"_s)) {
         m_demux = makeGStreamerElement("qtdemux", nullptr);
         m_typefind = makeGStreamerElement("identity", nullptr);
-    } else if (type.endsWith("webm")) {
+    } else if (type.endsWith("webm"_s)) {
         m_demux = makeGStreamerElement("matroskademux", nullptr);
         m_typefind = makeGStreamerElement("identity", nullptr);
-    } else if (type == "audio/mpeg") {
+    } else if (type == "audio/mpeg"_s) {
         m_demux = makeGStreamerElement("identity", nullptr);
         m_typefind = makeGStreamerElement("typefind", nullptr);
         hasDemuxer = false;
@@ -690,7 +690,7 @@ std::pair<AppendPipeline::CreateTrackResult, AppendPipeline::Track*> AppendPipel
     GST_DEBUG_OBJECT(pipeline(), "Creating Track object for pad %" GST_PTR_FORMAT, demuxerSrcPad);
 
     const String& type = m_sourceBufferPrivate.type().containerType();
-    if (type.endsWith("webm"))
+    if (type.endsWith("webm"_s))
         gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, matroskademuxForceSegmentStartToEqualZero, nullptr, nullptr);
 
     auto [parsedCaps, streamType, presentationSize] = parseDemuxerSrcPadCaps(adoptGRef(gst_pad_get_current_caps(demuxerSrcPad)).get());

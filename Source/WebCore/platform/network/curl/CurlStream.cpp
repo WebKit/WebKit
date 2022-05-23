@@ -42,7 +42,7 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
 
     m_curlHandle = makeUnique<CurlHandle>();
 
-    url.setProtocol(url.protocolIs("wss") ? "https" : "http");
+    url.setProtocol(url.protocolIs("wss"_s) ? "https"_s : "http"_s);
     m_curlHandle->setUrl(WTFMove(url));
 
     m_curlHandle->enableConnectionOnly();

@@ -1331,14 +1331,14 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 #if HAVE(AUDIT_TOKEN)
     ASSERT(process.connection() && process.connection()->getAuditToken());
     if (process.connection() && process.connection()->getAuditToken()) {
-        if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/", *(process.connection()->getAuditToken()))) {
+        if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(process.connection()->getAuditToken()))) {
             createdExtension = true;
             sandboxExtensionHandle = WTFMove(*handle);
         }
     } else
 #endif
     {
-        if (auto handle = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly)) {
+        if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly)) {
             createdExtension = true;
             sandboxExtensionHandle = WTFMove(*handle);
         }
@@ -9209,7 +9209,7 @@ void WebPageProxy::saveDataToFileInDownloadsFolder(String&& suggestedFilename, S
 void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference& dataReference)
 {
     String sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename);
-    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"))
+    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"_s))
         return;
 
     saveDataToFileInDownloadsFolder(WTFMove(sanitizedFilename), "application/pdf"_s, WTFMove(originatingURL),

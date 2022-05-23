@@ -63,8 +63,8 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
     // Do not correct filenames that are reported with a mime type of tar, and 
     // have a filename which has .tar in it or ends in .tgz
     if ((mimeType == "application/tar" || mimeType == "application/x-tar")
-        && (String(filename).containsIgnoringASCIICase(".tar")
-        || String(filename).endsWithIgnoringASCIICase(".tgz"))) {
+        && (String(filename).containsIgnoringASCIICase(".tar"_s)
+        || String(filename).endsWithIgnoringASCIICase(".tgz"_s))) {
         return filename;
     }
 

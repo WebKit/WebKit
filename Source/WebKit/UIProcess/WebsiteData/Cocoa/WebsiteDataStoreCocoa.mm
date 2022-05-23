@@ -509,7 +509,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
 
                 URL url { data };
                 if (url.protocol().isEmpty())
-                    url.setProtocol("https");
+                    url.setProtocol("https"_s);
                 if (!url.isValid())
                     continue;
                 WebCore::RegistrableDomain appBoundDomain { url };

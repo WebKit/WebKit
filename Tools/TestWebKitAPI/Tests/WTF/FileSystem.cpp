@@ -496,13 +496,13 @@ TEST_F(FileSystemTest, volumeFreeSpace)
     ASSERT_TRUE(freeSpace);
     EXPECT_GT(*freeSpace, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::volumeFreeSpace(fileThatDoesNotExist));
 }
 
 TEST_F(FileSystemTest, createSymbolicLink)
 {
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-symlink");
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-symlink"_s);
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFilePath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
@@ -749,7 +749,7 @@ TEST_F(FileSystemTest, pathByAppendingComponents)
     EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "file.txt"_s).utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "file.txt"_s }).utf8().data());
 #if OS(UNIX)
     EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/"_s, { "var"_s, "tmp"_s, "file.txt"_s }).utf8().data());
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var"_s, { "tmp"_s, "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var"_s, { "tmp"_s, "file.txt"_s }).utf8().data());
     EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/"_s, { "tmp"_s, "file.txt"_s }).utf8().data());
     EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/tmp"_s, { "file.txt"_s }).utf8().data());
 #endif

@@ -119,7 +119,7 @@ HRESULT DefaultPolicyDelegate::decidePolicyForNavigationAction(_In_opt_ IWebView
             BString url;
             // A file URL shouldn't fall through to here, but if it did,
             // it would be a security risk to open it.
-            if (SUCCEEDED(request->URL(&url)) && !String(url, SysStringLen(url)).startsWith("file:")) {
+            if (SUCCEEDED(request->URL(&url)) && !String(url, SysStringLen(url)).startsWith("file:"_s)) {
                 // FIXME: Open the URL not by means of a webframe, but by handing it over to the system and letting it determine how to open that particular URL scheme.  See documentation for [NSWorkspace openURL]
                 ;
             }
@@ -149,7 +149,7 @@ HRESULT DefaultPolicyDelegate::decidePolicyForMIMEType(_In_opt_ IWebView* webVie
     BString url;
     request->URL(&url);
 
-    if (String(url, SysStringLen(url)).startsWith("file:")) {
+    if (String(url, SysStringLen(url)).startsWith("file:"_s)) {
         BOOL isDirectory = FALSE;
         WIN32_FILE_ATTRIBUTE_DATA attrs;
         if (GetFileAttributesEx(url, GetFileExInfoStandard, &attrs))

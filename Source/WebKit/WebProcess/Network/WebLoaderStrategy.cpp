@@ -278,7 +278,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
 #if ENABLE(PDFJS)
 bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)
 {
-    if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"))
+    if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"_s))
         return false;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a PDFJS resource.", resourceLoader.url().string().utf8().data());

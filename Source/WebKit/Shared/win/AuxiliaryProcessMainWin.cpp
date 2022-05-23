@@ -36,9 +36,9 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
     for (int i = 0; i < argc; i++) {
         if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc)
-            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(parseIntegerAllowingTrailingJunk<uint64_t>(argv[++i]).value_or(0));
+            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(parseIntegerAllowingTrailingJunk<uint64_t>(StringView::fromLatin1(argv[++i])).value_or(0));
         else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc)
-            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(parseIntegerAllowingTrailingJunk<uint64_t>(argv[++i]).value_or(0));
+            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(parseIntegerAllowingTrailingJunk<uint64_t>(StringView::fromLatin1(argv[++i])).value_or(0));
         else if (!strcmp(argv[i], "-configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
         else if (!strcmp(argv[i], "-disable-jit"))

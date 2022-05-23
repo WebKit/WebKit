@@ -38,14 +38,14 @@ TEST(WTF, StringImplCreationFromLiteral)
     // Constructor taking an ASCIILiteral.
     auto stringWithTemplate = StringImpl::create("Template Literal"_s);
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate->length());
-    ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"));
+    ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"_s));
     ASSERT_TRUE(stringWithTemplate->is8Bit());
 
     // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
     auto programmaticString = StringImpl::createWithoutCopying(programmaticStringData, strlen(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
-    ASSERT_TRUE(equal(programmaticString.get(), programmaticStringData));
+    ASSERT_TRUE(equal(programmaticString.get(), StringView::fromLatin1(programmaticStringData)));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
     ASSERT_TRUE(programmaticString->is8Bit());
 
@@ -64,42 +64,42 @@ TEST(WTF, StringImplReplaceWithLiteral)
     ASSERT_TRUE(testStringImpl->is8Bit());
 
     // Cases for 8Bit source.
-    testStringImpl = testStringImpl->replace('2', "", 0);
-    ASSERT_TRUE(equal(testStringImpl.get(), "14"));
+    testStringImpl = testStringImpl->replace('2', ""_s, 0);
+    ASSERT_TRUE(equal(testStringImpl.get(), "14"_s));
 
     testStringImpl = StringImpl::create("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
 
-    testStringImpl = testStringImpl->replace('3', "NotFound", 8);
-    ASSERT_TRUE(equal(testStringImpl.get(), "1224"));
+    testStringImpl = testStringImpl->replace('3', "NotFound"_s, 8);
+    ASSERT_TRUE(equal(testStringImpl.get(), "1224"_s));
 
-    testStringImpl = testStringImpl->replace('2', "3", 1);
-    ASSERT_TRUE(equal(testStringImpl.get(), "1334"));
+    testStringImpl = testStringImpl->replace('2', "3"_s, 1);
+    ASSERT_TRUE(equal(testStringImpl.get(), "1334"_s));
 
     testStringImpl = StringImpl::create("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
-    testStringImpl = testStringImpl->replace('2', "555", 3);
-    ASSERT_TRUE(equal(testStringImpl.get(), "15555554"));
+    testStringImpl = testStringImpl->replace('2', "555"_s, 3);
+    ASSERT_TRUE(equal(testStringImpl.get(), "15555554"_s));
 
     // Cases for 16Bit source.
     String testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
 
-    testStringImpl = testString.impl()->replace('2', "NotFound", 8);
+    testStringImpl = testString.impl()->replace('2', "NotFound"_s, 8);
     ASSERT_TRUE(equal(testStringImpl.get(), String::fromUTF8("résumé").impl()));
 
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "e", 1);
-    ASSERT_TRUE(equal(testStringImpl.get(), "resume"));
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "e"_s, 1);
+    ASSERT_TRUE(equal(testStringImpl.get(), "resume"_s));
 
     testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "", 0);
-    ASSERT_TRUE(equal(testStringImpl.get(), "rsum"));
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), ""_s, 0);
+    ASSERT_TRUE(equal(testStringImpl.get(), "rsum"_s));
 
     testString = String::fromUTF8("résumé");
     ASSERT_FALSE(testString.impl()->is8Bit());
-    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "555", 3);
-    ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"));
+    testStringImpl = testString.impl()->replace(UChar(0x00E9 /*U+00E9 is 'é'*/), "555"_s, 3);
+    ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"_s));
 }
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
@@ -682,10 +682,10 @@ static void doStaticStringImplTests(StaticStringImplTestSet testSet, String& hel
     ASSERT_EQ(strlen("longer"), longer.length());
     ASSERT_EQ(strlen("hello"), hello2.length());
 
-    ASSERT_TRUE(equal(hello, "hello"));
-    ASSERT_TRUE(equal(world, "world"));
-    ASSERT_TRUE(equal(longer, "longer"));
-    ASSERT_TRUE(equal(hello2, "hello"));
+    ASSERT_TRUE(equal(hello, "hello"_s));
+    ASSERT_TRUE(equal(world, "world"_s));
+    ASSERT_TRUE(equal(longer, "longer"_s));
+    ASSERT_TRUE(equal(hello2, "hello"_s));
 
     // Each StaticStringImpl* returned by MAKE_STATIC_STRING_IMPL should be unique.
     ASSERT_NE(hello.impl(), hello2.impl());
@@ -694,11 +694,11 @@ static void doStaticStringImplTests(StaticStringImplTestSet testSet, String& hel
         // Test that MAKE_STATIC_STRING_IMPL isn't allocating a StaticStringImpl on the stack.
         const String& str1 = getNeverDestroyedStringAtStackDepth(10);
         ASSERT_EQ(strlen("NeverDestroyedString"), str1.length());
-        ASSERT_TRUE(equal(str1, "NeverDestroyedString"));
+        ASSERT_TRUE(equal(str1, "NeverDestroyedString"_s));
 
         const String& str2 = getNeverDestroyedStringAtStackDepth(20);
         ASSERT_EQ(strlen("NeverDestroyedString"), str2.length());
-        ASSERT_TRUE(equal(str2, "NeverDestroyedString"));
+        ASSERT_TRUE(equal(str2, "NeverDestroyedString"_s));
 
         ASSERT_TRUE(equal(str1, str2));
         ASSERT_EQ(&str1, &str2);

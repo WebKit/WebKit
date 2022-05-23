@@ -79,7 +79,7 @@ std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const 
 {
     static const size_t length = strlen("boundary=");
 
-    auto boundaryStart = contentType.findIgnoringASCIICase("boundary=");
+    auto boundaryStart = contentType.findIgnoringASCIICase("boundary="_s);
     if (boundaryStart == notFound)
         return std::nullopt;
 

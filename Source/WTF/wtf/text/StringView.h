@@ -70,7 +70,7 @@ public:
     StringView(ASCIILiteral);
 
     // FIXME: Make private once all call sites have been ported to fromLatin1.
-    StringView(const char*);
+    explicit StringView(const char*);
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 

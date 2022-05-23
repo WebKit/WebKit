@@ -340,7 +340,7 @@ void Daemon::broadcastDebugMessage(StringView message)
 
 void Daemon::broadcastAllConnectionIdentities()
 {
-    broadcastDebugMessage("===\nCurrent connections:");
+    broadcastDebugMessage("===\nCurrent connections:"_s);
 
     auto connections = copyToVector(m_connectionMap.values());
     std::sort(connections.begin(), connections.end(), [] (const Ref<ClientConnection>& a, const Ref<ClientConnection>& b) {
@@ -348,8 +348,8 @@ void Daemon::broadcastAllConnectionIdentities()
     });
 
     for (auto& iterator : connections)
-        iterator->broadcastDebugMessage("");
-    broadcastDebugMessage("===");
+        iterator->broadcastDebugMessage(""_s);
+    broadcastDebugMessage("==="_s);
 }
 
 void Daemon::connectionEventHandler(xpc_object_t request)
@@ -539,13 +539,13 @@ void Daemon::updateConnectionConfiguration(ClientConnection* clientConnection, c
 void Daemon::injectPushMessageForTesting(ClientConnection* connection, const PushMessageForTesting& message, CompletionHandler<void(bool)>&& replySender)
 {
     if (!connection->hostAppHasPushInjectEntitlement()) {
-        connection->broadcastDebugMessage("Attempting to inject a push message from an unentitled process");
+        connection->broadcastDebugMessage("Attempting to inject a push message from an unentitled process"_s);
         replySender(false);
         return;
     }
 
     if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid()) {
-        connection->broadcastDebugMessage("Attempting to inject an invalid push message");
+        connection->broadcastDebugMessage("Attempting to inject an invalid push message"_s);
         replySender(false);
         return;
     }
@@ -566,7 +566,7 @@ void Daemon::injectPushMessageForTesting(ClientConnection* connection, const Pus
 void Daemon::injectEncryptedPushMessageForTesting(ClientConnection* connection, const String& message, CompletionHandler<void(bool)>&& replySender)
 {
     if (!connection->hostAppHasPushInjectEntitlement()) {
-        connection->broadcastDebugMessage("Attempting to inject a push message from an unentitled process");
+        connection->broadcastDebugMessage("Attempting to inject a push message from an unentitled process"_s);
         replySender(false);
         return;
     }

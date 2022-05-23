@@ -183,7 +183,7 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
 #endif
 
     const char* value = g_getenv("WEBKIT_GST_ENABLE_AUDIO_MIXER");
-    if (value && equal(value, "1")) {
+    if (value && !strcmp(value, "1")) {
         if (!GStreamerAudioMixer::isAvailable()) {
             GST_WARNING("Internal audio mixing request cannot be fulfilled.");
             return false;

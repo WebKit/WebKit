@@ -1901,8 +1901,8 @@ String GraphicsContextGLANGLE::getUnmangledInfoLog(PlatformGLObject shaders[2], 
     // causes a warning in some compilers. There is no point showing
     // this warning to the user since they didn't write the code that
     // is causing it.
-    static constexpr char angleWarning[] = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n";
-    int startFrom = log.startsWith(angleWarning) ? strlen(angleWarning) : 0;
+    static constexpr auto angleWarning = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s;
+    int startFrom = log.startsWith(angleWarning) ? angleWarning.length() : 0;
     processedLog.append(StringView(log).substring(startFrom, log.length() - startFrom));
 
     LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());

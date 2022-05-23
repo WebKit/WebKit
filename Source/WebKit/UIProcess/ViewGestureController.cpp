@@ -302,7 +302,7 @@ void ViewGestureController::SnapshotRemovalTracker::log(StringView log) const
 void ViewGestureController::SnapshotRemovalTracker::resume()
 {
     if (isPaused() && m_outstandingEvents)
-        log("resume");
+        log("resume"_s);
     m_paused = false;
 }
 
@@ -312,7 +312,7 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
     m_removalCallback = WTFMove(removalCallback);
     m_startTime = MonotonicTime::now();
 
-    log("start");
+    log("start"_s);
 
     startWatchdog(swipeSnapshotRemovalWatchdogDuration);
 
@@ -381,7 +381,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 
     auto removalCallback = WTFMove(m_removalCallback);
     if (removalCallback) {
-        log("removing snapshot");
+        log("removing snapshot"_s);
         reset();
         removalCallback();
     }
@@ -389,7 +389,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 
 void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
 {
-    log("watchdog timer fired");
+    log("watchdog timer fired"_s);
     fireRemovalCallbackImmediately();
 }
 

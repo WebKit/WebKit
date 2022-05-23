@@ -316,7 +316,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
     // Confirm that the connection is from a WebContent process:
     auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection()->xpcConnection());
 
-    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent")) {
+    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
         RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
         return false;
     }

@@ -283,28 +283,28 @@ TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 #endif
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForSessionHandlerToBeCalled("play");
-    ASSERT_TRUE(sessionHandlerWasCalled("play"));
-    ASSERT_FALSE(eventListenerWasCalled("play"));
+    waitForSessionHandlerToBeCalled("play"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("play"_s));
+    ASSERT_FALSE(eventListenerWasCalled("play"_s));
 
     // The media session only registered for Play, but no other commands should reach HTMLMediaElement.
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekforward"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekforward"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekbackward"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekbackward"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekto"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekto"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandNextTrack));
-    ASSERT_FALSE(sessionHandlerWasCalled("nexttrack"));
+    ASSERT_FALSE(sessionHandlerWasCalled("nexttrack"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPreviousTrack));
-    ASSERT_FALSE(sessionHandlerWasCalled("previoustrack"));
+    ASSERT_FALSE(sessionHandlerWasCalled("previoustrack"_s));
 }
 
 TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
@@ -328,63 +328,63 @@ TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 #endif
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForSessionHandlerToBeCalled("play");
-    ASSERT_TRUE(sessionHandlerWasCalled("play"));
-    ASSERT_FALSE(eventListenerWasCalled("play"));
+    waitForSessionHandlerToBeCalled("play"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("play"_s));
+    ASSERT_FALSE(eventListenerWasCalled("play"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPause));
-    waitForSessionHandlerToBeCalled("pause");
-    ASSERT_TRUE(sessionHandlerWasCalled("pause"));
-    ASSERT_FALSE(eventListenerWasCalled("pause"));
+    waitForSessionHandlerToBeCalled("pause"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("pause"_s));
+    ASSERT_FALSE(eventListenerWasCalled("pause"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    waitForSessionHandlerToBeCalled("seekforward");
-    ASSERT_TRUE(sessionHandlerWasCalled("seekforward"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    waitForSessionHandlerToBeCalled("seekforward"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("seekforward"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    waitForSessionHandlerToBeCalled("seekbackward");
-    ASSERT_TRUE(sessionHandlerWasCalled("seekbackward"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    waitForSessionHandlerToBeCalled("seekbackward"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("seekbackward"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    waitForSessionHandlerToBeCalled("seekto");
-    ASSERT_TRUE(sessionHandlerWasCalled("seekto"));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"));
+    waitForSessionHandlerToBeCalled("seekto"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("seekto"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandNextTrack));
-    waitForSessionHandlerToBeCalled("nexttrack");
-    ASSERT_TRUE(sessionHandlerWasCalled("nexttrack"));
+    waitForSessionHandlerToBeCalled("nexttrack"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("nexttrack"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPreviousTrack));
-    waitForSessionHandlerToBeCalled("previoustrack");
-    ASSERT_TRUE(sessionHandlerWasCalled("previoustrack"));
+    waitForSessionHandlerToBeCalled("previoustrack"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("previoustrack"_s));
 
     // Unregister action handlers, supported commands should go to HTMLMediaElement.
     [webView() objectByEvaluatingJavaScript:@"clearActionHandlers()"];
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForEventListenerToBeCalled("play");
-    ASSERT_TRUE(eventListenerWasCalled("play"));
+    waitForEventListenerToBeCalled("play"_s);
+    ASSERT_TRUE(eventListenerWasCalled("play"_s));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPause));
-    waitForEventListenerToBeCalled("pause");
-    ASSERT_TRUE(eventListenerWasCalled("pause"));
+    waitForEventListenerToBeCalled("pause"_s);
+    ASSERT_TRUE(eventListenerWasCalled("pause"_s));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    waitForEventListenerToBeCalled("seeked");
-    ASSERT_TRUE(eventListenerWasCalled("seeked"));
+    waitForEventListenerToBeCalled("seeked"_s);
+    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    waitForEventListenerToBeCalled("seeked");
-    ASSERT_TRUE(eventListenerWasCalled("seeked"));
+    waitForEventListenerToBeCalled("seeked"_s);
+    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    waitForEventListenerToBeCalled("seeked");
-    ASSERT_TRUE(eventListenerWasCalled("seeked"));
+    waitForEventListenerToBeCalled("seeked"_s);
+    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
 }
 
 }

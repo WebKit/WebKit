@@ -50,7 +50,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     , m_scheduler(CurlContext::singleton().streamScheduler())
 {
     // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
-    if (m_url.protocolIs("wss") && DeprecatedGlobalSettings::allowsAnySSLCertificate())
+    if (m_url.protocolIs("wss"_s) && DeprecatedGlobalSettings::allowsAnySSLCertificate())
         CurlContext::singleton().sslHandle().setIgnoreSSLErrors(true);
 
     m_streamID = m_scheduler.createStream(m_url, *this);

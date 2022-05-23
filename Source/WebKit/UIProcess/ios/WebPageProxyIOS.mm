@@ -1315,73 +1315,73 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     // disabled by default in WKWebView, so we would need a new preference for controlling site-specific quirks that are on-by-default
     // in all apps, but may be turned off via SPI (or via Web Inspector). See also: <rdar://problem/50035167>.
     auto host = request.url().host();
-    if (equalLettersIgnoringASCIICase(host, "tv.kakao.com"_s) || host.endsWithIgnoringASCIICase(".tv.kakao.com"))
+    if (equalLettersIgnoringASCIICase(host, "tv.kakao.com"_s) || host.endsWithIgnoringASCIICase(".tv.kakao.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "tving.com"_s) || host.endsWithIgnoringASCIICase(".tving.com"))
+    if (equalLettersIgnoringASCIICase(host, "tving.com"_s) || host.endsWithIgnoringASCIICase(".tving.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com"_s) || host.endsWithIgnoringASCIICase(".live.iqiyi.com"))
+    if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com"_s) || host.endsWithIgnoringASCIICase(".live.iqiyi.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "jsfiddle.net"_s) || host.endsWithIgnoringASCIICase(".jsfiddle.net"))
+    if (equalLettersIgnoringASCIICase(host, "jsfiddle.net"_s) || host.endsWithIgnoringASCIICase(".jsfiddle.net"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn"_s) || host.endsWithIgnoringASCIICase(".video.sina.com.cn"))
+    if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn"_s) || host.endsWithIgnoringASCIICase(".video.sina.com.cn"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "huya.com"_s) || host.endsWithIgnoringASCIICase(".huya.com"))
+    if (equalLettersIgnoringASCIICase(host, "huya.com"_s) || host.endsWithIgnoringASCIICase(".huya.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "video.tudou.com"_s) || host.endsWithIgnoringASCIICase(".video.tudou.com"))
+    if (equalLettersIgnoringASCIICase(host, "video.tudou.com"_s) || host.endsWithIgnoringASCIICase(".video.tudou.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "cctv.com"_s) || host.endsWithIgnoringASCIICase(".cctv.com"))
+    if (equalLettersIgnoringASCIICase(host, "cctv.com"_s) || host.endsWithIgnoringASCIICase(".cctv.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "v.china.com.cn"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "trello.com"_s) || host.endsWithIgnoringASCIICase(".trello.com"))
+    if (equalLettersIgnoringASCIICase(host, "trello.com"_s) || host.endsWithIgnoringASCIICase(".trello.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "ted.com"_s) || host.endsWithIgnoringASCIICase(".ted.com"))
+    if (equalLettersIgnoringASCIICase(host, "ted.com"_s) || host.endsWithIgnoringASCIICase(".ted.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (host.containsIgnoringASCIICase("hsbc.")) {
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.au"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.au"))
+    if (host.containsIgnoringASCIICase("hsbc."_s)) {
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.au"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.au"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.eg"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.eg"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.eg"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.eg"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.lk"_s) || host.endsWithIgnoringASCIICase(".hsbc.lk"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.lk"_s) || host.endsWithIgnoringASCIICase(".hsbc.lk"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.co.uk"_s) || host.endsWithIgnoringASCIICase(".hsbc.co.uk"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.co.uk"_s) || host.endsWithIgnoringASCIICase(".hsbc.co.uk"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.hk"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.hk"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.hk"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.hk"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.mx"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.mx"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.mx"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.mx"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.ca"_s) || host.endsWithIgnoringASCIICase(".hsbc.ca"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.ca"_s) || host.endsWithIgnoringASCIICase(".hsbc.ca"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ar"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ar"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ar"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ar"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ph"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ph"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ph"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ph"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com"_s) || host.endsWithIgnoringASCIICase(".hsbc.com"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com"_s) || host.endsWithIgnoringASCIICase(".hsbc.com"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.cn"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.cn"))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.cn"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.cn"_s))
             return RecommendDesktopClassBrowsingForRequest::No;
     }
 
-    if (equalLettersIgnoringASCIICase(host, "nhl.com"_s) || host.endsWithIgnoringASCIICase(".nhl.com"))
+    if (equalLettersIgnoringASCIICase(host, "nhl.com"_s) || host.endsWithIgnoringASCIICase(".nhl.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     // FIXME: Remove this quirk when <rdar://problem/59480381> is complete.
-    if (equalLettersIgnoringASCIICase(host, "fidelity.com"_s) || host.endsWithIgnoringASCIICase(".fidelity.com"))
+    if (equalLettersIgnoringASCIICase(host, "fidelity.com"_s) || host.endsWithIgnoringASCIICase(".fidelity.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
-    if (equalLettersIgnoringASCIICase(host, "roblox.com"_s) || host.endsWithIgnoringASCIICase(".roblox.com"))
+    if (equalLettersIgnoringASCIICase(host, "roblox.com"_s) || host.endsWithIgnoringASCIICase(".roblox.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     return RecommendDesktopClassBrowsingForRequest::Auto;

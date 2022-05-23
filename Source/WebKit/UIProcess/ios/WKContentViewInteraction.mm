@@ -11919,7 +11919,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (_positionInformation.isImage) {
             if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
                 const auto& imageURL = _positionInformation.imageURL;
-                if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data")))
+                if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                     return;
                 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 [uiDelegate _webView:self.webView commitPreviewedImageWithURL:(NSURL *)imageURL];
@@ -12176,7 +12176,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     NSURL *targetURL = controller.previewData[UIPreviewDataLink];
     URL coreTargetURL = targetURL;
-    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (coreTargetURL.protocolIsInHTTPFamily() || coreTargetURL.protocolIs("data"));
+    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (coreTargetURL.protocolIsInHTTPFamily() || coreTargetURL.protocolIs("data"_s));
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
         _longPressCanClick = NO;
@@ -12268,7 +12268,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if ([_previewItemController type] == UIPreviewItemTypeImage) {
         if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
             const URL& imageURL = _positionInformation.imageURL;
-            if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data")))
+            if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                 return;
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [uiDelegate _webView:self.webView commitPreviewedImageWithURL:(NSURL *)imageURL];

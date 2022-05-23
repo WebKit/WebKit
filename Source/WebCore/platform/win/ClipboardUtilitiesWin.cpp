@@ -225,10 +225,10 @@ static void append(Vector<char>& vector, const CString& string)
 // Find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks.
 static String extractMarkupFromCFHTML(const String& cfhtml)
 {
-    unsigned markupStart = cfhtml.findIgnoringASCIICase("<html");
-    unsigned tagStart = cfhtml.findIgnoringASCIICase("startfragment", markupStart);
+    unsigned markupStart = cfhtml.findIgnoringASCIICase("<html"_s);
+    unsigned tagStart = cfhtml.findIgnoringASCIICase("startfragment"_s, markupStart);
     unsigned fragmentStart = cfhtml.find('>', tagStart) + 1;
-    unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment", fragmentStart);
+    unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment"_s, fragmentStart);
     unsigned fragmentEnd = cfhtml.reverseFind('<', tagEnd);
     return cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).stripWhiteSpace();
 }

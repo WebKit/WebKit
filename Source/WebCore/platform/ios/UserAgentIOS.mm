@@ -65,8 +65,8 @@ static StringView deviceNameForUserAgent()
 {
     if (isClassic()) {
         if (isClassicPad())
-            return "iPad";
-        return "iPhone";
+            return "iPad"_s;
+        return "iPhone"_s;
     }
 
     static NeverDestroyed<String> name = [] {

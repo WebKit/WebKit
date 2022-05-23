@@ -46,7 +46,7 @@ public:
     ~TestInvocation();
 
     WKURLRef url() const;
-    bool urlContains(const char*) const;
+    bool urlContains(StringView) const;
     
     const TestOptions& options() const { return m_options; }
 

@@ -50,7 +50,7 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(String&& localStorageDi
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteFileSystem::deleteDatabaseFile(databasePath("StorageTracker.db"));
+    SQLiteFileSystem::deleteDatabaseFile(databasePath("StorageTracker.db"_s));
 }
 
 String LocalStorageDatabaseTracker::localStorageDirectory() const

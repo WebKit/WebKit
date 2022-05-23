@@ -338,7 +338,7 @@ static String getFamilyNameStringFromFamily(const String& family)
 {
     // If we're creating a fallback font (e.g. "-webkit-monospace"), convert the name into
     // the fallback name (like "monospace") that fontconfig understands.
-    if (family.length() && !family.startsWith("-webkit-"))
+    if (family.length() && !family.startsWith("-webkit-"_s))
         return family;
 
     if (family == familyNamesData->at(FamilyNamesIndex::StandardFamily) || family == familyNamesData->at(FamilyNamesIndex::SerifFamily))

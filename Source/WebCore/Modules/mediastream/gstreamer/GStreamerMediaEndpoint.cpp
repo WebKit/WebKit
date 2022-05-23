@@ -215,7 +215,7 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
     for (auto& server : configuration.iceServers) {
         bool stunSet = false;
         for (auto& url : server.urls) {
-            if (url.protocol().startsWith("turn")) {
+            if (url.protocol().startsWith("turn"_s)) {
                 auto valid = makeStringByReplacingAll(url.string().isolatedCopy(), "turn:"_s, "turn://"_s);
                 valid = makeStringByReplacingAll(valid, "turns:"_s, "turns://"_s);
                 URL validURL(URL(), valid);
@@ -229,7 +229,7 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
                 if (!result)
                     GST_WARNING("Unable to use TURN server: %s", validURL.string().utf8().data());
             }
-            if (!stunSet && url.protocol().startsWith("stun")) {
+            if (!stunSet && url.protocol().startsWith("stun"_s)) {
                 auto valid = makeStringByReplacingAll(url.string().isolatedCopy(), "stun:"_s, "stun://"_s);
                 URL validURL(URL(), valid);
                 // FIXME: libnice currently doesn't seem to handle IPv6 addresses very well.
@@ -923,7 +923,7 @@ void GStreamerMediaEndpoint::addIceCandidate(GStreamerIceCandidate& candidate, P
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Adding ICE candidate %s", candidate.candidate.utf8().data());
 
-    if (!candidate.candidate.startsWith("candidate:")) {
+    if (!candidate.candidate.startsWith("candidate:"_s)) {
         callOnMainThread([task = createSharedTask<PeerConnectionBackend::AddIceCandidateCallbackFunction>(WTFMove(callback))]() mutable {
             task->run(Exception { OperationError, "Expect line: candidate:<candidate-str>"_s });
         });

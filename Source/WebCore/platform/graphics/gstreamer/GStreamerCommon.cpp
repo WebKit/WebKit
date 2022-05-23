@@ -250,7 +250,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
     Vector<String> options;
     auto optionsString = String::fromUTF8(contents.get(), length);
     optionsString.split('\0', [&options](StringView item) {
-        if (item.startsWith("--gst"))
+        if (item.startsWith("--gst"_s))
             options.append(item.toString());
     });
     return options;
@@ -500,9 +500,9 @@ bool isGStreamerPluginAvailable(const char* name)
     return plugin;
 }
 
-bool gstElementFactoryEquals(GstElement* element, const char* name)
+bool gstElementFactoryEquals(GstElement* element, ASCIILiteral name)
 {
-    return equal(GST_OBJECT_NAME(gst_element_get_factory(element)), name);
+    return name == GST_OBJECT_NAME(gst_element_get_factory(element));
 }
 
 GstElement* createAutoAudioSink(const String& role)
