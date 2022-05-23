@@ -284,29 +284,33 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrame
 }
 #endif
 
-void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
+void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
+    switch (event) {
     // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
-    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout) {
-        // Simulate the timeout by just discarding the context. The subsequent messages act like
-        // unauthorized or old messages from Web process, they are skipped.
-        callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier = m_graphicsContextGLIdentifier]() {
+    case WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout:
+        // Simulate the timeout by just discarding the context. The subsequent
+        // messages act like unauthorized or old messages from Web process, they
+        // are skipped.
+        callOnMainRunLoopAndWait([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier = m_graphicsContextGLIdentifier]() {
             if (auto connectionToWeb = gpuConnectionToWebProcess.get())
                 connectionToWeb->releaseGraphicsContextGLForTesting(identifier);
         });
-        return;
-    }
-    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange) {
+        break;
+    case WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange:
 #if PLATFORM(MAC)
         callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
             if (auto connection = weakConnection.get())
                 connection->dispatchDisplayWasReconfiguredForTesting();
         });
 #endif
-        return;
+        break;
+    default:
+        m_context->simulateEventForTesting(event);
+        break;
     }
-    m_context->simulateEventForTesting(event);
+    completionHandler();
 }
 
 void RemoteGraphicsContextGL::readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&& completionHandler)

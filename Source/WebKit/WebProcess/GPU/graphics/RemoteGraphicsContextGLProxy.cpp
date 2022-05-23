@@ -253,7 +253,7 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
 void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTesting event)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::SimulateEventForTesting(event));
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::SimulateEventForTesting(event), Messages::RemoteGraphicsContextGL::SimulateEventForTesting::Reply());
         if (!sendResult)
             markContextLost();
     }

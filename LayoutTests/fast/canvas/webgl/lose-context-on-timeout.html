@@ -27,6 +27,14 @@ async function webGLContextLost(canvas) {
 }
 var val;
 async function runTest() {
+    // keep the WP-GPUP connection open by ensure there will be atleast one
+    // active GL context at all times.
+    let keepalive_canvas = document.createElement("canvas");
+    keepalive_canvas.width = 200;
+    keepalive_canvas.height = 200;
+    let keepalive_gl = wtu.create3DContext(keepalive_canvas);
+    wtu.setupColorQuad(keepalive_gl);
+
     let canvas = document.createElement("canvas");
     canvas.width = 200;
     canvas.height = 200;

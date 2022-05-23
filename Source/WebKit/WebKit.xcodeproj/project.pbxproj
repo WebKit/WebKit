@@ -4347,6 +4347,12 @@
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
+		3ADAB87D282CAA8C006107A4 /* RemoteGraphicsContextGLMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLMessagesReplies.h; sourceTree = "<group>"; };
+		3ADAB87E282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		3ADAB87F282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxyMessages.h; sourceTree = "<group>"; };
+		3ADAB880282CAA8C006107A4 /* RemoteGraphicsContextGLMessages.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = RemoteGraphicsContextGLMessages.h; sourceTree = "<group>"; };
+		3ADAB881282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxyMessagesReplies.h; sourceTree = "<group>"; };
+		3ADAB882282CAA8C006107A4 /* RemoteGraphicsContextGLMessageReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = RemoteGraphicsContextGLMessageReceiver.cpp; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource113.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource113.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoFullscreenManagerMessageReceiver.cpp; path = DerivedSources/WebKit/VideoFullscreenManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoFullscreenManagerMessages.h; path = DerivedSources/WebKit/VideoFullscreenManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -12839,6 +12845,12 @@
 				1CDDFC7D2755866D00C93C62 /* RemoteGPUProxyMessageReceiver.cpp */,
 				1CDDFC7E2755866D00C93C62 /* RemoteGPUProxyMessages.h */,
 				1CDDFC7C2755866D00C93C62 /* RemoteGPUProxyMessagesReplies.h */,
+				3ADAB882282CAA8C006107A4 /* RemoteGraphicsContextGLMessageReceiver.cpp */,
+				3ADAB880282CAA8C006107A4 /* RemoteGraphicsContextGLMessages.h */,
+				3ADAB87D282CAA8C006107A4 /* RemoteGraphicsContextGLMessagesReplies.h */,
+				3ADAB87E282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessageReceiver.cpp */,
+				3ADAB87F282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessages.h */,
+				3ADAB881282CAA8C006107A4 /* RemoteGraphicsContextGLProxyMessagesReplies.h */,
 				1D47659B25CE74AD007AF312 /* RemoteImageDecoderAVFManagerMessageReceiver.cpp */,
 				1D47659925CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessages.h */,
 				1D47659A25CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessagesReplies.h */,

@@ -96,7 +96,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
 #endif
-#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC)
+#if USE(LIBGBM)
+    void PrepareForDisplay() -> (WebCore::DMABufObject dmabufObject) Synchronous NotStreamEncodableReply
+#endif
+#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(LIBGBM)
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
@@ -111,7 +114,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #if ENABLE(MEDIA_STREAM)
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
-    void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
+    void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event) -> () Synchronous
     void ReadnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> data) -> (IPC::ArrayReference<uint8_t> data) Synchronous
     void ReadnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
