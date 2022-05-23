@@ -306,9 +306,11 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case SearchFieldCancelButtonPart:
         return adjustSearchFieldCancelButtonStyle(style, element);
     case SearchFieldDecorationPart:
+        return adjustSearchFieldDecorationPartStyle(style, element);
     case SearchFieldResultsDecorationPart:
+        return adjustSearchFieldResultsDecorationPartStyle(style, element);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldDecorationStyle(style, element);
+        return adjustSearchFieldResultsButtonStyle(style, element);
     case ProgressBarPart:
         return adjustProgressBarStyle(style, element);
     case MeterPart:
@@ -426,14 +428,19 @@ ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) con
         if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
             return SearchFieldCancelButtonPart;
 
-        if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
-            return SearchFieldDecorationPart;
+        if (is<SearchFieldResultsButtonElement>(element)) {
+            if (!downcast<SearchFieldResultsButtonElement>(element.get()).canAdjustStyleForAppearance())
+                return NoControlPart;
 
-        if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
-            return SearchFieldResultsDecorationPart;
+            if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
+                return SearchFieldDecorationPart;
 
-        if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
-            return SearchFieldResultsButtonPart;
+            if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
+                return SearchFieldResultsDecorationPart;
+
+            if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
+                return SearchFieldResultsButtonPart;
+        }
 
         if (pseudo == ShadowPseudoIds::webkitSliderThumb() || pseudo == ShadowPseudoIds::webkitMediaSliderThumb())
             return SliderThumbHorizontalPart;
@@ -443,25 +450,6 @@ ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) con
     }
 
     return NoControlPart;
-}
-
-void RenderTheme::adjustSearchFieldDecorationStyle(RenderStyle& style, const Element* element) const
-{
-    if (is<SearchFieldResultsButtonElement>(element) && !downcast<SearchFieldResultsButtonElement>(*element).canAdjustStyleForAppearance()) {
-        style.setEffectiveAppearance(NoControlPart);
-        return;
-    }
-
-    switch (style.effectiveAppearance()) {
-    case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(style, element);
-    case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(style, element);
-    case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(style, element);
-    default:
-        break;
-    }
 }
 
 bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& rect)
