@@ -150,9 +150,11 @@ static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, C
     if (!handle->hasClient(client) || redirectsInReverseOrder.isEmpty())
         return completionHandler({ });
     auto redirectPair = redirectsInReverseOrder.takeLast();
-    client.redirectReceived(*handle, WTFMove(redirectPair.first), WTFMove(redirectPair.second), [handle = WTFMove(handle), client = &client, redirectsInReverseOrder = WTFMove(redirectsInReverseOrder), completionHandler = WTFMove(completionHandler)] (ResourceRequest&&) mutable {
+    client.redirectReceived(*handle, WTFMove(redirectPair.first), WTFMove(redirectPair.second), [handle = WTFMove(handle), client = WeakPtr { client }, redirectsInReverseOrder = WTFMove(redirectsInReverseOrder), completionHandler = WTFMove(completionHandler)] (ResourceRequest&&) mutable {
         // Ignore the new request because we can't do anything with it.
         // We're just replying a redirect chain that has already happened.
+        if (!client)
+            return completionHandler({ });
         iterateRedirects(WTFMove(handle), *client, WTFMove(redirectsInReverseOrder), WTFMove(completionHandler));
     });
 }
@@ -167,19 +169,19 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
         const auto& pair = m_redirectChain[redirectCount - i - 1];
         redirectsInReverseOrder.uncheckedAppend(std::make_pair(pair.m_request, pair.m_redirectResponse));
     }
-    iterateRedirects(CachedResourceHandle<CachedRawResource>(this), client, WTFMove(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), client = &client] (ResourceRequest&&) mutable {
-        if (!hasClient(*client))
+    iterateRedirects(CachedResourceHandle<CachedRawResource>(this), client, WTFMove(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), client = WeakPtr { client }] (ResourceRequest&&) mutable {
+        if (!client || !hasClient(*client))
             return;
         auto responseProcessedHandler = [this, protectedThis = WTFMove(protectedThis), client] {
-            if (!hasClient(*client))
+            if (!client || !hasClient(*client))
                 return;
             if (m_data) {
                 m_data->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
-                    if (hasClient(*client))
+                    if (!client || hasClient(*client))
                         client->dataReceived(*this, buffer);
                 });
             }
-            if (!hasClient(*client))
+            if (!client || !hasClient(*client))
                 return;
             CachedResource::didAddClient(*client);
         };
