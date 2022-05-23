@@ -700,14 +700,14 @@ TEST(JSONValue, MemoryCost)
         Ref<JSON::Value> value = JSON::Value::create(makeString("test"_s));
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 36U);
+        EXPECT_LE(memoryCost, 44U);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(emptyString());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 32U);
+        EXPECT_LE(memoryCost, 40U);
     }
 
     {

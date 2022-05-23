@@ -1613,6 +1613,7 @@ public:
     void emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest);
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest);
     void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath);
+    void emitEncodeStructure(RegisterID source, RegisterID dest);
 
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {
@@ -1621,17 +1622,16 @@ public:
 
     void emitStoreStructureWithTypeInfo(RegisterID structure, RegisterID dest, RegisterID scratch)
     {
+        // Store the StructureID
 #if USE(JSVALUE64)
-        load64(MacroAssembler::Address(structure, Structure::structureIDOffset()), scratch);
-        store64(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+        emitEncodeStructure(structure, scratch);
+        store32(scratch, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
 #else
+        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
+#endif
         // Store all the info flags using a single 32-bit wide load and store.
         load32(MacroAssembler::Address(structure, Structure::indexingModeIncludingHistoryOffset()), scratch);
         store32(scratch, MacroAssembler::Address(dest, JSCell::indexingTypeAndMiscOffset()));
-
-        // Store the StructureID
-        storePtr(structure, MacroAssembler::Address(dest, JSCell::structureIDOffset()));
-#endif
     }
 
     static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest);
@@ -1914,7 +1914,30 @@ public:
         for (unsigned i = 0; i < outOfLineCapacity; ++i)
             storeTrustedValue(JSValue(), Address(butterflyGPR, -sizeof(IndexingHeader) - (i + 1) * sizeof(EncodedJSValue)));
     }
-    
+
+    void loadCompactPtr(Address address, GPRReg dest)
+    {
+#if HAVE(36BIT_ADDRESS)
+        load32(address, dest);
+        lshift64(TrustedImm32(4), dest);
+#else
+        loadPtr(address, dest);
+#endif
+    }
+
+    Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
+    {
+#if HAVE(36BIT_ADDRESS)
+        ASSERT(left != scratch);
+        load32(right, scratch);
+        lshift64(TrustedImm32(4), scratch);
+        return branchPtr(cond, left, Address(scratch));
+#else
+        UNUSED_PARAM(scratch);
+        return branchPtr(cond, left, right);
+#endif
+    }   
+
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
 #endif
