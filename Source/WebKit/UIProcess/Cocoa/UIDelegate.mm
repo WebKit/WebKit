@@ -1264,12 +1264,15 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     }
 
     if (request.requiresDisplayCapture() && request.canPromptForGetDisplayMedia()) {
-        if (respondsToRequestDisplayCapturePermissionForOrigin)
+        if (respondsToRequestDisplayCapturePermissionForOrigin) {
             promptForDisplayCapturePermission(page, frame, userMediaOrigin, topLevelOrigin, request);
-        else
-            request.promptForGetDisplayMedia();
+            return;
+        }
 
-        return;
+        if (!respondsToRequestUserMediaAuthorizationForDevices) {
+            request.promptForGetDisplayMedia();
+            return;
+        }
     }
 
     if (!respondsToRequestUserMediaAuthorizationForDevices) {
