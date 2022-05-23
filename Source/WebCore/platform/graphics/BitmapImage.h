@@ -53,19 +53,13 @@ class Timer;
 
 class BitmapImage final : public Image {
 public:
-    static RefPtr<BitmapImage> create(PlatformImagePtr&& platformImage)
+    static Ref<BitmapImage> create(PlatformImagePtr&& platformImage, ImageObserver* observer = nullptr)
     {
-        return create(NativeImage::create(WTFMove(platformImage)));
+        return adoptRef(*new BitmapImage(NativeImage::create(WTFMove(platformImage)), observer));
     }
-    static RefPtr<BitmapImage> create(RefPtr<NativeImage>&& nativeImage)
+    static Ref<BitmapImage> create(RefPtr<NativeImage>&& nativeImage, ImageObserver* observer = nullptr)
     {
-        if (!nativeImage)
-            return nullptr;
-        return create(nativeImage.releaseNonNull());
-    }
-    static Ref<BitmapImage> create(Ref<NativeImage>&& nativeImage)
-    {
-        return adoptRef(*new BitmapImage(WTFMove(nativeImage)));
+        return adoptRef(*new BitmapImage(WTFMove(nativeImage), observer));
     }
     static Ref<BitmapImage> create(ImageObserver* observer = nullptr)
     {
@@ -160,7 +154,7 @@ public:
     void decode(Function<void()>&&);
 
 private:
-    WEBCORE_EXPORT BitmapImage(Ref<NativeImage>&&);
+    WEBCORE_EXPORT BitmapImage(RefPtr<NativeImage>&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
     RefPtr<NativeImage> frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
