@@ -219,9 +219,12 @@ void AuxiliaryProcess::applyProcessCreationParameters(const AuxiliaryProcessCrea
 }
 
 #if !PLATFORM(COCOA)
+
+#if !OS(UNIX)
 void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
 }
+#endif
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {

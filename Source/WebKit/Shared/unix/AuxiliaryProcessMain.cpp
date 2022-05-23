@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/Options.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -46,6 +47,15 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         JSC::Config::configureForTesting();
 #endif
     return true;
+}
+
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
+{
+    struct sigaction signalAction;
+    memset(&signalAction, 0, sizeof(signalAction));
+    RELEASE_ASSERT(!sigemptyset(&signalAction.sa_mask));
+    signalAction.sa_handler = SIG_IGN;
+    RELEASE_ASSERT(!sigaction(SIGPIPE, &signalAction, nullptr));
 }
 
 } // namespace WebKit
