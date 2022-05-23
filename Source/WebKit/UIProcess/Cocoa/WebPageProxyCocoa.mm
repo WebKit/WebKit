@@ -64,6 +64,7 @@
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
@@ -860,6 +861,14 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
     process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
+}
+
+void WebPageProxy::setUserAgentDetailsForPreconnect(const String& applicationName, bool useDesktopUserAgent)
+{
+    auto type = useDesktopUserAgent ? UserAgentType::Desktop : UserAgentType::Default;
+    auto customUserAgent = standardUserAgentWithApplicationName(applicationName, emptyString(), type);
+    if (customUserAgent != userAgent())
+        setCustomUserAgent(customUserAgent);
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)

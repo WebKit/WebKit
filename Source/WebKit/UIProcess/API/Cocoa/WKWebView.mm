@@ -2593,6 +2593,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         _page->disableURLSchemeCheckInDataDetectors();
 }
 
+- (void)_setUserAgentDetailsForPreconnect:(NSString *)applicationName desktopUserAgent:(BOOL)desktopUserAgent
+{
+    THROW_IF_SUSPENDED;
+    if (_page)
+        _page->setUserAgentDetailsForPreconnect(applicationName, desktopUserAgent);
+}
+
 - (void)_switchFromStaticFontRegistryToUserFontRegistry
 {
     THROW_IF_SUSPENDED;

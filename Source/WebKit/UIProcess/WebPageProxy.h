@@ -1918,6 +1918,7 @@ public:
 
     void grantAccessToAssetServices();
     void revokeAccessToAssetServices();
+    void setUserAgentDetailsForPreconnect(const String& applicationName, bool useDesktopUserAgent);
     void switchFromStaticFontRegistryToUserFontRegistry();
 
     void disableURLSchemeCheckInDataDetectors() const;
