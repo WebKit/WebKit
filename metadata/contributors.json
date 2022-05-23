@@ -5040,6 +5040,14 @@
    },
    {
       "emails" : [
+         "mwyrzykowski@apple.com"
+      ],
+      "expertise" : "Graphics",
+      "github" : "mwyrzykowski",
+      "name" : "Mike Wyrzykowski"
+   },
+   {
+      "emails" : [
          "mnaganov@chromium.org"
       ],
       "name" : "Mikhail Naganov"
