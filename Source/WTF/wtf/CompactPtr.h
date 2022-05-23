@@ -33,7 +33,7 @@
 namespace WTF {
 
 #if CPU(ADDRESS64)
-#if CPU(ARM64) && OS(DARWIN)
+#if CPU(ARM64) && OS(DARWIN) && !OS(WINDOWS)
 #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
 #define HAVE_36BIT_ADDRESS 1
 #endif
