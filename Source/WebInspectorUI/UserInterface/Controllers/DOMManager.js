@@ -154,6 +154,49 @@ WI.DOMManager = class DOMManager extends WI.Object
         return Array.from(this._breakpointsForEventListeners.values());
     }
 
+    *attachedNodes({filter} = {})
+    {
+        if (!this._document)
+            return;
+
+        filter ??= (node) => true;
+
+        // Traverse the node tree in the same order items would appear if the entire tree were expanded in order to
+        // provide a predictable order for the results.
+        let currentBranch = [this._document];
+        while (currentBranch.length) {
+            let currentNode = currentBranch.at(-1);
+
+            if (filter(currentNode))
+                yield currentNode;
+
+            // The `::before` pseudo element is the first child of any node.
+            let beforePseudoElement = currentNode.beforePseudoElement();
+            if (beforePseudoElement && filter(beforePseudoElement))
+                yield beforePseudoElement;
+
+            let firstChild = currentNode.children?.[0];
+            if (firstChild) {
+                currentBranch.push(firstChild);
+                continue;
+            }
+
+            while (currentBranch.length) {
+                let parent = currentBranch.pop();
+
+                // The `::after` pseudo element is the last child of any node.
+                let parentAfterPseudoElement = parent.afterPseudoElement();
+                if (parentAfterPseudoElement && filter(parentAfterPseudoElement))
+                    yield parentAfterPseudoElement;
+
+                if (parent.nextSibling) {
+                    currentBranch.push(parent.nextSibling);
+                    break;
+                }
+            }
+        }
+    }
+
     requestDocument(callback)
     {
         if (typeof callback !== "function")
@@ -238,11 +281,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         domNode.layoutContextType = layoutContextType;
-    }
-
-    nodesWithLayoutContextType(layoutContextType)
-    {
-        return Object.values(this._idToDOMNode).filter((node) => node.layoutContextType === layoutContextType);
     }
 
     // Private

@@ -29,8 +29,8 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super("layout-details", WI.UIString("Layout", "Layout @ Styles Sidebar", "Title of the CSS style panel."));
 
-        this._flexNodeSet = new Set;
-        this._gridNodeSet = new Set;
+        this._flexNodeSet = null;
+        this._gridNodeSet = null;
         this._nodeStyles = null;
         this.element.classList.add("layout-panel");
     }
@@ -78,17 +78,23 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super.attached();
 
+        WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
+
         WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
 
-        this._refreshNodeSets();
+        this._invalidateNodeSets();
     }
 
     detached()
     {
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+
+        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
+        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
 
         WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -115,6 +121,9 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     layout()
     {
         super.layout();
+
+        if (!this._gridNodeSet || !this._flexNodeSet)
+            this._refreshNodeSets();
 
         if (this._gridNodeSet.size) {
             this._gridDetailsSectionRow.hideEmptyMessage();
@@ -149,25 +158,26 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     // Private
 
+    _handleNodeInserted(event)
+    {
+        this._invalidateNodeSets();
+        this.needsLayout();
+    }
+
+    _handleNodeRemoved(event)
+    {
+        let domNode = event.target.node;
+        this._removeNodeFromNodeSets(domNode);
+        this.needsLayout();
+    }
+
     _handleLayoutContextTypeChanged(event)
     {
         let domNode = event.target;
-
-        // A node may switch layout context type between grid and flex.
-        // Remove it from both node sets in case it was previously added.
-        // It is also the default case when the layout context type switches to something unknown.
-        this._flexNodeSet.delete(domNode);
-        this._gridNodeSet.delete(domNode);
-
-        switch (domNode.layoutContextType) {
-        case WI.DOMNode.LayoutContextType.Grid:
-            this._gridNodeSet.add(domNode);
-            break;
-
-        case WI.DOMNode.LayoutContextType.Flex:
-            this._flexNodeSet.add(domNode);
-            break;
-        }
+        if (domNode.layoutContextType)
+            this._invalidateNodeSets();
+        else
+            this._removeNodeFromNodeSets(domNode);
 
         this.needsLayout();
     }
@@ -192,9 +202,37 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
             this._nodeStyles?.refresh();
     }
 
+    _removeNodeFromNodeSets(domNode)
+    {
+        this._flexNodeSet?.delete(domNode);
+        this._gridNodeSet?.delete(domNode);
+    }
+
+    _invalidateNodeSets()
+    {
+        this._flexNodeSet = null;
+        this._gridNodeSet = null;
+    }
+
     _refreshNodeSets()
     {
-        this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
-        this._flexNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Flex));
+        this._gridNodeSet = new Set;
+        this._flexNodeSet = new Set;
+
+        for (let node of WI.domManager.attachedNodes({filter: (node) => node.layoutContextType})) {
+            switch (node.layoutContextType) {
+            case WI.DOMNode.LayoutContextType.Grid:
+                this._gridNodeSet.add(node);
+                break;
+
+            case WI.DOMNode.LayoutContextType.Flex:
+                this._flexNodeSet.add(node);
+                break;
+
+            default:
+                console.assert(false, "Unknown layout context type.", node, node.type);
+                break;
+            }
+        }
     }
 };

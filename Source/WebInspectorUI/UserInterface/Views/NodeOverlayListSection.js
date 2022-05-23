@@ -160,9 +160,9 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
         this._suppressUpdateToggleAllCheckbox = true;
 
         for (let domNode of this._nodeSet) {
-            if (isChecked)
+            if (isChecked && !domNode.layoutOverlayShowing)
                 domNode.showLayoutOverlay();
-            else
+            else if (!isChecked && domNode.layoutOverlayShowing)
                 domNode.hideLayoutOverlay();
         }
 

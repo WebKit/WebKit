@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createDetachedNode()
+{
+    window.__testDetachedNode = document.createElement("div");
+    window.__testDetachedNode.id = "script-created-node";
+    return window.__testDetachedNode;
+}
+
+function insertDetachedNode()
+{
+    let parentElement = document.getElementById("a");
+    parentElement.insertBefore(window.__testDetachedNode, parentElement.firstChild);
+}
+
+function removePreviouslyDetachedNode()
+{
+    window.__testDetachedNode.remove();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.attachedNodes");
+
+    async function ensureDocumentSubtree() {
+        let documentNode = await WI.domManager.requestDocument();
+
+        const entireSubtreeDepth = -1;
+        await WI.assumingMainTarget().DOMAgent.requestChildNodes(documentNode.id, entireSubtreeDepth);
+    }
+
+    function logNodes(nodesIterator) {
+        InspectorTest.log("Dumping nodes:")
+        for (let node of nodesIterator) {
+            // Each test adds more content to the DOM tree, but we don't want to clutter test output with those.
+            if (node.escapedIdSelector === "#end-of-prewritten-test-content")
+                break;
+            
+            logNode(node);
+        }
+    }
+
+    function logNode(node) {
+        if (node.nodeType() === Node.TEXT_NODE)
+            InspectorTest.log("  [text node]");
+        else
+            InspectorTest.log("  " + node.unescapedSelector);
+    }
+
+    suite.addTestCase({
+        name: "DOM.attachedNodes.Unfiltered",
+        description: "Ensure that `attachedNodes` provides a correctly ordered list of all attached DOM nodes.",
+        async test() {
+            await ensureDocumentSubtree();
+            logNodes(WI.domManager.attachedNodes());
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.attachedNodes.Filtered",
+        description: "Ensure that `attachedNodes` correctly filters nodes.",
+        async test() {
+            await ensureDocumentSubtree();
+            logNodes(WI.domManager.attachedNodes({filter: (node) => node.nodeNameInCorrectCase() === "div"}));
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.attachedNodes.DetachedNode",
+        description: "Ensure that `attachedNodes` provides a correctly ordered list of all attached DOM nodes, and ignored detached nodes that are known to the backend.",
+        async test() {
+            await ensureDocumentSubtree();
+
+            InspectorTest.log("Creating detached node...");
+            let detachedNodeRemoteObject = await InspectorTest.evaluateInPage(`createDetachedNode()`);
+            let detachedNodeId = (await WI.assumingMainTarget().DOMAgent.requestNode(detachedNodeRemoteObject.objectId)).nodeId;
+            let detachedNode = WI.domManager.nodeForId(detachedNodeId);
+            InspectorTest.log("Created detached node: " + detachedNode.unescapedSelector);
+
+            logNodes(WI.domManager.attachedNodes());
+
+            InspectorTest.log("Attaching node to DOM tree...");
+            await Promise.all([
+                InspectorTest.evaluateInPage(`insertDetachedNode()`),
+                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+            ]);
+            InspectorTest.log("DOM node attached to tree.");
+
+            logNodes(WI.domManager.attachedNodes());
+
+            InspectorTest.log("Detaching node from DOM tree...");
+            await Promise.all([
+                InspectorTest.evaluateInPage(`removePreviouslyDetachedNode()`),
+                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved),
+            ]);
+            InspectorTest.log("DOM node detached from tree.");
+
+            logNodes(WI.domManager.attachedNodes());
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#a::before {
+    content: "before";
+}
+
+#a::after {
+    content: "after";
+}
+</style>
+</head>
+<body onload="runTest()">
+<p id="test-description">Tests for the DOMManager.attachedNodes.</p>
+<div id="a">
+    <div id="a1"></div>
+    <div id="a2"></div>
+    <div id="a3"></div>
+</div>
+<div id="b">
+    <div id="b1"></div>
+    <div id="b2"></div>
+    <div id="b3"></div>
+</div>
+<div id="end-of-prewritten-test-content"></div>
+</body>
+</html>
