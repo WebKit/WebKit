@@ -47,6 +47,7 @@
 /* Begin PBXBuildFile section */
 		041A1E34216FFDBC00789E0A /* PublicSuffix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 041A1E33216FFDBC00789E0A /* PublicSuffix.cpp */; };
 		04DB2396235E43EC00328F17 /* BumpPointerAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */; };
+		0721D4592838296C00A95853 /* start-offset.ts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0721D4582838295400A95853 /* start-offset.ts */; };
 		07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */; };
 		07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */; };
 		074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */; };
@@ -1606,6 +1607,7 @@
 				F4CFCDDA249FC9E400527482 /* SpaceOnly.otf in Copy Resources */,
 				9360270625A3CF7600367670 /* speechrecognition-basic.html in Copy Resources */,
 				9342589E255B6A120059EEDD /* speechrecognition-user-permission-persistence.html in Copy Resources */,
+				0721D4592838296C00A95853 /* start-offset.ts in Copy Resources */,
 				E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */,
 				515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */,
 				9BD6D3A21F7B218300BD4962 /* sunset-in-cupertino-100px.tiff in Copy Resources */,
@@ -1714,6 +1716,7 @@
 		0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BumpPointerAllocator.cpp; sourceTree = "<group>"; };
 		0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLinkTest.mm; sourceTree = "<group>"; };
 		07137049265320E500CA2C9A /* AudioBufferSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioBufferSize.mm; sourceTree = "<group>"; };
+		0721D4582838295400A95853 /* start-offset.ts */ = {isa = PBXFileReference; lastKnownFileType = file; path = "start-offset.ts"; sourceTree = "<group>"; };
 		0738012E275EADAB000FA77C /* GetDisplayMediaWindowAndScreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GetDisplayMediaWindowAndScreen.mm; sourceTree = "<group>"; };
 		0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityTestSupportProtocol.h; sourceTree = "<group>"; };
 		0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestPlugin.mm; sourceTree = "<group>"; };
@@ -4342,6 +4345,7 @@
 				F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */,
 				9360270525A3B28E00367670 /* speechrecognition-basic.html */,
 				9342589D255B66A00059EEDD /* speechrecognition-user-permission-persistence.html */,
+				0721D4582838295400A95853 /* start-offset.ts */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				9BD6D3A11F7B202100BD4962 /* sunset-in-cupertino-100px.tiff */,
 				9BD6D3A01F7B202000BD4962 /* sunset-in-cupertino-200px.png */,
