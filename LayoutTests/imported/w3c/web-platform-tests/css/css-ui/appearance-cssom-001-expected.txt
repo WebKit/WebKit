@@ -47,8 +47,8 @@ PASS -webkit-appearance: media-controls-light-bar-background (invalid)
 PASS -webkit-appearance: media-current-time-display (invalid)
 PASS -webkit-appearance: media-enter-fullscreen-button (invalid)
 PASS -webkit-appearance: media-exit-fullscreen-button (invalid)
-FAIL -webkit-appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider"
-FAIL -webkit-appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider-thumb"
+PASS -webkit-appearance: media-fullscreen-volume-slider (invalid)
+PASS -webkit-appearance: media-fullscreen-volume-slider-thumb (invalid)
 PASS -webkit-appearance: media-mute-button (invalid)
 PASS -webkit-appearance: media-overlay-play-button (invalid)
 PASS -webkit-appearance: media-play-button (invalid)
@@ -56,14 +56,14 @@ PASS -webkit-appearance: media-return-to-realtime-button (invalid)
 PASS -webkit-appearance: media-rewind-button (invalid)
 PASS -webkit-appearance: media-seek-back-button (invalid)
 PASS -webkit-appearance: media-seek-forward-button (invalid)
-FAIL -webkit-appearance: media-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-slider"
-FAIL -webkit-appearance: media-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-sliderthumb"
+PASS -webkit-appearance: media-slider (invalid)
+PASS -webkit-appearance: media-sliderthumb (invalid)
 PASS -webkit-appearance: media-time-remaining-display (invalid)
 PASS -webkit-appearance: media-toggle-closed-captions-button (invalid)
-FAIL -webkit-appearance: media-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider"
+PASS -webkit-appearance: media-volume-slider (invalid)
 PASS -webkit-appearance: media-volume-slider-container (invalid)
 PASS -webkit-appearance: media-volume-slider-mute-button (invalid)
-FAIL -webkit-appearance: media-volume-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-sliderthumb"
+PASS -webkit-appearance: media-volume-sliderthumb (invalid)
 PASS -webkit-appearance: menuarrow (invalid)
 PASS -webkit-appearance: menubar (invalid)
 PASS -webkit-appearance: menucheckbox (invalid)
@@ -210,8 +210,8 @@ PASS appearance: media-controls-light-bar-background (invalid)
 PASS appearance: media-current-time-display (invalid)
 PASS appearance: media-enter-fullscreen-button (invalid)
 PASS appearance: media-exit-fullscreen-button (invalid)
-FAIL appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.appearance expected "" but got "media-fullscreen-volume-slider"
-FAIL appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.appearance expected "" but got "media-fullscreen-volume-slider-thumb"
+PASS appearance: media-fullscreen-volume-slider (invalid)
+PASS appearance: media-fullscreen-volume-slider-thumb (invalid)
 PASS appearance: media-mute-button (invalid)
 PASS appearance: media-overlay-play-button (invalid)
 PASS appearance: media-play-button (invalid)
@@ -219,14 +219,14 @@ PASS appearance: media-return-to-realtime-button (invalid)
 PASS appearance: media-rewind-button (invalid)
 PASS appearance: media-seek-back-button (invalid)
 PASS appearance: media-seek-forward-button (invalid)
-FAIL appearance: media-slider (invalid) assert_equals: style.appearance expected "" but got "media-slider"
-FAIL appearance: media-sliderthumb (invalid) assert_equals: style.appearance expected "" but got "media-sliderthumb"
+PASS appearance: media-slider (invalid)
+PASS appearance: media-sliderthumb (invalid)
 PASS appearance: media-time-remaining-display (invalid)
 PASS appearance: media-toggle-closed-captions-button (invalid)
-FAIL appearance: media-volume-slider (invalid) assert_equals: style.appearance expected "" but got "media-volume-slider"
+PASS appearance: media-volume-slider (invalid)
 PASS appearance: media-volume-slider-container (invalid)
 PASS appearance: media-volume-slider-mute-button (invalid)
-FAIL appearance: media-volume-sliderthumb (invalid) assert_equals: style.appearance expected "" but got "media-volume-sliderthumb"
+PASS appearance: media-volume-sliderthumb (invalid)
 PASS appearance: menuarrow (invalid)
 PASS appearance: menubar (invalid)
 PASS appearance: menucheckbox (invalid)

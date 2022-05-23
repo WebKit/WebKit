@@ -475,20 +475,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case MediaSliderPart:
         m_value.valueID = CSSValueMediaSlider;
         break;
-    case MediaSliderThumbPart:
-        m_value.valueID = CSSValueMediaSliderthumb;
-        break;
     case MediaVolumeSliderPart:
         m_value.valueID = CSSValueMediaVolumeSlider;
         break;
-    case MediaVolumeSliderThumbPart:
-        m_value.valueID = CSSValueMediaVolumeSliderthumb;
-        break;
     case MediaFullScreenVolumeSliderPart:
         m_value.valueID = CSSValueMediaFullscreenVolumeSlider;
-        break;
-    case MediaFullScreenVolumeSliderThumbPart:
-        m_value.valueID = CSSValueMediaFullscreenVolumeSliderThumb;
         break;
     case MenulistPart:
         m_value.valueID = CSSValueMenulist;
@@ -553,6 +544,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
 #endif
+    case MediaFullScreenVolumeSliderThumbPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderThumbPart:
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:

@@ -29,7 +29,7 @@ CSSDocumentation = {
     },
     "-webkit-appearance": {
         "description": "Changes the appearance of buttons and other controls to resemble native controls.",
-        "syntax": "none | button | checkbox | listbox | media-slider | media-sliderthumb | media-volume-slider | media-volume-sliderthumb | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
+        "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
     },
     "-webkit-backdrop-filter": {
         "description": "Applies a filter effect where the first filter in the list takes the element's background image as the input image."

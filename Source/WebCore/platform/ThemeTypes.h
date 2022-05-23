@@ -43,11 +43,8 @@ enum ControlPart {
     DefaultButtonPart,
     ListboxPart,
     MediaFullScreenVolumeSliderPart,
-    MediaFullScreenVolumeSliderThumbPart,
     MediaSliderPart,
-    MediaSliderThumbPart,
     MediaVolumeSliderPart,
-    MediaVolumeSliderThumbPart,
     MenulistPart,
     MenulistButtonPart,
     MeterPart,
@@ -80,6 +77,9 @@ enum ControlPart {
 #if ENABLE(DATALIST_ELEMENT)
     ListButtonPart,
 #endif
+    MediaFullScreenVolumeSliderThumbPart,
+    MediaSliderThumbPart,
+    MediaVolumeSliderThumbPart,
     SearchFieldDecorationPart,
     SearchFieldResultsDecorationPart,
     SearchFieldResultsButtonPart,

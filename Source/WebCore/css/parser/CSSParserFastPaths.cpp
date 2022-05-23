@@ -751,6 +751,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
     case CSSPropertyAppearance: {
+        if (valueID == CSSValueMediaSlider || valueID == CSSValueMediaVolumeSlider || valueID == CSSValueMediaFullscreenVolumeSlider)
+            return isUASheetBehavior(context.mode);
+
         if (valueID == CSSValueDefaultButton)
             return context.useSystemAppearance;
 

@@ -842,11 +842,8 @@ button
 default-button
 listbox
 media-fullscreen-volume-slider
-media-fullscreen-volume-slider-thumb
 media-slider
-media-sliderthumb
 media-volume-slider
-media-volume-sliderthumb
 menulist
 menulist-button
 meter

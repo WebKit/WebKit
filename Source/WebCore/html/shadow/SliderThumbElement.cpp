@@ -595,11 +595,8 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
 
     switch (hostStyle->effectiveAppearance()) {
     case MediaSliderPart:
-    case MediaSliderThumbPart:
     case MediaVolumeSliderPart:
-    case MediaVolumeSliderThumbPart:
     case MediaFullScreenVolumeSliderPart:
-    case MediaFullScreenVolumeSliderThumbPart:
         m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderThumb();
         break;
     default:
@@ -646,11 +643,8 @@ std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(co
 
     switch (hostStyle->effectiveAppearance()) {
     case MediaSliderPart:
-    case MediaSliderThumbPart:
     case MediaVolumeSliderPart:
-    case MediaVolumeSliderThumbPart:
     case MediaFullScreenVolumeSliderPart:
-    case MediaFullScreenVolumeSliderThumbPart:
         m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderContainer();
         break;
     default:
