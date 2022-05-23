@@ -394,9 +394,6 @@ protected:
     virtual void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustMediaControlStyle(RenderStyle&, const Element*) const;
-    virtual bool paintMediaPlayButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual bool paintMediaMuteButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

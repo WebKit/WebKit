@@ -41,7 +41,7 @@ audio {
     flex-direction: column;
 }
 
-audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+:is(audio, video)::-webkit-media-controls-panel {
     display: flex;
     direction: ltr;
     flex-direction: row;
@@ -59,18 +59,15 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 video:-webkit-full-page-media {
     margin: auto;
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
     bottom: 0px;
 }
 
-audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
-    -webkit-appearance: media-mute-button;
+:is(audio, video)::-webkit-media-controls-mute-button,
+:is(audio, video)::-webkit-media-controls-play-button {
     display: flex;
     width: 16px;
     height: 16px;
@@ -79,22 +76,11 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     color: inherit;
 }
 
-audio::-webkit-media-controls-overlay-play-button, video::-webkit-media-controls-overlay-play-button {
+:is(audio, video)::-webkit-media-controls-overlay-play-button {
     display: none;
 }
 
-audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    -webkit-appearance: media-play-button;
-    display: flex;
-    width: 16px;
-    height: 16px;
-    background-color: initial;
-    border: initial;
-    color: inherit;
-}
-
-audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
-    -webkit-appearance: media-controls-background;
+:is(audio, video)::-webkit-media-controls-timeline-container {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -105,15 +91,12 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     min-width: 0;
 }
 
-audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
+:is(audio, video)::-webkit-media-controls-current-time-display,
+:is(audio, video)::-webkit-media-controls-time-remaining-display {
     display: none;
 }
 
-audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
-    display: none;
-}
-
-audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
+:is(audio, video)::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: flex;
     flex: 1 1;
@@ -126,15 +109,17 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     min-width: 0;
 }
 
-audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
+:is(audio, video)::-webkit-media-controls-volume-slider {
     background-color: initial !important;
     border: initial !important;
     color: inherit !important;
     margin: initial !important;
 }
 
-audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
-    -webkit-appearance: media-seek-back-button;
+:is(audio, video)::-webkit-media-controls-seek-back-button,
+:is(audio, video)::-webkit-media-controls-seek-forward-button,
+:is(audio, video)::-webkit-media-controls-fullscreen-button,
+:is(audio, video)::-webkit-media-controls-toggle-closed-captions-button {
     display: flex;
     width: 16px;
     height: 16px;
@@ -143,76 +128,27 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
     color: inherit;
 }
 
-audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
-    -webkit-appearance: media-seek-forward-button;
-    display: flex;
-    width: 16px;
-    height: 16px;
-    background-color: initial;
-    border: initial;
-    color: inherit;
-}
-
-audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-enter-fullscreen-button;
-    display: flex;
-    width: 16px;
-    height: 16px;
-    background-color: initial;
-    border: initial;
-    color: inherit;
-}
-
-audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
+:is(audio, video)::-webkit-media-controls-rewind-button,
+:is(audio, video)::-webkit-media-controls-return-to-realtime-button {
     display: none;
     background-color: initial;
     border: initial;
     color: inherit;
 }
 
-audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
-    display: none;
-    background-color: initial;
-    border: initial;
-    color: inherit;
-}
-
-audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
-    -webkit-appearance: media-toggle-closed-captions-button;
-    display: flex;
-    width: 16px;
-    height: 16px;
-    background-color: initial;
-    border: initial;
-    color: inherit;
-}
-
-audio::-webkit-media-controls-closed-captions-container, video::-webkit-media-controls-closed-captions-container {
+:is(audio, video)::-webkit-media-controls-closed-captions-container,
+:is(audio, video)::-webkit-media-controls-closed-captions-track-list,
+:is(audio, video)::-webkit-media-controls-fullscreen-volume-slider,
+:is(audio, video)::-webkit-media-controls-fullscreen-volume-min-button,
+:is(audio, video)::-webkit-media-controls-fullscreen-volume-max-button {
     display: none;
 }
 
-audio::-webkit-media-controls-closed-captions-track-list, video::-webkit-media-controls-closed-captions-track-list {
-    display: none;
-}
-
-audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button {
-    -webkit-appearance: media-volume-slider-mute-button !important;
+:is(audio, video)::-webkit-media-controls-volume-slider-mute-button {
     display: none !important;
     background-color: initial !important;
     border: initial !important;
     color: inherit !important;
-}
-
-audio::-webkit-media-controls-fullscreen-volume-slider, video::-webkit-media-controls-fullscreen-volume-slider {
-    display: none;
-}
-
-audio::-webkit-media-controls-fullscreen-volume-min-button, video::-webkit-media-controls-fullscreen-volume-min-button {
-    display: none;
-}
-
-audio::-webkit-media-controls-fullscreen-volume-max-button, video::-webkit-media-controls-fullscreen-volume-max-button {
-    display: none;
 }
 
 video::-webkit-media-text-track-container {

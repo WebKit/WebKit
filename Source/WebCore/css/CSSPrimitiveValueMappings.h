@@ -472,9 +472,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ListboxPart:
         m_value.valueID = CSSValueListbox;
         break;
-    case MediaPlayButtonPart:
-        m_value.valueID = CSSValueMediaPlayButton;
-        break;
     case MediaSliderPart:
         m_value.valueID = CSSValueMediaSlider;
         break;
@@ -483,9 +480,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         break;
     case MediaVolumeSliderPart:
         m_value.valueID = CSSValueMediaVolumeSlider;
-        break;
-    case MediaVolumeSliderMuteButtonPart:
-        m_value.valueID = CSSValueMediaVolumeSliderMuteButton;
         break;
     case MediaVolumeSliderThumbPart:
         m_value.valueID = CSSValueMediaVolumeSliderthumb;

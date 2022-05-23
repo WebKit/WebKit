@@ -292,8 +292,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustMenuListStyle(style, element);
     case MenulistButtonPart:
         return adjustMenuListButtonStyle(style, element);
-    case MediaPlayButtonPart:
-        return adjustMediaControlStyle(style, element);
     case MediaSliderPart:
     case MediaVolumeSliderPart:
     case MediaFullScreenVolumeSliderPart:
@@ -546,14 +544,10 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
         return paintSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaPlayButtonPart:
-        return paintMediaPlayButton(box, paintInfo, integralSnappedRect);
     case MediaSliderPart:
         return paintMediaSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaSliderThumbPart:
         return paintMediaSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaVolumeSliderMuteButtonPart:
-        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);    
     case MediaVolumeSliderPart:
         return paintMediaVolumeSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderThumbPart:
@@ -1356,10 +1350,6 @@ bool RenderTheme::shouldHaveCapsLockIndicator(const HTMLInputElement&) const
 }
 
 void RenderTheme::adjustMenuListButtonStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderTheme::adjustMediaControlStyle(RenderStyle&, const Element*) const
 {
 }
 
