@@ -66,7 +66,7 @@ protected:
 private:
     OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
-    unsigned m_baseTypeFlags : 2; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 3; // OptionSet<BaseTypeFlag>
     HorizontalConstraints m_horizontal;
     LayoutUnit m_logicalTop;
 };

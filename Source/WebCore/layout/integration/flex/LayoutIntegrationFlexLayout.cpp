@@ -139,6 +139,7 @@ void FlexLayout::updateRenderers() const
         auto borderBox = Layout::BoxGeometry::borderBoxRect(flexItemGeometry);
         renderer.setLocation(borderBox.topLeft());
         renderer.setWidth(borderBox.width());
+        renderer.setHeight(borderBox.height());
     }
 }
 

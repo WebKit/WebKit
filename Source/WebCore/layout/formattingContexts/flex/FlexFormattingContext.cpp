@@ -209,36 +209,40 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
 
     auto totalGrowth = 0.f;
-    auto totalFixedWidth = LayoutUnit { };
+    auto totalFixedSpace = LayoutUnit { };
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         totalGrowth += logicalFlexItem.layoutBox->style().flexGrow();
         // FIXME: Use min/max here.
-        totalFixedWidth += logicalFlexItem.rect.width();
+        totalFixedSpace += logicalFlexItem.rect.width();
     }
 
+    auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
     auto logicalLeft = LayoutUnit { };
     auto logicalTop = LayoutUnit { };
-    auto availableWidth = constraints.horizontal().logicalWidth;
-    auto flexibleWidth = availableWidth - totalFixedWidth;
+    auto flexDirection = root().style().flexDirection();
+    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+    auto availableSpace = std::optional<LayoutUnit> { flexDirectionIsInlineAxis ? std::make_optional(flexConstraints.horizontal().logicalWidth) : flexConstraints.availableVerticalSpace() };
+    auto flexibleSpace = availableSpace.value_or(0_lu) - totalFixedSpace;
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
         logicalLeft = logicalFlexItem.rect.right();
         auto growFlexItemIfApplicable = [&] {
-            if (flexibleWidth <= 0)
+            if (flexibleSpace <= 0)
                 return;
             auto grow = logicalFlexItem.layoutBox->style().flexGrow();
             if (!grow)
                 return;
             // This value specifies the flex grow factor, which determines how much the flex item will grow relative to the
             // rest of the flex items in the flex container when positive free space is distributed.
-            logicalFlexItem.rect.setWidth(LayoutUnit { availableWidth * grow / totalGrowth });
+            ASSERT(availableSpace.has_value());
+            logicalFlexItem.rect.setWidth(LayoutUnit { *availableSpace * grow / totalGrowth });
             // FIXME: constrain logical width on min width.
         };
         growFlexItemIfApplicable();
     }
-    setFlexItemsGeometry(logicalFlexItemList, downcast<ConstraintsForFlexContent>(constraints));
+    setFlexItemsGeometry(logicalFlexItemList, flexConstraints);
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()
