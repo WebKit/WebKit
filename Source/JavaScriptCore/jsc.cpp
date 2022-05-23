@@ -229,12 +229,13 @@ private:
 
 class Worker : public BasicRawSentinelNode<Worker> {
 public:
-    Worker(Workers&);
+    Worker(Workers&, bool isMain);
     ~Worker();
     
     void enqueue(const AbstractLocker&, RefPtr<Message>);
     RefPtr<Message> dequeue();
-    
+    bool isMain() const { return m_isMain; }
+
     static Worker& current();
 
 private:
@@ -242,6 +243,7 @@ private:
 
     Workers& m_workers;
     Deque<RefPtr<Message>> m_messages;
+    const bool m_isMain;
 };
 
 class Workers {
@@ -1129,16 +1131,19 @@ private:
 
     ShellSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
         : StringSourceProvider(source, sourceOrigin, WTFMove(sourceURL), startPosition, sourceType)
+        // Workers started via $.agent.start are not shut down in a synchronous manner, and it
+        // is possible the main thread terminates the process while a worker is writing its
+        // bytecode cache, which results in intermittent test failures. As $.agent.start is only
+        // a rarely used testing facility, we simply do not cache bytecode on these threads.
+        , m_cacheEnabled(Worker::current().isMain() && !!Options::diskCachePath())
+
     {
     }
 
-    static bool cacheEnabled()
-    {
-        static bool enabled = !!Options::diskCachePath();
-        return enabled;
-    }
+    bool cacheEnabled() const { return m_cacheEnabled; }
 
     mutable RefPtr<CachedBytecode> m_cachedBytecode;
+    const bool m_cacheEnabled;
 };
 
 static inline SourceCode jscSource(const String& source, const SourceOrigin& sourceOrigin, String sourceURL = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
@@ -1925,8 +1930,9 @@ Message::~Message()
 {
 }
 
-Worker::Worker(Workers& workers)
+Worker::Worker(Workers& workers, bool isMain)
     : m_workers(workers)
+    , m_isMain(isMain)
 {
     Locker locker { m_workers.m_lock };
     m_workers.m_workers.append(this);
@@ -3651,7 +3657,7 @@ CommandLine::CommandLine(CommandLineForWorkersTag)
 template<typename Func>
 int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 {
-    Worker worker(Workers::singleton());
+    Worker worker(Workers::singleton(), !isWorker);
     
     VM& vm = VM::create(HeapType::Large).leakRef();
     if (!isWorker && options.m_canBlockIsFalse)
