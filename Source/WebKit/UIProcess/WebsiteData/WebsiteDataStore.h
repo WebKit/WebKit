@@ -161,9 +161,10 @@ public:
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
 
 #if PLATFORM(IOS_FAMILY)
-    String cookieStorageDirectory();
-    String containerCachesDirectory();
-    static String containerTemporaryDirectory();
+    String cookieStorageDirectory() const;
+    String containerCachesDirectory() const;
+    String containerTemporaryDirectory() const;
+    static String defaultContainerTemporaryDirectory();
     static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
 
@@ -429,8 +430,8 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String networkingCachesDirectory();
-    String parentBundleDirectory();
+    String networkingCachesDirectory() const;
+    String parentBundleDirectory() const;
 #endif
 
     const PAL::SessionID m_sessionID;

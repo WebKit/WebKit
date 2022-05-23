@@ -642,15 +642,20 @@ String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& 
     return path;
 }
 
-String WebsiteDataStore::cookieStorageDirectory()
+String WebsiteDataStore::cookieStorageDirectory() const
 {
+    if (!isPersistent())
+        return { };
+
     return cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
 }
 
-String WebsiteDataStore::containerCachesDirectory()
+String WebsiteDataStore::containerCachesDirectory() const
 {
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
+    if (!isPersistent())
+        return { };
 
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
     NSError *error = nil;
     NSString* nsPath = path;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
@@ -661,15 +666,20 @@ String WebsiteDataStore::containerCachesDirectory()
     return path;
 }
 
-String WebsiteDataStore::parentBundleDirectory()
+String WebsiteDataStore::parentBundleDirectory() const
 {
+    if (!isPersistent())
+        return { };
+
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
 
-String WebsiteDataStore::networkingCachesDirectory()
+String WebsiteDataStore::networkingCachesDirectory() const
 {
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
+    if (!isPersistent())
+        return { };
 
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
     NSError *error = nil;
     NSString* nsPath = path;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
@@ -680,7 +690,15 @@ String WebsiteDataStore::networkingCachesDirectory()
     return path;
 }
 
-String WebsiteDataStore::containerTemporaryDirectory()
+String WebsiteDataStore::containerTemporaryDirectory() const
+{
+    if (!isPersistent())
+        return { };
+
+    return defaultContainerTemporaryDirectory();
+}
+
+String WebsiteDataStore::defaultContainerTemporaryDirectory()
 {
     String path = NSTemporaryDirectory();
     return stringByResolvingSymlinksInPath(path);

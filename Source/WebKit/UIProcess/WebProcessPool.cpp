@@ -767,7 +767,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     if (auto directory = websiteDataStore.containerCachesDirectory(); !directory.isEmpty())
         containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
     std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
-    if (auto directory = WebsiteDataStore::containerTemporaryDirectory(); !directory.isEmpty())
+    if (auto directory = websiteDataStore.containerTemporaryDirectory(); !directory.isEmpty())
         containerTemporaryDirectoryExtensionHandle = SandboxExtension::createHandleForReadWriteDirectory(directory);
 #endif
 
