@@ -686,7 +686,7 @@ class ShowIdentifier(shell.ShellCommand):
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+        shell.ShellCommand.__init__(self, timeout=10 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
