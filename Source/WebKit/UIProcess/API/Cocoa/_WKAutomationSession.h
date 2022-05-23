@@ -40,6 +40,7 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 
 @property (nonatomic, weak) id <_WKAutomationSessionDelegate> delegate;
 @property (nonatomic, readonly, getter=isPaired) BOOL paired;
+@property (nonatomic, readonly, getter=isPendingTermination) BOOL pendingTermination WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly, getter=isSimulatingUserInteraction) BOOL simulatingUserInteraction WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 

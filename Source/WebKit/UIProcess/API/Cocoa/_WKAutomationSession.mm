@@ -99,6 +99,11 @@
     return _session->isPaired();
 }
 
+- (BOOL)isPendingTermination
+{
+    return _session->isPendingTermination();
+}
+
 - (BOOL)isSimulatingUserInteraction
 {
     return _session->isSimulatingUserInteraction();
