@@ -3641,3 +3641,5 @@ webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-one-focusring-rect.html 
 webkit.org/b/240659 fast/text/isolate-ignore.html [ Crash ]
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
+
+webkit.org/b/231266 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
