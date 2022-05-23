@@ -107,23 +107,26 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
         return rect;
     });
     
-    if (rectsInContentCoordinates.isEmpty())
-        return std::nullopt;
-
     if (is<RenderBox>(*renderer)) {
         RoundedRect::Radii borderRadii = downcast<RenderBox>(*renderer).borderRadii();
         region.borderRadius = borderRadii.minimumRadius();
     }
 
-    region.rectsInContentCoordinates = rectsInContentCoordinates.map([&](auto rect) {
+    region.rectsInContentCoordinates = compactMap(rectsInContentCoordinates, [&](auto rect) -> std::optional<FloatRect> {
         auto contentsRect = rect;
 
         if (&frameView != &mainFrameView)
             contentsRect.intersect(frameClipRect);
 
+        if (contentsRect.isEmpty())
+            return std::nullopt;
+
         return contentsRect;
     });
-        
+
+    if (region.rectsInContentCoordinates.isEmpty())
+        return std::nullopt;
+
     return region;
 }
 
