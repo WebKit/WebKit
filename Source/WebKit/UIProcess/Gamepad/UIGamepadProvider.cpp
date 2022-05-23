@@ -199,7 +199,7 @@ Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
     });
 }
 
-#if !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX))
+#if !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX)) && !PLATFORM(WPE)
 
 void UIGamepadProvider::platformSetDefaultGamepadProvider()
 {

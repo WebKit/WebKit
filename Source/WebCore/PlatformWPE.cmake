@@ -139,3 +139,9 @@ if (USE_LIBGBM)
         ${LIBDRM_LIBRARIES}
     )
 endif ()
+
+if (ENABLE_GAMEPAD)
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/gamepad/wpe/WPEGamepadProvider.h
+    )
+endif ()
