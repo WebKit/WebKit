@@ -100,7 +100,7 @@ static const String& fullyQualifiedInfoTableName()
     static LazyNeverDestroyed<String> qualifiedName;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        qualifiedName.get() = MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__");
+        qualifiedName.construct(MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__"));
     });
     return qualifiedName;
 }
