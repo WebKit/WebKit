@@ -1653,6 +1653,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 } else {
                     for (let entry of collection.entries)
                         entry.currentSession = false;
+
+                    for (let resource of collection.pendingInsertions)
+                        resource[WI.NetworkTableContentView._currentSessionSymbol] = false;
                 }
             }
 
@@ -1904,7 +1907,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             remoteAddress: resource.displayRemoteAddress,
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
-            currentSession: true,
+            currentSession: resource[WI.NetworkTableContentView._currentSessionSymbol] ?? true,
         };
     }
 
@@ -2533,3 +2536,5 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._transitioningPageTarget = true;
     }
 };
+
+WI.NetworkTableContentView._currentSessionSymbol = Symbol("current-session");
