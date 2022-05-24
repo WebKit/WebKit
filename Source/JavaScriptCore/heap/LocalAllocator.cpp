@@ -32,6 +32,7 @@
 #include "LocalAllocatorInlines.h"
 #include "Options.h"
 #include "SuperSampler.h"
+#include "wtf/RawPointer.h"
 
 namespace JSC {
 
@@ -223,8 +224,7 @@ void* LocalAllocator::allocateIn(MarkedBlock::Handle* block)
 void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block)
 {
     ASSERT(block);
-    ASSERT(!block->isFreeListed());
-    
+
     block->sweep(&m_freeList);
     
     // It's possible to stumble on a completely full block. Marking tries to retire these, but

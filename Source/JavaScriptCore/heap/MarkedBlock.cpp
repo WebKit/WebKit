@@ -387,7 +387,21 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     
     SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
     
-    m_directory->setIsUnswept(NoLockingNecessary, this, false);
+    {
+        Locker locker { blockFooter().m_lock };
+
+        // The parallel sweeper built our freelist for us
+        if (isFreeListed())  {
+            ASSERT(!m_directory->isUnswept(NoLockingNecessary, this));
+            ASSERT(m_weakSet.isEmpty());
+            ASSERT(m_attributes.destruction != NeedsDestruction);
+            if (true)
+                dataLogLn("Sweeping (with freelist) block ", RawPointer(atomAt(0)), " which was freelisted by the concurrent sweeper");
+            return;
+        }
+
+        m_directory->setIsUnswept(NoLockingNecessary, this, false);
+    }
     
     m_weakSet.sweep();
     
@@ -407,7 +421,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    if (space()->isMarking())
+    // if (space()->isMarking())
         blockFooter().m_lock.lock();
     
     subspace()->didBeginSweepingToFreeList(this);
@@ -468,16 +482,31 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
 
 void MarkedBlock::Handle::sweepInParallel()
 {
-    // SweepingScope sweepingScope(*heap());
-    
-    if (!m_weakSet.isEmpty())
+    // We are unswept => the allocator fast path won't touch us
+    // We are unswept => sweep() is not being called, or if it is, we will see that we are swept when we grab the lock.
+    // The marker might mess us up?
+    blockFooter().m_lock.lock();
+
+    // Did we race against the mutator / incremental sweeper?
+    if (!m_directory->isUnswept(NoLockingNecessary, this)
+        // FIXME: We can never shrink the weak set off the mutator thread.
+        || !m_weakSet.isEmpty()) {
+        blockFooter().m_lock.unlock();
         return;
-    
+    }
+
+    // SweepingScope sweepingScope(*heap());
+
+    // Why do we check isDestructible?
     bool needsDestruction = m_attributes.destruction == NeedsDestruction
+        // needs cas?
         && m_directory->isDestructible(NoLockingNecessary, this);
 
-    if (needsDestruction)
-        return;
+    if (needsDestruction) {
+        // Our directory shouldn't need destruction.
+        dataLog("FATAL(p): ", RawPointer(this), "->sweep: block has destructors.\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     if (m_isFreeListed) {
         dataLog("FATAL(p): ", RawPointer(this), "->sweep: block is free-listed.\n");
@@ -489,9 +518,13 @@ void MarkedBlock::Handle::sweepInParallel()
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    if (false)
-        dataLogLn("*****Sweeping ", RawPointer(atomAt(0)));
+    if (true)
+        dataLogLn("Sweeping in parallel: ", RawPointer(atomAt(0)));
     m_directory->setIsUnswept(NoLockingNecessary, this, false);
+
+    // FIXME: Build freelist?
+
+    blockFooter().m_lock.unlock();
 }
 
 bool MarkedBlock::Handle::isFreeListedCell(const void* target) const

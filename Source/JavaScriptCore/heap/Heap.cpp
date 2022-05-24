@@ -297,6 +297,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_helperClient(&heapHelperPool())
+    , m_sweeperClient(&heapSweeperPool())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 
@@ -378,7 +379,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     m_worldState.store(0);
 
     auto numberOfParallelThreads = heapHelperPool().numberOfThreads();
-    for (unsigned i = 0; i < numberOfParallelThreads - 1; ++i) {
+    for (unsigned i = 0; i < numberOfParallelThreads; ++i) {
         std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toCString("P", i + 1));
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
@@ -386,7 +387,7 @@ Heap::Heap(VM& vm, HeapType heapType)
         m_parallelSlotVisitors.append(WTFMove(visitor));
     }
 
-    for (unsigned i = numberOfParallelThreads - 1; i < numberOfParallelThreads; ++i) {
+    for (unsigned i = 0; i < heapSweeperPool().numberOfThreads(); ++i) {
         m_parallelSweepers.append(ParallelSweeper { this });
         m_availableParallelSweepers.append(&m_parallelSweepers.last());
     }
@@ -1322,6 +1323,40 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
 
 NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 {
+    if (!m_sweeperClient.numberOfActiveThreads()) {
+        m_parallelSweepersShouldExit = false;
+        m_sweeperClient.setFunction(
+            [this] () {
+                ParallelSweeper* sweeper = nullptr;
+                {
+                    Locker locker { m_parallelSlotVisitorLock };
+                    RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSweepers.isEmpty(), "Parallel sweepers are allocated apriori");
+                    sweeper = m_availableParallelSweepers.takeLast();
+                }
+
+                Thread::registerGCThread(GCThreadType::Helper);
+
+                if (true)
+                    dataLogLn("Start executing sweeper: ", RawPointer(sweeper));
+
+                while (!m_parallelSweepersShouldExit) {
+                    sweeper->startSweeping(*this);
+                    while (sweeper->sweepNextBlockInParallel(this->vm()) && !m_parallelSweepersShouldExit);
+                    sweeper->stopSweeping();
+
+                    // todo: sleep
+                }
+
+                if (true)
+                    dataLogLn("Done executing sweeper: ", RawPointer(sweeper));
+
+                {
+                    Locker locker { m_parallelSlotVisitorLock };
+                    m_availableParallelSweepers.append(sweeper);
+                }
+            });
+    }
+
     // Check m_requests since the mutator calls this to poll what's going on.
     {
         Locker locker { *m_threadLock };
@@ -1387,37 +1422,23 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     m_helperClient.setFunction(
         [this] () {
             SlotVisitor* visitor = nullptr;
-            ParallelSweeper* sweeper = nullptr;
             {
                 Locker locker { m_parallelSlotVisitorLock };
-                if (!m_availableParallelSweepers.isEmpty())
-                    sweeper = m_availableParallelSweepers.takeLast();
-                else {
-                    RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
-                    visitor = m_availableParallelSlotVisitors.takeLast();
-                }
+                RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
+                visitor = m_availableParallelSlotVisitors.takeLast();
             }
 
             Thread::registerGCThread(GCThreadType::Helper);
 
-            if (visitor) {
-                ParallelModeEnabler parallelModeEnabler(*visitor);
-                visitor->drainFromShared(SlotVisitor::HelperDrain);
-            } else {
-                sweeper->startSweeping(*this);
-                while (sweeper->sweepNextBlockInParallel(this->vm()) && !m_parallelMarkersShouldExit);
-                sweeper->stopSweeping();
-            }
+            ParallelModeEnabler parallelModeEnabler(*visitor);
+            visitor->drainFromShared(SlotVisitor::HelperDrain);
 
             if (false)
-                dataLogLn("Done executing visitor/sweeper: ", RawPointer(visitor), " ", RawPointer(sweeper));
+                dataLogLn("Done executing visitor: ", RawPointer(visitor));
 
             {
                 Locker locker { m_parallelSlotVisitorLock };
-                if (visitor)
-                    m_availableParallelSlotVisitors.append(visitor);
-                else
-                    m_availableParallelSweepers.append(sweeper);
+                m_availableParallelSlotVisitors.append(visitor);
             }
         });
 
@@ -1587,7 +1608,9 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_parallelMarkersShouldExit = true;
         m_markingConditionVariable.notifyAll();
     }
+    m_parallelSweepersShouldExit = true;
     m_helperClient.finish();
+    m_sweeperClient.finish();
     
     ASSERT(m_mutatorMarkStack->isEmpty());
     ASSERT(m_raceMarkStack->isEmpty());

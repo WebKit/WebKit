@@ -30,5 +30,6 @@
 namespace JSC {
 
 ParallelHelperPool& heapHelperPool();
+ParallelHelperPool& heapSweeperPool();
 
 } // namespace JSC

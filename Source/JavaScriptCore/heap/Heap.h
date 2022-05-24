@@ -855,6 +855,7 @@ private:
     static constexpr size_t s_blockFragmentLength = 32;
 
     ParallelHelperClient m_helperClient;
+    ParallelHelperClient m_sweeperClient;
     RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask;
 
 #if ENABLE(RESOURCE_USAGE)
@@ -916,6 +917,7 @@ private:
 #endif
 
     bool m_parallelMarkersShouldExit { false };
+    bool m_parallelSweepersShouldExit { false };
     Lock m_collectContinuouslyLock;
     Condition m_collectContinuouslyCondition;
 

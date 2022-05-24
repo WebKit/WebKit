@@ -44,7 +44,25 @@ ParallelHelperPool& heapHelperPool()
             const char* threadName = "Heap Helper Thread";
 #endif
             helperPool = new ParallelHelperPool(threadName);
-            helperPool->ensureThreads(Options::numberOfGCMarkers() - 1 + 1);
+            helperPool->ensureThreads(Options::numberOfGCMarkers() - 1);
+        });
+    return *helperPool;
+}
+
+ParallelHelperPool& heapSweeperPool()
+{
+    static std::once_flag initializeHelperPoolOnceFlag;
+    static ParallelHelperPool* helperPool;
+    std::call_once(
+        initializeHelperPoolOnceFlag,
+        [] {
+#if OS(LINUX)
+            const char* threadName = "HeapSweeperHelper";
+#else
+            const char* threadName = "Heap Sweeper Thread";
+#endif
+            helperPool = new ParallelHelperPool(threadName);
+            helperPool->ensureThreads(1);
         });
     return *helperPool;
 }

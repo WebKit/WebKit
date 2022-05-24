@@ -287,7 +287,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         
         if (sweepMode == SweepToFreeList)
             setIsFreeListed();
-        if (space()->isMarking())
+        // if (space()->isMarking())
             footer.m_lock.unlock();
         if (destructionMode != BlockHasNoDestructors) {
             for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
@@ -345,7 +345,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
         footer.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
     
-    if (space()->isMarking())
+    // if (space()->isMarking())
         footer.m_lock.unlock();
     
     if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
