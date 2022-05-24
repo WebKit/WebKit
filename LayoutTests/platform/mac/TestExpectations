@@ -89,6 +89,11 @@ imported/w3c/web-platform-tests/speech-api [ Pass ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# webkit.org/b/240843
+fast/images/animated-heics-draw.html [ Pass ]
+fast/images/animated-heics-verify.html [ Pass ]
+fast/images/heic-as-background-image.html [ Pass ]
+
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html [ Failure ]
 
@@ -1457,10 +1462,6 @@ webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-tim
 webaudio/oscillator-sine.html [ Skip ]
 
 webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
-
-# <rdar://problem/88980849>
-fast/images/animated-heics-draw.html [ Skip ]
-fast/images/animated-heics-verify.html [ Skip ]
 
 # <rdar://problem/40172428>
 fast/text/woff2.html [ Pass ImageOnlyFailure ]

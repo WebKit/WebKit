@@ -70,6 +70,7 @@ WEBCORE_EXPORT void clearApplicationBundleIdentifierTestingOverride();
 namespace CocoaApplication {
 
 WEBCORE_EXPORT bool isIBooks();
+WEBCORE_EXPORT bool isWebkitTestRunner();
 
 }
 

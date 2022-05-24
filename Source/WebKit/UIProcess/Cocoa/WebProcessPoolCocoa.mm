@@ -398,13 +398,13 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    if (MacApplication::isAppleMail()) {
+    if (MacApplication::isAppleMail() || CocoaApplication::isWebkitTestRunner()) {
         if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
             parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
         parameters.restrictImageAndVideoDecoders = true;
     }
 #else
-    parameters.restrictImageAndVideoDecoders = IOSApplication::isMobileMail() || IOSApplication::isMailCompositionService();
+    parameters.restrictImageAndVideoDecoders = IOSApplication::isMobileMail() || IOSApplication::isMailCompositionService() || CocoaApplication::isWebkitTestRunner();
 #endif // PLATFORM(MAC)
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
 

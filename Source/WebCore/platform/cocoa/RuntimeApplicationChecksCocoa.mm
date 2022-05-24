@@ -102,6 +102,12 @@ bool CocoaApplication::isIBooks()
     return isIBooks;
 }
 
+bool CocoaApplication::isWebkitTestRunner()
+{
+    static bool isWebkitTestRunner = applicationBundleIsEqualTo("com.apple.WebKit.WebKitTestRunner"_s);
+    return isWebkitTestRunner;
+}
+
 #if PLATFORM(MAC)
 
 bool MacApplication::isSafari()
