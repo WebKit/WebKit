@@ -26,10 +26,13 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
+#include "CommonAtomStrings.h"
 #include "Editing.h"
 #include "ElementInlines.h"
 #include "HTMLBRElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLNames.h"
+#include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "RenderListItem.h"
 #include "Text.h"
@@ -67,17 +70,34 @@ void BreakBlockquoteCommand::doApply()
     Position pos = endingSelection().start().downstream();
     
     // Find the top-most blockquote from the start.
-    Node* topBlockquote = highestEnclosingNodeOfType(pos, isMailBlockquote);
+    RefPtr topBlockquote = highestEnclosingNodeOfType(pos, isMailBlockquote);
     if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
         return;
-    
-    auto breakNode = HTMLBRElement::create(document());
 
-    bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote);
+    auto breakNode = [&]() -> Ref<HTMLElement> {
+        auto lineBreak = HTMLBRElement::create(document());
+        RefPtr containerNode = pos.containerNode();
+        if (!containerNode || !containerNode->renderStyle())
+            return lineBreak;
+
+        auto* parentStyle = topBlockquote->parentNode()->renderStyle();
+        if (!parentStyle)
+            return lineBreak;
+
+        if (parentStyle->direction() == containerNode->renderStyle()->direction())
+            return lineBreak;
+
+        auto container = HTMLDivElement::create(document());
+        container->setDir(autoAtom());
+        container->appendChild(lineBreak);
+        return container;
+    }();
+
+    bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote.get());
 
     // If the position is at the beginning of the top quoted content, we don't need to break the quote.
     // Instead, insert the break before the blockquote, unless the position is as the end of the quoted content.
-    if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
+    if (isFirstVisiblePositionInNode(visiblePos, topBlockquote.get()) && !isLastVisPosInNode) {
         insertNodeBefore(breakNode.copyRef(), *topBlockquote);
         setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
         rebalanceWhitespace();   
