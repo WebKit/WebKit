@@ -1029,6 +1029,8 @@ localizedStrings["No request, served from the disk cache."] = "No request, serve
 localizedStrings["No request, served from the memory cache."] = "No request, served from the memory cache.";
 localizedStrings["No response cookies."] = "No response cookies.";
 localizedStrings["No response headers"] = "No response headers";
+/* Placeholder text shown when there are no images to display in the Screenshots timeline. */
+localizedStrings["No screenshots @ Screenshots Timeline"] = "No screenshots";
 localizedStrings["No search results"] = "No search results";
 localizedStrings["No search string"] = "No search string";
 localizedStrings["Node"] = "Node";

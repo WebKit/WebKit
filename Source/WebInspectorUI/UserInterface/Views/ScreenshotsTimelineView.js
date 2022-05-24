@@ -79,6 +79,9 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
                 this._selectTimelineRecord(record);
             });
         }        
+
+        if (!this.element.childNodes.length)
+            this.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
     }
 
     selectRecord(record)
