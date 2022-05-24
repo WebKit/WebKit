@@ -3266,7 +3266,7 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
         if (intrinsicContentHeight)
             return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
-        return intrinsicContentHeight;
+        return std::nullopt;
     }
     if (logicalHeightLength.isFillAvailable())
         return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
@@ -3276,8 +3276,13 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
 
 std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (height.isAuto())
-        return heightType == MinSize ? std::optional<LayoutUnit>(0) : std::nullopt;
+    if (height.isAuto()) {
+        if (heightType != MinSize)
+            return std::nullopt;
+        if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->shouldApplyMinBlockSizeAutoForChild(*this))
+            return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
+        return std::optional<LayoutUnit>(0);
+    }
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (height.isIntrinsic() || height.isLegacyIntrinsic())

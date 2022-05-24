@@ -91,6 +91,8 @@ public:
     enum class GapType { BetweenLines, BetweenItems };
     LayoutUnit computeGap(GapType) const;
 
+    bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
