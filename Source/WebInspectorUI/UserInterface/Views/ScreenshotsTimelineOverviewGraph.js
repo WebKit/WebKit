@@ -72,8 +72,10 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
 
             imageElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
             imageElement.addEventListener("click", (event) => {
+                // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
+                event.__timelineRecordClickEventHandled = true;
+
                 this.selectedRecord = record;
-                event.stopPropagation();
             });
         }
     }
