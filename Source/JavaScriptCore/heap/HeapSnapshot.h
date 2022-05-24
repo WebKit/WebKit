@@ -52,7 +52,7 @@ private:
     static constexpr intptr_t CellToSweepTag = 1;
 
     Vector<HeapSnapshotNode> m_nodes;
-    TinyBloomFilter m_filter;
+    TinyBloomFilter<uintptr_t> m_filter;
     HeapSnapshot* m_previous { nullptr };
     unsigned m_firstObjectIdentifier { 0 };
     unsigned m_lastObjectIdentifier { 0 };

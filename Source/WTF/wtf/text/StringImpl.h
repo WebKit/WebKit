@@ -48,6 +48,12 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
+#if HAVE(36BIT_ADDRESS)
+#define STRING_IMPL_SHAPE_16BYTE_ALIGNMENT alignas(16)
+#else
+#define STRING_IMPL_SHAPE_16BYTE_ALIGNMENT
+#endif
+
 namespace JSC {
 namespace LLInt { class Data; }
 class LLIntOffsetsExtractor;
@@ -132,7 +138,7 @@ struct StringStats {
 
 #endif
 
-class StringImplShape {
+class STRING_IMPL_SHAPE_16BYTE_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
