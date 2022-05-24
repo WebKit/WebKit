@@ -65,10 +65,7 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
         return;
 
     auto* image = cachedImage->image();
-    if (!image || image->isNull())
-        return;
-
-    if (renderer.size().width() < minimumWidthForAnalysis || renderer.size().height() < minimumHeightForAnalysis)
+    if (!image || image->width() < minimumWidthForAnalysis || image->height() < minimumHeightForAnalysis)
         return;
 
     bool shouldAddToQueue = [&] {
