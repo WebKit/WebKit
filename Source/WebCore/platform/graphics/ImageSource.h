@@ -51,7 +51,7 @@ public:
         return adoptRef(*new ImageSource(image, alphaOption, gammaAndColorProfileOption));
     }
 
-    static Ref<ImageSource> create(RefPtr<NativeImage>&& nativeImage)
+    static Ref<ImageSource> create(Ref<NativeImage>&& nativeImage)
     {
         return adoptRef(*new ImageSource(WTFMove(nativeImage)));
     }
@@ -62,9 +62,7 @@ public:
     bool isAllDataReceived();
 
     unsigned decodedSize() const { return m_decodedSize; }
-    void destroyAllDecodedData() { destroyDecodedData(frameCount(), frameCount()); }
-    void destroyAllDecodedDataExcludeFrame(size_t excludeFrame) { destroyDecodedData(frameCount(), excludeFrame); }
-    void destroyDecodedDataBeforeFrame(size_t beforeFrame) { destroyDecodedData(beforeFrame, beforeFrame); }
+    void destroyDecodedData(size_t begin, size_t end);
     void destroyIncompleteDecodedData();
     void clearFrameBufferCache(size_t beforeFrame);
 
@@ -128,7 +126,7 @@ public:
 
 private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
-    ImageSource(RefPtr<NativeImage>&&);
+    ImageSource(Ref<NativeImage>&&);
 
     enum class MetadataType {
         AccessibilityDescription    = 1 << 0,
@@ -153,7 +151,6 @@ private:
 
     bool ensureDecoderAvailable(FragmentedSharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
-    void destroyDecodedData(size_t frameCount, size_t excludeFrame);
     void decodedSizeChanged(long long decodedSize);
     void didDecodeProperties(unsigned decodedPropertiesSize);
     void decodedSizeIncreased(unsigned decodedSize);
@@ -161,7 +158,7 @@ private:
     void decodedSizeReset(unsigned decodedSize);
     void encodedDataStatusChanged(EncodedDataStatus);
 
-    void setNativeImage(RefPtr<NativeImage>&&);
+    void setNativeImage(Ref<NativeImage>&&);
     void cacheMetadataAtIndex(size_t, SubsamplingLevel, DecodingStatus = DecodingStatus::Invalid);
     void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
     void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus);
