@@ -1,3 +1,69 @@
+2022-05-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r294280. rdar://problem/87980543
+
+    REGRESSION(r249162): CanvasRenderingContext2DBase::drawImage() crashes if the image is animated and the first frame cannot be decoded
+    https://bugs.webkit.org/show_bug.cgi?id=239113
+    rdar://87980543
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    CanvasRenderingContext2DBase::drawImage() needs to ensure the first frame
+    of the animated image can be decoded correctly before creating the temporary
+    static image. If the first frame can't be decoded, this function should return
+    immediately. This matches the behavior of this function before r249162.
+    
+    The animated image decodes its frames asynchronously in a work queue. But
+    the first frame has to be decoded synchronously in the main run loop. So
+    to avoid running the image decoder in two different threads we are going
+    to keep the first and the current frame cached when we receive a memory
+    pressure warning. This should not increase the memory allocation of the
+    animated image because the numbers of cached frames increases quickly and
+    we keep all of them till a memory warning is received. But the memory
+    pressure warning will be received a little bit more often. This depends
+    on the memory size of the first frame.
+    
+    To make the code more robust, make ImageSource take a Ref<NativeImage>
+    instead of taking a RefPtr<NativeImage>.
+    
+    * html/canvas/CanvasRenderingContext2DBase.cpp:
+    (WebCore::CanvasRenderingContext2DBase::drawImage):
+    * platform/graphics/BitmapImage.cpp:
+    (WebCore::BitmapImage::BitmapImage):
+    (WebCore::BitmapImage::destroyDecodedData):
+    * platform/graphics/BitmapImage.h:
+    * platform/graphics/ImageSource.cpp:
+    (WebCore::ImageSource::ImageSource):
+    (WebCore::ImageSource::destroyDecodedData):
+    (WebCore::ImageSource::setNativeImage):
+    * platform/graphics/ImageSource.h:
+    (WebCore::ImageSource::create):
+    (WebCore::ImageSource::isDecoderAvailable const):
+    (WebCore::ImageSource::destroyAllDecodedData): Deleted.
+    (WebCore::ImageSource::destroyAllDecodedDataExcludeFrame): Deleted.
+    (WebCore::ImageSource::destroyDecodedDataBeforeFrame): Deleted.
+    
+    Source/WebKit:
+    
+    * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+    (WebKit::RemoteDisplayListRecorder::drawSystemImage):
+    
+    Canonical link: https://commits.webkit.org/250624@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294280 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-16  Said Abou-Hallawa  <said@apple.com>
+
+            REGRESSION(r249162): CanvasRenderingContext2DBase::drawImage() crashes if the image is animated and the first frame cannot be decoded
+            https://bugs.webkit.org/show_bug.cgi?id=239113
+            rdar://87980543
+
+            Reviewed by Simon Fraser.
+
+            * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+            (WebKit::RemoteDisplayListRecorder::drawSystemImage):
+
 2022-05-02  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/92617943
