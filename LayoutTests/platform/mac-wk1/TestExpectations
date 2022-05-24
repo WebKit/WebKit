@@ -1842,3 +1842,6 @@ webgl [ Skip ]
 
 webkit.org/b/231298 accessibility/mac/selection-boundary-userinfo.html [ Failure ]
 webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]
+
+webkit.org/b/240841 fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
+webkit.org/b/240841 fast/forms/textarea-scrolled-endline-caret.html [ Pass Failure ]
