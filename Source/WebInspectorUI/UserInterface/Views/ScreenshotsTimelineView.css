@@ -34,9 +34,10 @@
     max-width: calc(80% - (var(--margin) * 2));
     max-height: calc(100% - (var(--margin) * 2));
     margin: var(--margin);
-    border: 2px solid transparent;
+    box-shadow: var(--shadow);
 
     --margin: 20px;
+    --shadow: 1px 2px 6px rgba(0, 0, 0, 0.58);
 }
 
 .timeline-view.screenshots > img + img {
@@ -44,7 +45,7 @@
 }
 
 .timeline-view.screenshots > img.selected {
-    border-color: var(--glyph-color-active);
+    box-shadow: 0 0 0 2px var(--glyph-color-active), var(--shadow);
     scroll-snap-align: center;
 }
 
