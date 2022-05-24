@@ -150,10 +150,6 @@ private:
     void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
-#if ENABLE(VIDEO)
-    bool supportsClosedCaptioning() const final { return true; }
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const final;
     int attachmentBaseline(const RenderAttachment&) const final;

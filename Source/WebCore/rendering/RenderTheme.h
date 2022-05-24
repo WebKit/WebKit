@@ -206,23 +206,6 @@ public:
     virtual Seconds animationDurationForProgressBar(const RenderProgress&) const;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
 
-#if ENABLE(VIDEO)
-    // Media controls
-    virtual bool supportsClosedCaptioning() const { return false; }
-    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return false; }
-    virtual bool usesMediaControlStatusDisplay() { return false; }
-    virtual bool usesMediaControlVolumeSlider() const { return true; }
-    virtual bool usesVerticalVolumeSlider() const { return true; }
-    virtual double mediaControlsFadeInDuration() { return 0.1; }
-    virtual Seconds mediaControlsFadeOutDuration() { return 300_ms; }
-    virtual String formatMediaControlsTime(float time) const;
-    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-    virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
-    
-    // Returns the media volume slider container's offset from the mute button.
-    virtual LayoutPoint volumeSliderOffsetFromMuteButton(const RenderBox&, const LayoutSize&) const;
-#endif
-
     virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const;
     virtual bool supportsMeter(ControlPart, const HTMLMeterElement&) const;
 

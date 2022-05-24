@@ -698,43 +698,6 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     }
 }
 
-#if ENABLE(VIDEO)
-
-String RenderTheme::formatMediaControlsTime(float time) const
-{
-    if (!std::isfinite(time))
-        time = 0;
-    // FIXME: Seems like it would be better to use std::lround here.
-    int seconds = static_cast<int>(std::abs(time));
-    int hours = seconds / (60 * 60);
-    int minutes = (seconds / 60) % 60;
-    seconds %= 60;
-    if (hours)
-        return makeString((time < 0 ? "-" : ""), hours, ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString((time < 0 ? "-" : ""), pad('0', 2, minutes), ':', pad('0', 2, seconds));
-}
-
-String RenderTheme::formatMediaControlsCurrentTime(float currentTime, float /*duration*/) const
-{
-    return formatMediaControlsTime(currentTime);
-}
-
-String RenderTheme::formatMediaControlsRemainingTime(float currentTime, float duration) const
-{
-    return formatMediaControlsTime(currentTime - duration);
-}
-
-LayoutPoint RenderTheme::volumeSliderOffsetFromMuteButton(const RenderBox& muteButtonBox, const LayoutSize& size) const
-{
-    LayoutUnit y = -size.height();
-    FloatPoint absPoint = muteButtonBox.localToAbsolute(FloatPoint(muteButtonBox.offsetLeft(), y), { IsFixed, UseTransforms });
-    if (absPoint.y() < 0)
-        y = muteButtonBox.height();
-    return LayoutPoint(0_lu, y);
-}
-
-#endif
-
 Color RenderTheme::activeSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
     auto& cache = colorCache(options);

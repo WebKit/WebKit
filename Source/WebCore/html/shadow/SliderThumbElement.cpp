@@ -77,7 +77,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
     const RenderStyle& sliderStyle = input.renderer()->style();
 
 #if ENABLE(VIDEO)
-    if (sliderStyle.effectiveAppearance() == MediaVolumeSliderPart && input.renderer()->theme().usesVerticalVolumeSlider())
+    if (sliderStyle.effectiveAppearance() == MediaVolumeSliderPart)
         return true;
 #endif
 
