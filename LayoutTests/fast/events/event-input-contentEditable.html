@@ -67,12 +67,18 @@ document.execCommand("delete", false);
 var target4 = setupForFiringTest('<p id="target4" contentEditable>This text should be a link.</p>', "<a href=\"http://www.example.com/\">This text should be a link.</a>");
 document.execCommand("createLink", false, "http://www.example.com/");
 
-// An event shouldn't be dispatched to a 'display:none' node.
-var target5 = makeTestTarget('<p id="target5" contentEditable>This will not be rendered.</p>');
-target5.addEventListener("input", function(evt) { testFailed("should not be reached"); });
-sel.selectAllChildren(target5);
-target5.style.display = "none";
+// An event should be dispatched to a 'display:none' node.
+var target5A = setupForFiringTest('<p id="target5A" contentEditable>This will not be rendered.</p>', 'Text');
+sel.selectAllChildren(target5A);
+target5A.style.display = "none";
 document.execCommand("insertText", false, "Text");
+
+// An event should be dispatched to a child of a 'display:none' node.
+var target5B = setupForFiringTest('<p id="target5B" contentEditable>This <span id="target5BDestination">replace</span> will not be rendered.</p>', 'This <span id="target5BDestination">text</span> will not be rendered.');
+var target5BDestination = document.getElementById("target5BDestination");
+sel.selectAllChildren(target5BDestination);
+target5B.style.display = "none";
+document.execCommand("insertText", false, "text");
 
 // The event should be dispatched from the editable root.
 makeTestTarget('<p id="target6parent" contentEditable><span id="target6start">Start,</span><span id="target6middle">Middle,</span><span id="target6end">End.</span></p>');

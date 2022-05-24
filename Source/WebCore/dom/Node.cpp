@@ -764,8 +764,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         auto* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
         if (!style)
             continue;
-        if (style->display() == DisplayType::None)
-            continue;
+
         // Elements with user-select: all style are considered atomic
         // therefore non editable.
         if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->effectiveUserSelect() == UserSelect::All)
