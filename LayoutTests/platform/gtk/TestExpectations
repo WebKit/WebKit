@@ -1574,9 +1574,6 @@ webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure
 
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 
-# Crash is bug #186251
-webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
-
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]

@@ -8,17 +8,17 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 784x40
             RenderTableRow {TR} at (0,2) size 784x36 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (2,5) size 79x33 [r=0 c=0 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 73x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (3,3) size 73x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 57x18
                     RenderText at (0,0) size 57x17
                       text run at (0,0) width 57: "Select all"
               RenderTableCell {TD} at (83,5) size 63x33 [r=0 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 57x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (3,3) size 57x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 41x18
                     RenderText at (0,0) size 41x17
                       text run at (0,0) width 41: "Delete"
               RenderTableCell {TD} at (148,5) size 98x33 [r=0 c=2 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 92x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (3,3) size 92x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 76x18
                     RenderText at (0,0) size 76x17
                       text run at (0,0) width 76: "Empty trash"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 4x17
                   text run at (1,1) width 4: " "
               RenderTableCell {TD} at (574,5) size 79x33 [r=0 c=4 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 73x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (3,3) size 73x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 57x18
                     RenderText at (0,0) size 57x17
                       text run at (0,0) width 57: "Move to:"

@@ -389,6 +389,8 @@ webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
 
+webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
+
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
