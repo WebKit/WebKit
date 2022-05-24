@@ -918,6 +918,7 @@ private:
 
     bool m_parallelMarkersShouldExit { false };
     bool m_parallelSweepersShouldExit { false };
+    bool m_parallelSweepersWillRunSoon { false };
     Lock m_collectContinuouslyLock;
     Condition m_collectContinuouslyCondition;
 

@@ -112,30 +112,30 @@ void ParallelSweeper::startSweeping(Heap& heap)
     if (false)
         dataLogLn("Start sweeping in parallel");
     m_currentDirectory = heap.objectSpace().firstDirectory();
+    m_unsweptCursor = 0;
 }
 
 bool ParallelSweeper::sweepNextBlockInParallel(VM&)
-{
-    if (false)
-        dataLogLn("Sweeping block in parallel?");
-    MarkedBlock::Handle* block = nullptr;
-    
+{    
     for (; m_currentDirectory; m_currentDirectory = m_currentDirectory->nextDirectory()) {
         if (m_currentDirectory->needsDestruction())
             continue;
-        block = m_currentDirectory->findBlockToSweep();
-        if (block)
-            break;
+        
+        Locker locker { m_currentDirectory->bitvectorLock() };
+        auto* block = m_currentDirectory->findBlockToSweep(m_unsweptCursor);
+
+        if (!block) {
+            m_unsweptCursor = 0;
+            continue;
+        }
+
+        if (false)
+            dataLogLn("Sweeping block in parallel ", RawPointer(block->atomAt(0)));
+        block->sweepInParallel(locker);
+        return true;
     }
     
-    if (!block)
-        return false;
-    if (false)
-        dataLogLn("Sweeping block in parallel ", RawPointer(block->atomAt(0)));
-    
-    block->sweepInParallel();
-
-    return true;
+    return false;
 }
 
 void ParallelSweeper::stopSweeping()

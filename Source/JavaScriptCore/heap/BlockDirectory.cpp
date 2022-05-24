@@ -293,12 +293,12 @@ void BlockDirectory::snapshotUnsweptForFullCollection()
     m_bits.unswept() = m_bits.live();
 }
 
-MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
+MarkedBlock::Handle* BlockDirectory::findBlockToSweep(unsigned& cursor)
 {
-    m_unsweptCursor = m_bits.unswept().findBit(m_unsweptCursor, true);
-    if (m_unsweptCursor >= m_blocks.size())
+    cursor = m_bits.unswept().findBit(cursor, true);
+    if (cursor >= m_blocks.size())
         return nullptr;
-    return m_blocks[m_unsweptCursor];
+    return m_blocks[cursor];
 }
 
 void BlockDirectory::sweep()

@@ -131,7 +131,8 @@ public:
     
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
-    MarkedBlock::Handle* findBlockToSweep();
+    MarkedBlock::Handle* findBlockToSweep(unsigned& cursor);
+    MarkedBlock::Handle* findBlockToSweep() { return findBlockToSweep(m_unsweptCursor); }
     
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& markedSpace() const;

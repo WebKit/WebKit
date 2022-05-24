@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
+#include "wtf/Compiler.h"
 #include "wtf/RawPointer.h"
 #include <wtf/CommaPrinter.h>
 
@@ -395,7 +396,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
             ASSERT(!m_directory->isUnswept(NoLockingNecessary, this));
             ASSERT(m_weakSet.isEmpty());
             ASSERT(m_attributes.destruction != NeedsDestruction);
-            if (true)
+            if (false)
                 dataLogLn("Sweeping (with freelist) block ", RawPointer(atomAt(0)), " which was freelisted by the concurrent sweeper");
             return;
         }
@@ -480,8 +481,15 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-void MarkedBlock::Handle::sweepInParallel()
+void MarkedBlock::Handle::sweepInParallel(AbstractLocker& bitvectorLock)
 {
+    // The mutator might try to change the bitvector bits while we are reading them.
+    // It might also try to steal us from our current directory.
+    // This process doesn't take any marked block locks, so this will not deadlock.
+    UNUSED_PARAM(bitvectorLock);
+    if (!m_directory)
+        return;
+
     // We are unswept => the allocator fast path won't touch us
     // We are unswept => sweep() is not being called, or if it is, we will see that we are swept when we grab the lock.
     // The marker might mess us up?
@@ -518,7 +526,7 @@ void MarkedBlock::Handle::sweepInParallel()
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    if (true)
+    if (false)
         dataLogLn("Sweeping in parallel: ", RawPointer(atomAt(0)));
     m_directory->setIsUnswept(NoLockingNecessary, this, false);
 

@@ -1323,8 +1323,9 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
 
 NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 {
-    if (!m_sweeperClient.numberOfActiveThreads()) {
+    if (!m_parallelSweepersWillRunSoon) {
         m_parallelSweepersShouldExit = false;
+        m_parallelSweepersWillRunSoon = true;
         m_sweeperClient.setFunction(
             [this] () {
                 ParallelSweeper* sweeper = nullptr;
@@ -1336,7 +1337,7 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 
                 Thread::registerGCThread(GCThreadType::Helper);
 
-                if (true)
+                if (false)
                     dataLogLn("Start executing sweeper: ", RawPointer(sweeper));
 
                 while (!m_parallelSweepersShouldExit) {
@@ -1347,7 +1348,7 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
                     // todo: sleep
                 }
 
-                if (true)
+                if (false)
                     dataLogLn("Done executing sweeper: ", RawPointer(sweeper));
 
                 {
@@ -1609,6 +1610,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_markingConditionVariable.notifyAll();
     }
     m_parallelSweepersShouldExit = true;
+    m_parallelSweepersWillRunSoon = false;
     m_helperClient.finish();
     m_sweeperClient.finish();
     

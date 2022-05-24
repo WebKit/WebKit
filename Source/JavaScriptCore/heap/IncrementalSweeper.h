@@ -61,6 +61,7 @@ public:
 
 private:    
     BlockDirectory* m_currentDirectory;
+    unsigned m_unsweptCursor { 0 };
 };
 
 } // namespace JSC
