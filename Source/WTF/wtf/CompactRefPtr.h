@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "HeapSnapshotBuilder.h"
-#include "TinyBloomFilter.h"
+#include <wtf/CompactPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace JSC {
+namespace WTF {
 
-class HeapSnapshot {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    HeapSnapshot(HeapSnapshot*);
-    ~HeapSnapshot();
+template <typename T>
+using CompactRefPtr = RefPtr<T, CompactPtrTraits<T>>;
 
-    HeapSnapshot* previous() const { return m_previous; }
+} // namespace WTF
 
-    void appendNode(const HeapSnapshotNode&);
-    void sweepCell(JSCell*);
-    void shrinkToFit();
-    void finalize();
-
-    bool isEmpty() const { return m_nodes.isEmpty(); }
-    std::optional<HeapSnapshotNode> nodeForCell(JSCell*);
-    std::optional<HeapSnapshotNode> nodeForObjectIdentifier(unsigned objectIdentifier);
-
-private:
-    friend class HeapSnapshotBuilder;
-    static constexpr intptr_t CellToSweepTag = 1;
-
-    Vector<HeapSnapshotNode> m_nodes;
-    TinyBloomFilter<> m_filter;
-    HeapSnapshot* m_previous { nullptr };
-    unsigned m_firstObjectIdentifier { 0 };
-    unsigned m_lastObjectIdentifier { 0 };
-    bool m_finalized { false };
-    bool m_hasCellsToSweep { false };
-};
-
-} // namespace JSC
+using WTF::CompactRefPtr;

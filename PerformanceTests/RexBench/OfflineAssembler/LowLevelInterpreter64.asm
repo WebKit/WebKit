@@ -1424,7 +1424,7 @@ _llint_op_put_by_id:
     loadp [t3], t1
     loadi JSCell::m_structureID[t2], t2
     # Now, t1 has the Structure* and t2 has the StructureID that we want that Structure* to have.
-    bineq t2, Structure::m_blob + StructureIDBlob::u.fields.structureID[t1], .opPutByIdSlow
+    bineq t2, Structure::m_blob + TypeInfoBlob::u.fields.structureID[t1], .opPutByIdSlow
     addp 8, t3
     loadq Structure::m_prototype[t1], t2
     bqneq t2, ValueNull, .opPutByIdTransitionChainLoop

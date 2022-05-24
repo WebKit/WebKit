@@ -132,7 +132,11 @@ struct StringStats {
 
 #endif
 
+#if HAVE(36BIT_ADDRESS)
+class alignas(16) StringImplShape {
+#else
 class StringImplShape {
+#endif
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();

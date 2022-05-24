@@ -197,15 +197,15 @@ inline void Structure::validateFlags() { }
 
 Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     : JSCell(vm, vm.structureStructure.get())
-    , m_blob(StructureID::encode(this), indexingType, typeInfo)
+    , m_blob(indexingType, typeInfo)
     , m_outOfLineTypeFlags(typeInfo.outOfLineTypeFlags())
     , m_inlineCapacity(inlineCapacity)
     , m_bitField(0)
+    , m_propertyHash(0)
     , m_globalObject(vm, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
     , m_prototype(vm, this, prototype)
     , m_classInfo(classInfo)
     , m_transitionWatchpointSet(IsWatched)
-    , m_propertyHash(0)
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
@@ -244,10 +244,10 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     : JSCell(CreatingEarlyCell)
     , m_inlineCapacity(0)
     , m_bitField(0)
+    , m_propertyHash(0)
     , m_prototype(vm, this, jsNull())
     , m_classInfo(info())
     , m_transitionWatchpointSet(IsWatched)
-    , m_propertyHash(0)
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
@@ -268,7 +268,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
-    m_blob = StructureIDBlob(StructureID::encode(this), 0, typeInfo);
+    m_blob = TypeInfoBlob(0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
@@ -284,11 +284,11 @@ Structure::Structure(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureStructure.get())
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_bitField(0)
+    , m_propertyHash(previous->m_propertyHash)
+    , m_seenProperties(previous->m_seenProperties)
     , m_prototype(vm, this, previous->m_prototype.get())
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(IsWatched)
-    , m_propertyHash(previous->m_propertyHash)
-    , m_seenProperties(previous->m_seenProperties)
 {
     setDictionaryKind(previous->dictionaryKind());
     setIsPinnedPropertyTable(false);
@@ -309,7 +309,7 @@ Structure::Structure(VM& vm, Structure* previous)
     setMaxOffset(vm, invalidOffset);
  
     TypeInfo typeInfo = previous->typeInfo();
-    m_blob = StructureIDBlob(StructureID::encode(this), previous->indexingModeIncludingHistory(), typeInfo);
+    m_blob = TypeInfoBlob(previous->indexingModeIncludingHistory(), typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(!previous->typeInfo().structureIsImmortal());

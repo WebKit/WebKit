@@ -172,7 +172,11 @@ struct MethodTable {
     ClassName::TypedArrayStorageType, \
     sizeof(ClassName),
 
+#if HAVE(36BIT_ADDRESS)
+struct alignas(16) ClassInfo {
+#else
 struct ClassInfo {
+#endif
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".

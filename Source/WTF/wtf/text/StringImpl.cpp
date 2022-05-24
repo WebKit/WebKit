@@ -45,7 +45,11 @@ namespace WTF {
 
 using namespace Unicode;
 
+#if HAVE(36BIT_ADDRESS)
+static_assert(sizeof(StringImpl) == roundUpToMultipleOfImpl(16, 2 * sizeof(int) + 2 * sizeof(void*)), "StringImpl should stay small");
+#else
 static_assert(sizeof(StringImpl) == 2 * sizeof(int) + 2 * sizeof(void*), "StringImpl should stay small");
+#endif
 
 #if STRING_STATS
 StringStats StringImpl::m_stringStats;
