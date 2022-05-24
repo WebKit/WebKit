@@ -2843,8 +2843,7 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
             child.setMarginLeft(childOldMarginLeft);
             child.setMarginRight(childOldMarginRight);
             
-            auto shouldAvoidCurrentVerticalPosition = !availableLogicalWidthAtNewLogicalTopOffset || childLogicalWidthAtNewLogicalTopOffset > availableLogicalWidthAtNewLogicalTopOffset;
-            if (!shouldAvoidCurrentVerticalPosition) {
+            if (childLogicalWidthAtNewLogicalTopOffset <= availableLogicalWidthAtNewLogicalTopOffset) {
                 // Even though we may not be moving, if the logical width did shrink because of the presence of new floats, then
                 // we need to force a relayout as though we shifted. This happens because of the dynamic addition of overhanging floats
                 // from previous siblings when negative margins exist on a child (see the addOverhangingFloats call at the end of collapseMargins).

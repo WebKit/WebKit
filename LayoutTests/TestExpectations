@@ -4638,6 +4638,7 @@ webanimations/transform-property-and-transform-animation-with-delay-on-forced-la
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
 
 # CSS containment tests that fail
+imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 # webkit-ruby-text
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-021.html [ ImageOnlyFailure ]
@@ -4693,7 +4694,6 @@ webkit.org/b/238555 imported/w3c/web-platform-tests/css/css-contain/contain-flex
 # Container queries
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
 
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
