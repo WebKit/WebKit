@@ -2236,8 +2236,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 
 fast/text/install-font-style-recalc.html [ Pass ]
 
-webkit.org/b/240352 system-preview/badge.html [ ImageOnlyFailure ]
-
 # webkit.org/b/240579 Disabling the following http/tests/workers/service/shownotification layout-tests on iOS
 http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
 http/tests/workers/service/shownotification-allowed.html [ Skip ]

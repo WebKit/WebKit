@@ -205,10 +205,11 @@ void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destin
 #if USE(SYSTEM_PREVIEW)
     if (is<ARKitBadgeSystemImage>(systemImage)) {
         if (auto image = downcast<ARKitBadgeSystemImage>(systemImage).image()) {
-            if (auto nativeImage = image->nativeImage())
-                recordResourceUse(*nativeImage);
+            auto nativeImage = image->nativeImage();
+            if (!nativeImage)
+                return;
+            recordResourceUse(*nativeImage);
         }
-        return;
     }
 #endif
     recordDrawSystemImage(systemImage, destinationRect);
