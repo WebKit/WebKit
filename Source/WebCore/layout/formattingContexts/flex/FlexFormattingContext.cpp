@@ -206,6 +206,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
 
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
+    auto& formattingState = this->formattingState();
     auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
 
     auto totalGrowth = 0.f;
@@ -213,8 +214,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         totalGrowth += logicalFlexItem.layoutBox->style().flexGrow();
-        // FIXME: Use min/max here.
-        totalFixedSpace += logicalFlexItem.rect.width();
+        totalFixedSpace += formattingState.intrinsicWidthConstraintsForBox(*logicalFlexItem.layoutBox)->minimum;
     }
 
     auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
@@ -237,7 +237,8 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
             // This value specifies the flex grow factor, which determines how much the flex item will grow relative to the
             // rest of the flex items in the flex container when positive free space is distributed.
             ASSERT(availableSpace.has_value());
-            logicalFlexItem.rect.setWidth(LayoutUnit { *availableSpace * grow / totalGrowth });
+            // FIXME: This is still slighly incorrect.
+            logicalFlexItem.rect.setWidth(LayoutUnit { formattingState.intrinsicWidthConstraintsForBox(*logicalFlexItem.layoutBox)->minimum + (flexibleSpace * grow / totalGrowth) });
             // FIXME: constrain logical width on min width.
         };
         growFlexItemIfApplicable();

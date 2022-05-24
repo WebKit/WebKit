@@ -2356,7 +2356,8 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 
     for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
         flexItem.layoutIfNeeded();
-        m_flexLayout->updateFlexItemDimensions(flexItem);
+        auto minMaxContentSize = computeFlexItemMinMaxSizes(flexItem);
+        m_flexLayout->updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
     }
     m_flexLayout->layout();
 }

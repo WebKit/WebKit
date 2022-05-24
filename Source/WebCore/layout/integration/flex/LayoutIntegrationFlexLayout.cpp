@@ -34,6 +34,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutChildIterator.h"
 #include "RenderFlexibleBox.h"
 
 namespace WebCore {
@@ -75,9 +76,9 @@ static inline Layout::Edges flexBoxLogicalPadding(const RenderBoxModelObject& re
 
 void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 {
-    auto& flexBoxRenderer = this->flexBoxRenderer();
-
     auto updateGeometry = [&](auto& root) {
+        auto& flexBoxRenderer = this->flexBoxRenderer();
+
         auto isLeftToRightInlineDirection = flexBoxRenderer.style().isLeftToRightDirection();
         auto writingMode = flexBoxRenderer.style().writingMode();
 
@@ -87,12 +88,16 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
         root.setHorizontalMargin({ });
         root.setVerticalMargin({ });
     };
-    return updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox()));
+    updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox()));
+
+    for (auto& flexItem : Layout::childrenOfType<Layout::Box>(rootLayoutBox()))
+        m_flexFormattingState.clearIntrinsicWidthConstraints(flexItem);
 }
 
-void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem)
+void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit minimumContentSize, LayoutUnit maximumContentSize)
 {
-    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(flexItem));
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(flexItem);
+    auto& boxGeometry = m_layoutState.ensureGeometryForBox(layoutBox);
 
     boxGeometry.setContentBoxWidth(flexItem.contentWidth());
     boxGeometry.setContentBoxHeight(flexItem.contentHeight());
@@ -100,6 +105,9 @@ void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem)
     boxGeometry.setHorizontalMargin({ flexItem.marginLeft(), flexItem.marginRight() });
     boxGeometry.setBorder({ { flexItem.borderLeft(), flexItem.borderRight() }, { flexItem.borderTop(), flexItem.borderBottom() } });
     boxGeometry.setPadding(Layout::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
+
+    // FIXME: We may need to differentiate preferred and min/max content size.
+    m_flexFormattingState.setIntrinsicWidthConstraintsForBox(layoutBox, { minimumContentSize, maximumContentSize });
 }
 
 void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
