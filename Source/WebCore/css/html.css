@@ -471,8 +471,6 @@ input[type="search"]::-webkit-search-results-button {
 
 #if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
 input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
-    align-items: center;
-    display: inline-flex;
     overflow: hidden;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid -webkit-control-background;
@@ -513,7 +511,10 @@ input::-webkit-date-and-time-value {
 /* FIXME: Styling inner elements of the date control should be specific to input[type="date"]. */
 
 input::-webkit-datetime-edit {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 100%;
     overflow: hidden;
     padding: 1px;
 }
