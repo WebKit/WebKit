@@ -47,7 +47,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Map.prototype.getOrInitialize",
+        name: "Map.prototype.getOrInitialize.Raw",
         test() {
             const key = "key";
             const value = "value";
@@ -59,6 +59,22 @@ function test()
             InspectorTest.expectEqual(map.get(key), value, "Map does have `key` => `value`.");
             InspectorTest.expectEqual(map.getOrInitialize(key, value2), value, "Map should get `key` with `value` without re-initializing.");
             InspectorTest.expectEqual(map.get(key), value, "Map still has `key` => `value`.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.getOrInitialize.Function",
+        test() {
+            const key = "key";
+            const value = () => "value";
+            const value2 = () => InspectorTest.fail("Should not be reached.");
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.get(key), undefined, "Map does not have `key`.");
+            InspectorTest.expectEqual(map.getOrInitialize(key, value), value(), "Map should have initialized `key` with `value`.");
+            InspectorTest.expectEqual(map.get(key), value(), "Map does have `key` => `value`.");
+            InspectorTest.expectEqual(map.getOrInitialize(key, value2), value(), "Map should get `key` with `value` without re-initializing.");
+            InspectorTest.expectEqual(map.get(key), value(), "Map still has `key` => `value`.");
         }
     });
 

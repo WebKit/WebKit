@@ -36,6 +36,8 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         this.element.classList.add("screenshots");
         
         this._selectedRecord = null;
+
+        this._imageElementForRecord = new WeakMap;
     }
 
     // Public
@@ -44,12 +46,9 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
     {
         super.reset();
 
-        this.clear();
-    }
-
-    clear()
-    {
         this.selectRecord(null);
+
+        this._imageElementForRecord = new WeakMap;
     }
 
     // Protected
@@ -68,17 +67,34 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
 
         this.element.removeChildren();
 
+        let selectedElement = null;
+
         for (let record of this._visibleRecords()) {
-            let imageElement = this.element.appendChild(document.createElement("img"));
-            imageElement.src = record.imageData;
+            this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+                let imageElement = document.createElement("img");
 
-            if (record === this._selectedRecord)
-                imageElement.classList.add("selected");
+                imageElement.hidden = true;
+                imageElement.addEventListener("load", (event) => {
+                    imageElement.hidden = false;
+                }, {once: true});
+                imageElement.src = record.imageData;
 
-            imageElement.addEventListener("click", (event) => {
-                this._selectTimelineRecord(record);
-            });
+                imageElement.addEventListener("click", (event) => {
+                    this._selectTimelineRecord(record);
+                });
+
+                if (record === this._selectedRecord)
+                    selectedElement = imageElement;
+
+                return imageElement;
+            }));
         }        
+
+        if (selectedElement) {
+            selectedElement.classList.add("selected");
+
+            selectedElement.scrollIntoView({inline: "center"});
+        }
 
         if (!this.element.childNodes.length)
             this.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
@@ -86,8 +102,22 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
 
     selectRecord(record)
     {
+        if (record === this._selectedRecord)
+            return;
+
+        if (this._selectedRecord)
+            this._imageElementForRecord.get(this._selectedRecord)?.classList.remove("selected");
+
         this._selectedRecord = record;
-        this.needsLayout();
+
+        if (this._selectedRecord) {
+            let element = this._imageElementForRecord.get(this._selectedRecord);
+            if (element) {
+                element.classList.add("selected");
+
+                element.scrollIntoView({inline: "center"});
+            }
+        }
     }
 
     // Private

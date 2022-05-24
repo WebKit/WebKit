@@ -148,6 +148,31 @@ Object.defineProperty(Map.prototype, "getOrInitialize",
         if (value)
             return value;
 
+        if (typeof initialValue === "function")
+            initialValue = initialValue();
+
+        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
+
+        this.set(key, initialValue);
+        return initialValue;
+    }
+});
+
+Object.defineProperty(WeakMap.prototype, "getOrInitialize",
+{
+    value(key, initialValue)
+    {
+        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
+
+        let value = this.get(key);
+        if (value)
+            return value;
+
+        if (typeof initialValue === "function")
+            initialValue = initialValue();
+
+        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
+
         this.set(key, initialValue);
         return initialValue;
     }

@@ -26,7 +26,6 @@
 .timeline-view.screenshots {
     white-space: nowrap; 
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
     background-color: hsl(0, 0%, 90%);
 }
 
@@ -46,7 +45,6 @@
 
 .timeline-view.screenshots > img.selected {
     box-shadow: 0 0 0 2px var(--glyph-color-active), var(--shadow);
-    scroll-snap-align: center;
 }
 
 @media (prefers-color-scheme: dark) {

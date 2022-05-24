@@ -37,6 +37,8 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
         this._screenshotsTimeline = timeline;
 
         this._lastSelectedRecordInLayout = null;
+
+        this.reset();
     }
 
     // Protected
@@ -44,6 +46,13 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
     get height()
     {
         return 60;
+    }
+
+    reset()
+    {
+        super.reset();
+
+        this._imageElementForRecord = new WeakMap;
     }
 
     layout()
@@ -57,27 +66,37 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
 
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
 
+        for (let record of this._visibleRecords()) {
+            this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+                let imageElement = document.createElement("img");
+                imageElement.width = record.width * (this.height / record.height);
+                imageElement.height = this.height;
+                imageElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
+
+                imageElement.hidden = true;
+                imageElement.addEventListener("load", (event) => {
+                    imageElement.hidden = false;
+                }, {once: true});
+                imageElement.src = record.imageData;
+
+                imageElement.addEventListener("click", (event) => {
+                    // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
+                    event.__timelineRecordClickEventHandled = true;
+
+                    this.selectedRecord = record;
+                });
+
+                return imageElement;
+            }));
+        }
+
+        if (this._lastSelectedRecordInLayout)
+            this._imageElementForRecord.get(this._lastSelectedRecordInLayout)?.classList.remove("selected");
+
         this._lastSelectedRecordInLayout = this.selectedRecord;
 
-        for (let record of this._visibleRecords()) {
-            let imageElement = this.element.appendChild(document.createElement("img"));
-            imageElement.src = record.imageData;
-            if (record === this.selectedRecord)
-                imageElement.classList.add("selected");
-
-            imageElement.height = this.height;
-            let widthScale = this.height / record.height;
-            let pixelWidth = record.width * widthScale;
-            imageElement.width = pixelWidth;
-
-            imageElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
-            imageElement.addEventListener("click", (event) => {
-                // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
-                event.__timelineRecordClickEventHandled = true;
-
-                this.selectedRecord = record;
-            });
-        }
+        if (this._lastSelectedRecordInLayout)
+            this._imageElementForRecord.get(this._lastSelectedRecordInLayout)?.classList.add("selected");
     }
 
     updateSelectedRecord()
