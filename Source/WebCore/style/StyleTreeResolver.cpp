@@ -261,10 +261,17 @@ auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionTyp
 
     auto resolveAndAddPseudoElementStyle = [&](PseudoId pseudoId) {
         auto pseudoElementUpdate = resolvePseudoElement(element, pseudoId, update);
+        auto pseudoElementChange = [&] {
+            if (pseudoElementUpdate)
+                return pseudoElementUpdate->change == Change::None ? Change::None : Change::NonInherited;
+            if (!existingStyle || !existingStyle->getCachedPseudoStyle(pseudoId))
+                return Change::None;
+            // If ::first-letter goes aways rebuild the renderers.
+            return pseudoId == PseudoId::FirstLetter ? Change::Renderer : Change::NonInherited;
+        }();
+        update.change = std::max(update.change, pseudoElementChange);
         if (!pseudoElementUpdate)
-            return Change::None;
-        if (pseudoElementUpdate->change != Change::None)
-            update.change = std::max(update.change, Change::NonInherited);
+            return pseudoElementChange;
         if (pseudoElementUpdate->recompositeLayer)
             update.recompositeLayer = true;
         update.style->addCachedPseudoStyle(WTFMove(pseudoElementUpdate->style));

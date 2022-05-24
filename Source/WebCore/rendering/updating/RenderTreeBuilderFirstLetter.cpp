@@ -175,7 +175,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
 
     auto pseudoStyle = styleForFirstLetter(firstLetterContainer);
     if (!pseudoStyle) {
-        m_builder.destroy(*firstLetter, CanCollapseAnonymousBlock::No);
+        ASSERT_NOT_REACHED();
         return;
     }
 
