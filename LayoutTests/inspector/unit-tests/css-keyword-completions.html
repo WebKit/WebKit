@@ -84,7 +84,7 @@ function test()
                 expectedPrefix ??= text;
                 expectedCompletions ??= [];
                 expectedCompletionCount ??= -1;
-                additionalFunctionValueCompletionsProvider ??= () => {};
+                additionalFunctionValueCompletionsProvider ??= () => [];
 
                 let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider});
                 InspectorTest.expectEqual(completionResults.prefix, expectedPrefix, `Expected result prefix to be "${expectedPrefix}"`);

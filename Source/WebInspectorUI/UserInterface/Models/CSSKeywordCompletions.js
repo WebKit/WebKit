@@ -125,10 +125,9 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     }
 
     let valueCompletions;
-    if (functionName) {
-        valueCompletions = WI.CSSKeywordCompletions.forFunction(functionName);
-        valueCompletions.addValues(additionalFunctionValueCompletionsProvider?.(functionName) ?? []);
-    } else
+    if (functionName)
+        valueCompletions = WI.CSSKeywordCompletions.forFunction(functionName, {additionalFunctionValueCompletionsProvider});
+    else
         valueCompletions = WI.CSSKeywordCompletions.forProperty(propertyName);
 
     let completions;
@@ -209,7 +208,7 @@ WI.CSSKeywordCompletions.isTimingFunctionAwareProperty = function(name)
     return false;
 };
 
-WI.CSSKeywordCompletions.forFunction = function(functionName)
+WI.CSSKeywordCompletions.forFunction = function(functionName, {additionalFunctionValueCompletionsProvider} = {})
 {
     let suggestions = ["var()"];
 
@@ -229,6 +228,9 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
         suggestions.push("to", "left", "right", "top", "bottom");
         suggestions.pushAll(WI.CSSKeywordCompletions._colors);
     }
+
+    if (additionalFunctionValueCompletionsProvider)
+        suggestions.pushAll(additionalFunctionValueCompletionsProvider(functionName));
 
     return new WI.CSSCompletions(suggestions, {acceptEmptyPrefix: true});
 };
