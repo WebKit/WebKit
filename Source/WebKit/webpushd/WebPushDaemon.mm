@@ -505,6 +505,20 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
 #endif
 }
 
+void Daemon::deletePushRegistration(const String& bundleIdentifier, const String& originString, CompletionHandler<void()>&& callback)
+{
+    runAfterStartingPushService([this, bundleIdentifier, originString, callback = WTFMove(callback)]() mutable {
+        if (!m_pushService) {
+            callback();
+            return;
+        }
+
+        m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, originString, [callback = WTFMove(callback)](auto&&) mutable {
+            callback();
+        });
+    });
+}
+
 void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)
 {
     if (!canRegisterForNotifications(*connection)) {
@@ -512,18 +526,17 @@ void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection,
         return;
     }
 
+#if ENABLE(INSTALL_COORDINATION_BUNDLES)
     connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, [this, originString = String { originString }, replySender = WTFMove(replySender), bundleIdentifier = connection->hostAppCodeSigningIdentifier()](auto result) mutable {
-        runAfterStartingPushService([this, bundleIdentifier = WTFMove(bundleIdentifier), originString = WTFMove(originString), replySender = WTFMove(replySender), result]() mutable {
-            if (!m_pushService) {
-                replySender(result);
-                return;
-            }
-
-            m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, originString, [replySender = WTFMove(replySender), result](auto&&) mutable {
-                replySender(result);
-            });
+        deletePushRegistration(bundleIdentifier, originString, [replySender = WTFMove(replySender), result]() mutable {
+            replySender(result);
         });
     }));
+#else
+    deletePushRegistration(connection->hostAppCodeSigningIdentifier(), originString, [replySender = WTFMove(replySender)]() mutable {
+        replySender(emptyString());
+    });
+#endif
 }
 
 void Daemon::setDebugModeIsEnabled(ClientConnection* clientConnection, bool enabled)

@@ -74,6 +74,7 @@ public:
     void echoTwice(ClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
     void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
     void getOriginsWithPushAndNotificationPermissions(ClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
+    void deletePushRegistration(const String&, const String&, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void setDebugModeIsEnabled(ClientConnection*, bool);
     void updateConnectionConfiguration(ClientConnection*, const WebPushDaemonConnectionConfiguration&);
