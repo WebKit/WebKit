@@ -54,8 +54,6 @@ webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005
 
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
-http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
-
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 
@@ -145,7 +143,6 @@ webkit.org/b/223862 accessibility/gtk/text-for-range-list-items.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-simple.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
-accessibility/model-element-attributes.html [ Skip ]
 
 # Tests failing with ATSPI implementation.
 webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Failure ]

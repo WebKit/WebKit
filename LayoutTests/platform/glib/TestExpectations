@@ -364,6 +364,9 @@ accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
 
+# Missing support of HTML Model element (ENABLE MODEL).
+accessibility/model-element-attributes.html [ Skip ]
+
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.
@@ -2755,6 +2758,8 @@ webkit.org/b/236298 fast/text/hanging-punctuation-allow-end-basic.html [ ImageOn
 webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html [ ImageOnlyFailure ]
 
 webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
+
+http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 
