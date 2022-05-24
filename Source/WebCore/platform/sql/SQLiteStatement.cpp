@@ -97,7 +97,6 @@ int SQLiteStatement::bindBlob(int index, Span<const uint8_t> blob)
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
     ASSERT(blob.data() || !blob.size());
-    ASSERT(blob.size() >= 0);
 
     return sqlite3_bind_blob(m_statement, index, blob.data(), blob.size(), SQLITE_TRANSIENT);
 }
