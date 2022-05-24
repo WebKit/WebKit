@@ -132,7 +132,7 @@ struct StringStats {
 
 #endif
 
-class StringImplShape {
+class alignas(16) StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();

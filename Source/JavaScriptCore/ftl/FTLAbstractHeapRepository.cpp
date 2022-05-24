@@ -76,7 +76,7 @@ AbstractHeapRepository::AbstractHeapRepository()
     JSCell_header.changeParent(&JSCellHeaderAndNamedProperties);
     properties.atAnyNumber().changeParent(&JSCellHeaderAndNamedProperties);
 
-    // Make sure that our explicit assumptions about the StructureIDBlob match reality.
+    // Make sure that our explicit assumptions about the TypeInfoBlob match reality.
     RELEASE_ASSERT(!(JSCell_indexingTypeAndMisc.offset() & (sizeof(int32_t) - 1)));
     RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 1 == JSCell_typeInfoType.offset());
     RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 2 == JSCell_typeInfoFlags.offset());
