@@ -3463,6 +3463,37 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     return true;
 }
 
+static const TransformOperations& transformationAnimationValueAt(const KeyframeValueList& valueList, unsigned i)
+{
+    return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
+}
+
+static bool hasBigRotationAngle(const KeyframeValueList& valueList, const SharedPrimitivesPrefix& prefix)
+{
+    // Hardware non-matrix animations are used for every function in the shared primitives prefix.
+    // These kind of animations have issues with large rotation angles, so for every function that
+    // will be represented as a hardware non-matrix animation, check that for each of those functions
+    // the animation that's created for it will not have two consecutive keyframes that have a large
+    // rotation angle between them.
+    const auto& primitives = prefix.primitives();
+    for (unsigned animationIndex = 0; animationIndex < primitives.size(); ++animationIndex) {
+        auto type = primitives[animationIndex];
+        if (type != TransformOperation::ROTATE && type != TransformOperation::ROTATE_3D)
+            continue;
+        for (size_t i = 1; i < valueList.size(); ++i) {
+            // Since the shared primitive at this index is a rotation, both of these transform
+            // functions should be RotateTransformOperations.
+            auto prevOperation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i - 1).at(animationIndex));
+            auto operation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i).at(animationIndex));
+            auto angle = std::abs((prevOperation ? prevOperation->angle() : 0.0) - (operation ? operation->angle() : 0.0));
+            if (angle > 180.0)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
@@ -3479,7 +3510,13 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // the primitives shared between any two adjacent keyframes.
     SharedPrimitivesPrefix prefix;
     for (size_t i = 0; i < valueList.size(); ++i)
-        prefix.update(static_cast<const TransformAnimationValue&>(valueList.at(i)).value());
+        prefix.update(transformationAnimationValueAt(valueList, i));
+
+    // If this animation has a big rotation between two keyframes, fall back to software animation. CoreAnimation
+    // will always take the shortest path between two rotations, which will result in incorrect animation when
+    // the keyframes specify angles larger than one half rotation.
+    if (hasBigRotationAngle(valueList, prefix))
+        return false;
 
     const auto& primitives = prefix.primitives();
     unsigned numberOfSharedPrimitives = valueList.size() > 1 ? primitives.size() : 0;
@@ -3708,13 +3745,13 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
     
-    auto& startValue = static_cast<const TransformAnimationValue&>(valueList.at(fromIndex));
-    auto& endValue = static_cast<const TransformAnimationValue&>(valueList.at(toIndex));
+    const auto& startValue = transformationAnimationValueAt(valueList, fromIndex);
+    const auto& endValue = transformationAnimationValueAt(valueList, toIndex);
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.value().apply(boxSize, fromTransform);
-        endValue.value().apply(boxSize, toTransform);
+        startValue.apply(boxSize, fromTransform);
+        endValue.apply(boxSize, toTransform);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3725,27 +3762,27 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
-            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             float toValue;
-            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
             FloatPoint3D fromValue;
-            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             FloatPoint3D toValue;
-            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else {
             TransformationMatrix fromValue;
-            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             TransformationMatrix toValue;
-            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         }
     }

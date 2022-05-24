@@ -118,7 +118,7 @@ public:
     virtual ~SharedPrimitivesPrefix() = default;
     void update(const TransformOperations&);
     bool hadIncompatibleTransformFunctions() { return m_indexOfFirstMismatch.has_value(); }
-    const Vector<TransformOperation::OperationType>& primitives() { return m_primitives; }
+    const Vector<TransformOperation::OperationType>& primitives() const { return m_primitives; }
 
 private:
     std::optional<size_t> m_indexOfFirstMismatch;
