@@ -27,6 +27,7 @@
     white-space: nowrap; 
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    background-color: hsl(0, 0%, 90%);
 }
 
 .timeline-view.screenshots > img {
@@ -40,4 +41,10 @@
 .timeline-view.screenshots > img.selected {
     border-color: var(--glyph-color-active);
     scroll-snap-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-view.screenshots {
+        background-color: hsl(0, 0%, 14%);
+    }
 }
