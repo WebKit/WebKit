@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -521,7 +521,17 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     SYMBOL_STRING(label) ":\n"
 #endif
 
-#define OFFLINE_ASM_LOCAL_LABEL(label)   LOCAL_LABEL_STRING(label) ":\n"
+#if COMPILER(CLANG)
+#define OFFLINE_ASM_ALT_GLOBAL_LABEL(label) \
+    ".alt_entry " SYMBOL_STRING(label) "\n" \
+    OFFLINE_ASM_GLOBAL_LABEL(label)
+#else
+#define OFFLINE_ASM_ALT_GLOBAL_LABEL(label)
+#endif
+
+#define OFFLINE_ASM_LOCAL_LABEL(label) \
+    LOCAL_LABEL_STRING(label) ":\n" \
+    OFFLINE_ASM_ALT_GLOBAL_LABEL(label)
 
 #if OS(LINUX)
 #define OFFLINE_ASM_OPCODE_DEBUG_LABEL(label)  #label ":\n"
