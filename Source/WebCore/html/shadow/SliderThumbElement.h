@@ -59,8 +59,6 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
     bool isDisabledFormControl() const final;
     bool matchesReadWritePseudoClass() const final;
@@ -111,18 +109,6 @@ inline Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 {
     return adoptRef(*new SliderThumbElement(document));
 }
-
-// --------------------------------
-
-class RenderSliderThumb final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderSliderThumb);
-public:
-    RenderSliderThumb(SliderThumbElement&, RenderStyle&&);
-    void updateAppearance(const RenderStyle* parentStyle);
-
-private:
-    bool isSliderThumb() const final;
-};
 
 // --------------------------------
 
