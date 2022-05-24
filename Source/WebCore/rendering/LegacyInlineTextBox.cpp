@@ -491,18 +491,18 @@ ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
     ExpansionBehavior behavior;
 
     if (forceLeftExpansion())
-        behavior.setLeft(ExpansionBehavior::Behavior::Force);
+        behavior.left = ExpansionBehavior::Behavior::Force;
     else if (canHaveLeftExpansion())
-        behavior.setLeft(ExpansionBehavior::Behavior::Allow);
+        behavior.left = ExpansionBehavior::Behavior::Allow;
     else
-        behavior.setLeft(ExpansionBehavior::Behavior::Forbid);
+        behavior.left = ExpansionBehavior::Behavior::Forbid;
 
     if (forceRightExpansion())
-        behavior.setRight(ExpansionBehavior::Behavior::Force);
+        behavior.right = ExpansionBehavior::Behavior::Force;
     else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        behavior.setRight(ExpansionBehavior::Behavior::Allow);
+        behavior.right = ExpansionBehavior::Behavior::Allow;
     else
-        behavior.setRight(ExpansionBehavior::Behavior::Forbid);
+        behavior.right = ExpansionBehavior::Behavior::Forbid;
 
     return behavior;
 }

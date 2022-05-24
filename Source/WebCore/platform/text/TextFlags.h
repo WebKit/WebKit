@@ -58,8 +58,7 @@ enum class NonCJKGlyphOrientation : uint8_t {
     Upright
 };
 
-class ExpansionBehavior {
-public:
+struct ExpansionBehavior {
     enum class Behavior : uint8_t {
         Forbid,
         Allow,
@@ -69,47 +68,38 @@ public:
     ExpansionBehavior() = default;
 
     ExpansionBehavior(Behavior left, Behavior right)
-        : m_left(static_cast<uint8_t>(left))
-        , m_right(static_cast<uint8_t>(right))
+        : left(left)
+        , right(right)
     {
     }
 
-    static const ExpansionBehavior defaultBehavior()
+    static ExpansionBehavior defaultBehavior()
     {
         return { };
     }
 
-    static const ExpansionBehavior allowRightOnly()
+    static ExpansionBehavior allowRightOnly()
     {
         return { Behavior::Forbid, Behavior::Allow };
     }
 
-    static const ExpansionBehavior allowLeftOnly()
+    static ExpansionBehavior allowLeftOnly()
     {
         return { Behavior::Allow, Behavior::Forbid };
     }
 
-    static const ExpansionBehavior forceLeftOnly()
+    static ExpansionBehavior forceLeftOnly()
     {
         return { Behavior::Force, Behavior::Forbid };
     }
 
-    static const ExpansionBehavior forbidAll()
+    static ExpansionBehavior forbidAll()
     {
         return { Behavior::Forbid, Behavior::Forbid };
     }
 
-    Behavior left() const { return static_cast<Behavior>(m_left); }
-    void setLeft(Behavior behavior) { m_left = static_cast<uint8_t>(behavior); }
-
-    Behavior right() const { return static_cast<Behavior>(m_right); }
-    void setRight(Behavior behavior) { m_right = static_cast<uint8_t>(behavior); }
-
-private:
-    // Default behavior follows the previous implementation:
-    // forbids left and allows right expansions.
-    uint8_t m_left : 2 { static_cast<uint8_t>(Behavior::Forbid) };
-    uint8_t m_right : 2 { static_cast<uint8_t>(Behavior::Allow) };
+    Behavior left : 2 { Behavior::Forbid };
+    Behavior right : 2 { Behavior::Allow };
 };
 
 enum FontSynthesisValues {

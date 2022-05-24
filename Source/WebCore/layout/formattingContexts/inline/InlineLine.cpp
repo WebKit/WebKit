@@ -123,8 +123,8 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
             if (run.hasTextCombine())
                 expansionBehavior = ExpansionBehavior::forbidAll();
             else {
-                expansionBehavior.setLeft(runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow);
-                expansionBehavior.setRight(ExpansionBehavior::Behavior::Allow);
+                expansionBehavior.left = runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
+                expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
                 auto& textContent = *run.textContent();
                 // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
                 auto hangingTrailingContentInCurrentRun = std::min(textContent.length, hangingTrailingContentLength);
@@ -144,7 +144,7 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     }
     // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.
     if (lastRunIndexWithContent && runsExpansionOpportunities[*lastRunIndexWithContent]) {
-        runsExpansionBehaviors[*lastRunIndexWithContent].setRight(ExpansionBehavior::Behavior::Forbid);
+        runsExpansionBehaviors[*lastRunIndexWithContent].right = ExpansionBehavior::Behavior::Forbid;
         if (runIsAfterExpansion) {
             // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
             // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.

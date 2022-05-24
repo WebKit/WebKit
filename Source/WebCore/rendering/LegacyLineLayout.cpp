@@ -743,7 +743,7 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
                         // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
                         if (FontCascade::leftExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
                             setRightExpansion = true;
-                            result.setRight(ExpansionBehavior::Behavior::Force);
+                            result.right = ExpansionBehavior::Behavior::Force;
                         }
                     }
                 }
@@ -758,7 +758,7 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
                         // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
                         if (FontCascade::rightExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
                             setLeftExpansion = true;
-                            result.setLeft(ExpansionBehavior::Behavior::Force);
+                            result.left = ExpansionBehavior::Behavior::Force;
                         }
                     }
                 }
@@ -769,23 +769,23 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
             RenderRubyBase& rubyBase = downcast<RenderRubyBase>(block);
             if (&textBox == rubyBase.firstRootBox()->firstLeafDescendant()) {
                 setLeftExpansion = true;
-                result.setLeft(ExpansionBehavior::Behavior::Forbid);
+                result.left = ExpansionBehavior::Behavior::Forbid;
             } if (&textBox == rubyBase.firstRootBox()->lastLeafDescendant()) {
                 setRightExpansion = true;
-                result.setRight(ExpansionBehavior::Behavior::Forbid);
+                result.right = ExpansionBehavior::Behavior::Forbid;
             }
         }
     }
     if (!setLeftExpansion)
-        result.setLeft(isAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow);
+        result.left = isAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
     if (!setRightExpansion)
-        result.setRight(ExpansionBehavior::Behavior::Allow);
+        result.right = ExpansionBehavior::Behavior::Allow;
     return result;
 }
 
 static inline void applyExpansionBehavior(LegacyInlineTextBox& textBox, ExpansionBehavior expansionBehavior)
 {
-    switch (expansionBehavior.left()) {
+    switch (expansionBehavior.left) {
     case ExpansionBehavior::Behavior::Force:
         textBox.setForceLeftExpansion();
         break;
@@ -800,7 +800,7 @@ static inline void applyExpansionBehavior(LegacyInlineTextBox& textBox, Expansio
         break;
     };
 
-    switch (expansionBehavior.right()) {
+    switch (expansionBehavior.right) {
     case ExpansionBehavior::Behavior::Force:
         textBox.setForceRightExpansion();
         break;

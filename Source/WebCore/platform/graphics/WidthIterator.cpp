@@ -41,7 +41,7 @@ WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, HashSe
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
     , m_expansion(run.expansion())
-    , m_isAfterExpansion(run.expansionBehavior().left() == ExpansionBehavior::Behavior::Forbid)
+    , m_isAfterExpansion(run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid)
     , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_enableKerning(font.enableKerning())
     , m_requiresShaping(font.requiresShaping())
@@ -381,10 +381,10 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
             if (!m_run.ltr())
                 std::swap(isLeftmostCharacter, isRightmostCharacter);
 
-            bool forceLeftExpansion = isLeftmostCharacter && m_run.expansionBehavior().left() == ExpansionBehavior::Behavior::Force;
-            bool forceRightExpansion = isRightmostCharacter && m_run.expansionBehavior().right() == ExpansionBehavior::Behavior::Force;
-            bool forbidLeftExpansion = isLeftmostCharacter && m_run.expansionBehavior().left() == ExpansionBehavior::Behavior::Forbid;
-            bool forbidRightExpansion = isRightmostCharacter && m_run.expansionBehavior().right() == ExpansionBehavior::Behavior::Forbid;
+            bool forceLeftExpansion = isLeftmostCharacter && m_run.expansionBehavior().left == ExpansionBehavior::Behavior::Force;
+            bool forceRightExpansion = isRightmostCharacter && m_run.expansionBehavior().right == ExpansionBehavior::Behavior::Force;
+            bool forbidLeftExpansion = isLeftmostCharacter && m_run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid;
+            bool forbidRightExpansion = isRightmostCharacter && m_run.expansionBehavior().right == ExpansionBehavior::Behavior::Forbid;
 
             bool isIdeograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(character);
 
