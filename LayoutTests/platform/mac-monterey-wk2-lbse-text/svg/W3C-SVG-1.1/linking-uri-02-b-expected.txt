@@ -36,6 +36,8 @@ layer at (302,121) size 115x12
   RenderSVGText {text} at (266,115) size 116x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 116x12
       chunk 1 text run 1 at (302.00,130.00) startOffset 0 endOffset 29 width 115.24: "No view attributes except id."
+layer at (298,219) size 144x64
+  RenderSVGEllipse {ellipse} at (0,0) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
 layer at (355,281) size 44x18
   RenderSVGText {text} at (319,276) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 45x18
@@ -46,6 +48,8 @@ layer at (315,205) size 110x12
   RenderSVGText {text} at (279,199) size 111x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 111x12
       chunk 1 text run 1 at (315.00,214.00) startOffset 0 endOffset 27 width 110.26: "viewBox, should fill frame."
+layer at (49,32) size 72x72
+  RenderSVGEllipse {circle} at (0,0) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
 layer at (70,102) size 39x18
   RenderSVGText {text} at (34,97) size 40x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x18

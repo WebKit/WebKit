@@ -2,6 +2,18 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (20,170) size 430x60
+  RenderSVGContainer {g} at (36,-34) size 344x49
+layer at (20,170) size 60x60
+  RenderSVGEllipse {circle} at (36,-34) size 48x49 [fill={[type=SOLID] [color=#CCCCCC]}] [cx=50.00] [cy=200.00] [r=30.00]
+layer at (143,170) size 60x60
+  RenderSVGEllipse {circle} at (36,-34) size 48x49 [fill={[type=SOLID] [color=#CCCCCC]}] [cx=173.00] [cy=200.00] [r=30.00]
+layer at (267,170) size 60x60
+  RenderSVGEllipse {circle} at (36,-34) size 48x49 [fill={[type=SOLID] [color=#CCCCCC]}] [cx=297.00] [cy=200.00] [r=30.00]
+layer at (390,170) size 60x60
+  RenderSVGEllipse {circle} at (36,-34) size 48x49 [fill={[type=SOLID] [color=#CCCCCC]}] [cx=420.00] [cy=200.00] [r=30.00]
+layer at (20,170) size 60x60
+  RenderSVGEllipse {circle} at (36,-34) size 48x49 [fill={[type=SOLID] [color=#CC0066]}] [cx=50.00] [cy=200.00] [r=30.00]
 layer at (5,200) size 420x32
   RenderSVGText {text} at (5,200) size 420x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 420x32

@@ -8,6 +8,10 @@ layer at (10,60) size 60x21
   RenderSVGRect {rect} at (21,0) size 82x30 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=10.00] [y=60.00] [width=60.00] [height=20.00]
 layer at (145,60) size 30x41
   RenderSVGRect {rect} at (21,0) size 43x56 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=145.00] [y=60.00] [width=30.00] [height=40.00]
+layer at (20,90) size 20x21
+  RenderSVGEllipse {circle} at (22,1) size 28x28 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=30.00] [cy=100.00] [r=10.00]
+layer at (85,180) size 30x31
+  RenderSVGEllipse {circle} at (22,1) size 41x41 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#B4B4B4]}] [cx=100.00] [cy=195.00] [r=15.00]
 layer at (300,10) size 20x21
   RenderSVGRect {rect} at (21,0) size 30x30 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B4B4B4]}] [x=300.00] [y=10.00] [width=20.00] [height=20.00]
 layer at (300,170) size 20x41

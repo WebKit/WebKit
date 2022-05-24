@@ -17,7 +17,7 @@ layer at (-54,-30) size 110x109 backgroundClip at (0,0) size 480x360 clip at (0,
 layer at (-43,-15) size 87x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGContainer {g} at (60,74) size 89x110
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (50,80) size 50x50 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (58,88) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (50,80) size 50x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -35,7 +35,7 @@ layer at (-20,61) size 39x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
 layer at (-54,-15) size 109x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGContainer {g} at (180,74) size 109x110
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (170,80) size 50x50 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (178,88) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (170,80) size 50x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -53,7 +53,7 @@ layer at (-23,61) size 45x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
 layer at (-54,-15) size 109x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGContainer {g} at (297,49) size 113x135
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (258,128) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (298,88) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (258,128) size 34x34 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -67,7 +67,7 @@ layer at (-54,61) size 109x18 backgroundClip at (0,0) size 480x360 clip at (0,0)
 layer at (-54,-15) size 109x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGContainer {g} at (416,49) size 114x135
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (378,128) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (418,88) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (378,128) size 34x34 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-15) size 31x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -79,9 +79,9 @@ layer at (-54,61) size 108x18 backgroundClip at (0,0) size 480x360 clip at (0,0)
     RenderSVGInlineText {#text} at (0,0) size 108x18
       chunk 1 (middle anchor) text run 1 at (-53.98,75.00) startOffset 0 endOffset 18 width 107.96: "linear translation"
 layer at (-45,-30) size 91x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (59,205) size 92x109
+  RenderSVGContainer {g} at (59,218) size 92x96
 layer at (-15,-15) size 30x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (60,205) size 30x60 [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (60,220) size 30x30 [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-30) size 30x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (58,218) size 34x64 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-30.00] [width=30.00] [height=60.00]
 layer at (-45,-22) size 90x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -93,9 +93,9 @@ layer at (-37,46) size 74x18 backgroundClip at (0,0) size 480x360 clip at (0,0) 
     RenderSVGInlineText {#text} at (0,0) size 74x18
       chunk 1 (middle anchor) text run 1 at (-36.64,60.00) startOffset 0 endOffset 11 width 73.28: "paced scale"
 layer at (-45,-30) size 91x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (179,205) size 92x109
+  RenderSVGContainer {g} at (179,218) size 92x96
 layer at (-15,-15) size 30x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (180,205) size 30x60 [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (180,220) size 30x30 [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
 layer at (-15,-30) size 30x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (178,218) size 34x64 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-30.00] [width=30.00] [height=60.00]
 layer at (-45,-30) size 90x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

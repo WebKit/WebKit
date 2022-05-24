@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2012 Google, Inc.
- * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +25,9 @@
  */
 
 #include "config.h"
-#include "RenderSVGEllipse.h"
+#include "LegacyRenderSVGEllipse.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "RenderSVGShapeInlines.h"
+#include "LegacyRenderSVGShapeInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -37,17 +35,17 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGEllipse);
 
-RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(element, WTFMove(style))
+LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
+    : LegacyRenderSVGShape(element, WTFMove(style))
     , m_usePathFallback(false)
 {
 }
 
-RenderSVGEllipse::~RenderSVGEllipse() = default;
+LegacyRenderSVGEllipse::~LegacyRenderSVGEllipse() = default;
 
-void RenderSVGEllipse::updateShapeFromElement()
+void LegacyRenderSVGEllipse::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
@@ -63,8 +61,8 @@ void RenderSVGEllipse::updateShapeFromElement()
         return;
 
     if (hasNonScalingStroke()) {
-        // Fallback to RenderSVGShape if shape has a non-scaling stroke.
-        RenderSVGShape::updateShapeFromElement();
+        // Fallback to LegacyRenderSVGShape if shape has a non-scaling stroke.
+        LegacyRenderSVGShape::updateShapeFromElement();
         m_usePathFallback = true;
         return;
     }
@@ -77,7 +75,7 @@ void RenderSVGEllipse::updateShapeFromElement()
         m_strokeBoundingBox.inflate(strokeWidth() / 2);
 }
 
-void RenderSVGEllipse::calculateRadiiAndCenter()
+void LegacyRenderSVGEllipse::calculateRadiiAndCenter()
 {
     SVGLengthContext lengthContext(&graphicsElement());
     m_center = FloatPoint(
@@ -98,34 +96,34 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
         lengthContext.valueForLength(ry.isAuto() ? rx : ry, SVGLengthMode::Height));
 }
 
-void RenderSVGEllipse::fillShape(GraphicsContext& context) const
+void LegacyRenderSVGEllipse::fillShape(GraphicsContext& context) const
 {
     if (m_usePathFallback) {
-        RenderSVGShape::fillShape(context);
+        LegacyRenderSVGShape::fillShape(context);
         return;
     }
     context.fillEllipse(m_fillBoundingBox);
 }
 
-void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
+void LegacyRenderSVGEllipse::strokeShape(GraphicsContext& context) const
 {
     if (!style().hasVisibleStroke())
         return;
     if (m_usePathFallback) {
-        RenderSVGShape::strokeShape(context);
+        LegacyRenderSVGShape::strokeShape(context);
         return;
     }
     context.strokeEllipse(m_fillBoundingBox);
 }
 
-bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
+bool LegacyRenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     // The optimized contains code below does not support non-smooth strokes so we need
-    // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
+    // to fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
     if (m_usePathFallback || !hasSmoothStroke()) {
         if (!hasPath())
-            RenderSVGShape::updateShapeFromElement();
-        return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
+            LegacyRenderSVGShape::updateShapeFromElement();
+        return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
     }
 
     float halfStrokeWidth = strokeWidth() / 2;
@@ -143,10 +141,10 @@ bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, Poi
     return xrXInner * xrXInner + yrYInner * yrYInner >= 1.0;
 }
 
-bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
+bool LegacyRenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
     if (m_usePathFallback)
-        return RenderSVGShape::shapeDependentFillContains(point, fillRule);
+        return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
 
@@ -157,12 +155,10 @@ bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const
     return xrX * xrX + yrY * yrY <= 1.0;
 }
 
-bool RenderSVGEllipse::isRenderingDisabled() const
+bool LegacyRenderSVGEllipse::isRenderingDisabled() const
 {
     // A radius of zero disables rendering of the element, and results in an empty bounding box.
     return m_fillBoundingBox.isEmpty();
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

@@ -14,6 +14,14 @@ layer at (1,1) size 30x40
   RenderSVGContainer {g} at (19,69) size 31x41
 layer at (1,1) size 29x39
   RenderSVGRect {rect} at (19,69) size 31x41 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+layer at (5,5) size 21x21
+  RenderSVGContainer {g} at (20,75) size 20x20
+layer at (5,5) size 20x20
+  RenderSVGEllipse {circle} at (20,75) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+layer at (11,11) size 4x4
+  RenderSVGEllipse {circle} at (20,75) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+layer at (16,11) size 4x4
+  RenderSVGEllipse {circle} at (20,75) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
 layer at (10,102) size 41x10
   RenderSVGText {text} at (10,130) size 41x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x10

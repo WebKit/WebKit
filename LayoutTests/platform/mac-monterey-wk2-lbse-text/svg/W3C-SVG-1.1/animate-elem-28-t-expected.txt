@@ -4,6 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (1,1) size 478x358
   RenderSVGContainer {g} at (-3,-3) size 484x364
+layer at (90,30) size 300x300
+  RenderSVGEllipse {circle} at (-3,-3) size 306x306 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [cx=240.00] [cy=180.00] [r=150.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (9,303) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

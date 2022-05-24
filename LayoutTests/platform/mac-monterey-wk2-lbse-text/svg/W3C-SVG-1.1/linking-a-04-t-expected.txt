@@ -8,6 +8,8 @@ layer at (90,5) size 200x14
   RenderSVGText {text} at (0,0) size 200x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 200x14
       chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 42 width 199.95: "Basic out-bound links and the 'a' element."
+layer at (370,133) size 40x40
+  RenderSVGEllipse {circle} at (-2,-2) size 44x44 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=390.00] [cy=153.00] [r=20.00]
 layer at (350,180) size 78x12
   RenderSVGText {text} at (260,174) size 78x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x12

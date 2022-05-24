@@ -8,6 +8,10 @@ layer at (100,100) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#DC143C]}] [x=100.00] [y=100.00] [width=50.00] [height=50.00]
 layer at (150,150) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#DC143C]}] [x=150.00] [y=150.00] [width=50.00] [height=50.00]
+layer at (100,150) size 50x50
+  RenderSVGEllipse {circle} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFD700]}] [cx=125.00] [cy=175.00] [r=25.00]
+layer at (150,100) size 50x50
+  RenderSVGEllipse {circle} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFD700]}] [cx=175.00] [cy=125.00] [r=25.00]
 layer at (105,186) size 66x12
   RenderSVGText {text} at (105,185) size 66x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x12

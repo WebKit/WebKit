@@ -2500,6 +2500,7 @@ rendering/svg/LegacyRenderSVGShape.cpp
 rendering/svg/LegacyRenderSVGTransformableContainer.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGContainer.cpp
+rendering/svg/LegacyRenderSVGEllipse.cpp
 rendering/svg/RenderSVGEllipse.cpp
 rendering/svg/RenderSVGForeignObject.cpp
 rendering/svg/RenderSVGGradientStop.cpp

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGCircleElement.h"
 
+#include "LegacyRenderSVGEllipse.h"
 #include "RenderSVGEllipse.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
@@ -78,7 +79,12 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGEllipse>(*this, WTFMove(style));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGEllipse>(*this, WTFMove(style));
+#endif
+
+    return createRenderer<LegacyRenderSVGEllipse>(*this, WTFMove(style));
 }
 
 }

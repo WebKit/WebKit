@@ -27,11 +27,15 @@ layer at (145,112) size 135x16
     RenderSVGInlineText {#text} at (0,0) size 135x16
       chunk 1 text run 1 at (145.00,125.00) startOffset 0 endOffset 21 width 134.63: "Start, Middle and End"
 layer at (0,0) size 10x10
-  RenderSVGContainer {g} at (242,127) size 16x16
+  RenderSVGContainer {g} at (242,127) size 66x16
 layer at (0,0) size 10x10
   RenderSVGContainer {g} at (242,127) size 16x16
 layer at (0,0) size 10x10
   RenderSVGRect {rect} at (242,127) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 10x10
+  RenderSVGContainer {g} at (292,127) size 16x16
+layer at (0,0) size 10x10
+  RenderSVGEllipse {circle} at (292,127) size 16x16 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
 layer at (145,207) size 135x16
   RenderSVGText {text} at (145,207) size 135x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 135x16

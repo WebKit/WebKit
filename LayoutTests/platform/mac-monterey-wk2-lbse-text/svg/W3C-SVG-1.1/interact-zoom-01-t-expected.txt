@@ -2,10 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 80x60
-layer at (5,2) size 62x15
-  RenderSVGContainer {g} at (0,0) size 62x14
-layer at (5,2) size 62x14
-  RenderSVGContainer {g} at (0,0) size 62x14
+layer at (5,2) size 65x41
+  RenderSVGContainer {g} at (0,0) size 66x41
+layer at (5,2) size 65x41
+  RenderSVGContainer {g} at (0,0) size 66x41
 layer at (5,2) size 54x7
   RenderSVGText {text} at (0,0) size 55x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 55x7
@@ -14,6 +14,18 @@ layer at (5,9) size 61x7
   RenderSVGText {text} at (0,7) size 62x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x7
       chunk 1 text run 1 at (5.00,14.00) startOffset 0 endOffset 21 width 61.04: "zoomAndPan attribute."
+layer at (10,22) size 60x21
+  RenderSVGContainer {g} at (-1,-1) size 62x22
+layer at (10,22) size 20x20
+  RenderSVGEllipse {circle} at (-1,-1) size 22x22 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=20.00] [cy=32.00] [r=10.00]
+layer at (20,22) size 20x20
+  RenderSVGEllipse {circle} at (-1,-1) size 22x22 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=32.00] [r=10.00]
+layer at (50,22) size 20x20
+  RenderSVGEllipse {circle} at (-1,-1) size 22x22 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=60.00] [cy=32.00] [r=10.00]
+layer at (40,22) size 20x20
+  RenderSVGEllipse {circle} at (-1,-1) size 22x22 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=50.00] [cy=32.00] [r=10.00]
+layer at (30,22) size 20x20
+  RenderSVGEllipse {circle} at (-1,-1) size 22x22 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=40.00] [cy=32.00] [r=10.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46
