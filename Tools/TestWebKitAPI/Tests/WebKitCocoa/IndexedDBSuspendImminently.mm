@@ -71,7 +71,8 @@ static void keepNetworkProcessActive()
     }];
 }
 
-TEST(IndexedDB, IndexedDBSuspendImminently)
+// FIXME: Re-enable this test once webkit.org/b/240886 is resolved.
+TEST(IndexedDB, DISABLED_IndexedDBSuspendImminently)
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
