@@ -1830,9 +1830,10 @@ WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::Con
     m_unblockHandler = unblockHandler;
     m_unblockRequestDeniedScript = unblockRequestDeniedScript;
     
-    if (unblockHandler.needsUIProcess())
+    if (unblockHandler.needsUIProcess()) {
+        m_contentFilter->setBlockedError(error);
         m_contentFilter->handleProvisionalLoadFailure(error);
-    else {
+    } else {
         unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }](bool unblocked) mutable {
             m_unblockHandler.setUnblockedAfterRequest(unblocked);
 
