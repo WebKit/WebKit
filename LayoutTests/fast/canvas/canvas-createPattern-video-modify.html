@@ -3,6 +3,7 @@
 <head>
     <script src="../../resources/js-test-pre.js"></script>
     <script src="../../media/media-file.js"></script>
+    <script src="../../media/utilities.js"></script>
     <script src="../../resources/platform-helper.js"></script>
 </head>
 <body>
@@ -11,7 +12,6 @@
 
     var buffer;
     var canvas, context;
-    var modified = false;
     var expectedResults = [
         // Each entry is formatted as [x, y, r, g, b].
         [40, 165, 200, 200, 0], // Represents yellow north west tile.
@@ -21,31 +21,30 @@
     ];
 
     var video = document.createElement("video");
-    video.addEventListener("loadeddata", loadeddata);
+
+    waitForVideoFrame(video, firstframe);
     video.src = findMediaFile("video", "../../media/content/test");
 
-    function loadeddata()
+    async function firstframe()
     {
-        if (!modified) {
-            canvas = document.createElement("canvas");
-            canvas.width = 2.5 * video.videoWidth;
-            canvas.height = 2.5 * video.videoHeight;
-            document.body.appendChild(canvas);
+        canvas = document.createElement("canvas");
+        canvas.width = 2.5 * video.videoWidth;
+        canvas.height = 2.5 * video.videoHeight;
+        document.body.appendChild(canvas);
 
-            context = canvas.getContext("2d");
-            context.fillStyle = context.createPattern(video, "repeat");
+        context = canvas.getContext("2d");
+        context.fillStyle = context.createPattern(video, "repeat");
 
-            video.src = findMediaFile("video", "../../media/content/counting");
-            modified = !modified;
-        } else {
-            context.fillRect(0, 0, canvas.width, canvas.height);
+        video.src = findMediaFile("video", "../../media/content/counting");
 
-            expectedResults.forEach(function(element) {
-                checkPixels(context, element[0], element[1], element[2], element[3], element[4], videoCanvasPixelComparisonTolerance());
-            });
+        await waitForVideoFrame(video);
 
-            finishJSTest();
-        }
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        expectedResults.forEach(function(element) {
+            checkPixels(context, element[0], element[1], element[2], element[3], element[4], videoCanvasPixelComparisonTolerance());
+        });
+
+        finishJSTest();
     }
 
     function checkPixels(context, x, y, r, g, b, tolerance)

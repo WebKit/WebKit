@@ -4,9 +4,8 @@ function once(target, name, cb) {
             resolve(event);
         }, { once: true });
     });
-    if (cb) {
+    if (cb)
         p.then(cb);
-    }
     return p;
 }
 
@@ -21,9 +20,8 @@ function fetchWithXHR(uri, onLoadFunction) {
         xhr.send();
     });
 
-    if (onLoadFunction) {
+    if (onLoadFunction)
         p.then(onLoadFunction);
-    }
 
     return p;
 };
@@ -42,18 +40,41 @@ function fetchAndLoad(sb, prefix, chunks, suffix) {
     // Fetch the buffers in parallel.
     let buffers = {};
     let fetches = [];
-    for (var chunk of chunks) {
+    for (var chunk of chunks)
         fetches.push(fetchWithXHR(prefix + chunk + suffix).then(((c, x) => buffers[c] = x).bind(null, chunk)));
-    }
 
     // Load them in series, as required per spec.
     return Promise.all(fetches).then(() => {
         let rv = Promise.resolve();
-        for (let chunk of chunks) {
+        for (let chunk of chunks)
             rv = rv.then(loadSegment.bind(null, sb, buffers[chunk]));
-        }
         return rv;
     });
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
+
+function waitForVideoFrame(video, cb) {
+    const p = new Promise((resolve) => {
+        video.requestVideoFrameCallback((now, metadata) => resolve(now, metadata));
+    });
+    if (cb)
+        p.then(cb);
+    return p;
+}
+
+function waitForVideoFrameUntil(video, time, cb) {
+    const p = new Promise(resolve => {
+        const callback = ((now, metadata) => {
+            if (metadata.mediaTime >= time) {
+                resolve(now, metadata);
+                return;
+            }
+            video.requestVideoFrameCallback(callback);
+        });
+        video.requestVideoFrameCallback(callback);
+    });
+    if (cb)
+        p.then(cb);
+    return p;
+}
