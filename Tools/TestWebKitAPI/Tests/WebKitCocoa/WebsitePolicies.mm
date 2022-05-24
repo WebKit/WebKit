@@ -927,7 +927,8 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 }
 #endif
 
-TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
+// FIXME: Re-enable this test once webkit.org/b/230494 is resolved.
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)
