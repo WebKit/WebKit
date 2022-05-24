@@ -514,6 +514,11 @@ bool RenderFlexibleBox::shouldApplyMinSizeAutoForChild(const RenderBox& child) c
     return (minSize.isAuto() || childBlockSizeIsEquivalentToAutomaticSize) && (mainAxisOverflowForChild(child) == Overflow::Visible);
 }
 
+bool RenderFlexibleBox::shouldApplyMinBlockSizeAutoForChild(const RenderBox& child) const
+{
+    return !mainAxisIsChildInlineAxis(child) && shouldApplyMinSizeAutoForChild(child);
+}
+
 Length RenderFlexibleBox::flexBasisForChild(const RenderBox& child) const
 {
     Length flexLength = child.style().flexBasis();
