@@ -966,6 +966,9 @@ private:
 
     uint32_t m_bitField;
 
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
+
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
     mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
@@ -973,7 +976,9 @@ private:
     WriteBarrier<JSCell> m_previousOrRareData;
 
     RefPtr<UniquedStringImpl> m_transitionPropertyName;
+    // CompactRefPtr<UniquedStringImpl> m_transitionPropertyName;
 
+    // CompactPtr<const ClassInfo> m_classInfo;
     const ClassInfo* m_classInfo;
 
     StructureTransitionTable m_transitionTable;
@@ -985,9 +990,6 @@ private:
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
     static_assert(firstOutOfLineOffset < 256);
-
-    uint16_t m_transitionOffset;
-    uint16_t m_maxOffset;
 
     uint32_t m_propertyHash;
     TinyBloomFilter m_seenProperties;
