@@ -43,13 +43,13 @@ SelectionGeometryGatherer::SelectionGeometryGatherer(RenderView& renderView)
 {
 }
 
-void SelectionGeometryGatherer::addQuad(RenderLayerModelObject *repaintContainer, const FloatQuad& quad)
+void SelectionGeometryGatherer::addQuad(const RenderLayerModelObject* repaintContainer, const FloatQuad& quad)
 {
     if (!quad.boundingBoxIsEmpty())
         m_quads.append(repaintContainer ? repaintContainer->localToAbsoluteQuad(quad) : quad);
 }
 
-void SelectionGeometryGatherer::addGapRects(RenderLayerModelObject *repaintContainer, const GapRects& rects)
+void SelectionGeometryGatherer::addGapRects(const RenderLayerModelObject* repaintContainer, const GapRects& rects)
 {
     if (repaintContainer) {
         GapRects absoluteGapRects;

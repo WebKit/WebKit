@@ -857,7 +857,7 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
     return result;
 }
 
-RenderLayerModelObject* RenderObject::containerForRepaint() const
+RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
 {
     RenderLayerModelObject* repaintContainer = nullptr;
 
@@ -872,7 +872,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* enclosingFilterLayer = parentLayer->enclosingFilterLayer();
             if (enclosingFilterLayer)
-                return &enclosingFilterLayer->renderer();
+                return { false, &enclosingFilterLayer->renderer() };
         }
     }
 
@@ -887,7 +887,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
         if (!repaintContainerFragmentedFlow || repaintContainerFragmentedFlow != parentRenderFragmentedFlow)
             repaintContainer = parentRenderFragmentedFlow;
     }
-    return repaintContainer;
+    return { false, repaintContainer };
 }
 
 void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const
@@ -971,8 +971,9 @@ void RenderObject::repaint() const
     if (view.printing())
         return;
 
-    RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer, clippedOverflowRectForRepaint(repaintContainer));
+    auto repaintContainer = containerForRepaint();
+    if (!repaintContainer.fullRepaintIsScheduled)
+        repaintUsingContainer(repaintContainer.renderer, clippedOverflowRectForRepaint(repaintContainer.renderer));
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer) const
@@ -990,8 +991,9 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer)
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     dirtyRect.move(view.frameView().layoutContext().layoutDelta());
 
-    RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer, computeRectForRepaint(dirtyRect, repaintContainer), shouldClipToLayer);
+    auto repaintContainer = containerForRepaint();
+    if (!repaintContainer.fullRepaintIsScheduled)
+        repaintUsingContainer(repaintContainer.renderer, computeRectForRepaint(dirtyRect, repaintContainer.renderer), shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
@@ -1004,7 +1006,7 @@ void RenderObject::repaintSlowRepaintObject() const
     if (view.printing())
         return;
 
-    const RenderLayerModelObject* repaintContainer = containerForRepaint();
+    auto* repaintContainer = containerForRepaint().renderer;
 
     bool shouldClipToLayer = true;
     IntRect repaintRect;

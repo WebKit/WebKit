@@ -45,8 +45,8 @@ class SelectionGeometryGatherer {
 public:
     SelectionGeometryGatherer(RenderView&);
 
-    void addQuad(RenderLayerModelObject *repaintContainer, const FloatQuad&);
-    void addGapRects(RenderLayerModelObject *repaintContainer, const GapRects&);
+    void addQuad(const RenderLayerModelObject* repaintContainer, const FloatQuad&);
+    void addGapRects(const RenderLayerModelObject* repaintContainer, const GapRects&);
     void setTextOnly(bool isTextOnly) { m_isTextOnly = isTextOnly; }
     bool isTextOnly() const { return m_isTextOnly; }
 

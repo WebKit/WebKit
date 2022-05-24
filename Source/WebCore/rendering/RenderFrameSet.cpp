@@ -436,9 +436,9 @@ void RenderFrameSet::layout()
 
     bool doFullRepaint = selfNeedsLayout() && checkForRepaintDuringLayout();
     LayoutRect oldBounds;
-    RenderLayerModelObject* repaintContainer = 0;
+    const RenderLayerModelObject* repaintContainer = nullptr;
     if (doFullRepaint) {
-        repaintContainer = containerForRepaint();
+        repaintContainer = containerForRepaint().renderer;
         oldBounds = clippedOverflowRectForRepaint(repaintContainer);
     }
 

@@ -32,7 +32,7 @@ namespace WebCore {
 
 RenderSelectionInfoBase::RenderSelectionInfoBase(RenderObject& renderer)
     : m_renderer(renderer)
-    , m_repaintContainer(renderer.containerForRepaint())
+    , m_repaintContainer(renderer.containerForRepaint().renderer)
     , m_state(renderer.selectionState())
 {
 }

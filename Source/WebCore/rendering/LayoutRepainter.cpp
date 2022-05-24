@@ -30,21 +30,20 @@
 
 namespace WebCore {
 
-LayoutRepainter::LayoutRepainter(RenderElement& object, bool checkForRepaint)
-    : m_object(object)
-    , m_repaintContainer(0)
+LayoutRepainter::LayoutRepainter(RenderElement& renderer, bool checkForRepaint)
+    : m_renderer(renderer)
     , m_checkForRepaint(checkForRepaint)
 {
     if (m_checkForRepaint) {
-        m_repaintContainer = m_object.containerForRepaint();
-        m_oldBounds = m_object.clippedOverflowRectForRepaint(m_repaintContainer);
-        m_oldOutlineBox = m_object.outlineBoundsForRepaint(m_repaintContainer);
+        m_repaintContainer = m_renderer.containerForRepaint().renderer;
+        m_oldBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
+        m_oldOutlineBox = m_renderer.outlineBoundsForRepaint(m_repaintContainer);
     }
 }
 
 bool LayoutRepainter::repaintAfterLayout()
 {
-    return m_checkForRepaint ? m_object.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBox) : false;
+    return m_checkForRepaint ? m_renderer.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBox) : false;
 }
 
 } // namespace WebCore

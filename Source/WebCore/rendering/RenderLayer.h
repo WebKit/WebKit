@@ -428,7 +428,7 @@ public:
 
     // The rect is in the coordinate space of the layer's render object.
     void setBackingNeedsRepaintInRect(const LayoutRect&, GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
-    void repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer);
+    void repaintIncludingNonCompositingDescendants(const RenderLayerModelObject* repaintContainer);
 
     void styleChanged(StyleDifference, const RenderStyle* oldStyle);
 

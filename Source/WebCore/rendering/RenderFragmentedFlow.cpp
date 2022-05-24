@@ -948,7 +948,7 @@ void RenderFragmentedFlow::mapLocalToContainer(const RenderLayerModelObject* anc
 
         // If the repaint container is nullptr, we have to climb up to the RenderView, otherwise swap
         // it with the fragment's repaint container.
-        ancestorContainer = ancestorContainer ? fragment->containerForRepaint() : nullptr;
+        ancestorContainer = ancestorContainer ? fragment->containerForRepaint().renderer : nullptr;
 
         if (RenderFragmentedFlow* fragmentFragmentedFlow = fragment->enclosingFragmentedFlow()) {
             RenderFragmentContainer* startFragment = nullptr;
