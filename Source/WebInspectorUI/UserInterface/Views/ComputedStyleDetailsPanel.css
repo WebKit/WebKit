@@ -87,3 +87,7 @@
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:hover {
     --scope-bar-background-opacity-override: 0.5;
 }
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .computed-style-section {
+    padding-top: var(--computed-style-section-vertical-padding);
+}

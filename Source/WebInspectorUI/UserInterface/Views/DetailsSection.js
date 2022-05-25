@@ -78,6 +78,7 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
     set title(title)
     {
+        this._headerElement.toggleAttribute("hidden", !title);
         this._titleElement.textContent = title;
     }
 

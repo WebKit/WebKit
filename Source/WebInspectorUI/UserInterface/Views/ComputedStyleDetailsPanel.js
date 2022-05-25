@@ -216,10 +216,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             this.removeSubview(styleSection);
             styleSection.element.remove();
             this._detailsSectionByStyleSectionMap.delete(styleSection);
-
-            // The top-level details section for variables needs to be preserved because it's the host of nested details sections for variables groups.
-            if (detailsSection !== this._variablesSection)
-                detailsSection.element.remove();
+            detailsSection.element.remove();
         }
 
         this._variablesStyleSectionForGroupTypeMap.clear();
@@ -257,19 +254,12 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.addSubview(variablesStyleSection);
 
-        let detailsSection;
-        if (!label) {
-            this._variablesRow.element.appendChild(variablesStyleSection.element);
-            detailsSection = this._variablesSection;
-        } else {
-            let detailsSectionRow = new WI.DetailsSectionRow;
-            let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
-            detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
-            detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
-
-            detailsSectionRow.element.appendChild(variablesStyleSection.element);
-            this._variablesRow.element.appendChild(detailsSection.element);
-        }
+        let detailsSectionRow = new WI.DetailsSectionRow;
+        let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
+        let detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
+        detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
+        detailsSectionRow.element.appendChild(variablesStyleSection.element);
+        this._variablesRow.element.appendChild(detailsSection.element);
 
         this._detailsSectionByStyleSectionMap.set(variablesStyleSection, detailsSection);
         this._variablesStyleSectionForGroupTypeMap.set(groupType, variablesStyleSection);
