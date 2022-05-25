@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
+#include "heap/CellContainer.h"
 #include "wtf/Compiler.h"
 #include "wtf/RawPointer.h"
 #include <wtf/CommaPrinter.h>
@@ -101,6 +102,7 @@ MarkedBlock::Footer::Footer(VM& vm, Handle& handle)
     , m_vm(&vm)
     , m_markingVersion(MarkedSpace::nullVersion)
     , m_newlyAllocatedVersion(MarkedSpace::nullVersion)
+    , m_sweepListVersion(MarkedSpace::nullVersion)
 {
 }
 
@@ -326,6 +328,8 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, unsigned 
     
     RELEASE_ASSERT(directory->subspace()->alignedMemoryAllocator() == m_alignedMemoryAllocator);
     
+    Locker locker { blockFooter().m_lock };
+    
     m_index = index;
     m_directory = directory;
     blockFooter().m_subspace = directory->subspace();
@@ -353,6 +357,8 @@ void MarkedBlock::Handle::didRemoveFromDirectory()
 {
     ASSERT(m_index != std::numeric_limits<unsigned>::max());
     ASSERT(m_directory);
+
+    Locker locker { blockFooter().m_lock };
     
     m_index = std::numeric_limits<unsigned>::max();
     m_directory = nullptr;
@@ -391,16 +397,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     {
         Locker locker { blockFooter().m_lock };
 
-        // The parallel sweeper built our freelist for us
-        if (isFreeListed())  {
-            ASSERT(!m_directory->isUnswept(NoLockingNecessary, this));
-            ASSERT(m_weakSet.isEmpty());
-            ASSERT(m_attributes.destruction != NeedsDestruction);
-            if (false)
-                dataLogLn("Sweeping (with freelist) block ", RawPointer(atomAt(0)), " which was freelisted by the concurrent sweeper");
-            return;
-        }
-
+        // Make sure the parallel sweeper observes that we have started sweeping
         m_directory->setIsUnswept(NoLockingNecessary, this, false);
     }
     
@@ -422,7 +419,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    // if (space()->isMarking())
+    if (space()->isMarking())
         blockFooter().m_lock.lock();
     
     subspace()->didBeginSweepingToFreeList(this);
@@ -481,33 +478,34 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-void MarkedBlock::Handle::sweepInParallel(AbstractLocker& bitvectorLock)
+void MarkedBlock::Handle::sweepInParallel(AbstractLocker& footerLock)
 {
-    // The mutator might try to change the bitvector bits while we are reading them.
-    // It might also try to steal us from our current directory.
-    // This process doesn't take any marked block locks, so this will not deadlock.
-    UNUSED_PARAM(bitvectorLock);
+    UNUSED_PARAM(footerLock);
     if (!m_directory)
         return;
 
     // We are unswept => the allocator fast path won't touch us
-    // We are unswept => sweep() is not being called, or if it is, we will see that we are swept when we grab the lock.
-    // The marker might mess us up?
-    blockFooter().m_lock.lock();
+    // We are unswept => sweep() is not being called, or if it is, we will see that we are swept when we grabbed the footer lock.
 
     // Did we race against the mutator / incremental sweeper?
-    if (!m_directory->isUnswept(NoLockingNecessary, this)
-        // FIXME: We can never shrink the weak set off the mutator thread.
-        || !m_weakSet.isEmpty()) {
-        blockFooter().m_lock.unlock();
+    if (!m_directory->isUnswept(NoLockingNecessary, this))
         return;
-    }
 
-    // SweepingScope sweepingScope(*heap());
+    auto currentVersion = space()->markingVersion();
+    EmptyMode emptyMode = this->emptyMode();
+    ScribbleMode scribbleMode = this->scribbleMode();
+    NewlyAllocatedMode newlyAllocatedMode = this->newlyAllocatedMode();
+    MarksMode marksMode = this->marksMode();
+    auto cellSize = this->cellSize();
+    
+    if (blockFooter().m_sweepListVersion == currentVersion
+            || newlyAllocatedMode == HasNewlyAllocated
+            || marksMode == MarksStale
+            || emptyMode == IsEmpty)
+        return;
 
     // Why do we check isDestructible?
     bool needsDestruction = m_attributes.destruction == NeedsDestruction
-        // needs cas?
         && m_directory->isDestructible(NoLockingNecessary, this);
 
     if (needsDestruction) {
@@ -527,12 +525,41 @@ void MarkedBlock::Handle::sweepInParallel(AbstractLocker& bitvectorLock)
     }
 
     if (false)
-        dataLogLn("Sweeping in parallel: ", RawPointer(atomAt(0)));
-    m_directory->setIsUnswept(NoLockingNecessary, this, false);
+        dataLogLn("Building freelist for sweeping in parallel: ", RawPointer(atomAt(0)));
 
-    // FIXME: Build freelist?
+    FreeCell* head = nullptr;
+    uintptr_t secret = static_cast<uintptr_t>(vm().heapRandom().getUint64());
+    bool isEmpty = true;
+    size_t count = 0;
+    auto handleDeadCell = [&] (size_t i) {
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block().atoms()[i]);
 
-    blockFooter().m_lock.unlock();
+        FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
+        if (scribbleMode == Scribble)
+            scribble(freeCell, cellSize);
+        freeCell->setNext(head, secret);
+        head = freeCell;
+        ++count;
+    };
+
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
+        if (emptyMode == NotEmpty
+            && ((marksMode == MarksNotStale && blockFooter().m_marks.get(i))
+                || (newlyAllocatedMode == HasNewlyAllocated && blockFooter().m_newlyAllocated.get(i)))) {
+            isEmpty = false;
+            continue;
+        }
+        
+        handleDeadCell(i);
+    }
+
+    blockFooter().m_sweepListHead = head;
+    blockFooter().m_sweepListSecret = secret;
+    blockFooter().m_sweepListVersion = currentVersion;
+    blockFooter().m_sweepListCount = count;
+
+    if (false)
+        dataLogLn("Built freelist for sweeping in parallel: atom 0:", RawPointer(atomAt(0)), " head: ", RawPointer(head), " version: ", currentVersion, " count: ", count);
 }
 
 bool MarkedBlock::Handle::isFreeListedCell(const void* target) const

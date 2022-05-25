@@ -121,8 +121,11 @@ bool ParallelSweeper::sweepNextBlockInParallel(VM&)
         if (m_currentDirectory->needsDestruction())
             continue;
         
-        Locker locker { m_currentDirectory->bitvectorLock() };
-        auto* block = m_currentDirectory->findBlockToSweep(m_unsweptCursor);
+        MarkedBlock::Handle* block = nullptr;
+        {
+            Locker bitvectorLock { m_currentDirectory->bitvectorLock() };
+            block = m_currentDirectory->findBlockToSweep(m_unsweptCursor);
+        }
 
         if (!block) {
             m_unsweptCursor = 0;
@@ -131,7 +134,12 @@ bool ParallelSweeper::sweepNextBlockInParallel(VM&)
 
         if (false)
             dataLogLn("Sweeping block in parallel ", RawPointer(block->atomAt(0)));
-        block->sweepInParallel(locker);
+
+        Locker footerLock { block->block().lock() };
+        if (block->directory() != m_currentDirectory)
+            continue;
+        
+        block->sweepInParallel(footerLock);
         return true;
     }
     

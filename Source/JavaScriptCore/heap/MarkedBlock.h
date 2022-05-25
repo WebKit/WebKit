@@ -37,6 +37,7 @@
 namespace JSC {
 
 class AlignedMemoryAllocator;    
+struct FreeCell;
 class FreeList;
 class Heap;
 class JSCell;
@@ -142,7 +143,7 @@ public:
         // the block. If it's not set and the block has nothing marked, then we'll make the
         // mistake of making a pop freelist rather than a bump freelist.
         void sweep(FreeList*);
-        void sweepInParallel(AbstractLocker& bitvectorLock);
+        void sweepInParallel(AbstractLocker& footerLock);
         
         // This is to be called by Subspace.
         template<typename DestroyFunc>
@@ -294,10 +295,14 @@ public:
 
         HeapVersion m_markingVersion;
         HeapVersion m_newlyAllocatedVersion;
+        HeapVersion m_sweepListVersion;
+        uint16_t m_sweepListCount { 0 };
 
         Bitmap<atomsPerBlock> m_marks;
         Bitmap<atomsPerBlock> m_newlyAllocated;
         void* m_verifierMemo { nullptr };
+        FreeCell* m_sweepListHead { nullptr };
+        uintptr_t m_sweepListSecret { 0 };
     };
     
 private:
@@ -310,6 +315,7 @@ public:
     static constexpr size_t footerSize = blockSize - payloadSize;
 
     static_assert(payloadSize == ((blockSize - sizeof(MarkedBlock::Footer)) & ~(atomSize - 1)), "Payload size computed the alternate way should give the same result");
+    static_assert(payloadSize < std::numeric_limits<uint16_t>::max(), "The sweep list count is 16-bit");
     
     static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         

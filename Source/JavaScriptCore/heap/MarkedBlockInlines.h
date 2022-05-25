@@ -32,6 +32,7 @@
 #include "Scribble.h"
 #include "SuperSampler.h"
 #include "VM.h"
+#include "wtf/RawPointer.h"
 
 namespace JSC {
 
@@ -287,7 +288,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         
         if (sweepMode == SweepToFreeList)
             setIsFreeListed();
-        // if (space()->isMarking())
+        if (space()->isMarking())
             footer.m_lock.unlock();
         if (destructionMode != BlockHasNoDestructors) {
             for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
@@ -326,18 +327,35 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             ++count;
         }
     };
-    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
-        if (emptyMode == NotEmpty
-            && ((marksMode == MarksNotStale && footer.m_marks.get(i))
-                || (newlyAllocatedMode == HasNewlyAllocated && footer.m_newlyAllocated.get(i)))) {
-            isEmpty = false;
-            continue;
+
+    if (sweepMode == SweepToFreeList 
+        && newlyAllocatedMode == DoesNotHaveNewlyAllocated 
+        && footer.m_sweepListVersion == space()->markingVersion()) {
+        if (false)
+            dataLogLn("Sweep is stealing from parallel sweeper! ", RawPointer(atomAt(0)));
+        ASSERT(destructionMode == BlockHasNoDestructors);
+        secret = footer.m_sweepListSecret;
+        head = footer.m_sweepListHead;
+        isEmpty = head == nullptr;
+        count = footer.m_sweepListCount;
+        footer.m_sweepListVersion = MarkedSpace::nullVersion;
+        footer.m_sweepListHead = nullptr;
+        footer.m_sweepListSecret = 0;
+        footer.m_sweepListCount = 0;
+    } else {
+        for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
+            if (emptyMode == NotEmpty
+                && ((marksMode == MarksNotStale && footer.m_marks.get(i))
+                    || (newlyAllocatedMode == HasNewlyAllocated && footer.m_newlyAllocated.get(i)))) {
+                isEmpty = false;
+                continue;
+            }
+            
+            if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
+                deadCells.append(i);
+            else
+                handleDeadCell(i);
         }
-        
-        if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
-            deadCells.append(i);
-        else
-            handleDeadCell(i);
     }
     
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
@@ -345,7 +363,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
         footer.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
     
-    // if (space()->isMarking())
+    if (space()->isMarking())
         footer.m_lock.unlock();
     
     if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
