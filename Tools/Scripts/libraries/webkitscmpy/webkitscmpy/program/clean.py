@@ -24,8 +24,8 @@ import re
 import sys
 
 from .command import Command
-from webkitcorepy import arguments, run, Terminal
-from webkitscmpy import local, remote
+from webkitcorepy import run, Terminal
+from webkitscmpy import log, remote
 
 
 class Clean(Command):
@@ -33,6 +33,7 @@ class Clean(Command):
     help = 'Remove all local changes from current checkout or delete local and remote branches associated with a pull-request'
 
     PR_RE = re.compile(r'^\[?[Pp][Rr][ -](?P<number>\d+)]?$')
+    REMOTE_RE = re.compile(r'^remote\.(?P<name>\S+)\.fetch$')
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -49,7 +50,7 @@ class Clean(Command):
     @classmethod
     def cleanup(cls, repository, argument, remote_target=None):
         if not repository.is_git:
-            sys.stderr('Can only cleanup branches on git repositories\n')
+            sys.stderr.write('Can only clean up branches on git repositories\n')
             return 1
 
         rmt = repository.remote(name=remote_target)
@@ -113,4 +114,52 @@ class Clean(Command):
         result = 0
         for argument in args.arguments:
             result += cls.cleanup(repository, argument, remote_target=args.remote)
+        return result
+
+
+class DeletePRBranches(Command):
+    name = 'delete-pr-branches'
+    help = 'Iterate through all local development branches, find matching PRs and, if those PRs are closed, delete the local branches.'
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        parser.add_argument(
+            '--remote', dest='remote', type=str, default=None,
+            help='Specify remote to search for pull request from.',
+        )
+
+    @classmethod
+    def main(cls, args, repository, **kwargs):
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
+        if not repository.path:
+            sys.stderr.write('Cannot clean on remote repository "{}"\n'.format(repository.url))
+            return 1
+
+        rmt = repository.remote(name=args.remote)
+        if not rmt.pull_requests:
+            sys.stderr.write("'{}' does not have associated pull-requests\n".format(rmt.url))
+            return 1
+
+        result = 0
+        for branch in repository.branches_for(remote=False):
+            if not repository.dev_branches.match(branch):
+                continue
+            log.info('Checking {}...'.format(branch))
+            prs = list(rmt.pull_requests.find(opened=None, head=branch))
+            if not prs:
+                continue
+            if any([pr.opened for pr in prs]):
+                continue
+            result += Clean.cleanup(repository, branch, remote_target=args.remote)
+
+        for name in repository.config().keys():
+            match = Clean.REMOTE_RE.match(name)
+            if not match:
+                continue
+            name = match.group('name')
+            log.info('Deleting {}...'.format(name))
+            result += run([repository.executable(), 'fetch', name, '-f'], cwd=repository.root_path).returncode
+
         return result

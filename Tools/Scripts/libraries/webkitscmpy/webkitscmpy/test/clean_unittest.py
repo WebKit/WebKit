@@ -87,3 +87,22 @@ class TestClean(testing.PathTestCase):
                     path=self.path,
                 ))
             self.assertNotIn('eng/pr-branch', repo.commits)
+
+    def test_delete_pr_branches(self):
+        with OutputCapture(), mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+            remote.pull_requests[-1]['state'] = 'closed'
+
+            self.assertIn('eng/pr-branch', repo.commits)
+            self.assertEqual(0, program.main(
+                args=('delete-pr-branches', '-v'),
+                path=self.path,
+            ))
+            self.assertNotIn('eng/pr-branch', repo.commits)

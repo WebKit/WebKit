@@ -28,7 +28,7 @@ import sys
 from .blame import Blame
 from .branch import Branch
 from .canonicalize import Canonicalize
-from .clean import Clean
+from .clean import Clean, DeletePRBranches
 from .command import Command
 from .commit import Commit
 from .checkout import Checkout
@@ -79,7 +79,7 @@ def main(
         Blame, Branch, Canonicalize, Checkout,
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
-        Credentials, Commit,
+        Credentials, Commit, DeletePRBranches,
     ]
     if subversion:
         programs.append(SetupGitSvn)
