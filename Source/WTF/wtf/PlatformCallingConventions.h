@@ -86,16 +86,14 @@
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
-#if ENABLE(JIT_OPERATION_VALIDATION) && ENABLE(JIT_OPERATION_DISASSEMBLY)
-#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) (void*)validateFunction, name
-#elif ENABLE(JIT_OPERATION_VALIDATION)
-#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) (void*)validateFunction
-#else // ENABLE(JIT_OPERATION_DISASSEMBLY)
-#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction, name) name
+#if ENABLE(JIT_OPERATION_VALIDATION)
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction) (void*)validateFunction
+#else
+#define JSC_ANNOTATE_JIT_OPERATION_EXTRAS(validateFunction)
 #endif
 
 #define JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function) \
-    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, JSC_ANNOTATE_JIT_OPERATION_EXTRAS(function##Validate, #function) };
+    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, JSC_ANNOTATE_JIT_OPERATION_EXTRAS(function##Validate) };
 
 #define JSC_ANNOTATE_JIT_OPERATION(function) \
     JSC_DECLARE_AND_DEFINE_JIT_OPERATION_VALIDATION(function); \

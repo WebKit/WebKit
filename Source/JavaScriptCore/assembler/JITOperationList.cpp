@@ -33,6 +33,11 @@
 #include "Opcode.h"
 #include "Options.h"
 
+#if HAVE(DLADDR)
+#include <cxxabi.h>
+#include <dlfcn.h>
+#endif
+
 namespace JSC {
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
@@ -114,28 +119,26 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline)
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
 
-#if ENABLE(JIT_OPERATION_VALIDATION) && ENABLE(JIT_OPERATION_DISASSEMBLY)
-#define LLINT_OP_EXTRAS(validateLabel, nameStr) bitwise_cast<void*>(validateLabel), nameStr
-#elif ENABLE(JIT_OPERATION_VALIDATION)
-#define LLINT_OP_EXTRAS(validateLabel, nameStr) bitwise_cast<void*>(validateLabel)
+#if ENABLE(JIT_OPERATION_VALIDATION)
+#define LLINT_OP_EXTRAS(validateLabel) bitwise_cast<void*>(validateLabel)
 #else // ENABLE(JIT_OPERATION_DISASSEMBLY)
-#define LLINT_OP_EXTRAS(validateLabel, nameStr) nameStr
+#define LLINT_OP_EXTRAS(validateLabel)
 #endif
 
 #define LLINT_ROUTINE(functionName) { \
         bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(functionName)), \
-        LLINT_OP_EXTRAS(LLINT_ROUTINE_VALIDATE(functionName), #functionName) \
+        LLINT_OP_EXTRAS(LLINT_ROUTINE_VALIDATE(functionName)) \
     },
 
 #define LLINT_OP(name) { \
         bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_VALIDATE(name), #name) \
+        LLINT_OP_EXTRAS(LLINT_RETURN_VALIDATE(name)) \
     }, { \
         bitwise_cast<void*>(LLInt::getWide16CodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE16_VALIDATE(name), #name " [wide16]") \
+        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE16_VALIDATE(name)) \
     }, { \
         bitwise_cast<void*>(LLInt::getWide32CodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE32_VALIDATE(name), #name " [wide32]") \
+        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE32_VALIDATE(name)) \
     },
 
 #define LLINT_RETURN_LOCATION(name, ...) \
@@ -231,7 +234,9 @@ SUPPRESS_ASAN void JITOperationList::addDisassemblyLabels(const JITOperationAnno
 #else
         auto* operation = current->operation;
 #endif
-        registerLabel(removeCodePtrTag(operation), current->name);
+        Dl_info info;
+        if (dladdr(operation, &info) && info.dli_sname)
+            registerLabel(removeCodePtrTag(operation), info.dli_sname);
     }
 }
 

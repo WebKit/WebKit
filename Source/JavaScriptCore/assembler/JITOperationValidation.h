@@ -52,9 +52,6 @@ struct JITOperationAnnotation {
 #if ENABLE(JIT_OPERATION_VALIDATION)
     void* operationWithValidation;
 #endif
-#if ENABLE(JIT_OPERATION_DISASSEMBLY)
-    const char* name;
-#endif
 };
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
