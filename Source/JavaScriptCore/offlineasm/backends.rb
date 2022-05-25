@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -152,7 +152,7 @@ end
 
 class LocalLabel
     def lower(name)
-        $asm.putsLocalLabel "_offlineasm_#{self.name[1..-1]}"
+        $asm.putsLocalLabel "jsc_llint_#{self.name[1..-1]}"
     end
 end
 
@@ -172,11 +172,11 @@ end
 
 class LocalLabelReference
     def asmLabel
-        Assembler.localLabelReference("_offlineasm_"+name[1..-1])
+        Assembler.localLabelReference("jsc_llint_"+name[1..-1])
     end
 
     def cLabel
-        Assembler.cLocalLabelReference("_offlineasm_"+name[1..-1])
+        Assembler.cLocalLabelReference("jsc_llint_"+name[1..-1])
     end
 end
 

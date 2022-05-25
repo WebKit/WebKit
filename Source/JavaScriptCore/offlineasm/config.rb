@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ $preferredDebugAnnotationColumns = 18
 # For example,  the output will look like this:
 #
 #    ...
-#    OFFLINE_ASM_LOCAL_LABEL(_offlineasm_4_functionArityCheck__continue)  // Local Label 24 .
+#    OFFLINE_ASM_LOCAL_LABEL(jsc_llint_4_functionArityCheck__continue)  // Local Label 24 .
 #    ...
 #    OFFLINE_ASM_GLOBAL_LABEL(llint_op_enter)  // Global Label 8 .
 #    ...

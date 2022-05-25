@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1121,9 +1121,9 @@ class Instruction
             # On Darwin, use Macho-O GOT relocation specifiers, along with
             # the labels required for the .loh directive.
             $asm.putStr("#if OS(DARWIN)")
-            $asm.puts "L_offlineasm_loh_adrp_#{uid}:"
+            $asm.puts "Ljsc_llint_loh_adrp_#{uid}:"
             $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGE"
-            $asm.puts "L_offlineasm_loh_ldr_#{uid}:"
+            $asm.puts "Ljsc_llint_loh_ldr_#{uid}:"
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
 
             # On Linux, use ELF GOT relocation specifiers.
@@ -1139,7 +1139,7 @@ class Instruction
             $asm.deferAction {
                 # On Darwin, also include the .loh directive using the generated labels.
                 $asm.putStr("#if OS(DARWIN)")
-                $asm.puts ".loh AdrpLdrGot L_offlineasm_loh_adrp_#{uid}, L_offlineasm_loh_ldr_#{uid}"
+                $asm.puts ".loh AdrpLdrGot Ljsc_llint_loh_adrp_#{uid}, Ljsc_llint_loh_ldr_#{uid}"
                 $asm.putStr("#endif")
             }
 

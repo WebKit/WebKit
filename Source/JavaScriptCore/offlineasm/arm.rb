@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -703,16 +703,16 @@ class Instruction
             uid = $asm.newUID
 
             $asm.putStr("#if OS(DARWIN)")
-            $asm.puts "movw #{operands[1].armOperand}, :lower16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(L_offlineasm_#{uid}+4))"
-            $asm.puts "movt #{operands[1].armOperand}, :upper16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(L_offlineasm_#{uid}+4))"
-            $asm.puts "L_offlineasm_#{uid}:"
+            $asm.puts "movw #{operands[1].armOperand}, :lower16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(Ljsc_llint_#{uid}+4))"
+            $asm.puts "movt #{operands[1].armOperand}, :upper16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(Ljsc_llint_#{uid}+4))"
+            $asm.puts "Ljsc_llint_#{uid}:"
             $asm.puts "add #{operands[1].armOperand}, pc"
             $asm.puts "ldr #{operands[1].armOperand}, [#{operands[1].armOperand}]"
 
             # On Linux, use ELF GOT relocation specifiers.
             $asm.putStr("#elif OS(LINUX)")
-            gotLabel = Assembler.localLabelReference("offlineasm_arm_got_#{uid}")
-            offsetLabel = Assembler.localLabelReference("offlineasm_arm_got_offset_#{uid}")
+            gotLabel = Assembler.localLabelReference("jsc_llint_arm_got_#{uid}")
+            offsetLabel = Assembler.localLabelReference("jsc_llint_arm_got_offset_#{uid}")
 
             $asm.puts "ldr #{dest.armOperand}, #{gotLabel}"
             $asm.puts "ldr #{temp.armOperand}, #{gotLabel}+4"
