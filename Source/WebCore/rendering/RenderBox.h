@@ -668,6 +668,20 @@ override;
 
     bool shouldComputeLogicalHeightFromAspectRatio() const;
 
+    // The explicit intrinsic inner size of contain-intrinsic-size
+    std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
+    std::optional<LayoutUnit> explicitIntrinsicInnerHeight() const;
+
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const
+    {
+        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight();
+    }
+
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const
+    {
+        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth();
+    }
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
@@ -783,6 +797,9 @@ private:
     LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
     
     void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
+
+    bool hasExplicitIntrinsicInnerWidth() const;
+    bool hasExplicitIntrinsicInnerHeight() const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
