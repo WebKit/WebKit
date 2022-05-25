@@ -1,5 +1,48 @@
 2022-05-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r294234. rdar://problem/93602100
+
+    Web Inspector: Regression(r266885) Crash sometimes when rehydrating imported audit results
+    https://bugs.webkit.org/show_bug.cgi?id=240366
+    
+    Reviewed by Devin Rousso.
+    
+    Source/JavaScriptCore:
+    
+    * inspector/protocol/DOM.json:
+    
+    Source/WebCore:
+    
+    Added test cases to inspector/model/dom-node.html
+    
+    After r266885, there is no path to handle the possibility that there may not be a resulting node for calls to
+    `DOM.querySelector`. To correct this, mark the return value as optional (Web Inspector frontend already treats
+    it as optional) and return early if there was no Element matching the selector.
+    
+    * inspector/agents/InspectorDOMAgent.cpp:
+    (WebCore::InspectorDOMAgent::querySelector):
+    * inspector/agents/InspectorDOMAgent.h:
+    
+    LayoutTests:
+    
+    * inspector/model/dom-node.html:
+    * inspector/model/dom-node-expected.txt:
+    
+    Canonical link: https://commits.webkit.org/250592@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@294234 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-16  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Regression(r266885) Crash sometimes when rehydrating imported audit results
+            https://bugs.webkit.org/show_bug.cgi?id=240366
+
+            Reviewed by Devin Rousso.
+
+            * inspector/model/dom-node.html:
+            * inspector/model/dom-node-expected.txt:
+
+2022-05-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r293819. rdar://problem/93602086
 
     Crash in WindowProxy::setDOMWindow

@@ -25,6 +25,34 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "WI.DOMNode.querySelector",
+        description: "Test getting a child node via querySelector.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+
+            function querySelector(selector) {
+                InspectorTest.log(`Calling querySelector("${selector}") on document node.`);
+                return documentNode.querySelector(selector).then((nodeId) => {
+                    if (!nodeId)
+                        return null;
+                    return WI.domManager.nodeForId(nodeId);
+                });
+            }
+
+            let nodeFromQueryingExistingId = await querySelector("#test-id");
+            InspectorTest.expectThat(nodeFromQueryingExistingId instanceof WI.DOMNode, "`querySelector(\"#test-id\")` should return a WI.DOMNode");
+
+            let nodeFromQueryingNonExistantId = await querySelector("#non-existent-id");
+            InspectorTest.expectNull(nodeFromQueryingNonExistantId, "`querySelector(\"#non-existent-id\")` should return null.");
+
+            await querySelector("^\\_(invalid selector)_/^").catch((error) => {
+                InspectorTest.expectEqual(error.message, "SyntaxError", "`querySelector` with an invalid selector should throw a SyntaxError.");
+            });
+
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
