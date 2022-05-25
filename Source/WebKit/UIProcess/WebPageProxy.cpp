@@ -5996,7 +5996,7 @@ using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCall
 static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
 #if HAVE(APP_SSO)
-    page.websiteDataStore().soAuthorizationCoordinator().tryAuthorize(WTFMove(navigationAction), page, WTFMove(newPageCallback), WTFMove(uiClientCallback));
+    page.websiteDataStore().soAuthorizationCoordinator(page).tryAuthorize(WTFMove(navigationAction), page, WTFMove(newPageCallback), WTFMove(uiClientCallback));
 #else
     uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
 #endif
