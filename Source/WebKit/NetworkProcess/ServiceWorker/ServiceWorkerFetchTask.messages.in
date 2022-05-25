@@ -27,7 +27,7 @@ messages -> ServiceWorkerFetchTask NotRefCounted {
     DidFail(WebCore::ResourceError error)
     DidReceiveRedirectResponse(WebCore::ResourceResponse response)
     DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
-    DidReceiveData(IPC::SharedBufferCopy data, int64_t encodedDataLength)
+    DidReceiveData(IPC::SharedBufferReference data, int64_t encodedDataLength)
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish()
 }

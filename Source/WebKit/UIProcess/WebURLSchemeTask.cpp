@@ -190,7 +190,7 @@ auto WebURLSchemeTask::didReceiveData(const SharedBuffer& buffer) -> ExceptionTy
         return ExceptionType::None;
     }
 
-    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_resourceLoaderID, IPC::SharedBufferCopy(buffer)), m_webPageID);
+    m_process->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_resourceLoaderID, IPC::SharedBufferReference(buffer)), m_webPageID);
     return ExceptionType::None;
 }
 

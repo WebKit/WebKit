@@ -897,7 +897,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
 
     auto retainedSelf = retainPtr(self);
-    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::SharedBufferCopy& pdfData) {
+    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::SharedBufferDataReference& pdfData) {
         retainedSelf->_pdfPrintCallbackID = 0;
         if (pdfData.isEmpty())
             return;

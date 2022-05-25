@@ -105,7 +105,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createImageBufferBacke
     RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes", size.width(), size.height(), CFDataGetLength(data.get()));
 #endif
 
-    return ImageBufferBackendHandle { IPC::SharedBufferCopy { WebCore::SharedBuffer::create(data.get()) } };
+    return ImageBufferBackendHandle { IPC::SharedBufferReference { WebCore::SharedBuffer::create(data.get()) } };
 }
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const

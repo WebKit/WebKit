@@ -43,7 +43,7 @@
 #import "RemoteScrollingCoordinator.h"
 #import "SandboxUtilities.h"
 #import "ShareableBitmapUtilities.h"
-#import "SharedBufferCopy.h"
+#import "SharedBufferReference.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
 #import "TapHandlingResult.h"
@@ -4220,13 +4220,13 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
         auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
 
         frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
-        reply(IPC::SharedBufferCopy(SharedBuffer::create(pdfData.get())));
+        reply(IPC::SharedBufferReference(SharedBuffer::create(pdfData.get())));
         return;
     }
 
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, 0, pageCount, pdfPageData);
-    reply(IPC::SharedBufferCopy(SharedBuffer::create(pdfPageData.get())));
+    reply(IPC::SharedBufferReference(SharedBuffer::create(pdfPageData.get())));
 
     endPrinting();
 }

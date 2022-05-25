@@ -200,7 +200,7 @@ Platform/IPC/JSIPCBinding.cpp
 Platform/IPC/MessageReceiveQueueMap.cpp
 Platform/IPC/MessageReceiverMap.cpp
 Platform/IPC/MessageSender.cpp
-Platform/IPC/SharedBufferCopy.cpp
+Platform/IPC/SharedBufferReference.cpp
 Platform/IPC/StreamClientConnection.cpp
 Platform/IPC/StreamConnectionBuffer.cpp
 Platform/IPC/StreamConnectionWorkQueue.cpp

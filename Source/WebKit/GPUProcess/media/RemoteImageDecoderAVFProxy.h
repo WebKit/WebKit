@@ -37,7 +37,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
-class SharedBufferCopy;
+class SharedBufferReference;
 }
 
 namespace WebKit {
@@ -56,10 +56,10 @@ public:
     bool allowsExitUnderMemoryPressure() const;
 
 private:
-    void createDecoder(const IPC::SharedBufferCopy&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);
+    void createDecoder(const IPC::SharedBufferReference&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);
     void deleteDecoder(WebCore::ImageDecoderIdentifier);
     void setExpectedContentSize(WebCore::ImageDecoderIdentifier, long long expectedContentSize);
-    void setData(WebCore::ImageDecoderIdentifier, const IPC::SharedBufferCopy&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
+    void setData(WebCore::ImageDecoderIdentifier, const IPC::SharedBufferReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
     void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void clearFrameBufferCache(WebCore::ImageDecoderIdentifier, size_t index);
 

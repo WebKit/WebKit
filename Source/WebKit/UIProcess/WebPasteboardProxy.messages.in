@@ -64,7 +64,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetTypes(String pasteboardName) -> (Vector<String> types) Synchronous
     ReadText(String pasteboardName) -> (String text) Synchronous
     ReadFilePaths(String pasteboardName) -> (Vector<String> types) Synchronous
-    ReadBuffer(String pasteboardName, String pasteboardType) -> (IPC::SharedBufferCopy data) Synchronous
+    ReadBuffer(String pasteboardName, String pasteboardType) -> (IPC::SharedBufferReference data) Synchronous
     WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
     ClearClipboard(String pasteboardName)
 #endif
