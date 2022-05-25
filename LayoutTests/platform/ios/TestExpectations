@@ -3649,3 +3649,5 @@ webkit.org/b/240918 [ Debug ]  fast/loader/create-frame-in-DOMContentLoaded.html
 webkit.org/b/240918 [ Debug ]  fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Failure ]
 
 webkit.org/b/240927 [ Debug ]  storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
+
+webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
