@@ -266,6 +266,7 @@ public:
         Nonce = 1 << 17,
         ComputedStyleMap = 1 << 18,
         ExplicitlySetAttrElementsMap = 1 << 19,
+        CachedAttrAssociatedElementsMap = 1 << 20,
     };
 #endif
 

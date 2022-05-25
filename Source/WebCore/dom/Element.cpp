@@ -80,6 +80,9 @@
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
+#include "JSElement.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeAnimationOptions.h"
@@ -1989,6 +1992,11 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
     return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
 }
 
+CachedAttrAssociatedElementsMap* Element::cachedAttrAssociatedElementsMapIfExists() const
+{
+    return hasRareData() ? &elementRareData()->cachedAttrAssociatedElementsMap() : nullptr;
+}
+
 Element* Element::getElementAttribute(const QualifiedName& attributeName) const
 {
     ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
@@ -2033,7 +2041,36 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element>> { element });
 }
 
-std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
+JSC::JSValue Element::getElementsArrayAttribute(const QualifiedName& attributeName, JSC::JSGlobalObject& lexicalGlobalObject, WebCore::JSDOMGlobalObject& globalObject)
+{
+    JSValueInWrappedObject* cachedValue = nullptr;
+    if (auto* cachedMap = cachedAttrAssociatedElementsMapIfExists()) {
+        if (auto it = cachedMap->find(attributeName); it != cachedMap->end())
+            cachedValue = it->value.get();
+    }
+
+    std::optional<Vector<RefPtr<Element>>> elements = getElementsArrayAttributeInternal(attributeName);
+    if (!elements) {
+        if (cachedValue)
+            cachedValue->clear();
+        return JSC::jsNull();
+    }
+
+    JSC::JSValue newValue = JSConverter<IDLFrozenArray<IDLInterface<Element>>>::convert(lexicalGlobalObject, globalObject, elements.value());
+    if (cachedValue) {
+        if (!cachedValue->getValue().isUndefinedOrNull()) {
+            Vector<RefPtr<Element>> cachedElements = Converter<IDLFrozenArray<IDLInterface<Element>>>::convert(lexicalGlobalObject, cachedValue->getValue());
+            if (elements == cachedElements)
+                return cachedValue->getValue();
+        }
+
+        cachedValue->setWeakly(newValue);
+    } else
+        ensureElementRareData().cachedAttrAssociatedElementsMap().set(attributeName, makeUnique<JSValueInWrappedObject>(newValue));
+    return newValue;
+}
+
+std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttributeInternal(const QualifiedName& attributeName) const
 {
     ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
     ASSERT(isElementsArrayReflectionAttribute(attributeName));

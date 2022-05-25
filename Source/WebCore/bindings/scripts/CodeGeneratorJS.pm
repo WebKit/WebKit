@@ -5349,6 +5349,9 @@ sub GenerateAttributeGetterBodyDefinition
 
         my $globalObjectReference = $attribute->isStatic ? "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)" : "*thisObject.globalObject()";
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", $globalObjectReference);
+        if ($attribute->extendedAttributes->{"Reflect"} and $baseFunctionName eq "getElementsArrayAttribute") {
+            $toJSExpression = "${functionName}(" . join(", ", @arguments) . ", lexicalGlobalObject, ${globalObjectReference})";
+        }
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->extendedAttributes->{ForwardToMapLike} or $attribute->extendedAttributes->{ForwardToSetLike};
 
         if (!IsReadonly($attribute)) {

@@ -22,6 +22,7 @@
     CustomToJSObject,
     DOMJIT,
     JSCustomHeader,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window

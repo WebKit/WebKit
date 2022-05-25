@@ -3960,7 +3960,7 @@ static inline JSValue jsTestObj_reflectedElementsArrayAttrGetter(JSGlobalObject&
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLFrozenArray<IDLInterface<Element>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.getElementsArrayAttribute(WebCore::HTMLNames::reflectedelementsarrayattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (impl.getElementsArrayAttribute(WebCore::HTMLNames::reflectedelementsarrayattrAttr, lexicalGlobalObject, *thisObject.globalObject())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedElementsArrayAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

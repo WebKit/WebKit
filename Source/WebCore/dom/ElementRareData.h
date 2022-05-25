@@ -26,6 +26,7 @@
 #include "DatasetDOMStringMap.h"
 #include "ElementAnimationRareData.h"
 #include "IntersectionObserver.h"
+#include "JSValueInWrappedObject.h"
 #include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
@@ -108,6 +109,7 @@ public:
 #endif
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
+    CachedAttrAssociatedElementsMap& cachedAttrAssociatedElementsMap() { return m_cachedAttrAssociatedElementsMap; }
 
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
@@ -151,6 +153,8 @@ public:
             result.add(UseType::Nonce);
         if (!m_explicitlySetAttrElementsMap.isEmpty())
             result.add(UseType::ExplicitlySetAttrElementsMap);
+        if (!m_cachedAttrAssociatedElementsMap.isEmpty())
+            result.add(UseType::CachedAttrAssociatedElementsMap);
         return result;
     }
 #endif
@@ -185,6 +189,7 @@ private:
     AtomString m_nonce;
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
+    CachedAttrAssociatedElementsMap m_cachedAttrAssociatedElementsMap;
 
     void releasePseudoElement(PseudoElement*);
 };

@@ -39,6 +39,7 @@ class JSValueInWrappedObject {
     // It must be neither copyable nor movable. Changing this will break concurrent GC.
     WTF_MAKE_NONCOPYABLE(JSValueInWrappedObject);
     WTF_MAKE_NONMOVABLE(JSValueInWrappedObject);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JSValueInWrappedObject(JSC::JSValue = { });
 

@@ -43,6 +43,7 @@ struct SameSizeAsElementRareData : NodeRareData {
 #endif
     void* resizeObserverData;
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
+    CachedAttrAssociatedElementsMap cachedAttrAssociatedElementsMap;
 };
 
 static_assert(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), "ElementRareData should stay small");

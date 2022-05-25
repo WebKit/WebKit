@@ -30,6 +30,8 @@
 #include "EventOptions.h"
 #include "FocusOptions.h"
 #include "HitTestRequest.h"
+#include "JSDOMGlobalObject.h"
+#include "JSValueInWrappedObject.h"
 #include "QualifiedName.h"
 #include "RenderPtr.h"
 #include "ScrollTypes.h"
@@ -94,6 +96,7 @@ struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element>>>;
+using CachedAttrAssociatedElementsMap = HashMap<QualifiedName, std::unique_ptr<JSValueInWrappedObject>>;
 
 namespace Style {
 class Resolver;
@@ -125,7 +128,8 @@ public:
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
     WEBCORE_EXPORT Element* getElementAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
-    WEBCORE_EXPORT std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT JSC::JSValue getElementsArrayAttribute(const QualifiedName& attributeName, JSC::JSGlobalObject&, WebCore::JSDOMGlobalObject&);
+    std::optional<Vector<RefPtr<Element>>> getElementsArrayAttributeInternal(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& value);
 
     // Call this to get the value of an attribute that is known not to be the style
@@ -676,6 +680,7 @@ public:
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
+    CachedAttrAssociatedElementsMap* cachedAttrAssociatedElementsMapIfExists() const;
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

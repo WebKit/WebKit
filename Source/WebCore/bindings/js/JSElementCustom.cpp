@@ -81,4 +81,17 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<E
     return createNewElementWrapper(globalObject, WTFMove(element));
 }
 
+template<typename Visitor>
+void JSElement::visitAdditionalChildren(Visitor& visitor)
+{
+    if (auto* cachedMap = wrapped().cachedAttrAssociatedElementsMapIfExists()) {
+        for (auto& cachedValue : cachedMap->values()) {
+            if (cachedValue)
+                cachedValue->visit(visitor);
+        }
+    }
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSElement);
+
 } // namespace WebCore
