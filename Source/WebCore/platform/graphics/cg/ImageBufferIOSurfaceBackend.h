@@ -27,16 +27,12 @@
 
 #if HAVE(IOSURFACE)
 
-#include "GraphicsContextCG.h"
 #include "ImageBufferCGBackend.h"
 #include "IOSurface.h"
 #include "IOSurfacePool.h"
-#include <optional>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
-class GraphicsContextCG;
 
 class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferIOSurfaceBackend);
@@ -91,7 +87,7 @@ protected:
     std::unique_ptr<IOSurface> m_surface;
     mutable bool m_requiresDrawAfterPutPixelBuffer { false };
 
-    mutable std::optional<GraphicsContextCG> m_context;
+    mutable bool m_needsSetupContext { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
 
     RefPtr<IOSurfacePool> m_ioSurfacePool;

@@ -32,16 +32,10 @@
 
 namespace WebCore {
 
-#if HAVE(IOSURFACE)
-class IOSurface;
-#endif
-
 class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
 public:
     GraphicsContextCG(CGContextRef);
-#if HAVE(IOSURFACE)
-    explicit GraphicsContextCG(IOSurface&);
-#endif
+
 #if PLATFORM(WIN)
     GraphicsContextCG(HDC, bool hasAlpha = false); // FIXME: To be removed.
 #endif

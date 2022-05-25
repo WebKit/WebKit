@@ -43,6 +43,7 @@ class TextStream;
 
 namespace WebCore {
 
+class GraphicsContext;
 class HostWindow;
 class IOSurfacePool;
 class ProcessIdentity;
@@ -126,10 +127,8 @@ public:
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
 #endif
     IOSurfaceRef surface() const { return m_surface.get(); }
+    WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
     WEBCORE_EXPORT CGContextRef ensurePlatformContext(const HostWindow* = nullptr);
-    // The graphics context cached on the surface counts as a "user", so to get
-    // an accurate result from isInUse(), it needs to be released.
-    WEBCORE_EXPORT void releasePlatformGraphicsContext();
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to
@@ -151,6 +150,10 @@ public:
 
     WEBCORE_EXPORT bool isInUse() const;
 
+    // The graphics context cached on the surface counts as a "user", so to get
+    // an accurate result from isInUse(), it needs to be released.
+    WEBCORE_EXPORT void releaseGraphicsContext();
+
 #if HAVE(IOSURFACE_ACCELERATOR)
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
     WEBCORE_EXPORT static void convertToFormat(IOSurfacePool*, std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
@@ -169,6 +172,7 @@ private:
     IntSize m_size;
     size_t m_totalBytes;
 
+    std::unique_ptr<GraphicsContext> m_graphicsContext;
     RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;

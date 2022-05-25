@@ -82,7 +82,7 @@ void IOSurfacePool::willAddSurface(IOSurface& surface, bool inUse)
     CachedSurfaceDetails& details = m_surfaceDetails.add(&surface, CachedSurfaceDetails()).iterator->value;
     details.resetLastUseTime();
 
-    surface.releasePlatformGraphicsContext();
+    surface.releaseGraphicsContext();
 
     size_t surfaceBytes = surface.totalBytes();
 

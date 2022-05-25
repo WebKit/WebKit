@@ -29,7 +29,6 @@
 #import "DisplayListRecorder.h"
 #import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
-#import "IOSurface.h"
 #import "IntRect.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
@@ -114,12 +113,6 @@ static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
     drawFocusRing(context, color);
-}
-
-GraphicsContextCG::GraphicsContextCG(IOSurface& iosurface)
-    : GraphicsContextCG(iosurface.ensurePlatformContext())
-{
-    setIsAcceleratedContext(true);
 }
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, float, const Color& color)
