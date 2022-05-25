@@ -53,10 +53,14 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
-        track->updateConfigurationFromCaps();
+        track->m_taskQueue.enqueueTask([track]() {
+            track->updateConfigurationFromCaps();
+        });
     }), this);
     g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
-        track->updateConfigurationFromTags();
+        track->m_taskQueue.enqueueTask([track]() {
+            track->updateConfigurationFromTags();
+        });
     }), this);
 
     updateConfigurationFromCaps();
@@ -65,6 +69,7 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 
 void AudioTrackPrivateGStreamer::updateConfigurationFromTags()
 {
+    ASSERT(isMainThread());
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
     unsigned bitrate;
     if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
@@ -72,13 +77,12 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromTags()
 
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
-    callOnMainThreadAndWait([&] {
-        setConfiguration(WTFMove(configuration));
-    });
+    setConfiguration(WTFMove(configuration));
 }
 
 void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
 {
+    ASSERT(isMainThread());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
@@ -95,9 +99,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
     configuration.codec = codec.get();
 #endif
 
-    callOnMainThreadAndWait([&] {
-        setConfiguration(WTFMove(configuration));
-    });
+    setConfiguration(WTFMove(configuration));
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
@@ -110,11 +112,15 @@ AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
 
 void AudioTrackPrivateGStreamer::disconnect()
 {
+    m_taskQueue.startAborting();
+
     if (m_stream)
         g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
+
+    m_taskQueue.finishAborting();
 }
 
 void AudioTrackPrivateGStreamer::setEnabled(bool enabled)

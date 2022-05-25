@@ -53,10 +53,14 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        track->updateConfigurationFromCaps();
+        track->m_taskQueue.enqueueTask([track]() {
+            track->updateConfigurationFromCaps();
+        });
     }), this);
     g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        track->updateConfigurationFromTags();
+        track->m_taskQueue.enqueueTask([track]() {
+            track->updateConfigurationFromTags();
+        });
     }), this);
 
     updateConfigurationFromCaps();
@@ -65,6 +69,7 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
 {
+    ASSERT(isMainThread());
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
     unsigned bitrate;
     if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
@@ -72,13 +77,12 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
 
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
-    callOnMainThreadAndWait([&] {
-        setConfiguration(WTFMove(configuration));
-    });
+    setConfiguration(WTFMove(configuration));
 }
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
 {
+    ASSERT(isMainThread());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
@@ -158,9 +162,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
     configuration.codec = codec.get();
 #endif
 
-    callOnMainThreadAndWait([&] {
-        setConfiguration(WTFMove(configuration));
-    });
+    setConfiguration(WTFMove(configuration));
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
@@ -173,11 +175,15 @@ VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 
 void VideoTrackPrivateGStreamer::disconnect()
 {
+    m_taskQueue.startAborting();
+
     if (m_stream)
         g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
+
+    m_taskQueue.finishAborting();
 }
 
 void VideoTrackPrivateGStreamer::setSelected(bool selected)
