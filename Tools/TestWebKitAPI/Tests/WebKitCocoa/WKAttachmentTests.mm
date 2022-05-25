@@ -156,6 +156,20 @@ static NSData *testiWorkAttachmentData()
     return [NSData dataWithContentsOfURL:testiWorkAttachmentFileURL()];
 }
 
+#if PLATFORM(MAC)
+
+static NSURL *testDirectoryAttachmentFileURL()
+{
+    NSString *folderName = [NSString stringWithFormat:@"some.directory-%@", [NSUUID UUID].UUIDString];
+    auto temporaryFolder = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:folderName] isDirectory:YES];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtURL:temporaryFolder withIntermediateDirectories:NO attributes:nil error:&error];
+
+    return temporaryFolder;
+}
+
+#endif
+
 @interface AttachmentUIDelegate : NSObject<WKUIDelegatePrivate>
 @end
 
@@ -2060,6 +2074,34 @@ TEST(WKAttachmentTestsMac, DropImageOverImageWithControls)
     [simulator runFrom:NSMakePoint(400, 400) to:NSMakePoint(50, 50)];
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
     [webView expectElementCount:2 querySelector:@"IMG"];
+}
+
+static bool didLoadIcon;
+static NSImage *_icon(id, SEL)
+{
+    didLoadIcon = true;
+    return nil;
+}
+
+TEST(WKAttachmentTestsMac, DragDirectoryAttachment)
+{
+    didLoadIcon = false;
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    InstanceMethodSwizzler fileWrapperSwizzler {
+        [NSFileWrapper class],
+        @selector(icon),
+        reinterpret_cast<IMP>(_icon)
+    };
+
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:testDirectoryAttachmentFileURL() options:0 error:nil]);
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:fileWrapper.get() contentType:nil]);
+    [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(300, 300)];
+    TestWebKitAPI::Util::run(&didLoadIcon);
 }
 
 #endif // PLATFORM(MAC)

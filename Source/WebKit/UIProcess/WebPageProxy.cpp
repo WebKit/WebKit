@@ -10303,6 +10303,14 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
 {
     FloatSize size = requestedSize;
     ShareableBitmap::Handle handle;
+#if PLATFORM(MAC)
+    auto attachment = attachmentForIdentifier(identifier);
+    if (attachment && attachment->contentType() == "public.directory") {
+        updateIconForDirectory(attachment->fileWrapper(), attachment->identifier());
+        return;
+    }
+#endif
+
 #if PLATFORM(COCOA)
     if (auto icon = iconForAttachment(fileName, contentType, title, size))
         icon->createHandle(handle);

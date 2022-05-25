@@ -2599,6 +2599,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
+    if (fileName.isNull() && attachmentType.isNull() && title.isNull())
+        return nil;
+
     if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title))
         return icon->nsImage();
     return nil;

@@ -118,6 +118,8 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 namespace WebKit {
 using namespace WebCore;
 
+constexpr IntSize iconSize = IntSize(400, 400);
+
 #if ENABLE(DATA_DETECTION)
 
 void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetectionResult)
@@ -602,7 +604,7 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
     [operation setCompletionBlock:^{
         RunLoop::main().dispatch([this, operation = retainPtr(operation)] {
             auto identifier = [operation identifier];
-            auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
+            auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], iconSize);
             if (!convertedImage)
                 return;
             this->updateAttachmentThumbnail(identifier, convertedImage);
@@ -612,8 +614,7 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
     [[WKQLThumbnailQueueManager sharedInstance].queue addOperation:operation];
 }
 
-
-void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper* fileWrapper, const String& identifier)
+void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper *fileWrapper, const String& identifier)
 {
     auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithAttachment:fileWrapper identifier:identifier]);
     requestThumbnailWithOperation(operation.get());
@@ -623,10 +624,33 @@ void WebPageProxy::requestThumbnailWithPath(const String& identifier, const Stri
 {
     auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithURL:filePath identifier:identifier]);
     requestThumbnailWithOperation(operation.get());
-    
 }
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)
+
+#if PLATFORM(MAC)
+
+void WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier)
+{
+    auto image = [fileWrapper icon];
+    if (!image)
+        return;
+
+    auto flippedIcon = [NSImage imageWithSize:iconSize flipped:YES drawingHandler:^BOOL(NSRect destinationRect) {
+        [image drawInRect:destinationRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
+        return YES;
+    }];
+
+    auto convertedImage = convertPlatformImageToBitmap(flippedIcon, iconSize);
+    if (!convertedImage)
+        return;
+
+    ShareableBitmap::Handle handle;
+    convertedImage->createHandle(handle);
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
+}
+
+#endif
 
 void WebPageProxy::scheduleActivityStateUpdate()
 {

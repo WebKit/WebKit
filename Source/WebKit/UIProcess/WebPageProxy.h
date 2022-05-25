@@ -2109,6 +2109,10 @@ public:
     void setIsInMultitaskingMode(bool);
 #endif
 
+#if PLATFORM(MAC)
+    void updateIconForDirectory(NSFileWrapper *, const String&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
