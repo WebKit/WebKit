@@ -14,7 +14,7 @@
 
 #include "test_utils/ANGLETest.h"
 #include "util/OSWindow.h"
-#include "util/x11/X11Window.h"
+#include "util/linux/x11/X11Window.h"
 
 using namespace angle;
 

@@ -39,7 +39,7 @@ std::string GetLogFileName(std::string deqpDataDir)
 {
 #if (DE_OS == DE_OS_ANDROID)
     // On Android executable dir is not writable, so use data dir instead
-    return deqpDataDir + "/" + g_cmdLine->getLogFileName();
+    return std::string("/data/data/com.android.angle.test/") + g_cmdLine->getLogFileName();
 #else
     return g_cmdLine->getLogFileName();
 #endif

@@ -538,6 +538,10 @@ SpirvType SPIRVBuilder::getSpirvType(const TType &type, const SpirvTypeSpec &typ
         case EbtSamplerVideoWEBGL:
             spirvType.type = EbtSampler2D;
             break;
+        // yuvCscStandardEXT is just a uint under the hood.
+        case EbtYuvCscStandardEXT:
+            spirvType.type = EbtUInt;
+            break;
         default:
             break;
     }

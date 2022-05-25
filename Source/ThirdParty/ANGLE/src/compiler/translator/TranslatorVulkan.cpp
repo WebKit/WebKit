@@ -35,6 +35,7 @@
 #include "compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateDithering.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateFragColorData.h"
+#include "compiler/translator/tree_ops/vulkan/EmulateYUVBuiltIns.h"
 #include "compiler/translator/tree_ops/vulkan/FlagSamplersWithTexelFetch.h"
 #include "compiler/translator/tree_ops/vulkan/ReplaceForShaderFramebufferFetch.h"
 #include "compiler/translator/tree_ops/vulkan/RewriteInterpolateAtOffset.h"
@@ -159,8 +160,8 @@ bool DeclareDefaultUniforms(TCompiler *compiler,
     TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
     layoutQualifier.blockStorage     = EbsStd140;
     const TVariable *uniformBlock    = DeclareInterfaceBlock(
-        root, symbolTable, uniformList, EvqUniform, layoutQualifier, TMemoryQualifier::Create(), 0,
-        ImmutableString(kDefaultUniformNames[shaderType]), ImmutableString(""));
+           root, symbolTable, uniformList, EvqUniform, layoutQualifier, TMemoryQualifier::Create(), 0,
+           ImmutableString(kDefaultUniformNames[shaderType]), ImmutableString(""));
 
     // Create a map from the uniform variables to new variables that reference the fields of the
     // block.
@@ -872,10 +873,9 @@ bool TranslatorVulkan::translateImpl(TInfoSinkBase &sink,
     }
 
     // Remove declarations of inactive shader interface variables so glslang wrapper doesn't need to
-    // replace them.  Note: this is done before extracting samplers from structs, as removing such
-    // inactive samplers is not yet supported.  Note also that currently, CollectVariables marks
-    // every field of an active uniform that's of struct type as active, i.e. no extracted sampler
-    // is inactive.
+    // replace them.  Note that currently, CollectVariables marks every field of an active uniform
+    // that's of struct type as active, i.e. no extracted sampler is inactive, so this can be done
+    // before extracting samplers from structs.
     if (!RemoveInactiveInterfaceVariables(this, root, &getSymbolTable(), getAttributes(),
                                           getInputVaryings(), getOutputVariables(), getUniforms(),
                                           getInterfaceBlocks(), true))
@@ -1245,7 +1245,16 @@ bool TranslatorVulkan::translateImpl(TInfoSinkBase &sink,
                 }
             }
 
-            if (!EmulateDithering(this, root, &getSymbolTable(), specConst, driverUniforms))
+            if (IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_YUV_target))
+            {
+                if (!EmulateYUVBuiltIns(this, root, &getSymbolTable()))
+                {
+                    return false;
+                }
+            }
+
+            if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
+                                  driverUniforms))
             {
                 return false;
             }

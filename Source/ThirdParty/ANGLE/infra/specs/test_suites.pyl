@@ -54,9 +54,6 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'android_swarming': {
-          'shards': 4,
-        },
         'merge': {
           'script': '//scripts/angle_deqp_test_merge.py',
         },
@@ -519,9 +516,6 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'android_swarming': {
-          'shards': 2,
-        },
         'desktop_args': [
           '--bot-mode',
         ],
@@ -564,9 +558,6 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'android_swarming': {
-          'shards': 2,
-        },
         'desktop_args': [
           '--bot-mode',
         ],
@@ -587,7 +578,7 @@
           '--render-test-output-dir=${ISOLATED_OUTDIR}',
         ],
         'android_swarming': {
-          'shards': 4,
+          'shards': 8,
         },
         'args': [
           'angle_end2end_tests',
@@ -711,7 +702,7 @@
           'shards': 2,
         },
         'android_swarming': {
-          'shards': 20,
+          'shards': 6,
         },
       },
     },
@@ -860,24 +851,6 @@
         'linux_args': [
           '--xvfb',
         ],
-        'use_isolated_scripts_api': True,
-      },
-    },
-
-    'swangle_deqp_gles31_slow_tests': {
-      'angle_deqp_gles31_tests': {
-        'args': [
-          'angle_deqp_gles31_tests',
-          '--use-angle=swiftshader',
-          '--bot-mode',
-          '--batch-timeout=600',
-        ],
-        'linux_args': [
-          '--xvfb',
-        ],
-        'swarming': {
-          'shards': 30,
-        },
         'use_isolated_scripts_api': True,
       },
     },
@@ -1192,13 +1165,6 @@
     'swangle_slow_gtests': [
       'swangle_deqp_egl_slow_tests',
       'swangle_deqp_gles2_slow_tests',
-      'swangle_deqp_gles31_rotate180_tests',
-      'swangle_deqp_gles31_rotate270_tests',
-      'swangle_deqp_gles31_rotate90_tests',
-      'swangle_deqp_gles31_slow_tests',
-      'swangle_deqp_gles3_rotate180_tests',
-      'swangle_deqp_gles3_rotate270_tests',
-      'swangle_deqp_gles3_rotate90_tests',
       'swangle_deqp_gles3_slow_tests',
       'swangle_deqp_khr_gles2_tests',
       'swangle_deqp_khr_gles31_tests',
@@ -1242,23 +1208,6 @@
       'angle_gles1_conformance_gtests',
       'angle_unit_gtests',
       'angle_white_box_gtests',
-    ],
-
-    'win7_amd_gtests': [
-      'angle_deqp_gles2_d3d11_gtests',
-      'angle_end2end_with_retry_gtests',
-      'angle_unit_gtests',
-      'angle_white_box_gtests',
-    ],
-
-    'win7_nvidia_gtests': [
-      'angle_end2end_gtests',
-      'angle_gles1_conformance_gtests',
-      'angle_unit_gtests',
-      'angle_white_box_gtests',
-      'angle_deqp_egl_d3d11_gtests',
-      'angle_deqp_gles2_d3d11_gtests',
-      'angle_deqp_gles3_d3d11_gtests',
     ],
   },
 }

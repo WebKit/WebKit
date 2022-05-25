@@ -233,64 +233,6 @@
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_repeat = FAIL
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_mirror = FAIL
 
-// These tests also fail on AMD windows driver as it is not allowed to use emulation due to errors.
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_nearest = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_linear = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_nearest = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_linear = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.bias.linear_nearest = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.mipmap.cube.bias.linear_linear = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_clamp = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_mirror = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_mipmap_linear_linear_clamp = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.filtering.linear_mipmap_linear_linear_mirror = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.clamp_clamp = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.clamp_repeat = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.clamp_mirror = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_clamp = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_repeat = FAIL
-3243 VULKAN WIN AMD : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_mirror = FAIL
-
-// Vulkan AMD drivers don't seem to support wide point clipping.
-2463 VULKAN WIN AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip = FAIL
-2463 VULKAN WIN AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_center = FAIL
-2463 VULKAN WIN AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_corner = FAIL
-
-// These failures are possibly due to an AMD driver bug.
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.draw.random.14 = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.draw.random.30 = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.draw.random.41 = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.first.byte_first* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.first.float_first* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_1_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_1_2_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_1_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_17_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_17_2_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_17_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_32_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_32_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_32_32_float* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_4_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_4_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.offset.buffer_4_32_float* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_32_float* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_32_short* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_3_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.strides.buffer_0_6_short* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_0_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_0_short* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_17_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_32_byte* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_32_float* = SKIP
-2847 VULKAN WIN AMD : dEQP-GLES2.functional.vertex_arrays.single_attribute.usages.buffer_0_32_short* = SKIP
-
-// Fails after OpenGL line rasterization rules implementation. Possibly a bug in FragCoord.
-2809 VULKAN WIN AMD : dEQP-GLES2.functional.clipping.line.long_line_clip = FAIL
-
 // Failures on newer NVIDIA drivers (411.95) and passes on older drivers (388.16).
 2976 VULKAN NVIDIA : dEQP-GLES2.functional.shaders.invariance.* = FAIL
 // Fails on 431.02 NVIDIA driver

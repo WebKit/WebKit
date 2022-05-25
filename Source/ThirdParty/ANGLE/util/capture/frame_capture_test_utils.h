@@ -118,7 +118,7 @@ class TraceLibrary
 
   private:
     template <typename FuncT, typename... ArgsT>
-    typename std::result_of<FuncT(ArgsT...)>::type callFunc(const char *funcName, ArgsT... args)
+    typename std::invoke_result<FuncT, ArgsT...>::type callFunc(const char *funcName, ArgsT... args)
     {
         void *untypedFunc = mTraceLibrary->getSymbol(funcName);
         if (!untypedFunc)

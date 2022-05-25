@@ -225,6 +225,11 @@ void GenerateContextLostErrorOnContext(Context *context)
 
 void GenerateContextLostErrorOnCurrentGlobalContext()
 {
+    // If the client starts issuing GL calls before ANGLE has had a chance to initialize,
+    // GenerateContextLostErrorOnCurrentGlobalContext can be called before AllocateCurrentThread has
+    // had a chance to run. Calling GetCurrentThread() ensures that TLS thread state is set up.
+    egl::GetCurrentThread();
+
     GenerateContextLostErrorOnContext(GetGlobalContext());
 }
 }  // namespace gl

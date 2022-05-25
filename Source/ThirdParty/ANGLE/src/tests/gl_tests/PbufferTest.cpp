@@ -227,6 +227,61 @@ TEST_P(PbufferTest, BindTexImage)
     glDeleteTextures(1, &texture);
 }
 
+// Verify that binding a pbuffer works after using a texture normally.
+TEST_P(PbufferTest, BindTexImageAfterTexImage)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
+    EGLWindow *window = getEGLWindow();
+
+    // Apply the Pbuffer and clear it to magenta
+    eglMakeCurrent(window->getDisplay(), mPbuffer, mPbuffer, window->getContext());
+    ASSERT_EGL_SUCCESS();
+
+    glViewport(0, 0, static_cast<GLsizei>(mPbufferSize), static_cast<GLsizei>(mPbufferSize));
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(static_cast<GLint>(mPbufferSize) / 2,
+                          static_cast<GLint>(mPbufferSize) / 2, GLColor::magenta);
+
+    // Apply the window surface
+    window->makeCurrent();
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+
+    // Create a simple blue texture.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::blue);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw a quad and verify blue
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Bind the Pbuffer to the texture
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+
+    // Draw a quad and verify magenta
+    drawQuad(mTextureProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+
+    // Unbind the texture
+    eglReleaseTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+}
+
 // Test clearing a Pbuffer in sRGB colorspace and checking the color is correct.
 // Then bind the Pbuffer to a texture and verify it renders correctly
 TEST_P(PbufferTest, ClearAndBindTexImageSrgb)

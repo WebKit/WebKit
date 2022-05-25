@@ -1206,7 +1206,7 @@ angle::Result Program::linkImpl(const Context *context)
     // use the previously linked program if linking the shaders fails.
     mLinked = false;
 
-    mState.mExecutable->getInfoLog().reset();
+    mState.mExecutable->resetInfoLog();
 
     // Validate we have properly attached shaders before checking the cache.
     if (!linkValidateShaders(mState.mExecutable->getInfoLog()))
@@ -1343,6 +1343,8 @@ angle::Result Program::linkImpl(const Context *context)
 
             mState.mExecutable->mUsesEarlyFragmentTestsOptimization =
                 fragmentShader->hasEarlyFragmentTestsOptimization();
+            mState.mExecutable->mEnablesPerSampleShading =
+                fragmentShader->enablesPerSampleShading();
             mState.mExecutable->mAdvancedBlendEquations =
                 fragmentShader->getAdvancedBlendEquations();
             mState.mSpecConstUsageBits |= fragmentShader->getSpecConstUsageBits();
@@ -1392,6 +1394,7 @@ void Program::resolveLinkImpl(const Context *context)
     std::unique_ptr<LinkingState> linkingState = std::move(mLinkingState);
     if (!mLinked)
     {
+        mState.mExecutable->reset(false);
         return;
     }
 
@@ -1523,7 +1526,7 @@ void Program::unlink()
         // the last successfully linked ProgramExecutable, so we don't lose any state information.
         mState.mExecutable.reset(new ProgramExecutable(*mLinkingState->linkedExecutable));
     }
-    mState.mExecutable->reset();
+    mState.mExecutable->reset(true);
 
     mState.mUniformLocations.clear();
     mState.mBufferVariables.clear();
@@ -1550,14 +1553,16 @@ angle::Result Program::loadBinary(const Context *context,
     unlink();
     InfoLog &infoLog = mState.mExecutable->getInfoLog();
 
-#if ANGLE_PROGRAM_BINARY_LOAD != ANGLE_ENABLED
-    return angle::Result::Continue;
-#else
+    if (!angle::GetANGLEHasBinaryLoading())
+    {
+        return angle::Result::Incomplete;
+    }
+
     ASSERT(binaryFormat == GL_PROGRAM_BINARY_ANGLE);
     if (binaryFormat != GL_PROGRAM_BINARY_ANGLE)
     {
         infoLog << "Invalid program binary format.";
-        return angle::Result::Continue;
+        return angle::Result::Incomplete;
     }
 
     BinaryInputStream stream(binary, length);
@@ -1604,7 +1609,6 @@ angle::Result Program::loadBinary(const Context *context,
     mLinkingState = std::move(linkingState);
 
     return result;
-#endif  // #if ANGLE_PROGRAM_BINARY_LOAD == ANGLE_ENABLED
 }
 
 angle::Result Program::saveBinary(Context *context,

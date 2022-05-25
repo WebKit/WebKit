@@ -224,9 +224,9 @@ def gen_util_gles_and_egl_loaders():
 
 
 def gen_trace_gles_and_egl_loaders():
-    path = os.path.join("..", "src", "tests", "restricted_traces")
+    path = os.path.join("..", "util", "capture")
     export = "ANGLE_TRACE_LOADER_EXPORT "
-    lib = "ANGLE_RESTRICTED_TRACES"
+    lib = "ANGLE_TRACES_UTIL"
     gen_gles_loader(trace_gles_preamble, path, lib, export, "t_", "trace_")
     gen_egl_loader(trace_egl_preamble, path, lib, export, "t_", "trace_")
 
@@ -272,10 +272,10 @@ def main():
             '../util/gles_loader_autogen.h',
             '../util/windows/wgl_loader_autogen.cpp',
             '../util/windows/wgl_loader_autogen.h',
-            '../src/tests/restricted_traces/trace_egl_loader_autogen.cpp',
-            '../src/tests/restricted_traces/trace_egl_loader_autogen.h',
-            '../src/tests/restricted_traces/trace_gles_loader_autogen.cpp',
-            '../src/tests/restricted_traces/trace_gles_loader_autogen.h',
+            '../util/capture/trace_egl_loader_autogen.cpp',
+            '../util/capture/trace_egl_loader_autogen.h',
+            '../util/capture/trace_gles_loader_autogen.cpp',
+            '../util/capture/trace_gles_loader_autogen.h',
         ]
 
         if sys.argv[1] == 'inputs':
@@ -318,14 +318,14 @@ trace_gles_preamble = """#if defined(GL_GLES_PROTOTYPES) && GL_GLES_PROTOTYPES
 #endif  // defined(GL_GLES_PROTOTYPES)
 
 #include "angle_gl.h"
-#include "restricted_traces_export.h"
+#include "traces_export.h"
 """
 
 trace_egl_preamble = """
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "restricted_traces_export.h"
+#include "traces_export.h"
 """
 
 util_wgl_preamble = """

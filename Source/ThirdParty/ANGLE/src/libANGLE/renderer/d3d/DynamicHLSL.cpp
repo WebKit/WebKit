@@ -403,22 +403,22 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
 }
 
 std::string DynamicHLSL::generateShaderForImage2DBindSignature(
-    const d3d::Context *context,
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,
     gl::ShaderType shaderType,
+    const std::string &shaderHLSL,
     std::vector<sh::ShaderVariable> &image2DUniforms,
-    const gl::ImageUnitTextureTypeMap &image2DBindLayout) const
+    const gl::ImageUnitTextureTypeMap &image2DBindLayout,
+    unsigned int baseUAVRegister) const
 {
-    std::string shaderHLSL(programData.getAttachedShader(shaderType)->getTranslatedSource());
-
     if (image2DUniforms.empty())
     {
         return shaderHLSL;
     }
 
-    return GenerateShaderForImage2DBindSignature(context, programD3D, programData, shaderType,
-                                                 image2DUniforms, image2DBindLayout);
+    return GenerateShaderForImage2DBindSignature(programD3D, programData, shaderType, shaderHLSL,
+                                                 image2DUniforms, image2DBindLayout,
+                                                 baseUAVRegister);
 }
 
 void DynamicHLSL::generateVaryingLinkHLSL(const VaryingPacking &varyingPacking,

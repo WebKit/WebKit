@@ -135,6 +135,8 @@ class SharedBufferSuballocationGarbage
 
     bool destroyIfComplete(RendererVk *renderer, Serial completedSerial);
     bool usedInRecordedCommands() const { return mLifetime.usedInRecordedCommands(); }
+    VkDeviceSize getSize() const { return mSuballocation.getSize(); }
+    bool isSuballocated() const { return mSuballocation.isSuballocated(); }
 
   private:
     SharedResourceUse mLifetime;

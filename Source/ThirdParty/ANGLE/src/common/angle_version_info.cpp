@@ -28,4 +28,13 @@ int GetANGLECommitHashSize()
 {
     return ANGLE_COMMIT_HASH_SIZE;
 }
+
+bool GetANGLEHasBinaryLoading()
+{
+#ifdef ANGLE_HAS_BINARY_LOADING
+    return true;
+#else
+    return false;
+#endif  //  #ifndef ANGLE_HAS_BINARY_LOADING
+}
 }  // namespace angle

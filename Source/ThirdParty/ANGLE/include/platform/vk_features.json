@@ -15,7 +15,6 @@
                 "rasterization rules"
             ]
         },
-
         {
             "name": "bresenham_line_rasterization",
             "category": "Features",
@@ -23,7 +22,6 @@
                 "Enable Bresenham line rasterization via VK_EXT_line_rasterization extension"
             ]
         },
-
         {
             "name": "provoking_vertex",
             "category": "Features",
@@ -31,7 +29,6 @@
                 "Enable provoking vertex mode via VK_EXT_provoking_vertex extension"
             ]
         },
-
         {
             "name": "force_fallback_format",
             "category": "Workarounds",
@@ -39,7 +36,6 @@
                 "Force a fallback format for angle_end2end_tests"
             ]
         },
-
         {
             "name": "clamp_point_size",
             "category": "Workarounds",
@@ -48,7 +44,6 @@
             ],
             "issue": "http://anglebug.com/2970"
         },
-
         {
             "name": "depth_clamping",
             "category": "Workarounds",
@@ -57,7 +52,6 @@
             ],
             "issue": "http://anglebug.com/3970"
         },
-
         {
             "name": "supports_renderpass2",
             "category": "Features",
@@ -65,7 +59,6 @@
                 "VkDevice supports the VK_KHR_create_renderpass2 extension"
             ]
         },
-
         {
             "name": "supports_incremental_present",
             "category": "Features",
@@ -73,7 +66,6 @@
                 "VkDevice supports the VK_KHR_incremental_present extension"
             ]
         },
-
         {
             "name": "supports_android_hardware_buffer",
             "category": "Features",
@@ -81,7 +73,6 @@
                 "VkDevice supports the VK_ANDROID_external_memory_android_hardware_buffer extension"
             ]
         },
-
         {
             "name": "supports_GGP_frame_token",
             "category": "Features",
@@ -89,7 +80,6 @@
                 "VkDevice supports the VK_GGP_frame_token extension"
             ]
         },
-
         {
             "name": "supports_external_memory_fd",
             "category": "Features",
@@ -97,7 +87,6 @@
                 "VkDevice supports the VK_KHR_external_memory_fd extension"
             ]
         },
-
         {
             "name": "supports_external_memory_fuchsia",
             "category": "Features",
@@ -105,7 +94,6 @@
                 "VkDevice supports the VK_FUCHSIA_external_memory extension"
             ]
         },
-
         {
             "name": "supports_filtering_precision",
             "category": "Features",
@@ -113,7 +101,6 @@
                 "VkDevice supports the VK_GOOGLE_sampler_filtering_precision extension"
             ]
         },
-
         {
             "name": "supports_external_fence_capabilities",
             "category": "Features",
@@ -121,7 +108,6 @@
                 "VkInstance supports the VK_KHR_external_fence_capabilities extension"
             ]
         },
-
         {
             "name": "supports_external_semaphore_capabilities",
             "category": "Features",
@@ -129,7 +115,6 @@
                 "VkInstance supports the VK_KHR_external_semaphore_capabilities extension"
             ]
         },
-
         {
             "name": "supports_external_semaphore_fd",
             "category": "Features",
@@ -137,7 +122,6 @@
                 "VkDevice supports the VK_KHR_external_semaphore_fd extension"
             ]
         },
-
         {
             "name": "supports_external_semaphore_fuchsia",
             "category": "Features",
@@ -145,7 +129,6 @@
                 "VkDevice supports the VK_FUCHSIA_external_semaphore extension"
             ]
         },
-
         {
             "name": "supports_external_fence_fd",
             "category": "Features",
@@ -154,7 +137,6 @@
             ],
             "issue": "http://anglebug.com/2517"
         },
-
         {
             "name": "supports_android_native_fence_sync",
             "category": "Features",
@@ -163,7 +145,6 @@
             ],
             "issue": "http://anglebug.com/2517"
         },
-
         {
             "name": "supports_image_cube_array",
             "category": "Features",
@@ -172,7 +153,6 @@
             ],
             "issue": "http://anglebug.com/3584"
         },
-
         {
             "name": "supports_pipeline_statistics_query",
             "category": "Features",
@@ -181,7 +161,6 @@
             ],
             "issue": "http://anglebug.com/5430"
         },
-
         {
             "name": "supports_shader_stencil_export",
             "category": "Features",
@@ -189,7 +168,6 @@
                 "VkDevice supports the VK_EXT_shader_stencil_export extension"
             ]
         },
-
         {
             "name": "supports_YUV_sampler_conversion",
             "category": "Features",
@@ -197,7 +175,6 @@
                 "VkDevice supports the VK_KHR_sampler_ycbcr_conversion extension"
             ]
         },
-
         {
             "name": "emulate_transform_feedback",
             "category": "Features",
@@ -206,7 +183,6 @@
             ],
             "issue": "http://anglebug.com/3205"
         },
-
         {
             "name": "supports_transform_feedback_extension",
             "category": "Features",
@@ -215,7 +191,6 @@
             ],
             "issue": "http://anglebug.com/3206"
         },
-
         {
             "name": "supports_geometry_streams_capability",
             "category": "Features",
@@ -224,7 +199,6 @@
             ],
             "issue": "http://anglebug.com/3206"
         },
-
         {
             "name": "supports_index_type_uint8",
             "category": "Features",
@@ -233,7 +207,6 @@
             ],
             "issue": "http://anglebug.com/4405"
         },
-
         {
             "name": "supports_custom_border_color",
             "category": "Features",
@@ -242,7 +215,6 @@
             ],
             "issue": "http://anglebug.com/3577"
         },
-
         {
             "name": "supports_multi_draw_indirect",
             "category": "Features",
@@ -251,7 +223,6 @@
             ],
             "issue": "http://anglebug.com/6439"
         },
-
         {
             "name": "supports_depth_stencil_resolve",
             "category": "Features",
@@ -261,7 +232,6 @@
             ],
             "issue": "http://anglebug.com/4836"
         },
-
         {
             "name": "supports_multisampled_render_to_single_sampled",
             "category": "Features",
@@ -270,7 +240,6 @@
             ],
             "issue": "http://anglebug.com/4836"
         },
-
         {
             "name": "supports_multiview",
             "category": "Features",
@@ -279,7 +248,6 @@
             ],
             "issue": "http://anglebug.com/6048"
         },
-
         {
             "name": "disable_fifo_present_mode",
             "category": "Workarounds",
@@ -288,7 +256,6 @@
             ],
             "issue": "http://anglebug.com/3153"
         },
-
         {
             "name": "bind_empty_for_unused_descriptor_sets",
             "category": "Workarounds",
@@ -297,7 +264,6 @@
             ],
             "issue": "http://anglebug.com/2727"
         },
-
         {
             "name": "force_D16_tex_filter",
             "category": "Workarounds",
@@ -307,7 +273,6 @@
             ],
             "issue": "http://anglebug.com/3452"
         },
-
         {
             "name": "disable_flipping_blit_with_command",
             "category": "Workarounds",
@@ -316,7 +281,6 @@
             ],
             "issue": "http://anglebug.com/3498"
         },
-
         {
             "name": "per_frame_window_size_query",
             "category": "Workarounds",
@@ -325,16 +289,6 @@
             ],
             "issue": "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"
         },
-
-        {
-            "name": "disallow_seamful_cube_map_emulation",
-            "category": "Workarounds",
-            "description": [
-                "Seamful cube map emulation misbehaves on some drivers, so it's disallowed"
-            ],
-            "issue": "http://anglebug.com/3243"
-        },
-
         {
             "name": "pad_buffers_to_max_vertex_attrib_stride",
             "category": "Workarounds",
@@ -348,7 +302,6 @@
             ],
             "issue": "http://anglebug.com/4428"
         },
-
         {
             "name": "supports_external_memory_dma_buf_and_modifiers",
             "category": "Features",
@@ -358,7 +311,6 @@
             ],
             "issue": "http://anglebug.com/6248"
         },
-
         {
             "name": "supports_external_memory_host",
             "category": "Features",
@@ -366,7 +318,6 @@
                 "VkDevice supports the VK_EXT_external_memory_host extension"
             ]
         },
-
         {
             "name": "allocate_non_zero_memory",
             "category": "Features",
@@ -375,7 +326,6 @@
             ],
             "issue": "http://anglebug.com/4384"
         },
-
         {
             "name": "log_memory_report_callbacks",
             "category": "Features",
@@ -383,7 +333,6 @@
                 "Log each callback from VK_EXT_device_memory_report"
             ]
         },
-
         {
             "name": "log_memory_report_stats",
             "category": "Features",
@@ -391,7 +340,6 @@
                 "Log stats from VK_EXT_device_memory_report each swap"
             ]
         },
-
         {
             "name": "shadow_buffers",
             "category": "Features",
@@ -400,7 +348,6 @@
             ],
             "issue": "http://anglebug.com/4339"
         },
-
         {
             "name": "prefer_CPU_for_buffer_sub_data",
             "category": "Features",
@@ -409,7 +356,6 @@
             ],
             "issue": "http://issuetracker.google.com/200067929"
         },
-
         {
             "name": "persistently_mapped_buffers",
             "category": "Features",
@@ -418,7 +364,6 @@
             ],
             "issue": "http://anglebug.com/2162"
         },
-
         {
             "name": "enable_pre_rotate_surfaces",
             "category": "Features",
@@ -427,7 +372,6 @@
             ],
             "issue": "http://anglebug.com/3502"
         },
-
         {
             "name": "enable_precision_qualifiers",
             "category": "Features",
@@ -436,7 +380,6 @@
             ],
             "issue": "http://anglebug.com/3078"
         },
-
         {
             "name": "prefer_aggregate_barrier_calls",
             "category": "Workarounds",
@@ -446,7 +389,6 @@
             ],
             "issue": "http://anglebug.com/4633"
         },
-
         {
             "name": "prefer_skipping_invalidate_for_emulated_formats",
             "category": "Workarounds",
@@ -456,7 +398,6 @@
             ],
             "issue": "http://anglebug.com/6860"
         },
-
         {
             "name": "async_command_queue",
             "category": "Features",
@@ -465,7 +406,6 @@
             ],
             "issue": "http://anglebug.com/4324"
         },
-
         {
             "name": "supports_shader_float16",
             "category": "Features",
@@ -475,7 +415,6 @@
             ],
             "issue": "http://anglebug.com/4551"
         },
-
         {
             "name": "allow_GenerateMipmap_with_compute",
             "category": "Features",
@@ -485,7 +424,6 @@
             ],
             "issue": "http://anglebug.com/4551"
         },
-
         {
             "name": "supports_render_pass_store_op_none",
             "category": "Features",
@@ -494,7 +432,6 @@
             ],
             "issue": "http://anglebug.com/5055"
         },
-
         {
             "name": "supports_render_pass_load_store_op_none",
             "category": "Features",
@@ -503,7 +440,6 @@
             ],
             "issue": "http://anglebug.com/5371"
         },
-
         {
             "name": "supports_depth_clip_control",
             "category": "Features",
@@ -512,7 +448,6 @@
             ],
             "issue": "http://anglebug.com/5421"
         },
-
         {
             "name": "supports_blend_operation_advanced",
             "category": "Features",
@@ -521,7 +456,6 @@
             ],
             "issue": "http://anglebug.com/3586"
         },
-
         {
             "name": "force_max_uniform_buffer_size_16KB",
             "category": "Workarounds",
@@ -530,7 +464,6 @@
             ],
             "issue": "https://issuetracker.google.com/161903006"
         },
-
         {
             "name": "supports_image_format_list",
             "category": "Features",
@@ -540,7 +473,6 @@
             ],
             "issue": "http://anglebug.com/5281"
         },
-
         {
             "name": "enable_multisampled_render_to_texture",
             "category": "Workarounds",
@@ -549,7 +481,6 @@
             ],
             "issue": "http://anglebug.com/4937"
         },
-
         {
             "name": "defer_flush_until_end_render_pass",
             "category": "Workarounds",
@@ -558,7 +489,6 @@
             ],
             "issue": "https://issuetracker.google.com/issues/166475273"
         },
-
         {
             "name": "wait_idle_before_swapchain_recreation",
             "category": "Workarounds",
@@ -568,7 +498,6 @@
             ],
             "issue": "http://anglebug.com/5061"
         },
-
         {
             "name": "force_texture_lod_offset_1",
             "category": "Workarounds",
@@ -576,7 +505,6 @@
                 "Increase the minimum texture level-of-detail by 1 when sampling."
             ]
         },
-
         {
             "name": "force_texture_lod_offset_2",
             "category": "Workarounds",
@@ -584,7 +512,6 @@
                 "Increase the minimum texture level-of-detail by 2 when sampling."
             ]
         },
-
         {
             "name": "force_texture_lod_offset_3",
             "category": "Workarounds",
@@ -592,7 +519,6 @@
                 "Increase the minimum texture level-of-detail by 3 when sampling."
             ]
         },
-
         {
             "name": "force_texture_lod_offset_4",
             "category": "Workarounds",
@@ -600,7 +526,6 @@
                 "Increase the minimum texture level-of-detail by 4 when sampling."
             ]
         },
-
         {
             "name": "force_nearest_filtering",
             "category": "Workarounds",
@@ -608,7 +533,6 @@
                 "Force nearest filtering when sampling."
             ]
         },
-
         {
             "name": "force_nearest_mip_filtering",
             "category": "Workarounds",
@@ -616,7 +540,6 @@
                 "Force nearest mip filtering when sampling."
             ]
         },
-
         {
             "name": "compress_vertex_data",
             "category": "Workarounds",
@@ -625,7 +548,6 @@
                 "possible. Using this feature makes ANGLE non-conformant."
             ]
         },
-
         {
             "name": "prefer_draw_clear_over_vkCmdClearAttachments",
             "category": "Workarounds",
@@ -635,7 +557,6 @@
             ],
             "issue": "https://issuetracker.google.com/166809097"
         },
-
         {
             "name": "emulated_prerotation_90",
             "category": "Features",
@@ -644,7 +565,6 @@
             ],
             "issue": "http://anglebug.com/4901"
         },
-
         {
             "name": "emulated_prerotation_180",
             "category": "Features",
@@ -653,7 +573,6 @@
             ],
             "issue": "http://anglebug.com/4901"
         },
-
         {
             "name": "emulated_prerotation_270",
             "category": "Features",
@@ -662,7 +581,6 @@
             ],
             "issue": "http://anglebug.com/4901"
         },
-
         {
             "name": "generate_SPIRV_through_glslang",
             "category": "Features",
@@ -671,7 +589,6 @@
             ],
             "issue": "http://anglebug.com/4889"
         },
-
         {
             "name": "force_driver_uniform_over_spec_const",
             "category": "Workarounds",
@@ -680,7 +597,6 @@
             ],
             "issue": "http://issuetracker.google.com/173636783"
         },
-
         {
             "name": "expose_non_conformant_extensions_and_versions",
             "category": "Workarounds",
@@ -689,7 +605,6 @@
             ],
             "issue": "http://anglebug.com/5375"
         },
-
         {
             "name": "emulate_R32f_image_atomic_exchange",
             "category": "Workarounds",
@@ -698,7 +613,6 @@
             ],
             "issue": "http://anglebug.com/5535"
         },
-
         {
             "name": "supports_negative_viewport",
             "category": "Features",
@@ -706,7 +620,6 @@
                 "The driver supports inverting the viewport with a negative height."
             ]
         },
-
         {
             "name": "force_fragment_shader_precision_highp_to_mediump",
             "category": "Workarounds",
@@ -715,7 +628,6 @@
             ],
             "issue": "https://issuetracker.google.com/184850002"
         },
-
         {
             "name": "prefer_submit_at_FBO_boundary",
             "category": "Workarounds",
@@ -724,7 +636,6 @@
             ],
             "issue": "https://issuetracker.google.com/187425444"
         },
-
         {
             "name": "use_multiple_descriptors_for_external_formats",
             "category": "Workarounds",
@@ -733,7 +644,6 @@
             ],
             "issue": "http://anglebug.com/6141"
         },
-
         {
             "name": "supports_protected_memory",
             "category": "Features",
@@ -742,7 +652,6 @@
             ],
             "issue": "http://anglebug.com/3965"
         },
-
         {
             "name": "supports_host_query_reset",
             "category": "Features",
@@ -751,7 +660,6 @@
             ],
             "issue": "http://anglebug.com/6692"
         },
-
         {
             "name": "supports_surface_capabilities2_extension",
             "category": "Features",
@@ -759,7 +667,6 @@
                 "VkInstance supports the VK_KHR_get_surface_capabilities2 extension"
             ]
         },
-
         {
             "name": "supports_surface_protected_capabilities_extension",
             "category": "Features",
@@ -767,7 +674,6 @@
                 "VkInstance supports the VK_KHR_surface_protected_capabilities extension"
             ]
         },
-
         {
             "name": "supports_surfaceless_query_extension",
             "category": "Features",
@@ -775,7 +681,6 @@
                 "VkInstance supports the VK_GOOGLE_surfaceless_query extension"
             ]
         },
-
         {
             "name": "supports_surface_protected_swapchains",
             "category": "Features",
@@ -783,7 +688,6 @@
                 "VkSurface supportsProtected for protected swapchains"
             ]
         },
-
         {
             "name": "override_surface_format_RGB8_to_RGBA8",
             "category": "Workarounds",
@@ -792,7 +696,6 @@
             ],
             "issue": "http://anglebug.com/6651"
         },
-
         {
             "name": "supports_shared_presentable_image_extension",
             "category": "Features",
@@ -800,7 +703,6 @@
                 "VkSurface supports the VK_KHR_shared_presentable_images extension"
             ]
         },
-
         {
             "name": "supports_shader_framebuffer_fetch",
             "category": "Features",
@@ -808,7 +710,6 @@
                 "Whether the Vulkan backend supports coherent framebuffer fetch"
             ]
         },
-
         {
             "name": "supports_shader_framebuffer_fetch_non_coherent",
             "category": "Features",
@@ -816,7 +717,6 @@
                 "Whether the Vulkan backend supports non-coherent framebuffer fetch"
             ]
         },
-
         {
             "name": "supports_lock_surface_extension",
             "category": "Features",
@@ -824,7 +724,6 @@
                 "Surface supports the EGL_KHR_lock_surface3 extension"
             ]
         },
-
         {
             "name": "swapbuffers_on_flush_or_finish_with_single_buffer",
             "category": "Features",
@@ -834,7 +733,6 @@
             ],
             "issue": "http://anglebug.com/6878"
         },
-
         {
             "name": "emulate_dithering",
             "category": "Features",
@@ -843,7 +741,14 @@
             ],
             "issue": "http://anglebug.com/6755"
         },
-
+        {
+            "name": "round_output_after_dithering",
+            "category": "Workarounds",
+            "description": [
+                "Round output after dithering to workaround a driver bug that rounds the output up"
+            ],
+            "issue": "http://anglebug.com/6953"
+        },
         {
             "name": "emulate_advanced_blend_equations",
             "category": "Features",
@@ -852,7 +757,6 @@
             ],
             "issue": "http://anglebug.com/3586"
         },
-
         {
             "name": "bottom_left_origin_present_region_rectangles",
             "category": "Workarounds",
@@ -861,7 +765,6 @@
                 "instead of top-left origin as from spec"
             ]
         },
-
         {
             "name": "force_submit_immutable_texture_updates",
             "category": "AppWorkarounds",
@@ -870,7 +773,6 @@
             ],
             "issue": "http://anglebug.com/6929"
         },
-
         {
             "name": "retain_SPIRV_debug_info",
             "category": "Features",
@@ -879,7 +781,6 @@
             ],
             "issue": "http://anglebug.com/5901"
         },
-
         {
             "name": "create_pipeline_during_link",
             "category": "Features",
@@ -888,7 +789,6 @@
             ],
             "issue": "http://anglebug.com/7046"
         },
-
         {
             "name": "prefer_device_local_memory_host_visible",
             "category": "Features",
@@ -897,7 +797,22 @@
             ],
             "issue": "http://anglebug.com/7047"
         },
-
+        {
+            "name": "supports_extended_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_extended_dynamic_state extension"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "supports_extended_dynamic_state2",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_extended_dynamic_state2 extension"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
         {
             "name": "supports_fragment_shading_rate",
             "category": "Features",
@@ -905,6 +820,31 @@
                 "VkDevice supports VK_KHR_fragment_shading_rate extension"
             ],
             "issue": "http://anglebug.com/7172"
+        },
+        {
+            "name": "explicitly_enable_per_sample_shading",
+            "category": "Workarounds",
+            "description": [
+                "Explicitly enable per-sample shading if the fragment shader contains the ",
+                "sample qualifier"
+            ],
+            "issue": "http://anglebug.com/6876"
+        },
+        {
+            "name": "force_continuous_refresh_on_shared_present",
+            "category": "Features",
+            "description": [
+                "Force to create vulkan swapchain with continuous refresh on shared present"
+            ],
+            "issue": "https://issuetracker.google.com/229267970"
+        },
+        {
+            "name": "supports_image_2d_view_of_3d",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_image_2d_view_of_3d"
+            ],
+            "issue": "https://anglebug.com/7320"
         }
     ]
 }

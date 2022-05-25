@@ -508,8 +508,8 @@ TEST_P(TransformFeedbackTest, UseAsUBOThenUpdateThenCapture)
 
     const std::array<uint32_t, 12> kInitialData = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     const std::array<uint32_t, 12> kUpdateData  = {
-        0x12345678u, 0x9ABCDEF0u, 0x13579BDFu, 0x2468ACE0u, 0x23456781u, 0xABCDEF09u,
-        0x3579BDF1u, 0x468ACE02u, 0x34567812u, 0xBCDEF09Au, 0x579BDF13u, 0x68ACE024u,
+         0x12345678u, 0x9ABCDEF0u, 0x13579BDFu, 0x2468ACE0u, 0x23456781u, 0xABCDEF09u,
+         0x3579BDF1u, 0x468ACE02u, 0x34567812u, 0xBCDEF09Au, 0x579BDF13u, 0x68ACE024u,
     };
 
     GLBuffer buffer;
@@ -2478,7 +2478,7 @@ TEST_P(TransformFeedbackTest, Overrun)
 
     // Verify only the first data was output.
     const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
     const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
 
     size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
@@ -2513,7 +2513,7 @@ TEST_P(TransformFeedbackTest, OverrunWithPause)
 
     // Verify only the first data was output.
     const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
     const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
 
     size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
@@ -2555,7 +2555,7 @@ TEST_P(TransformFeedbackTest, OverrunWithPauseAndResume)
 
     // Verify only the first and third data was output.
     const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
     const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
 
     size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
@@ -2605,7 +2605,7 @@ TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
 
     // Verify only the first and third data was output.
     const void *mapPtr         = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
-                                          mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
+                                                  mTransformFeedbackBufferSize, GL_MAP_READ_BIT);
     const GLfloat *mapPtrFloat = reinterpret_cast<const float *>(mapPtr);
 
     size_t numFloats = mTransformFeedbackBufferSize / sizeof(GLfloat);
@@ -3610,9 +3610,9 @@ void main()
     constexpr size_t kCapturedVaryingsCount = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {8, 9, 4};
     const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
-        {0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48},
-        {0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87},
-        {0.25, 0.5, 0.75, 1.0},
+                {0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48},
+                {0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87},
+                {0.25, 0.5, 0.75, 1.0},
     };
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
@@ -3709,9 +3709,9 @@ void main()
     constexpr size_t kCapturedVaryingsCount                            = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {1, 2, 1};
     const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
-        {0.25},
-        {0.5, 0.75},
-        {1.0},
+                {0.25},
+                {0.5, 0.75},
+                {1.0},
     };
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_SEPARATE_ATTRIBS);
@@ -4136,6 +4136,47 @@ TEST_P(TransformFeedbackTest, DrawAfterDeletingPausedBuffer)
     glPauseTransformFeedback();
     glDrawArrays(GL_POINTS, 0, 1);
     buf.reset();
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Validates deleting an active transform feedback object works as expected.
+TEST_P(TransformFeedbackTest, DeletingTransformFeedback)
+{
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl1_shaders::vs::Simple(),
+                                        essl1_shaders::fs::Green(), {"gl_Position"},
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    std::vector<uint8_t> data(100, 0);
+
+    std::array<Vector3, 6> quadVerts = GetQuadVertices();
+
+    GLint loc = glGetAttribLocation(testProgram, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, loc);
+
+    GLBuffer posBuf;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(loc);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    GLTransformFeedback tf;
+    (void)tf.get();
+
+    GLBuffer buf;
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, data.size() * sizeof(data[0]), data.data(),
+                 GL_STREAM_READ);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    buf.reset();
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf);
+    glDrawArrays(GL_POINTS, 0, 1);
+    tf.reset();
+    glFinish();
     glDrawArrays(GL_POINTS, 0, 1);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }

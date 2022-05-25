@@ -9,6 +9,7 @@
 
 #include "common/debug.h"
 #include "common/system_utils.h"
+#include "traces_export.h"
 #include "util/EGLPlatformParameters.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
@@ -24,10 +25,27 @@
 #include <string>
 #include <utility>
 
-#include "util/capture/frame_capture_test_utils.h"
+#include "frame_capture_test_utils.h"
 
+namespace
+{
+EGLWindow *gEGLWindow       = nullptr;
 constexpr char kResultTag[] = "*RESULT";
 constexpr char kTracePath[] = ANGLE_CAPTURE_REPLAY_TEST_NAMES_PATH;
+}  // anonymous namespace
+
+angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
+{
+    if (!gEGLWindow)
+    {
+        std::cout << "No Window pointer in TraceLoadProc.\n";
+        return nullptr;
+    }
+    else
+    {
+        return gEGLWindow->getProcAddress(procName);
+    }
+}
 
 class CaptureReplayTests
 {
@@ -96,6 +114,11 @@ class CaptureReplayTests
             mOSWindow->destroy();
             return false;
         }
+
+        gEGLWindow = mEGLWindow;
+        trace_angle::LoadEGL(TraceLoadProc);
+        trace_angle::LoadGLES(TraceLoadProc);
+
         // Disable vsync
         if (!mEGLWindow->setSwapInterval(0))
         {

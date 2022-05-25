@@ -389,15 +389,16 @@ std::ostream &operator<<(std::ostream &os, ShadingModel value);
 
 enum class ShadingRate : uint8_t
 {
-    _1x1 = 0,
-    _1x2 = 1,
-    _2x1 = 2,
-    _2x2 = 3,
-    _4x2 = 4,
-    _4x4 = 5,
+    Undefined = 0,
+    _1x1      = 1,
+    _1x2      = 2,
+    _2x1      = 3,
+    _2x2      = 4,
+    _4x2      = 5,
+    _4x4      = 6,
 
-    InvalidEnum = 6,
-    EnumCount   = 6,
+    InvalidEnum = 7,
+    EnumCount   = 7,
 };
 
 template <>

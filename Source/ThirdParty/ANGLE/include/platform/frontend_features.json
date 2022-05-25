@@ -15,7 +15,6 @@
                 "Some users rely on a lost context notification if a GL_OUT_OF_MEMORY error occurs"
             ]
         },
-
         {
             "name": "disable_program_caching_for_transform_feedback",
             "category": "Workarounds",
@@ -23,7 +22,6 @@
                 "On some GPUs, program binaries don't contain transform feedback varyings"
             ]
         },
-
         {
             "name": "scalarize_vec_and_mat_constructor_args",
             "category": "Workarounds",
@@ -32,7 +30,6 @@
             ],
             "issue": "http://crbug.com/1165751"
         },
-
         {
             "name": "disable_program_binary",
             "category": "Features",
@@ -41,7 +38,6 @@
             ],
             "issue": "http://anglebug.com/5007"
         },
-
         {
             "name": "disable_anisotropic_filtering",
             "category": "Workarounds",
@@ -49,7 +45,6 @@
                 "Disable support for anisotropic filtering"
             ]
         },
-
         {
             "name": "allow_compressed_formats",
             "category": "Workarounds",
@@ -57,7 +52,14 @@
                 "Allow compressed formats"
             ]
         },
-
+        {
+            "name": "force_depth_attachment_init_on_clear",
+            "category": "Workarounds",
+            "description": [
+                "Force depth attachment initialization on clear ops"
+            ],
+            "issue": "https://anglebug.com/7246"
+        },
         {
             "name": "enable_capture_limits",
             "category": "Features",
@@ -66,7 +68,6 @@
             ],
             "issue": "http://anglebug.com/5750"
         },
-
         {
             "name": "enable_compressing_pipeline_cache_in_thread_pool",
             "category": "Workarounds",
@@ -75,7 +76,6 @@
             ],
             "issue": "http://anglebug.com/4722"
         },
-
         {
             "name": "force_robust_resource_init",
             "category": "Features",
@@ -84,7 +84,6 @@
             ],
             "issue": "http://anglebug.com/6041"
         },
-
         {
             "name": "force_init_shader_variables",
             "category": "Features",
@@ -92,7 +91,6 @@
                 "Force-enable shader variable initialization"
             ]
         },
-
         {
             "name": "enable_program_binary_for_capture",
             "category": "Features",

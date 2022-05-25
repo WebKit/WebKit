@@ -2946,523 +2946,6 @@ TEST_P(FramebufferTest_ES3, AttachmentStateChange)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-// Tests that we can support a feedback loop between a depth textures and the depth buffer.
-// The test emulates the read-only feedback loop in Manhattan.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopSupported)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 2;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-
-    GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Clear depth to 0.5.
-    glClearDepthf(0.5f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    // Disable depth. Although this does not remove the feedback loop as defined by the
-    // spec it mimics what gfxbench does in its rendering tests.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Verify we can sample the depth texture and get 0.5.
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
-
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-}
-
-// Tests corner cases with read-only depth-stencil feedback loops.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopStateChanges)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 2;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-    glUseProgram(program);
-
-    setupQuadVertexBuffer(0.5f, 1.0f);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    GLFramebuffer framebuffer1;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    GLFramebuffer framebuffer2;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    ASSERT_GL_NO_ERROR();
-
-    // Clear depth to 0.5.
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
-    glClearDepthf(0.5f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    glFlush();
-
-    // Disable depth. Although this does not remove the feedback loop as defined by the
-    // spec it mimics what gfxbench does in its rendering tests.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Draw with loop.
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    ASSERT_GL_NO_ERROR();
-
-    // Draw with no loop and second FBO. Starts RP in writable mode.
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    ASSERT_GL_NO_ERROR();
-
-    // Draw with loop, restarts RP.
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Tests depth/stencil clear after read-only depth/stencil feedback loop draw.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopDrawThenDepthStencilClear)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 2;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-    glUseProgram(program);
-
-    setupQuadVertexBuffer(0.5f, 1.0f);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Clear depth to 0.5.
-    glClearDepthf(0.5f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    // Disable depth to establish read-only depth/stencil feedback loop.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Verify we can sample the depth texture and get 0.5.
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
-
-    // Clear depth to another value
-    glDepthMask(true);
-    glClearDepthf(1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure the last clear and the draw are not reordered by mistake.
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure depth is correctly cleared.
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
-    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.95f);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Tests scissored depth/stencil clear after read-only depth/stencil feedback loop draw.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopDrawThenScissoredDepthStencilClear)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 2;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-    glUseProgram(program);
-
-    setupQuadVertexBuffer(0.5f, 1.0f);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Clear depth to 0.5.
-    glClearDepthf(0.5f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    // Disable depth to establish read-only depth/stencil feedback loop.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Verify we can sample the depth texture and get 0.5.
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
-
-    // Clear depth to another value in a scissor
-    glDepthMask(true);
-    glEnable(GL_SCISSOR_TEST);
-    glViewport(kSize / 2, kSize / 2, kSize / 2, kSize / 2);
-    glClearDepthf(1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure the draw worked.
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure depth is correctly cleared.
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
-    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.95f);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::blue);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Tests depth/stencil blit after read-only depth/stencil feedback loop draw.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopDrawThenDepthStencilBlit)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 2;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-    glUseProgram(program);
-
-    setupQuadVertexBuffer(0.5f, 1.0f);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Clear depth to 0.5.
-    glClearDepthf(0.5f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    // Disable depth to establish read-only depth/stencil feedback loop.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Verify we can sample the depth texture and get 0.5.
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
-
-    // Blit depth to another framebuffer.
-    GLFramebuffer framebuffer2;
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer2);
-
-    GLTexture colorTexture2;
-    glBindTexture(GL_TEXTURE_2D, colorTexture2);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture2,
-                           0);
-
-    GLTexture depthTexture2;
-    glBindTexture(GL_TEXTURE_2D, depthTexture2);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture2,
-                           0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
-
-    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-    // Make sure the draw worked.
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure depth is correctly blitted.
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer2);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_GREATER);
-
-    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
-    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.05f);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-    ASSERT_GL_NO_ERROR();
-
-    glDepthFunc(GL_LESS);
-    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
-    drawQuad(drawRed, essl1_shaders::PositionAttrib(), -0.05f);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-    ASSERT_GL_NO_ERROR();
-}
-
-// Tests that if the framebuffer is cleared, a feedback loop between a depth textures and the depth
-// buffer is established, and a scissored clear is issued, that the clear is not mistakenly
-// scissored.
-TEST_P(FramebufferTest_ES3, ReadOnlyDepthFeedbackLoopWithClearAndScissoredDraw)
-{
-    // Feedback loops are only supported on Vulkan.
-    // TODO(jmadill): Make GL extension. http://anglebug.com/4969
-    ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    constexpr GLuint kSize = 16;
-    glViewport(0, 0, kSize, kSize);
-
-    constexpr char kFS[] = R"(precision mediump float;
-varying vec2 v_texCoord;
-uniform sampler2D depth;
-void main()
-{
-    if (abs(texture2D(depth, v_texCoord).x - 0.5) < 0.1)
-    {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    }
-    else
-    {
-        gl_FragColor = vec4(1, 0, 0, 1);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
-
-    GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLTexture colorTexture;
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-
-    GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, kSize, kSize, 0, GL_DEPTH_COMPONENT,
-                 GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Clear color to blue and depth to 0.5.
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-    glClearDepthf(0.5f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Disable depth. Although this does not remove the feedback loop as defined by the
-    // spec it mimics what gfxbench does in its rendering tests.
-    glDepthMask(false);
-    glDisable(GL_DEPTH_TEST);
-
-    // Verify we can sample the depth texture and get 0.5.  Use a scissor.
-    glScissor(0, 0, kSize / 2, kSize);
-    glEnable(GL_SCISSOR_TEST);
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
-    ASSERT_GL_NO_ERROR();
-
-    // Make sure the scissored region passes the depth test and is changed to green.
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kSize / 2 - 1, 0, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kSize / 2 - 1, kSize - 1, GLColor::green);
-
-    // Make sure the region outside the scissor is cleared to blue.
-    EXPECT_PIXEL_COLOR_EQ(kSize / 2, 0, GLColor::blue);
-    EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize - 1, GLColor::blue);
-    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::blue);
-    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::blue);
-}
-
 // Tests that we can support a color texture also attached to the color attachment but
 // with different LOD. From GLES3.0 spec section 4.4.3.2, if min_filter is GL_NEAREST_MIPMAP_NEAREST
 // and the lod is within the [base_level, max_level] range, and it is possible to sample from a LOD
@@ -4538,6 +4021,116 @@ TEST_P(FramebufferTest_ES3, InvalidateClearDraw)
 
     drawQuad(program, essl1_shaders::PositionAttrib(), 0);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Produces VUID-VkImageMemoryBarrier-oldLayout-01197 VVL error with a "Render pass closed due to
+// framebuffer change" command buffer label. As seen in Black Desert Mobile.
+// The application draws 2 passes to produce the issue. First pass draws to a depth only frame
+// buffer, the second one to a different color+depth frame buffer. The second pass samples the first
+// passes frame buffer in two draw calls. First draw call samples it in the fragment stage, second
+// in the the vertex stage.
+TEST_P(FramebufferTest_ES3, FramebufferChangeTest)
+{
+    // Init depth frame buffer
+    GLFramebuffer depthFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFramebuffer);
+
+    GLTexture depthAttachment;
+    glBindTexture(GL_TEXTURE_2D, depthAttachment);
+    // When using a color attachment instead, the issue does not occur.
+    // The issue seems to occur for all GL_DEPTH_COMPONENT formats.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, kWidth, kHeight, 0, GL_DEPTH_COMPONENT,
+                 GL_UNSIGNED_INT, nullptr);
+
+    // If filtering the depth attachment to GL_NEAREST is not set, the issue does not occur.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthAttachment, 0);
+
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_NO_ERROR();
+
+    // Depth only pass
+    {
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+        glUseProgram(program);
+
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Color pass
+    // The depth texture from the first pass is sampled from in both draw calls.
+    // Skipping any of the two depth texture binds makes the issue not occur.
+    // Changing the order of the draw calls makes the issue not occur.
+    // This pass does not need to draw into a frame buffer.
+
+    // Draw 1
+    // The depth texture from the first pass is sampled from in the frament stage.
+    {
+        constexpr char kFS[] = {
+            R"(#version 300 es
+precision mediump float;
+
+uniform mediump sampler2D samp;
+
+layout(location = 0) out highp vec4 color;
+
+void main()
+{
+    color = texture(samp, vec2(0));
+})",
+        };
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+        glUseProgram(program);
+
+        GLint textureLoc = glGetUniformLocation(program, "samp");
+        glUniform1i(textureLoc, 1);
+
+        // Skipping this bind makes the issue not occur
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, depthAttachment);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Draw 2
+    // Here the depth attachment from the first pass is used in the vertex stage. The VVL error
+    // occurs in this draw. The sampler has to be attached to the vertex stage, otherwise the issue
+    // does not occur.
+    {
+        constexpr char kVS[] = {
+            R"(#version 300 es
+
+uniform mediump sampler2D samp;
+
+layout(location = 0) in mediump vec4 pos;
+
+void main()
+{
+    gl_Position = pos + texture(samp, vec2(0));
+})",
+        };
+
+        ANGLE_GL_PROGRAM(program, kVS, essl3_shaders::fs::Red());
+        glUseProgram(program);
+
+        GLint textureLoc = glGetUniformLocation(program, "samp");
+        glUniform1i(textureLoc, 2);
+
+        // Skipping this bind makes the issue not occur
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, depthAttachment);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        ASSERT_GL_NO_ERROR();
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,

@@ -11,6 +11,7 @@
 #define COMPILER_TRANSLATOR_TREEOPS_VULKAN_EARLYFRAGMENTTESTSOPTIMIZATION_H_
 
 #include "common/angleutils.h"
+#include "common/debug.h"
 
 namespace sh
 {

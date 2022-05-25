@@ -50,6 +50,11 @@
 #    include <X11/Xlib.h>
 #endif
 
+#if defined(ANGLE_USE_WAYLAND)
+#    include <wayland-client.h>
+#    include <wayland-egl-backend.h>
+#endif
+
 namespace tcu
 {
 namespace
@@ -305,6 +310,7 @@ NativeWindow::NativeWindow(ANGLENativeDisplay *nativeDisplay,
         std::swap(osWindowWidth, osWindowHeight);
     }
 
+    mWindow->setNativeDisplay(nativeDisplay->getDeviceContext());
     bool initialized = mWindow->initialize("dEQP ANGLE Tests", osWindowWidth, osWindowHeight);
     TCU_CHECK(initialized);
 
@@ -419,11 +425,20 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
       mNativeDisplay(bitCast<eglw::EGLNativeDisplayType>(EGL_DEFAULT_DISPLAY)),
       mPlatformAttributes(std::move(platformAttributes))
 {
-#if (DE_OS == DE_OS_UNIX) && defined(ANGLE_USE_X11)
+#if (DE_OS == DE_OS_UNIX)
+#    if defined(ANGLE_USE_X11)
     // Make sure to only open the X display once so that it can be used by the EGL display as well
     // as pixmaps
     mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(XOpenDisplay(nullptr));
-#endif  // (DE_OS == DE_OS_UNIX)
+#    endif  // ANGLE_USE_X11
+
+#    if defined(ANGLE_USE_WAYLAND)
+    if (mNativeDisplay == 0)
+    {
+        mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(wl_display_connect(nullptr));
+    }
+#    endif  // ANGLE_USE_WAYLAND
+#endif      // (DE_OS == DE_OS_UNIX)
 
     // If pre-rotating, let NativeWindowFactory know.
     uint32_t preRotation = 0;

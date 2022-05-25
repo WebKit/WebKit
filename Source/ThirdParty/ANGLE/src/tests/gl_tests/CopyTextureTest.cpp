@@ -972,6 +972,61 @@ TEST_P(CopyTextureTest, CopySubTextureOffset)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that copying a texture attached to a framebuffer into a L texture does not break a
+// subsequent clear
+TEST_P(CopyTextureTest, ClearAfterCopySubTextureLuminance)
+{
+    if (!checkExtensions())
+    {
+        return;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 4, 4, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glCopySubTextureCHROMIUM(mTextures[1], 0, GL_TEXTURE_2D, mTextures[0], 0, 0, 0, 0, 0, 4, 4,
+                             GL_TRUE, GL_FALSE, GL_TRUE);
+
+    glClearColor(0.0, 1.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that copying a texture attached to a framebuffer into a LA texture does not break a
+// subsequent clear
+TEST_P(CopyTextureTest, ClearAfterCopySubTextureLuminanceAlpha)
+{
+    if (!checkExtensions())
+    {
+        return;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, 4, 4, 0, GL_LUMINANCE_ALPHA,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glCopySubTextureCHROMIUM(mTextures[1], 0, GL_TEXTURE_2D, mTextures[0], 0, 0, 0, 0, 0, 4, 4,
+                             GL_TRUE, GL_FALSE, GL_TRUE);
+
+    glClearColor(0.0, 1.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Test every combination of copy [sub]texture parameters:
 // source: ALPHA, RGB, RGBA, LUMINANCE, LUMINANCE_ALPHA, BGRA_EXT
 // destination: RGB, RGBA, BGRA_EXT
@@ -1355,7 +1410,7 @@ TEST_P(CopyTextureTest, CopyOutsideMipmap)
     ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsOpenGL());
 
     // http://anglebug.com/5246
-    ANGLE_SKIP_TEST_IF(IsWindows7() && IsNVIDIA() && IsOpenGLES());
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

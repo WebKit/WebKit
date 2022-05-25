@@ -9,7 +9,6 @@
 
 #include "compiler/translator/tree_ops/vulkan/EmulateDithering.h"
 
-#include "compiler/translator/Compiler.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
@@ -70,6 +69,7 @@ TIntermTyped *CreateDitherValue(const TType &type, TIntermSequence *ditherValueE
 }
 
 void EmitFragmentOutputDither(TCompiler *compiler,
+                              ShCompileOptions compileOptions,
                               TSymbolTable *symbolTable,
                               TIntermBlock *ditherBlock,
                               TIntermTyped *ditherControl,
@@ -77,6 +77,8 @@ void EmitFragmentOutputDither(TCompiler *compiler,
                               TIntermTyped *fragmentOutput,
                               uint32_t location)
 {
+    bool roundOutputAfterDithering = (compileOptions | SH_ROUND_OUTPUT_AFTER_DITHERING) != 0;
+
     // dither >> 2*location
     TIntermBinary *ditherControlShifted = new TIntermBinary(
         EOpBitShiftRight, ditherControl->deepCopy(), CreateUIntNode(location * 2));
@@ -104,6 +106,23 @@ void EmitFragmentOutputDither(TCompiler *compiler,
         CreateTempInitDeclarationNode(&ditherValue->variable(), CreateZeroNode(*outputType));
     ditherBlock->appendStatement(ditherValueDecl);
 
+    // If a workaround is enabled, the bit-range of each channel is also tracked, so a round() can
+    // be applied.
+    TIntermSymbol *roundMultiplier = nullptr;
+    if (roundOutputAfterDithering)
+    {
+        roundMultiplier = new TIntermSymbol(
+            CreateTempVariable(symbolTable, StaticType::GetBasic<EbtFloat, EbpMedium, 3>()));
+
+        constexpr std::array<float, 3> kDefaultMultiplier = {255, 255, 255};
+        TIntermConstantUnion *defaultMultiplier =
+            CreateVecNode(kDefaultMultiplier.data(), 3, EbpMedium);
+
+        TIntermDeclaration *roundMultiplierDecl =
+            CreateTempInitDeclarationNode(&roundMultiplier->variable(), defaultMultiplier);
+        ditherBlock->appendStatement(roundMultiplierDecl);
+    }
+
     TIntermBlock *switchBody = new TIntermBlock;
 
     // case kDitherControlDither4444:
@@ -118,6 +137,16 @@ void EmitFragmentOutputDither(TCompiler *compiler,
 
         switchBody->appendStatement(new TIntermCase(CreateUIntNode(vk::kDitherControlDither4444)));
         switchBody->appendStatement(setDitherValue);
+
+        if (roundOutputAfterDithering)
+        {
+            constexpr std::array<float, 3> kMultiplier = {15, 15, 15};
+            TIntermConstantUnion *roundMultiplierValue =
+                CreateVecNode(kMultiplier.data(), 3, EbpMedium);
+            switchBody->appendStatement(
+                new TIntermBinary(EOpAssign, roundMultiplier->deepCopy(), roundMultiplierValue));
+        }
+
         switchBody->appendStatement(new TIntermBranch(EOpBreak, nullptr));
     }
 
@@ -133,6 +162,16 @@ void EmitFragmentOutputDither(TCompiler *compiler,
 
         switchBody->appendStatement(new TIntermCase(CreateUIntNode(vk::kDitherControlDither5551)));
         switchBody->appendStatement(setDitherValue);
+
+        if (roundOutputAfterDithering)
+        {
+            constexpr std::array<float, 3> kMultiplier = {31, 31, 31};
+            TIntermConstantUnion *roundMultiplierValue =
+                CreateVecNode(kMultiplier.data(), 3, EbpMedium);
+            switchBody->appendStatement(
+                new TIntermBinary(EOpAssign, roundMultiplier->deepCopy(), roundMultiplierValue));
+        }
+
         switchBody->appendStatement(new TIntermBranch(EOpBreak, nullptr));
     }
 
@@ -150,6 +189,16 @@ void EmitFragmentOutputDither(TCompiler *compiler,
 
         switchBody->appendStatement(new TIntermCase(CreateUIntNode(vk::kDitherControlDither565)));
         switchBody->appendStatement(setDitherValue);
+
+        if (roundOutputAfterDithering)
+        {
+            constexpr std::array<float, 3> kMultiplier = {31, 63, 31};
+            TIntermConstantUnion *roundMultiplierValue =
+                CreateVecNode(kMultiplier.data(), 3, EbpMedium);
+            switchBody->appendStatement(
+                new TIntermBinary(EOpAssign, roundMultiplier->deepCopy(), roundMultiplierValue));
+        }
+
         switchBody->appendStatement(new TIntermBranch(EOpBreak, nullptr));
     }
 
@@ -166,9 +215,26 @@ void EmitFragmentOutputDither(TCompiler *compiler,
         fragmentOutput = new TIntermSwizzle(fragmentOutput, {0, 1, 2});
     }
     ditherBlock->appendStatement(new TIntermBinary(EOpAddAssign, fragmentOutput, ditherValue));
+
+    // round() the output if workaround is enabled
+    if (roundOutputAfterDithering)
+    {
+        TVector<int> swizzle = {0, 1, 2};
+        swizzle.resize(fragmentOutput->getNominalSize());
+        TIntermTyped *multiplier = new TIntermSwizzle(roundMultiplier, swizzle);
+
+        // fragmentOutput.rgb = round(fragmentOutput.rgb * roundMultiplier) / roundMultiplier
+        TIntermTyped *scaledUp = new TIntermBinary(EOpMul, fragmentOutput->deepCopy(), multiplier);
+        TIntermTyped *rounded =
+            CreateBuiltInUnaryFunctionCallNode("round", scaledUp, *symbolTable, 300);
+        TIntermTyped *scaledDown = new TIntermBinary(EOpDiv, rounded, multiplier->deepCopy());
+        ditherBlock->appendStatement(
+            new TIntermBinary(EOpAssign, fragmentOutput->deepCopy(), scaledDown));
+    }
 }
 
 void EmitFragmentVariableDither(TCompiler *compiler,
+                                ShCompileOptions compileOptions,
                                 TSymbolTable *symbolTable,
                                 TIntermBlock *ditherBlock,
                                 TIntermTyped *ditherControl,
@@ -192,8 +258,8 @@ void EmitFragmentVariableDither(TCompiler *compiler,
     TIntermSymbol *fragmentOutputSymbol = new TIntermSymbol(&fragmentVariable);
     if (!type.isArray())
     {
-        EmitFragmentOutputDither(compiler, symbolTable, ditherBlock, ditherControl, ditherParam,
-                                 fragmentOutputSymbol, location);
+        EmitFragmentOutputDither(compiler, compileOptions, symbolTable, ditherBlock, ditherControl,
+                                 ditherParam, fragmentOutputSymbol, location);
         return;
     }
 
@@ -201,12 +267,13 @@ void EmitFragmentVariableDither(TCompiler *compiler,
     {
         TIntermBinary *element = new TIntermBinary(EOpIndexDirect, fragmentOutputSymbol->deepCopy(),
                                                    CreateIndexNode(index));
-        EmitFragmentOutputDither(compiler, symbolTable, ditherBlock, ditherControl, ditherParam,
-                                 element, location + static_cast<uint32_t>(index));
+        EmitFragmentOutputDither(compiler, compileOptions, symbolTable, ditherBlock, ditherControl,
+                                 ditherParam, element, location + static_cast<uint32_t>(index));
     }
 }
 
 TIntermNode *EmitDitheringBlock(TCompiler *compiler,
+                                ShCompileOptions compileOptions,
                                 TSymbolTable *symbolTable,
                                 SpecConst *specConst,
                                 DriverUniform *driverUniforms,
@@ -358,8 +425,8 @@ TIntermNode *EmitDitheringBlock(TCompiler *compiler,
     // Dither blocks for each fragment output
     for (const TVariable *fragmentVariable : fragmentOutputVariables)
     {
-        EmitFragmentVariableDither(compiler, symbolTable, ditherBlock, ditherControl, ditherParam,
-                                   *fragmentVariable);
+        EmitFragmentVariableDither(compiler, compileOptions, symbolTable, ditherBlock,
+                                   ditherControl, ditherParam, *fragmentVariable);
     }
 
     return new TIntermIfElse(ifAnyDitherCondition, ditherBlock, nullptr);
@@ -367,6 +434,7 @@ TIntermNode *EmitDitheringBlock(TCompiler *compiler,
 }  // anonymous namespace
 
 bool EmulateDithering(TCompiler *compiler,
+                      ShCompileOptions compileOptions,
                       TIntermBlock *root,
                       TSymbolTable *symbolTable,
                       SpecConst *specConst,
@@ -375,8 +443,8 @@ bool EmulateDithering(TCompiler *compiler,
     FragmentOutputVariableList fragmentOutputVariables;
     GatherFragmentOutputs(root, &fragmentOutputVariables);
 
-    TIntermNode *ditherCode = EmitDitheringBlock(compiler, symbolTable, specConst, driverUniforms,
-                                                 fragmentOutputVariables);
+    TIntermNode *ditherCode = EmitDitheringBlock(compiler, compileOptions, symbolTable, specConst,
+                                                 driverUniforms, fragmentOutputVariables);
 
     return RunAtTheEndOfShader(compiler, root, ditherCode, symbolTable);
 }

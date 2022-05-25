@@ -4,20 +4,16 @@
         "Use of this source code is governed by a BSD-style license that can be",
         "found in the LICENSE file.",
         "",
-        "ConvertVertex.comp.json: Build parameters for ConvertVertex.comp.",
-        "",
-        "Notes:",
-        " - Optimized ConvertVertex shaders crash old AMD drivers.  Optimization is tentatively",
-        "   disabled until ANGLE try bots are upgraded.  http://anglebug.com/4720"
+        "ConvertVertex.comp.json: Build parameters for ConvertVertex.comp."
     ],
     "Conversion": [
-        [ "SintToSint", "-Od" ],
-        [ "UintToUint", "-Od" ],
-        [ "SintToFloat", "-Od" ],
-        [ "UintToFloat", "-Od" ],
-        [ "SnormToFloat", "-Od" ],
-        [ "UnormToFloat", "-Od" ],
-        [ "FixedToFloat", "-Od" ],
-        [ "FloatToFloat", "-Od" ]
+        "SintToSint",
+        "UintToUint",
+        "SintToFloat",
+        "UintToFloat",
+        "SnormToFloat",
+        "UnormToFloat",
+        "FixedToFloat",
+        "FloatToFloat"
     ]
 }

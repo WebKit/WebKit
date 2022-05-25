@@ -626,6 +626,9 @@ struct Extensions
     // GL_ANGLE_provoking_vertex
     bool provokingVertexANGLE = false;
 
+    // GL_ANGLE_read_only_depth_stencil_feedback_loops
+    bool readOnlyDepthStencilFeedbackLoopsANGLE = false;
+
     // GL_ANGLE_relaxed_vertex_attribute_type
     bool relaxedVertexAttributeTypeANGLE = false;
 

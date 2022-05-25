@@ -1518,9 +1518,10 @@ bool ValidateBindImageTexture(const Context *context,
             return false;
         }
 
-        if (!tex->getImmutableFormat())
+        if (!tex->getImmutableFormat() && tex->getType() != gl::TextureType::Buffer)
         {
-            context->validationError(entryPoint, GL_INVALID_OPERATION, kTextureIsNotImmutable);
+            context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                     kTextureIsNeitherImmutableNorTextureBuffer);
             return false;
         }
     }

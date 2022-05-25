@@ -1584,6 +1584,74 @@ class BlitFramebufferTest : public ANGLETest
         else
             EXPECT_PIXEL_RECT_EQ(64, 0, 128, 1, GLColor::blue);
     }
+
+    // Test blitting between 3D textures and 2D array textures
+    void test3DBlit(GLenum sourceTarget, GLenum destTarget)
+    {
+
+        constexpr int kTexWidth  = 4;
+        constexpr int kTexHeight = 3;
+        constexpr int kTexDepth  = 2;
+        glViewport(0, 0, kTexWidth, kTexHeight);
+
+        size_t size = kTexWidth * kTexHeight * kTexDepth;
+        std::vector<uint32_t> sourceData(size);
+        std::vector<uint32_t> destData(size);
+        for (size_t i = 0; i < size; ++i)
+        {
+            sourceData[i] = i;
+            destData[i]   = size - i;
+        }
+
+        // Create a source 3D texture and FBO.
+        GLTexture sourceTexture;
+        glBindTexture(sourceTarget, sourceTexture);
+        glTexImage3D(sourceTarget, 0, GL_RGBA8, kTexWidth, kTexHeight, kTexDepth, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, sourceData.data());
+
+        // Create a dest texture and FBO.
+        GLTexture destTexture;
+        glBindTexture(destTarget, destTexture);
+        glTexImage3D(destTarget, 0, GL_RGBA8, kTexWidth, kTexHeight, kTexDepth, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, destData.data());
+
+        for (int z = 0; z < kTexDepth; ++z)
+        {
+            ASSERT_GL_NO_ERROR();
+            GLFramebuffer sourceFBO;
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
+            glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, sourceTexture, 0,
+                                      z);
+            ASSERT_GL_NO_ERROR();
+
+            GLFramebuffer destFBO;
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, destFBO);
+            glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, destTexture, 0, z);
+            ASSERT_GL_NO_ERROR();
+
+            glBlitFramebuffer(0, 0, kTexWidth, kTexHeight, 0, 0, kTexWidth, kTexHeight,
+                              GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        for (int z = 0; z < kTexDepth; ++z)
+        {
+            GLFramebuffer readFBO;
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO);
+            glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, destTexture, 0, z);
+            ASSERT_GL_NO_ERROR();
+
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            for (int y = 0; y < kTexHeight; ++y)
+            {
+                for (int x = 0; x < kTexWidth; ++x)
+                {
+                    int index = x + kTexWidth * (y + z * kTexHeight);
+                    EXPECT_PIXEL_COLOR_EQ(x, y, index);
+                }
+            }
+        }
+    }
 };
 
 class BlitFramebufferTestES31 : public BlitFramebufferTest
@@ -3463,6 +3531,30 @@ TEST_P(BlitFramebufferTest, ResolveWithRotation)
     EXPECT_PIXEL_RECT_EQ(w / 2, h / 2, w / 2, h / 2, GLColor::yellow);
 }
 
+// Test blitting a 3D texture to a 3D texture
+TEST_P(BlitFramebufferTest, Blit3D)
+{
+    test3DBlit(GL_TEXTURE_3D, GL_TEXTURE_3D);
+}
+
+// Test blitting a 2D array texture to a 2D array texture
+TEST_P(BlitFramebufferTest, Blit2DArray)
+{
+    test3DBlit(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_2D_ARRAY);
+}
+
+// Test blitting a 3D texture to a 2D array texture
+TEST_P(BlitFramebufferTest, Blit3DTo2DArray)
+{
+    test3DBlit(GL_TEXTURE_3D, GL_TEXTURE_2D_ARRAY);
+}
+
+// Test blitting a 2D array texture to a 3D texture
+TEST_P(BlitFramebufferTest, Blit2DArrayTo3D)
+{
+    test3DBlit(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_3D);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferANGLETest);
@@ -3477,6 +3569,10 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferANGLETest,
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
+                       ES3_VULKAN()
+                           .disable(Feature::SupportsExtendedDynamicState)
+                           .disable(Feature::SupportsExtendedDynamicState2),
+                       ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
                        ES2_METAL(),
                        ES2_METAL().disable(Feature::HasShaderStencilOutput));
 
@@ -3485,6 +3581,10 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(BlitFramebufferTest,
                                ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
                                ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
                                ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsExtendedDynamicState)
+                                   .disable(Feature::SupportsExtendedDynamicState2),
+                               ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
                                ES3_METAL().disable(Feature::HasShaderStencilOutput));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferTestES31);

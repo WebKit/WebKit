@@ -485,4 +485,13 @@ enum class PipelineType
 #define ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced) \
     ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE##instanced
 
+// Helper macro that casts to a bitfield type then verifies no bits were dropped.
+#define SetBitField(lhs, rhs)                                                         \
+    do                                                                                \
+    {                                                                                 \
+        auto ANGLE_LOCAL_VAR = rhs;                                                   \
+        lhs = static_cast<typename std::decay<decltype(lhs)>::type>(ANGLE_LOCAL_VAR); \
+        ASSERT(static_cast<decltype(ANGLE_LOCAL_VAR)>(lhs) == ANGLE_LOCAL_VAR);       \
+    } while (0)
+
 #endif  // LIBANGLE_RENDERER_RENDERER_UTILS_H_

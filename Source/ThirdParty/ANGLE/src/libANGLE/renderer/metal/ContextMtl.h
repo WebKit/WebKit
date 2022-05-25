@@ -265,10 +265,12 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     // override mtl::ErrorHandler
     void handleError(GLenum error,
+                     const char *message,
                      const char *file,
                      const char *function,
                      unsigned int line) override;
     void handleError(NSError *error,
+                     const char *message,
                      const char *file,
                      const char *function,
                      unsigned int line) override;
@@ -378,6 +380,11 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
     const mtl::TextureRef &getWorkTexture() const { return mWorkTexture; }
+    angle::Result copyTextureSliceLevelToWorkBuffer(const gl::Context *context,
+                                                    const mtl::TextureRef &srcTexture,
+                                                    const mtl::MipmapNativeLevel &mipNativeLevel,
+                                                    uint32_t layerIndex);
+    const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
 
   private:
     void ensureCommandBufferReady();
@@ -574,6 +581,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     ProgramMtl *mProgram             = nullptr;
     QueryMtl *mOcclusionQuery        = nullptr;
     mtl::TextureRef mWorkTexture;
+    mtl::BufferRef mWorkBuffer;
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 

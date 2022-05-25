@@ -113,7 +113,7 @@ class ProgramExecutable final : public angle::Subject
     ProgramExecutable(const ProgramExecutable &other);
     ~ProgramExecutable() override;
 
-    void reset();
+    void reset(bool clearInfoLog);
 
     void save(bool isSeparable, gl::BinaryOutputStream *stream) const;
     void load(bool isSeparable, gl::BinaryInputStream *stream);
@@ -225,6 +225,7 @@ class ProgramExecutable final : public angle::Subject
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
     const RangeUI &getFragmentInoutRange() const { return mFragmentInoutRange; }
     bool usesEarlyFragmentTestsOptimization() const { return mUsesEarlyFragmentTestsOptimization; }
+    bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
     BlendEquationBitSet getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
     {
@@ -466,6 +467,7 @@ class ProgramExecutable final : public angle::Subject
 
     RangeUI mFragmentInoutRange;
     bool mUsesEarlyFragmentTestsOptimization;
+    bool mEnablesPerSampleShading;
 
     // KHR_blend_equation_advanced supported equation list
     BlendEquationBitSet mAdvancedBlendEquations;

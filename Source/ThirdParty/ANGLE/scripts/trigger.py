@@ -58,7 +58,7 @@ def parse_args():
 
 def invoke_mb(args):
     mb_script_path = os.path.join('tools', 'mb', 'mb.py')
-    mb_args = ['python', mb_script_path] + args
+    mb_args = [sys.executable, mb_script_path] + args
 
     # Attempt to detect standalone vs chromium component build.
     is_standalone = not os.path.isdir(os.path.join('third_party', 'angle'))

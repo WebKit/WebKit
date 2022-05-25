@@ -5,8 +5,8 @@
 //
 // DisplayVkLinux.h:
 //    Defines the class interface for DisplayVkLinux, which is the base of DisplayVkSimple,
-//    DisplayVkHeadless and DisplayVkXcb.  This base class implements the common functionality of
-//    handling Linux dma-bufs.
+//    DisplayVkHeadless, DisplayVkXcb and DisplayVkWayland.  This base class implements the
+//    common functionality of handling Linux dma-bufs.
 //
 
 #ifndef LIBANGLE_RENDERER_VULKAN_DISPLAY_DISPLAYVKLINUX_H_

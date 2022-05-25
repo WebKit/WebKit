@@ -99,6 +99,8 @@ $ adb shell pm path org.chromium.angle
 package:/data/app/org.chromium.angle-HpkUceNFjoLYKPbIVxFWLQ==/base.apk
 ```
 
+Note that `angle_debug_package` must be set to `org.chromium.angle` for this apk to be loaded.
+
 ## Selecting ANGLE as the OpenGL ES driver
 
 For debuggable applications or root users, you can tell the platform to load ANGLE libraries from
@@ -119,14 +121,14 @@ The following values are supported for `angle_gl_driver_selection_values`:
 
 In each section below, replace `<driver>` with one of the values above.
 
-## ANGLE for a *single* OpenGL ES app
+### ANGLE for a *single* OpenGL ES app
 
 ```
 adb shell settings put global angle_gl_driver_selection_pkgs <package name>
 adb shell settings put global angle_gl_driver_selection_values <driver>
 ```
 
-## ANGLE for *multiple* OpenGL ES apps
+### ANGLE for *multiple* OpenGL ES apps
 
 Similar to selecting a single app, you can select multiple applications by listing their package
 names and driver choice in comma separated lists.  Note the lists must be the same length, one
@@ -136,7 +138,7 @@ adb shell settings put global angle_gl_driver_selection_pkgs <package name 1>,<p
 adb shell settings put global angle_gl_driver_selection_values <driver 1>,<driver 2>,<driver 3>,...
 ```
 
-## ANGLE for *all* OpenGL ES apps
+### ANGLE for *all* OpenGL ES apps
 
 `Note: This method only works on a device with root access.`
 
@@ -158,6 +160,8 @@ V GraphicsEnvironment: ANGLE developer option for <package name>: angle
 I GraphicsEnvironment: ANGLE package enabled: org.chromium.angle
 I ANGLE   : Version (2.1.0.f87fac56d22f), Renderer (Vulkan 1.1.87(Adreno (TM) 615 (0x06010501)))
 ```
+
+Note that this might be logged by the built-in ANGLE and not the installed apk if `angle_debug_package` wasn't set.
 
 ## Clean up
 

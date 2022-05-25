@@ -29,6 +29,7 @@ namespace
 constexpr char kOESExt[]                         = "GL_OES_EGL_image";
 constexpr char kExternalExt[]                    = "GL_OES_EGL_image_external";
 constexpr char kExternalESSL3Ext[]               = "GL_OES_EGL_image_external_essl3";
+constexpr char kYUVInternalFormatExt[]           = "GL_ANGLE_yuv_internal_format";
 constexpr char kYUVTargetExt[]                   = "GL_EXT_YUV_target";
 constexpr char kBaseExt[]                        = "EGL_KHR_image_base";
 constexpr char k2DTextureExt[]                   = "EGL_KHR_gl_texture_2D_image";
@@ -41,9 +42,9 @@ constexpr char kEGLImageArrayExt[]               = "GL_EXT_EGL_image_array";
 constexpr char kEGLAndroidImageNativeBufferExt[] = "EGL_ANDROID_image_native_buffer";
 constexpr char kEGLImageStorageExt[]             = "GL_EXT_EGL_image_storage";
 constexpr EGLint kDefaultAttribs[]               = {
-    EGL_IMAGE_PRESERVED,
-    EGL_TRUE,
-    EGL_NONE,
+                  EGL_IMAGE_PRESERVED,
+                  EGL_TRUE,
+                  EGL_NONE,
 };
 constexpr EGLint kColorspaceAttribs[] = {
     EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_SRGB_KHR, EGL_NONE,
@@ -91,7 +92,7 @@ GLubyte kSrgbColor3D[]   = {58, 226, 32, 255, 149, 26, 60, 255};
 GLubyte kLinearColorCube[] = {75, 135, 205, 255, 201, 89,  133, 255, 111, 201, 108, 255,
                               30, 90,  230, 255, 180, 210, 70,  255, 77,  111, 99,  255};
 GLubyte kSrgbColorCube[]   = {18, 62, 155, 255, 149, 26,  60, 255, 41, 149, 38, 255,
-                            3,  26, 202, 255, 117, 164, 16, 255, 19, 41,  32, 255};
+                              3,  26, 202, 255, 117, 164, 16, 255, 19, 41,  32, 255};
 GLfloat kCubeFaceX[]       = {1.0, -1.0, 0.0, 0.0, 0.0, 0.0};
 GLfloat kCubeFaceY[]       = {0.0, 0.0, 1.0, -1.0, 0.0, 0.0};
 GLfloat kCubeFaceZ[]       = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
@@ -1073,6 +1074,8 @@ class ImageTest : public ANGLETest
     bool hasExternalExt() const { return IsGLExtensionEnabled(kExternalExt); }
 
     bool hasExternalESSL3Ext() const { return IsGLExtensionEnabled(kExternalESSL3Ext); }
+
+    bool hasYUVInternalFormatExt() const { return IsGLExtensionEnabled(kYUVInternalFormatExt); }
 
     bool hasYUVTargetExt() const { return IsGLExtensionEnabled(kYUVTargetExt); }
 
@@ -2638,6 +2641,61 @@ TEST_P(ImageTestES3, SourceAHBTargetExternalESSL3)
 {
     ANGLE_SKIP_TEST_IF(!IsAndroid());
     SourceAHBTargetExternalESSL3_helper(kDefaultAttribs);
+}
+
+// Test sampling from a YUV texture using GL_ANGLE_yuv_internal_format as external texture and then
+// switching to raw YUV sampling using EXT_yuv_target
+TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSample)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
+
+    // Create source YUV texture
+    GLTexture yuvTexture;
+    GLubyte yuvColor[6]         = {7, 51, 197, 231, 128, 192};
+    GLubyte expectedRgbColor[4] = {255, 159, 211, 255};
+    constexpr size_t kWidth     = 2;
+    constexpr size_t kHeight    = 2;
+
+    glBindTexture(GL_TEXTURE_2D, yuvTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                    GL_UNSIGNED_BYTE, yuvColor);
+    ASSERT_GL_NO_ERROR();
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Image
+    EGLWindow *window = getEGLWindow();
+    EGLImageKHR image =
+        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                          reinterpretHelper<EGLClientBuffer>(yuvTexture.get()), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    createEGLImageTargetTextureExternal(image, target);
+
+    // Draw quad with program that samples YUV data with implicit RGB conversion
+    glUseProgram(mTextureExternalProgram);
+    glUniform1i(mTextureExternalUniformLocation, 0);
+    drawQuad(mTextureExternalProgram, "position", 0.5f);
+    // Expect that the rendered quad's color is converted to RGB
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+
+    // Draw quad with program that samples raw YUV data
+    glUseProgram(mTextureYUVProgram);
+    glUniform1i(mTextureYUVUniformLocation, 0);
+    drawQuad(mTextureYUVProgram, "position", 0.5f);
+    // Expect that the rendered quad's color matches the raw YUV data
+    EXPECT_PIXEL_NEAR(0, 0, yuvColor[2], yuvColor[4], yuvColor[5], 255, 1);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
 }
 
 // Test sampling from a YUV AHB with a regular external sampler and pre-initialized data

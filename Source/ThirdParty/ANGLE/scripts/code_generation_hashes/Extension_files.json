@@ -1,6 +1,6 @@
 {
   "doc/ExtensionSupport.md":
-    "1b86f123870b49e1db0b2426f85d5f4b",
+    "495b6bdeaab61f75a3e456a8fa142d66",
   "scripts/cl.xml":
     "f923201d4ea3e1130763b19fa7faa7a2",
   "scripts/egl.xml":
@@ -26,13 +26,13 @@
   "scripts/gl_angle_ext.xml":
     "37eebedc1153cd9d208efa469a10a7b2",
   "scripts/registry_xml.py":
-    "8d002c3cd027eb292c01abfc91c9be7b",
+    "bef0145151493df09aeb5239eb0a22f0",
   "scripts/wgl.xml":
     "c36001431919e1c435f1215a85f7e1db",
   "src/libANGLE/gen_extensions.py":
     "186e7b22cb560bf4f32e2b1b8a025dd8",
   "src/libANGLE/gles_extensions_autogen.cpp":
-    "e00e8bd3cea419b33e9b3cb66462754f",
+    "b976708b85cae170f402bb1f0d034530",
   "src/libANGLE/gles_extensions_autogen.h":
-    "887f39c8994a0b8e3c82a2676f2308e7"
+    "cf728525657b876d475440fa75c6c495"
 }

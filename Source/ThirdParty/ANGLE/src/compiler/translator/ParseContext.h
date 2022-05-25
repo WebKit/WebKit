@@ -76,6 +76,7 @@ class TParseContext : angle::NonCopyable
     }
 
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
+    bool isSampleQualifierSpecified() const { return mSampleQualifierSpecified; }
 
     void setLoopNestingLevel(int loopNestintLevel) { mLoopNestingLevel = loopNestintLevel; }
 
@@ -691,6 +692,7 @@ class TParseContext : angle::NonCopyable
     bool mFragmentPrecisionHighOnESSL1;  // true if highp precision is supported when compiling
                                          // ESSL1.
     bool mEarlyFragmentTestsSpecified;   // true if layout(early_fragment_tests) in; is specified.
+    bool mSampleQualifierSpecified;      // true if the |sample| qualifier is used
     TLayoutMatrixPacking mDefaultUniformMatrixPacking;
     TLayoutBlockStorage mDefaultUniformBlockStorage;
     TLayoutMatrixPacking mDefaultBufferMatrixPacking;

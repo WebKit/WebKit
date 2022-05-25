@@ -705,10 +705,22 @@ void ANGLETestBase::ANGLETestSetUp()
             FAIL() << "Internal parameter conflict error.";
         }
 
-        if (mFixture->eglWindow->initializeSurface(
-                mFixture->osWindow, driverLib, mFixture->configParams) != GLWindowResult::NoError)
+        const GLWindowResult windowResult = mFixture->eglWindow->initializeSurface(
+            mFixture->osWindow, driverLib, mFixture->configParams);
+
+        if (windowResult != GLWindowResult::NoError)
         {
-            FAIL() << "egl surface init failed.";
+            if (windowResult != GLWindowResult::Error)
+            {
+                // If the test requests an extension that isn't supported, automatically skip the
+                // test.
+                GTEST_SKIP() << "Test skipped due to missing extension";
+            }
+            else
+            {
+                // Otherwise fail the test.
+                FAIL() << "egl surface init failed.";
+            }
         }
 
         if (!mDeferContextInit && !mFixture->eglWindow->initializeContext())
@@ -1393,6 +1405,11 @@ void ANGLETestBase::setClientArraysEnabled(bool enabled)
 void ANGLETestBase::setRobustResourceInit(bool enabled)
 {
     mFixture->configParams.robustResourceInit = enabled;
+}
+
+void ANGLETestBase::setMutableRenderBuffer(bool enabled)
+{
+    mFixture->configParams.mutableRenderBuffer = enabled;
 }
 
 void ANGLETestBase::setContextProgramCacheEnabled(bool enabled)

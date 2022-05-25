@@ -14,7 +14,6 @@
                 "Issue with 1-bit alpha framebuffer formats"
             ]
         },
-
         {
             "name": "RGBA4_is_not_supported_for_color_rendering",
             "category": "Workarounds",
@@ -22,7 +21,6 @@
                 "GL_RGBA4 is not color renderable"
             ]
         },
-
         {
             "name": "allow_ETC_formats",
             "category": "Workarounds",
@@ -30,7 +28,13 @@
                 "Enable ETC2/EAC on desktop OpenGL"
             ]
         },
-
+        {
+            "name": "allow_astc_formats",
+            "category": "Workarounds",
+            "description": [
+                "Enable ASTC on desktop OpenGL"
+            ]
+        },
         {
             "name": "does_SRGB_clears_on_linear_framebuffer_attachments",
             "category": "Workarounds",
@@ -38,7 +42,6 @@
                 "Issue clearing framebuffers with linear attachments when GL_FRAMEBUFFER_SRGB is enabled"
             ]
         },
-
         {
             "name": "do_while_GLSL_causes_GPU_hang",
             "category": "Workarounds",
@@ -47,7 +50,6 @@
             ],
             "issue": "http://crbug.com/644669"
         },
-
         {
             "name": "vertex_ID_does_not_include_base_vertex",
             "category": "Workarounds",
@@ -55,7 +57,6 @@
                 "gl_VertexID in GLSL vertex shader doesn't include base vertex value"
             ]
         },
-
         {
             "name": "finish_does_not_cause_queries_to_be_available",
             "category": "Workarounds",
@@ -63,7 +64,6 @@
                 "glFinish doesn't cause all queries to report available result"
             ]
         },
-
         {
             "name": "always_call_use_program_after_link",
             "category": "Workarounds",
@@ -72,7 +72,6 @@
             ],
             "issue": "http://crbug.com/110263"
         },
-
         {
             "name": "unpack_overlapping_rows_separately_unpack_buffer",
             "category": "Workarounds",
@@ -80,7 +79,6 @@
                 "In the case of unpacking from a pixel unpack buffer, unpack overlapping rows row by row"
             ]
         },
-
         {
             "name": "pack_overlapping_rows_separately_pack_buffer",
             "category": "Workarounds",
@@ -88,7 +86,6 @@
                 "In the case of packing to a pixel pack buffer, pack overlapping rows row by row"
             ]
         },
-
         {
             "name": "initialize_current_vertex_attributes",
             "category": "Workarounds",
@@ -96,7 +93,6 @@
                 "During initialization, assign the current vertex attributes to the spec-mandated defaults"
             ]
         },
-
         {
             "name": "emulate_abs_int_function",
             "category": "Workarounds",
@@ -105,7 +101,6 @@
             ],
             "issue": "http://crbug.com/642227"
         },
-
         {
             "name": "add_and_true_to_loop_condition",
             "category": "Workarounds",
@@ -113,7 +108,6 @@
                 "Calculation of loop conditions in for and while loop has bug"
             ]
         },
-
         {
             "name": "unpack_last_row_separately_for_padding_inclusion",
             "category": "Workarounds",
@@ -122,7 +116,6 @@
             ],
             "issue": "http://anglebug.com/1512"
         },
-
         {
             "name": "pack_last_row_separately_for_padding_inclusion",
             "category": "Workarounds",
@@ -131,7 +124,6 @@
             ],
             "issue": "http://anglebug.com/1512"
         },
-
         {
             "name": "emulate_isnan_float",
             "category": "Workarounds",
@@ -140,7 +132,6 @@
             ],
             "issue": "http://crbug.com/650547"
         },
-
         {
             "name": "use_unused_blocks_with_standard_or_shared_layout",
             "category": "Workarounds",
@@ -148,7 +139,6 @@
                 "Unused std140 or shared uniform blocks will be treated as inactive"
             ]
         },
-
         {
             "name": "remove_invariant_and_centroid_for_ESSL3",
             "category": "Workarounds",
@@ -156,7 +146,6 @@
                 "Fix spec difference between GLSL 4.1 or lower and ESSL3"
             ]
         },
-
         {
             "name": "rewrite_float_unary_minus_operator",
             "category": "Workarounds",
@@ -165,7 +154,6 @@
             ],
             "issue": "http://crbug.com/308366"
         },
-
         {
             "name": "emulate_atan_2_float",
             "category": "Workarounds",
@@ -174,7 +162,6 @@
             ],
             "issue": "http://crbug.com/672380"
         },
-
         {
             "name": "reapply_UBO_bindings_after_using_binary_program",
             "category": "Workarounds",
@@ -183,7 +170,6 @@
             ],
             "issue": "http://anglebug.com/1637"
         },
-
         {
             "name": "emulate_max_vertex_attrib_stride",
             "category": "Workarounds",
@@ -192,7 +178,6 @@
             ],
             "issue": "http://anglebug.com/1936"
         },
-
         {
             "name": "dont_initialize_uninitialized_locals",
             "category": "Workarounds",
@@ -201,7 +186,6 @@
             ],
             "issue": "http://anglebug.com/2046"
         },
-
         {
             "name": "clamp_point_size",
             "category": "Workarounds",
@@ -209,7 +193,6 @@
                 "The point size range reported from the API is inconsistent with the actual behavior"
             ]
         },
-
         {
             "name": "dont_use_loops_to_initialize_variables",
             "category": "Workarounds",
@@ -218,7 +201,6 @@
             ],
             "issue": "http://crbug.com/809422"
         },
-
         {
             "name": "clamp_frag_depth",
             "category": "Workarounds",
@@ -226,7 +208,6 @@
                 "gl_FragDepth is not clamped correctly when rendering to a floating point depth buffer"
             ]
         },
-
         {
             "name": "rewrite_repeated_assign_to_swizzled",
             "category": "Workarounds",
@@ -235,7 +216,6 @@
                 "GLSL user-defined function have incorrect results"
             ]
         },
-
         {
             "name": "disable_blend_func_extended",
             "category": "Workarounds",
@@ -244,7 +224,6 @@
             ],
             "issue": "http://anglebug.com/1085"
         },
-
         {
             "name": "unsized_SRGB_read_pixels_doesnt_transform",
             "category": "Workarounds",
@@ -254,7 +233,6 @@
             ],
             "issue": "http://crbug.com/550292 http://crbug.com/565179"
         },
-
         {
             "name": "query_counter_bits_generates_errors",
             "category": "Workarounds",
@@ -263,7 +241,6 @@
             ],
             "issue": "http://anglebug.com/3027"
         },
-
         {
             "name": "dont_relink_programs_in_parallel",
             "category": "Workarounds",
@@ -272,7 +249,6 @@
             ],
             "issue": "http://anglebug.com/3045"
         },
-
         {
             "name": "disable_worker_contexts",
             "category": "Workarounds",
@@ -281,7 +257,6 @@
             ],
             "issue": "http://crbug.com/849576"
         },
-
         {
             "name": "limit_max_texture_size_to_4096",
             "category": "Workarounds",
@@ -291,7 +266,6 @@
             ],
             "issue": "http://crbug.com/927470"
         },
-
         {
             "name": "limit_max_MSAA_samples_to_4",
             "category": "Workarounds",
@@ -300,7 +274,6 @@
             ],
             "issue": "http://crbug.com/797243"
         },
-
         {
             "name": "allow_clear_for_robust_resource_init",
             "category": "Workarounds",
@@ -310,7 +283,6 @@
             ],
             "issue": "https://crbug.com/848952 http://crbug.com/883276"
         },
-
         {
             "name": "clamp_array_access",
             "category": "Workarounds",
@@ -319,7 +291,6 @@
             ],
             "issue": "http://anglebug.com/2978"
         },
-
         {
             "name": "reset_TexImage2D_base_level",
             "category": "Workarounds",
@@ -329,7 +300,6 @@
             ],
             "issue": "https://crbug.com/705865"
         },
-
         {
             "name": "clear_to_zero_or_one_broken",
             "category": "Workarounds",
@@ -338,7 +308,6 @@
             ],
             "issue": "https://crbug.com/710443"
         },
-
         {
             "name": "limit_max_3d_array_texture_size_to_1024",
             "category": "Workarounds",
@@ -347,7 +316,6 @@
             ],
             "issue": "http://crbug.com/927470"
         },
-
         {
             "name": "adjust_src_dst_region_for_BlitFramebuffer",
             "category": "Workarounds",
@@ -356,7 +324,6 @@
             ],
             "issue": "http://crbug.com/830046"
         },
-
         {
             "name": "clip_src_region_for_BlitFramebuffer",
             "category": "Workarounds",
@@ -365,7 +332,6 @@
             ],
             "issue": "http://crbug.com/830046"
         },
-
         {
             "name": "RGB_DXT1_textures_sample_zero_alpha",
             "category": "Workarounds",
@@ -374,7 +340,6 @@
             ],
             "issue": "http://anglebug.com/3729"
         },
-
         {
             "name": "unfold_short_circuits",
             "category": "Workarounds",
@@ -384,7 +349,6 @@
             ],
             "issue": "http://anglebug.com/482"
         },
-
         {
             "name": "emulate_primitive_restart_fixed_index",
             "category": "Workarounds",
@@ -394,7 +358,6 @@
             ],
             "issue": "http://anglebug.com/3997"
         },
-
         {
             "name": "set_primitive_restart_fixed_index_for_draw_arrays",
             "category": "Workarounds",
@@ -404,7 +367,6 @@
             ],
             "issue": "http://anglebug.com/3997"
         },
-
         {
             "name": "remove_dynamic_indexing_of_swizzled_vector",
             "category": "Workarounds",
@@ -413,7 +375,6 @@
             ],
             "issue": "http://crbug.com/709351"
         },
-
         {
             "name": "pre_add_texel_fetch_offsets",
             "category": "Workarounds",
@@ -425,7 +386,6 @@
             ],
             "issue": "http://crbug.com/642605"
         },
-
         {
             "name": "regenerate_struct_names",
             "category": "Workarounds",
@@ -435,7 +395,6 @@
             ],
             "issue": "http://crbug.com/403957"
         },
-
         {
             "name": "read_pixels_using_implementation_color_read_format_for_norm16",
             "category": "Workarounds",
@@ -445,7 +404,6 @@
             ],
             "issue": "http://anglebug.com/4214"
         },
-
         {
             "name": "flush_before_delete_texture_if_copied_to",
             "category": "Workarounds",
@@ -455,7 +413,6 @@
             ],
             "issue": "http://anglebug.com/4267"
         },
-
         {
             "name": "rewrite_row_major_matrices",
             "category": "Workarounds",
@@ -464,7 +421,6 @@
             ],
             "issue": "http://anglebug.com/2273"
         },
-
         {
             "name": "disable_draw_buffers_indexed",
             "category": "Workarounds",
@@ -472,7 +428,6 @@
                 "Disable OES_draw_buffers_indexed extension."
             ]
         },
-
         {
             "name": "disable_semaphore_fd",
             "category": "Workarounds",
@@ -481,7 +436,6 @@
             ],
             "issue": "https://crbug.com/1046462"
         },
-
         {
             "name": "disable_timestamp_queries",
             "category": "Workarounds",
@@ -490,7 +444,6 @@
             ],
             "issue": "https://crbug.com/811661"
         },
-
         {
             "name": "decode_encode_SRGB_for_GenerateMipmap",
             "category": "Workarounds",
@@ -499,7 +452,6 @@
             ],
             "issue": "http://anglebug.com/4646"
         },
-
         {
             "name": "emulate_CopyTexImage2D_from_renderbuffers",
             "category": "Workarounds",
@@ -508,7 +460,6 @@
             ],
             "issue": "https://anglebug.com/4674"
         },
-
         {
             "name": "disable_GPU_switching_support",
             "category": "Workarounds",
@@ -517,7 +468,6 @@
             ],
             "issue": "https://crbug.com/1091824"
         },
-
         {
             "name": "disable_native_parallel_compile",
             "category": "Workarounds",
@@ -526,7 +476,6 @@
             ],
             "issue": "http://crbug.com/1094869"
         },
-
         {
             "name": "emulate_pack_skip_rows_and_pack_skip_pixels",
             "category": "Workarounds",
@@ -535,7 +484,6 @@
             ],
             "issue": "https://anglebug.com/4849"
         },
-
         {
             "name": "clamp_msc_rate",
             "category": "Workarounds",
@@ -544,7 +492,6 @@
             ],
             "issue": "https://crbug.com/1042393"
         },
-
         {
             "name": "bind_transform_feedback_buffer_before_bind_buffer_range",
             "category": "Workarounds",
@@ -554,7 +501,6 @@
             ],
             "issue": "https://anglebug.com/5140"
         },
-
         {
             "name": "disable_sync_control_support",
             "category": "Workarounds",
@@ -564,7 +510,6 @@
             ],
             "issue": "https://crbug.com/1137851"
         },
-
         {
             "name": "keep_buffer_shadow_copy",
             "category": "Workarounds",
@@ -572,7 +517,6 @@
                 "Maintain a shadow copy of buffer data when the GL API does not permit reading data back."
             ]
         },
-
         {
             "name": "set_zero_level_before_GenerateMipmap",
             "category": "Workarounds",
@@ -580,7 +524,6 @@
                 "glGenerateMipmap fails if the zero texture level is not set on some Mac drivers."
             ]
         },
-
         {
             "name": "promote_packed_formats_to_8_bit_per_channel",
             "category": "Workarounds",
@@ -589,7 +532,6 @@
             ],
             "issue": "http://anglebug.com/5469"
         },
-
         {
             "name": "init_fragment_output_variables",
             "category": "Workarounds",
@@ -598,7 +540,6 @@
             ],
             "issue": "http://crbug.com/1171371"
         },
-
         {
             "name": "shift_instanced_array_data_with_offset",
             "category": "Workarounds",
@@ -607,7 +548,6 @@
             ],
             "issue": "http://crbug.com/1144207"
         },
-
         {
             "name": "sync_vertex_arrays_to_default",
             "category": "Workarounds",
@@ -616,7 +556,6 @@
             ],
             "issue": "http://anglebug.com/5577"
         },
-
         {
             "name": "sanitize_AMDGPU_renderer_string",
             "category": "Workarounds",
@@ -625,7 +564,6 @@
             ],
             "issue": "http://crbug.com/1181193"
         },
-
         {
             "name": "unbind_FBO_before_switching_context",
             "category": "Workarounds",
@@ -634,7 +572,6 @@
             ],
             "issue": "http://crbug.com/1181193"
         },
-
         {
             "name": "flush_on_framebuffer_change",
             "category": "Workarounds",
@@ -644,7 +581,6 @@
             ],
             "issue": "http://crbug.com/1181068"
         },
-
         {
             "name": "disable_multisampled_render_to_texture",
             "category": "Workarounds",
@@ -653,7 +589,6 @@
             ],
             "issue": "http://anglebug.com/2894"
         },
-
         {
             "name": "upload_texture_data_in_chunks",
             "category": "Workarounds",
@@ -662,7 +597,6 @@
             ],
             "issue": "http://crbug.com/1181068"
         },
-
         {
             "name": "emulate_immutable_compressed_texture_3D",
             "category": "Workarounds",
@@ -671,7 +605,6 @@
             ],
             "issue": "https://crbug.com/1060012"
         },
-
         {
             "name": "emulate_RGB10",
             "category": "Workarounds",
@@ -680,7 +613,6 @@
             ],
             "issue": "https://crbug.com/1300575"
         },
-
         {
             "name": "always_unbind_framebuffer_texture_2D",
             "category": "Workarounds",

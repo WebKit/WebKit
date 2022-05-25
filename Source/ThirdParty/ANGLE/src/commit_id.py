@@ -6,6 +6,7 @@
 # Generate commit.h with git commit hash.
 #
 
+import logging
 import subprocess as sp
 import sys
 import os
@@ -25,6 +26,14 @@ def grab_output(command, cwd):
 
 def get_commit_position(cwd):
     return grab_output('git rev-list HEAD --count', cwd)
+
+
+def does_git_dir_exist(cwd, aosp):
+    ret = os.path.exists(os.path.join(cwd, '.git', 'HEAD'))
+    # If we're on Android, .git may be a file with a gitdir directive pointing elsewhere.
+    if aosp and not ret and os.path.exists(os.path.join(cwd, '.git')):
+        ret = 'true' == grab_output('git rev-parse --is-inside-work-tree', cwd)
+    return ret
 
 
 def unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path):
@@ -51,12 +60,10 @@ if len(sys.argv) < 2:
 operation = sys.argv[1]
 
 # Set the root of ANGLE's repo as the working directory
-cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
 aosp_angle_path = os.path.join(os.path.dirname('.'), 'external', 'angle')
-if os.path.exists(aosp_angle_path):
-    cwd = aosp_angle_path
-
-git_dir_exists = os.path.exists(os.path.join(cwd, '.git', 'HEAD'))
+aosp = os.path.exists(aosp_angle_path)
+cwd = aosp_angle_path if aosp else os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+git_dir_exists = does_git_dir_exist(cwd, aosp)
 
 if operation == 'check':
     if git_dir_exists:
@@ -92,25 +99,25 @@ commit_id_size = 12
 commit_id = 'unknown hash'
 commit_date = 'unknown date'
 commit_position = '0'
-enable_binary_loading = False
+binary_loading = False
 
 if git_dir_exists:
     try:
         commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
         commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
         commit_position = get_commit_position(cwd)
-        enable_binary_loading = True
+        binary_loading = True
     except:
         pass
 
 hfile = open(output_file, 'w')
 
+logging.info('ANGLE hash: {}'.format(commit_id))
 hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
 hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
 hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)
-
-if not enable_binary_loading:
-    hfile.write('#define ANGLE_DISABLE_PROGRAM_BINARY_LOAD\n')
+if binary_loading:
+    hfile.write('#define ANGLE_HAS_BINARY_LOADING\n')
 
 hfile.close()

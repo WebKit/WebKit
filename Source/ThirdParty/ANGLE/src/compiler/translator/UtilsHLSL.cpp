@@ -21,24 +21,42 @@ namespace sh
 namespace
 {
 
-void DisambiguateFunctionNameForParameterType(const TType &paramType,
-                                              TString *disambiguatingStringOut)
+// Parameter types are only added to function names if they are ambiguous according to the
+// native HLSL compiler. Other parameter types are not added to function names to avoid
+// making function names longer.
+bool FunctionParameterNeedsDisambiguation(const TType &paramType)
 {
-    // Parameter types are only added to function names if they are ambiguous according to the
-    // native HLSL compiler. Other parameter types are not added to function names to avoid
-    // making function names longer.
     if (paramType.getObjectSize() == 4 && paramType.getBasicType() == EbtFloat)
     {
         // Disambiguation is needed for float2x2 and float4 parameters. These are the only
         // built-in types that HLSL thinks are identical. float2x3 and float3x2 are different
         // types, for example.
-        *disambiguatingStringOut += "_" + TypeString(paramType);
+        return true;
     }
-    else if (paramType.getBasicType() == EbtStruct)
+
+    if (paramType.getBasicType() == EbtUInt || paramType.getBasicType() == EbtInt)
+    {
+        // The HLSL compiler can't always tell the difference between int and uint types when an
+        // expression is passed as a function parameter
+        return true;
+    }
+
+    if (paramType.getBasicType() == EbtStruct)
     {
         // Disambiguation is needed for struct parameters, since HLSL thinks that structs with
         // the same fields but a different name are identical.
         ASSERT(paramType.getStruct()->symbolType() != SymbolType::Empty);
+        return true;
+    }
+
+    return false;
+}
+
+void DisambiguateFunctionNameForParameterType(const TType &paramType,
+                                              TString *disambiguatingStringOut)
+{
+    if (FunctionParameterNeedsDisambiguation(paramType))
+    {
         *disambiguatingStringOut += "_" + TypeString(paramType);
     }
 }
@@ -89,8 +107,12 @@ HLSLTextureGroup TextureGroup(const TBasicType type, TLayoutImageInternalFormat 
             return HLSL_TEXTURE_2D_MS;
         case EbtSampler2DMSArray:
             return HLSL_TEXTURE_2D_MS_ARRAY;
+        case EbtSamplerBuffer:
+            return HLSL_TEXTURE_BUFFER;
         case EbtISampler2D:
             return HLSL_TEXTURE_2D_INT4;
+        case EbtISamplerBuffer:
+            return HLSL_TEXTURE_BUFFER_INT4;
         case EbtISampler3D:
             return HLSL_TEXTURE_3D_INT4;
         case EbtISamplerCube:
@@ -107,6 +129,8 @@ HLSLTextureGroup TextureGroup(const TBasicType type, TLayoutImageInternalFormat 
             return HLSL_TEXTURE_3D_UINT4;
         case EbtUSamplerCube:
             return HLSL_TEXTURE_2D_ARRAY_UINT4;
+        case EbtUSamplerBuffer:
+            return HLSL_TEXTURE_BUFFER_UINT4;
         case EbtUSampler2DArray:
             return HLSL_TEXTURE_2D_ARRAY_UINT4;
         case EbtUSampler2DMS:
@@ -276,6 +300,57 @@ HLSLTextureGroup TextureGroup(const TBasicType type, TLayoutImageInternalFormat 
 #endif
             }
         }
+        case EbtImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32F:
+                case EiifRGBA16F:
+                case EiifR32F:
+                    return HLSL_TEXTURE_BUFFER;
+                case EiifRGBA8:
+                    return HLSL_TEXTURE_BUFFER_UNORM;
+                case EiifRGBA8_SNORM:
+                    return HLSL_TEXTURE_BUFFER_SNORM;
+                default:
+                    UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
+                    return HLSL_TEXTURE_UNKNOWN;
+#endif
+            }
+        }
+        case EbtUImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32UI:
+                case EiifRGBA16UI:
+                case EiifRGBA8UI:
+                case EiifR32UI:
+                    return HLSL_TEXTURE_BUFFER_UINT4;
+                default:
+                    UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
+                    return HLSL_TEXTURE_UNKNOWN;
+#endif
+            }
+        }
+        case EbtIImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32I:
+                case EiifRGBA16I:
+                case EiifRGBA8I:
+                case EiifR32I:
+                    return HLSL_TEXTURE_BUFFER_INT4;
+                default:
+                    UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
+                    return HLSL_TEXTURE_UNKNOWN;
+#endif
+            }
+        }
         default:
             UNREACHABLE();
 #if !UNREACHABLE_IS_NORETURN
@@ -342,6 +417,16 @@ const char *TextureString(const HLSLTextureGroup textureGroup)
             return "TextureCube";
         case HLSL_TEXTURE_2D_ARRAY_COMPARISON:
             return "Texture2DArray";
+        case HLSL_TEXTURE_BUFFER:
+            return "Buffer<float4>";
+        case HLSL_TEXTURE_BUFFER_INT4:
+            return "Buffer<int4>";
+        case HLSL_TEXTURE_BUFFER_UINT4:
+            return "Buffer<uint4>";
+        case HLSL_TEXTURE_BUFFER_UNORM:
+            return "Buffer<unorm float4>";
+        case HLSL_TEXTURE_BUFFER_SNORM:
+            return "Buffer<snorm float4>";
         default:
             UNREACHABLE();
     }
@@ -412,6 +497,16 @@ const char *TextureGroupSuffix(const HLSLTextureGroup type)
             return "Cube_comparison";
         case HLSL_TEXTURE_2D_ARRAY_COMPARISON:
             return "2DArray_comparison";
+        case HLSL_TEXTURE_BUFFER:
+            return "Buffer";
+        case HLSL_TEXTURE_BUFFER_INT4:
+            return "Buffer_int4_";
+        case HLSL_TEXTURE_BUFFER_UINT4:
+            return "Buffer_uint4_";
+        case HLSL_TEXTURE_BUFFER_UNORM:
+            return "Buffer_unorm_float4_";
+        case HLSL_TEXTURE_BUFFER_SNORM:
+            return "Buffer_snorm_float4_";
         default:
             UNREACHABLE();
     }
@@ -659,6 +754,57 @@ HLSLRWTextureGroup RWTextureGroup(const TBasicType type,
             break;
 #endif
         }
+        case EbtImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32F:
+                case EiifRGBA16F:
+                case EiifR32F:
+                    return HLSL_RWTEXTURE_BUFFER_FLOAT4;
+                case EiifRGBA8:
+                    return HLSL_RWTEXTURE_BUFFER_UNORM;
+                case EiifRGBA8_SNORM:
+                    return HLSL_RWTEXTURE_BUFFER_SNORM;
+                default:
+                    UNREACHABLE();
+            }
+#if !UNREACHABLE_IS_NORETURN
+            break;
+#endif
+        }
+        case EbtIImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32I:
+                case EiifRGBA16I:
+                case EiifRGBA8I:
+                case EiifR32I:
+                    return HLSL_RWTEXTURE_BUFFER_INT4;
+                default:
+                    UNREACHABLE();
+            }
+#if !UNREACHABLE_IS_NORETURN
+            break;
+#endif
+        }
+        case EbtUImageBuffer:
+        {
+            switch (imageInternalFormat)
+            {
+                case EiifRGBA32UI:
+                case EiifRGBA16UI:
+                case EiifRGBA8UI:
+                case EiifR32UI:
+                    return HLSL_RWTEXTURE_BUFFER_UINT4;
+                default:
+                    UNREACHABLE();
+            }
+#if !UNREACHABLE_IS_NORETURN
+            break;
+#endif
+        }
         default:
             UNREACHABLE();
     }
@@ -699,6 +845,16 @@ const char *RWTextureString(const HLSLRWTextureGroup RWTextureGroup)
             return "RWTexture2DArray<int4>";
         case HLSL_RWTEXTURE_3D_INT4:
             return "RWTexture3D<int4>";
+        case HLSL_RWTEXTURE_BUFFER_FLOAT4:
+            return "RWBuffer<float4>";
+        case HLSL_RWTEXTURE_BUFFER_UNORM:
+            return "RWBuffer<unorm float4>";
+        case HLSL_RWTEXTURE_BUFFER_SNORM:
+            return "RWBuffer<snorm float4>";
+        case HLSL_RWTEXTURE_BUFFER_UINT4:
+            return "RWBuffer<uint4>";
+        case HLSL_RWTEXTURE_BUFFER_INT4:
+            return "RWBuffer<int4>";
         default:
             UNREACHABLE();
     }
@@ -745,6 +901,16 @@ const char *RWTextureGroupSuffix(const HLSLRWTextureGroup type)
             return "RW2DArray_int4_";
         case HLSL_RWTEXTURE_3D_INT4:
             return "RW3D_int4_";
+        case HLSL_RWTEXTURE_BUFFER_FLOAT4:
+            return "RWBuffer_float4_";
+        case HLSL_RWTEXTURE_BUFFER_UNORM:
+            return "RWBuffer_unorm_float4_";
+        case HLSL_RWTEXTURE_BUFFER_SNORM:
+            return "RWBuffer_snorm_float4_";
+        case HLSL_RWTEXTURE_BUFFER_UINT4:
+            return "RWBuffer_uint4_";
+        case HLSL_RWTEXTURE_BUFFER_INT4:
+            return "RWBuffer_int4_";
         default:
             UNREACHABLE();
     }

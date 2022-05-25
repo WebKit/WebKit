@@ -280,9 +280,15 @@ class Renderer9 : public RendererD3D
     TextureStorage *createTextureStorageEGLImage(EGLImageD3D *eglImage,
                                                  RenderTargetD3D *renderTargetD3D,
                                                  const std::string &label) override;
+
+    TextureStorage *createTextureStorageBuffer(const gl::OffsetBindingPointer<gl::Buffer> &buffer,
+                                               GLenum internalFormat,
+                                               const std::string &label) override;
+
     TextureStorage *createTextureStorageExternal(egl::Stream *stream,
                                                  const egl::Stream::GLTextureDescription &desc,
                                                  const std::string &label) override;
+
     TextureStorage *createTextureStorage2D(GLenum internalformat,
                                            bool renderTarget,
                                            GLsizei width,
@@ -443,6 +449,8 @@ class Renderer9 : public RendererD3D
                       gl::Limitations *outLimitations) const override;
 
     void initializeFeatures(angle::FeaturesD3D *features) const override;
+
+    void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     angle::Result setBlendDepthRasterStates(const gl::Context *context, gl::PrimitiveMode drawMode);
 

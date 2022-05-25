@@ -449,12 +449,14 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
         case EvqGlobalInvocationID:
         case EvqLocalInvocationIndex:
         case EvqViewIDOVR:
+        case EvqLayerIn:
             return spv::StorageClassInput;
 
         case EvqPosition:
         case EvqPointSize:
         case EvqFragDepth:
         case EvqSampleMask:
+        case EvqLayerOut:
             return spv::StorageClassOutput;
 
         case EvqClipDistance:
@@ -470,9 +472,7 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
             return shaderType == GL_TESS_CONTROL_SHADER_EXT ? spv::StorageClassOutput
                                                             : spv::StorageClassInput;
 
-        case EvqLayer:
         case EvqPrimitiveID:
-            // gl_Layer is output in GS and input in FS.
             // gl_PrimitiveID is output in GS and input in TCS, TES and FS.
             return shaderType == GL_GEOMETRY_SHADER ? spv::StorageClassOutput
                                                     : spv::StorageClassInput;
@@ -617,7 +617,8 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             name              = "gl_PrimitiveIDIn";
             builtInDecoration = spv::BuiltInPrimitiveId;
             break;
-        case EvqLayer:
+        case EvqLayerOut:
+        case EvqLayerIn:
             name              = "gl_Layer";
             builtInDecoration = spv::BuiltInLayer;
 
@@ -662,14 +663,21 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
     const spirv::IdRef varId  = mBuilder.declareVariable(
-        typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
+         typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
 
     mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,
                          {spirv::LiteralInteger(builtInDecoration)});
 
-    // Additionally, decorate gl_TessLevel* with Patch.
-    if (type.getQualifier() == EvqTessLevelInner || type.getQualifier() == EvqTessLevelOuter)
+    // Additionally:
+    //
+    // - decorate gl_Layer in FS with Flat.
+    // - decorate gl_TessLevel* with Patch.
+    if (type.getQualifier() == EvqLayerIn)
+    {
+        spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationFlat, {});
+    }
+    else if (type.getQualifier() == EvqTessLevelInner || type.getQualifier() == EvqTessLevelOuter)
     {
         spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationPatch, {});
     }
@@ -1225,7 +1233,8 @@ spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
     {
         // Otherwise get the constant id for each component.
         ASSERT(expectedBasicType == EbtFloat || expectedBasicType == EbtInt ||
-               expectedBasicType == EbtUInt || expectedBasicType == EbtBool);
+               expectedBasicType == EbtUInt || expectedBasicType == EbtBool ||
+               expectedBasicType == EbtYuvCscStandardEXT);
 
         for (size_t component = 0; component < size; ++component, ++constUnion)
         {
@@ -1249,6 +1258,10 @@ spirv::IdRef OutputSPIRVTraverser::createConstant(const TType &type,
                     break;
                 case EbtBool:
                     componentId = mBuilder.getBoolConstant(castConstant.getBConst());
+                    break;
+                case EbtYuvCscStandardEXT:
+                    componentId =
+                        mBuilder.getUintConstant(castConstant.getYuvCscStandardEXTConst());
                     break;
                 default:
                     UNREACHABLE();
@@ -2832,10 +2845,8 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
 
         case EOpRgb_2_yuv:
         case EOpYuv_2_rgb:
-            // TODO: There doesn't seem to be an equivalent in SPIR-V, and should likley be emulated
-            // as an AST transformation.  Not supported by the Vulkan at the moment.
-            // http://anglebug.com/4889.
-            UNIMPLEMENTED();
+            // These built-ins are emulated, and shouldn't be encountered at this point.
+            UNREACHABLE();
             break;
 
         case EOpDFdx:
@@ -5376,7 +5387,16 @@ bool OutputSPIRVTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
                     ASSERT(condition != nullptr);
 
                     TConstantUnion caseValue;
-                    caseValue.cast(EbtUInt, *condition->getConstantValue());
+                    if (condition->getType().getBasicType() == EbtYuvCscStandardEXT)
+                    {
+                        caseValue.setUConst(
+                            condition->getConstantValue()->getYuvCscStandardEXTConst());
+                    }
+                    else
+                    {
+                        bool valid = caseValue.cast(EbtUInt, *condition->getConstantValue());
+                        ASSERT(valid);
+                    }
 
                     caseValues.push_back(caseValue.getUConst());
                     caseBlockIndices.push_back(blockIndex);
@@ -5648,7 +5668,7 @@ void OutputSPIRVTraverser::visitFunctionPrototype(TIntermFunctionPrototype *node
             const spv::StorageClass storageClass = IsOpaqueType(paramType.getBasicType())
                                                        ? spv::StorageClassUniformConstant
                                                        : spv::StorageClassFunction;
-            paramId = mBuilder.getTypePointerId(paramId, storageClass);
+            paramId                              = mBuilder.getTypePointerId(paramId, storageClass);
         }
 
         ids.parameterTypeIds.push_back(paramId);

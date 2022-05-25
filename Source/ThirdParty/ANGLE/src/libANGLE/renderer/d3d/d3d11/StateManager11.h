@@ -50,7 +50,7 @@ class ShaderConstants11 : angle::NonCopyable
                          unsigned int samplerIndex,
                          const gl::Texture &texture,
                          const gl::SamplerState &samplerState);
-    void onImageChange(gl::ShaderType shaderType,
+    bool onImageChange(gl::ShaderType shaderType,
                        unsigned int imageIndex,
                        const gl::ImageUnit &imageUnit);
     void onClipControlChange(bool lowerLeft, bool zeroToOne);

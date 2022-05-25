@@ -350,11 +350,9 @@ ANGLE_DEFINE_SCALAR(bool);
 ANGLE_DEFINE_SCALAR(char);
 ANGLE_DEFINE_SCALAR(short);
 ANGLE_DEFINE_SCALAR(int);
-ANGLE_DEFINE_SCALAR(long);
 ANGLE_DEFINE_SCALAR(uchar);
 ANGLE_DEFINE_SCALAR(ushort);
 ANGLE_DEFINE_SCALAR(uint);
-ANGLE_DEFINE_SCALAR(ulong);
 ANGLE_DEFINE_SCALAR(half);
 ANGLE_DEFINE_SCALAR(float);
 )")
@@ -377,11 +375,9 @@ ANGLE_DEFINE_VECTOR(bool);
 ANGLE_DEFINE_VECTOR(char);
 ANGLE_DEFINE_VECTOR(short);
 ANGLE_DEFINE_VECTOR(int);
-ANGLE_DEFINE_VECTOR(long);
 ANGLE_DEFINE_VECTOR(uchar);
 ANGLE_DEFINE_VECTOR(ushort);
 ANGLE_DEFINE_VECTOR(uint);
-ANGLE_DEFINE_VECTOR(ulong);
 ANGLE_DEFINE_VECTOR(half);
 ANGLE_DEFINE_VECTOR(float);
 )",
@@ -3723,9 +3719,16 @@ void ProgramPrelude::visitOperator(TOperator op,
             break;
 
         case TOperator::EOpDivAssign:
-            if (argType0->isMatrix() && argType1->isMatrix())
+            if (argType0->isMatrix())
             {
-                componentWiseDivideAssign();
+                if (argType1->isMatrix())
+                {
+                    componentWiseDivideAssign();
+                }
+                else if (argType1->isScalar())
+                {
+                    divMatrixScalarAssign();
+                }
             }
             break;
 

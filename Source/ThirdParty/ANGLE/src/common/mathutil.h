@@ -567,7 +567,7 @@ inline float normalizedToFloat(T input)
 template <typename T>
 inline T floatToNormalized(float input)
 {
-    if (sizeof(T) > 2)
+    if constexpr (sizeof(T) > 2)
     {
         // float has only a 23 bit mantissa, so we need to do the calculation in double precision
         return static_cast<T>(std::numeric_limits<T>::max() * static_cast<double>(input) + 0.5);

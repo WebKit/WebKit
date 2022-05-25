@@ -1040,8 +1040,8 @@ void *CL_API_CALL clEnqueueMapImage(cl_command_queue command_queue,
 
     cl_int errorCode = CL_SUCCESS;
     void *object     = EnqueueMapImage(command_queue, image, blocking_map, map_flagsPacked, origin,
-                                   region, image_row_pitch, image_slice_pitch,
-                                   num_events_in_wait_list, event_wait_list, event, errorCode);
+                                       region, image_row_pitch, image_slice_pitch,
+                                       num_events_in_wait_list, event_wait_list, event, errorCode);
 
     ASSERT((errorCode == CL_SUCCESS) == (object != nullptr));
     if (errcode_ret != nullptr)
@@ -1175,7 +1175,7 @@ cl_mem CL_API_CALL clCreateImage2D(cl_context context,
 
     cl_int errorCode = CL_SUCCESS;
     cl_mem object    = CreateImage2D(context, flagsPacked, image_format, image_width, image_height,
-                                  image_row_pitch, host_ptr, errorCode);
+                                     image_row_pitch, host_ptr, errorCode);
 
     ASSERT((errorCode == CL_SUCCESS) == (object != nullptr));
     if (errcode_ret != nullptr)
@@ -2394,7 +2394,7 @@ cl_mem CL_API_CALL clCreateImageWithProperties(cl_context context,
 
     cl_int errorCode = CL_SUCCESS;
     cl_mem object    = CreateImageWithProperties(context, properties, flagsPacked, image_format,
-                                              image_desc, host_ptr, errorCode);
+                                                 image_desc, host_ptr, errorCode);
 
     ASSERT((errorCode == CL_SUCCESS) == (object != nullptr));
     if (errcode_ret != nullptr)

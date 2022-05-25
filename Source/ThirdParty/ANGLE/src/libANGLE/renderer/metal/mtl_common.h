@@ -547,11 +547,13 @@ class ErrorHandler
     virtual ~ErrorHandler() {}
 
     virtual void handleError(GLenum error,
+                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line) = 0;
 
     virtual void handleError(NSError *error,
+                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line) = 0;
@@ -569,14 +571,21 @@ class Context : public ErrorHandler
     DisplayMtl *mDisplay;
 };
 
-#define ANGLE_MTL_CHECK(context, test, error)                                \
-    do                                                                       \
-    {                                                                        \
-        if (ANGLE_UNLIKELY(!(test)))                                         \
-        {                                                                    \
-            context->handleError(error, __FILE__, ANGLE_FUNCTION, __LINE__); \
-            return angle::Result::Stop;                                      \
-        }                                                                    \
+std::string FormatMetalErrorMessage(GLenum errorCode);
+std::string FormatMetalErrorMessage(NSError *error);
+
+#define ANGLE_MTL_HANDLE_ERROR(context, message, error) \
+    context->handleError(error, message, __FILE__, ANGLE_FUNCTION, __LINE__)
+
+#define ANGLE_MTL_CHECK(context, test, error)                                                  \
+    do                                                                                         \
+    {                                                                                          \
+        if (ANGLE_UNLIKELY(!(test)))                                                           \
+        {                                                                                      \
+            context->handleError(error, mtl::FormatMetalErrorMessage(error).c_str(), __FILE__, \
+                                 ANGLE_FUNCTION, __LINE__);                                    \
+            return angle::Result::Stop;                                                        \
+        }                                                                                      \
     } while (0)
 
 #define ANGLE_MTL_TRY(context, test) ANGLE_MTL_CHECK(context, test, GL_INVALID_OPERATION)

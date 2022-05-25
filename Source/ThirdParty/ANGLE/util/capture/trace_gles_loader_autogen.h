@@ -8,15 +8,15 @@
 // gles_loader_autogen.h:
 //   Simple GLES function loader.
 
-#ifndef ANGLE_RESTRICTED_TRACES_GLES_LOADER_AUTOGEN_H_
-#define ANGLE_RESTRICTED_TRACES_GLES_LOADER_AUTOGEN_H_
+#ifndef ANGLE_TRACES_UTIL_GLES_LOADER_AUTOGEN_H_
+#define ANGLE_TRACES_UTIL_GLES_LOADER_AUTOGEN_H_
 
 #if defined(GL_GLES_PROTOTYPES) && GL_GLES_PROTOTYPES
 #    error "Don't define GL prototypes if you want to use a loader!"
 #endif  // defined(GL_GLES_PROTOTYPES)
 
 #include "angle_gl.h"
-#include "restricted_traces_export.h"
+#include "traces_export.h"
 
 #define glAlphaFunc t_glAlphaFunc
 #define glClipPlanef t_glClipPlanef
@@ -1734,4 +1734,4 @@ using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
 ANGLE_TRACE_LOADER_EXPORT void LoadGLES(LoadProc loadProc);
 }  // namespace trace_angle
 
-#endif  // ANGLE_RESTRICTED_TRACES_GLES_LOADER_AUTOGEN_H_
+#endif  // ANGLE_TRACES_UTIL_GLES_LOADER_AUTOGEN_H_

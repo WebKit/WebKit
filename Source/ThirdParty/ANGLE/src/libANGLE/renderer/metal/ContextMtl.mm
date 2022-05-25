@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 
 #include <TargetConditionals.h>
+#include <cstdint>
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/debug.h"
@@ -30,6 +31,7 @@
 #include "libANGLE/renderer/metal/TransformFeedbackMtl.h"
 #include "libANGLE/renderer/metal/VertexArrayMtl.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
+#include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -780,9 +782,9 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
         size_t outIndexCount      = 0;
         gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
         drawIdxBuffer             = mProvokingVertexHelper.preconditionIndexBuffer(
-            mtl::GetImpl(context), idxBuffer, count, convertedOffset,
-            mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
-            provokingVertexAdditionalOffset, newMode);
+                        mtl::GetImpl(context), idxBuffer, count, convertedOffset,
+                        mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
+                        provokingVertexAdditionalOffset, newMode);
         if (!drawIdxBuffer)
         {
             return angle::Result::Stop;
@@ -1508,17 +1510,16 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
 
 // override mtl::ErrorHandler
 void ContextMtl::handleError(GLenum glErrorCode,
+                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line)
 {
-    std::stringstream errorStream;
-    errorStream << "Metal backend encountered an error. Code=" << glErrorCode << ".";
-
-    mErrors->handleError(glErrorCode, errorStream.str().c_str(), file, function, line);
+    mErrors->handleError(glErrorCode, message, file, function, line);
 }
 
 void ContextMtl::handleError(NSError *nserror,
+                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line)
@@ -1528,11 +1529,7 @@ void ContextMtl::handleError(NSError *nserror,
         return;
     }
 
-    std::stringstream errorStream;
-    errorStream << "Metal backend encountered an error: \n"
-                << nserror.localizedDescription.UTF8String;
-
-    mErrors->handleError(GL_INVALID_OPERATION, errorStream.str().c_str(), file, function, line);
+    mErrors->handleError(GL_INVALID_OPERATION, message, file, function, line);
 }
 
 void ContextMtl::invalidateState(const gl::Context *context)
@@ -1770,14 +1767,11 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
                 ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
             if (renderTargetSize > maxSize)
             {
-                NSString *errorString = [NSString
-                    stringWithFormat:@"This set of render targets requires %lu bytes of "
-                                     @"pixel storage. This device supports %lu bytes.",
-                                     (unsigned long)renderTargetSize, (unsigned long)maxSize];
-                NSError *err          = [NSError errorWithDomain:@"MTLValidationError"
-                                                   code:-1
-                                               userInfo:@{NSLocalizedDescriptionKey : errorString}];
-                this->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
+                std::stringstream errorStream;
+                errorStream << "This set of render targets requires " << renderTargetSize
+                            << " bytes of pixel storage. This device supports " << maxSize
+                            << " bytes.";
+                ANGLE_MTL_HANDLE_ERROR(this, errorStream.str().c_str(), GL_INVALID_OPERATION);
                 return nil;
             }
         }
@@ -2647,4 +2641,35 @@ angle::Result ContextMtl::copy2DTextureSlice0Level0ToWorkTexture(const mtl::Text
 
     return angle::Result::Continue;
 }
+
+angle::Result ContextMtl::copyTextureSliceLevelToWorkBuffer(
+    const gl::Context *context,
+    const mtl::TextureRef &srcTexture,
+    const mtl::MipmapNativeLevel &mipNativeLevel,
+    uint32_t layerIndex)
+{
+    auto formatId                    = mtl::Format::MetalToAngleFormatID(srcTexture->pixelFormat());
+    const mtl::Format &metalFormat   = getPixelFormat(formatId);
+    const angle::Format &angleFormat = metalFormat.actualAngleFormat();
+
+    uint32_t width       = srcTexture->width(mipNativeLevel);
+    uint32_t height      = srcTexture->height(mipNativeLevel);
+    uint32_t sizeInBytes = width * height * angleFormat.pixelBytes;
+
+    // Expand the buffer if it is not big enough.
+    if (!mWorkBuffer || mWorkBuffer->size() < sizeInBytes)
+    {
+        ANGLE_TRY(mtl::Buffer::MakeBuffer(this, sizeInBytes, nullptr, &mWorkBuffer));
+    }
+
+    gl::Rectangle region(0, 0, width, height);
+    uint32_t bytesPerRow = angleFormat.pixelBytes * width;
+    uint32_t destOffset  = 0;
+    ANGLE_TRY(mtl::ReadTexturePerSliceBytesToBuffer(context, srcTexture, bytesPerRow, region,
+                                                    mipNativeLevel, layerIndex, destOffset,
+                                                    mWorkBuffer));
+
+    return angle::Result::Continue;
 }
+
+}  // namespace rx

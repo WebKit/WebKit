@@ -912,7 +912,7 @@
                         "type":{
                             "basic":"Int",
                             "precision":"High",
-                            "qualifier":"Layer"
+                            "qualifier":"LayerIn"
                         }
                     }
                 }
@@ -1040,7 +1040,7 @@
                 "type":{
                     "basic":"Int",
                     "precision":"High",
-                    "qualifier":"Layer"
+                    "qualifier":"LayerOut"
                 }
             }
         },
@@ -1241,7 +1241,7 @@
                 "type":{
                     "basic":"Int",
                     "precision":"High",
-                    "qualifier":"Layer"
+                    "qualifier":"LayerOut"
                 }
             },
             "gl_PerVertex":{

@@ -294,6 +294,7 @@
     },
     "ShadingRate":
     {
+        "Undefined": "GL_NONE",
         "_1x1": "GL_SHADING_RATE_1X1_PIXELS_QCOM",
         "_1x2": "GL_SHADING_RATE_1X2_PIXELS_QCOM",
         "_2x1": "GL_SHADING_RATE_2X1_PIXELS_QCOM",

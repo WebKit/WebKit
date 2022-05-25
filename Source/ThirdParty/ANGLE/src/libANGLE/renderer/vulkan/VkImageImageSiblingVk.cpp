@@ -59,9 +59,9 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
     {
         // If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is provided for eglCreateImageKHR(),
         // the provided format will be used for mFormat and intendedFormat.
-        intendedFormatID = angle::Format::InternalFormatToID(mInternalFormat);
         GLenum type      = gl::GetSizedInternalFormatInfo(format.glInternalFormat).type;
         mFormat          = gl::Format(mInternalFormat, type);
+        intendedFormatID = angle::Format::InternalFormatToID(mFormat.info->sizedInternalFormat);
     }
     else
     {

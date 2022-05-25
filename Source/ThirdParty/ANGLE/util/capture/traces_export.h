@@ -5,8 +5,11 @@
 //
 // restricted_traces_export: Export definitions for restricted traces.
 
-#ifndef ANGLE_RESTRICTED_TRACES_EXPORT_H_
-#define ANGLE_RESTRICTED_TRACES_EXPORT_H_
+#ifndef ANGLE_TRACES_EXPORT_H_
+#define ANGLE_TRACES_EXPORT_H_
+
+// for KHRONOS_APIENTRY
+#include <KHR/khrplatform.h>
 
 // See util/util_export.h for details on import/export labels.
 #if !defined(ANGLE_TRACE_EXPORT)
@@ -45,4 +48,4 @@ ANGLE_TRACE_LOADER_EXPORT void LoadEGL(LoadProc loadProc);
 ANGLE_TRACE_LOADER_EXPORT void LoadGLES(LoadProc loadProc);
 }  // namespace trace_angle
 
-#endif  // ANGLE_RESTRICTED_TRACES_EXPORT_H_
+#endif  // ANGLE_TRACES_EXPORT_H_

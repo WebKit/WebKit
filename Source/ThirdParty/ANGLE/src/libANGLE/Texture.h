@@ -68,7 +68,7 @@ struct ImageDesc final
               const bool fixedSampleLocations,
               const InitState initState);
 
-    ImageDesc(const ImageDesc &other) = default;
+    ImageDesc(const ImageDesc &other)            = default;
     ImageDesc &operator=(const ImageDesc &other) = default;
 
     GLint getMemorySize() const;
@@ -86,7 +86,7 @@ struct SwizzleState final
 {
     SwizzleState();
     SwizzleState(GLenum red, GLenum green, GLenum blue, GLenum alpha);
-    SwizzleState(const SwizzleState &other) = default;
+    SwizzleState(const SwizzleState &other)            = default;
     SwizzleState &operator=(const SwizzleState &other) = default;
 
     bool swizzleRequired() const;
@@ -148,6 +148,7 @@ class TextureState final : private angle::NonCopyable
     bool isStencilMode() const { return mDepthStencilTextureMode == GL_STENCIL_INDEX; }
 
     bool hasBeenBoundAsImage() const { return mHasBeenBoundAsImage; }
+    bool is3DTextureAndHasBeenBoundAs2DImage() const { return mIs3DAndHasBeenBoundAs2DImage; }
     bool hasBeenBoundAsAttachment() const { return mHasBeenBoundAsAttachment; }
 
     gl::SrgbOverride getSRGBOverride() const { return mSrgbOverride; }
@@ -222,6 +223,7 @@ class TextureState final : private angle::NonCopyable
     GLenum mDepthStencilTextureMode;
 
     bool mHasBeenBoundAsImage;
+    bool mIs3DAndHasBeenBoundAs2DImage;
     bool mHasBeenBoundAsAttachment;
 
     bool mImmutableFormat;
@@ -267,6 +269,7 @@ class Texture final : public RefCountObject<TextureID>,
     void onDestroy(const Context *context) override;
 
     void setLabel(const Context *context, const std::string &label) override;
+
     const std::string &getLabel() const override;
 
     TextureType getType() const { return mState.mType; }
@@ -511,6 +514,7 @@ class Texture final : public RefCountObject<TextureID>,
     angle::Result generateMipmap(Context *context);
 
     void onBindAsImageTexture();
+    void onBind3DTextureAs2DImage();
 
     egl::Surface *getBoundSurface() const;
     egl::Stream *getBoundStream() const;

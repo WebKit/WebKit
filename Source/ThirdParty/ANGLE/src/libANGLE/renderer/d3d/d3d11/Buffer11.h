@@ -42,6 +42,7 @@ enum BufferUsage
     BUFFER_USAGE_STRUCTURED,
     BUFFER_USAGE_EMULATED_INDEXED_VERTEX,
     BUFFER_USAGE_RAW_UAV,
+    BUFFER_USAGE_TYPED_UAV,
 
     BUFFER_USAGE_COUNT,
 };
@@ -81,7 +82,14 @@ class Buffer11 : public BufferD3D
                                  GLsizeiptr size,
                                  d3d11::UnorderedAccessView **uavOut);
 
+    angle::Result getTypedUAVRange(const gl::Context *context,
+                                   GLintptr offset,
+                                   GLsizeiptr size,
+                                   DXGI_FORMAT format,
+                                   d3d11::UnorderedAccessView **uavOut);
+
     angle::Result markRawBufferUsage(const gl::Context *context);
+    angle::Result markTypedBufferUsage(const gl::Context *context);
     bool isMapped() const { return mMappedStorage != nullptr; }
     angle::Result packPixels(const gl::Context *context,
                              const gl::FramebufferAttachment &readAttachment,

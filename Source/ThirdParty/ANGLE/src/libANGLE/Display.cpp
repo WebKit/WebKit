@@ -280,6 +280,8 @@ EGLAttrib GetPlatformTypeFromEnvironment()
     return 0;
 #elif defined(ANGLE_USE_X11)
     return EGL_PLATFORM_X11_EXT;
+#elif defined(ANGLE_USE_WAYLAND)
+    return EGL_PLATFORM_WAYLAND_EXT;
 #elif defined(ANGLE_USE_VULKAN_DISPLAY) && defined(ANGLE_VULKAN_DISPLAY_MODE_SIMPLE)
     return EGL_PLATFORM_VULKAN_DISPLAY_MODE_SIMPLE_ANGLE;
 #elif defined(ANGLE_USE_VULKAN_DISPLAY) && defined(ANGLE_VULKAN_DISPLAY_MODE_HEADLESS)
@@ -425,10 +427,24 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             }
             break;
 #    elif defined(ANGLE_PLATFORM_LINUX)
+#        if defined(ANGLE_USE_GBM)
+            if (platformType == EGL_PLATFORM_GBM_KHR && rx::IsVulkanGbmDisplayAvailable())
+            {
+                impl = rx::CreateVulkanGbmDisplay(state);
+                break;
+            }
+#        endif
 #        if defined(ANGLE_USE_X11)
             if (platformType == EGL_PLATFORM_X11_EXT && rx::IsVulkanXcbDisplayAvailable())
             {
                 impl = rx::CreateVulkanXcbDisplay(state);
+                break;
+            }
+#        endif
+#        if defined(ANGLE_USE_WAYLAND)
+            if (platformType == EGL_PLATFORM_WAYLAND_EXT && rx::IsVulkanWaylandDisplayAvailable())
+            {
+                impl = rx::CreateVulkanWaylandDisplay(state);
                 break;
             }
 #        endif
@@ -868,6 +884,7 @@ Display::~Display()
     switch (mPlatform)
     {
         case EGL_PLATFORM_ANGLE_ANGLE:
+        case EGL_PLATFORM_GBM_KHR:
         {
             ANGLEPlatformDisplayMap *displays      = GetANGLEPlatformDisplayMap();
             ANGLEPlatformDisplayMap::iterator iter = displays->find(ANGLEPlatformDisplay(
@@ -1904,6 +1921,10 @@ static ClientExtensions GenerateClientExtensions()
     extensions.platformDevice   = true;
 #endif
 
+#if defined(ANGLE_USE_GBM)
+    extensions.platformGbmKHR = true;
+#endif
+
 #if defined(ANGLE_ENABLE_D3D11)
 #    if defined(ANGLE_ENABLE_WINDOWS_UWP)
     extensions.platformANGLED3D11ON12 = true;
@@ -2026,10 +2047,6 @@ void Display::initDisplayExtensions()
 
     // All backends support specific context versions
     mDisplayExtensions.createContextBackwardsCompatible = true;
-
-    // Note: we don't notify the back-end of a change to the renderbuffer right now. This extension
-    // is implemented only in the front-end. A full implementation involves notifying the back-end.
-    mDisplayExtensions.mutableRenderBufferKHR = true;
 
     mDisplayExtensionString = GenerateExtensionsString(mDisplayExtensions);
 }

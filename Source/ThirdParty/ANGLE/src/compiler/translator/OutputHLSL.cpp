@@ -854,10 +854,19 @@ void OutputHLSL::header(TInfoSinkBase &out,
 
             if (mOutputType == SH_HLSL_4_1_OUTPUT)
             {
-                mResourcesHLSL->samplerMetadataUniforms(out, 4);
+                unsigned int registerIndex = 4;
+                mResourcesHLSL->samplerMetadataUniforms(out, registerIndex);
+                // Sampler metadata struct must be two 4-vec, 32 bytes.
+                registerIndex += mResourcesHLSL->getSamplerCount() * 2;
+                mResourcesHLSL->imageMetadataUniforms(out, registerIndex);
             }
 
             out << "};\n";
+
+            if (mResourcesHLSL->hasImages())
+            {
+                out << kImage2DFunctionString << "\n";
+            }
         }
         else
         {
@@ -2941,6 +2950,11 @@ bool OutputHLSL::visitBranch(Visit visit, TIntermBranch *node)
                 {
                     ASSERT(!mInsideMain);
                     out << "return ";
+                    if (IsInShaderStorageBlock(node->getExpression()))
+                    {
+                        mSSBOOutputHLSL->outputLoadFunctionCall(node->getExpression());
+                        return false;
+                    }
                 }
                 else
                 {

@@ -344,8 +344,7 @@ class CommandQueueInterface : angle::NonCopyable
     // semaphore, we need to ensure that there are no pending submissions.
     virtual angle::Result ensureNoPendingWork(Context *context) = 0;
 
-    virtual Serial getLastCompletedQueueSerial() const = 0;
-    virtual bool isBusy() const                        = 0;
+    virtual bool isBusy() const = 0;
 };
 
 class CommandQueue final : public CommandQueueInterface
@@ -408,7 +407,8 @@ class CommandQueue final : public CommandQueueInterface
 
     angle::Result ensureNoPendingWork(Context *context) override { return angle::Result::Continue; }
 
-    Serial getLastCompletedQueueSerial() const override;
+    Serial getLastCompletedQueueSerial() const { return mLastCompletedQueueSerial.getSerial(); }
+
     bool isBusy() const override;
 
     angle::Result queueSubmit(Context *context,
@@ -474,9 +474,12 @@ class CommandQueue final : public CommandQueueInterface
 
     // Queue serial management.
     AtomicSerialFactory mQueueSerialFactory;
-    Serial mLastCompletedQueueSerial;
     Serial mLastSubmittedQueueSerial;
     Serial mCurrentQueueSerial;
+    // This queue serial can be read/write from different threads, so we need to use atomic
+    // operations to access the underline value. Since we only do load/store on this value, it
+    // should be just a normal uint64_t load/store on most platforms.
+    AtomicQueueSerial mLastCompletedQueueSerial;
 
     // QueueMap
     DeviceQueueMap mQueueMap;
@@ -563,7 +566,11 @@ class CommandProcessor final : public Context, public CommandQueueInterface
 
     angle::Result ensureNoPendingWork(Context *context) override;
 
-    Serial getLastCompletedQueueSerial() const override;
+    Serial getLastCompletedQueueSerial() const
+    {
+        return mCommandQueue.getLastCompletedQueueSerial();
+    }
+
     bool isBusy() const override;
 
     egl::ContextPriority getDriverPriority(egl::ContextPriority priority)
@@ -632,25 +639,6 @@ class CommandProcessor final : public Context, public CommandQueueInterface
 
     // Command queue worker thread.
     std::thread mTaskThread;
-};
-
-// An RAII wrapper for locking and unlocking the command-queue mutex.  On destructor, this class
-// handles device loss, if it has happened.  This is because handling device loss affects the
-// command queue state, so it's deferred until the current scope that's using the command queue
-// state is finished.
-class ANGLE_NO_DISCARD ScopedCommandQueueLock final
-{
-  public:
-    ScopedCommandQueueLock(RendererVk *renderer, std::mutex &lock)
-        : mRenderer(renderer), mLock(lock)
-    {
-        lock.lock();
-    }
-    ~ScopedCommandQueueLock();
-
-  private:
-    RendererVk *mRenderer;
-    std::mutex &mLock;
 };
 
 }  // namespace vk

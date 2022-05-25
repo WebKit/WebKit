@@ -1791,14 +1791,14 @@ bool ValidateFramebufferTextureLayer(const Context *context,
 
             case TextureType::CubeMapArray:
             {
-                if (level > log2(caps.max3DTextureSize))
+                if (level > log2(caps.maxCubeMapTextureSize))
                 {
                     context->validationError(entryPoint, GL_INVALID_VALUE,
                                              kFramebufferTextureInvalidMipLevel);
                     return false;
                 }
 
-                if (layer >= caps.max3DTextureSize)
+                if (layer >= caps.maxArrayTextureLayers)
                 {
                     context->validationError(entryPoint, GL_INVALID_VALUE,
                                              kFramebufferTextureInvalidLayer);

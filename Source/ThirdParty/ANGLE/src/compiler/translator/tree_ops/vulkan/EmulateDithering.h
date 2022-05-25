@@ -11,6 +11,7 @@
 #define COMPILER_TRANSLATOR_TREEOPS_VULKAN_EMULATEDITHERING_H_
 
 #include "common/angleutils.h"
+#include "compiler/translator/Compiler.h"
 
 namespace sh
 {
@@ -21,6 +22,7 @@ class SpecConst;
 class DriverUniform;
 
 ANGLE_NO_DISCARD bool EmulateDithering(TCompiler *compiler,
+                                       ShCompileOptions compileOptions,
                                        TIntermBlock *root,
                                        TSymbolTable *symbolTable,
                                        SpecConst *specConst,

@@ -39,10 +39,13 @@ if (angle_has_build) {
     angle_vulkan_display_mode = "headless"
   }
 
-  angle_use_x11 = ozone_platform_x11 && !is_ggp && is_linux && !is_chromecast
-  angle_use_wayland =
-      ozone_platform_wayland && !is_ggp && is_linux && !is_chromecast
-  angle_use_vulkan_display = (is_linux || is_chromeos) && !is_ggp
+  declare_args() {
+    angle_use_gbm = ozone_platform_gbm
+    angle_use_x11 = ozone_platform_x11 && !is_ggp && is_linux && !is_chromecast
+    angle_use_wayland =
+        ozone_platform_wayland && !is_ggp && is_linux && !is_chromecast
+    angle_use_vulkan_display = (is_linux || is_chromeos) && !is_ggp
+  }
 } else {
   declare_args() {
     is_ubsan = false
@@ -118,6 +121,9 @@ declare_args() {
 
   # Frame capture code is enabled by default if rapidjson is available.
   angle_has_frame_capture = angle_has_rapidjson
+
+  # By default, include the SPIR-V based MSL translator (in addition to the direct translator)
+  angle_enable_msl_through_spirv = is_mac
 }
 
 declare_args() {
@@ -143,7 +149,7 @@ declare_args() {
       ((is_win && !angle_is_winuwp) ||
        ((is_linux || is_chromeos) &&
         (angle_use_x11 || angle_use_wayland || angle_use_vulkan_display)) ||
-       is_android || is_fuchsia || is_ggp || is_mac)
+       is_android || is_fuchsia || is_ggp || angle_enable_msl_through_spirv)
 
   # When set to true, ANGLE will not use VK_KHR_surface and VK_KHR_swapchain
   # extensions. Content can be rendered only off-screen.
@@ -200,7 +206,7 @@ declare_args() {
   # the SPIR-V generation path, but leave it disabled on release.  It's still used by the metal
   # backend nevertheless.
   angle_enable_spirv_gen_through_glslang =
-      is_debug || angle_assert_always_on || angle_enable_metal ||
+      is_debug || angle_assert_always_on || angle_enable_msl_through_spirv ||
       angle_use_spirv_gen_through_glslang
 
   # ISpriteVisual windows cannot be validated and can lead to crashes if an invalid window is
@@ -244,6 +250,13 @@ declare_args() {
       (angle_enable_glsl || angle_enable_metal || use_fuzzing_engine)
 
   angle_has_histograms = angle_has_build
+
+  # True if we want to build the ANGLE test suites. On by default in most configs.
+  angle_build_tests = angle_has_build
+}
+
+declare_args() {
+  angle_enable_renderdoc = angle_enable_vulkan_validation_layers
 }
 
 if (!defined(angle_zlib_compression_utils_dir)) {
@@ -298,7 +311,8 @@ set_defaults("angle_test") {
   configs = angle_common_configs - [
               "$angle_root:constructor_and_destructor_warnings",
               "$angle_root:extra_warnings",
-            ] + [ "$angle_root/src/tests:angle_maybe_has_histograms" ]
+            ] + [ "$angle_root/src/tests:angle_maybe_has_histograms" ] +
+            [ "$angle_root/src/tests:angle_enable_renderdoc" ]
 
   public_configs = []
   public_deps = []
@@ -460,6 +474,7 @@ if (angle_standalone || build_with_chromium) {
       data = invoker.data + [
                "$angle_root/scripts/run_gtest_angle_test.py",
                "$angle_root/src/tests/py_utils/angle_path_util.py",
+               "$angle_root/src/tests/py_utils/angle_test_util.py",
                "//testing/scripts/common.py",
                "//testing/xvfb.py",
              ]
@@ -527,37 +542,6 @@ if (angle_standalone || build_with_chromium) {
   }
 }
 
-# Used by a few targets that compile traces.
-template("angle_trace_fixture") {
-  _config_name = target_name + "_config"
-  config(_config_name) {
-    include_dirs = [ "$angle_root/src/libANGLE/capture" ]
-  }
-  angle_source_set(target_name) {
-    testonly = true
-    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
-    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
-    sources = [
-      "$angle_root/src/libANGLE/capture/trace_fixture.cpp",
-      "$angle_root/src/libANGLE/capture/trace_fixture.h",
-      invoker.gl_header,
-    ]
-    public_deps = [ "$angle_root:includes" ]
-    if (defined(invoker.public_deps)) {
-      public_deps += invoker.public_deps
-    }
-    include_dirs = [ "." ]
-    public_configs = [ ":${_config_name}" ]
-    if (defined(invoker.public_configs)) {
-      public_configs += invoker.public_configs
-    }
-    if (is_ios) {
-      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
-      check_includes = false
-    }
-  }
-}
-
 template("angle_trace") {
   angle_shared_library(target_name) {
     testonly = true
@@ -569,10 +553,7 @@ template("angle_trace") {
     defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
     suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
 
-    deps = [
-      "$angle_root:includes",
-      invoker.fixture,
-    ]
+    deps = [ "$angle_root:angle_trace_fixture" ]
 
     if (is_android) {
       libs = [ "log" ]
@@ -636,7 +617,6 @@ template("angle_trace_library") {
         "$_trace_dir/$_trace.json",
         "$_trace_dir/$_trace.angledata.gz",
       ]
-      fixture = invoker.trace_fixture
 
       if (invoker.short_names) {
         output_name = _trace
@@ -646,9 +626,11 @@ template("angle_trace_library") {
     _trace_targets += [ ":$_target" ]
   }
 
-  group(target_name) {
+  angle_shared_library(target_name) {
     testonly = true
     data = [ invoker.json_path ]
     data_deps = _trace_targets
+    deps = [ "$angle_root:angle_common" ]
+    public_deps = [ "$angle_root/util:angle_trace_loader" ]
   }
 }

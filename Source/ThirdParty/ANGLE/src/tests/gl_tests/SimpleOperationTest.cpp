@@ -668,6 +668,26 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartAtEnd)
     verifyTriangles();
 }
 
+// Triangle fans test with primitive restart enabled, but no indexed draw.
+TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartNonIndexedDraw)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    std::vector<GLubyte> indices = {0, 1, 2, 3, 4};
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_STATIC_DRAW);
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
+
+    EXPECT_GL_NO_ERROR();
+
+    verifyTriangles();
+}
+
 // Simple repeated draw and swap test.
 TEST_P(SimpleOperationTest, DrawQuadAndSwap)
 {

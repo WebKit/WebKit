@@ -31,6 +31,7 @@ if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
 import android_helper
 import angle_path_util
+import angle_test_util
 from skia_gold import angle_skia_gold_properties
 from skia_gold import angle_skia_gold_session_manager
 
@@ -313,6 +314,8 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
 
     if _use_adb(args.test_suite):
         android_helper.PrepareTestSuite(args.test_suite)
+        if args.test_suite == DEFAULT_TEST_SUITE:
+            android_helper.RunSmokeTest()
 
     with temporary_dir('angle_skia_gold_') as skia_gold_temp_dir:
         gold_properties = angle_skia_gold_properties.ANGLESkiaGoldProperties(args)
@@ -441,7 +444,7 @@ def main():
     add_skia_gold_args(parser)
 
     args, extra_flags = parser.parse_known_args()
-    logging.basicConfig(level=args.log.upper())
+    angle_test_util.setupLogging(args.log.upper())
 
     env = os.environ.copy()
 

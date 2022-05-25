@@ -400,6 +400,7 @@ EGLDisplay GetPlatformDisplay(Thread *thread,
     switch (platform)
     {
         case EGL_PLATFORM_ANGLE_ANGLE:
+        case EGL_PLATFORM_GBM_KHR:
         {
             return Display::GetDisplayFromNativeDisplay(
                 platform, gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
@@ -656,7 +657,7 @@ EGLBoolean SwapInterval(Thread *thread, Display *display, EGLint interval)
     Surface *drawSurface        = static_cast<Surface *>(thread->getCurrentDrawSurface());
     const Config *surfaceConfig = drawSurface->getConfig();
     EGLint clampedInterval      = std::min(std::max(interval, surfaceConfig->minSwapInterval),
-                                      surfaceConfig->maxSwapInterval);
+                                           surfaceConfig->maxSwapInterval);
 
     drawSurface->setSwapInterval(clampedInterval);
 

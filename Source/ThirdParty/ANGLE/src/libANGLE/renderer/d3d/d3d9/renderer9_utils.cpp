@@ -521,11 +521,6 @@ void GenerateCaps(IDirect3D9 *d3d9,
         textureCapsMap->insert(internalFormat, textureCaps);
 
         maxSamples = std::max(maxSamples, textureCaps.getMaxSamples());
-
-        if (gl::GetSizedInternalFormatInfo(internalFormat).compressed)
-        {
-            caps->compressedTextureFormats.push_back(internalFormat);
-        }
     }
 
     // GL core feature limits
@@ -754,7 +749,7 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->fragDepthEXT                = true;
     extensions->textureUsageANGLE           = true;
     extensions->translatedShaderSourceANGLE = true;
-    extensions->fboRenderMipmapOES          = false;
+    extensions->fboRenderMipmapOES          = true;
     extensions->discardFramebufferEXT = false;  // It would be valid to set this to true, since
                                                 // glDiscardFramebufferEXT is just a hint
     extensions->colorBufferFloatEXT   = false;

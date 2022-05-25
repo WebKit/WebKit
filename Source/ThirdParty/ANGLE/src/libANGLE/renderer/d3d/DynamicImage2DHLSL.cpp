@@ -692,6 +692,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
                                    const Image2DHLSLGroup textureGroup,
                                    const std::vector<sh::ShaderVariable> &group,
                                    const gl::ImageUnitTextureTypeMap &image2DBindLayout,
+                                   unsigned int baseUAVRegister,
                                    unsigned int *groupTextureRegisterIndex,
                                    unsigned int *groupRWTextureRegisterIndex,
                                    unsigned int *image2DTexture3D,
@@ -748,14 +749,14 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
         out << "static const uint " << offsetStr << "2D = " << texture2DRegisterIndex << ";\n";
         out << "uniform " << Image2DHLSLTextureString(textureGroup, gl::TextureType::_2D) << " "
             << declarationStr << "2D[" << texture2DCount << "]"
-            << " : register(" << registerStr << texture2DRegisterIndex << ");\n";
+            << " : register(" << registerStr << baseUAVRegister + texture2DRegisterIndex << ");\n";
     }
     if (texture3DCount > 0)
     {
         out << "static const uint " << offsetStr << "3D = " << texture3DRegisterIndex << ";\n";
         out << "uniform " << Image2DHLSLTextureString(textureGroup, gl::TextureType::_3D) << " "
             << declarationStr << "3D[" << texture3DCount << "]"
-            << " : register(" << registerStr << texture3DRegisterIndex << ");\n";
+            << " : register(" << registerStr << baseUAVRegister + texture3DRegisterIndex << ");\n";
     }
     if (texture2DArrayCount > 0)
     {
@@ -763,7 +764,8 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
             << ";\n";
         out << "uniform " << Image2DHLSLTextureString(textureGroup, gl::TextureType::_2DArray)
             << " " << declarationStr << "2DArray[" << texture2DArrayCount << "]"
-            << " : register(" << registerStr << texture2DArrayRegisterIndex << ");\n";
+            << " : register(" << registerStr << baseUAVRegister + texture2DArrayRegisterIndex
+            << ");\n";
     }
     for (const sh::ShaderVariable &uniform : group)
     {
@@ -839,12 +841,13 @@ constexpr const char kImage2DFunctionString[] = "// @@ IMAGE2D DECLARATION FUNCT
 }  // anonymous namespace
 
 std::string GenerateShaderForImage2DBindSignature(
-    const d3d::Context *context,
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,
     gl::ShaderType shaderType,
+    const std::string &shaderHLSL,
     std::vector<sh::ShaderVariable> &image2DUniforms,
-    const gl::ImageUnitTextureTypeMap &image2DBindLayout)
+    const gl::ImageUnitTextureTypeMap &image2DBindLayout,
+    unsigned int baseUAVRegister)
 {
     std::vector<std::vector<sh::ShaderVariable>> groupedImage2DUniforms(IMAGE2D_MAX + 1);
     unsigned int image2DTexture3DCount = 0, image2DTexture2DArrayCount = 0;
@@ -888,18 +891,18 @@ std::string GenerateShaderForImage2DBindSignature(
 
     for (int groupId = IMAGE2D_MIN; groupId < IMAGE2D_MAX; ++groupId)
     {
-        OutputHLSLImage2DUniformGroup(programD3D, programData, shaderType, out,
-                                      Image2DHLSLGroup(groupId), groupedImage2DUniforms[groupId],
-                                      image2DBindLayout, &groupTextureRegisterIndex,
-                                      &groupRWTextureRegisterIndex, &image2DTexture3DIndex,
-                                      &image2DTexture2DArrayIndex, &image2DTexture2DIndex);
+        OutputHLSLImage2DUniformGroup(
+            programD3D, programData, shaderType, out, Image2DHLSLGroup(groupId),
+            groupedImage2DUniforms[groupId], image2DBindLayout, baseUAVRegister,
+            &groupTextureRegisterIndex, &groupRWTextureRegisterIndex, &image2DTexture3DIndex,
+            &image2DTexture2DArrayIndex, &image2DTexture2DIndex);
     }
 
-    std::string shaderHLSL(programData.getAttachedShader(shaderType)->getTranslatedSource());
-    bool success = angle::ReplaceSubstring(&shaderHLSL, kImage2DFunctionString, out.str());
+    std::string result = shaderHLSL;
+    bool success       = angle::ReplaceSubstring(&result, kImage2DFunctionString, out.str());
     ASSERT(success);
 
-    return shaderHLSL;
+    return result;
 }
 
 }  // namespace rx

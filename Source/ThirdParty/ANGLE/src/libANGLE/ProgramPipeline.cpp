@@ -379,6 +379,7 @@ void ProgramPipeline::updateUsesEarlyFragmentTestsOptimization()
     const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
     mState.mExecutable->mUsesEarlyFragmentTestsOptimization =
         fragmentExecutable.mUsesEarlyFragmentTestsOptimization;
+    mState.mExecutable->mEnablesPerSampleShading = fragmentExecutable.mEnablesPerSampleShading;
 }
 
 void ProgramPipeline::updateLinkedVaryings()
@@ -445,7 +446,7 @@ angle::Result ProgramPipeline::link(const Context *context)
     ProgramVaryingPacking varyingPacking;
     LinkingVariables linkingVariables(mState);
 
-    mState.mExecutable->reset();
+    mState.mExecutable->reset(true);
 
     InfoLog &infoLog = mState.mExecutable->getInfoLog();
     infoLog.reset();

@@ -240,6 +240,16 @@ bool TConstantUnion::cast(TBasicType newType, const TConstantUnion &constant)
                     return false;
             }
             break;
+        case EbtYuvCscStandardEXT:
+            switch (constant.type)
+            {
+                case EbtYuvCscStandardEXT:
+                    setYuvCscStandardEXTConst(constant.getYuvCscStandardEXTConst());
+                    break;
+                default:
+                    return false;
+            }
+            break;
         default:
             return false;
     }

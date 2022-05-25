@@ -1508,6 +1508,8 @@ ShadingRate FromGLenum<ShadingRate>(GLenum from)
 {
     switch (from)
     {
+        case GL_NONE:
+            return ShadingRate::Undefined;
         case GL_SHADING_RATE_1X1_PIXELS_QCOM:
             return ShadingRate::_1x1;
         case GL_SHADING_RATE_1X2_PIXELS_QCOM:
@@ -1529,6 +1531,8 @@ GLenum ToGLenum(ShadingRate from)
 {
     switch (from)
     {
+        case ShadingRate::Undefined:
+            return GL_NONE;
         case ShadingRate::_1x1:
             return GL_SHADING_RATE_1X1_PIXELS_QCOM;
         case ShadingRate::_1x2:
@@ -1551,6 +1555,9 @@ std::ostream &operator<<(std::ostream &os, ShadingRate value)
 {
     switch (value)
     {
+        case ShadingRate::Undefined:
+            os << "GL_NONE";
+            break;
         case ShadingRate::_1x1:
             os << "GL_SHADING_RATE_1X1_PIXELS_QCOM";
             break;

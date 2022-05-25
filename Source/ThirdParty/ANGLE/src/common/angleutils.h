@@ -59,7 +59,7 @@ class NonCopyable
     ~NonCopyable()          = default;
 
   private:
-    NonCopyable(const NonCopyable &) = delete;
+    NonCopyable(const NonCopyable &)    = delete;
     void operator=(const NonCopyable &) = delete;
 };
 

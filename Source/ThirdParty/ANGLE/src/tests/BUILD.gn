@@ -243,6 +243,9 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     if (angle_use_x11) {
       sources += [ "egl_tests/EGLX11VisualTest.cpp" ]
     }
+    if (angle_use_wayland) {
+      sources += [ "egl_tests/EGLWaylandTest.cpp" ]
+    }
 
     configs += [ "${angle_root}:libANGLE_config" ]
 
@@ -407,15 +410,25 @@ if (is_win || is_linux || is_chromeos || is_android || is_apple) {
     ]
     data_deps = [ "//testing:run_perf_test" ]
 
-    # These tests depend on vulkan_command_buffer_utils, which is
-    # not yet compatible with mac and vulkan display/headless backend.
-    if (angle_enable_vulkan && !angle_use_vulkan_display && !is_apple) {
+    if (angle_enable_vulkan) {
       sources += angle_white_box_perf_tests_vulkan_sources
       deps += [
         "$angle_glslang_dir:glslang_lib_sources",
         "$angle_root/src/common/vulkan:angle_vulkan_entry_points",
       ]
     }
+
+    # These tests depend on vulkan_command_buffer_utils, which is
+    # not yet compatible with mac and vulkan display/headless backend.
+    if (angle_enable_vulkan && !angle_use_vulkan_display && !is_apple) {
+      sources += angle_white_box_perf_tests_vulkan_command_buffer_sources
+    }
+  }
+}
+
+config("angle_enable_renderdoc") {
+  if (angle_enable_renderdoc) {
+    defines = [ "ANGLE_TEST_ENABLE_RENDERDOC_CAPTURE" ]
   }
 }
 
@@ -1207,9 +1220,21 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     ]
   }
 
+  # TODO(anglebug.com/7349): Remove this again once
+  # https://github.com/KhronosGroup/VK-GL-CTS/pull/323 is rolled in.
+  # We can't use C++20 before then.
+  # (And keeping this warning disabled for long carries the risk of unknowingly
+  # adding new references to other deprecated things.)
+  config("angle_deqp_framework_common_warnings") {
+    if (is_clang) {
+      cflags = [ "-Wno-deprecated-declarations" ]
+    }
+  }
+
   angle_deqp_source_set("angle_deqp_framework_common") {
     sources = deqp_framework_common_sources
     public_configs = [ ":angle_deqp_framework_common_config" ]
+    configs += [ ":angle_deqp_framework_common_warnings" ]
     public_deps = [
       ":angle_deqp_framework_decpp",
       ":angle_deqp_framework_qphelper",
@@ -1228,6 +1253,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   angle_deqp_source_set("angle_deqp_framework_opengl") {
     sources = deqp_framework_opengl_sources
     public_configs = [ ":angle_deqp_framework_opengl_config" ]
+    configs += [ ":angle_deqp_framework_common_warnings" ]
     public_deps = [ ":angle_deqp_framework_common" ]
   }
 
@@ -1265,6 +1291,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     sources = deqp_glshared_sources
     public_deps = [ ":angle_deqp_framework_opengl" ]
     public_configs = [ ":angle_deqp_glshared_config" ]
+    configs += [ ":angle_deqp_framework_common_warnings" ]
   }
 
   angle_deqp_source_set("angle_deqp_libtester") {
@@ -1379,6 +1406,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   angle_deqp_source_set("angle_deqp_gles2_common") {
     sources = deqp_gles2_sources
+    configs += [ ":angle_deqp_framework_common_warnings" ]
     public_deps = [
       ":angle_deqp_framework_egl",
       ":angle_deqp_glshared",
@@ -1387,6 +1415,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   angle_deqp_source_set("angle_deqp_gles3_common") {
     sources = deqp_gles3_sources
+    configs += [ ":angle_deqp_framework_common_warnings" ]
     public_deps = [
       ":angle_deqp_framework_egl",
       ":angle_deqp_glshared",
@@ -1395,6 +1424,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   angle_deqp_source_set("angle_deqp_gles31_common") {
     sources = deqp_gles31_sources
+    configs += [ ":angle_deqp_framework_common_warnings" ]
     public_deps = [
       ":angle_deqp_framework_egl",
       ":angle_deqp_glshared",

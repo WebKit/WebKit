@@ -8,13 +8,13 @@
 // egl_loader_autogen.h:
 //   Simple EGL function loader.
 
-#ifndef ANGLE_RESTRICTED_TRACES_EGL_LOADER_AUTOGEN_H_
-#define ANGLE_RESTRICTED_TRACES_EGL_LOADER_AUTOGEN_H_
+#ifndef ANGLE_TRACES_UTIL_EGL_LOADER_AUTOGEN_H_
+#define ANGLE_TRACES_UTIL_EGL_LOADER_AUTOGEN_H_
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "restricted_traces_export.h"
+#include "traces_export.h"
 
 #define eglChooseConfig t_eglChooseConfig
 #define eglCopyBuffers t_eglCopyBuffers
@@ -256,4 +256,4 @@ using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
 ANGLE_TRACE_LOADER_EXPORT void LoadEGL(LoadProc loadProc);
 }  // namespace trace_angle
 
-#endif  // ANGLE_RESTRICTED_TRACES_EGL_LOADER_AUTOGEN_H_
+#endif  // ANGLE_TRACES_UTIL_EGL_LOADER_AUTOGEN_H_

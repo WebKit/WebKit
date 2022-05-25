@@ -82,17 +82,14 @@
     'angle': {
       'gn_args': 'build_angle_gles1_conform_tests=true is_component_build=true',
     },
-    'asan': {
-      'gn_args': 'is_asan=true',
-    },
-    'opencl': {
-      'gn_args': 'angle_enable_cl=true',
-    },
     'arm': {
       'gn_args': 'target_cpu="arm"',
     },
     'arm64': {
       'gn_args': 'target_cpu="arm64"',
+    },
+    'asan': {
+      'gn_args': 'is_asan=true',
     },
     'debug': {
       'gn_args': 'is_debug=true',
@@ -102,6 +99,9 @@
     },
     'non_clang': {
       'gn_args': 'is_clang=false',
+    },
+    'opencl': {
+      'gn_args': 'angle_enable_cl=true',
     },
     'perf': {
       'gn_args': 'is_debug=false dcheck_always_on=false symbol_level=1',

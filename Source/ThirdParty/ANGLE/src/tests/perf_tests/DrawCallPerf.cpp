@@ -26,6 +26,7 @@ enum class StateChange
     VertexBufferCycle,
     Scissor,
     ManyTextureDraw,
+    Uniform,
     InvalidEnum,
     EnumCount = InvalidEnum,
 };
@@ -74,6 +75,9 @@ std::string DrawArraysPerfParams::story() const
             break;
         case StateChange::ManyTextureDraw:
             strstr << "_many_tex_draw";
+            break;
+        case StateChange::Uniform:
+            strstr << "_uniform";
             break;
         default:
             break;
@@ -211,6 +215,24 @@ void main()
             GLuint buffer = Create2DTriangleBuffer(mNumTris, GL_STATIC_DRAW);
             mVBOPool.push_back(buffer);
         }
+    }
+    else if (params.stateChange == StateChange::Uniform)
+    {
+        constexpr char kVS[] = R"(attribute vec2 vPosition;
+void main()
+{
+    gl_Position = vec4(vPosition, 0, 1);
+})";
+
+        constexpr char kFS[] = R"(precision mediump float;
+uniform vec4 uni;
+void main()
+{
+    gl_FragColor = uni;
+})";
+
+        mProgram1 = CompileProgram(kVS, kFS);
+        ASSERT_NE(0u, mProgram1);
     }
     else
     {
@@ -525,6 +547,16 @@ void DrawWithEightTextures(unsigned int iterations,
     }
 }
 
+void UpdateUniformThenDraw(unsigned int iterations, GLsizei numElements)
+{
+    for (unsigned int it = 0; it < iterations; it++)
+    {
+        float f = static_cast<float>(it) / static_cast<float>(iterations);
+        glUniform4f(0, f, f + 0.1f, f + 0.2f, f + 0.3f);
+        glDrawArrays(GL_TRIANGLES, 0, numElements);
+    }
+}
+
 void DrawCallPerfBenchmark::drawBenchmark()
 {
     // This workaround fixes a huge queue of graphics commands accumulating on the GL
@@ -577,6 +609,9 @@ void DrawCallPerfBenchmark::drawBenchmark()
         case StateChange::ManyTextureDraw:
             glUseProgram(mProgram3);
             DrawWithEightTextures(params.iterationsPerStep, numElements, mTextures);
+            break;
+        case StateChange::Uniform:
+            UpdateUniformThenDraw(params.iterationsPerStep, numElements);
             break;
         case StateChange::InvalidEnum:
             ADD_FAILURE() << "Invalid state change.";

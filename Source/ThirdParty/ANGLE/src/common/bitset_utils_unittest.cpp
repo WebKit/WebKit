@@ -100,6 +100,26 @@ TYPED_TEST(BitSetTest, Basic)
     EXPECT_EQ(mBits.count(), 0u);
 }
 
+// Test that BitSetT's initializer list constructor works correctly.
+TYPED_TEST(BitSetTest, InitializerList)
+{
+    TypeParam bits = TypeParam{
+        2, 5, 6, 9, 10,
+    };
+
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        if (i == 2 || i == 5 || i == 6 || i == 9 || i == 10)
+        {
+            EXPECT_TRUE(bits[i]) << i;
+        }
+        else
+        {
+            EXPECT_FALSE(bits[i]) << i;
+        }
+    }
+}
+
 TYPED_TEST(BitSetTest, BitwiseOperators)
 {
     TypeParam mBits = this->mBits;
@@ -565,6 +585,28 @@ TYPED_TEST(BitSetArrayTest, BasicTest)
     for (auto bit : mBits)
     {
         EXPECT_TRUE(testBitSet.test(bit));
+    }
+}
+
+// Test that BitSetArray's initializer list constructor works correctly.
+TEST(BitSetArrayTest, InitializerList)
+{
+    BitSetArray<500> bits = BitSetArray<500>{
+        0,   11,  22,  33,  44,  55,  66,  77,  88,  99,  110, 121, 132, 143, 154, 165,
+        176, 187, 198, 209, 220, 231, 242, 253, 264, 275, 286, 297, 308, 319, 330, 341,
+        352, 363, 374, 385, 396, 407, 418, 429, 440, 451, 462, 473, 484, 495,
+    };
+
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        if (i % 11 == 0)
+        {
+            EXPECT_TRUE(bits[i]) << i;
+        }
+        else
+        {
+            EXPECT_FALSE(bits[i]) << i;
+        }
     }
 }
 

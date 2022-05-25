@@ -1374,6 +1374,43 @@ int GetMaxSampleMaskWords(D3D_FEATURE_LEVEL featureLevel)
     }
 }
 
+bool HasTextureBufferSupport(ID3D11Device *device, const Renderer11DeviceCaps &renderer11DeviceCaps)
+{
+    if (renderer11DeviceCaps.featureLevel < D3D_FEATURE_LEVEL_11_0)
+        return false;
+
+    if (!renderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats)
+        return false;
+
+    // https://docs.microsoft.com/en-us/windows/win32/direct3d12/typed-unordered-access-view-loads
+    // we don't need to check the typed store. from the spec,
+    // https://microsoft.github.io/DirectX-Specs/d3d/archive/D3D11_3_FunctionalSpec.htm#FormatList
+    // all the following format support typed stored.
+    // According to spec,
+    // https://www.khronos.org/registry/OpenGL-Refpages/es3/html/glBindImageTexture.xhtml the
+    // required image unit format are GL_RGBA32F, GL_RGBA32UI, GL_RGBA32I, GL_RGBA16F, GL_RGBA16UI,
+    // GL_RGBA16I, GL_RGBA8, GL_RGBAUI, GL_RGBA8I, GL_RGBA8_SNORM, GL_R32F, GL_R32UI, GL_R32I,
+    const std::array<DXGI_FORMAT, 2> &optionalFormats = {
+        DXGI_FORMAT_R32G32B32A32_FLOAT,  // test for GL_RGBA32(UIF), GL_RGBA16(UIF),
+                                         // GL_RGBA8(UIUnorm)
+        DXGI_FORMAT_R8G8B8A8_SNORM,      // test for GL_RGBA8_SNORM,
+    };
+
+    for (DXGI_FORMAT dxgiFormat : optionalFormats)
+    {
+        D3D11_FEATURE_DATA_FORMAT_SUPPORT FormatSupport = {dxgiFormat, 0};
+        if (!SUCCEEDED(device->CheckFeatureSupport(D3D11_FEATURE_FORMAT_SUPPORT, &FormatSupport,
+                                                   sizeof(FormatSupport))))
+        {
+            WARN() << "Error checking typed load support for format 0x" << std::hex << dxgiFormat;
+            return false;
+        }
+        if ((FormatSupport.OutFormatSupport & D3D11_FORMAT_SUPPORT2_UAV_TYPED_LOAD) == 0)
+            return false;
+    }
+    return true;
+}
+
 void GenerateCaps(ID3D11Device *device,
                   ID3D11DeviceContext *deviceContext,
                   const Renderer11DeviceCaps &renderer11DeviceCaps,
@@ -1392,11 +1429,6 @@ void GenerateCaps(ID3D11Device *device,
             GenerateTextureFormatCaps(GetMaximumClientVersion(renderer11DeviceCaps), internalFormat,
                                       device, renderer11DeviceCaps);
         textureCapsMap->insert(internalFormat, textureCaps);
-
-        if (gl::GetSizedInternalFormatInfo(internalFormat).compressed)
-        {
-            caps->compressedTextureFormats.push_back(internalFormat);
-        }
     }
 
     // GL core feature limits
@@ -1674,6 +1706,12 @@ void GenerateCaps(ID3D11Device *device,
     // GL_KHR_parallel_shader_compile
     extensions->parallelShaderCompileKHR = true;
 
+    // GL_EXT_texture_buffer
+    extensions->textureBufferEXT = HasTextureBufferSupport(device, renderer11DeviceCaps);
+
+    // GL_OES_texture_buffer
+    extensions->textureBufferOES = extensions->textureBufferEXT;
+
     // D3D11 Feature Level 10_0+ uses SV_IsFrontFace in HLSL to emulate gl_FrontFacing.
     // D3D11 Feature Level 9_3 doesn't support SV_IsFrontFace, and has no equivalent, so can't
     // support gl_FrontFacing.
@@ -1705,6 +1743,13 @@ void GenerateCaps(ID3D11Device *device,
 
     // D3D11 does not support compressed textures where the base mip level is not a multiple of 4
     limitations->compressedBaseMipLevelMultipleOfFour = true;
+
+    if (extensions->textureBufferAny())
+    {
+        caps->maxTextureBufferSize = 1 << D3D11_REQ_BUFFER_RESOURCE_TEXEL_COUNT_2_TO_EXP;
+        // this maybe touble for RGB32 format.
+        caps->textureBufferOffsetAlignment = 16;
+    }
 
 #ifdef ANGLE_ENABLE_WINDOWS_UWP
     // Setting a non-zero divisor on attribute zero doesn't work on certain Windows Phone 8-era
@@ -2507,6 +2552,14 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
                             IsWin10OrGreater());
 }
 
+void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
+                                angle::FrontendFeatures *features)
+{
+    bool isAMD = IsAMD(adapterDesc.VendorId);
+
+    ANGLE_FEATURE_CONDITION(features, forceDepthAttachmentInitOnClear, isAMD);
+}
+
 void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t byteWidth)
 {
     constantBufferDescription->ByteWidth           = static_cast<UINT>(byteWidth);
@@ -2545,6 +2598,11 @@ void TextureHelper11::getDesc(D3D11_TEXTURE3D_DESC *desc) const
     static_cast<ID3D11Texture3D *>(mData->object)->GetDesc(desc);
 }
 
+void TextureHelper11::getDesc(D3D11_BUFFER_DESC *desc) const
+{
+    static_cast<ID3D11Buffer *>(mData->object)->GetDesc(desc);
+}
+
 void TextureHelper11::initDesc(const D3D11_TEXTURE2D_DESC &desc2D)
 {
     mData->resourceType = ResourceType::Texture2D;
@@ -2560,6 +2618,15 @@ void TextureHelper11::initDesc(const D3D11_TEXTURE3D_DESC &desc3D)
     mExtents.width      = static_cast<int>(desc3D.Width);
     mExtents.height     = static_cast<int>(desc3D.Height);
     mExtents.depth      = static_cast<int>(desc3D.Depth);
+    mSampleCount        = 1;
+}
+
+void TextureHelper11::initDesc(const D3D11_BUFFER_DESC &descBuffer)
+{
+    mData->resourceType = ResourceType::Buffer;
+    mExtents.width      = static_cast<int>(descBuffer.ByteWidth);
+    mExtents.height     = 1;
+    mExtents.depth      = 1;
     mSampleCount        = 1;
 }
 

@@ -164,8 +164,8 @@ egl::Error IOSurfaceSurfaceCGL::bindTexImage(const gl::Context *context,
 
     const auto &format = kIOSurfaceFormats[mFormatIndex];
     CGLError error     = CGLTexImageIOSurface2D(
-        mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
-        format.nativeFormat, format.nativeType, mIOSurface, mPlane);
+            mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
+            format.nativeFormat, format.nativeType, mIOSurface, mPlane);
 
     if (error != kCGLNoError)
     {
@@ -254,6 +254,11 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     // We could map IOSurfaceGetPixelFormat to expected type plane and format type.
     // However, the caller might supply us non-public pixel format, which makes exhaustive checks
     // problematic.
+    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
+        kIOSurfaceFormats[formatIndex].componentBytes)
+    {
+        WARN() << "IOSurface bytes per elements does not match the pbuffer internal format.";
+    }
 
     return true;
 }

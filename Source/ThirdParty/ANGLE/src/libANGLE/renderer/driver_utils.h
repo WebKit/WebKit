@@ -164,8 +164,12 @@ bool IsBroadwell(uint32_t DeviceId);
 bool IsCherryView(uint32_t DeviceId);
 bool IsSkylake(uint32_t DeviceId);
 bool IsBroxton(uint32_t DeviceId);
-bool IsKabylake(uint32_t DeviceId);
+bool IsKabyLake(uint32_t DeviceId);
+bool IsGeminiLake(uint32_t DeviceId);
+bool IsCoffeeLake(uint32_t DeviceId);
 bool Is9thGenIntel(uint32_t DeviceId);
+bool Is11thGenIntel(uint32_t DeviceId);
+bool Is12thGenIntel(uint32_t DeviceId);
 
 // Platform helpers
 inline bool IsWindows()

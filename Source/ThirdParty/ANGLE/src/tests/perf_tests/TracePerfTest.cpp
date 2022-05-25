@@ -11,11 +11,11 @@
 #include "common/PackedEnums.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
-#include "restricted_traces/restricted_traces_export.h"
 #include "tests/perf_tests/ANGLEPerfTest.h"
 #include "tests/perf_tests/ANGLEPerfTestArgs.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
 #include "util/capture/frame_capture_test_utils.h"
+#include "util/capture/traces_export.h"
 #include "util/egl_loader_autogen.h"
 #include "util/png_utils.h"
 #include "util/test_utils.h"
@@ -91,6 +91,19 @@ class TracePerfTest : public ANGLERenderTest
                                   EGLint const *attrib_list);
     void onEglMakeCurrent(EGLDisplay display, EGLSurface draw, EGLSurface read, EGLContext context);
     EGLContext onEglGetCurrentContext();
+    EGLImage onEglCreateImage(EGLDisplay display,
+                              EGLContext context,
+                              EGLenum target,
+                              EGLClientBuffer buffer,
+                              const EGLAttrib *attrib_list);
+    EGLImageKHR onEglCreateImageKHR(EGLDisplay display,
+                                    EGLContext context,
+                                    EGLenum target,
+                                    EGLClientBuffer buffer,
+                                    const EGLint *attrib_list);
+    EGLBoolean onEglDestroyImage(EGLDisplay display, EGLImage image);
+    EGLBoolean onEglDestroyImageKHR(EGLDisplay display, EGLImage image);
+
     void onReplayFramebufferChange(GLenum target, GLuint framebuffer);
     void onReplayInvalidateFramebuffer(GLenum target,
                                        GLsizei numAttachments,
@@ -172,6 +185,7 @@ class TracePerfTest : public ANGLERenderTest
     GLuint mDrawFramebufferBinding                                      = 0;
     GLuint mReadFramebufferBinding                                      = 0;
     uint32_t mCurrentFrame                                              = 0;
+    uint32_t mCurrentIteration                                          = 0;
     uint32_t mOffscreenFrameCount                                       = 0;
     uint32_t mTotalFrameCount                                           = 0;
     bool mScreenshotSaved                                               = false;
@@ -200,6 +214,35 @@ void KHRONOS_APIENTRY EglMakeCurrent(EGLDisplay display,
 EGLContext KHRONOS_APIENTRY EglGetCurrentContext()
 {
     return gCurrentTracePerfTest->onEglGetCurrentContext();
+}
+
+EGLImage KHRONOS_APIENTRY EglCreateImage(EGLDisplay display,
+                                         EGLContext context,
+                                         EGLenum target,
+                                         EGLClientBuffer buffer,
+                                         const EGLAttrib *attrib_list)
+{
+    return gCurrentTracePerfTest->onEglCreateImage(display, context, target, buffer, attrib_list);
+}
+
+EGLImageKHR KHRONOS_APIENTRY EglCreateImageKHR(EGLDisplay display,
+                                               EGLContext context,
+                                               EGLenum target,
+                                               EGLClientBuffer buffer,
+                                               const EGLint *attrib_list)
+{
+    return gCurrentTracePerfTest->onEglCreateImageKHR(display, context, target, buffer,
+                                                      attrib_list);
+}
+
+EGLBoolean KHRONOS_APIENTRY EglDestroyImage(EGLDisplay display, EGLImage image)
+{
+    return gCurrentTracePerfTest->onEglDestroyImage(display, image);
+}
+
+EGLBoolean KHRONOS_APIENTRY EglDestroyImageKHR(EGLDisplay display, EGLImage image)
+{
+    return gCurrentTracePerfTest->onEglDestroyImageKHR(display, image);
 }
 
 void KHRONOS_APIENTRY BindFramebufferProc(GLenum target, GLuint framebuffer)
@@ -497,6 +540,22 @@ angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
     if (strcmp(procName, "eglGetCurrentContext") == 0)
     {
         return reinterpret_cast<angle::GenericProc>(EglGetCurrentContext);
+    }
+    if (strcmp(procName, "eglCreateImage") == 0)
+    {
+        return reinterpret_cast<angle::GenericProc>(EglCreateImage);
+    }
+    if (strcmp(procName, "eglCreateImageKHR") == 0)
+    {
+        return reinterpret_cast<angle::GenericProc>(EglCreateImageKHR);
+    }
+    if (strcmp(procName, "eglDestroyImage") == 0)
+    {
+        return reinterpret_cast<angle::GenericProc>(EglDestroyImage);
+    }
+    if (strcmp(procName, "eglDestroyImageKHR") == 0)
+    {
+        return reinterpret_cast<angle::GenericProc>(EglDestroyImageKHR);
     }
 
     // GLES
@@ -1222,6 +1281,28 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_EXT_texture_buffer");
     }
 
+    if (traceNameIs("tessellation"))
+    {
+        if (IsNVIDIA() && mParams.isVulkan())
+        {
+            skipTest("http://anglebug.com/7240 Tessellation driver bugs on Nvidia");
+        }
+
+        addExtensionPrerequisite("GL_EXT_geometry_shader");
+        addExtensionPrerequisite("GL_EXT_primitive_bounding_box");
+        addExtensionPrerequisite("GL_EXT_tessellation_shader");
+        addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
+    }
+
+    if (traceNameIs("basemark_gpu"))
+    {
+        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+    }
+    if (traceNameIs("mortal_kombat"))
+    {
+        addExtensionPrerequisite("GL_EXT_texture_buffer");
+    }
+
     ASSERT(mParams.surfaceType == SurfaceType::Window || gEnableAllTraceTests);
     ASSERT(mParams.eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE ||
            gEnableAllTraceTests);
@@ -1244,7 +1325,7 @@ void TracePerfTest::initializeBenchmark()
     mStartingDirectory = angle::GetCWD().value();
 
     std::stringstream traceNameStr;
-    traceNameStr << "angle_restricted_trace_" << traceInfo.name;
+    traceNameStr << "angle_restricted_traces_" << traceInfo.name;
     std::string traceName = traceNameStr.str();
     mTraceLibrary.reset(new TraceLibrary(traceName.c_str()));
 
@@ -1290,7 +1371,8 @@ void TracePerfTest::initializeBenchmark()
         mWindowWidth  = mTestParams.windowWidth;
         mWindowHeight = mTestParams.windowHeight;
     }
-    mCurrentFrame = mStartFrame;
+    mCurrentFrame     = mStartFrame;
+    mCurrentIteration = mStartFrame;
 
     if (IsAndroid())
     {
@@ -1515,6 +1597,9 @@ void TracePerfTest::drawBenchmark()
         mCurrentFrame++;
     }
 
+    // Always iterated for saving screenshots after reset
+    mCurrentIteration++;
+
     // Process any running queries once per iteration.
     for (size_t queryIndex = 0; queryIndex < mRunningQueries.size();)
     {
@@ -1612,6 +1697,38 @@ void TracePerfTest::onEglMakeCurrent(EGLDisplay display,
 EGLContext TracePerfTest::onEglGetCurrentContext()
 {
     return getGLWindow()->getCurrentContextGeneric();
+}
+
+EGLImage TracePerfTest::onEglCreateImage(EGLDisplay display,
+                                         EGLContext context,
+                                         EGLenum target,
+                                         EGLClientBuffer buffer,
+                                         const EGLAttrib *attrib_list)
+{
+    GLWindowBase::Image image = getGLWindow()->createImage(
+        reinterpret_cast<GLWindowContext>(context), target, buffer, attrib_list);
+    return reinterpret_cast<EGLImage>(image);
+}
+
+EGLImageKHR TracePerfTest::onEglCreateImageKHR(EGLDisplay display,
+                                               EGLContext context,
+                                               EGLenum target,
+                                               EGLClientBuffer buffer,
+                                               const EGLint *attrib_list)
+{
+    GLWindowBase::Image image = getGLWindow()->createImageKHR(
+        reinterpret_cast<GLWindowContext>(context), target, buffer, attrib_list);
+    return reinterpret_cast<EGLImage>(image);
+}
+
+EGLBoolean TracePerfTest::onEglDestroyImage(EGLDisplay display, EGLImage image)
+{
+    return getGLWindow()->destroyImage(image);
+}
+
+EGLBoolean TracePerfTest::onEglDestroyImageKHR(EGLDisplay display, EGLImage image)
+{
+    return getGLWindow()->destroyImageKHR(image);
 }
 
 // Triggered when the replay calls glBindFramebuffer.
@@ -1887,7 +2004,7 @@ void TracePerfTest::swap()
 {
     // Capture a screenshot if enabled.
     if (gScreenShotDir != nullptr && !mScreenshotSaved &&
-        static_cast<uint32_t>(gScreenShotFrame) == mCurrentFrame)
+        static_cast<uint32_t>(gScreenShotFrame) == mCurrentIteration)
     {
         std::stringstream screenshotNameStr;
         screenshotNameStr << gScreenShotDir << GetPathSeparator() << "angle" << mBackend << "_"

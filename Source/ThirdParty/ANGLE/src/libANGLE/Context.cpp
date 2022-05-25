@@ -3152,6 +3152,7 @@ void Context::detachTransformFeedback(TransformFeedbackID transformFeedback)
     if (mState.removeTransformFeedbackBinding(this, transformFeedback))
     {
         bindTransformFeedback(GL_TRANSFORM_FEEDBACK, {0});
+        mStateCache.onActiveTransformFeedbackChange(this);
     }
 }
 
@@ -3591,7 +3592,6 @@ Extensions Context::generateSupportedExtensions() const
         // Disable ES3+ extensions
         supportedExtensions.colorBufferFloatEXT          = false;
         supportedExtensions.EGLImageExternalEssl3OES     = false;
-        supportedExtensions.textureNorm16EXT             = false;
         supportedExtensions.multiviewOVR                 = false;
         supportedExtensions.multiview2OVR                = false;
         supportedExtensions.multiviewMultisampleANGLE    = false;
@@ -3601,6 +3601,14 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.drawBuffersIndexedOES        = false;
         supportedExtensions.EGLImageArrayEXT             = false;
         supportedExtensions.textureFormatSRGBOverrideEXT = false;
+
+        // Support GL_EXT_texture_norm16 on non-WebGL ES2 contexts. This is needed for R16/RG16
+        // texturing for HDR video playback in Chromium which uses ES2 for compositor contexts.
+        // Remove this workaround after Chromium migrates to ES3 for compositor contexts.
+        if (mWebGLContext || getClientVersion() < ES_2_0)
+        {
+            supportedExtensions.textureNorm16EXT = false;
+        }
 
         // Requires immutable textures
         supportedExtensions.yuvInternalFormatANGLE = false;
@@ -3978,7 +3986,12 @@ void Context::initCaps()
 
     ANGLE_LIMIT_CAP(mState.mCaps.maxFramebufferLayers, IMPLEMENTATION_MAX_FRAMEBUFFER_LAYERS);
 
-    ANGLE_LIMIT_CAP(mState.mCaps.maxSampleMaskWords, MAX_SAMPLE_MASK_WORDS);
+    ANGLE_LIMIT_CAP(mState.mCaps.maxSampleMaskWords, IMPLEMENTATION_MAX_SAMPLE_MASK_WORDS);
+    ANGLE_LIMIT_CAP(mState.mCaps.maxSamples, IMPLEMENTATION_MAX_SAMPLES);
+    ANGLE_LIMIT_CAP(mState.mCaps.maxFramebufferSamples, IMPLEMENTATION_MAX_SAMPLES);
+    mState.mCaps.maxColorTextureSamples &= IMPLEMENTATION_MAX_SAMPLES_MASK;
+    mState.mCaps.maxDepthTextureSamples &= IMPLEMENTATION_MAX_SAMPLES_MASK;
+    mState.mCaps.maxIntegerSamples &= IMPLEMENTATION_MAX_SAMPLES_MASK;
 
     ANGLE_LIMIT_CAP(mState.mCaps.maxViews, IMPLEMENTATION_ANGLE_MULTIVIEW_MAX_VIEWS);
 
@@ -4100,6 +4113,11 @@ void Context::initCaps()
                << maxShaderStorageBufferBindings;
         ANGLE_LIMIT_CAP(mState.mCaps.maxShaderStorageBufferBindings,
                         maxShaderStorageBufferBindings);
+        for (gl::ShaderType shaderType : gl::AllShaderTypes())
+        {
+            ANGLE_LIMIT_CAP(mState.mCaps.maxShaderStorageBlocks[shaderType],
+                            maxShaderStorageBufferBindings);
+        }
     }
 
     // Disable support for OES_get_program_binary

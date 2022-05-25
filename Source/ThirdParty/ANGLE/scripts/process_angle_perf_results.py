@@ -10,14 +10,21 @@
 
 from __future__ import print_function
 
+import os
+import six
+import sys
+# Swarming runs merge scripts with its python and some really old modules.
+if __name__ == '__main__' and 'ensure_binary' not in dir(six):
+    print('spawning via vpython due to an old six version (%s)' % six.__version__)
+    import subprocess
+    sys.exit(subprocess.call(['vpython', os.path.realpath(__file__)] + sys.argv[1:]))
+
 import argparse
 import collections
 import json
 import logging
 import multiprocessing
-import os
 import shutil
-import sys
 import tempfile
 import time
 import uuid

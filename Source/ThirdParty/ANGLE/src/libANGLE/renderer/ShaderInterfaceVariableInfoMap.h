@@ -95,6 +95,11 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
                                                                 uint32_t bufferIndex) const;
 
+    uint32_t getDefaultUniformBinding(gl::ShaderType shaderType) const;
+    uint32_t getXfbBufferBinding(uint32_t xfbBufferIndex) const;
+    uint32_t getAtomicCounterBufferBinding(gl::ShaderType shaderType,
+                                           uint32_t atomicCounterBufferIndex) const;
+
     bool hasVariable(gl::ShaderType shaderType, const std::string &variableName) const;
     const ShaderInterfaceVariableInfo &getVariableByName(gl::ShaderType shaderType,
                                                          const std::string &variableName) const;
@@ -162,6 +167,28 @@ ShaderInterfaceVariableInfoMap::getTransformFeedbackInfo(gl::ShaderType shaderTy
 {
     ASSERT(bufferIndex < mData[shaderType][ShaderVariableType::TransformFeedback].size());
     return mData[shaderType][ShaderVariableType::TransformFeedback][bufferIndex];
+}
+
+ANGLE_INLINE uint32_t
+ShaderInterfaceVariableInfoMap::getDefaultUniformBinding(gl::ShaderType shaderType) const
+{
+    return getDefaultUniformInfo(shaderType).binding;
+}
+
+ANGLE_INLINE uint32_t
+ShaderInterfaceVariableInfoMap::getXfbBufferBinding(uint32_t xfbBufferIndex) const
+{
+    // Note: we only use this method for transform feedback emulation. And emulation only supports
+    // XFB in the vertex shader.
+    return getTransformFeedbackInfo(gl::ShaderType::Vertex, xfbBufferIndex).binding;
+}
+
+ANGLE_INLINE uint32_t ShaderInterfaceVariableInfoMap::getAtomicCounterBufferBinding(
+    gl::ShaderType shaderType,
+    uint32_t atomicCounterBufferIndex) const
+{
+    ASSERT(hasAtomicCounterInfo(shaderType));
+    return getAtomicCounterInfo(shaderType).binding + atomicCounterBufferIndex;
 }
 }  // namespace rx
 #endif  // LIBANGLE_RENDERER_SHADERINTERFACEVARIABLEINFOMAP_H_

@@ -423,7 +423,7 @@ State::State(const State *shareContextState,
       mBoundingBoxMaxZ(1.0f),
       mBoundingBoxMaxW(1.0f),
       mShadingRatePreserveAspectRatio(false),
-      mShadingRate(ShadingRate::_1x1)
+      mShadingRate(ShadingRate::Undefined)
 {}
 
 State::~State() {}
@@ -3657,6 +3657,13 @@ void State::setImageUnit(const Context *context,
     if (texture)
     {
         texture->onBindAsImageTexture();
+
+        // Using individual layers of a 3d image as 2d may require that the image be respecified in
+        // a compatible layout
+        if (!layered && texture->getType() == TextureType::_3D)
+        {
+            texture->onBind3DTextureAs2DImage();
+        }
     }
     imageUnit.texture.set(context, texture);
     imageUnit.level   = level;

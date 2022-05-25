@@ -197,6 +197,7 @@ ProgramExecutable::ProgramExecutable()
       mAtomicCounterUniformRange(0, 0),
       mFragmentInoutRange(0, 0),
       mUsesEarlyFragmentTestsOptimization(false),
+      mEnablesPerSampleShading(false),
       // [GL_EXT_geometry_shader] Table 20.22
       mGeometryShaderInputPrimitiveType(PrimitiveMode::Triangles),
       mGeometryShaderOutputPrimitiveType(PrimitiveMode::TriangleStrip),
@@ -208,7 +209,7 @@ ProgramExecutable::ProgramExecutable()
       mTessGenVertexOrder(GL_NONE),
       mTessGenPointMode(GL_NONE)
 {
-    reset();
+    reset(true);
 }
 
 ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
@@ -245,16 +246,20 @@ ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
       mShaderStorageBlocks(other.mShaderStorageBlocks),
       mFragmentInoutRange(other.mFragmentInoutRange),
       mUsesEarlyFragmentTestsOptimization(other.mUsesEarlyFragmentTestsOptimization),
+      mEnablesPerSampleShading(other.mEnablesPerSampleShading),
       mAdvancedBlendEquations(other.mAdvancedBlendEquations)
 {
-    reset();
+    reset(true);
 }
 
 ProgramExecutable::~ProgramExecutable() = default;
 
-void ProgramExecutable::reset()
+void ProgramExecutable::reset(bool clearInfoLog)
 {
-    resetInfoLog();
+    if (clearInfoLog)
+    {
+        resetInfoLog();
+    }
     mActiveAttribLocationsMask.reset();
     mAttributesTypeMask.reset();
     mAttributesMask.reset();
@@ -291,6 +296,7 @@ void ProgramExecutable::reset()
 
     mFragmentInoutRange                 = RangeUI(0, 0);
     mUsesEarlyFragmentTestsOptimization = false;
+    mEnablesPerSampleShading            = false;
     mAdvancedBlendEquations.reset();
 
     mGeometryShaderInputPrimitiveType  = PrimitiveMode::Triangles;
@@ -323,6 +329,7 @@ void ProgramExecutable::load(bool isSeparable, gl::BinaryInputStream *stream)
     mFragmentInoutRange                 = RangeUI(fragmentInoutRangeLow, fragmentInoutRangeHigh);
 
     mUsesEarlyFragmentTestsOptimization = stream->readBool();
+    mEnablesPerSampleShading            = stream->readBool();
 
     static_assert(sizeof(mAdvancedBlendEquations.bits()) == sizeof(uint32_t));
     mAdvancedBlendEquations = BlendEquationBitSet(stream->readInt<uint32_t>());
@@ -555,6 +562,7 @@ void ProgramExecutable::save(bool isSeparable, gl::BinaryOutputStream *stream) c
     stream->writeInt(mFragmentInoutRange.high());
 
     stream->writeBool(mUsesEarlyFragmentTestsOptimization);
+    stream->writeBool(mEnablesPerSampleShading);
     stream->writeInt(mAdvancedBlendEquations.bits());
 
     stream->writeInt(mLinkedShaderStages.bits());

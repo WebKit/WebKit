@@ -756,19 +756,16 @@ angle::Result ProgramMtl::createMslShaderLib(
         {
             std::ostringstream ss;
             ss << "Internal error compiling shader with Metal backend.\n";
-#if !defined(NDEBUG)
             ss << err.get().localizedDescription.UTF8String << "\n";
             ss << "-----\n";
             ss << translatedMslInfo->metalShaderSource;
             ss << "-----\n";
-#else
-            ss << "Please submit this shader, or website as a bug to https://bugs.webkit.org\n";
-#endif
-            ERR() << ss.str();
 
+            ERR() << ss.str();
             infoLog << ss.str();
 
-            ANGLE_MTL_CHECK(context, false, GL_INVALID_OPERATION);
+            ANGLE_MTL_HANDLE_ERROR(context, ss.str().c_str(), GL_INVALID_OPERATION);
+            return angle::Result::Stop;
         }
 
         return angle::Result::Continue;

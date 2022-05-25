@@ -36,7 +36,8 @@ declare_args() {
 
   # Don't build extra (test, samples etc) for Windows UWP. We don't have
   # infrastructure (e.g. windowing helper functions) in place to run them.
-  angle_build_all = !build_with_chromium && !angle_is_winuwp && angle_has_build
+  angle_build_all = !build_with_chromium && !angle_is_winuwp &&
+                    angle_has_build && angle_build_tests
 
   # Enable generating current commit information using git
   angle_enable_commit_id = true
@@ -153,6 +154,15 @@ config("internal_config") {
     if (!angle_use_x11) {
       defines += [ "EGL_NO_X11" ]
     }
+
+    # These two are needed here to correctly select OSWindow::New
+    if (angle_use_x11) {
+      defines += [ "ANGLE_USE_X11" ]
+    }
+    if (angle_use_wayland) {
+      defines += [ "ANGLE_USE_WAYLAND" ]
+    }
+
     if (angle_vulkan_display_mode == "simple") {
       defines += [ "ANGLE_VULKAN_DISPLAY_MODE_SIMPLE" ]
     } else if (angle_vulkan_display_mode == "headless") {
@@ -513,6 +523,10 @@ angle_static_library("angle_gpu_info_util") {
         "Xext",
       ]
     }
+
+    if (angle_use_wayland && angle_has_build) {
+      public_deps += [ ":angle_wayland" ]
+    }
   }
 
   if (use_libpci) {
@@ -587,7 +601,8 @@ template("translator_lib") {
     }
 
     if (!invoker.gl_d3d_only) {
-      if (angle_enable_vulkan || use_fuzzing_engine || angle_enable_metal) {
+      if (angle_enable_vulkan || use_fuzzing_engine ||
+          angle_enable_msl_through_spirv) {
         _needs_glsl_base = true
         _needs_glsl_and_vulkan_base = true
         _uses_spirv = true
@@ -602,10 +617,10 @@ template("translator_lib") {
 
       if (angle_enable_metal) {
         sources += angle_translator_lib_metal_sources
-        defines += [
-          "ANGLE_ENABLE_METAL",
-          "ANGLE_ENABLE_METAL_SPIRV",
-        ]
+        defines += [ "ANGLE_ENABLE_METAL" ]
+        if (angle_enable_msl_through_spirv) {
+          defines += [ "ANGLE_ENABLE_METAL_SPIRV" ]
+        }
       }
     }
 
@@ -824,6 +839,10 @@ config("libANGLE_config") {
     defines += [ "ANGLE_USE_X11" ]
   }
 
+  if (angle_use_wayland) {
+    defines += [ "ANGLE_USE_WAYLAND" ]
+  }
+
   if (angle_enable_overlay) {
     defines += [ "ANGLE_ENABLE_OVERLAY=1" ]
   }
@@ -971,11 +990,6 @@ angle_source_set("libANGLE_base") {
     defines += [ "ANGLE_GENERATE_SHADER_DEBUG_INFO" ]
   }
 
-  # If VVL are enabled, enable RenderDoc capture as well.
-  if (angle_enable_vulkan_validation_layers) {
-    defines += [ "ANGLE_TEST_ENABLE_RENDERDOC_CAPTURE" ]
-  }
-
   configs += [ ":debug_annotations_config" ]
   public_configs += [
     ":libANGLE_config",
@@ -1016,6 +1030,38 @@ angle_source_set("angle_gl_enum_utils") {
     "src/libANGLE/capture/gl_enum_utils_autogen.cpp",
     "src/libANGLE/capture/gl_enum_utils_autogen.h",
   ]
+}
+
+if (angle_use_wayland) {
+  config("angle_wayland_config") {
+    if (!defined(use_system_libwayland) || use_system_libwayland) {
+      libs = [
+        "wayland-client",
+        "wayland-egl",
+      ]
+    }
+
+    include_dirs = [
+      "$angle_wayland_dir/egl",
+      "$angle_wayland_dir/src",
+
+      # In case we are building with chromium, we need to take into account the case
+      # where wayland-egl-backend.h is not installed in the system include directories
+      "//third_party/wayland/src/egl",
+    ]
+  }
+
+  group("angle_wayland") {
+    public_configs = [ ":angle_wayland_config" ]
+
+    if (defined(use_system_libwayland) && !use_system_libwayland) {
+      # Use chromium third-party targets
+      public_deps = [
+        "//third_party/wayland:wayland_client",
+        "//third_party/wayland:wayland_egl",
+      ]
+    }
+  }
 }
 
 if (!defined(angle_abseil_cpp_dir)) {
@@ -1097,6 +1143,33 @@ if (angle_has_frame_capture) {
       sources += [ "src/libANGLE/capture/frame_capture_utils.cpp" ]
     } else {
       sources += [ "src/libANGLE/capture/frame_capture_utils_mock.cpp" ]
+    }
+  }
+}
+
+if (angle_build_tests) {
+  # Used by a few targets that compile traces.
+  config("angle_trace_fixture_config") {
+    include_dirs = [ "src/libANGLE/capture" ]
+  }
+
+  angle_source_set("angle_trace_fixture") {
+    testonly = true
+    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
+    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
+    sources = [
+      "src/libANGLE/capture/trace_fixture.cpp",
+      "src/libANGLE/capture/trace_fixture.h",
+    ]
+    public_deps = [
+      ":includes",
+      "util:angle_trace_loader",
+    ]
+    include_dirs = [ "." ]
+    public_configs = [ ":angle_trace_fixture_config" ]
+    if (is_ios) {
+      # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
+      check_includes = false
     }
   }
 }

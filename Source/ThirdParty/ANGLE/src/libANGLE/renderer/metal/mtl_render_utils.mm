@@ -944,14 +944,16 @@ void RenderUtils::onDestroy()
 
 // override ErrorHandler
 void RenderUtils::handleError(GLenum glErrorCode,
+                              const char *message,
                               const char *file,
                               const char *function,
                               unsigned int line)
 {
-    ERR() << "Metal backend encountered an internal error. Code=" << glErrorCode << ".";
+    ERR() << message;
 }
 
 void RenderUtils::handleError(NSError *nserror,
+                              const char *message,
                               const char *file,
                               const char *function,
                               unsigned int line)
@@ -961,9 +963,7 @@ void RenderUtils::handleError(NSError *nserror,
         return;
     }
 
-    std::stringstream errorStream;
-    ERR() << "Metal backend encountered an internal error: \n"
-          << nserror.localizedDescription.UTF8String;
+    ERR() << message;
 }
 
 // Clear current framebuffer

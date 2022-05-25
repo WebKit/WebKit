@@ -9,10 +9,16 @@
 ////
 
 // Crashing Tests
-1442 D3D11 : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
 1442 OPENGL : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
 
-1442 D3D11 : dEQP-GLES31.functional.image_load_store.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.coherent_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.qualifiers.volatile_r32f = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.2d.format_reinterpret.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.cube.format_reinterpret.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.3d.format_reinterpret.* = SKIP
+1442 D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.format_reinterpret.* = SKIP
+7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.volatile_r32f = SKIP
+7345 NVIDIA D3D11 : dEQP-GLES31.functional.image_load_store.2d_array.qualifiers.coherent_r32f = SKIP
 
 // Times out shader compilation because it uses so many resources.
 3445 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.48 = SKIP
@@ -119,7 +125,6 @@
 // TODO(xinghua.cao@intel.com): FAIL expectation instead of SKIP should be sufficient for OpenGL, but the
 // test expectations parser doesn't support having FAIL for GL and SKIP for D3D with the same test filter.
 
-1729 D3D11 : dEQP-GLES31.functional.atomic_counter.* = SKIP
 1951 D3D11 : dEQP-GLES31.functional.layout_binding.ssbo.* = SKIP
 4330 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_vertex.* = SKIP
 4329 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_fragment.* = SKIP
@@ -379,12 +384,6 @@
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
 5430 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
-
-// Fails on Android 13 DP2
-6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*1 = FAIL
-6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*2 = FAIL
-6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*4 = FAIL
-6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*8 = FAIL
 
 // ASAN Test bugs
 6678 ASAN : dEQP-GLES31.functional.ssbo.array_length.* = SKIP

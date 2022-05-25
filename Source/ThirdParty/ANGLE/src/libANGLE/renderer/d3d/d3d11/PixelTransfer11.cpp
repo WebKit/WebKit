@@ -224,7 +224,7 @@ angle::Result PixelTransfer11::copyBufferToTexture(const gl::Context *context,
     // Set the viewport
     stateManager->setSimpleViewport(destSize);
 
-    UINT numPixels = (destArea.width * destArea.height * destArea.depth);
+    UINT numPixels = (shaderParams.PixelsPerRow * destArea.height * destArea.depth);
     deviceContext->Draw(numPixels, 0);
 
     return angle::Result::Continue;

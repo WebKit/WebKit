@@ -41,6 +41,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo allowAstcFormats = {
+        "allowAstcFormats",
+        FeatureCategory::OpenGLWorkarounds,
+        "Enable ASTC on desktop OpenGL",
+        &members,
+    };
+
     FeatureInfo doesSRGBClearsOnLinearFramebufferAttachments = {
         "doesSRGBClearsOnLinearFramebufferAttachments",
         FeatureCategory::OpenGLWorkarounds,

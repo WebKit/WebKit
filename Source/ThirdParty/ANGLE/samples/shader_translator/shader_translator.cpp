@@ -203,6 +203,16 @@ int main(int argc, char *argv[])
                                     output = SH_HLSL_3_0_OUTPUT;
                                 }
                                 break;
+                            case 'm':
+                                if (argv[0][4] == 'v')
+                                {
+                                    output = SH_SPIRV_METAL_OUTPUT;
+                                }
+                                else
+                                {
+                                    output = SH_MSL_METAL_OUTPUT;
+                                }
+                                break;
                             default:
                                 failCode = EFailUsage;
                         }
@@ -420,6 +430,8 @@ void usage()
         "       -b=v     : output Vulkan SPIR-V code\n"
         "       -b=h9    : output HLSL9 code\n"
         "       -b=h11   : output HLSL11 code\n"
+        "       -b=m     : output MSL code (direct)\n"
+        "       -b=mv    : output MSL code (via SPIR-V)\n"
         "       -x=i     : enable GL_OES_EGL_image_external\n"
         "       -x=d     : enable GL_OES_EGL_standard_derivatives\n"
         "       -x=r     : enable ARB_texture_rectangle\n"

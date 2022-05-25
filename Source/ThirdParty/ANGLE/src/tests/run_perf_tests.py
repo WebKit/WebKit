@@ -26,6 +26,7 @@ if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
 import android_helper
 import angle_path_util
+import angle_test_util
 
 angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
@@ -321,8 +322,7 @@ def main():
 
     args, extra_flags = parser.parse_known_args()
 
-    importlib.reload(logging)
-    logging.basicConfig(level=args.log.upper())
+    angle_test_util.setupLogging(args.log.upper())
 
     start_time = time.time()
 
@@ -350,6 +350,8 @@ def main():
     if _use_adb(args.test_suite):
         android_helper.PrepareTestSuite(args.test_suite)
         tests = android_helper.ListTests()
+        if args.test_suite == DEFAULT_TEST_SUITE:
+            android_helper.RunSmokeTest()
     else:
         cmd = [get_binary_name(args.test_suite), '--list-tests', '--verbose']
         exit_code, lines = _run_and_get_output(args, cmd, env, [])
@@ -418,6 +420,7 @@ def main():
             steps_per_trial = _get_results_from_output(calibrate_output, 'steps_to_run')
             if not steps_per_trial:
                 logging.warning('Skipping test %s' % test)
+                results.result_skip(test)
                 continue
             assert (len(steps_per_trial) == 1)
             steps_per_trial = int(steps_per_trial[0])
@@ -501,6 +504,10 @@ def main():
                     histograms.Merge(merged_histogram)
             else:
                 logging.error('Test %s failed to record some samples' % test)
+                results.result_fail(test)
+
+    for test in tests:
+        assert results.has_result(test)
 
     if args.isolated_script_test_output:
         results.save_to_output_file(args.test_suite, args.isolated_script_test_output)

@@ -259,6 +259,11 @@ Once you feel good about your trace, you can upload it to our collection of trac
 be done by Googlers with write access to the trace CIPD prefix. If you need write access contact
 someone listed in the `OWNERS` file.
 
+Please kindly go over the trace content with ANGLE code owners before running
+below commands. You can share your trace through Google Drive for content
+iterations. We cannot delete trace files once they are up on the CIPD.
+Doing additional rounds of content check can help us save CIPD resources.
+
 ```
 ./sync_restricted_traces_to_cipd.py
 ```

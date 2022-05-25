@@ -302,11 +302,6 @@ void UpdateVertexArrayID(GLuint id, GLsizei readBufferOffset)
 
 void SetResourceID(GLuint *map, GLuint id)
 {
-    if (map[id] != 0)
-    {
-        fprintf(stderr, "%s: resource ID %d is already reserved\n", __func__, id);
-        exit(1);
-    }
     map[id] = id;
 }
 

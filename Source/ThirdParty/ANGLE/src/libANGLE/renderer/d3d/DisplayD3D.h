@@ -101,6 +101,8 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
 
     const std::string &getStoredErrorString() const { return mStoredErrorString; }
 
+    void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
+
     void populateFeatureList(angle::FeatureList *features) override;
 
   private:

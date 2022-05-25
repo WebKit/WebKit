@@ -1391,7 +1391,8 @@ TEST_P(UniformTestES3, MatrixUniformUpload)
                 drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.0f);
 
                 ASSERT_GL_NO_ERROR();
-                EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+                EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white)
+                    << " transpose = " << transpose << ", cols = " << cols << ", rows = " << rows;
             }
         }
     }

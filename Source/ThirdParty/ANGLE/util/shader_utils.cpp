@@ -555,7 +555,7 @@ varying vec2 v_texCoord;
 
 void main()
 {
-    gl_Position = vec4(a_position.xy, 0.0, 1.0);
+    gl_Position = a_position;
     v_texCoord = a_position.xy * 0.5 + vec2(0.5);
 })";
 }

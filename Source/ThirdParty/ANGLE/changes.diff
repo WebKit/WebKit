@@ -1,5 +1,5 @@
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index a175734c39c5bd25fcba8325da8585a17a0c9d0a..7fc9aa792ace24f146923e374542d7253bd16a48 100644
+index 274d8029521aa8e6d6fdae039a21931f00125fe6..5314733998768cdbda34126ed61d4247ef952541 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,12 @@
@@ -167,7 +167,7 @@ index ad3cc080de119748939e5aa893fe095b9dd4a2f3..75069c57284bb3b0cb796717191c7d55
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 7c85791ed5a4a849363331aac5db5b667f8835dd..3ec829dcb4921013810f5354aa9274bc432b548b 100644
+index 1a5b0d8874f173fed2ee1f27d69b8ea4db6fd919..4459f29401d15fd2b3c553c10c71f1625dc2e2e1 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -180,11 +180,44 @@ index 7c85791ed5a4a849363331aac5db5b667f8835dd..3ec829dcb4921013810f5354aa9274bc
  #include "libANGLE/State.h"
  
  #include <string.h>
+diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
+index ae040dfc19960b7cc686d0c2136454eb246ca80d..9e69e2fa308675249c48aee6b44b09cd4a5d2dfa 100644
+--- a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
++++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
+@@ -114,12 +114,14 @@ const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::getVariableBy
+     return mData[shaderType][typeAndIndex.variableType][typeAndIndex.index];
+ }
+ 
++#if ANGLE_ENABLE_METAL_SPIRV
+ bool ShaderInterfaceVariableInfoMap::hasTransformFeedbackInfo(gl::ShaderType shaderType,
+                                                               uint32_t bufferIndex) const
+ {
+     std::string bufferName = rx::GetXfbBufferName(bufferIndex);
+     return hasVariable(shaderType, bufferName);
+ }
++#endif
+ 
+ void ShaderInterfaceVariableInfoMap::mapIndexedResourceByName(gl::ShaderType shaderType,
+                                                               ShaderVariableType variableType,
+diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
+index ce9c26e401ffd4fa59eb8308a5210998970bec8c..dcaa142fc2a5e0d45ddf7e8fcaac14bb7f30ff2d 100644
+--- a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
++++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
+@@ -89,7 +89,9 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
+     bool hasAtomicCounterInfo(gl::ShaderType shaderType) const;
+     const ShaderInterfaceVariableInfo &getAtomicCounterInfo(gl::ShaderType shaderType) const;
+     const ShaderInterfaceVariableInfo &getFramebufferFetchInfo(gl::ShaderType shaderType) const;
++#if ANGLE_ENABLE_METAL_SPIRV
+     bool hasTransformFeedbackInfo(gl::ShaderType shaderType, uint32_t bufferIndex) const;
++#endif
+     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
+                                                                 uint32_t bufferIndex) const;
+ 
 diff --git a/src/libANGLE/renderer/driver_utils.cpp b/src/libANGLE/renderer/driver_utils.cpp
-index bfdf0ff768941042dfb12023c73ecbd426dcb46d..6e5097653d36cfba64307132e43589f50c41f8d3 100644
+index e1555cff0ce083f309e845eab2678be57839122e..ad08da0ed2befa72cf2a5291a6d91c62538939b4 100644
 --- a/src/libANGLE/renderer/driver_utils.cpp
 +++ b/src/libANGLE/renderer/driver_utils.cpp
-@@ -164,6 +164,10 @@ const char *GetVendorString(uint32_t vendorId)
+@@ -268,6 +268,10 @@ const char *GetVendorString(uint32_t vendorId)
              return "Qualcomm";
          case VENDOR_ID_SAMSUNG:
              return "Samsung Electronics Co., Ltd.";
@@ -195,27 +228,6 @@ index bfdf0ff768941042dfb12023c73ecbd426dcb46d..6e5097653d36cfba64307132e43589f5
          case 0xba5eba11:  // Mock vendor ID used for tests.
              return "Test";
          case 0:
-diff --git a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp b/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
-index a2b44d2bf063b13f77e3083473e5031efd00993a..20ec85a507e3923a84cca23536373836d46c03b9 100644
---- a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
-+++ b/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
-@@ -250,12 +250,10 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
-         return false;
-     }
- 
--    // Check that the format matches this IOSurface plane
--    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
--        kIOSurfaceFormats[formatIndex].componentBytes)
--    {
--        return false;
--    }
-+    // FIXME: Check that the format matches this IOSurface plane for pixel formats that we know of.
-+    // We could map IOSurfaceGetPixelFormat to expected type plane and format type.
-+    // However, the caller might supply us non-public pixel format, which makes exhaustive checks
-+    // problematic.
- 
-     return true;
- }
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
 index 285734ba963e988732c51e2e69a32a7db19938eb..4a73b4134efd7ea50fd3215bf5ff5b069bb69cc6 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
@@ -238,10 +250,10 @@ index 285734ba963e988732c51e2e69a32a7db19938eb..4a73b4134efd7ea50fd3215bf5ff5b06
  }  // namespace rx
  
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index 279923ff2cc0a3fa2f3259d36de9375cc19be576..900aea8afb94ae32b37711ddb8136c43b0308b49 100644
+index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2f54269a2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -365,7 +365,7 @@
+@@ -365,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
      {
          if (buffer.offset == offset)
          {
@@ -250,7 +262,7 @@ index 279923ff2cc0a3fa2f3259d36de9375cc19be576..900aea8afb94ae32b37711ddb8136c43
          }
      }
  
-@@ -520,7 +520,7 @@
+@@ -520,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
          default:
              // dynamic buffer, allow up to 10 update per frame/encoding without
              // waiting for GPU.
@@ -260,10 +272,10 @@ index 279923ff2cc0a3fa2f3259d36de9375cc19be576..900aea8afb94ae32b37711ddb8136c43
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 30088237319f5cd62ec3457c66f653bbeb44fdf6..30d89fe4e17b938a2826ca08715d75ada6df9415 100644
+index 13aec00fac3e4ea8932a86883dcc6eff7f30f59c..295a3788aa012838660233608df48f10bd269831 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1205,8 +1205,7 @@ bool IsMetalDisplayAvailable()
+@@ -1210,8 +1210,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -273,27 +285,56 @@ index 30088237319f5cd62ec3457c66f653bbeb44fdf6..30d89fe4e17b938a2826ca08715d75ad
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
-diff --git a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
-index ab7283ae1c987aa80983f86914b6fc9fcf1d0fe3..10008675955563ff9187f7c5bea4025291993701 100644
---- a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
-+++ b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
-@@ -219,12 +219,10 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
-         return false;
-     }
+diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
+index 8e2d6eb6967f907b8224641610a369a2000f90f7..7f0c4de62558749e79614996699519f5fc164d71 100644
+--- a/src/libANGLE/renderer/metal/ProgramMtl.mm
++++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
+@@ -1257,20 +1257,40 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
+         {
+             continue;
+         }
+-        // If we exceed the default uniform max size, try to allocate a buffer. Worst case
+-        // scenario, fall back on a large setBytes.
++        if(mAuxBufferPool)
++        {
++            mAuxBufferPool->releaseInFlightBuffers(context);
++        }
++        // If we exceed the default inline max size, try to allocate a buffer
+         bool needsCommitUniform = true;
+-        if (needsCommitUniform)
++        if (needsCommitUniform && uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize)
+         {
+-            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
++            ASSERT(uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize);
+             cmdEncoder->setBytes(shaderType, uniformBlock.uniformData.data(),
+                                  uniformBlock.uniformData.size(),
+                                  mtl::kDefaultUniformsBindingIndex);
+         }
++        else if(needsCommitUniform)
++        {
++            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
++            mtl::BufferRef mtlBufferOut;
++            size_t  offsetOut;
++            uint8_t * ptrOut;
++            //Allocate a new Uniform buffer
++            ANGLE_TRY(getBufferPool(context)->allocate(context,
++                uniformBlock.uniformData.size(), &ptrOut, &mtlBufferOut, &offsetOut));
++            //Copy the uniform result
++            memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
++            //Commit
++            ANGLE_TRY(getBufferPool(context)->commit(context));
++            //Set buffer
++            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut, mtl::kDefaultUniformsBindingIndex);
++
  
--    // Check that the format matches this IOSurface plane
--    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
--        kIOSurfaceFormats[formatIndex].componentBytes)
--    {
--        return false;
--    }
-+    // FIXME: Check that the format matches this IOSurface plane for pixel formats that we know of.
-+    // We could map IOSurfaceGetPixelFormat to expected type plane and format type.
-+    // However, the caller might supply us non-public pixel format, which makes exhaustive checks
-+    // problematic.
+-        mDefaultUniformBlocksDirty.reset(shaderType);
+         }
  
-     return true;
++        mDefaultUniformBlocksDirty.reset(shaderType);
++    }
+     return angle::Result::Continue;
  }
+ 
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -307,11 +348,24 @@ index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860
      bool mAlwaysAllocateNewBuffer;
  };
  
+diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
+index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..3f3086c36d3ae3886af05a044bbdc834e63d2239 100644
+--- a/src/libANGLE/renderer/metal/mtl_common.h
++++ b/src/libANGLE/renderer/metal/mtl_common.h
+@@ -139,7 +139,7 @@ constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
+ constexpr uint32_t kMaxShaderBuffers     = 31;
+ constexpr uint32_t kMaxShaderSamplers    = 16;
+ constexpr size_t kInlineConstDataMaxSize = 4 * 1024;
+-constexpr size_t kDefaultUniformsMaxSize = 4 * 1024;
++constexpr size_t kDefaultUniformsMaxSize = 16 * 1024;
+ constexpr uint32_t kMaxViewports         = 1;
+ 
+ // Restrict in-flight resource usage to 400 MB.
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index ad9e8861346082fbe11824fefd59ec60eb1e2a20..9fa9318fdee76088cfcb8a424204659402794836 100644
+index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -2540,45 +2540,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2540,45 +2540,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -357,7 +411,7 @@ index ad9e8861346082fbe11824fefd59ec60eb1e2a20..9fa9318fdee76088cfcb8a4242046594
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2583,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2615,8 +2583,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
              UNREACHABLE();
      }
  
@@ -507,7 +561,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -504,12 +506,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -504,12 +506,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -522,7 +576,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  bool Texture::isCPUAccessible() const
-@@ -988,7 +990,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -988,7 +990,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -531,7 +585,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1009,7 +1011,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -1009,7 +1011,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  

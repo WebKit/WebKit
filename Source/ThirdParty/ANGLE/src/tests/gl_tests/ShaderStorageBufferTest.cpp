@@ -2839,6 +2839,167 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests that reading from an SSBO inside a function in the fragment shader works.
+TEST_P(ShaderStorageBufferTest31, FragReadSSBOInFunction)
+{
+    GLint maxFragmentShaderStorageBlocks;
+    glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &maxFragmentShaderStorageBlocks);
+
+    ANGLE_SKIP_TEST_IF(maxFragmentShaderStorageBlocks < 1);
+
+    constexpr std::array<float, 4> kBufferInitValue = {1.0f, 0.0f, 1.0f, 1.0f};
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferInitValue), kBufferInitValue.data(),
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    // Create a program that reads from the SSBO in the fragment shader.
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 colorOut;
+
+layout(binding = 0, std430) buffer block {
+  vec4 color;
+} instance;
+
+vec4 func() {
+  vec4 temp = instance.color;
+  return temp;
+}
+
+void main() {
+  colorOut = func();
+})";
+
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, essl31_shaders::vs::Simple());
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+
+    const GLuint program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+    CheckLinkStatusAndReturnProgram(program, true);
+
+    glUseProgram(program);
+    GLint positionLoc = glGetAttribLocation(program, essl31_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLoc);
+
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    const size_t posBufferSize                 = quadVertices.size() * sizeof(Vector3);
+
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, posBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLoc);
+
+    glUseProgram(program);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
+// Tests reading from an SSBO in a function. In this case, we also modify SSBO to check the result.
+TEST_P(ShaderStorageBufferTest31, ReadSSBOInFunction)
+{
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+layout(std430, binding = 0) buffer block {
+    uint data;
+} instance;
+
+uint func()
+{
+    return instance.data;
+}
+void main() {
+    instance.data = func() + 1u;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program);
+
+    constexpr unsigned int kBytesPerComponent = sizeof(GLuint);
+    constexpr unsigned int kInitialData       = 123u;
+
+    // Create shader storage buffer
+    GLBuffer shaderStorageBuffer;
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBytesPerComponent, &kInitialData, GL_STATIC_DRAW);
+
+    // Bind shader storage buffer
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer);
+
+    glDispatchCompute(1, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    const void *bufferData =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBytesPerComponent, GL_MAP_READ_BIT);
+
+    constexpr unsigned int kExpectedData = 124u;
+    EXPECT_EQ(kExpectedData, *static_cast<const GLuint *>(bufferData));
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Tests whole-array assignment to an SSBO.
+TEST_P(ShaderStorageBufferTest31, ArrayAssignSSBO)
+{
+    constexpr char kCS[] = R"(#version 310 es
+
+layout(std430, binding = 0) buffer block {
+  int a[4];
+} instance;
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+void main() {
+  instance.a = int[4](0, 1, 2, 3);
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program);
+
+    constexpr unsigned int kBytesPerComponent = sizeof(GLuint);
+    constexpr unsigned int kElementCount      = 4;
+
+    // Create shader storage buffer
+    GLBuffer shaderStorageBuffer;
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kElementCount * kBytesPerComponent, nullptr,
+                 GL_STATIC_DRAW);
+
+    // Bind shader storage buffer
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer);
+
+    glDispatchCompute(1, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    const void *bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
+                                              kElementCount * kBytesPerComponent, GL_MAP_READ_BIT);
+
+    for (unsigned int idx = 0; idx < kElementCount; idx++)
+    {
+        EXPECT_EQ(static_cast<const GLuint *>(bufferData)[idx], idx);
+    }
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ShaderStorageBufferTest31);
 ANGLE_INSTANTIATE_TEST_ES31(ShaderStorageBufferTest31);
 

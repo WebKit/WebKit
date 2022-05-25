@@ -141,8 +141,20 @@ TEST_P(APPLEClipDistanceTest, CompileSucceedsWithoutExtSupportVulkan)
 #endif
 
 #if defined(ANGLE_ENABLE_METAL)
-// With extension flag and extension directive, compiling using TranslatorMetal succeeds.
+// With extension flag and extension directive, compiling using TranslatorMetalDirect succeeds.
 TEST_P(APPLEClipDistanceTest, CompileSucceedsMetal)
+{
+    mResources.APPLE_clip_distance = 1;
+    mResources.MaxClipDistances    = 8;
+
+    InitializeCompiler(SH_MSL_METAL_OUTPUT);
+    EXPECT_TRUE(TestShaderCompile(EXTPragma));
+}
+#endif
+
+#if defined(ANGLE_ENABLE_METAL_SPIRV)
+// With extension flag and extension directive, compiling using TranslatorMetal succeeds.
+TEST_P(APPLEClipDistanceTest, CompileSucceedsMetalSPIRV)
 {
     mResources.APPLE_clip_distance = 1;
     mResources.MaxClipDistances    = 8;

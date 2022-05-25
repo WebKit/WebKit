@@ -310,6 +310,10 @@ class RendererD3D : public BufferFactoryD3D
     virtual TextureStorage *createTextureStorageEGLImage(EGLImageD3D *eglImage,
                                                          RenderTargetD3D *renderTargetD3D,
                                                          const std::string &label)     = 0;
+    virtual TextureStorage *createTextureStorageBuffer(
+        const gl::OffsetBindingPointer<gl::Buffer> &buffer,
+        GLenum internalFormat,
+        const std::string &label) = 0;
     virtual TextureStorage *createTextureStorageExternal(
         egl::Stream *stream,
         const egl::Stream::GLTextureDescription &desc,
@@ -402,6 +406,7 @@ class RendererD3D : public BufferFactoryD3D
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
     const gl::Limitations &getNativeLimitations() const;
+    virtual void initializeFrontendFeatures(angle::FrontendFeatures *features) const = 0;
 
     // Necessary hack for default framebuffers in D3D.
     virtual FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) = 0;

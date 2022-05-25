@@ -554,6 +554,8 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     mEarlyFragmentTestsSpecified = parseContext.isEarlyFragmentTestsSpecified();
 
+    mEnablesPerSampleShading = parseContext.isSampleQualifierSpecified();
+
     mComputeShaderLocalSizeDeclared = parseContext.isComputeShaderLocalSizeDeclared();
     mComputeShaderLocalSize         = parseContext.getComputeShaderLocalSize();
 

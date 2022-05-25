@@ -528,6 +528,7 @@ MSG kTextureBufferInvalidBuffer = "If buffer is nonzero, it must match the name 
 MSG kTextureFormatMismatch = "Passed in texture target and format must match the one originally used to define the texture.";
 MSG kTextureIsImmutable = "Texture is immutable.";
 MSG kTextureIsNotImmutable = "Texture is not immutable.";
+MSG kTextureIsNeitherImmutableNorTextureBuffer = "Texture is not the name of an immutable texture object or a buffer texture.";
 MSG kTextureNotBound = "A texture must be bound.";
 MSG kTextureNotPow2 = "The texture is a non-power-of-two texture.";
 MSG kTextureRectangleNotSupported = "Context does not support GL_ANGLE_texture_rectangle";

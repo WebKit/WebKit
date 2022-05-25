@@ -1579,7 +1579,7 @@ TEST_P(D3DTextureTest, TextureArray)
 
     const EGLint attribs[] = {EGL_D3D11_TEXTURE_ARRAY_SLICE_ANGLE, arraySize - 1, EGL_NONE};
     EGLImage image         = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
-                                       static_cast<EGLClientBuffer>(d3d11_texture), attribs);
+                                               static_cast<EGLClientBuffer>(d3d11_texture), attribs);
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(image, EGL_NO_IMAGE_KHR);
 
@@ -1825,24 +1825,23 @@ class D3DTextureYUVTest : public D3DTextureTest
     }
 };
 
+// Test that an NV12 D3D11 texture can be imported as two R8 and RG8 EGLImages and the resulting GL
+// textures can be sampled from.
 TEST_P(D3DTextureYUVTest, NV12TextureImage)
 {
     RunYUVTest(DXGI_FORMAT_NV12);
 }
 
-// Reading back from RGBA16_EXT renderbuffer needs GL_EXT_texture_norm16 which is ES3 only.
-class D3DTextureYUVTestES3 : public D3DTextureYUVTest
-{
-  protected:
-    D3DTextureYUVTestES3() : D3DTextureYUVTest() {}
-};
-
-TEST_P(D3DTextureYUVTestES3, P010TextureImage)
+// ANGLE ES2/D3D11 supports GL_EXT_texture_norm16 even though the extension spec says it's ES3 only.
+// Test P010 on ES2 since Chromium's Skia context is ES2 and it uses P010 for HDR video playback.
+TEST_P(D3DTextureYUVTest, P010TextureImage)
 {
     RunYUVTest(DXGI_FORMAT_P010);
 }
 
-TEST_P(D3DTextureYUVTestES3, P016TextureImage)
+// Same as above, but for P016. P016 doesn't seem to be supported on all GPUs so it might be skipped
+// more often than P010 and NV12 e.g. on the NVIDIA GTX 1050 Ti.
+TEST_P(D3DTextureYUVTest, P016TextureImage)
 {
     RunYUVTest(DXGI_FORMAT_P016);
 }
@@ -1853,7 +1852,6 @@ ANGLE_INSTANTIATE_TEST_ES2(D3DTextureTest);
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureClearTest);
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureYUVTest);
 ANGLE_INSTANTIATE_TEST_ES3(D3DTextureTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(D3DTextureYUVTestES3);
 // D3D Debug device reports an error. http://anglebug.com/3513
 // ANGLE_INSTANTIATE_TEST(D3DTextureTestMS, ES2_D3D11());
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(D3DTextureTestMS);

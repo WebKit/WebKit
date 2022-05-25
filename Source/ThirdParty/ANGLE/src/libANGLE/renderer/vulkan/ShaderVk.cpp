@@ -109,6 +109,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         compileOptions |= SH_GENERATE_SPIRV_THROUGH_GLSLANG;
     }
 
+    if (contextVk->getFeatures().roundOutputAfterDithering.enabled)
+    {
+        compileOptions |= SH_ROUND_OUTPUT_AFTER_DITHERING;
+    }
+
     return compileImpl(context, compilerInstance, mState.getSource(), compileOptions | options);
 }
 

@@ -19,8 +19,9 @@
 
 namespace rx
 {
-class RendererVk;
+constexpr VkDeviceSize kMaxTotalEmptyBufferBytes = 16 * 1024 * 1024;
 
+class RendererVk;
 using ContextVkSet = std::set<ContextVk *>;
 
 class ShareGroupVk : public ShareGroupImpl
@@ -35,6 +36,10 @@ class ShareGroupVk : public ShareGroupImpl
     PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
     DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
     const ContextVkSet &getContexts() const { return mContexts; }
+    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex descriptorSetIndex)
+    {
+        return mMetaDescriptorPools[descriptorSetIndex];
+    }
 
     void releaseResourceUseLists(const Serial &submitSerial);
     void acquireResourceUseList(vk::ResourceUseList &&resourceUseList)
@@ -46,7 +51,10 @@ class ShareGroupVk : public ShareGroupImpl
                                          VkDeviceSize size,
                                          uint32_t memoryTypeIndex);
     void pruneDefaultBufferPools(RendererVk *renderer);
-    bool isDueForBufferPoolPrune();
+    bool isDueForBufferPoolPrune(RendererVk *renderer);
+
+    void calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *totalSize) const;
+    void logBufferPools() const;
 
     void addContext(ContextVk *contextVk);
     void removeContext(ContextVk *contextVk);
@@ -57,6 +65,9 @@ class ShareGroupVk : public ShareGroupImpl
 
     // DescriptorSetLayouts are also managed in a cache.
     DescriptorSetLayoutCache mDescriptorSetLayoutCache;
+
+    // Descriptor set caches
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
 
     // The list of contexts within the share group
     ContextVkSet mContexts;

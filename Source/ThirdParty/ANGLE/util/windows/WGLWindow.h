@@ -51,6 +51,16 @@ class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
     GLWindowContext getCurrentContextGeneric() override;
     GLWindowContext createContextGeneric(GLWindowContext share) override;
     bool makeCurrentGeneric(GLWindowContext context) override;
+    Image createImage(GLWindowContext context,
+                      Enum target,
+                      ClientBuffer buffer,
+                      const Attrib *attrib_list) override;
+    Image createImageKHR(GLWindowContext context,
+                         Enum target,
+                         ClientBuffer buffer,
+                         const AttribKHR *attrib_list) override;
+    EGLBoolean destroyImage(Image image) override;
+    EGLBoolean destroyImageKHR(Image image) override;
 
     // Create a WGL context with this window's configuration
     HGLRC createContext(const ConfigParameters &configParams, HGLRC shareContext);

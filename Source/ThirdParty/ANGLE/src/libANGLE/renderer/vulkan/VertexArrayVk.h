@@ -82,6 +82,16 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBuffers;
     }
 
+    const gl::AttribArray<angle::FormatID> &getCurrentArrayBufferFormats() const
+    {
+        return mCurrentArrayBufferFormats;
+    }
+
+    const gl::AttribArray<GLuint> &getCurrentArrayBufferStrides() const
+    {
+        return mCurrentArrayBufferStrides;
+    }
+
     // Update mCurrentElementArrayBuffer based on the vertex array state
     void updateCurrentElementArrayBuffer();
 
@@ -108,7 +118,9 @@ class VertexArrayVk : public VertexArrayImpl
     }
 
   private:
-    angle::Result setDefaultPackedInput(ContextVk *contextVk, size_t attribIndex);
+    angle::Result setDefaultPackedInput(ContextVk *contextVk,
+                                        size_t attribIndex,
+                                        angle::FormatID *formatOut);
 
     angle::Result convertVertexBufferGPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
@@ -139,6 +151,7 @@ class VertexArrayVk : public VertexArrayImpl
     gl::AttribArray<GLuint> mCurrentArrayBufferRelativeOffsets;
     gl::AttribArray<vk::BufferHelper *> mCurrentArrayBuffers;
     // Cache strides of attributes for a fast pipeline cache update when VAOs are changed
+    gl::AttribArray<angle::FormatID> mCurrentArrayBufferFormats;
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
     gl::AttributesMask mCurrentArrayBufferCompressed;
     vk::BufferHelper *mCurrentElementArrayBuffer;

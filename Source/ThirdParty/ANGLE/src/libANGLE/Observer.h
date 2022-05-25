@@ -51,12 +51,9 @@ enum class SubjectMessage
     // gl::VertexArray, into gl::Context. Used to track validation.
     SubjectMapped,
     SubjectUnmapped,
-    // Indicates a bound buffer was reallocated when it was mapped, to prevent having to flush
-    // pending commands and waiting for the GPU to become idle.
+    // Indicates a bound buffer's storage was reallocated due to glBufferData call or optimizations
+    // to prevent having to flush pending commands and waiting for the GPU to become idle.
     InternalMemoryAllocationChanged,
-
-    // Indicates that a buffer's storage has changed. Used to prevent use-after-free error. (Vulkan)
-    BufferVkStorageChanged,
 
     // Indicates an external change to the default framebuffer.
     SurfaceChanged,

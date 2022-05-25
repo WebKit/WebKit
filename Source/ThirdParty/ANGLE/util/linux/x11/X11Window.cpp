@@ -6,7 +6,7 @@
 
 // X11Window.cpp: Implementation of OSWindow for X11
 
-#include "util/x11/X11Window.h"
+#include "util/linux/x11/X11Window.h"
 
 #include "common/debug.h"
 #include "util/Timer.h"
@@ -722,8 +722,13 @@ void X11Window::processEvent(const XEvent &xEvent)
     }
 }
 
-// static
-OSWindow *OSWindow::New()
+bool IsX11WindowAvailable()
 {
-    return new X11Window();
+    Display *display = XOpenDisplay(nullptr);
+    if (!display)
+    {
+        return false;
+    }
+    XCloseDisplay(display);
+    return true;
 }

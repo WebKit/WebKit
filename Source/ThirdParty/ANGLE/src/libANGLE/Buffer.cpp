@@ -394,8 +394,7 @@ void Buffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessa
     // Pass it along!
     ASSERT(index == kImplementationSubjectIndex);
     ASSERT(message == angle::SubjectMessage::SubjectChanged ||
-           message == angle::SubjectMessage::InternalMemoryAllocationChanged ||
-           message == angle::SubjectMessage::BufferVkStorageChanged);
+           message == angle::SubjectMessage::InternalMemoryAllocationChanged);
     onStateChange(message);
 }
 

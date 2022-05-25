@@ -115,6 +115,11 @@ Surface::Surface(EGLint surfaceType,
         mRenderBuffer = EGL_SINGLE_BUFFER;
     }
 
+    if (mType == EGL_WINDOW_BIT)
+    {
+        mRenderBuffer = mState.attributes.getAsInt(EGL_RENDER_BUFFER, EGL_BACK_BUFFER);
+    }
+
     mGLColorspace =
         static_cast<EGLenum>(attributes.get(EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_LINEAR));
     mVGAlphaFormat =

@@ -473,8 +473,17 @@ TEST_P(AttributeLayoutBufferIndexed, Test)
     Run(false);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(AttributeLayoutNonIndexed);
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(AttributeLayoutMemoryIndexed);
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(AttributeLayoutBufferIndexed);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(AttributeLayoutNonIndexed,
+                                       ES3_VULKAN()
+                                           .disable(Feature::SupportsExtendedDynamicState)
+                                           .disable(Feature::SupportsExtendedDynamicState2));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(AttributeLayoutMemoryIndexed,
+                                       ES3_VULKAN()
+                                           .disable(Feature::SupportsExtendedDynamicState)
+                                           .disable(Feature::SupportsExtendedDynamicState2));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(AttributeLayoutBufferIndexed,
+                                       ES3_VULKAN()
+                                           .disable(Feature::SupportsExtendedDynamicState)
+                                           .disable(Feature::SupportsExtendedDynamicState2));
 
 }  // anonymous namespace

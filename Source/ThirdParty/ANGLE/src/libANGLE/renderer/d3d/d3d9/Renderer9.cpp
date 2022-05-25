@@ -114,7 +114,7 @@ Renderer9::Renderer9(egl::Display *display) : RendererD3D(display), mStateManage
 
     const egl::AttributeMap &attributes = display->getAttributeMap();
     EGLint requestedDeviceType          = static_cast<EGLint>(attributes.get(
-        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
+                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
     switch (requestedDeviceType)
     {
         case EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE:
@@ -564,7 +564,7 @@ egl::ConfigSet Renderer9::generateConfigs()
                     config.transparentGreenValue = 0;
                     config.transparentBlueValue  = 0;
                     config.colorComponentType    = gl_egl::GLComponentTypeToEGLColorComponentType(
-                        colorBufferFormatInfo.componentType);
+                           colorBufferFormatInfo.componentType);
 
                     configs.add(config);
                 }
@@ -830,8 +830,8 @@ egl::Error Renderer9::validateShareHandle(const egl::Config *config,
 
     IDirect3DTexture9 *texture = nullptr;
     HRESULT result             = mDevice->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET,
-                                            backBufferd3dFormatInfo.texFormat, D3DPOOL_DEFAULT,
-                                            &texture, &shareHandle);
+                                                        backBufferd3dFormatInfo.texFormat, D3DPOOL_DEFAULT,
+                                                        &texture, &shareHandle);
     if (FAILED(result))
     {
         return egl::EglBadParameter() << "Failed to open share handle, " << gl::FmtHR(result);
@@ -2887,6 +2887,15 @@ TextureStorage *Renderer9::createTextureStorageEGLImage(EGLImageD3D *eglImage,
                                         label);
 }
 
+TextureStorage *Renderer9::createTextureStorageBuffer(
+    const gl::OffsetBindingPointer<gl::Buffer> &buffer,
+    GLenum internalFormat,
+    const std::string &label)
+{
+    UNREACHABLE();
+    return nullptr;
+}
+
 TextureStorage *Renderer9::createTextureStorageExternal(
     egl::Stream *stream,
     const egl::Stream::GLTextureDescription &desc,
@@ -3055,6 +3064,8 @@ void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
     }
     ApplyFeatureOverrides(features, mDisplay->getState());
 }
+
+void Renderer9::initializeFrontendFeatures(angle::FrontendFeatures *features) const {}
 
 DeviceImpl *Renderer9::createEGLDevice()
 {

@@ -210,6 +210,7 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mChecksPrecisionErrors(checksPrecErrors),
       mFragmentPrecisionHighOnESSL1(false),
       mEarlyFragmentTestsSpecified(false),
+      mSampleQualifierSpecified(false),
       mDefaultUniformMatrixPacking(EmpColumnMajor),
       mDefaultUniformBlockStorage(sh::IsWebGLBasedSpec(spec) ? EbsStd140 : EbsShared),
       mDefaultBufferMatrixPacking(EmpColumnMajor),
@@ -631,11 +632,8 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
                 message = "can't modify gl_PrimitiveID in a fragment shader";
             }
             break;
-        case EvqLayer:
-            if (mShaderType == GL_FRAGMENT_SHADER)
-            {
-                message = "can't modify gl_Layer in a fragment shader";
-            }
+        case EvqLayerIn:
+            message = "can't modify gl_Layer in a fragment shader";
             break;
         case EvqSampleID:
             message = "can't modify gl_SampleID";
@@ -2595,6 +2593,11 @@ TPublicType TParseContext::addFullySpecifiedType(const TTypeQualifierBuilder &ty
     checkEarlyFragmentTestsIsNotSpecified(typeSpecifier.getLine(),
                                           returnType.layoutQualifier.earlyFragmentTests);
 
+    if (returnType.qualifier == EvqSampleIn || returnType.qualifier == EvqSampleOut)
+    {
+        mSampleQualifierSpecified = true;
+    }
+
     if (mShaderVersion < 300)
     {
         if (typeSpecifier.isArray())
@@ -3942,7 +3945,7 @@ TIntermFunctionPrototype *TParseContext::addFunctionPrototypeDeclaration(
     // function is declared multiple times.
     bool hadPrototypeDeclaration = false;
     const TFunction *function    = symbolTable.markFunctionHasPrototypeDeclaration(
-        parsedFunction.getMangledName(), &hadPrototypeDeclaration);
+           parsedFunction.getMangledName(), &hadPrototypeDeclaration);
 
     if (hadPrototypeDeclaration && mShaderVersion == 100)
     {
@@ -6810,9 +6813,9 @@ void TParseContext::checkTextureOffset(TIntermAggregate *functionCall)
         TIntermAggregate *offsetAggregate = offset->getAsAggregate();
         TIntermSymbol *offsetSymbol       = offset->getAsSymbolNode();
 
-        const TConstantUnion *offsetValues =
-            offsetAggregate ? offsetAggregate->getConstantValue()
-                            : offsetSymbol ? offsetSymbol->getConstantValue() : nullptr;
+        const TConstantUnion *offsetValues = offsetAggregate ? offsetAggregate->getConstantValue()
+                                             : offsetSymbol  ? offsetSymbol->getConstantValue()
+                                                             : nullptr;
 
         if (offsetValues == nullptr)
         {

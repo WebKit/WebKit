@@ -44,6 +44,7 @@ enum class CommandID : uint16_t
     BindIndexBuffer,
     BindTransformFeedbackBuffers,
     BindVertexBuffers,
+    BindVertexBuffers2,
     BlitImage,
     BufferBarrier,
     ClearAttachments,
@@ -78,12 +79,28 @@ enum class CommandID : uint16_t
     ResetEvent,
     ResetQueryPool,
     ResolveImage,
+    SetBlendConstants,
+    SetCullMode,
+    SetDepthBias,
+    SetDepthBiasEnable,
+    SetDepthCompareOp,
+    SetDepthTestEnable,
+    SetDepthWriteEnable,
     SetEvent,
+    SetFragmentShadingRate,
+    SetFrontFace,
+    SetLineWidth,
+    SetPrimitiveRestartEnable,
+    SetRasterizerDiscardEnable,
     SetScissor,
+    SetStencilCompareMask,
+    SetStencilOp,
+    SetStencilReference,
+    SetStencilTestEnable,
+    SetStencilWriteMask,
     SetViewport,
     WaitEvents,
     WriteTimestamp,
-    SetShadingRate,
 };
 
 #define VERIFY_4_BYTE_ALIGNMENT(StructName) \
@@ -138,7 +155,8 @@ struct BindTransformFeedbackBuffersParams
 };
 VERIFY_4_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
 
-using BindVertexBuffersParams = BindTransformFeedbackBuffersParams;
+using BindVertexBuffersParams  = BindTransformFeedbackBuffersParams;
+using BindVertexBuffers2Params = BindVertexBuffersParams;
 
 struct BlitImageParams
 {
@@ -411,6 +429,50 @@ struct ResolveImageParams
 };
 VERIFY_4_BYTE_ALIGNMENT(ResolveImageParams)
 
+struct SetBlendConstantsParams
+{
+    float blendConstants[4];
+};
+VERIFY_4_BYTE_ALIGNMENT(SetBlendConstantsParams)
+
+struct SetCullModeParams
+{
+    VkCullModeFlags cullMode;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetCullModeParams)
+
+struct SetDepthBiasParams
+{
+    float depthBiasConstantFactor;
+    float depthBiasClamp;
+    float depthBiasSlopeFactor;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetDepthBiasParams)
+
+struct SetDepthBiasEnableParams
+{
+    VkBool32 depthBiasEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetDepthBiasEnableParams)
+
+struct SetDepthCompareOpParams
+{
+    VkCompareOp depthCompareOp;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetDepthCompareOpParams)
+
+struct SetDepthTestEnableParams
+{
+    VkBool32 depthTestEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetDepthTestEnableParams)
+
+struct SetDepthWriteEnableParams
+{
+    VkBool32 depthWriteEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetDepthWriteEnableParams)
+
 struct SetEventParams
 {
     VkEvent event;
@@ -418,11 +480,79 @@ struct SetEventParams
 };
 VERIFY_4_BYTE_ALIGNMENT(SetEventParams)
 
+struct SetFragmentShadingRateParams
+{
+    uint16_t fragmentWidth;
+    uint16_t fragmentHeight;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetFragmentShadingRateParams)
+
+struct SetFrontFaceParams
+{
+    VkFrontFace frontFace;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetFrontFaceParams)
+
+struct SetLineWidthParams
+{
+    float lineWidth;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetLineWidthParams)
+
+struct SetPrimitiveRestartEnableParams
+{
+    VkBool32 primitiveRestartEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetPrimitiveRestartEnableParams)
+
+struct SetRasterizerDiscardEnableParams
+{
+    VkBool32 rasterizerDiscardEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetRasterizerDiscardEnableParams)
+
 struct SetScissorParams
 {
     VkRect2D scissor;
 };
 VERIFY_4_BYTE_ALIGNMENT(SetScissorParams)
+
+struct SetStencilCompareMaskParams
+{
+    uint16_t compareFrontMask;
+    uint16_t compareBackMask;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetStencilCompareMaskParams)
+
+struct SetStencilOpParams
+{
+    uint32_t faceMask : 4;
+    uint32_t failOp : 3;
+    uint32_t passOp : 3;
+    uint32_t depthFailOp : 3;
+    uint32_t compareOp : 3;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetStencilOpParams)
+
+struct SetStencilReferenceParams
+{
+    uint16_t frontReference;
+    uint16_t backReference;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetStencilReferenceParams)
+
+struct SetStencilTestEnableParams
+{
+    VkBool32 stencilTestEnable;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetStencilTestEnableParams)
+
+struct SetStencilWriteMaskParams
+{
+    uint16_t writeFrontMask;
+    uint16_t writeBackMask;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetStencilWriteMaskParams)
 
 struct SetViewportParams
 {
@@ -448,13 +578,6 @@ struct WriteTimestampParams
     uint32_t query;
 };
 VERIFY_4_BYTE_ALIGNMENT(WriteTimestampParams)
-
-struct SetShadingRateParams
-{
-    uint16_t fragmentWidth;
-    uint16_t fragmentHeight;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetShadingRateParams)
 
 // Header for every cmd in custom cmd buffer
 struct CommandHeader
@@ -538,6 +661,13 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                            uint32_t bindingCount,
                            const VkBuffer *buffers,
                            const VkDeviceSize *offsets);
+
+    void bindVertexBuffers2(uint32_t firstBinding,
+                            uint32_t bindingCount,
+                            const VkBuffer *buffers,
+                            const VkDeviceSize *offsets,
+                            const VkDeviceSize *sizes,
+                            const VkDeviceSize *strides);
 
     void blitImage(const Image &srcImage,
                    VkImageLayout srcImageLayout,
@@ -678,10 +808,32 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                       uint32_t regionCount,
                       const VkImageResolve *regions);
 
+    void setBlendConstants(const float blendConstants[4]);
+    void setCullMode(VkCullModeFlags cullMode);
+    void setDepthBias(float depthBiasConstantFactor,
+                      float depthBiasClamp,
+                      float depthBiasSlopeFactor);
+    void setDepthBiasEnable(VkBool32 depthBiasEnable);
+    void setDepthCompareOp(VkCompareOp depthCompareOp);
+    void setDepthTestEnable(VkBool32 depthTestEnable);
+    void setDepthWriteEnable(VkBool32 depthWriteEnable);
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
-
+    void setFragmentShadingRate(const VkExtent2D *fragmentSize,
+                                VkFragmentShadingRateCombinerOpKHR ops[2]);
+    void setFrontFace(VkFrontFace frontFace);
+    void setLineWidth(float lineWidth);
+    void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
+    void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
-
+    void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
+    void setStencilOp(VkStencilFaceFlags faceMask,
+                      VkStencilOp failOp,
+                      VkStencilOp passOp,
+                      VkStencilOp depthFailOp,
+                      VkCompareOp compareOp);
+    void setStencilReference(uint32_t frontReference, uint32_t backReference);
+    void setStencilTestEnable(VkBool32 stencilTestEnable);
+    void setStencilWriteMask(uint32_t writeFrontMask, uint32_t writeBackMask);
     void setViewport(uint32_t firstViewport, uint32_t viewportCount, const VkViewport *viewports);
 
     void waitEvents(uint32_t eventCount,
@@ -698,8 +850,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void writeTimestamp(VkPipelineStageFlagBits pipelineStage,
                         const QueryPool &queryPool,
                         uint32_t query);
-
-    void setShadingRate(const VkExtent2D *fragmentSize, VkFragmentShadingRateCombinerOpKHR ops[2]);
 
     // No-op for compatibility
     VkResult end() { return VK_SUCCESS; }
@@ -1005,6 +1155,28 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers(uint32_t firstBindin
     paramStruct->bindingCount = bindingCount;
     writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
     storePointerParameter(writePtr, offsets, offsetsSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers2(uint32_t firstBinding,
+                                                             uint32_t bindingCount,
+                                                             const VkBuffer *buffers,
+                                                             const VkDeviceSize *offsets,
+                                                             const VkDeviceSize *sizes,
+                                                             const VkDeviceSize *strides)
+{
+    ASSERT(firstBinding == 0);
+    ASSERT(sizes == nullptr);
+    uint8_t *writePtr;
+    size_t buffersSize                    = bindingCount * sizeof(VkBuffer);
+    size_t offsetsSize                    = bindingCount * sizeof(VkDeviceSize);
+    size_t stridesSize                    = bindingCount * sizeof(VkDeviceSize);
+    BindVertexBuffers2Params *paramStruct = initCommand<BindVertexBuffers2Params>(
+        CommandID::BindVertexBuffers2, buffersSize + offsetsSize + stridesSize, &writePtr);
+    // Copy params
+    paramStruct->bindingCount = bindingCount;
+    writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storePointerParameter(writePtr, offsets, offsetsSize);
+    storePointerParameter(writePtr, strides, stridesSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
@@ -1452,11 +1624,112 @@ ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
     paramStruct->region             = regions[0];
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const float blendConstants[4])
+{
+    SetBlendConstantsParams *paramStruct =
+        initCommand<SetBlendConstantsParams>(CommandID::SetBlendConstants);
+    for (uint32_t channel = 0; channel < 4; ++channel)
+    {
+        paramStruct->blendConstants[channel] = blendConstants[channel];
+    }
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setCullMode(VkCullModeFlags cullMode)
+{
+    SetCullModeParams *paramStruct = initCommand<SetCullModeParams>(CommandID::SetCullMode);
+    paramStruct->cullMode          = cullMode;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthBias(float depthBiasConstantFactor,
+                                                       float depthBiasClamp,
+                                                       float depthBiasSlopeFactor)
+{
+    SetDepthBiasParams *paramStruct      = initCommand<SetDepthBiasParams>(CommandID::SetDepthBias);
+    paramStruct->depthBiasConstantFactor = depthBiasConstantFactor;
+    paramStruct->depthBiasClamp          = depthBiasClamp;
+    paramStruct->depthBiasSlopeFactor    = depthBiasSlopeFactor;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthBiasEnable(VkBool32 depthBiasEnable)
+{
+    SetDepthBiasEnableParams *paramStruct =
+        initCommand<SetDepthBiasEnableParams>(CommandID::SetDepthBiasEnable);
+    paramStruct->depthBiasEnable = depthBiasEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthCompareOp(VkCompareOp depthCompareOp)
+{
+    SetDepthCompareOpParams *paramStruct =
+        initCommand<SetDepthCompareOpParams>(CommandID::SetDepthCompareOp);
+    paramStruct->depthCompareOp = depthCompareOp;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthTestEnable(VkBool32 depthTestEnable)
+{
+    SetDepthTestEnableParams *paramStruct =
+        initCommand<SetDepthTestEnableParams>(CommandID::SetDepthTestEnable);
+    paramStruct->depthTestEnable = depthTestEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthWriteEnable(VkBool32 depthWriteEnable)
+{
+    SetDepthWriteEnableParams *paramStruct =
+        initCommand<SetDepthWriteEnableParams>(CommandID::SetDepthWriteEnable);
+    paramStruct->depthWriteEnable = depthWriteEnable;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::setEvent(VkEvent event, VkPipelineStageFlags stageMask)
 {
     SetEventParams *paramStruct = initCommand<SetEventParams>(CommandID::SetEvent);
     paramStruct->event          = event;
     paramStruct->stageMask      = stageMask;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setFragmentShadingRate(
+    const VkExtent2D *fragmentSize,
+    VkFragmentShadingRateCombinerOpKHR ops[2])
+{
+    ASSERT(fragmentSize != nullptr);
+
+    // Supported parameter values -
+    // 1. CombinerOp needs to be VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR
+    // 2. The largest fragment size supported is 4x4
+    ASSERT(ops[0] == VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR);
+    ASSERT(ops[1] == VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR);
+    ASSERT(fragmentSize->width <= 4);
+    ASSERT(fragmentSize->height <= 4);
+
+    SetFragmentShadingRateParams *paramStruct =
+        initCommand<SetFragmentShadingRateParams>(CommandID::SetFragmentShadingRate);
+    paramStruct->fragmentWidth  = static_cast<uint16_t>(fragmentSize->width);
+    paramStruct->fragmentHeight = static_cast<uint16_t>(fragmentSize->height);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setFrontFace(VkFrontFace frontFace)
+{
+    SetFrontFaceParams *paramStruct = initCommand<SetFrontFaceParams>(CommandID::SetFrontFace);
+    paramStruct->frontFace          = frontFace;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setLineWidth(float lineWidth)
+{
+    SetLineWidthParams *paramStruct = initCommand<SetLineWidthParams>(CommandID::SetLineWidth);
+    paramStruct->lineWidth          = lineWidth;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable)
+{
+    SetPrimitiveRestartEnableParams *paramStruct =
+        initCommand<SetPrimitiveRestartEnableParams>(CommandID::SetPrimitiveRestartEnable);
+    paramStruct->primitiveRestartEnable = primitiveRestartEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setRasterizerDiscardEnable(
+    VkBool32 rasterizerDiscardEnable)
+{
+    SetRasterizerDiscardEnableParams *paramStruct =
+        initCommand<SetRasterizerDiscardEnableParams>(CommandID::SetRasterizerDiscardEnable);
+    paramStruct->rasterizerDiscardEnable = rasterizerDiscardEnable;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setScissor(uint32_t firstScissor,
@@ -1468,6 +1741,54 @@ ANGLE_INLINE void SecondaryCommandBuffer::setScissor(uint32_t firstScissor,
     ASSERT(scissors != nullptr);
     SetScissorParams *paramStruct = initCommand<SetScissorParams>(CommandID::SetScissor);
     paramStruct->scissor          = scissors[0];
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setStencilCompareMask(uint32_t compareFrontMask,
+                                                                uint32_t compareBackMask)
+{
+    SetStencilCompareMaskParams *paramStruct =
+        initCommand<SetStencilCompareMaskParams>(CommandID::SetStencilCompareMask);
+    paramStruct->compareFrontMask = static_cast<uint16_t>(compareFrontMask);
+    paramStruct->compareBackMask  = static_cast<uint16_t>(compareBackMask);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setStencilOp(VkStencilFaceFlags faceMask,
+                                                       VkStencilOp failOp,
+                                                       VkStencilOp passOp,
+                                                       VkStencilOp depthFailOp,
+                                                       VkCompareOp compareOp)
+{
+    SetStencilOpParams *paramStruct = initCommand<SetStencilOpParams>(CommandID::SetStencilOp);
+    SetBitField(paramStruct->faceMask, faceMask);
+    SetBitField(paramStruct->failOp, failOp);
+    SetBitField(paramStruct->passOp, passOp);
+    SetBitField(paramStruct->depthFailOp, depthFailOp);
+    SetBitField(paramStruct->compareOp, compareOp);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setStencilReference(uint32_t frontReference,
+                                                              uint32_t backReference)
+{
+    SetStencilReferenceParams *paramStruct =
+        initCommand<SetStencilReferenceParams>(CommandID::SetStencilReference);
+    paramStruct->frontReference = static_cast<uint16_t>(frontReference);
+    paramStruct->backReference  = static_cast<uint16_t>(backReference);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setStencilTestEnable(VkBool32 stencilTestEnable)
+{
+    SetStencilTestEnableParams *paramStruct =
+        initCommand<SetStencilTestEnableParams>(CommandID::SetStencilTestEnable);
+    paramStruct->stencilTestEnable = stencilTestEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setStencilWriteMask(uint32_t writeFrontMask,
+                                                              uint32_t writeBackMask)
+{
+    SetStencilWriteMaskParams *paramStruct =
+        initCommand<SetStencilWriteMaskParams>(CommandID::SetStencilWriteMask);
+    paramStruct->writeFrontMask = static_cast<uint16_t>(writeFrontMask);
+    paramStruct->writeBackMask  = static_cast<uint16_t>(writeBackMask);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setViewport(uint32_t firstViewport,
@@ -1523,25 +1844,6 @@ ANGLE_INLINE void SecondaryCommandBuffer::writeTimestamp(VkPipelineStageFlagBits
     paramStruct->pipelineStage = pipelineStage;
     paramStruct->queryPool     = queryPool.getHandle();
     paramStruct->query         = query;
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::setShadingRate(const VkExtent2D *fragmentSize,
-                                                         VkFragmentShadingRateCombinerOpKHR ops[2])
-{
-    ASSERT(fragmentSize != nullptr);
-
-    // Supported parameter values -
-    // 1. CombinerOp needs to be VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR
-    // 2. The largest fragment size supported is 4x4
-    ASSERT(ops[0] == VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR);
-    ASSERT(ops[1] == VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR);
-    ASSERT(fragmentSize->width <= 4);
-    ASSERT(fragmentSize->height <= 4);
-
-    SetShadingRateParams *paramStruct =
-        initCommand<SetShadingRateParams>(CommandID::SetShadingRate);
-    paramStruct->fragmentWidth  = static_cast<uint16_t>(fragmentSize->width);
-    paramStruct->fragmentHeight = static_cast<uint16_t>(fragmentSize->height);
 }
 }  // namespace priv
 }  // namespace vk

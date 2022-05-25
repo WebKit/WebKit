@@ -91,6 +91,22 @@ void HandleAllocator::release(GLuint handle)
         WARN() << "HandleAllocator::release releasing " << handle << std::endl;
     }
 
+    // Try consolidating the ranges first.
+    for (HandleRange &handleRange : mUnallocatedList)
+    {
+        if (handleRange.begin - 1 == handle)
+        {
+            handleRange.begin--;
+            return;
+        }
+
+        if (handleRange.end == handle - 1)
+        {
+            handleRange.end++;
+            return;
+        }
+    }
+
     // Add to released list, logarithmic time for push_heap.
     mReleasedList.push_back(handle);
     std::push_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());

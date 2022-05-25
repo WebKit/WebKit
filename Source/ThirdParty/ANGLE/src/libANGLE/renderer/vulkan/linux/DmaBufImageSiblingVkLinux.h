@@ -15,6 +15,18 @@
 namespace rx
 {
 
+enum MutableFormat
+{
+    Allowed,
+    NotAllowed
+};
+
+enum InitResult
+{
+    Success,
+    Failed
+};
+
 class DmaBufImageSiblingVkLinux : public ExternalImageSiblingVk
 {
   public:
@@ -39,11 +51,18 @@ class DmaBufImageSiblingVkLinux : public ExternalImageSiblingVk
     void release(RendererVk *renderer) override;
 
   private:
+    angle::Result initWithFormat(DisplayVk *displayVk,
+                                 const angle::Format &format,
+                                 VkFormat vulkanFormat,
+                                 MutableFormat mutableFormat,
+                                 InitResult *outResult);
+
     angle::Result initImpl(DisplayVk *displayVk);
 
     egl::AttributeMap mAttribs;
     gl::Extents mSize;
     gl::Format mFormat;
+    std::vector<VkFormat> mVkFormats;
 
     bool mRenderable;
     bool mTextureable;

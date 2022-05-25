@@ -237,11 +237,6 @@ struct FeaturesVk : FeatureSetBase
         "Vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE when window resizing", &members,
         "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"};
 
-    FeatureInfo disallowSeamfulCubeMapEmulation = {
-        "disallowSeamfulCubeMapEmulation", FeatureCategory::VulkanWorkarounds,
-        "Seamful cube map emulation misbehaves on some drivers, so it's disallowed", &members,
-        "http://anglebug.com/3243"};
-
     FeatureInfo padBuffersToMaxVertexAttribStride = {
         "padBuffersToMaxVertexAttribStride", FeatureCategory::VulkanWorkarounds,
         "Vulkan considers vertex attribute accesses to count up to the last multiple of the "
@@ -569,6 +564,11 @@ struct FeaturesVk : FeatureSetBase
                                     "Emulate OpenGL dithering", &members,
                                     "http://anglebug.com/6755"};
 
+    FeatureInfo roundOutputAfterDithering = {
+        "roundOutputAfterDithering", FeatureCategory::VulkanWorkarounds,
+        "Round output after dithering to workaround a driver bug that rounds the output up",
+        &members, "http://anglebug.com/6953"};
+
     FeatureInfo emulateAdvancedBlendEquations = {
         "emulateAdvancedBlendEquations", FeatureCategory::VulkanFeatures,
         "Emulate GL_KHR_blend_equation_advanced", &members, "http://anglebug.com/3586"};
@@ -599,10 +599,35 @@ struct FeaturesVk : FeatureSetBase
         "Prefer adding HOST_VISIBLE flag for DEVICE_LOCAL memory when picking memory types",
         &members, "http://anglebug.com/7047"};
 
+    FeatureInfo supportsExtendedDynamicState = {
+        "supportsExtendedDynamicState", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_extended_dynamic_state extension", &members,
+        "http://anglebug.com/5906"};
+
+    FeatureInfo supportsExtendedDynamicState2 = {
+        "supportsExtendedDynamicState2", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_extended_dynamic_state2 extension", &members,
+        "http://anglebug.com/5906"};
+
     FeatureInfo supportsFragmentShadingRate = {
         "supportsFragmentShadingRate", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_KHR_fragment_shading_rate extension", &members,
         "http://anglebug.com/7172"};
+
+    FeatureInfo explicitlyEnablePerSampleShading = {
+        "explicitlyEnablePerSampleShading", FeatureCategory::VulkanWorkarounds,
+        "Explicitly enable per-sample shading if the fragment shader contains the "
+        "sample qualifier",
+        &members, "http://anglebug.com/6876"};
+
+    FeatureInfo forceContinuousRefreshOnSharedPresent = {
+        "forceContinuousRefreshOnSharedPresent", FeatureCategory::VulkanFeatures,
+        "Force to create vulkan swapchain with continuous refresh on shared present", &members,
+        "https://issuetracker.google.com/229267970"};
+
+    FeatureInfo supportsImage2dViewOf3d = {
+        "supportsImage2dViewOf3d", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_image_2d_view_of_3d", &members, "https://anglebug.com/7320"};
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

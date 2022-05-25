@@ -43,7 +43,7 @@ class Serial final
 {
   public:
     constexpr Serial() : mValue(kInvalid) {}
-    constexpr Serial(const Serial &other) = default;
+    constexpr Serial(const Serial &other)  = default;
     Serial &operator=(const Serial &other) = default;
 
     static constexpr Serial Infinite() { return Serial(std::numeric_limits<uint64_t>::max()); }
@@ -74,8 +74,26 @@ class Serial final
   private:
     template <typename T>
     friend class SerialFactoryBase;
+    friend class AtomicQueueSerial;
     constexpr explicit Serial(uint64_t value) : mValue(value) {}
     uint64_t mValue;
+    static constexpr uint64_t kInvalid = 0;
+};
+
+// Defines class to track the queue serial that can be load/store from multiple threads atomically.
+class AtomicQueueSerial final
+{
+  public:
+    constexpr AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
+    AtomicQueueSerial &operator=(const Serial &other)
+    {
+        mValue.store(other.mValue, std::memory_order_release);
+        return *this;
+    }
+    Serial getSerial() const { return Serial(mValue.load(std::memory_order_consume)); }
+
+  private:
+    std::atomic<uint64_t> mValue;
     static constexpr uint64_t kInvalid = 0;
 };
 

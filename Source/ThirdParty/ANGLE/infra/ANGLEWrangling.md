@@ -137,39 +137,30 @@ see: https://chromium-review.googlesource.com/c/angle/angle/+/3198390 where the
 script sometimes has difficulty with headers.  If you cannot see an obvious problem, create a CL
 that adds the header to `IGNORED_INCLUDES` in `export_targets.py`.
 
+### SwANGLE builders
+
+The ANGLE into Chromium roller has two SwiftShader + ANGLE (SwANGLE) builders:
+[linux-swangle-try-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-x64)
+and
+[win-swangle-try-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-x86).
+However, failures on these bots may be due to SwiftShader changes.
+
+To handle failures on these bots:
+1. If possible, suppress the failing tests in ANGLE, opening a bug to investigate later.
+1. If you supsect an ANGLE CL caused a regression,
+   consider whether reverting it or suppressing the failures is a better course of action.
+1. If you suspect a SwiftShader CL, and the breakage is too severe to suppress,
+   (a lot of tests fail in multiple suites),
+   consider reverting the responsible SwiftShader roll into Chromium
+   and open a SwiftShader [bug](http://go/swiftshaderbugs). SwiftShader rolls into Chromium
+   should fail afterwards, but if the bad roll manages to reland,
+   stop the [autoroller](https://autoroll.skia.org/r/swiftshader-chromium-autoroll) as well.
+
 ## Task 4: ANGLE Standalone Testing
 
 See more detailed instructions on by following [this link](README.md).
 
-## Task 5: Monitor SwANGLE CI and Try Testers
-
-The most important task here is to keep the 2 SwANGLE bots on the ANGLE CV healthy:
-[linux-swangle-try-tot-angle-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-tot-angle-x64)
-and
-[win-swangle-try-tot-angle-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-tot-angle-x86).
-As well as the 2 SwANGLE bots used for ANGLE rolls on Chromium CV,
-[linux-swangle-try-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-x64)
-and
-[win-swangle-try-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-x86).
-
-Same instructions as for [Task 1](#task-1_monitor-angle-ci-and-try-testers) apply here.
-Some failures on these bots may be due to SwiftShader changes, however.
-The possible ways to handle these failures are:
-1. If possible, suppress the failing tests in ANGLE, opening a bug to investigate these later.
-1. If it is clear that an ANGLE CL caused a regression,
-   consider whether reverting it or suppressing the failures is a better course of action.
-1. If a SwiftShader CL is suspected, and the breakage is too severe to be suppressed,
-   (a lot of tests fail in multiple suites),
-   it is possible to revert the responsible SwiftShader roll into Chromium
-   and open a SwiftShader [bug](http://go/swiftshaderbugs). SwiftShader rolls into Chromium
-   should fail afterwards, but if the bad roll manages to reland,
-   the [autoroller](https://autoroll.skia.org/r/swiftshader-chromium-autoroll) needs to be stopped.
-
-A lower priority task here is to keep healthy all the SwANGLE
-[CI](https://luci-milo.appspot.com/p/chromium/g/chromium.swangle/builders) and
-[Try](https://luci-milo.appspot.com/p/chromium/g/tryserver.chromium.swangle/builders) bots.
-
-## Task 6: Monitor and respond to ANGLE's perf alerts
+## Task 5: Monitor and respond to ANGLE's perf alerts
 
 Any large regressions should be triaged with a new ANGLE bug linked to any suspected CLs that may
 have caused performance to regress. If it's a known/expected regression, the bug can be closed as

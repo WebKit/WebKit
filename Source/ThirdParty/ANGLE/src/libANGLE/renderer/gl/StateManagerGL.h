@@ -457,7 +457,7 @@ class StateManagerGL final : angle::NonCopyable
     float mSampleCoverageValue;
     bool mSampleCoverageInvert;
     bool mSampleMaskEnabled;
-    std::array<GLbitfield, gl::MAX_SAMPLE_MASK_WORDS> mSampleMaskValues;
+    gl::SampleMaskArray<GLbitfield> mSampleMaskValues;
 
     bool mDepthTestEnabled;
     GLenum mDepthFunc;

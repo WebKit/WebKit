@@ -15,6 +15,7 @@ import re
 import subprocess
 import tarfile
 import tempfile
+import threading
 import time
 
 import angle_path_util
@@ -190,6 +191,40 @@ def _RunInstrumentation(flags):
         return _ReadDeviceFile(temp_device_file)
 
 
+def _DumpDebugInfo(since_time):
+    logcat_output = _AdbRun(['logcat', '-t', since_time]).decode()
+    logging.info('logcat:\n%s', logcat_output)
+
+    pid_lines = [
+        ln for ln in logcat_output.split('\n')
+        if 'org.chromium.native_test.NativeTest.StdoutFile' in ln
+    ]
+    if pid_lines:
+        debuggerd_output = _AdbShell('debuggerd %s' % pid_lines[-1].split(' ')[2]).decode()
+        logging.warning('debuggerd output:\n%s', debuggerd_output)
+
+
+def _RunInstrumentationWithTimeout(flags, timeout):
+    initial_time = _AdbShell('date +"%F %T.%3N"').decode().strip()
+
+    results = []
+
+    def run():
+        results.append(_RunInstrumentation(flags))
+
+    t = threading.Thread(target=run)
+    t.daemon = True
+    t.start()
+    t.join(timeout=timeout)
+
+    if t.is_alive():  # join timed out
+        logging.warning('Timed out, dumping debug info')
+        _DumpDebugInfo(since_time=initial_time)
+        raise TimeoutError('Test run did not finish in %s seconds' % timeout)
+
+    return results[0]
+
+
 def AngleSystemInfo(args):
     PrepareTestSuite('angle_system_info_test')
 
@@ -227,6 +262,34 @@ def _RemoveFlag(args, f):
     return original_value
 
 
+def RunSmokeTest():
+    test_name = 'TracePerfTest.Run/vulkan_words_with_friends_2'
+    run_instrumentation_timeout = 60
+
+    logging.info('Running smoke test (%s)', test_name)
+
+    PrepareRestrictedTraces([GetTraceFromTestName(test_name)])
+
+    with _TempDeviceFile() as device_test_output_path:
+        flags = [
+            '--gtest_filter=' + test_name, '--no-warmup', '--steps-per-trial', '1', '--trials',
+            '1', '--isolated-script-test-output=' + device_test_output_path
+        ]
+        try:
+            _RunInstrumentationWithTimeout(flags, run_instrumentation_timeout)
+        except TimeoutError:
+            raise Exception('Smoke test did not finish in %s seconds' %
+                            run_instrumentation_timeout)
+
+        test_output = _ReadDeviceFile(device_test_output_path)
+
+    output_json = json.loads(test_output)
+    if output_json['tests'][test_name]['actual'] != 'PASS':
+        raise Exception('Smoke test (%s) failed' % test_name)
+
+    logging.info('Smoke test passed')
+
+
 def RunTests(test_suite, args, stdoutfile=None, output_dir=None, log_output=True):
     args = args[:]
     test_output_path = _RemoveFlag(args, '--isolated-script-test-output')
@@ -248,7 +311,7 @@ def RunTests(test_suite, args, stdoutfile=None, output_dir=None, log_output=True
                 device_output_dir = stack.enter_context(_TempDeviceDir())
                 args.append('--render-test-output-dir=' + device_output_dir)
 
-            output = _RunInstrumentation(args)
+            output = _RunInstrumentationWithTimeout(args, timeout=10 * 60)
 
             test_output = _ReadDeviceFile(device_test_output_path)
             if test_output_path:

@@ -197,6 +197,22 @@ if (angle_use_x11) {
   ]
 }
 
+if (angle_use_wayland) {
+  _vulkan_backend_sources += [
+    "linux/wayland/DisplayVkWayland.cpp",
+    "linux/wayland/DisplayVkWayland.h",
+    "linux/wayland/WindowSurfaceVkWayland.cpp",
+    "linux/wayland/WindowSurfaceVkWayland.h",
+  ]
+}
+
+if (angle_use_gbm) {
+  _vulkan_backend_sources += [
+    "linux/gbm/DisplayVkGbm.cpp",
+    "linux/gbm/DisplayVkGbm.h",
+  ]
+}
+
 if (is_fuchsia) {
   _vulkan_backend_sources += [
     "fuchsia/DisplayVkFuchsia.cpp",
@@ -292,6 +308,10 @@ angle_source_set("angle_vulkan_backend") {
   ]
   public_configs = [ ":angle_vulkan_backend_config" ]
 
+  if (angle_use_wayland) {
+    public_configs += [ "$angle_root:angle_wayland_config" ]
+  }
+
   data_deps = []
 
   defines = []
@@ -303,6 +323,9 @@ angle_source_set("angle_vulkan_backend") {
 
   if (is_linux || is_chromeos) {
     deps += [ "$angle_root/src/common/linux:angle_dma_buf" ]
+    if (angle_use_gbm) {
+      deps += [ "//third_party/minigbm" ]
+    }
   }
 
   if (is_fuchsia) {

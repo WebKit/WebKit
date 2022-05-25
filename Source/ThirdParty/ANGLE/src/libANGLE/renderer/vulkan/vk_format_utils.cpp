@@ -177,7 +177,7 @@ void Format::initBufferFallback(RendererVk *renderer,
     {
         size_t skip = renderer->getFeatures().forceFallbackFormat.enabled ? 1 : 0;
         int i       = FindSupportedFormat(renderer, info, skip, compressedStartIndex,
-                                    HasFullBufferFormatSupport);
+                                          HasFullBufferFormatSupport);
 
         mActualBufferFormatID         = info[i].format;
         mVkBufferFormatIsPacked       = info[i].vkFormatIsPacked;
@@ -234,9 +234,7 @@ FormatTable::FormatTable() {}
 
 FormatTable::~FormatTable() {}
 
-void FormatTable::initialize(RendererVk *renderer,
-                             gl::TextureCapsMap *outTextureCapsMap,
-                             std::vector<GLenum> *outCompressedTextureFormats)
+void FormatTable::initialize(RendererVk *renderer, gl::TextureCapsMap *outTextureCapsMap)
 {
     for (size_t formatIndex = 0; formatIndex < angle::kNumANGLEFormats; ++formatIndex)
     {
@@ -257,11 +255,6 @@ void FormatTable::initialize(RendererVk *renderer,
         if (format.mActualSampleOnlyImageFormatID == angle::FormatID::NONE)
         {
             continue;
-        }
-
-        if (intendedAngleFormat.isBlock)
-        {
-            outCompressedTextureFormats->push_back(format.mIntendedGLFormat);
         }
 
         if (format.mActualRenderableImageFormatID == angle::FormatID::NONE)
@@ -431,9 +424,7 @@ gl::SwizzleState ApplySwizzle(const gl::SwizzleState &formatSwizzle,
     return result;
 }
 
-gl::SwizzleState GetFormatSwizzle(const ContextVk *contextVk,
-                                  const angle::Format &angleFormat,
-                                  const bool sized)
+gl::SwizzleState GetFormatSwizzle(const angle::Format &angleFormat, const bool sized)
 {
     gl::SwizzleState internalSwizzle;
 

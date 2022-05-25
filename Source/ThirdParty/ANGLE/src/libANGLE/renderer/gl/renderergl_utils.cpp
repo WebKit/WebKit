@@ -654,11 +654,6 @@ void GenerateCaps(const FunctionsGL *functions,
         gl::TextureCaps textureCaps =
             GenerateTextureFormatCaps(functions, features, internalFormat, maxSupportedESVersion);
         textureCapsMap->insert(internalFormat, textureCaps);
-
-        if (gl::GetSizedInternalFormatInfo(internalFormat).compressed)
-        {
-            caps->compressedTextureFormats.push_back(internalFormat);
-        }
     }
 
     // Table 6.28, implementation dependent values
@@ -1329,6 +1324,12 @@ void GenerateCaps(const FunctionsGL *functions,
 
     // Extension support
     extensions->setTextureExtensionSupport(*textureCapsMap);
+
+    // Expose this extension only when we support the formats or we're running on top of a native
+    // ES driver.
+    extensions->textureCompressionAstcLdrKHR =
+        extensions->textureCompressionAstcLdrKHR &&
+        (features.allowAstcFormats.enabled || functions->standard == STANDARD_GL_ES);
     extensions->textureCompressionAstcHdrKHR =
         extensions->textureCompressionAstcLdrKHR &&
         functions->hasExtension("GL_KHR_texture_compression_astc_hdr");
@@ -1582,7 +1583,7 @@ void GenerateCaps(const FunctionsGL *functions,
     {
         extensions->textureRectangleANGLE = true;
         caps->maxRectangleTextureSize     = std::min(
-            QuerySingleGLInt(functions, GL_MAX_RECTANGLE_TEXTURE_SIZE_ANGLE), textureSizeLimit);
+                QuerySingleGLInt(functions, GL_MAX_RECTANGLE_TEXTURE_SIZE_ANGLE), textureSizeLimit);
     }
 
     // OpenGL 4.3 (and above) and OpenGL ES 3.2 can support all features and constants defined in
@@ -1902,6 +1903,13 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(
         features, allowETCFormats,
         isIntel && !IsSandyBridge(device) && !IsIvyBridge(device) && !IsHaswell(device));
+
+    // Mesa always exposes ASTC extension but only Intel Gen9, Gen11, and Gen12 have hardware
+    // support for it. Newer Intel GPUs (Gen12.5+) do not support ASTC.
+    ANGLE_FEATURE_CONDITION(features, allowAstcFormats,
+                            !isMesa || isIntel && (Is9thGenIntel(device) || IsGeminiLake(device) ||
+                                                   IsCoffeeLake(device) || Is11thGenIntel(device) ||
+                                                   Is12thGenIntel(device)));
 
     // Ported from gpu_driver_bug_list.json (#183)
     ANGLE_FEATURE_CONDITION(features, emulateAbsIntFunction, IsApple() && isIntel);

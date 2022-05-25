@@ -1609,8 +1609,9 @@ void CaptureUpdateUniformBlockIndexes(const gl::Program *program,
         std::string name;
         params.addValueParam("program", ParamType::TShaderProgramID, program->id());
 
+        const std::string fullName = uniformBlocks[index].nameWithArrayIndex();
         ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
-        CaptureString(uniformBlocks[index].name.c_str(), &nameParam);
+        CaptureString(fullName.c_str(), &nameParam);
         params.addParam(std::move(nameParam));
 
         params.addValueParam("index", ParamType::TGLuint, index);

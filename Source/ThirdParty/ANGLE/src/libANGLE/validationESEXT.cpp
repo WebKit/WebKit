@@ -3039,7 +3039,8 @@ bool ValidateShadingRateQCOM(const Context *context, angle::EntryPoint entryPoin
         return false;
     }
 
-    if (gl::FromGLenum<gl::ShadingRate>(rate) == gl::ShadingRate::InvalidEnum)
+    gl::ShadingRate shadingRate = gl::FromGLenum<gl::ShadingRate>(rate);
+    if (shadingRate == gl::ShadingRate::Undefined || shadingRate == gl::ShadingRate::InvalidEnum)
     {
         context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidShadingRate);
         return false;

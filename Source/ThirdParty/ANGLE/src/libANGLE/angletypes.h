@@ -168,7 +168,7 @@ struct Extents
     Extents() : width(0), height(0), depth(0) {}
     Extents(int width_, int height_, int depth_) : width(width_), height(height_), depth(depth_) {}
 
-    Extents(const Extents &other) = default;
+    Extents(const Extents &other)            = default;
     Extents &operator=(const Extents &other) = default;
 
     bool empty() const { return (width * height * depth) == 0; }
@@ -797,6 +797,9 @@ static_assert(sizeof(BlendStateExt) == sizeof(uint64_t) +
 using StorageBuffersMask = angle::BitSet<IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS>;
 
 template <typename T>
+using SampleMaskArray = std::array<T, IMPLEMENTATION_MAX_SAMPLE_MASK_WORDS>;
+
+template <typename T>
 using TexLevelArray = std::array<T, IMPLEMENTATION_MAX_TEXTURE_LEVELS>;
 
 using TexLevelMask = angle::BitSet<IMPLEMENTATION_MAX_TEXTURE_LEVELS>;
@@ -969,6 +972,9 @@ using BarrierVector = angle::FastVector<T, kBarrierVectorDefaultSize>;
 
 using BufferBarrierVector = BarrierVector<Buffer *>;
 
+using SamplerBindingVector = std::vector<BindingPointer<Sampler>>;
+using BufferVector         = std::vector<OffsetBindingPointer<Buffer>>;
+
 struct TextureAndLayout
 {
     Texture *texture;
@@ -988,7 +994,7 @@ class LevelIndexWrapper
   public:
     LevelIndexWrapper() = default;
     explicit constexpr LevelIndexWrapper(T levelIndex) : mLevelIndex(levelIndex) {}
-    constexpr LevelIndexWrapper(const LevelIndexWrapper &other) = default;
+    constexpr LevelIndexWrapper(const LevelIndexWrapper &other)            = default;
     constexpr LevelIndexWrapper &operator=(const LevelIndexWrapper &other) = default;
 
     constexpr T get() const { return mLevelIndex; }

@@ -56,6 +56,7 @@
 6286 : ImageTest.UpdatedData/* = FAIL
 
 6180 : PbufferTest.BindTexImage/* = FAIL
+6180 : PbufferTest.BindTexImageAfterTexImage/* = FAIL
 6180 : PbufferTest.ClearAndBindTexImageSrgb/* = FAIL
 6180 : PbufferTest.ClearAndBindTexImageSrgbSkipDecode/* = FAIL
 6180 : PbufferTest.Clearing/* = FAIL
@@ -76,8 +77,6 @@
 6654 : UniformTest.UnusedStructInlineUniform/* = SKIP_FOR_CAPTURE
 6654 : UniformTest.UnusedStructInlineUniformWithSampler/* = SKIP_FOR_CAPTURE
 
-7153 : InstancingTestES3.LargestDivisor/* = COMPILE_FAIL
-
 # Fails because of unsupported combined depth/stencil GetImage.
 4688 ASAN : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
 
@@ -87,6 +86,7 @@
 # ES3
 6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
 6180 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
+3886 : ComputeShaderTest.BindImageTexture3D/* = NOT_RUN
 
 # This test only exists on Win64
 6180 WIN : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = NOT_RUN
@@ -102,10 +102,6 @@
 6513 : TransformFeedbackTest.MultiContext/* = FLAKY
 6180 WIN : TransformFeedbackTest.BufferOutOfMemory/* = FLAKY
 6180 : VertexAttributeTestES3.DrawWithUnalignedData/* = FLAKY
-
-6180 : UniformBufferTest.BlockArrayContainingArrayOfStructs/* = FAIL
-6180 : UniformBufferTest.ManyBlocks/* = FAIL
-
 
 # Skip because crashes
 6313 : CopyTextureTestES3.InvalidateBlitThenBlend1000Layers/* = CRASH
@@ -166,7 +162,6 @@
 # ES3_1 Crashed
 6180 : EGLMultiContextTest.ComputeShaderOkayWithRendering/* = CRASH
 6180 : EGLMultiContextTest.TestContextDestroySimple/* = CRASH
-6605 : TextureBufferTestES31.MapTextureBufferInvalidateThenWrite/* = FAIL
 
 # ES3_1 gtest skips
 6180 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = NOT_RUN
@@ -198,3 +193,7 @@
 7088 : VulkanPerformanceCounterTest* = SKIP_FOR_CAPTURE
 
 7111 : ImageTestES3.Source2DTarget2DStorageOrphan/* = FAIL
+
+7291 : BlitFramebufferTest.Blit3D/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE

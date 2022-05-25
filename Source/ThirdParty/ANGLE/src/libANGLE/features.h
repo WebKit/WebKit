@@ -29,11 +29,6 @@
 #    define ANGLE_VSYNC ANGLE_ENABLED
 #endif
 
-// Program binary loading
-#if !defined(ANGLE_PROGRAM_BINARY_LOAD)
-#    define ANGLE_PROGRAM_BINARY_LOAD ANGLE_ENABLED
-#endif
-
 // Append HLSL assembly to shader debug info. Defaults to enabled in Debug and off in Release.
 #if !defined(ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO)
 #    if !defined(NDEBUG)

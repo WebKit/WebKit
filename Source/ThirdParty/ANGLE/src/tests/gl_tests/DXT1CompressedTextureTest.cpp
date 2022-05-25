@@ -469,6 +469,68 @@ TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImageValidation)
     ASSERT_GL_ERROR(GL_INVALID_VALUE);
 }
 
+// Test validation of glCompressedTexSubImage3D with per-slice data uploads
+TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImage3DValidationPerSlice)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    const GLenum format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+
+    // 8x8x2, 4x4x2, 2x2x2, 1x1x2
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, format, 8, 8, 2);
+    ASSERT_GL_NO_ERROR();
+
+    uint8_t data[32] = {};
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 8, 1, format, 32, data);
+    ASSERT_GL_NO_ERROR();
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 8, 8, 1, format, 32, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 4, 4, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 1, 4, 4, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 2, 0, 0, 0, 2, 2, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 2, 0, 0, 1, 2, 2, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 3, 0, 0, 0, 1, 1, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 3, 0, 0, 1, 1, 1, 1, format, 8, data);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test validation of glCompressedTexSubImage3D with combined per-level data uploads
+TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImage3DValidationPerLevel)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    const GLenum format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+
+    // 8x8x2, 4x4x2, 2x2x2, 1x1x2
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, format, 8, 8, 2);
+    ASSERT_GL_NO_ERROR();
+
+    uint8_t data[64] = {};
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 8, 8, 2, format, 64, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 4, 4, 2, format, 16, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 2, 0, 0, 0, 2, 2, 2, format, 16, data);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 3, 0, 0, 0, 1, 1, 2, format, 16, data);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test validation of glCompressedTexSubImage3D with DXT formats
 TEST_P(DXT1CompressedTextureTestES3, CopyTexSubImage3DDisallowed)
 {

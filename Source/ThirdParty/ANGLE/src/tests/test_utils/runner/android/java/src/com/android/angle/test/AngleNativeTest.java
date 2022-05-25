@@ -157,7 +157,9 @@ public class AngleNativeTest
 
     private void runTests(Activity activity)
     {
+        Log.i(TAG, "runTests: " + mCommandLineFlags.toString());
         nativeRunTests(mCommandLineFlags.toString(), mCommandLineFilePath, mStdoutFilePath);
+        Log.i(TAG, "runTests finished");
         activity.finish();
         mReporter.testRunFinished(Process.myPid());
     }

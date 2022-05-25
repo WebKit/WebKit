@@ -1725,8 +1725,9 @@ void MaskedScissoredClearTestBase::maskedScissoredColorDepthStencilClear(
     // using a scissor, the corners should be left to the original color, while the center is
     // possibly changed.  If using a mask, the center (and corners if not scissored), changes to
     // the masked results.
-    GLColor expectedCenterColorRGB =
-        !clearColor ? color1RGB : maskColor ? color2MaskedRGB : color2RGB;
+    GLColor expectedCenterColorRGB = !clearColor ? color1RGB
+                                     : maskColor ? color2MaskedRGB
+                                                 : color2RGB;
     GLColor expectedCornerColorRGB = scissor ? color1RGB : expectedCenterColorRGB;
 
     // Verify second clear color mask worked as expected.
@@ -2876,7 +2877,11 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  testing::Range(0, 3),
                                  testing::Bool(),
                                  ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanClearTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,

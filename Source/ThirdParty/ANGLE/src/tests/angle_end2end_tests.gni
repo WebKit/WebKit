@@ -86,6 +86,7 @@ angle_end2end_tests_sources = [
   "gl_tests/IndexBufferOffsetTest.cpp",
   "gl_tests/IndexedPointsTest.cpp",
   "gl_tests/InstancingTest.cpp",
+  "gl_tests/KTXCompressedTextureTest.cpp",
   "gl_tests/LineLoopTest.cpp",
   "gl_tests/LinkAndRelinkTest.cpp",
   "gl_tests/MatrixTest.cpp",

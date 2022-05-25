@@ -120,48 +120,6 @@
 6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_read_pixels = FAIL
 6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_texture = FAIL
 
-// Pixel 4 Vulkan (still failing March 16, 2022)
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_clear_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_render_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_clear_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_render_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_render_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_render_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_clear_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_clear_render_even_render_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_clear_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_render_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_clear_even_render_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_even_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_render_even_clear_clear = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_render_even_none = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_render_even_render = FAIL
-6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_render_even_render_render = FAIL
-
 // Pixel 6 Vulkan
 // These fail on the Android S bots, but pass on pre-release Android T drivers:
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
@@ -309,5 +267,6 @@
 
 6678 TSAN : dEQP-EGL.functional.multithread.* = SKIP
 6678 TSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
+7327 TSAN : dEQP-EGL.functional.color_clears.multi_thread.gles3.rgba8888_window = SKIP
 
 6678 UBSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP

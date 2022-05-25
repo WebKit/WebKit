@@ -29,20 +29,6 @@ namespace sh
 namespace
 {
 
-#if 0
-static constexpr const int kNormalBlendFuncChannel = 1;
-static constexpr const int kHslBlendFuncChannel    = 3;
-
-static const char *kColorCoeffVarName       = "coeff_color";
-static const char *kAlphaCoeffVarName       = "coeff_alpha";
-static const char *kSourceVarName           = "src";
-static const char *kDestinationVarName      = "dst";
-static const char *kOutputVarName           = "blend_result";
-static const char *kPremultipliedSrcVarName = "premul_src";
-static const char *kPremultipliedDstVarName = "premul_dst";
-static const char *kBlendMainFuncName       = "main";
-#endif
-
 // All helper functions that may be generated.
 class Builder
 {
