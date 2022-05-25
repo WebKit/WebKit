@@ -85,7 +85,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
                 break;
             case DataFormatCell:
                 m_jit.move(TrustedImm32(JSValue::CellTag), tagGPR);
-                m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
+                m_jit.loadCell(JITCompiler::payloadFor(virtualRegister), payloadGPR);
                 spillFormat = DataFormatJSCell; // This will be used as the new register format.
                 break;
             case DataFormatBoolean:
@@ -1104,18 +1104,20 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         }
 
         ASSERT((info.spillFormat() & DataFormatJS) || info.spillFormat() == DataFormatCell);
+        GPRReg payloadGPR = allocate();
+        GPRReg tagGPR = allocate();
+        m_jit.loadValue(JITCompiler::addressFor(virtualRegister), { tagGPR, payloadGPR });
         if (type & ~SpecCell) {
             speculationCheck(
                 BadType,
                 JSValueSource(JITCompiler::addressFor(virtualRegister)),
                 edge,
-                m_jit.branchIfNotCell(JITCompiler::tagFor(virtualRegister)));
+                m_jit.branchIfNotCell(tagGPR));
         }
-        GPRReg gpr = allocate();
-        m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
-        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillCell(m_stream, gpr);
-        return gpr;
+        m_gprs.unlock(tagGPR);
+        m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
+        info.fillCell(m_stream, payloadGPR);
+        return payloadGPR;
     }
 
     case DataFormatCell: {

@@ -237,7 +237,7 @@ void JIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpTypeofIsUndefined>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
-    
+
     emitGetVirtualRegister(value, jsRegT10);
     Jump isCell = branchIfCell(jsRegT10);
 

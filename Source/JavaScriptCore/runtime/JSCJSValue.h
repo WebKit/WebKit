@@ -135,6 +135,10 @@ enum class SourceCodeRepresentation : uint8_t {
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
 
+#if USE(JSVALUE32_64) && ENABLE(CONCURRENT_JS)
+extern "C" JS_EXPORT_PRIVATE int g_globalLock;
+#endif
+
 class JSValue {
     friend struct EncodedJSValueHashTraits;
     friend struct EncodedJSValueWithRepresentationHashTraits;

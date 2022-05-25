@@ -2500,37 +2500,6 @@ end
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
 # t3 is caller's JSGlobalObject
-macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, prepareCall, slowCase)
-    addi 1, CallLinkInfo::m_slowPathCount[t2]
-    if JSVALUE64
-        btqnz t0, NotCellMask, slowCase
-    else
-        bineq t1, CellTag, slowCase
-    end
-    bbneq JSCell::m_type[t0], JSFunctionType, .notJSFunction
-    loadp JSFunction::m_executableOrRareData[t0], t5
-    btpz t5, (constexpr JSFunction::rareDataTag), .isExecutable
-    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t5], t5
-.isExecutable:
-    loadp offsetOfJITCodeWithArityCheck[t5], t4
-    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, t3 needs to be unmodified.
-    move t4, t1
-    move 0, t0
-    bbneq JSCell::m_type[t5], FunctionExecutableType, .callCode
-    loadp offsetOfCodeBlock[t5], t0
-.callCode:
-    prepareCall(t5, t2, t3, t4)
-    storep t0, CodeBlock - PrologueStackPointerDelta[sp]
-    jmp t1, JSEntryPtrTag
-.notJSFunction:
-    bbneq JSCell::m_type[t0], InternalFunctionType, slowCase
-    prepareCall(t5, t2, t3, t4)
-    jmp internalFunctionTrampoline
-end
-
-# 64bit:t0 32bit(t0,t1) is callee
-# t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_link_call_trampoline, macro ()
     linkSlowPathFor(_llint_link_call)
 end)

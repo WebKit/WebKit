@@ -2495,17 +2495,6 @@ void JIT::emit_op_enumerator_has_own_property(const JSInstruction*)
 
 void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
 {
-    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
-    Jump valueNotCell;
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
-#if USE(JSVALUE64)
-        emitGetVirtualRegister(value, regT0);
-#elif USE(JSVALUE32_64)
-        emitGetVirtualRegisterTag(value, regT0);
-#endif
-        valueNotCell = branchIfNotCell(regT0);
-    }
-
     constexpr GPRReg arg1GPR = preferredArgumentGPR<decltype(operationWriteBarrierSlowPath), 1>();
 #if USE(JSVALUE64)
     constexpr JSValueRegs tmpJSR { arg1GPR };
@@ -2514,8 +2503,15 @@ void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBa
 #endif
     static_assert(noOverlap(regT0, arg1GPR, regT2));
 
-    emitGetVirtualRegister(owner, tmpJSR);
+    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
+        emitGetVirtualRegister(value, tmpJSR);
+        valueNotCell = branchIfNotCell(regT0);
+    }
+
     Jump ownerNotCell;
+    emitGetVirtualRegister(owner, tmpJSR);
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell = branchIfNotCell(tmpJSR);
 

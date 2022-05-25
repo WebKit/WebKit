@@ -37,6 +37,10 @@ namespace JSC {
 
 const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
 
+#if USE(JSVALUE32_64) && ENABLE(CONCURRENT_JS)
+int g_globalLock { 0 };
+#endif
+
 double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())

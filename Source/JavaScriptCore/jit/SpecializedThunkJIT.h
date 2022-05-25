@@ -58,7 +58,8 @@ namespace JSC {
             VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);
             m_failures.append(emitLoadDouble(src, dst, scratch));
         }
-        
+
+#if USE(JSVALUE64)
         void loadCellArgument(int argument, RegisterID dst)
         {
             VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);
@@ -70,7 +71,20 @@ namespace JSC {
             loadCellArgument(argument, dst);
             m_failures.append(branchIfNotString(dst));
         }
-        
+#else
+        void loadCellArgument(int argument, RegisterID dst, RegisterID scratch)
+        {
+            VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);
+            m_failures.append(emitLoadJSCell(src, dst, scratch));
+        }
+
+        void loadJSStringArgument(int argument, RegisterID dst, RegisterID scratch)
+        {
+            loadCellArgument(argument, dst, scratch);
+            m_failures.append(branchIfNotString(dst));
+        }
+#endif
+
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)
         {
             VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);

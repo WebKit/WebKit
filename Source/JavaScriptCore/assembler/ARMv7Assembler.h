@@ -573,7 +573,9 @@ private:
         OP_B_T1         = 0xD000,
         OP_B_T2         = 0xE000,
         OP_STRD_imm_T1  = 0xE840,
+        OP_STREX_imm_T1 = 0xE840,
         OP_LDRD_imm_T1  = 0xE850,
+        OP_LDREX_imm_T1 = 0xE850,
         OP_POP_T2       = 0xE8BD,
         OP_PUSH_T2      = 0xE92D,
         OP_AND_reg_T2   = 0xEA00,
@@ -706,6 +708,7 @@ private:
         OP_NOP_T2b       = 0x8000,
         OP_DMB_SY_T1b    = 0x8F5F,
         OP_DMB_ISHST_T1b = 0x8F5A,
+        OP_DMB_ISH_T1b   = 0x8F5B,
         OP_B_T3b         = 0x8000,
         OP_B_T4b         = 0x9000,
         OP_BL_T4b        = 0xD000,
@@ -1320,6 +1323,14 @@ public:
         m_formatter.twoWordOp12Reg4Reg4Reg4Imm8(static_cast<OpcodeID1>(opcode), rn, rt, rt2, offset);
     }
 
+    ALWAYS_INLINE void ldrex(RegisterID rt, RegisterID rn, int32_t offset)
+    {
+        ASSERT(!BadReg(rt));
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(!(offset & ~0x3fc));
+        m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDREX_imm_T1, rn, rt, (0xf << 8 | offset >> 2));
+    }
+
     void lsl(RegisterID rd, RegisterID rm, int32_t shiftAmount)
     {
         ASSERT(!BadReg(rd));
@@ -1797,6 +1808,17 @@ public:
         m_formatter.twoWordOp12Reg4Reg4Reg4Imm8(static_cast<OpcodeID1>(opcode), rn, rt, rt2, offset);
     }
 
+    ALWAYS_INLINE void strex(RegisterID rd, RegisterID rt, RegisterID rn, int32_t offset)
+    {
+        ASSERT(!BadReg(rd));
+        ASSERT(!BadReg(rt));
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(rd != rn);
+        ASSERT(rd != rt);
+        ASSERT(!(offset & ~0x3fc));
+        m_formatter.twoWordOp12Reg4Reg4Reg4Imm8(OP_STREX_imm_T1, rn, rt, rd, offset >> 2);
+    }
+
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
@@ -2158,6 +2180,11 @@ public:
     void dmbISHST()
     {
         m_formatter.twoWordOp16Op16(OP_DMB_T1a, OP_DMB_ISHST_T1b);
+    }
+
+    void dmbISH()
+    {
+        m_formatter.twoWordOp16Op16(OP_DMB_T1a, OP_DMB_ISH_T1b);
     }
 
     AssemblerLabel labelIgnoringWatchpoints()

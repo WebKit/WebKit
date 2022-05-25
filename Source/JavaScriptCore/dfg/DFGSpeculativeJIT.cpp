@@ -2419,7 +2419,9 @@ void SpeculativeJIT::checkArgumentTypes()
             break;
         }
         case FlushedCell: {
-            speculationCheck(BadType, valueSource, node, m_jit.branchIfNotCell(JITCompiler::tagFor(virtualRegister)));
+            GPRTemporary temp(this);
+            m_jit.load32Concurrently(JITCompiler::tagFor(virtualRegister), temp.gpr());
+            speculationCheck(BadType, valueSource, node, m_jit.branchIfNotCell(temp.gpr()));
             break;
         }
         default:
@@ -10156,17 +10158,17 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         }
 
 #if USE(JSVALUE32_64)
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
+        GPRTemporary tempTag(this);
+        GPRTemporary tempPayload(this);
 #endif
 
         emitLoop([&] () {
 #if USE(JSVALUE64)
             auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
 #else
-            auto skip = m_jit.branchIfNotCell(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset));
-            m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
-            auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
+            m_jit.loadValue(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), {tempTag.gpr(), tempPayload.gpr()});
+            auto skip = m_jit.branchIfNotCell(tempTag.gpr());
+            auto found = m_jit.branch32(CCallHelpers::Equal, tempPayload.gpr(), searchElementGPR);
             skip.link(&m_jit);
 #endif
             return found;

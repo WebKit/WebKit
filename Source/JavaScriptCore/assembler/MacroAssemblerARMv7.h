@@ -191,6 +191,43 @@ public:
     static constexpr RegisterID framePointerRegister = ARMRegisters::fp;
     static constexpr RegisterID linkRegister = ARMRegisters::lr;
 
+private:
+    template<typename instruction>
+    void execConcurrently(instruction insn)
+    {
+        constexpr RegisterID scratch = dataTempRegister;
+        constexpr RegisterID scratch2 = addressTempRegister;
+
+        ArmAddress lockAddress = setupArmAddress(AbsoluteAddress(&g_globalLock), scratch2);
+
+        Label tryLock = label();
+        m_assembler.ldrex(scratch, lockAddress.base, lockAddress.u.offset);
+        branch32(NotEqual, scratch, TrustedImm32(0)).linkTo(tryLock, this);
+
+        // Here we are actually writting the address of the lock at the address of the lock
+        // While gcc/clang write #1 to indicate that we have the lock, we don't really care about the value
+        // written, since we only need it to be not #0
+        m_assembler.strex(scratch, scratch2, lockAddress.base, lockAddress.u.offset);
+        branch32(NotEqual, scratch, TrustedImm32(0)).linkTo(tryLock, this);
+
+        // At this point we hold the lock, force sequential execution
+        m_assembler.dmbISH();
+
+        // The actual op
+        insn();
+
+        m_assembler.dmbISH();
+
+        move(TrustedImm32(0), scratch);
+
+        // The previous insn may have overriden scratch2, so we might need to setup it again
+        intptr_t currentRegisterContents;
+        if (cachedAddressTempRegister().value(currentRegisterContents))
+            lockAddress = setupArmAddress(AbsoluteAddress(&g_globalLock), scratch2);
+        store32(scratch, lockAddress);
+    }
+
+public:
     // Integer arithmetic operations:
     //
     // Operations are typically two operand - operation(source, srcDst)
@@ -814,6 +851,25 @@ public:
         load32(setupArmAddress(address), dest);
     }
 
+    void load32Concurrently(Address address, RegisterID dest)
+    {
+        // TODO: can we do this better with variadic lambdas?
+        auto load = [&]() {
+            load32(setupArmAddress(address), dest);
+        };
+        execConcurrently(load);
+    }
+
+    template<typename T, typename U, typename V>
+    void loadTwo32Concurrently(T address, U src1, V src2)
+    {
+        // TODO: can we do this better with variadic lambdas?
+        auto load = [&]() {
+            loadPair32(address, src1, src2);
+        };
+        execConcurrently(load);
+    }
+
     void load32(BaseIndex address, RegisterID dest)
     {
         load32(setupArmAddress(address), dest);
@@ -979,6 +1035,11 @@ public:
         loadPair32(Address(scratch, address.offset), dest1, dest2);
     }
 
+    void loadPair32(const void* address, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(setupArmAddress(AbsoluteAddress(address)), dest1, dest2);
+    }
+
     void loadPair64(RegisterID src, TrustedImm32 offset, FPRegisterID dest1, FPRegisterID dest2)
     {
         ASSERT(dest1 != dest2);
@@ -1046,6 +1107,16 @@ public:
     {
         move(imm, dataTempRegister);
         store32(dataTempRegister, address);
+    }
+
+    void store32Concurrently(TrustedImm32 imm, const void* address)
+    {
+        // TODO: can we do this better with variadic lambdas?
+        auto store = [&]() {
+            move(imm, dataTempRegister);
+            store32(dataTempRegister, address);
+        };
+        execConcurrently(store);
     }
 
     void store8(RegisterID src, Address address)
@@ -1189,6 +1260,16 @@ public:
         ArmAddress armAddress = setupArmAddress(AbsoluteAddress(address));
         ASSERT(armAddress.type == ArmAddress::HasOffset);
         storePair32(src1, src2, Address(armAddress.base, armAddress.u.offset));
+    }
+
+    template<typename T, typename U, typename V>
+    void storeTwo32Concurrently(T src1, U src2, V address)
+    {
+        // TODO: can we do this better with variadic lambdas?
+        auto store = [&]() {
+            storePair32(src1, src2, address);
+        };
+        execConcurrently(store);
     }
 
     // Possibly clobbers src, but not on this architecture.

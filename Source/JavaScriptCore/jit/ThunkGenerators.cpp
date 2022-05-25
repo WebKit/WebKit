@@ -733,7 +733,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
 static void stringCharLoad(SpecializedThunkJIT& jit)
 {
     // load string
+#if USE(JSVALUE64)
     jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
+#else
+    jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT2);
+#endif
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
     jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, JSString::offsetOfValue()), SpecializedThunkJIT::regT0);
@@ -800,7 +804,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(V
     SpecializedThunkJIT jit(vm, 1);
 
     // load string
+#if USE(JSVALUE64)
     jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, GPRInfo::regT0);
+#else
+    jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, GPRInfo::regT0, GPRInfo::regT3);
+#endif
 
     // Load string length to regT3, and start the process of loading the data pointer into regT2
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSString::offsetOfValue()), GPRInfo::regT0);

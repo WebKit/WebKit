@@ -45,7 +45,11 @@ namespace JSC {
         {
         }
 
+#if USE(JSVALUE32_64)
+        inline Jump emitLoadJSCell(VirtualRegister, RegisterID payload, RegisterID tag);
+#else
         inline Jump emitLoadJSCell(VirtualRegister, RegisterID payload);
+#endif
         inline Jump emitLoadInt32(VirtualRegister, RegisterID dst);
         inline Jump emitLoadDouble(VirtualRegister, FPRegisterID dst, RegisterID scratch);
 
@@ -55,11 +59,11 @@ namespace JSC {
     };
 
 #if USE(JSVALUE32_64)
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID payload)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID payload, RegisterID tag)
     {
         ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
-        loadPtr(payloadFor(virtualRegister), payload);
-        return branchIfNotCell(tagFor(virtualRegister));
+        loadValue(addressFor(virtualRegister), { tag, payload });
+        return branchIfNotCell(tag);
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(VirtualRegister virtualRegister, RegisterID dst)
