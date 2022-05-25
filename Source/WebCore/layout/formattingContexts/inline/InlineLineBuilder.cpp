@@ -321,7 +321,7 @@ struct UsedConstraints {
 };
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>& previousLine)
 {
-    initialize(initialConstraintsForLine(lineLogicalRect, !previousLine), needsLayoutRange.start, previousLine);
+    initialize(initialConstraintsForLine(lineLogicalRect, previousLine), needsLayoutRange.start, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
@@ -400,7 +400,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 {
     ASSERT(isInIntrinsicWidthMode());
     auto lineLogicalWidth = *intrinsicWidthMode() == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
-    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, !previousLine);
+    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, previousLine);
     initialize(lineConstraints, needsLayoutRange.start, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
@@ -627,7 +627,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
     return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
 }
 
-UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const
+UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, const std::optional<PreviousLine>& previousLine) const
 {
     auto lineLogicalLeft = initialLineLogicalRect.left();
     auto lineLogicalRight = initialLineLogicalRect.right();
@@ -640,31 +640,32 @@ UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initial
     }
 
     auto computedTextIndent = [&]() -> InlineLayoutUnit {
+        auto& root = this->root();
+
         // text-indent property specifies the indentation applied to lines of inline content in a block.
         // The indent is treated as a margin applied to the start edge of the line box.
-        // Unless otherwise specified, only lines that are the first formatted line of an element are affected.
-        // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
-        // FIXME: Add support for each-line.
+        // The first formatted line of an element is always indented. For example, the first line of an anonymous block box
+        // is only affected if it is the first child of its parent element.
+        // If 'each-line' is specified, indentation also applies to all lines where the previous line ends with a hard break.
         // [Integration] root()->parent() would normally produce a valid layout box.
-        auto& root = this->root();
-        auto isFormattingContextRootCandidateToTextIndent = !root.isAnonymous();
-        if (root.isAnonymous()) {
-            // Unless otherwise specified by the each-line and/or hanging keywords, only lines that are the first formatted line
-            // of an element are affected.
-            // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
-            auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
-            if (isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::NotApplicable)
-                isFormattingContextRootCandidateToTextIndent = root.parent().firstInFlowChild() == &root;
-            else
-                isFormattingContextRootCandidateToTextIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
+        bool shouldIndent = false;
+        if (!previousLine) {
+            shouldIndent = !root.isAnonymous();
+            if (root.isAnonymous()) {
+                auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
+                if (isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::NotApplicable)
+                    shouldIndent = root.parent().firstInFlowChild() == &root;
+                else
+                    shouldIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
+            }
+        } else {
+            shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine && previousLine->endsWithLineBreak;
         }
-        if (!isFormattingContextRootCandidateToTextIndent)
-            return { };
-        auto invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
-        // text-indent: hanging inverts which lines are affected.
-        // inverted line range -> all the lines except the first one.
-        // !inverted line range -> first line gets the indent.
-        auto shouldIndent = invertLineRange != isFirstLine;
+
+        // Specifying 'hanging' inverts whether the line should be indented or not.
+        if (root.style().textIndentType() == TextIndentType::Hanging)
+            shouldIndent = !shouldIndent;
+
         if (!shouldIndent)
             return { };
 

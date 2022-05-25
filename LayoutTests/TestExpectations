@@ -2651,7 +2651,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/s
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-flex-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-grid-item-001.html [ ImageOnlyFailure ]
-webkit.org/b/240731 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-hanging.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-006.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure Pass ]

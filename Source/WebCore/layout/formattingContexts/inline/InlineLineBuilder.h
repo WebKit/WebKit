@@ -107,7 +107,7 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const;
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, const std::optional<PreviousLine>&) const;
     std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
 
     void handleFloatContent(const InlineItem&);
