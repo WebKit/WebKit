@@ -307,7 +307,7 @@ function maccatalyst_process_network_entitlements()
 # iOS Family entitlements
 # ========================================
 
-function ios_family_process_webcontent_entitlements()
+function ios_family_process_webcontent_shared_entitlements()
 {
     plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
@@ -322,7 +322,6 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
-    plistbuddy Add :com.apple.private.verified-jit bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.security.mutable-state-flags array
     plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
@@ -330,36 +329,23 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
-    plistbuddy Add :dynamic-codesigning bool YES
-
     plistbuddy Add :com.apple.tcc.delegated-services array
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
-
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+}
+
+function ios_family_process_webcontent_entitlements()
+{
+    plistbuddy Add :com.apple.private.verified-jit bool YES
+    plistbuddy Add :dynamic-codesigning bool YES
+
+    ios_family_process_webcontent_shared_entitlements
 }
 
 function ios_family_process_webcontent_captiveportal_entitlements()
 {
-    plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
-    plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
-    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
-    plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
-    plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
-    plistbuddy Add :com.apple.pac.shared_region_id string WebContent
-    plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
-    plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
-    plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
-    plistbuddy Add :com.apple.private.gpu-restricted bool YES
-    plistbuddy Add :com.apple.private.memorystatus bool YES
-    plistbuddy Add :com.apple.private.network.socket-delegate bool YES
-    plistbuddy Add :com.apple.private.pac.exception bool YES
-    plistbuddy Add :com.apple.private.security.message-filter bool YES
-    plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
-    plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
-    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
-    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
 
     plistbuddy Add :com.apple.imageio.allowabletypes array
     plistbuddy Add :com.apple.imageio.allowabletypes:0 string org.webmproject.webp
@@ -367,11 +353,7 @@ function ios_family_process_webcontent_captiveportal_entitlements()
     plistbuddy Add :com.apple.imageio.allowabletypes:2 string public.png
     plistbuddy Add :com.apple.imageio.allowabletypes:3 string com.compuserve.gif
 
-    plistbuddy Add :com.apple.tcc.delegated-services array
-    plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
-    plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
-
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+    ios_family_process_webcontent_shared_entitlements
 }
 
 function ios_family_process_gpu_entitlements()
