@@ -3644,3 +3644,6 @@ webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/231266 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/240918 [ Debug ]  fast/loader/create-frame-in-DOMContentLoaded.html [ Pass Failure ]
+webkit.org/b/240918 [ Debug ]  fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Failure ]
