@@ -45,29 +45,28 @@
     }
 </style>
 <script src="../../media/media-file.js"></script>
+<script src="../../media/utilities.js"></script>
 <script>
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    function init()
+    async function init()
     {
-        var totalCount = document.getElementsByTagName('video').length;
-        var count = totalCount;
-        document.addEventListener("canplaythrough", function () {
-            if (!--count && window.testRunner) {
-                setTimeout(function() {
-                    testRunner.notifyDone();
-                }, totalCount * 150);
-            }
-        }, true);
-
         document.addEventListener("error", function (event) {
             console.log("Video " + event.target.getAttribute("name") + " failed to load, error " + event.target.error.code);
             if (window.testRunner)
                 testRunner.notifyDone();
         }, true);
 
+        var promises = [];
+        Array.from(document.getElementsByTagName('video')).forEach(video => promises.push(waitForVideoFrame(video)));
+
         setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
+
+        await Promise.all(promises);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 
