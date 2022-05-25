@@ -346,8 +346,8 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc(int sampleRate)
     {
         Locker locker { m_speakerSamplesProducerLock };
         if (m_speakerSamplesProducer) {
-            ASSERT(speakerProcFormat.mSampleRate == sampleRate);
             speakerProcFormat = m_speakerSamplesProducer->format().streamDescription();
+            ASSERT(speakerProcFormat.mSampleRate == sampleRate);
         } else {
             err = PAL::AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, &size);
             if (err) {
