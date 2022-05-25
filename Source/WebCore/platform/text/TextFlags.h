@@ -65,7 +65,12 @@ struct ExpansionBehavior {
         Force
     };
 
-    ExpansionBehavior() = default;
+    ExpansionBehavior()
+        : left(Behavior::Forbid)
+        , right(Behavior::Allow)
+    {
+
+    }
 
     ExpansionBehavior(Behavior left, Behavior right)
         : left(left)
@@ -98,8 +103,9 @@ struct ExpansionBehavior {
         return { Behavior::Forbid, Behavior::Forbid };
     }
 
-    Behavior left : 2 { Behavior::Forbid };
-    Behavior right : 2 { Behavior::Allow };
+    static constexpr unsigned bitsOfKind = 2;
+    Behavior left : bitsOfKind;
+    Behavior right : bitsOfKind;
 };
 
 enum FontSynthesisValues {
