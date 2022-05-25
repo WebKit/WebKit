@@ -121,6 +121,9 @@ cleanup_after_successful_rebase_and_exit() {
     echo "Press Enter to continue after fixing build:"
     read -r
     regenerate_changes_diff "origin/main"
+    echo "Generating contents of commit message into commit-message.txt."
+    echo "Contains upstream commits:" > commit-message.txt
+    git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt
     echo "Removing temporary git repository from Source/ThirdParty/ANGLE"
     rm -rf .git
     git add -A .
