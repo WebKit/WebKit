@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -300,46 +300,45 @@ void FilterImage::correctPremultipliedPixelBuffer()
     if (!m_premultipliedPixelBuffer || m_isValidPremultiplied)
         return;
 
-    Uint8ClampedArray& imageArray = m_premultipliedPixelBuffer->data();
-    uint8_t* pixelData = imageArray.data();
-    int pixelArrayLength = imageArray.length();
+    uint8_t* pixelBytes = m_premultipliedPixelBuffer->bytes();
+    int pixelByteLength = m_premultipliedPixelBuffer->sizeInBytes();
 
     // We must have four bytes per pixel, and complete pixels
-    ASSERT(!(pixelArrayLength % 4));
+    ASSERT(!(pixelByteLength % 4));
 
 #if HAVE(ARM_NEON_INTRINSICS)
-    if (pixelArrayLength >= 64) {
-        uint8_t* lastPixel = pixelData + (pixelArrayLength & ~0x3f);
+    if (pixelByteLength >= 64) {
+        uint8_t* lastPixel = pixelBytes + (pixelByteLength & ~0x3f);
         do {
-            // Increments pixelData by 64.
-            uint8x16x4_t sixteenPixels = vld4q_u8(pixelData);
+            // Increments pixelBytes by 64.
+            uint8x16x4_t sixteenPixels = vld4q_u8(pixelBytes);
             sixteenPixels.val[0] = vminq_u8(sixteenPixels.val[0], sixteenPixels.val[3]);
             sixteenPixels.val[1] = vminq_u8(sixteenPixels.val[1], sixteenPixels.val[3]);
             sixteenPixels.val[2] = vminq_u8(sixteenPixels.val[2], sixteenPixels.val[3]);
-            vst4q_u8(pixelData, sixteenPixels);
-            pixelData += 64;
-        } while (pixelData < lastPixel);
+            vst4q_u8(pixelBytes, sixteenPixels);
+            pixelBytes += 64;
+        } while (pixelBytes < lastPixel);
 
-        pixelArrayLength &= 0x3f;
-        if (!pixelArrayLength)
+        pixelByteLength &= 0x3f;
+        if (!pixelByteLength)
             return;
     }
 #endif
 
-    int numPixels = pixelArrayLength / 4;
+    int numPixels = pixelByteLength / 4;
 
     // Iterate over each pixel, checking alpha and adjusting color components if necessary
     while (--numPixels >= 0) {
         // Alpha is the 4th byte in a pixel
-        uint8_t a = *(pixelData + 3);
+        uint8_t a = *(pixelBytes + 3);
         // Clamp each component to alpha, and increment the pixel location
         for (int i = 0; i < 3; ++i) {
-            if (*pixelData > a)
-                *pixelData = a;
-            ++pixelData;
+            if (*pixelBytes > a)
+                *pixelBytes = a;
+            ++pixelBytes;
         }
         // Increment for alpha
-        ++pixelData;
+        ++pixelBytes;
     }
 }
 

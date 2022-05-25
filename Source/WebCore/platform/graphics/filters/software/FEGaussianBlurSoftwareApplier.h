@@ -42,8 +42,8 @@ private:
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 
     struct ApplyParameters {
-        RefPtr<Uint8ClampedArray> ioPixelArray;
-        RefPtr<Uint8ClampedArray> tmpPixelArray;
+        std::optional<PixelBuffer> ioBuffer;
+        std::optional<PixelBuffer> tempBuffer;
         int width;
         int height;
         unsigned kernelSizeX;
@@ -54,16 +54,16 @@ private:
 
     static inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight);
 
-    static inline void boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
-    static inline void boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
+    static inline void boxBlurAlphaOnly(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
+    static inline void boxBlur(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
 
-    static inline void boxBlurAccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight);
-    static inline void boxBlurUnaccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+    static inline void boxBlurAccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight);
+    static inline void boxBlurUnaccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
 
-    static inline void boxBlurGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+    static inline void boxBlurGeneric(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
     static inline void boxBlurWorker(ApplyParameters*);
 
-    static inline void applyPlatform(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+    static inline void applyPlatform(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
 };
 
 } // namespace WebCore

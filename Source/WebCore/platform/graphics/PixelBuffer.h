@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,18 @@ public:
 
     PixelBuffer deepClone() const;
 
+    uint8_t* bytes() const;
+    size_t sizeInBytes() const;
+
+    bool setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset);
+    bool zeroRange(size_t byteOffset, size_t rangeByteLength);
+    void zeroFill() { zeroRange(0, sizeInBytes()); }
+
+    uint8_t item(size_t index) const;
+    void set(size_t index, double value);
+
+    std::optional<PixelBuffer> createScratchPixelBuffer(const IntSize&) const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PixelBuffer> decode(Decoder&);
 
@@ -119,4 +131,4 @@ template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& 
     return result;
 }
 
-}
+} // namespace WebCore

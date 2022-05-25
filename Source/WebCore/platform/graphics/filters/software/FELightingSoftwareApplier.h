@@ -104,7 +104,7 @@ private:
         const LightSource* lightSource;
         const DestinationColorSpace* operatingColorSpace;
 
-        Uint8ClampedArray* pixels;
+        PixelBuffer* pixels;
         int widthMultipliedByPixelSize;
         int width;
         int height;

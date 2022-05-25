@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -83,25 +83,21 @@ inline void FEColorMatrixSoftwareApplier::luminance(float& red, float& green, fl
 #if USE(ACCELERATE)
 void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBuffer) const
 {
-    auto& pixelArray = pixelBuffer.data();
+    auto* pixelBytes = pixelBuffer.bytes();
     auto bufferSize = pixelBuffer.size();
-
-    ASSERT(pixelArray.length() == bufferSize.area() * 4);
-    
     const int32_t divisor = 256;
-    uint8_t* data = pixelArray.data();
 
     vImage_Buffer src;
     src.width = bufferSize.width();
     src.height = bufferSize.height();
     src.rowBytes = bufferSize.width() * 4;
-    src.data = data;
+    src.data = pixelBytes;
     
     vImage_Buffer dest;
     dest.width = bufferSize.width();
     dest.height = bufferSize.height();
     dest.rowBytes = bufferSize.width() * 4;
-    dest.data = data;
+    dest.data = pixelBytes;
 
     switch (m_effect.type()) {
     case FECOLORMATRIX_TYPE_UNKNOWN:
@@ -192,53 +188,52 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
 
 void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixelBuffer) const
 {
-    auto& pixelArray = pixelBuffer.data();
-    unsigned pixelArrayLength = pixelArray.length();
+    auto pixelByteLength = pixelBuffer.sizeInBytes();
 
     switch (m_effect.type()) {
     case FECOLORMATRIX_TYPE_UNKNOWN:
         break;
 
     case FECOLORMATRIX_TYPE_MATRIX:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
+        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
+            float red = pixelBuffer.item(pixelByteOffset);
+            float green = pixelBuffer.item(pixelByteOffset + 1);
+            float blue = pixelBuffer.item(pixelByteOffset + 2);
+            float alpha = pixelBuffer.item(pixelByteOffset + 3);
             matrix(red, green, blue, alpha);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
+            pixelBuffer.set(pixelByteOffset, red);
+            pixelBuffer.set(pixelByteOffset + 1, green);
+            pixelBuffer.set(pixelByteOffset + 2, blue);
+            pixelBuffer.set(pixelByteOffset + 3, alpha);
         }
         break;
 
     case FECOLORMATRIX_TYPE_SATURATE:
     case FECOLORMATRIX_TYPE_HUEROTATE:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
+        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
+            float red = pixelBuffer.item(pixelByteOffset);
+            float green = pixelBuffer.item(pixelByteOffset + 1);
+            float blue = pixelBuffer.item(pixelByteOffset + 2);
+            float alpha = pixelBuffer.item(pixelByteOffset + 3);
             saturateAndHueRotate(red, green, blue);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
+            pixelBuffer.set(pixelByteOffset, red);
+            pixelBuffer.set(pixelByteOffset + 1, green);
+            pixelBuffer.set(pixelByteOffset + 2, blue);
+            pixelBuffer.set(pixelByteOffset + 3, alpha);
         }
         break;
 
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
+        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
+            float red = pixelBuffer.item(pixelByteOffset);
+            float green = pixelBuffer.item(pixelByteOffset + 1);
+            float blue = pixelBuffer.item(pixelByteOffset + 2);
+            float alpha = pixelBuffer.item(pixelByteOffset + 3);
             luminance(red, green, blue, alpha);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
+            pixelBuffer.set(pixelByteOffset, red);
+            pixelBuffer.set(pixelByteOffset + 1, green);
+            pixelBuffer.set(pixelByteOffset + 2, blue);
+            pixelBuffer.set(pixelByteOffset + 3, alpha);
         }
         break;
     }

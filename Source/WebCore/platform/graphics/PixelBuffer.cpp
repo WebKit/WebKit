@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,9 +120,56 @@ PixelBuffer PixelBuffer::deepClone() const
     return { m_format, m_size, Uint8ClampedArray::create(m_data->data(), m_data->length()) };
 }
 
+uint8_t* PixelBuffer::bytes() const
+{
+    return m_data->data();
+}
+
+size_t PixelBuffer::sizeInBytes() const
+{
+    ASSERT(m_data->byteLength() == m_size.area() * 4);
+    return m_data->byteLength();
+}
+
+bool PixelBuffer::setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset)
+{
+    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, sizeInBytes()))
+        return false;
+
+    memmove(bytes() + byteOffset, data, dataByteLength);
+    return true;
+}
+
+bool PixelBuffer::zeroRange(size_t byteOffset, size_t rangeByteLength)
+{
+    if (!isSumSmallerThanOrEqual(byteOffset, rangeByteLength, sizeInBytes()))
+        return false;
+
+    memset(bytes() + byteOffset, 0, rangeByteLength);
+    return true;
+}
+
+uint8_t PixelBuffer::item(size_t index) const
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < sizeInBytes());
+    return bytes()[index];
+}
+
+void PixelBuffer::set(size_t index, double value)
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < sizeInBytes());
+    bytes()[index] = JSC::Uint8ClampedAdaptor::toNativeFromDouble(value);
+}
+
+std::optional<PixelBuffer> PixelBuffer::createScratchPixelBuffer(const IntSize& size) const
+{
+    return PixelBuffer::tryCreate(m_format, size);
+}
+
 TextStream& operator<<(TextStream& ts, const PixelBuffer& pixelBuffer)
 {
     return ts << &pixelBuffer.data() << "format ( " << pixelBuffer.format() << ")";
 }
 
-}
+} // namespace WebCore
+

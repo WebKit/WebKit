@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,16 +114,15 @@ FEComponentTransferSoftwareApplier::LookupTable FEComponentTransferSoftwareAppli
 
 void FEComponentTransferSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 {
-    auto& pixelArray = pixelBuffer.data();
-    unsigned pixelArrayLength = pixelArray.length();
-    uint8_t* data = pixelArray.data();
+    auto* data = pixelBuffer.bytes();
+    auto pixelByteLength = pixelBuffer.sizeInBytes();
 
     auto redTable   = computeLookupTable(m_effect.redFunction());
     auto greenTable = computeLookupTable(m_effect.greenFunction());
     auto blueTable  = computeLookupTable(m_effect.blueFunction());
     auto alphaTable = computeLookupTable(m_effect.alphaFunction());
 
-    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
+    for (unsigned pixelOffset = 0; pixelOffset < pixelByteLength; pixelOffset += 4) {
         data[pixelOffset]     = redTable[data[pixelOffset]];
         data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];
         data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];

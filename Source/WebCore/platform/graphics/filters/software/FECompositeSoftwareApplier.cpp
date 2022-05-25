@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -140,13 +140,13 @@ bool FECompositeSoftwareApplier::applyArithmetic(FilterImage& input, FilterImage
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
-    auto& sourcePixelArray = sourcePixelBuffer->data();
-    auto& destinationPixelArray = destinationPixelBuffer->data();
+    auto* sourcePixelBytes = sourcePixelBuffer->bytes();
+    auto* destinationPixelBytes = destinationPixelBuffer->bytes();
 
-    int length = sourcePixelArray.length();
-    ASSERT(length == static_cast<int>(destinationPixelArray.length()));
+    auto length = sourcePixelBuffer->sizeInBytes();
+    ASSERT(length == destinationPixelBuffer->sizeInBytes());
 #if !HAVE(ARM_NEON_INTRINSICS)
-    applyPlatformArithmetic(sourcePixelArray.data(), destinationPixelArray.data(), length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
+    applyPlatformArithmetic(sourcePixelBytes, destinationPixelBytes, length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
 #endif
     return true;
 }

@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,8 +58,6 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
     if (!destinationPixelBuffer)
         return false;
 
-    auto& destinationPixelArray = destinationPixelBuffer->data();
-
     auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
     auto inputPixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
 
@@ -70,9 +68,7 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
     if (!inputPixelBuffer || !displacementPixelBuffer)
         return false;
 
-    auto& inputPixelArray = inputPixelBuffer->data();
-    auto& displacementPixelArray = displacementPixelBuffer->data();
-    ASSERT(inputPixelArray.length() == displacementPixelArray.length());
+    ASSERT(inputPixelBuffer->sizeInBytes() == displacementPixelBuffer->sizeInBytes());
 
     auto paintSize = result.absoluteImageRect().size();
     auto scale = filter.resolvedSize({ m_effect.scale(), m_effect.scale() });
@@ -94,16 +90,16 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterI
         for (int x = 0; x < paintSize.width(); ++x) {
             int destinationIndex = lineStartOffset + x * 4;
             
-            int srcX = x + static_cast<int>(scaleForColorX * displacementPixelArray.item(destinationIndex + displacementChannelX) + scaledOffsetX);
-            int srcY = y + static_cast<int>(scaleForColorY * displacementPixelArray.item(destinationIndex + displacementChannelY) + scaledOffsetY);
+            int srcX = x + static_cast<int>(scaleForColorX * displacementPixelBuffer->item(destinationIndex + displacementChannelX) + scaledOffsetX);
+            int srcY = y + static_cast<int>(scaleForColorY * displacementPixelBuffer->item(destinationIndex + displacementChannelY) + scaledOffsetY);
 
-            unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelArray.data() + destinationIndex);
+            unsigned* destinationPixelPtr = reinterpret_cast<unsigned*>(destinationPixelBuffer->bytes() + destinationIndex);
             if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
                 *destinationPixelPtr = 0;
                 continue;
             }
 
-            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputPixelArray.data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
+            *destinationPixelPtr = *reinterpret_cast<unsigned*>(inputPixelBuffer->bytes() + byteOffsetOfPixel(srcX, srcY, rowBytes));
         }
     }
 
