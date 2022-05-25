@@ -98,6 +98,7 @@ private:
 #endif
 
         void initializeElements(AppendPipeline*, GstBin*);
+        bool isLinked() const { return gst_pad_is_linked(entryPad.get()); }
     };
 
     void handleErrorSyncMessage(GstMessage*);
@@ -124,7 +125,8 @@ private:
     static AtomString generateTrackId(StreamType, int padIndex);
     enum class CreateTrackResult { TrackCreated, TrackIgnored, AppendParsingFailed };
     std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad, int padIndex);
-    AppendPipeline::Track* tryMatchPadToExistingTrack(GstPad* demuxerSrcPad);
+
+    bool recycleTrackForPad(GstPad*);
     void linkPadWithTrack(GstPad* demuxerSrcPad, Track&);
 
     void consumeAppsinksAvailableSamples();
