@@ -3140,10 +3140,12 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     }
 
     // If the decoder is exporting raw memory, we have to use the swapchain to allocate appropriate buffers
-    // and copy over the data for each plane.
+    // and copy over the data for each plane. For that to work, linear-storage buffer is required.
     GBMBufferSwapchain::BufferDescription bufferDescription {
-        DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo))),
-        static_cast<uint32_t>GST_VIDEO_INFO_WIDTH(&videoInfo), static_cast<uint32_t>GST_VIDEO_INFO_HEIGHT(&videoInfo),
+        .format = DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo))),
+        .width = static_cast<uint32_t>GST_VIDEO_INFO_WIDTH(&videoInfo),
+        .height = static_cast<uint32_t>GST_VIDEO_INFO_HEIGHT(&videoInfo),
+        .flags = GBMBufferSwapchain::BufferDescription::LinearStorage,
     };
     if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid)
         return;
