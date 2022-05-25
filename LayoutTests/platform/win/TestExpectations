@@ -5036,6 +5036,13 @@ http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
 http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
 http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
 
+webkit.org/b/240617 webanimations/offset-anchor-animation-yields-compositing.html [ Pass Failure ]
+webkit.org/b/240617 webanimations/offset-distance-animation-yields-compositing.html [ Pass Failure ]
+webkit.org/b/240617 webanimations/offset-path-animation-yields-compositing.html [ Pass Failure ]
+webkit.org/b/240617 webanimations/offset-position-animation-yields-compositing.html [ Pass Failure ]
+webkit.org/b/240617 webanimations/offset-rotate-animation-yields-compositing.html [ Pass Failure ]
+webkit.org/b/240617 webanimations/offset-shorthand-animation-yields-compositing.html [ Pass Failure ]
+
 # webkit.org/b/237344 [ Win ] 4X imported/mozilla/svg/blend(layout-tests) are constant Image Only Failures
 imported/mozilla/svg/blend-color.svg [ Skip ]
 imported/mozilla/svg/blend-hard-light.svg [ Skip ]
