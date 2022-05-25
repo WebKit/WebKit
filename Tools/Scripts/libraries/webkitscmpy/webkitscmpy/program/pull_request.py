@@ -159,7 +159,7 @@ class PullRequest(Command):
         # FIXME: We can do better by infering the remote from the branch point, if it's not specified
         source_remote = args.remote or 'origin'
 
-        if repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
+        if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
             if Branch.main(
                 args, repository,
                 why="'{}' is not a pull request branch".format(repository.branch),
