@@ -35,6 +35,21 @@ namespace WebCore {
 
 class SVGAttributeAnimator;
 
+struct SVGAttributeHashTranslator {
+    static unsigned hash(const QualifiedName& key)
+    {
+        if (key.hasPrefix()) {
+            QualifiedNameComponents components = { nullAtom().impl(), key.localName().impl(), key.namespaceURI().impl() };
+            return computeHash(components);
+        }
+        return DefaultHash<QualifiedName>::hash(key);
+    }
+    static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
+
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool hasHashInValue = true;
+};
+
 template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry : public SVGPropertyRegistry {
 public:
@@ -300,9 +315,11 @@ public:
 
 private:
     // Singleton map for every OwnerType.
-    static HashMap<QualifiedName, const SVGMemberAccessor<OwnerType>*>& attributeNameToAccessorMap()
+    using QualifiedNameAccessorHashMap = HashMap<QualifiedName, const SVGMemberAccessor<OwnerType>*, SVGAttributeHashTranslator>;
+
+    static QualifiedNameAccessorHashMap& attributeNameToAccessorMap()
     {
-        static NeverDestroyed<HashMap<QualifiedName, const SVGMemberAccessor<OwnerType>*>> attributeNameToAccessorMap;
+        static NeverDestroyed<QualifiedNameAccessorHashMap> attributeNameToAccessorMap;
         return attributeNameToAccessorMap;
     }
 
@@ -331,12 +348,7 @@ private:
 
     static const SVGMemberAccessor<OwnerType>* findAccessor(const QualifiedName& attributeName)
     {
-        // Here we need to loop through the entries in the map and use matches() to compare them with attributeName.
-        // m_map.contains() uses QualifiedName::operator==() which compares the impl pointers only while matches()
-        // compares the contents if the impl pointers differ.
-        auto it = std::find_if(attributeNameToAccessorMap().begin(), attributeNameToAccessorMap().end(), [&attributeName](const auto& entry) -> bool {
-            return entry.key.matches(attributeName);
-        });
+        auto it = attributeNameToAccessorMap().find(attributeName);
         return it != attributeNameToAccessorMap().end() ? it->value : nullptr;
     }
 
