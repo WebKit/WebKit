@@ -183,8 +183,10 @@ static void encodeSharedBuffer(Encoder& encoder, const FragmentedSharedBuffer* b
         encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
 #else
     SharedMemory::Handle handle;
-    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    {
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    }
     encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
 #endif
 }
