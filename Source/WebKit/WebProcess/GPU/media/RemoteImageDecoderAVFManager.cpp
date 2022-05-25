@@ -32,7 +32,7 @@
 #include "RemoteImageDecoderAVF.h"
 #include "RemoteImageDecoderAVFManagerMessages.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
-#include "SharedBufferCopy.h"
+#include "SharedBufferReference.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -42,7 +42,7 @@ using namespace WebCore;
 RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
-    if (!ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferCopy(data), mimeType), Messages::RemoteImageDecoderAVFProxy::CreateDecoder::Reply(imageDecoderIdentifier), 0))
+    if (!ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), Messages::RemoteImageDecoderAVFProxy::CreateDecoder::Reply(imageDecoderIdentifier), 0))
         return nullptr;
 
     if (!imageDecoderIdentifier)

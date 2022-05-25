@@ -206,15 +206,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetContentsAsAttributedString() -> (struct WebCore::AttributedString result) Async
 #endif
 #if ENABLE(MHTML)
-    GetContentsAsMHTMLData() -> (IPC::SharedBufferCopy data) Async
+    GetContentsAsMHTMLData() -> (IPC::SharedBufferReference data) Async
 #endif
-    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferCopy> buffer) Async
-    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (std::optional<IPC::SharedBufferCopy> buffer) Async
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferReference> buffer) Async
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (std::optional<IPC::SharedBufferReference> buffer) Async
     GetRenderTreeExternalRepresentation() -> (String string) Async
     GetSelectionOrContentsAsString() -> (String string) Async
-    GetSelectionAsWebArchiveData() -> (std::optional<IPC::SharedBufferCopy> data) Async
+    GetSelectionAsWebArchiveData() -> (std::optional<IPC::SharedBufferReference> data) Async
     GetSourceForFrame(WebCore::FrameIdentifier frameID) -> (String string) Async
-    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferCopy> dataReference) Async
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferReference> dataReference) Async
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details) Async
 
@@ -412,12 +412,12 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) Async
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) Async
-    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (IPC::SharedBufferCopy data) Async
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (IPC::SharedBufferReference data) Async
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
-    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (IPC::SharedBufferCopy data) Async
+    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (IPC::SharedBufferReference data) Async
 #endif
-    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (IPC::SharedBufferCopy data) Async
+    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (IPC::SharedBufferReference data) Async
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebCore::ResourceError error) Async
@@ -549,7 +549,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
 
-    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier) -> (IPC::SharedBufferCopy iconData) Async
+    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier) -> (IPC::SharedBufferReference iconData) Async
     SetUseIconLoadingClient(bool useIconLoadingClient)
 
 #if ENABLE(GAMEPAD)
@@ -563,14 +563,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     URLSchemeTaskWillPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest) Async
     URLSchemeTaskDidPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
     URLSchemeTaskDidReceiveResponse(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response)
-    URLSchemeTaskDidReceiveData(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, IPC::SharedBufferCopy data)
+    URLSchemeTaskDidReceiveData(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, IPC::SharedBufferReference data)
     URLSchemeTaskDidComplete(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceError error)
 
     SetIsSuspended(bool suspended)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType) -> () Async
-    UpdateAttachmentAttributes(String identifier, std::optional<uint64_t> fileSize, String contentType, String fileName, IPC::SharedBufferCopy enclosingImageData) -> () Async
+    UpdateAttachmentAttributes(String identifier, std::optional<uint64_t> fileSize, String contentType, String fileName, IPC::SharedBufferReference enclosingImageData) -> () Async
     UpdateAttachmentIcon(String identifier, WebKit::ShareableBitmap::Handle qlThumbnailHandle)
 #endif
 

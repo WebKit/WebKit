@@ -32,7 +32,7 @@
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
-#import "SharedBufferCopy.h"
+#import "SharedBufferReference.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
@@ -307,7 +307,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
                 return;
 
             auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferCopy(WTFMove(registrationData))), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrationData))), 0);
         });
     });
 }

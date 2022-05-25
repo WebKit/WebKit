@@ -41,7 +41,7 @@
 #import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
-#import "SharedBufferCopy.h"
+#import "SharedBufferReference.h"
 #import "SynapseSPI.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
@@ -263,12 +263,12 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferCopy& bufferCopy)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)
 {
     if (bufferCopy.isEmpty())
         return;
 
-    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.buffer()->createNSData().get()]);
+    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
     [fileWrapper setPreferredFilename:preferredFileName];
     attachment->setFileWrapper(fileWrapper.get());
 }

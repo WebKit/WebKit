@@ -28,7 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ShareableBitmap.h"
-#include "SharedBufferCopy.h"
+#include "SharedBufferReference.h"
 #include <variant>
 #include <wtf/MachSendRight.h>
 
@@ -40,7 +40,7 @@ using ImageBufferBackendHandle = std::variant<
     , MachSendRight
 #endif
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , IPC::SharedBufferCopy
+    , IPC::SharedBufferReference
 #endif
 >;
 

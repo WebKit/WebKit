@@ -37,7 +37,7 @@
 
 namespace IPC {
 class FormDataReference;
-class SharedBufferCopy;
+class SharedBufferReference;
 }
 
 namespace WebKit {
@@ -67,7 +67,7 @@ private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, DownloadID);
 
     // IPC Message
-    void didReceiveData(const IPC::SharedBufferCopy&, int64_t encodedDataLength);
+    void didReceiveData(const IPC::SharedBufferReference&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFail(WebCore::ResourceError&&);

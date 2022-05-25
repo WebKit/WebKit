@@ -693,7 +693,6 @@
 		2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */; };
 		2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */; };
 		2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */; };
-		2DC18FF6EF2A3130C1301767 /* SharedBufferDataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1881ACBCAB5D57C5C6EF0 /* SharedBufferDataReference.h */; };
 		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
 		2DD12A081A8177F3002C74E6 /* WKPageRenderingProgressEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD12A071A8177F3002C74E6 /* WKPageRenderingProgressEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DD45ADE1E5F8972006C355F /* InputViewUpdateDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */; };
@@ -1572,7 +1571,7 @@
 		A1798B512230A10E000764BD /* PaymentAuthorizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */; };
 		A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A181A79721ACAC610059A316 /* WebKitAdditions.mm */; };
 		A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */; };
-		A183494224EF467800BDC9A8 /* SharedBufferCopy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */; };
+		A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */; };
 		A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */; };
 		A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A4FE5C18DCE9FA00B5EA8A /* _WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */; };
@@ -3708,9 +3707,7 @@
 		2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKMouseGestureRecognizer.h; path = ios/WKMouseGestureRecognizer.h; sourceTree = "<group>"; };
 		2DB94298234E7A7F00E776AD /* WKMouseGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseGestureRecognizer.mm; path = ios/WKMouseGestureRecognizer.mm; sourceTree = "<group>"; };
 		2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.GPU.sb; sourceTree = "<group>"; };
-		2DC18001D90DDD15FC6991A9 /* SharedBufferCopy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCopy.cpp; sourceTree = "<group>"; };
-		2DC1855EDBFB850BA0B6D06D /* SharedBufferDataReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferDataReference.cpp; sourceTree = "<group>"; };
-		2DC1881ACBCAB5D57C5C6EF0 /* SharedBufferDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferDataReference.h; sourceTree = "<group>"; };
+		2DC18001D90DDD15FC6991A9 /* SharedBufferReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferReference.cpp; sourceTree = "<group>"; };
 		2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeViews.h; sourceTree = "<group>"; };
 		2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeViews.mm; sourceTree = "<group>"; };
 		2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageCocoa.mm; sourceTree = "<group>"; };
@@ -4845,7 +4842,7 @@
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
 		5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDebugInfo.cpp; sourceTree = "<group>"; };
-		5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferCopy.h; sourceTree = "<group>"; };
+		5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferReference.h; sourceTree = "<group>"; };
 		5CD286491E722F440094FDC8 /* _WKUserContentFilterPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterPrivate.h; sourceTree = "<group>"; };
 		5CD2864A1E722F440094FDC8 /* WKContentRuleList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleList.h; sourceTree = "<group>"; };
 		5CD2864B1E722F440094FDC8 /* WKContentRuleList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentRuleList.mm; sourceTree = "<group>"; };
@@ -7464,10 +7461,8 @@
 				1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */,
 				1AAB0378185A7C6A00EDF501 /* MessageSender.h */,
 				7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */,
-				2DC18001D90DDD15FC6991A9 /* SharedBufferCopy.cpp */,
-				5CC5DB9121488E16006CB8A8 /* SharedBufferCopy.h */,
-				2DC1855EDBFB850BA0B6D06D /* SharedBufferDataReference.cpp */,
-				2DC1881ACBCAB5D57C5C6EF0 /* SharedBufferDataReference.h */,
+				2DC18001D90DDD15FC6991A9 /* SharedBufferReference.cpp */,
+				5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */,
 				93468E6A2714AF47009983E3 /* SharedFileHandle.cpp */,
 				93122C852710CCDE001D819F /* SharedFileHandle.h */,
 				7B73123625CC8524003B2796 /* StreamClientConnection.cpp */,
@@ -13150,8 +13145,7 @@
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
-				A183494224EF467800BDC9A8 /* SharedBufferCopy.h in Headers */,
-				2DC18FF6EF2A3130C1301767 /* SharedBufferDataReference.h in Headers */,
+				A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */,
 				93122C862710CCDF001D819F /* SharedFileHandle.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
 				CD4B4D9D1E765E0000D27092 /* SharedRingBufferStorage.h in Headers */,

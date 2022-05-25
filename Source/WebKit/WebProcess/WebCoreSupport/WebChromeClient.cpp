@@ -42,7 +42,7 @@
 #include "PluginView.h"
 #include "RemoteGPUProxy.h"
 #include "RemoteRenderingBackendProxy.h"
-#include "SharedBufferCopy.h"
+#include "SharedBufferReference.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
