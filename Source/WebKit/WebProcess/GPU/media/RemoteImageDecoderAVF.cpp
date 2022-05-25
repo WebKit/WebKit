@@ -30,7 +30,7 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
-#include "SharedBufferCopy.h"
+#include "SharedBufferReference.h"
 #include "WebProcess.h"
 #include <WebCore/AVAssetMIMETypeCache.h>
 #include <WebCore/DestinationColorSpace.h>
@@ -209,7 +209,7 @@ void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool all
     IntSize size;
     bool hasTrack;
     std::optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
-    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferCopy(data), allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
+    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
         return;
 
     m_isAllDataReceived = allDataReceived;
