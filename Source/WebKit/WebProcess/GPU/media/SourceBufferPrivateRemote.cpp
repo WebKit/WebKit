@@ -83,14 +83,17 @@ void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     if (!m_gpuProcessConnection)
         return;
 
-    auto sharedData = SharedMemory::copyBuffer(data);
     SharedMemory::Handle handle;
-    sharedData->createHandle(handle, SharedMemory::Protection::ReadOnly);
-
+    {
+        auto sharedData = SharedMemory::copyBuffer(data);
+        if (!sharedData)
+            return;
+        sharedData->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    }
     // Take ownership of shared memory and mark it as media-related memory.
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(SharedMemory::IPCHandle { WTFMove(handle), sharedData->size() }), m_remoteSourceBufferIdentifier);
+    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(SharedMemory::IPCHandle { WTFMove(handle), data->size() }), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::abort()

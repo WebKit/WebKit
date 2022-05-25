@@ -561,11 +561,13 @@ void WebPage::getDataSelectionForPasteboard(const String pasteboardType, Complet
     auto buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
     if (!buffer)
         return completionHandler({ });
-    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-    if (!sharedMemoryBuffer)
-        return completionHandler({ });
     SharedMemory::Handle handle;
-    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    {
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+        if (!sharedMemoryBuffer)
+            return completionHandler({ });
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    }
     completionHandler(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() });
 }
 

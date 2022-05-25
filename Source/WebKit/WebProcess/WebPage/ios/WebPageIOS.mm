@@ -3213,11 +3213,13 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
         if (!buffer)
             return;
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        if (!sharedMemoryBuffer)
-            return;
         SharedMemory::Handle handle;
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return;
+            sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        }
         send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }, authorizationToken));
     }
 }
@@ -4656,19 +4658,20 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedShare
 {
     ASSERT(!buffer.isEmpty());
 
-    // FIXME: In some cases, buffer conains a single segment that wraps an existing ShareableResource.
+    // FIXME: In some cases, buffer contains a single segment that wraps an existing ShareableResource.
     // If we could create a handle from that existing resource then we could avoid this extra
     // allocation and copy.
 
-    auto sharedMemory = SharedMemory::copyBuffer(buffer);
-    if (!sharedMemory)
-        return;
-
     ShareableResource::Handle handle;
-    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
-    if (!shareableResource || !shareableResource->createHandle(handle))
-        return;
+    {
+        auto sharedMemory = SharedMemory::copyBuffer(buffer);
+        if (!sharedMemory)
+            return;
 
+        auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
+        if (!shareableResource || !shareableResource->createHandle(handle))
+            return;
+    }
     send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(handle));
 }
 
