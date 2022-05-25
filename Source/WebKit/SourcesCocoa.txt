@@ -48,8 +48,6 @@ NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCo
 NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm
 NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm
 
-NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm
-
 NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm
 NetworkProcess/ios/NetworkProcessIOS.mm
 

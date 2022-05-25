@@ -160,14 +160,6 @@ NetworkProcess/storage/SessionStorageManager.cpp
 NetworkProcess/storage/StorageAreaBase.cpp
 NetworkProcess/storage/StorageAreaRegistry.cpp
 
-NetworkProcess/WebStorage/LocalStorageDatabase.cpp
-NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp
-NetworkProcess/WebStorage/LocalStorageNamespace.cpp
-NetworkProcess/WebStorage/SessionStorageNamespace.cpp
-NetworkProcess/WebStorage/StorageArea.cpp
-NetworkProcess/WebStorage/StorageManager.cpp
-NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp
-
 NetworkProcess/cache/CacheStorageEngine.cpp
 NetworkProcess/cache/CacheStorageEngineCache.cpp
 NetworkProcess/cache/CacheStorageEngineCaches.cpp

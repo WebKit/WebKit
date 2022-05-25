@@ -23,8 +23,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
-    NetworkProcess/WebStorage/StorageManager.cpp
-
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
     Platform/IPC/win/IPCSemaphoreWin.cpp

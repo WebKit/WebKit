@@ -39,8 +39,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
-    NetworkProcess/WebStorage/StorageManager.cpp
-
     NetworkProcess/cache/NetworkCacheDataCurl.cpp
     NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
 

@@ -30,7 +30,6 @@
 #import "DefaultWebBrowserChecks.h"
 #import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
-#import "StorageManager.h"
 #import "WebFramePolicyListenerProxy.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"

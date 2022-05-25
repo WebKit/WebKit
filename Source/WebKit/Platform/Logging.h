@@ -69,7 +69,6 @@ extern "C" {
     M(Layers) \
     M(Layout) \
     M(Loading) \
-    M(LocalStorageDatabaseTracker) \
     M(Media) \
     M(MemoryPressure) \
     M(ModelElement) \
