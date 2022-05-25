@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Viewport
 Tests 'Screenshot' Timeline event records.
 
 
@@ -8,6 +9,7 @@ Evaluating...
 Stopping Capture...
 PASS: Should have at least 1 Screenshot record.
 PASS: Screenshot record should contain image data.
-PASS: Screenshot record width should be non-zero.
-PASS: Screenshot record height should be non-zero.
+Adding screenshot from console...
+PASS: Should have added another Screenshot record.
+PASS: Screenshot record from console should contain image data.
 

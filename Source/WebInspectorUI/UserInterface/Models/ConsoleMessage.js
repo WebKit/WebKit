@@ -25,7 +25,7 @@
 
 WI.ConsoleMessage = class ConsoleMessage
 {
-    constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, callFrames, request)
+    constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, callFrames, request, timestamp)
     {
         console.assert(target instanceof WI.Target);
         console.assert(typeof source === "string");
@@ -33,6 +33,7 @@ WI.ConsoleMessage = class ConsoleMessage
         console.assert(typeof message === "string");
         console.assert(!type || Object.values(WI.ConsoleMessage.MessageType).includes(type));
         console.assert(!parameters || parameters.every((x) => x instanceof WI.RemoteObject));
+        console.assert(!timestamp || !isNaN(timestamp), timestamp);
 
         this._target = target;
         this._source = source;
@@ -52,6 +53,8 @@ WI.ConsoleMessage = class ConsoleMessage
         this._stackTrace = WI.StackTrace.fromPayload(this._target, {callFrames});
 
         this._request = request;
+
+        this._timestamp = timestamp ?? NaN;
     }
 
     // Public
@@ -68,6 +71,7 @@ WI.ConsoleMessage = class ConsoleMessage
     get parameters() { return this._parameters; }
     get stackTrace() { return this._stackTrace; }
     get request() { return this._request; }
+    get timestamp() { return this._timestamp; }
 
     get sourceCodeLocation()
     {

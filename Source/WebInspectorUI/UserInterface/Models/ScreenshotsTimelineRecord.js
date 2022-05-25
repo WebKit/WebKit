@@ -25,26 +25,22 @@
 
 WI.ScreenshotsTimelineRecord = class ScreenshotsTimelineRecord extends WI.TimelineRecord
 {
-    constructor(timestamp, imageData, width, height)
+    constructor(timestamp, imageData)
     {
         console.assert(timestamp);
         console.assert(imageData && typeof imageData === "string", imageData);
-        console.assert(width);
-        console.assert(height);
 
         // Pass the startTime as the endTime since this record type has no duration.
         super(WI.TimelineRecord.Type.Screenshots, timestamp, timestamp);
 
         this._imageData = imageData;
-        this._width = width;
-        this._height = height;
     }
 
     // Import / Export
 
     static async fromJSON(json)
     {
-        return new WI.ScreenshotsTimelineRecord(json.timestamp, json.imageData, json.width, json.height);
+        return new WI.ScreenshotsTimelineRecord(json.timestamp, json.imageData);
     }
 
     toJSON()
@@ -53,14 +49,10 @@ WI.ScreenshotsTimelineRecord = class ScreenshotsTimelineRecord extends WI.Timeli
             type: this.type,
             timestamp: this.startTime,
             imageData: this._imageData,
-            width: this._width,
-            height: this._height,
         };
     }
 
     // Public
 
     get imageData() { return this._imageData; }
-    get width() { return this._width; }
-    get height() { return this._height; }
 };

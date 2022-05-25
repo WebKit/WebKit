@@ -42,17 +42,18 @@
 
 namespace Inspector {
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
     , m_message(message)
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -61,11 +62,12 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_line(line)
     , m_column(column)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
     autogenerateMetadata(globalObject);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -73,6 +75,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_callStack(WTFMove(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
     const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
     if (frame) {
@@ -82,7 +85,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -91,6 +94,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_callStack(WTFMove(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
     const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
     if (frame) {
@@ -100,7 +104,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -108,16 +112,18 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_arguments(WTFMove(arguments))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
     autogenerateMetadata(globalObject);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, Vector<JSONLogValue>&& messages, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, Vector<JSONLogValue>&& messages, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, Seconds timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
+    , m_timestamp(timestamp)
 {
     if (globalObject)
         m_globalObject = { globalObject->vm(), globalObject };
@@ -248,6 +254,9 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
 
     if (m_source == MessageSource::Network && !m_requestId.isEmpty())
         messageObject->setNetworkRequestId(m_requestId);
+
+    if (m_timestamp)
+        messageObject->setTimestamp(m_timestamp.seconds());
 
     if ((m_arguments && m_arguments->argumentCount()) || m_jsonLogValues.size()) {
         InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(globalObject());

@@ -60,7 +60,8 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
     }
   ],
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 
 -- Running test case: Worker.Console.warn
@@ -82,7 +83,8 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
     }
   ],
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 
 -- Running test case: Worker.Console.error
@@ -104,7 +106,8 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
     }
   ],
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 
 -- Running test case: Worker.Console.assert
@@ -126,7 +129,8 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
     }
   ],
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 
 -- Running test case: Worker.Console.time
@@ -141,7 +145,8 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 
 -- Running test case: Worker.Console.count
@@ -156,6 +161,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_sourceCodeLocation": "<filtered>",
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
-  "_request": null
+  "_request": null,
+  "_timestamp": null
 }
 

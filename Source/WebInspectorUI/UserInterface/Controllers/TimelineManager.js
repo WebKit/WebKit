@@ -36,6 +36,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, this._handleMessageAdded, this);
+
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
 
         this._capturingState = TimelineManager.CapturingState.Inactive;
@@ -992,7 +994,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         case InspectorBackend.Enum.Timeline.EventType.Screenshot:
             console.assert(isNaN(endTime));
 
-            return new WI.ScreenshotsTimelineRecord(startTime, recordPayload.data.imageData, recordPayload.data.width, recordPayload.data.height);
+            return new WI.ScreenshotsTimelineRecord(startTime, recordPayload.data.imageData);
 
         default:
             console.error("Missing handling of Timeline Event Type: " + recordPayload.type);
@@ -1213,6 +1215,17 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         this._addRecord(new WI.ResourceTimelineRecord(mainResource));
+    }
+
+    _handleMessageAdded(event)
+    {
+        if (!this._enabled)
+            return;
+
+        let {message} = event.data;
+
+        if (WI.ScreenshotsInstrument.supported() && message.source === WI.ConsoleMessage.MessageSource.ConsoleAPI && message.type === WI.ConsoleMessage.MessageType.Image && message.level === WI.ConsoleMessage.MessageLevel.Log && message.messageText)
+            this._addRecord(new WI.ScreenshotsTimelineRecord(message.timestamp, message.messageText));
     }
 
     _resourceWasAdded(event)

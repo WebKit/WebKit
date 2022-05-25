@@ -58,7 +58,8 @@
                 { "name": "repeatCount", "type": "integer", "optional": true, "description": "Repeat count for repeated messages." },
                 { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "optional": true, "description": "Message parameters in case of the formatted message." },
                 { "name": "stackTrace", "type": "array", "items": { "$ref": "CallFrame" }, "optional": true, "description": "JavaScript stack trace for assertions and error messages." },
-                { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." }
+                { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." },
+                { "name": "timestamp", "type": "number", "optional": true, "description": "Time when this message was added. Currently only used when an expensive operation happens to make sure that the frontend can account for it." }
             ]
         },
         {

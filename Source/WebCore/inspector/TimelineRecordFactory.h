@@ -58,7 +58,7 @@ public:
     static Ref<JSON::Object> createAnimationFrameData(int callbackId);
     static Ref<JSON::Object> createObserverCallbackData(const String& callbackType);
     static Ref<JSON::Object> createPaintData(const FloatQuad&);
-    static Ref<JSON::Object> createScreenshotData(const String& imageData, int width, int height);
+    static Ref<JSON::Object> createScreenshotData(const String& imageData);
 
     static void appendLayoutRoot(JSON::Object& data, const FloatQuad&);
 

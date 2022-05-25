@@ -83,6 +83,10 @@ function test()
                 InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
                 InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
 
+                InspectorTest.assert(message.source === WI.ConsoleMessage.MessageSource.ConsoleAPI, "The added message should be from the console API.");
+                InspectorTest.assert(message.level === WI.ConsoleMessage.MessageLevel.Log, "The added message should be a log.");
+                InspectorTest.assert(message.timestamp, "The message should have a timestamp.");
+
                 try {
                     let image = new Image;
                     await new Promise((resolve, reject) => {

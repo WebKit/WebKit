@@ -69,7 +69,6 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
         for (let record of this._visibleRecords()) {
             this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
                 let imageElement = document.createElement("img");
-                imageElement.width = record.width * (this.height / record.height);
                 imageElement.height = this.height;
                 imageElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
 

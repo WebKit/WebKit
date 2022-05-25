@@ -35,7 +35,7 @@ WI.ConsoleObserver = class ConsoleObserver extends InspectorBackend.Dispatcher
         if (message.type === "assert" && !message.text)
             message.text = WI.UIString("Assertion");
 
-        WI.consoleManager.messageWasAdded(this._target, message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
+        WI.consoleManager.messageWasAdded(this._target, message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId, message.timestamp);
     }
 
     messageRepeatCountUpdated(count)
