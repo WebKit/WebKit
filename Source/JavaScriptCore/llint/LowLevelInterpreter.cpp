@@ -478,8 +478,37 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 // Define the opcode dispatch mechanism when using an ASM loop:
 //
 
+#if COMPILER(CLANG)
+
+// We need an OFFLINE_ASM_BEGIN_SPACER because we'll be declaring every OFFLINE_ASM_GLOBAL_LABEL
+// as an alt entry. However, Clang will error out if the first global label is also an alt entry.
+// To work around this, we'll make OFFLINE_ASM_BEGIN emit an unused global label (which will now
+// be the first) that is not an alt entry, and insert a spacer instruction between it and the
+// actual first global label emitted by the offlineasm. Clang also requires that these 2 labels
+// not point to the same spot in memory; hence, the need for the spacer.
+//
+// For the spacer instruction, we'll choose a breakpoint instruction. However, we can
+// also just emit an unused piece of data. A breakpoint instruction is preferable.
+
+#if CPU(ARM_THUMB2)
+#define OFFLINE_ASM_BEGIN_SPACER "bkpt #0\n"
+#elif CPU(ARM64)
+#define OFFLINE_ASM_BEGIN_SPACER "brk #0xc471\n"
+#elif CPU(X86_64)
+#define OFFLINE_ASM_BEGIN_SPACER "int3\n"
+#else
+#define OFFLINE_ASM_BEGIN_SPACER ".int 0xbadbeef0\n"
+#endif
+
+#else
+#define OFFLINE_ASM_BEGIN_SPACER
+#endif // COMPILER(CLANG)
+
 // These are for building an interpreter from generated assembly code:
-#define OFFLINE_ASM_BEGIN   asm (
+#define OFFLINE_ASM_BEGIN   asm ( \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE) \
+    OFFLINE_ASM_BEGIN_SPACER
+
 #define OFFLINE_ASM_END     );
 
 #if ENABLE(LLINT_EMBEDDED_OPCODE_ID)
@@ -497,34 +526,47 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     OFFLINE_ASM_OPCODE_DEBUG_LABEL(__opcode) \
     OFFLINE_ASM_LOCAL_LABEL(__opcode)
 
+#define OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE(label)
+
+#if COMPILER(CLANG)
+#define OFFLINE_ASM_ALT_ENTRY_DIRECTIVE(label) \
+    ".alt_entry " SYMBOL_STRING(label) "\n"
+#else
+#define OFFLINE_ASM_ALT_ENTRY_DIRECTIVE(label)
+#endif
+
 #if CPU(ARM_THUMB2)
-#define OFFLINE_ASM_GLOBAL_LABEL(label)          \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
     ".text\n"                                    \
-    ".balign 4\n"                                 \
+    ".balign 4\n"                                \
+    ALT_ENTRY(label)                             \
     ".globl " SYMBOL_STRING(label) "\n"          \
     HIDE_SYMBOL(label) "\n"                      \
     ".thumb\n"                                   \
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
 #elif CPU(ARM64)
-#define OFFLINE_ASM_GLOBAL_LABEL(label)         \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
     ".text\n"                                   \
-    ".balign 4\n"                                \
+    ".balign 4\n"                               \
+    ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
     HIDE_SYMBOL(label) "\n"                     \
     SYMBOL_STRING(label) ":\n"
 #else
-#define OFFLINE_ASM_GLOBAL_LABEL(label)         \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
     ".text\n"                                   \
+    ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
     HIDE_SYMBOL(label) "\n"                     \
     SYMBOL_STRING(label) ":\n"
 #endif
 
+#define OFFLINE_ASM_GLOBAL_LABEL(label) \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_ALT_ENTRY_DIRECTIVE)
+
 #if COMPILER(CLANG)
-#define OFFLINE_ASM_ALT_GLOBAL_LABEL(label) \
-    ".alt_entry " SYMBOL_STRING(label) "\n" \
-    OFFLINE_ASM_GLOBAL_LABEL(label)
+#define OFFLINE_ASM_ALT_GLOBAL_LABEL(label) OFFLINE_ASM_GLOBAL_LABEL(label)
 #else
 #define OFFLINE_ASM_ALT_GLOBAL_LABEL(label)
 #endif
