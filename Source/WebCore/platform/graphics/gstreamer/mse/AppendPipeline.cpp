@@ -567,6 +567,20 @@ void AppendPipeline::resetParserState()
 #endif
 }
 
+void AppendPipeline::stopParser()
+{
+    ASSERT(isMainThread());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Stopping parser");
+
+    // Forget all pending tasks and unblock the streaming thread if it was blocked.
+    m_taskQueue.startAborting();
+
+    // Reset the state of all elements in the pipeline.
+    assertedElementSetState(m_pipeline.get(), GST_STATE_READY);
+
+    m_taskQueue.finishAborting();
+}
+
 void AppendPipeline::pushNewBuffer(GRefPtr<GstBuffer>&& buffer)
 {
     GST_TRACE_OBJECT(m_pipeline.get(), "pushing data buffer %" GST_PTR_FORMAT, buffer.get());
