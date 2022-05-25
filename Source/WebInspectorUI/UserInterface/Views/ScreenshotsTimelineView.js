@@ -96,7 +96,10 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
             selectedElement.scrollIntoView({inline: "center"});
         }
 
-        if (!this.element.childNodes.length)
+        if (this.element.childNodes.length) {
+            let spacer = this.element.appendChild(document.createElement("div"));
+            spacer.className = "spacer";
+        } else
             this.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
     }
 

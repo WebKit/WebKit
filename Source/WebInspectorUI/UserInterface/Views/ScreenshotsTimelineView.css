@@ -24,15 +24,22 @@
  */
 
 .timeline-view.screenshots {
+    text-align: center;
     white-space: nowrap; 
     overflow-x: auto;
     background-color: hsl(0, 0%, 90%);
+}
+
+.timeline-view.screenshots > .spacer {
+    display: inline-block;
+    height: 50%;
 }
 
 .timeline-view.screenshots > img {
     max-width: calc(80% - (var(--margin) * 2));
     max-height: calc(100% - (var(--margin) * 2));
     margin: var(--margin);
+    vertical-align: middle;
     box-shadow: var(--shadow);
 
     --margin: 20px;
