@@ -291,7 +291,7 @@ public:
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
-    void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
+    void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
 
     void sendPrewarmInformation(const URL&);

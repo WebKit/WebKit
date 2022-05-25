@@ -87,7 +87,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     EnsureAutomationSessionProxy(String sessionIdentifier)
     DestroyAutomationSessionProxy()
 
-    PrepareToSuspend(bool isSuspensionImminent) -> ()
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()
 
     BackgroundResponsivenessPing()

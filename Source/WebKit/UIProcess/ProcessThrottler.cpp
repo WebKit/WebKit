@@ -226,15 +226,15 @@ void ProcessThrottler::clearPendingRequestToSuspend()
 
 void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspensionImminent)
 {
-    PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: isSuspensionImminent=%d", isSuspensionImminent == IsSuspensionImminent::Yes);
     if (m_pendingRequestToSuspendID) {
         // Do not send a new PrepareToSuspend IPC for imminent suspension if we've already sent a non-imminent PrepareToSuspend IPC.
         RELEASE_ASSERT(isSuspensionImminent == IsSuspensionImminent::Yes);
-        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Not sending PrepareToSuspend() IPC because there is already one in flight (%" PRIu64 ")", *m_pendingRequestToSuspendID);
+        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Not sending PrepareToSuspend(isSuspensionImminent=%d) IPC because there is already one in flight (%" PRIu64 ")", isSuspensionImminent == IsSuspensionImminent::Yes, *m_pendingRequestToSuspendID);
     } else {
         m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
-        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent=%d) IPC", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes);
-        m_process.sendPrepareToSuspend(isSuspensionImminent, [this, weakThis = WeakPtr { *this }, requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
+        double remainingRunTime = ProcessAssertion::remainingRunTimeInSeconds(m_processIdentifier);
+        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent=%d) IPC, remainingRunTime=%fs", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes, remainingRunTime);
+        m_process.sendPrepareToSuspend(isSuspensionImminent, remainingRunTime, [this, weakThis = WeakPtr { *this }, requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
             if (weakThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
                 processReadyToSuspend();
         });

@@ -270,7 +270,7 @@ public:
     void getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&);
 #endif
     // ProcessThrottlerClient
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 

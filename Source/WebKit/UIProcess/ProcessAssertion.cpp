@@ -42,6 +42,11 @@ ProcessAssertion::ProcessAssertion(ProcessID pid, const String& reason, ProcessA
 
 ProcessAssertion::~ProcessAssertion() = default;
 
+double ProcessAssertion::remainingRunTimeInSeconds(ProcessID)
+{
+    return 0;
+}
+
 bool ProcessAssertion::isValid() const
 {
     return true;

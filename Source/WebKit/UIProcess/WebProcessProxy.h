@@ -327,7 +327,7 @@ public:
     void didStartProvisionalLoadForMainFrame(const URL&);
 
     // ProcessThrottlerClient
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
     void didSetAssertionType(ProcessAssertionType) final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }

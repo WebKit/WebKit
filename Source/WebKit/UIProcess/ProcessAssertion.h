@@ -70,6 +70,7 @@ public:
         }
         return assertion;
     }
+    static double remainingRunTimeInSeconds(ProcessID);
     virtual ~ProcessAssertion();
 
     void setPrepareForInvalidationHandler(Function<void()>&& handler) { m_prepareForInvalidationHandler = WTFMove(handler); }

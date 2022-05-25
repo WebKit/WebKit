@@ -2133,7 +2133,7 @@ void NetworkProcess::terminate()
 
 void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
-    prepareToSuspend(true, WTFMove(completionHandler));
+    prepareToSuspend(true, MonotonicTime::now(), WTFMove(completionHandler));
 }
 
 void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType workerType, PAL::SessionID sessionID, const WebCore::RegistrableDomain& registrableDomain, WebCore::ProcessIdentifier processIdentifier)
@@ -2156,9 +2156,11 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
     }
 }
 
-void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d Process is %{public}sin background", this, isSuspensionImminent, m_enterBackgroundTimestamp ? "" : "not ");
+    auto nowTime = MonotonicTime::now();
+    double remainingRunTime = estimatedSuspendTime > nowTime ? (estimatedSuspendTime - nowTime).value() : 0.0;
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d, remainingRunTime=%fs", this, isSuspensionImminent, remainingRunTime);
 
     m_isSuspended = true;
     lowMemoryHandler(Critical::Yes);
@@ -2189,26 +2191,17 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
 
 void NetworkProcess::applicationDidEnterBackground()
 {
-    if (!m_enterBackgroundTimestamp)
-        m_enterBackgroundTimestamp = MonotonicTime::now();
-
     m_downloadManager.applicationDidEnterBackground();
 }
 
 void NetworkProcess::applicationWillEnterForeground()
 {
-    if (m_enterBackgroundTimestamp)
-        m_enterBackgroundTimestamp = std::nullopt;
-
     m_downloadManager.applicationWillEnterForeground();
 }
 
 void NetworkProcess::processDidResume(bool forForegroundActivity)
 {
-    if (!m_enterBackgroundTimestamp)
-        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d", this, forForegroundActivity);
-    else
-        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d Process has been in background for %f seconds", this, forForegroundActivity, (MonotonicTime::now() - m_enterBackgroundTimestamp.value()).value());
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d", this, forForegroundActivity);
 
     m_isSuspended = false;
 

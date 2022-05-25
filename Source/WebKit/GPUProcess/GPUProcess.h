@@ -73,7 +73,7 @@ public:
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
 
-    void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
+    void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
     void resume();
 

@@ -367,6 +367,23 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     };
 }
 
+double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
+{
+    RBSProcessIdentifier *processIdentifier = [RBSProcessIdentifier identifierWithPid:pid];
+    if (!processIdentifier) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "ProcessAssertion::remainingRunTimeInSeconds failed to get identifier for process with PID=%d", pid);
+        return 0;
+    }
+
+    RBSProcessHandle *processHandle = [RBSProcessHandle handleForIdentifier:processIdentifier error:nil];
+    if (!processHandle) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "ProcessAssertion::remainingRunTimeInSeconds failed to get handle for process with PID=%d", pid);
+        return 0;
+    }
+
+    return processHandle.activeLimitations.runTime;
+}
+
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainRunLoop());

@@ -72,7 +72,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheModelSynchronouslyForTesting(enum:uint8_t WebKit::CacheModel cacheModel) -> () Synchronous
 
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
-    PrepareToSuspend(bool isSuspensionImminent) -> ()
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume(bool forForegroundActivity)
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppInitiated lastNavigationWasAppInitiated);

@@ -1374,11 +1374,13 @@ void NetworkProcessProxy::setSuspensionAllowedForTesting(bool allowed)
     s_suspensionAllowedForTesting = allowed;
 }
 
-void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&& completionHandler)
 {
     if (!s_suspensionAllowedForTesting)
         return completionHandler();
-    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+    
+    auto estimatedSuspendTime = MonotonicTime::now() + Seconds(remainingRunTime);
+    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, estimatedSuspendTime), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void NetworkProcessProxy::sendProcessDidResume(ResumeReason reason)

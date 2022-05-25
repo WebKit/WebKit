@@ -27,7 +27,7 @@ messages -> GPUProcess LegacyReceiver {
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters) -> ()
 
-    PrepareToSuspend(bool isSuspensionImminent) -> ()
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()
 
     AddSession(PAL::SessionID sessionID, struct WebKit::GPUProcessSessionParameters parameters)

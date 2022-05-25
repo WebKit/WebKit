@@ -1590,7 +1590,7 @@ void WebsiteDataStore::terminateNetworkProcess()
 
 void WebsiteDataStore::sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    networkProcess().sendPrepareToSuspend(IsSuspensionImminent::No, WTFMove(completionHandler));
+    networkProcess().sendPrepareToSuspend(IsSuspensionImminent::No, 0.0, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::sendNetworkProcessWillSuspendImminentlyForTesting()

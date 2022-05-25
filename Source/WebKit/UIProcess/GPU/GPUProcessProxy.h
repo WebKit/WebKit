@@ -126,7 +126,7 @@ private:
 
     // ProcessThrottlerClient
     ASCIILiteral clientName() const final { return "GPUProcess"_s; }
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
 
     // ProcessLauncher::Client
