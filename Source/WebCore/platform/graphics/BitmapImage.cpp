@@ -52,9 +52,8 @@ BitmapImage::BitmapImage(ImageObserver* observer)
 {
 }
 
-BitmapImage::BitmapImage(RefPtr<NativeImage>&& image, ImageObserver* observer)
-    : Image(observer)
-    , m_source(ImageSource::create(WTFMove(image)))
+BitmapImage::BitmapImage(Ref<NativeImage>&& image)
+    : m_source(ImageSource::create(WTFMove(image)))
 {
 }
 
@@ -77,12 +76,15 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     LOG(Images, "BitmapImage::%s - %p - url: %s", __FUNCTION__, this, sourceURL().string().utf8().data());
 
-    if (!destroyAll)
-        m_source->destroyDecodedDataBeforeFrame(m_currentFrame);
-    else if (!canDestroyDecodedData())
-        m_source->destroyAllDecodedDataExcludeFrame(m_currentFrame);
-    else {
-        m_source->destroyAllDecodedData();
+    if (!destroyAll) {
+        // Destroy all the frames between frame0 and m_currentFrame.
+        m_source->destroyDecodedData(1, m_currentFrame);
+    } else if (!canDestroyDecodedData()) {
+        // Destroy all the frames except frame0 and m_currentFrame.
+        m_source->destroyDecodedData(1, m_currentFrame);
+        m_source->destroyDecodedData(m_currentFrame + 1, frameCount());
+    } else {
+        m_source->destroyDecodedData(0, frameCount());
         m_currentFrameDecodingStatus = DecodingStatus::Invalid;
     }
 
@@ -228,7 +230,6 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     if (destRect.isEmpty() || requestedSrcRect.isEmpty())
         return ImageDrawResult::DidNothing;
 
-    
     auto srcRect = requestedSrcRect;
     auto preferredSize = size();
     auto srcSize = sourceSize();
