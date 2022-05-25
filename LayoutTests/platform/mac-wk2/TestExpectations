@@ -1515,8 +1515,6 @@ webkit.org/b/229429 [ BigSur Debug ] http/tests/inspector/network/fetch-network-
 
 webkit.org/b/229454 [ BigSur Debug ] http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 
-webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failure ]
-
 webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
 
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
