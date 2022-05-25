@@ -220,37 +220,12 @@
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-connection "IOGPU")
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-external-trap)
-                (allow (with telemetry) (with message "IOGPU")
-                    iokit-async-external-method
-                    iokit-external-method)
-            )
-        )
-    )
+            (iokit-connection "IOGPU")))
 
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-external-trap)
-                (deny (with telemetry) (with message "AGXDeviceUserClient")
-                    iokit-async-external-method
-                    iokit-external-method
-                )
-                (allow iokit-async-external-method)
-                (allow iokit-external-method)
-            )
-        )
-    )
+            (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -367,20 +342,6 @@
         (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
 )
 
-(define (IOSurfaceRootUserClientMethodFilter)
-    (when (defined? 'iokit-external-method)
-        (apply-message-filter
-            (deny (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap)
-            (allow iokit-async-external-method)
-            (deny (with telemetry) (with message "IOSurfaceRootUserClient")
-                iokit-external-method)
-            (allow iokit-external-method)
-        )
-    )
-)
-
 ;; Things required by UIKit
 (define-once (uikit-requirements)
     (mobile-preferences-read
@@ -429,10 +390,7 @@
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
-        )
-        (IOSurfaceRootUserClientMethodFilter)
-    )
+            (iokit-user-client-class "IOSurfaceRootUserClient"))) ;; Needed by Tiled Grid code.
 
     ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
     ;; <rdar://problem/13796537>
@@ -976,12 +934,7 @@
 (allow iokit-open (with telemetry-backtrace)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-user-client-class
-            "IOSurfaceRootUserClient"
-        )
-    )
-    (IOSurfaceRootUserClientMethodFilter)
-)
+        (iokit-user-client-class "IOSurfaceRootUserClient")))
 
 (deny iokit-open (with telemetry)
     (require-all
