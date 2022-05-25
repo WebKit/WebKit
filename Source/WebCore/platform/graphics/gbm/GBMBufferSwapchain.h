@@ -64,9 +64,15 @@ public:
     ~GBMBufferSwapchain();
 
     struct BufferDescription {
+        enum Flags : uint32_t {
+            NoFlags = 0,
+            LinearStorage = 1 << 0,
+        };
+
         DMABufFormat format { };
         uint32_t width { 0 };
         uint32_t height  { 0 };
+        uint32_t flags { NoFlags };
     };
 
     class Buffer : public ThreadSafeRefCounted<Buffer> {

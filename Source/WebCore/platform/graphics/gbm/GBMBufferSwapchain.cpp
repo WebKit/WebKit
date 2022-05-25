@@ -48,7 +48,7 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
 
     // If the description of the requested buffers has changed, update the description to the new one and wreck the existing buffers.
     // This should handle changes in format or dimension of the buffers.
-    if (description.format.fourcc != m_array.description.format.fourcc || description.width != m_array.description.width || description.height != m_array.description.height) {
+    if (description.format.fourcc != m_array.description.format.fourcc || description.width != m_array.description.width || description.height != m_array.description.height || description.flags != m_array.description.flags) {
         m_array.description = description;
         m_array.object = { };
     }
@@ -95,12 +95,16 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
                 return nullptr;
             }
 
+            uint32_t boFlags = 0;
+            if (description.flags & BufferDescription::LinearStorage)
+                boFlags |= GBM_BO_USE_LINEAR;
+
             // For each plane, we spawn a gbm_bo object of the appropriate size and format.
             // TODO: GBM_BO_USE_LINEAR will be needed when transferring memory into the bo (e.g. copying
             // over the software-decoded video data), but might not be required for backing e.g. ANGLE rendering.
             for (unsigned i = 0; i < buffer->m_description.format.numPlanes; ++i) {
                 auto& plane = buffer->m_planes[i];
-                plane.bo = gbm_bo_create(device.device(), plane.width, plane.height, uint32_t(plane.fourcc), GBM_BO_USE_LINEAR);
+                plane.bo = gbm_bo_create(device.device(), plane.width, plane.height, uint32_t(plane.fourcc), boFlags);
                 plane.stride = gbm_bo_get_stride(plane.bo);
             }
 

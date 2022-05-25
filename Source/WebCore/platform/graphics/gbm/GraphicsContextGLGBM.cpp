@@ -98,6 +98,7 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
                 .format = DMABufFormat::create(uint32_t(contextAttributes().alpha ? DMABufFormat::FourCC::ARGB8888 : DMABufFormat::FourCC::XRGB8888)),
                 .width = std::clamp<uint32_t>(size.width(), 0, UINT_MAX),
                 .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
+                .flags = GBMBufferSwapchain::BufferDescription::NoFlags,
             });
 
         GLenum textureTarget = drawingBufferTextureTarget();
