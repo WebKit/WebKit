@@ -282,9 +282,13 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
         return AccessibilityRole::Paragraph;
     if (is<HTMLLabelElement>(*node()))
         return AccessibilityRole::Label;
+    
+    if (node()->hasTagName(dialogTag))
+        return AccessibilityRole::ApplicationDialog;
+    
     if (is<Element>(*node()) && downcast<Element>(*node()).isFocusable())
         return AccessibilityRole::Group;
-    
+
     return AccessibilityRole::Unknown;
 }
 
