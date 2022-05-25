@@ -374,7 +374,11 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
 {
 #if ENABLE(VIDEO)
     RefPtr targetElement = dynamicDowncast<WebCore::Element>(event.currentTarget());
-    if (!m_element || &context != &m_element->document() || !targetElement)
+    if (!m_element || !targetElement)
+        return;
+
+    Ref document = m_element->document();
+    if (&context != document.ptr() || !document->fullscreenManager().isFullscreen())
         return;
 
     if (targetElement == m_element) {
@@ -398,6 +402,11 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
 
 void WebFullScreenManager::mainVideoElementExtractionTimerFired()
 {
+    if (!m_element || !m_element->document().fullscreenManager().isFullscreen())
+        return;
+
+    updateMainVideoElement();
+
     if (!m_mainVideoElement)
         return;
 
