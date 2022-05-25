@@ -1,3 +1,42 @@
+2022-05-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r293819. rdar://problem/93602086
+
+    Crash in WindowProxy::setDOMWindow
+    https://bugs.webkit.org/show_bug.cgi?id=232763
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-05-04
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Add a few null checks here and there.
+    
+    Test: fast/dom/set-dom-window-without-page.html
+    
+    * bindings/js/WindowProxy.cpp:
+    (WebCore::WindowProxy::setDOMWindow):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::findFrameForNavigation):
+    
+    LayoutTests:
+    
+    * fast/dom/set-dom-window-without-page-expected.txt: Added.
+    * fast/dom/set-dom-window-without-page.html: Added.
+    
+    Canonical link: https://commits.webkit.org/250292@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293819 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-05-04  Alex Christensen  <achristensen@webkit.org>
+
+            Crash in WindowProxy::setDOMWindow
+            https://bugs.webkit.org/show_bug.cgi?id=232763
+
+            Reviewed by Chris Dumez.
+
+            * fast/dom/set-dom-window-without-page-expected.txt: Added.
+            * fast/dom/set-dom-window-without-page.html: Added.
+
 2022-05-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r294012. rdar://problem/92425915
