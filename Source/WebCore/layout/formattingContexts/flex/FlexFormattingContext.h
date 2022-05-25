@@ -65,6 +65,7 @@ private:
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     LogicalFlexItems convertFlexItemsToLogicalSpace();
     void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForFlexContent&);
+    void computeLogicalWidthForFlexItems(LogicalFlexItems&, const ConstraintsForFlexContent&);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
