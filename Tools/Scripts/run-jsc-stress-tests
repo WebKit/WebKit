@@ -2462,6 +2462,11 @@ def prepareBundle
         handleCollection(collection)
     }
 
+    if $runlist.size == 0
+        $stderr.puts("No tests selected for execution (overzealous --filter?)")
+        exit(2)
+    end
+
     puts
 end
 
