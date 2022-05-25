@@ -232,12 +232,14 @@ void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection,
         uint64_t size = buffer->size();
         if (!size)
             return completionHandler({ });
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        if (!sharedMemoryBuffer)
-            return completionHandler({ });
         SharedMemory::Handle handle;
-        if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return completionHandler({ });
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return completionHandler({ });
+            if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
+                return completionHandler({ });
+        }
         completionHandler(SharedMemory::IPCHandle { WTFMove(handle), size });
     });
 }
@@ -554,12 +556,14 @@ void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, s
         uint64_t size = buffer->size();
         if (!size)
             return completionHandler({ });
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        if (!sharedMemoryBuffer)
-            return completionHandler({ });
         SharedMemory::Handle handle;
-        if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return completionHandler({ });
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return completionHandler({ });
+            if (!sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly))
+                return completionHandler({ });
+        }
         completionHandler(SharedMemory::IPCHandle { WTFMove(handle), size });
     });
 }
