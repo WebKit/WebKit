@@ -231,9 +231,6 @@ PASS padding-inline-start
 PASS padding-left
 PASS padding-right
 PASS padding-top
-PASS page-break-after
-PASS page-break-before
-PASS page-break-inside
 PASS paint-order
 PASS perspective
 PASS perspective-origin
@@ -290,10 +287,8 @@ PASS table-layout
 PASS text-align
 PASS text-anchor
 PASS text-combine-upright
-PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line
-PASS text-decoration-skip
 PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness

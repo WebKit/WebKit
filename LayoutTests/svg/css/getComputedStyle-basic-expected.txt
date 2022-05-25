@@ -74,6 +74,12 @@ rect: style.getPropertyValue(box-shadow) : none
 rect: style.getPropertyCSSValue(box-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(box-sizing) : content-box
 rect: style.getPropertyCSSValue(box-sizing) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(break-after) : auto
+rect: style.getPropertyCSSValue(break-after) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(break-before) : auto
+rect: style.getPropertyCSSValue(break-before) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(break-inside) : auto
+rect: style.getPropertyCSSValue(break-inside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(buffered-rendering) : auto
 rect: style.getPropertyCSSValue(buffered-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(caption-side) : top
@@ -286,12 +292,6 @@ rect: style.getPropertyValue(padding-right) : 0px
 rect: style.getPropertyCSSValue(padding-right) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(padding-top) : 0px
 rect: style.getPropertyCSSValue(padding-top) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(page-break-after) : auto
-rect: style.getPropertyCSSValue(page-break-after) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(page-break-before) : auto
-rect: style.getPropertyCSSValue(page-break-before) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(page-break-inside) : auto
-rect: style.getPropertyCSSValue(page-break-inside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(paint-order) : normal
 rect: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(perspective) : none
@@ -362,6 +362,8 @@ rect: style.getPropertyValue(text-emphasis-style) : none
 rect: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-indent) : 0px
 rect: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-orientation) : mixed
+rect: style.getPropertyCSSValue(text-orientation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-overflow) : clip
 rect: style.getPropertyCSSValue(text-overflow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-rendering) : auto
@@ -448,12 +450,6 @@ rect: style.getPropertyValue(-webkit-box-shadow) : none
 rect: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-axis) : auto
 rect: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-break-after) : auto
-rect: style.getPropertyCSSValue(-webkit-column-break-after) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-break-before) : auto
-rect: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-break-inside) : auto
-rect: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -500,8 +496,6 @@ rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-orientation) : mixed
-rect: style.getPropertyCSSValue(-webkit-text-orientation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-security) : none
 rect: style.getPropertyCSSValue(-webkit-text-security) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
@@ -588,6 +582,12 @@ g: style.getPropertyValue(box-shadow) : none
 g: style.getPropertyCSSValue(box-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(box-sizing) : content-box
 g: style.getPropertyCSSValue(box-sizing) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(break-after) : auto
+g: style.getPropertyCSSValue(break-after) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(break-before) : auto
+g: style.getPropertyCSSValue(break-before) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(break-inside) : auto
+g: style.getPropertyCSSValue(break-inside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(buffered-rendering) : auto
 g: style.getPropertyCSSValue(buffered-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(caption-side) : top
@@ -800,12 +800,6 @@ g: style.getPropertyValue(padding-right) : 0px
 g: style.getPropertyCSSValue(padding-right) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(padding-top) : 0px
 g: style.getPropertyCSSValue(padding-top) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(page-break-after) : auto
-g: style.getPropertyCSSValue(page-break-after) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(page-break-before) : auto
-g: style.getPropertyCSSValue(page-break-before) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(page-break-inside) : auto
-g: style.getPropertyCSSValue(page-break-inside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(paint-order) : normal
 g: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(perspective) : none
@@ -876,6 +870,8 @@ g: style.getPropertyValue(text-emphasis-style) : none
 g: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-indent) : 0px
 g: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-orientation) : mixed
+g: style.getPropertyCSSValue(text-orientation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-overflow) : clip
 g: style.getPropertyCSSValue(text-overflow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-rendering) : auto
@@ -962,12 +958,6 @@ g: style.getPropertyValue(-webkit-box-shadow) : none
 g: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-axis) : auto
 g: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-break-after) : auto
-g: style.getPropertyCSSValue(-webkit-column-break-after) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-break-before) : auto
-g: style.getPropertyCSSValue(-webkit-column-break-before) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-break-inside) : auto
-g: style.getPropertyCSSValue(-webkit-column-break-inside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -1014,8 +1004,6 @@ g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-fill-color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-orientation) : mixed
-g: style.getPropertyCSSValue(-webkit-text-orientation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-security) : none
 g: style.getPropertyCSSValue(-webkit-text-security) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)

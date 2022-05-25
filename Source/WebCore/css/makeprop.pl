@@ -212,11 +212,9 @@ sub skippedFromComputedStyle
 
   if (exists($options->{"longhands"})) {
     my @longhands = @{$options->{"longhands"}};
-    if (scalar @longhands != 1) {
-      # Skip properties if they have a non-internal longhand property.
-      foreach my $longhand (@longhands) {
-        return 1 if !skippedFromComputedStyle($longhand);
-      }
+    # Skip properties if they have a non-internal longhand property.
+    foreach my $longhand (@longhands) {
+      return 1 if !skippedFromComputedStyle($longhand);
     }
   }
 

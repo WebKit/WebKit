@@ -234,9 +234,6 @@ PASS padding-inline-start
 PASS padding-left
 PASS padding-right
 PASS padding-top
-PASS page-break-after
-PASS page-break-before
-PASS page-break-inside
 PASS paint-order
 PASS perspective
 PASS perspective-origin
@@ -294,10 +291,8 @@ PASS table-layout
 PASS text-align
 PASS text-anchor
 PASS text-combine-upright
-PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line
-PASS text-decoration-skip
 PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
@@ -358,9 +353,6 @@ PASS -webkit-box-pack
 PASS -webkit-box-reflect
 PASS -webkit-box-shadow
 PASS -webkit-column-axis
-PASS -webkit-column-break-after
-PASS -webkit-column-break-before
-PASS -webkit-column-break-inside
 PASS -webkit-column-progression
 PASS -webkit-font-smoothing
 PASS -webkit-hyphenate-character
@@ -387,13 +379,11 @@ PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
-PASS -webkit-perspective
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-tap-highlight-color
 PASS -webkit-text-combine
 PASS -webkit-text-fill-color
-PASS -webkit-text-orientation
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color
 PASS -webkit-text-stroke-width
