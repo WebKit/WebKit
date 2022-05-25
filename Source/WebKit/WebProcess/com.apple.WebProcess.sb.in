@@ -2200,7 +2200,9 @@
         MSC__kernelrpc_mach_vm_purgable_control_trap
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
         MSC_iokit_user_client_trap
+#endif
         MSC_mach_generate_activity_id
         MSC_mach_msg_trap
         MSC_mach_reply_port
