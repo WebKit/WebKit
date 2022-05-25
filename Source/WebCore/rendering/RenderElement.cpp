@@ -683,18 +683,18 @@ static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& rend
     return findNextLayer(*renderer.parent(), parentLayer, &renderer);
 }
 
-static void addLayers(const RenderElement& addedRenderer, RenderElement& currentRenderer, RenderLayer& parentLayer, std::optional<RenderLayer*>& beforeChild)
+static void addLayers(const RenderElement& addedRenderer, RenderElement& currentRenderer, RenderLayer* parentLayer)
 {
     if (currentRenderer.hasLayer()) {
-        if (!beforeChild.has_value())
-            beforeChild = layerNextSiblingRespectingTopLayer(addedRenderer, parentLayer);
-
-        parentLayer.addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild.value());
+        if (isInTopLayerOrBackdrop(currentRenderer.style(), currentRenderer.element()))
+            parentLayer = addedRenderer.view().layer();
+        RenderLayer* beforeChild = layerNextSiblingRespectingTopLayer(addedRenderer, *parentLayer);
+        parentLayer->addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild);
         return;
     }
 
     for (auto& child : childrenOfType<RenderElement>(currentRenderer))
-        addLayers(addedRenderer, child, parentLayer, beforeChild);
+        addLayers(addedRenderer, child, parentLayer);
 }
 
 void RenderElement::addLayers(RenderLayer* parentLayer)
@@ -702,12 +702,12 @@ void RenderElement::addLayers(RenderLayer* parentLayer)
     if (!parentLayer)
         return;
 
-    std::optional<RenderLayer*> beforeChild;
-    WebCore::addLayers(*this, *this, *parentLayer, beforeChild);
+    WebCore::addLayers(*this, *this, parentLayer);
 }
 
-void RenderElement::removeLayers(RenderLayer* parentLayer)
+void RenderElement::removeLayers()
 {
+    RenderLayer* parentLayer = layerParent();
     if (!parentLayer)
         return;
 
@@ -717,7 +717,7 @@ void RenderElement::removeLayers(RenderLayer* parentLayer)
     }
 
     for (auto& child : childrenOfType<RenderElement>(*this))
-        child.removeLayers(parentLayer);
+        child.removeLayers();
 }
 
 void RenderElement::moveLayers(RenderLayer& newParent)
@@ -1022,10 +1022,8 @@ void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
             enclosingLayer->dirtyVisibleContentStatus();
     }
     // Keep our layer hierarchy updated.
-    if (firstChild() || hasLayer()) {
-        auto* parentLayer = layerParent();
-        removeLayers(parentLayer);
-    }
+    if (firstChild() || hasLayer())
+        removeLayers();
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);

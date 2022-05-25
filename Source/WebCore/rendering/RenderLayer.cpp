@@ -5441,8 +5441,10 @@ void RenderLayer::createReflection()
 
 void RenderLayer::removeReflection()
 {
-    if (!m_reflection->renderTreeBeingDestroyed())
-        m_reflection->removeLayers(this);
+    if (!m_reflection->renderTreeBeingDestroyed()) {
+        if (auto* layer = m_reflection->layer())
+            removeChild(*layer);
+    }
 
     m_reflection->setParent(nullptr);
     m_reflection = nullptr;
