@@ -52,6 +52,7 @@ struct LinkLoadParameters {
     String crossOrigin;
     String imageSrcSet;
     String imageSizes;
+    String nonce;
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 };
 

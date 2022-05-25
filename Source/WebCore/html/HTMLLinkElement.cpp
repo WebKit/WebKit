@@ -263,6 +263,7 @@ void HTMLLinkElement::process()
         attributeWithoutSynchronization(crossoriginAttr),
         attributeWithoutSynchronization(imagesrcsetAttr),
         attributeWithoutSynchronization(imagesizesAttr),
+        nonce(),
         referrerPolicy(),
     };
 
