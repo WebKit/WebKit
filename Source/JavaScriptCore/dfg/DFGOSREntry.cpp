@@ -299,7 +299,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
 
-    unsigned registerCount = registerSaveLocations->size();
+    unsigned registerCount = registerSaveLocations->registerCount();
     VMEntryRecord* record = vmEntryRecord(vm.topEntryFrame);
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset currentEntry = registerSaveLocations->at(i);

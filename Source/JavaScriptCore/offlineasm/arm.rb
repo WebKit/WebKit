@@ -48,14 +48,22 @@ require "risc"
 #
 # FPR conventions, to match the baseline JIT
 #
-# d0 => ft0, fa0, fr
-# d1 => ft1, fa1
-# d2 => ft2
-# d3 => ft3
-# d4 => ft4
-# d5 => ft5
-# d6 =>              (scratch)
-# d7 =>              (scratch)
+#  d0 => ft0, fa0, fr
+#  d1 => ft1, fa1
+#  d2 => ft2
+#  d3 => ft3
+#  d4 => ft4
+#  d5 => ft5
+#  d6 => ft6
+#  d7 => ft7
+#  d8 => csfr0
+#  d9 => csfr1
+# d10 => csfr2
+# d11 => csfr3
+# d12 => csfr4
+# d13 => csfr5
+# d14 => csfr6
+# d15 => scratch
 
 class Node
     def armSingle
@@ -76,7 +84,7 @@ end
 # only as last resort.
 ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r12"), SpecialRegister.new("r6")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
-ARM_SCRATCH_FPR = SpecialRegister.new("d6")
+ARM_SCRATCH_FPR = SpecialRegister.new("d15")
 OS_DARWIN = ((RUBY_PLATFORM =~ /darwin/i) != nil)
 
 def armMoveImmediate(value, register)
@@ -147,6 +155,24 @@ class FPRegisterID
             "d4"
         when "ft5"
             "d5"
+        when "ft6"
+            "d6"
+        when "ft7"
+            "d7"
+        when "csfr0"
+            "d8"
+        when "csfr1"
+            "d9"
+        when "csfr2"
+            "d10"
+        when "csfr3"
+            "d11"
+        when "csfr4"
+            "d12"
+        when "csfr5"
+            "d13"
+        when "csfr6"
+            "d14"
         else
             raise "Bad register #{name} for ARM at #{codeOriginString}"
         end

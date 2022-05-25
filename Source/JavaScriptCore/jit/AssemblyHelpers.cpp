@@ -633,7 +633,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
-    unsigned registerCount = allCalleeSaves->size();
+    unsigned registerCount = allCalleeSaves->registerCount();
 
     GPRReg scratch = InvalidGPRReg;
     unsigned scratchGPREntryIndex = 0;
@@ -720,7 +720,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-    unsigned registerCount = allCalleeSaves->size();
+    unsigned registerCount = allCalleeSaves->registerCount();
 
     LoadRegSpooler spooler(*this, entryFrameGPR);
 
@@ -1109,7 +1109,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
-    unsigned registerCount = allCalleeSaves->size();
+    unsigned registerCount = allCalleeSaves->registerCount();
 
     StoreRegSpooler spooler(*this, calleeSavesBuffer);
 
@@ -1219,9 +1219,9 @@ void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
 {
     StoreRegSpooler spooler(*this, framePointerRegister);
 
-    size_t listSize = list.size();
+    size_t registerCount = list.registerCount();
     size_t i = 0;
-    for (; i < listSize; i++) {
+    for (; i < registerCount; i++) {
         auto entry = list.at(i);
         if (!entry.reg().isGPR())
             break;
@@ -1229,7 +1229,7 @@ void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
     }
     spooler.finalizeGPR();
 
-    for (; i < listSize; i++)
+    for (; i < registerCount; i++)
         spooler.storeFPR(list.at(i));
     spooler.finalizeFPR();
 }
@@ -1238,9 +1238,9 @@ void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
 {
     LoadRegSpooler spooler(*this, framePointerRegister);
 
-    size_t listSize = list.size();
+    size_t registerCount = list.registerCount();
     size_t i = 0;
-    for (; i < listSize; i++) {
+    for (; i < registerCount; i++) {
         auto entry = list.at(i);
         if (!entry.reg().isGPR())
             break;
@@ -1248,7 +1248,7 @@ void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
     }
     spooler.finalizeGPR();
 
-    for (; i < listSize; i++)
+    for (; i < registerCount; i++)
         spooler.loadFPR(list.at(i));
     spooler.finalizeFPR();
 }
@@ -1256,7 +1256,7 @@ void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
 void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
-    unsigned registerCount = calleeSaves->size();
+    unsigned registerCount = calleeSaves->registerCount();
 
     StoreRegSpooler spooler(*this, framePointerRegister);
 
@@ -1282,7 +1282,7 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
 void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
     RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters());
-    unsigned registerCount = calleeSaves->size();
+    unsigned registerCount = calleeSaves->registerCount();
     
     LoadRegSpooler spooler(*this, framePointerRegister);
 
@@ -1325,7 +1325,7 @@ void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFram
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     const RegisterAtOffsetList* currentCalleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
     RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
-    unsigned registerCount = allCalleeSaves->size();
+    unsigned registerCount = allCalleeSaves->registerCount();
 
     unsigned i = 0;
     for (; i < registerCount; i++) {
@@ -1373,7 +1373,7 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
 
     const RegisterAtOffsetList* calleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
-    unsigned registerCount = calleeSaves->size();
+    unsigned registerCount = calleeSaves->registerCount();
 
     GPRReg dstBufferGPR = temp1;
     addPtr(TrustedImm32(offsetVirtualRegister.offsetInBytes()), framePointerRegister, dstBufferGPR);

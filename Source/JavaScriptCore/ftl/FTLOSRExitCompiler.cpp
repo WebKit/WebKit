@@ -182,7 +182,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         sizeof(EncodedJSValue) * (
             exit.m_descriptor->m_values.size() + numMaterializations + maxMaterializationNumArguments) +
         requiredScratchMemorySizeInBytes() +
-        codeBlock->jitCode()->calleeSaveRegisters()->size() * sizeof(uint64_t));
+        codeBlock->jitCode()->calleeSaveRegisters()->sizeOfAreaInBytes());
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
     EncodedJSValue* materializationPointers = scratch + exit.m_descriptor->m_values.size();
     EncodedJSValue* materializationArguments = materializationPointers + numMaterializations;
@@ -452,7 +452,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         jit.move(CCallHelpers::framePointerRegister, srcBufferGPR);
         jit.move(CCallHelpers::TrustedImmPtr(unwindScratch), destBufferGPR);
         CCallHelpers::CopySpooler spooler(CCallHelpers::CopySpooler::BufferRegs::AllowModification, jit, srcBufferGPR, destBufferGPR, GPRInfo::regT0, GPRInfo::regT1);
-        for (unsigned i = codeBlock->jitCode()->calleeSaveRegisters()->size(); i--;) {
+        for (unsigned i = codeBlock->jitCode()->calleeSaveRegisters()->registerCount(); i--;) {
             RegisterAtOffset entry = codeBlock->jitCode()->calleeSaveRegisters()->at(i);
             spooler.loadGPR(entry.offset());
             spooler.storeGPR(i * sizeof(uint64_t));

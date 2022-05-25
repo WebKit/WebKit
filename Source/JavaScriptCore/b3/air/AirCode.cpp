@@ -229,14 +229,8 @@ void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOf
 RegisterAtOffsetList Code::calleeSaveRegisterAtOffsetList() const
 {
     RegisterAtOffsetList result = m_uncorrectedCalleeSaveRegisterAtOffsetList;
-    if (StackSlot* slot = m_calleeSaveStackSlot) {
-        ptrdiff_t offset = slot->byteSize() + slot->offsetFromFP();
-        for (size_t i = result.size(); i--;) {
-            result.at(i) = RegisterAtOffset(
-                result.at(i).reg(),
-                result.at(i).offset() + offset);
-        }
-    }
+    if (StackSlot* slot = m_calleeSaveStackSlot)
+        result.adjustOffsets(slot->byteSize() + slot->offsetFromFP());
     return result;
 }
 
@@ -277,7 +271,7 @@ void Code::dump(PrintStream& out) const
     if (m_callArgAreaSize)
         out.print(tierName, "Call arg area size: ", m_callArgAreaSize, "\n");
     RegisterAtOffsetList calleeSaveRegisters = this->calleeSaveRegisterAtOffsetList();
-    if (calleeSaveRegisters.size())
+    if (calleeSaveRegisters.registerCount())
         out.print(tierName, "Callee saves: ", calleeSaveRegisters, "\n");
 }
 

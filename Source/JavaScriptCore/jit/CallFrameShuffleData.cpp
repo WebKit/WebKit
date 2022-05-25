@@ -39,7 +39,7 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
 {
     RegisterSet calleeSaveRegisters { RegisterSet::vmCalleeSaveRegisters() };
 
-    for (size_t i = 0; i < registerSaveLocations->size(); ++i) {
+    for (size_t i = 0; i < registerSaveLocations->registerCount(); ++i) {
         RegisterAtOffset entry { registerSaveLocations->at(i) };
         if (!calleeSaveRegisters.get(entry.reg()))
             continue;
@@ -52,15 +52,20 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
         registers[entry.reg()]
             = ValueRecovery::displacedInJSStack(saveSlot, DataFormatJS);
 #elif USE(JSVALUE32_64)
-        // On 32-bit architectures, 2 callee saved registers may be packed into the same slot
-        static_assert(!PayloadOffset || !TagOffset);
-        static_assert(PayloadOffset == 4 || TagOffset == 4);
-        bool inTag = (saveSlotIndexInCPURegisters & 1) == !!TagOffset;
-        if (saveSlotIndexInCPURegisters < 0)
-            saveSlotIndexInCPURegisters -= 1; // Round towards -inf
-        VirtualRegister saveSlot { saveSlotIndexInCPURegisters / 2 };
-        registers[entry.reg()]
-            = ValueRecovery::calleeSaveRegDisplacedInJSStack(saveSlot, inTag);
+        // On 32-bit architectures, 2 callee saved GPRs may be packed into the same slot
+        if (entry.reg().isGPR()) {
+            static_assert(!PayloadOffset || !TagOffset);
+            static_assert(PayloadOffset == 4 || TagOffset == 4);
+            bool inTag = (saveSlotIndexInCPURegisters & 1) == !!TagOffset;
+            if (saveSlotIndexInCPURegisters < 0)
+                saveSlotIndexInCPURegisters -= 1; // Round towards -inf
+            VirtualRegister saveSlot { saveSlotIndexInCPURegisters / 2 };
+            registers[entry.reg()] = ValueRecovery::calleeSaveGPRDisplacedInJSStack(saveSlot, inTag);
+        } else {
+            ASSERT(!(saveSlotIndexInCPURegisters & 1)); // Should be at an even offset
+            VirtualRegister saveSlot { saveSlotIndexInCPURegisters / 2 };
+            registers[entry.reg()] = ValueRecovery::displacedInJSStack(saveSlot, DataFormatDouble);
+        }
 #endif
     }
 
@@ -74,7 +79,7 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* 
 #if USE(JSVALUE64)
         registers[reg] = ValueRecovery::inRegister(reg, DataFormatJS);
 #elif USE(JSVALUE32_64)
-        registers[reg] = ValueRecovery::inRegister(reg, DataFormatInt32);
+        registers[reg] = ValueRecovery::inRegister(reg, reg.isGPR() ? DataFormatInt32 : DataFormatDouble);
 #endif
     }
 }

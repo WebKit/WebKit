@@ -756,7 +756,7 @@ end
 if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
-    const CalleeSaveRegisterCount = 7
+    const CalleeSaveRegisterCount = 7 + 2 * 1 // 7 32-bit GPRs + 1 64-bit FPR
 elsif MIPS
     const CalleeSaveRegisterCount = 3
 elsif X86 or X86_WIN
@@ -772,6 +772,7 @@ const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + S
 macro pushCalleeSaves()
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
+        emit "vpush.64 {d15}"
         emit "push {r4-r6, r8-r11}"
     elsif MIPS
         emit "addiu $sp, $sp, -12"
@@ -795,6 +796,7 @@ macro popCalleeSaves()
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
         emit "pop {r4-r6, r8-r11}"
+        emit "vpop.64 {d15}"
     elsif MIPS
         emit "lw $s0, 0($sp)"
         emit "lw $s1, 4($sp)"
@@ -933,7 +935,17 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storeq csr4, 32[entryFrame]
             storeq csr5, 40[entryFrame]
             storeq csr6, 48[entryFrame]
-        elsif ARMv7 or MIPS
+        elsif ARMv7
+            storep csr0, [entryFrame]
+            storep csr1, 4[entryFrame]
+            stored csfr0, 8[entryFrame]
+            stored csfr1, 16[entryFrame]
+            stored csfr2, 24[entryFrame]
+            stored csfr3, 32[entryFrame]
+            stored csfr4, 40[entryFrame]
+            stored csfr5, 48[entryFrame]
+            stored csfr6, 56[entryFrame]
+        elsif MIPS
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
         elsif RISCV64
@@ -1009,7 +1021,17 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadq 32[temp], csr4
             loadq 40[temp], csr5
             loadq 48[temp], csr6
-        elsif ARMv7 or MIPS
+        elsif ARMv7
+            loadp [temp], csr0
+            loadp 4[temp], csr1
+            loadd 8[temp], csfr0
+            loadd 16[temp], csfr1
+            loadd 24[temp], csfr2
+            loadd 32[temp], csfr3
+            loadd 40[temp], csfr4
+            loadd 48[temp], csfr5
+            loadd 56[temp], csfr6
+        elsif MIPS
             loadp [temp], csr0
             loadp 4[temp], csr1
         elsif RISCV64

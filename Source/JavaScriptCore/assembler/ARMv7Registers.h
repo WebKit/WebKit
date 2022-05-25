@@ -104,22 +104,22 @@
     macro(s13, "s13", 0, 0)                     \
     macro(s14, "s14", 0, 0)                     \
     macro(s15, "s15", 0, 0)                     \
-    macro(s16, "s16", 0, 0)                     \
-    macro(s17, "s17", 0, 0)                     \
-    macro(s18, "s18", 0, 0)                     \
-    macro(s19, "s19", 0, 0)                     \
-    macro(s20, "s20", 0, 0)                     \
-    macro(s21, "s21", 0, 0)                     \
-    macro(s22, "s22", 0, 0)                     \
-    macro(s23, "s23", 0, 0)                     \
-    macro(s24, "s24", 0, 0)                     \
-    macro(s25, "s25", 0, 0)                     \
-    macro(s26, "s26", 0, 0)                     \
-    macro(s27, "s27", 0, 0)                     \
-    macro(s28, "s28", 0, 0)                     \
-    macro(s29, "s29", 0, 0)                     \
-    macro(s30, "s30", 0, 0)                     \
-    macro(s31, "s31", 0, 0)
+    macro(s16, "s16", 0, 1)                     \
+    macro(s17, "s17", 0, 1)                     \
+    macro(s18, "s18", 0, 1)                     \
+    macro(s19, "s19", 0, 1)                     \
+    macro(s20, "s20", 0, 1)                     \
+    macro(s21, "s21", 0, 1)                     \
+    macro(s22, "s22", 0, 1)                     \
+    macro(s23, "s23", 0, 1)                     \
+    macro(s24, "s24", 0, 1)                     \
+    macro(s25, "s25", 0, 1)                     \
+    macro(s26, "s26", 0, 1)                     \
+    macro(s27, "s27", 0, 1)                     \
+    macro(s28, "s28", 0, 1)                     \
+    macro(s29, "s29", 0, 1)                     \
+    macro(s30, "s30", 0, 1)                     \
+    macro(s31, "s31", 0, 1)
 
 #if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 #define FOR_EACH_FP_DOUBLE_REGISTER(macro)      \
@@ -131,14 +131,14 @@
     macro(d5,  "d5",  0, 0)                     \
     macro(d6,  "d6",  0, 0)                     \
     macro(d7,  "d7",  0, 0)                     \
-    macro(d8,  "d8",  0, 0)                     \
-    macro(d9,  "d9",  0, 0)                     \
-    macro(d10, "d10", 0, 0)                     \
-    macro(d11, "d11", 0, 0)                     \
-    macro(d12, "d12", 0, 0)                     \
-    macro(d13, "d13", 0, 0)                     \
-    macro(d14, "d14", 0, 0)                     \
-    macro(d15, "d15", 0, 0)                     \
+    macro(d8,  "d8",  0, 1)                     \
+    macro(d9,  "d9",  0, 1)                     \
+    macro(d10, "d10", 0, 1)                     \
+    macro(d11, "d11", 0, 1)                     \
+    macro(d12, "d12", 0, 1)                     \
+    macro(d13, "d13", 0, 1)                     \
+    macro(d14, "d14", 0, 1)                     \
+    macro(d15, "d15", 0, 1)                     \
     macro(d16, "d16", 0, 0)                     \
     macro(d17, "d17", 0, 0)                     \
     macro(d18, "d18", 0, 0)                     \
@@ -165,14 +165,14 @@
     macro(d5,  "d5",  0, 0)                     \
     macro(d6,  "d6",  0, 0)                     \
     macro(d7,  "d7",  0, 0)                     \
-    macro(d8,  "d8",  0, 0)                     \
-    macro(d9,  "d9",  0, 0)                     \
-    macro(d10, "d10", 0, 0)                     \
-    macro(d11, "d11", 0, 0)                     \
-    macro(d12, "d12", 0, 0)                     \
-    macro(d13, "d13", 0, 0)                     \
-    macro(d14, "d14", 0, 0)                     \
-    macro(d15, "d15", 0, 0)
+    macro(d8,  "d8",  0, 1)                     \
+    macro(d9,  "d9",  0, 1)                     \
+    macro(d10, "d10", 0, 1)                     \
+    macro(d11, "d11", 0, 1)                     \
+    macro(d12, "d12", 0, 1)                     \
+    macro(d13, "d13", 0, 1)                     \
+    macro(d14, "d14", 0, 1)                     \
+    macro(d15, "d15", 0, 1)
 #endif
 
 #if CPU(ARM_NEON)
@@ -181,10 +181,10 @@
     macro(q1, "q1", 0, 0)                       \
     macro(q2, "q2", 0, 0)                       \
     macro(q3, "q3", 0, 0)                       \
-    macro(q4, "q4", 0, 0)                       \
-    macro(q5, "q5", 0, 0)                       \
-    macro(q6, "q6", 0, 0)                       \
-    macro(q7, "q7", 0, 0)                       \
+    macro(q4, "q4", 0, 1)                       \
+    macro(q5, "q5", 0, 1)                       \
+    macro(q6, "q6", 0, 1)                       \
+    macro(q7, "q7", 0, 1)                       \
     macro(q8, "q8", 0, 0)                       \
     macro(q9, "q9", 0, 0)                       \
     macro(q10, "q10", 0, 0)                     \

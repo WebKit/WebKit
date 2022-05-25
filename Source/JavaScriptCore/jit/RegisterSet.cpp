@@ -94,6 +94,12 @@ RegisterSet RegisterSet::macroScratchRegisters()
     return RegisterSet(MacroAssembler::s_scratchRegister);
 #elif CPU(ARM64) || CPU(RISCV64)
     return RegisterSet(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister);
+#elif CPU(ARM_THUMB2)
+    RegisterSet result;
+    result.set(MacroAssembler::dataTempRegister);
+    result.set(MacroAssembler::addressTempRegister);
+    result.set(MacroAssembler::fpTempRegister);
+    return result;
 #elif CPU(MIPS)
     RegisterSet result;
     result.set(MacroAssembler::immTempRegister);
@@ -152,7 +158,17 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.set(FPRInfo::fpRegCS5);
     result.set(FPRInfo::fpRegCS6);
     result.set(FPRInfo::fpRegCS7);
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#elif CPU(ARM_THUMB2)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(FPRInfo::fpRegCS0);
+    result.set(FPRInfo::fpRegCS1);
+    result.set(FPRInfo::fpRegCS2);
+    result.set(FPRInfo::fpRegCS3);
+    result.set(FPRInfo::fpRegCS4);
+    result.set(FPRInfo::fpRegCS5);
+    result.set(FPRInfo::fpRegCS6);
+#elif CPU(MIPS)
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
 #elif CPU(RISCV64)

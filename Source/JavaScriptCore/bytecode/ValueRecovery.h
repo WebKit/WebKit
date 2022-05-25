@@ -192,7 +192,7 @@ public:
     }
 
 #if USE(JSVALUE32_64)
-    static ValueRecovery calleeSaveRegDisplacedInJSStack(VirtualRegister virtualReg, bool inTag)
+    static ValueRecovery calleeSaveGPRDisplacedInJSStack(VirtualRegister virtualReg, bool inTag)
     {
         ValueRecovery result;
         UnionType u;

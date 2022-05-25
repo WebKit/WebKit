@@ -193,10 +193,10 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     Wasm::CallInformation jsCallInfo = Wasm::jsCallingConvention().callInformationFor(typeDefinition, Wasm::CallRole::Callee);
     RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
 
-    unsigned totalFrameSize = registersToSpill.size() * sizeof(CPURegister);
+    unsigned totalFrameSize = registersToSpill.sizeOfAreaInBytes();
     totalFrameSize += sizeof(CPURegister); // Slot for the VM's previous wasm instance.
     totalFrameSize += wasmCallInfo.headerAndArgumentStackSizeInBytes;
-    totalFrameSize += savedResultRegisters.size() * sizeof(CPURegister);
+    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
 
     // FIXME: Optimize Wasm function call even if arguments include I64.
     // This requires I64 extraction from BigInt.

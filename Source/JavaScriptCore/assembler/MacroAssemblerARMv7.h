@@ -41,11 +41,14 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
 public:
     static constexpr size_t nearJumpRange = 16 * MB;
 
-private:
     static constexpr RegisterID dataTempRegister = ARMRegisters::ip;
     static constexpr RegisterID addressTempRegister = ARMRegisters::r6;
 
-    static constexpr ARMRegisters::FPDoubleRegisterID fpTempRegister = ARMRegisters::d7;
+    // d15 is host/C ABI callee save, but is volatile in the VM/JS ABI. We use
+    // this as scratch register so we can use the full range of d0-d7 as
+    // temporary, and in particular as Wasm argument/return register.
+    static constexpr ARMRegisters::FPDoubleRegisterID fpTempRegister = ARMRegisters::d15;
+private:
     inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
 
     // In the Thumb-2 instruction set, instructions operating only on registers r0-r7 can often

@@ -1557,7 +1557,7 @@ void testInfiniteLoopDoesntCauseBadHoisting()
 
     // The patchpoint early ret() works because we don't have callee saves.
     auto code = compileProc(proc);
-    RELEASE_ASSERT(!proc.calleeSaveRegisterAtOffsetList().size()); 
+    RELEASE_ASSERT(!proc.calleeSaveRegisterAtOffsetList().registerCount());
     invoke<void>(*code, static_cast<uint64_t>(55)); // Shouldn't crash dereferncing 55.
 }
 

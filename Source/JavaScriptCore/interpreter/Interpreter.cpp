@@ -625,7 +625,7 @@ private:
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         CPURegister* frame = reinterpret_cast<CPURegister*>(m_callFrame->registers());
 
-        unsigned registerCount = currentCalleeSaves->size();
+        unsigned registerCount = currentCalleeSaves->registerCount();
         VMEntryRecord* record = vmEntryRecord(m_vm.topEntryFrame);
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset currentEntry = currentCalleeSaves->at(i);

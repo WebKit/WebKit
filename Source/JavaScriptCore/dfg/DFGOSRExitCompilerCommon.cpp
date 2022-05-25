@@ -231,7 +231,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 CCallHelpers::Address calleeSaveSlot(InlineCallFrame* inlineCallFrame, CodeBlock* baselineCodeBlock, GPRReg calleeSave)
 {
     const RegisterAtOffsetList* calleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
-    for (unsigned i = 0; i < calleeSaves->size(); i++) {
+    for (unsigned i = 0; i < calleeSaves->registerCount(); i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
         if (entry.reg() != calleeSave)
             continue;

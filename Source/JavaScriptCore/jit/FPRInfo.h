@@ -106,7 +106,7 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 6;
+    static constexpr unsigned numberOfRegisters = 8;
 
 #if CPU(ARM_HARDFP)
     static constexpr unsigned numberOfArgumentRegisters = 8;
@@ -115,13 +115,23 @@ public:
 #endif
 
     // Temporary registers.
-    // d7 is use by the MacroAssembler as fpTempRegister.
+    // d8-d15 are callee saved, d15 is use by the MacroAssembler as fpTempRegister.
     static constexpr FPRReg fpRegT0 = ARMRegisters::d0;
     static constexpr FPRReg fpRegT1 = ARMRegisters::d1;
     static constexpr FPRReg fpRegT2 = ARMRegisters::d2;
     static constexpr FPRReg fpRegT3 = ARMRegisters::d3;
     static constexpr FPRReg fpRegT4 = ARMRegisters::d4;
     static constexpr FPRReg fpRegT5 = ARMRegisters::d5;
+    static constexpr FPRReg fpRegT6 = ARMRegisters::d6;
+    static constexpr FPRReg fpRegT7 = ARMRegisters::d7;
+    static constexpr FPRReg fpRegCS0 = ARMRegisters::d8;
+    static constexpr FPRReg fpRegCS1 = ARMRegisters::d9;
+    static constexpr FPRReg fpRegCS2 = ARMRegisters::d10;
+    static constexpr FPRReg fpRegCS3 = ARMRegisters::d11;
+    static constexpr FPRReg fpRegCS4 = ARMRegisters::d12;
+    static constexpr FPRReg fpRegCS5 = ARMRegisters::d13;
+    static constexpr FPRReg fpRegCS6 = ARMRegisters::d14;
+
     // ARMv7 doesn't pass arguments in fp registers. The return
     // value is also actually in integer registers, for now
     // we'll return in d0 for simplicity.
@@ -140,6 +150,8 @@ public:
     static_assert(ARMRegisters::d3 == 3);
     static_assert(ARMRegisters::d4 == 4);
     static_assert(ARMRegisters::d5 == 5);
+    static_assert(ARMRegisters::d6 == 6);
+    static_assert(ARMRegisters::d7 == 7);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;

@@ -197,11 +197,11 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     RegisterAtOffsetList registersToSpill(toSave, RegisterAtOffsetList::OffsetBaseType::FramePointerBased);
     result->entrypoint.calleeSaveRegisters = registersToSpill;
 
-    size_t totalFrameSize = registersToSpill.size() * sizeof(CPURegister);
+    size_t totalFrameSize = registersToSpill.sizeOfAreaInBytes();
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(typeDefinition);
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     totalFrameSize += wasmFrameConvention.headerAndArgumentStackSizeInBytes;
-    totalFrameSize += savedResultRegisters.size() * sizeof(CPURegister);
+    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
 
     totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);

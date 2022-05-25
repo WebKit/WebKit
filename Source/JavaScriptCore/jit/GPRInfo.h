@@ -553,7 +553,8 @@ static_assert(GPRInfo::returnValueGPR2 == X86Registers::edx);
 
 #if CPU(ARM_THUMB2)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 2u
+// Callee Saves includes r10, r11, and FP registers d8..d15, which are twice the size of a GPR
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 18u
 
 class GPRInfo {
 public:

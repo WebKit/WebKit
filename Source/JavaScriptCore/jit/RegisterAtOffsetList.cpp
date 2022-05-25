@@ -39,18 +39,41 @@ RegisterAtOffsetList::RegisterAtOffsetList() { }
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
     : m_registers(registerSet.numberOfSetRegisters())
 {
-    size_t numberOfRegisters = registerSet.numberOfSetRegisters();
-    ptrdiff_t offset = 0;
-    
-    if (offsetBaseType == FramePointerBased)
-        offset = -(static_cast<ptrdiff_t>(numberOfRegisters) * sizeof(CPURegister));
+    constexpr size_t sizeOfGPR = sizeof(CPURegister);
+    constexpr size_t sizeOfFPR = sizeof(double);
 
+    size_t sizeOfAreaInBytes;
+    {
+#if USE(JSVALUE64)
+        static_assert(sizeOfGPR == sizeOfFPR);
+        size_t numberOfRegs = registerSet.numberOfSetRegisters();
+        sizeOfAreaInBytes = numberOfRegs * sizeOfGPR;
+#elif USE(JSVALUE32_64)
+        static_assert(2 * sizeOfGPR == sizeOfFPR);
+        size_t numberOfGPRs = registerSet.numberOfSetGPRs();
+        size_t numberOfFPRs = registerSet.numberOfSetFPRs();
+        if (numberOfFPRs)
+            numberOfGPRs = WTF::roundUpToMultipleOf<2>(numberOfGPRs);
+        sizeOfAreaInBytes = numberOfGPRs * sizeOfGPR + numberOfFPRs * sizeOfFPR;
+        m_sizeOfAreaInBytes = sizeOfAreaInBytes; // Hold on to it to avoid having to re-compute it
+#endif
+    }
+
+    ptrdiff_t startOffset = 0;
+    if (offsetBaseType == FramePointerBased)
+        startOffset = -static_cast<ptrdiff_t>(sizeOfAreaInBytes);
+
+    ptrdiff_t offset = startOffset;
     unsigned index = 0;
+
     registerSet.forEach([&] (Reg reg) {
-        m_registers[index] = RegisterAtOffset(reg, offset);
-        offset += sizeof(CPURegister);
-        ++index;
+        size_t registerSize = reg.isGPR() ? sizeOfGPR : sizeOfFPR;
+        offset = WTF::roundUpToMultipleOf(registerSize, offset);
+        m_registers[index++] = RegisterAtOffset(reg, offset);
+        offset += registerSize;
     });
+
+    ASSERT(static_cast<size_t>(offset - startOffset) == sizeOfAreaInBytes);
 }
 
 void RegisterAtOffsetList::dump(PrintStream& out) const

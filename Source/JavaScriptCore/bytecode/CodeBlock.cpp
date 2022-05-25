@@ -2462,21 +2462,14 @@ unsigned CodeBlock::reoptimizationRetryCounter() const
 }
 
 #if !ENABLE(C_LOOP)
-static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)
-{
-
-    return (WTF::roundUpToMultipleOf(sizeof(Register), calleeSaveRegisters * sizeof(CPURegister)) / sizeof(Register));
-
-}
-
 size_t CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters()
 {
-    return roundCalleeSaveSpaceAsVirtualRegisters(numberOfLLIntBaselineCalleeSaveRegisters());
+    return WTF::roundUpToMultipleOf<sizeof(Register)>(numberOfLLIntBaselineCalleeSaveRegisters() * sizeof(CPURegister)) / sizeof(Register);
 }
 
 size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList& calleeSaveRegisters)
 {
-    return roundCalleeSaveSpaceAsVirtualRegisters(calleeSaveRegisters.size());
+    return WTF::roundUpToMultipleOf<sizeof(Register)>(calleeSaveRegisters.sizeOfAreaInBytes()) / sizeof(Register);
 }
 #endif
 

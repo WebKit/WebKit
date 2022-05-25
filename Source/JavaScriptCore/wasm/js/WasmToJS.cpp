@@ -88,7 +88,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     const unsigned numberOfParameters = argCount + 1; // There is a "this" argument.
     const unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;
     const unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
-    const unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<unsigned>(numberOfBytesForCall, savedResultRegisters.size() * sizeof(CPURegister)));
+    const unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<unsigned>(numberOfBytesForCall, savedResultRegisters.sizeOfAreaInBytes()));
     jit.subPtr(MacroAssembler::TrustedImm32(stackOffset), MacroAssembler::stackPointerRegister);
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
 
