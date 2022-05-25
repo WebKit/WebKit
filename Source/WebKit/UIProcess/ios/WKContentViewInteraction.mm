@@ -3226,17 +3226,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer
 {
     auto position = [gestureRecognizer locationInView:self];
+
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (UIButton *analysisButton = [_imageAnalysisInteraction analysisButton]) {
-        auto hitTestedView = dynamic_objc_cast<UIButton>([self hitTest:position withEvent:nil]);
-        // FIXME: Instead of a class check, this should be a straightforward equality check.
-        // However, rdar://91828384 currently prevents us from doing so. We can simplify this logic
-        // once the fix for that bug has landed.
-        if (hitTestedView.class == analysisButton.class)
-            [_imageAnalysisInteraction setHighlightSelectableItems:![_imageAnalysisInteraction highlightSelectableItems]];
+    if ([self _handleTapOverImageAnalysisInteractionButton:position])
         return;
-    }
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif
 
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     ASSERT(!_potentialTapInProgress);
@@ -4753,6 +4747,29 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             });
         });
     });
+}
+
+- (BOOL)_handleTapOverImageAnalysisInteractionButton:(CGPoint)position
+{
+    if (!_imageAnalysisInteraction)
+        return NO;
+
+    auto *hitButton = dynamic_objc_cast<UIButton>([self hitTest:position withEvent:nil]);
+    UIButton *analysisButton = [_imageAnalysisInteraction analysisButton];
+    // FIXME: Instead of a class check, this should be a straightforward equality check.
+    // However, rdar://91828384 currently prevents us from doing so. We can simplify this logic
+    // once the fix for that bug has landed.
+    if (analysisButton && hitButton.class == analysisButton.class) {
+        [_imageAnalysisInteraction setHighlightSelectableItems:![_imageAnalysisInteraction highlightSelectableItems]];
+        return YES;
+    }
+
+    if ([_imageAnalysisActionButtons containsObject:hitButton]) {
+        [hitButton sendActionsForControlEvents:UIControlEventTouchUpInside];
+        return YES;
+    }
+
+    return NO;
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -10996,10 +11013,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)installImageAnalysisInteraction:(VKCImageAnalysis *)analysis
 {
     if (!_imageAnalysisInteraction) {
+        _imageAnalysisActionButtons = adoptNS([[NSMutableSet alloc] initWithCapacity:1]);
         _imageAnalysisInteraction = adoptNS([PAL::allocVKCImageAnalysisInteractionInstance() init]);
         [_imageAnalysisInteraction setActiveInteractionTypes:VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors];
         [_imageAnalysisInteraction setDelegate:self];
         [_imageAnalysisInteraction setWantsAutomaticContentsRectCalculation:NO];
+        [_imageAnalysisInteraction setQuickActionConfigurationUpdateHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] (UIButton *button) {
+            if (auto strongSelf = weakSelf.get())
+                [strongSelf->_imageAnalysisActionButtons addObject:button];
+        }];
         WebKit::setUpAdditionalImageAnalysisBehaviors(_imageAnalysisInteraction.get());
         [self addInteraction:_imageAnalysisInteraction.get()];
     }
@@ -11014,7 +11036,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return;
 
     [self removeInteraction:_imageAnalysisInteraction.get()];
+    [_imageAnalysisInteraction setDelegate:nil];
+    [_imageAnalysisInteraction setQuickActionConfigurationUpdateHandler:nil];
     _imageAnalysisInteraction = nil;
+    _imageAnalysisActionButtons = nil;
     [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
     [_imageAnalysisGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
 }
