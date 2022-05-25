@@ -1568,8 +1568,6 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-requ
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-request-with-response.html [ Pass Failure ]
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Failure ]
 
-webkit.org/b/230502 [ Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
-
 webkit.org/b/230504 [ BigSur+ Release ] css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
 
 webkit.org/b/230514 [ BigSur Release ] imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
@@ -1740,3 +1738,6 @@ webkit.org/b/240814 webrtc/canvas-to-peer-connection.html [ Pass Failure ]
 webkit.org/b/240821 [ Monterey Release ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Slow ]
 
 webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]
+
+webkit.org/b/240927 [ BigSur Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
+
