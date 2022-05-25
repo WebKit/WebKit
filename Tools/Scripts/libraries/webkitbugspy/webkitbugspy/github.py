@@ -103,7 +103,10 @@ class Tracker(GenericTracker):
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 auth=HTTPBasicAuth(username, access_token),
             )
-            if response.status_code == 200 and response.json().get('login') == username:
+            expiration = response.headers.get('github-authentication-token-expiration', None)
+            if expiration:
+                expiration = int(calendar.timegm(datetime.strptime(expiration, '%Y-%m-%d %H:%M:%S UTC').timetuple()))
+            if (expiration is None or expiration > time.time()) and response.status_code == 200 and response.json().get('login') == username:
                 return True
             sys.stderr.write('Login to {} for {} failed\n'.format(self.api_url, username))
             return False
