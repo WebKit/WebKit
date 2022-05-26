@@ -6,8 +6,6 @@ include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
 
-set(WebCore_OUTPUT_NAME WebCoreGTK)
-
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 

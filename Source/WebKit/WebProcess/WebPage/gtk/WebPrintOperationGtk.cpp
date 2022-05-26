@@ -33,6 +33,7 @@
 #include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
