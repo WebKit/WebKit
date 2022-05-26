@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ "${SKIP_INSTALL}" == "YES" ]]; then
+if [[ "${SKIP_INSTALL}" == "YES" || "${USE_STAGING_INSTALL_PATH}" == "YES" ]]; then
     exit 0
 fi
 
