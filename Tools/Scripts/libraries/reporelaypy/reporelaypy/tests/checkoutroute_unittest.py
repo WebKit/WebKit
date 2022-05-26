@@ -174,3 +174,33 @@ class CheckoutRouteUnittest(testing.PathTestCase):
                 response.headers.get('location'),
                 'https://github.com/WebKit/WebKit/commit/621652add7fc416099bd2063366cc38ff61afe36',
             )
+
+    @mock_app
+    def test_compare(self, app=None, client=None):
+        with mocks.local.Git(self.path) as repo:
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://github.com/WebKit/WebKit')],
+            ))
+
+            response = client.get('compare/2@main...4@main')
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(
+                response.headers.get('location'),
+                'https://github.com/WebKit/WebKit/compare/fff83bb2d9171b4d9196e977eb0508fd57e7a08d...bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+            )
+
+    @mock_app
+    def test_compare_trac(self, app=None, client=None):
+        with mocks.local.Git(self.path) as repo:
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://github.com/WebKit/WebKit'), Redirector('https://trac.webkit.org')],
+            ))
+
+            response = client.get('compare/2@main...4@main')
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(
+                response.headers.get('location'),
+                'https://github.com/WebKit/WebKit/compare/fff83bb2d9171b4d9196e977eb0508fd57e7a08d...bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+            )
