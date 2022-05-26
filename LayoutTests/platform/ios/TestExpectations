@@ -72,9 +72,9 @@ accessibility
 perf/accessibility-title-ui-element.html
 
 # webkit.org/b/240843
-fast/images/heic-as-background-image.html [ Pass ]
-fast/images/animated-heics-verify.html [ Pass ]
-fast/images/animated-heics-draw.html [ Pass ]
+fast/images/heic-as-background-image.html [ Skip ]
+fast/images/animated-heics-verify.html [ Skip ]
+fast/images/animated-heics-draw.html [ Skip ]
 
 # No fullscreen API on iOS
 fullscreen
