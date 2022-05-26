@@ -223,39 +223,6 @@ void MediaList::reattach(MediaQuerySet* mediaQueries)
     m_mediaQueries = mediaQueries;
 }
 
-static void addResolutionWarningMessageToConsole(Document& document, const String& serializedExpression, const CSSPrimitiveValue& value)
-{
-    ASSERT(value.isDotsPerInch() || value.isDotsPerCentimeter());
-    auto replacementUnit = CSSPrimitiveValue::unitTypeString(value.primitiveType());
-    auto lengthUnit = value.isDotsPerInch() ? "inch" : "centimeter";
-
-    auto message = makeString("Consider using 'dppx' units instead of '", replacementUnit, "', as in CSS '", replacementUnit, "' means dots-per-CSS-", lengthUnit, ", not dots-per-physical-", lengthUnit, ", so does not correspond to the actual '", replacementUnit, "' of a screen. In media query expression: ", serializedExpression);
-
-    document.addConsoleMessage(MessageSource::CSS, MessageLevel::Debug, message);
-}
-
-void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* mediaQuerySet)
-{
-    if (!mediaQuerySet || !document || !document->settings().resolutionMediaFeatureEnabled())
-        return;
-
-    for (auto& query : mediaQuerySet->queryVector()) {
-        if (!query.ignored() && !equalLettersIgnoringASCIICase(query.mediaType(), "print"_s)) {
-            auto& expressions = query.expressions();
-            for (auto& expression : expressions) {
-                if (expression.mediaFeature() == MediaFeatureNames::resolution || expression.mediaFeature() == MediaFeatureNames::maxResolution || expression.mediaFeature() == MediaFeatureNames::minResolution) {
-                    auto* value = expression.value();
-                    if (is<CSSPrimitiveValue>(value)) {
-                        auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-                        if (primitiveValue.isDotsPerInch() || primitiveValue.isDotsPerCentimeter())
-                            addResolutionWarningMessageToConsole(*document, mediaQuerySet->mediaText(), primitiveValue);
-                    }
-                }
-            }
-        }
-    }
-}
-
 TextStream& operator<<(TextStream& ts, const MediaQuerySet& querySet)
 {
     ts << querySet.mediaText();

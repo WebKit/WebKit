@@ -100,7 +100,6 @@ RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
         return nullptr;
 
     auto media = MediaQuerySet::create(query, MediaQueryParserContext(*m_document));
-    reportMediaQueryWarningIfNeeded(m_document.get(), media.ptr());
     bool matches = evaluate(media.get());
     return MediaQueryList::create(*m_document, *this, WTFMove(media), matches);
 }

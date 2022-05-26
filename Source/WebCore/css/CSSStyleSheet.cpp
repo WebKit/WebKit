@@ -221,7 +221,6 @@ void CSSStyleSheet::setMediaQueries(Ref<MediaQuerySet>&& mediaQueries)
     m_mediaQueries = WTFMove(mediaQueries);
     if (m_mediaCSSOMWrapper && m_mediaQueries)
         m_mediaCSSOMWrapper->reattach(m_mediaQueries.get());
-    reportMediaQueryWarningIfNeeded(ownerDocument(), m_mediaQueries.get());
 }
 
 unsigned CSSStyleSheet::length() const

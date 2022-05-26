@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpi', as in CSS 'dpi' means dots-per-CSS-inch, not dots-per-physical-inch, so does not correspond to the actual 'dpi' of a screen. In media query expression: (resolution: 216dpi)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpi', as in CSS 'dpi' means dots-per-CSS-inch, not dots-per-physical-inch, so does not correspond to the actual 'dpi' of a screen. In media query expression: (min-resolution: 216dpi)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpi', as in CSS 'dpi' means dots-per-CSS-inch, not dots-per-physical-inch, so does not correspond to the actual 'dpi' of a screen. In media query expression: (max-resolution: 216dpi)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpcm', as in CSS 'dpcm' means dots-per-CSS-centimeter, not dots-per-physical-centimeter, so does not correspond to the actual 'dpcm' of a screen. In media query expression: (resolution: 96dpcm)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpcm', as in CSS 'dpcm' means dots-per-CSS-centimeter, not dots-per-physical-centimeter, so does not correspond to the actual 'dpcm' of a screen. In media query expression: (min-resolution: 96dpcm)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpcm', as in CSS 'dpcm' means dots-per-CSS-centimeter, not dots-per-physical-centimeter, so does not correspond to the actual 'dpcm' of a screen. In media query expression: (max-resolution: 96dpcm)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpi', as in CSS 'dpi' means dots-per-CSS-inch, not dots-per-physical-inch, so does not correspond to the actual 'dpi' of a screen. In media query expression: (min-resolution: 300dpi)
-CONSOLE MESSAGE: Consider using 'dppx' units instead of 'dpcm', as in CSS 'dpcm' means dots-per-CSS-centimeter, not dots-per-physical-centimeter, so does not correspond to the actual 'dpcm' of a screen. In media query expression: (min-resolution: 118dpcm)
 CSS3 media query test: resolution query with dppx. Using style element, @media css rule.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -165,9 +165,6 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         return;
     }
 
-    if (is<StyleRuleMedia>(rule))
-        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), &downcast<StyleRuleMedia>(rule.get()).mediaQueries());
-
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
     if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount) {
