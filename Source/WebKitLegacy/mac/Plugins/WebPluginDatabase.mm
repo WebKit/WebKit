@@ -372,7 +372,9 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
 
 + (NSArray *)_defaultPlugInPaths
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+    return @[];
+#else
     // Plug-ins are found in order of precedence.
     // If there are duplicates, the first found plug-in is used.
     // For example, if there is a QuickTime.plugin in the users's home directory
@@ -383,18 +385,6 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
         @"/Library/Internet Plug-Ins",
         [[NSBundle mainBundle] builtInPlugInsPath],
     ];
-#else
-    // iOS plug-ins are all located in /System/Library/Internet Plug-Ins
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    NSArray *systemLibrary = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES);
-    if (!systemLibrary || [systemLibrary count] == 0)
-        return nil;
-    NSString *systemDir = (NSString*)[systemLibrary objectAtIndex:0];
-#else
-    NSString* platformRootDir = [NSString stringWithUTF8String:WebKitPlatformSystemRootDirectory()];
-    NSString *systemDir = [platformRootDir stringByAppendingPathComponent:@"System/Library"];
-#endif
-    return @[[systemDir stringByAppendingPathComponent:@"Internet Plug-Ins"]];
 #endif
 }
 
