@@ -464,6 +464,7 @@ private:
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
+    void handleRowCountChanged(AXCoreObject*, Document*);
     void handleAttributeChange(const QualifiedName&, Element*);
     bool shouldProcessAttributeChange(const QualifiedName&, Element*);
     void selectedChildrenChanged(Node*);
@@ -527,6 +528,7 @@ private:
 
     AXTextStateChangeIntent m_textSelectionIntent;
     WeakHashSet<Element> m_deferredRecomputeIsIgnoredList;
+    WeakHashSet<HTMLTableElement> m_deferredRecomputeTableIsExposedList;
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;

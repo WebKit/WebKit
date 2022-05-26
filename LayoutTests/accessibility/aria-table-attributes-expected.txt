@@ -1,22 +1,21 @@
 This tests that attributes related to aria table/grid are working correctly.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: grid.numberAttributeValue('AXARIAColumnCount') === 16
+PASS: grid.numberAttributeValue('AXARIARowCount') === 30
+PASS: grid.rowCount === 4
+PASS: grid.columnCount === 4
+PASS: cell1.numberAttributeValue('AXARIAColumnIndex') === 2
+PASS: cell1.numberAttributeValue('AXARIARowIndex') === 7
+PASS: cell2.numberAttributeValue('AXARIAColumnIndex') === 4
+PASS: cell2.numberAttributeValue('AXARIARowIndex') === 8
+PASS: cell4.numberAttributeValue('AXARIAColumnIndex') === 3
+PASS: cell2.rowIndexRange() === '{1, 2}'
+PASS: cell5.columnIndexRange() === '{2, 3}'
+PASS: cell3.rowIndexRange() === '{1, 2}'
+PASS: cell6.rowIndexRange() === '{0, 2}'
+PASS: cell7.rowIndexRange() === '{0, 2}'
+PASS: #grid AXARIARowCount dynamically changed to 60.
 
-
-PASS grid.numberAttributeValue('AXARIAColumnCount') is 16
-PASS grid.numberAttributeValue('AXARIARowCount') is 30
-PASS grid.rowCount is 4
-PASS grid.columnCount is 4
-PASS cell1.numberAttributeValue('AXARIAColumnIndex') is 2
-PASS cell1.numberAttributeValue('AXARIARowIndex') is 7
-PASS cell2.numberAttributeValue('AXARIAColumnIndex') is 4
-PASS cell2.numberAttributeValue('AXARIARowIndex') is 8
-PASS cell4.numberAttributeValue('AXARIAColumnIndex') is 3
-PASS cell2.rowIndexRange() is '{1, 2}'
-PASS cell5.columnIndexRange() is '{2, 3}'
-PASS cell3.rowIndexRange() is '{1, 2}'
-PASS cell6.rowIndexRange() is '{0, 2}'
-PASS cell7.rowIndexRange() is '{0, 2}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table id="table" aria-rowcount="1">
+    <tr>
+        <td id="cellOne">x</td>
+        <td>x</td>
+    </tr>
+</table>
+
+<script>
+    var testOutput = `This test ensures a table's "exposed" state (whether it is an accessibility data table, vs. just a layout table) updates in response to dynamic page changes.\n\n`;
+
+    function createCell() {
+        const cell = document.createElement("td");
+        cell.appendChild(document.createTextNode("Text inside cell"));
+        return cell;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        const table = accessibilityController.accessibleElementById("table");
+        const cellOne = accessibilityController.accessibleElementById("cellOne");
+        testOutput += "Initial table state has aria-rowcount, so it should be a data table.\n";
+        testOutput += `#table ${table.role}\n`;
+        testOutput += `#cellOne ${cellOne.role}\n`;
+
+        testOutput += "\nRemoving aria-rowcount. Based on this table's contents, it should now become a layout table.\n";
+        document.getElementById("table").removeAttribute("aria-rowcount");
+        setTimeout(async function() {
+            await waitFor(() => {
+                return !cellOne.role.includes("Cell") && !table.role.includes("Table");
+            });
+            testOutput += `#table ${table.role}\n`;
+            testOutput += `#cellOne ${cellOne.role}\n`;
+
+            testOutput += "\nAdding a lot of rows which should cause the table to become an accessibility data table.\n";
+            for (let i = 0; i < 20; i++) {
+                const row = document.getElementById("table").insertRow(-1);
+                row.appendChild(createCell());
+                row.appendChild(createCell());
+            }
+
+            await waitFor(() => {
+                return table.childrenCount >= 20 &&
+                    cellOne.role.includes("Cell") &&
+                    table.role.includes("Table");
+            });
+            testOutput += `#table ${table.role}\n`;
+            testOutput += `#cellOne ${cellOne.role}\n`;
+
+            document.getElementById("table").style.visibility = "hidden";
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

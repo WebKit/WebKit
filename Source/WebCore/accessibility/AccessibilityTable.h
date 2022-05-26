@@ -49,6 +49,7 @@ public:
 
     void addChildren() override;
     void clearChildren() final;
+    void updateChildrenRoles();
 
     AccessibilityChildrenVector columns() override;
     AccessibilityChildrenVector rows() override;
@@ -73,6 +74,7 @@ public:
     bool isTable() const override { return true; }
     // Returns whether it is exposed as an AccessibilityTable to the platform.
     bool isExposable() const override;
+    void recomputeIsExposable();
 
     int axColumnCount() const override;
     int axRowCount() const override;

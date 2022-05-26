@@ -85,6 +85,8 @@
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "HTMLTableElement.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineRunAndOffset.h"
 #include "MathMLElement.h"
@@ -900,6 +902,7 @@ void AXObjectCache::remove(Node& node)
         m_deferredAttributeChange.remove(downcast<Element>(&node));
         m_modalElementsSet.remove(downcast<Element>(&node));
         m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(node));
+        m_deferredRecomputeTableIsExposedList.remove(downcast<Element>(node));
         m_deferredSelectedChildredChangedList.remove(downcast<Element>(node));
         m_deferredModalChangedList.remove(downcast<Element>(node));
         m_deferredMenuListChange.remove(downcast<Element>(node));
@@ -1140,6 +1143,12 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
         return;
     m_deferredChildrenChangedList.add(object);
 
+    // Adding or removing rows from a table can cause it to change from layout table to AX data table and vice versa, so queue up recomputation of that for the parent table.
+    if (auto* tableSectionElement = dynamicDowncast<HTMLTableSectionElement>(object->element())) {
+        if (auto* parentTable = tableSectionElement->findParentTable().get())
+            m_deferredRecomputeTableIsExposedList.add(*parentTable);
+    }
+
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
@@ -1293,7 +1302,18 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
 }
-    
+
+void AXObjectCache::handleRowCountChanged(AXCoreObject* axObject, Document* document)
+{
+    if (!axObject)
+        return;
+
+    if (auto* axTable = dynamicDowncast<AccessibilityTable>(axObject))
+        axTable->recomputeIsExposable();
+
+    postNotification(axObject, document, AXRowCountChanged);
+}
+
 void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* newNode)
 {
     if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer())) {
@@ -1790,7 +1810,7 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
         // Post that the ancestor's row count changed.
         if (ancestor)
-            postNotification(ancestor, &document(), AXRowCountChanged);
+            handleRowCountChanged(ancestor, &document());
 
         // Post that the specific row either collapsed or expanded.
         auto role = object->roleValue();
@@ -1942,6 +1962,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXObjectCache::AXReadOnlyStatusChanged);
     else if (attrName == aria_requiredAttr)
         postNotification(element, AXObjectCache::AXRequiredStatusChanged);
+    else if (attrName == aria_rowcountAttr)
+        handleRowCountChanged(get(element), element ? &element->document() : nullptr);
     else if (attrName == aria_sortAttr)
         postNotification(element, AXObjectCache::AXSortDirectionChanged);
 }
@@ -3260,7 +3282,8 @@ static void filterListForRemoval(const ListHashSet<T>& list, const Document& doc
         conditionallyAddNodeToFilterList(node, document, nodesToRemove);
 }
 
-static void filterWeakHashSetForRemoval(WeakHashSet<Element>& weakHashSet, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
+template<typename T>
+static void filterWeakHashSetForRemoval(WeakHashSet<T>& weakHashSet, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     weakHashSet.forEach([&] (auto& element) {
         conditionallyAddNodeToFilterList(&element, document, nodesToRemove);
@@ -3275,6 +3298,7 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
     filterListForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
+    filterWeakHashSetForRemoval(m_deferredRecomputeTableIsExposedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredModalChangedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredMenuListChange, document, nodesToRemove);
@@ -3317,6 +3341,12 @@ void AXObjectCache::performDeferredCacheUpdate()
     if (m_performingDeferredCacheUpdate)
         return;
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
+
+    m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
+        if (auto* axTable = dynamicDowncast<AccessibilityTable>(getOrCreate(&tableElement)))
+            axTable->recomputeIsExposable();
+    });
+    m_deferredRecomputeTableIsExposedList.clear();
 
     for (auto* nodeChild : m_deferredNodeAddedOrRemovedList) {
         handleMenuOpened(nodeChild);
@@ -3418,6 +3448,14 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         bool node { false };
     };
     HashMap<AXID, UpdatedFields> updatedObjects;
+    auto updateNode = [&] (RefPtr<AXCoreObject> axObject) {
+        auto updatedFields = updatedObjects.get(axObject->objectID());
+        if (!updatedFields.node) {
+            updatedObjects.set(axObject->objectID(), UpdatedFields { updatedFields.children, true });
+            tree->updateNode(*axObject);
+        }
+    };
+
     for (const auto& notification : notifications) {
         AXLOG(notification);
         if (!notification.first || !notification.first->objectID().isValid())
@@ -3466,17 +3504,14 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
         case AXTextChanged:
-        case AXValueChanged: {
-            auto updatedFields = updatedObjects.get(notification.first->objectID());
-            if (!updatedFields.node) {
-                updatedObjects.set(notification.first->objectID(), UpdatedFields { updatedFields.children, true });
-                tree->updateNode(*notification.first);
-            }
+        case AXValueChanged:
+            updateNode(notification.first);
             break;
-        }
+        case AXRowCountChanged:
+            updateNode(notification.first);
+            FALLTHROUGH;
         case AXChildrenChanged:
         case AXLanguageChanged:
-        case AXRowCountChanged:
         case AXRowCollapsed:
         case AXRowExpanded: {
             auto updatedFields = updatedObjects.get(notification.first->objectID());
