@@ -34,7 +34,7 @@ class MediaController
 
         this.fullscreenChangeEventType = media.webkitSupportsPresentationMode ? "webkitpresentationmodechanged" : "webkitfullscreenchange";
 
-        this.hasPlayed = false;
+        this.hasPlayed = !media.paused || !!media.played.length;
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
 
