@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -335,7 +335,7 @@ public:
 #endif
 
 #if HAVE(APP_SSO)
-    SOAuthorizationCoordinator& soAuthorizationCoordinator() { return m_soAuthorizationCoordinator.get(); }
+    SOAuthorizationCoordinator& soAuthorizationCoordinator(const WebPageProxy&);
 #endif
 
     static WTF::String defaultServiceWorkerRegistrationDirectory();
@@ -487,7 +487,7 @@ private:
     RefPtr<NetworkProcessProxy> m_networkProcess;
 
 #if HAVE(APP_SSO)
-    UniqueRef<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
+    std::unique_ptr<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
 #endif
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     mutable std::optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.

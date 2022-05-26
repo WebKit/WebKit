@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,9 +135,6 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-#if HAVE(APP_SSO)
-    , m_soAuthorizationCoordinator(makeUniqueRef<SOAuthorizationCoordinator>())
-#endif
     , m_webLockRegistry(WebCore::LocalWebLockRegistry::create())
 {
     WTF::setProcessPrivileges(allPrivileges());
@@ -207,6 +204,17 @@ WebsiteDataStore* WebsiteDataStore::existingDataStoreForSessionID(PAL::SessionID
 {
     return allDataStores().get(sessionID);
 }
+
+#if HAVE(APP_SSO)
+SOAuthorizationCoordinator& WebsiteDataStore::soAuthorizationCoordinator(const WebPageProxy& pageProxy)
+{
+    RELEASE_ASSERT(pageProxy.preferences().isExtensibleSSOEnabled());
+    if (!m_soAuthorizationCoordinator)
+        m_soAuthorizationCoordinator = WTF::makeUnique<SOAuthorizationCoordinator>();
+
+    return *m_soAuthorizationCoordinator;
+}
+#endif
 
 static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionID)
 {
