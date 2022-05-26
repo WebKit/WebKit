@@ -315,7 +315,7 @@
           (literal "/dev/random")
           (literal "/dev/urandom"))
 
-    (allow file-read* file-write-data
+    (allow file-read* file-write-data (with telemetry)
            (literal "/dev/aes_0")))
 
 (define required-etc-files
@@ -1239,14 +1239,8 @@
 
 (deny file-ioctl (with telemetry))
 
-;; restrict to the two ioctl's /dev/aes_0 needs
-(allow file-ioctl (with telemetry)
-    (require-all
-        (literal "/dev/aes_0")
-        (require-any
-            (ioctl-command (_IO "T" 101)) ;; IOAES_GET_INFO
-            (ioctl-command (_IO "T" 102)) ;; IOAES_ENCRYPT_DECRYPT
-)))
+(deny file-ioctl (with telemetry)
+    (literal "/dev/aes_0"))
 
 (deny socket-ioctl (with telemetry))
 
