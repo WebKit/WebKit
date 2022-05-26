@@ -904,42 +904,56 @@
             (allow mach-message-send (with telemetry)))))
             
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
-    (allow syscall-mach (with telemetry))
+    (deny syscall-mach (with telemetry))
     (allow syscall-mach (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
         MSC__kernelrpc_mach_port_construct_trap
         MSC__kernelrpc_mach_port_deallocate_trap
         MSC__kernelrpc_mach_port_destruct_trap
         MSC__kernelrpc_mach_port_extract_member_trap
+        MSC__kernelrpc_mach_port_get_attributes_trap
         MSC__kernelrpc_mach_port_guard_trap
         MSC__kernelrpc_mach_port_insert_member_trap
         MSC__kernelrpc_mach_port_insert_right_trap
         MSC__kernelrpc_mach_port_mod_refs_trap
         MSC__kernelrpc_mach_port_request_notification_trap
         MSC__kernelrpc_mach_port_type_trap
+        MSC__kernelrpc_mach_port_unguard_trap
         MSC__kernelrpc_mach_vm_allocate_trap
         MSC__kernelrpc_mach_vm_deallocate_trap
         MSC__kernelrpc_mach_vm_map_trap
         MSC__kernelrpc_mach_vm_protect_trap
+        MSC__kernelrpc_mach_vm_purgable_control_trap
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
+        MSC_iokit_user_client_trap
+        MSC_mach_generate_activity_id
         MSC_mach_msg_trap
+        MSC_mach_msg2_trap
         MSC_mach_reply_port
         MSC_mach_voucher_extract_attr_recipe_trap
+        MSC_mk_timer_arm
+        MSC_mk_timer_cancel
+        MSC_mk_timer_create
+        MSC_mk_timer_destroy
         MSC_pid_for_task
         MSC_semaphore_signal_trap
+        MSC_semaphore_timedwait_trap
         MSC_semaphore_wait_trap
         MSC_swtch_pri
         MSC_syscall_thread_switch
+        MSC_task_name_for_pid
+        MSC_task_self_trap
         MSC_thread_get_special_reply_port)))
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 (when (defined? 'syscall-unix)
-    (allow syscall-unix (with telemetry))
+    (deny syscall-unix (with telemetry))
     (allow syscall-unix (syscall-number
         SYS___channel_open
         SYS___disable_threadsignal
         SYS___mac_syscall
+        SYS___pthread_canceled
         SYS___pthread_kill
         SYS___pthread_sigmask
         SYS___semwait_signal
@@ -981,6 +995,7 @@
         SYS_gettimeofday
         SYS_getuid
         SYS_getxattr
+        SYS_guarded_open_np
         SYS_issetugid
         SYS_kdebug_trace
         SYS_kdebug_trace64
@@ -1024,6 +1039,8 @@
         SYS_readlink
         SYS_rename
         SYS_sendto
+        SYS_setrlimit
+        SYS_setsockopt
         SYS_sigaltstack
         SYS_sigprocmask
         SYS_socket
