@@ -60,15 +60,7 @@ namespace Instanceof {
     // Fast path only registers
     namespace FastPath {
         constexpr GPRReg stubInfoGPR { GPRInfo::argumentGPR1 };
-        constexpr GPRReg scratch1GPR { GPRInfo::argumentGPR0 };
-        constexpr GPRReg scratch2GPR {
-#if USE(JSVALUE64)
-            GPRInfo::regT4
-#elif USE(JSVALUE32_64)
-            GPRInfo::regT6
-#endif
-        };
-        static_assert(noOverlap(valueJSR, protoJSR, stubInfoGPR, scratch1GPR, scratch2GPR), "Required for DataIC");
+        static_assert(noOverlap(valueJSR, protoJSR, stubInfoGPR), "Required for DataIC");
     }
 
     // Slow path only registers
@@ -311,8 +303,7 @@ namespace DelById {
     namespace FastPath {
         constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
         constexpr GPRReg stubInfoGPR { GPRInfo::regT4 };
-        constexpr GPRReg scratchGPR { GPRInfo::regT5 };
-        static_assert(noOverlap(baseJSR, stubInfoGPR, scratchGPR), "Required for DataIC");
+        static_assert(noOverlap(baseJSR, stubInfoGPR), "Required for DataIC");
     }
 
     // Slow path only registers
@@ -336,8 +327,7 @@ namespace DelByVal {
     namespace FastPath {
         constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };
         constexpr GPRReg stubInfoGPR { GPRInfo::regT4 };
-        constexpr GPRReg scratchGPR { GPRInfo::regT5 };
-        static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR, scratchGPR), "Required for DataIC");
+        static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR), "Required for DataIC");
     }
 
     // Slow path only registers

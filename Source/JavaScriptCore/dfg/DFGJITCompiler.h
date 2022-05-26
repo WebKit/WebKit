@@ -307,26 +307,31 @@ public:
     class LinkableConstant final : public CCallHelpers::ConstantMaterializer {
     public:
         enum NonCellTag { NonCell };
-        LinkableConstant(Graph&, JSCell*);
+        LinkableConstant() = default;
+        LinkableConstant(JITCompiler&, JSCell*);
+        LinkableConstant(LinkerIR::Constant index)
+            : m_index(index)
+        { }
 
         void materialize(CCallHelpers&, GPRReg);
         void store(CCallHelpers&, CCallHelpers::Address);
 
         template<typename T>
-        static LinkableConstant nonCellPointer(Graph& graph, T* pointer)
+        static LinkableConstant nonCellPointer(JITCompiler& jit, T* pointer)
         {
             static_assert(!std::is_base_of_v<JSCell, T>);
-            return LinkableConstant(graph, pointer, NonCell);
+            return LinkableConstant(jit, pointer, NonCell);
         }
 
-        static LinkableConstant structure(Graph& graph, RegisteredStructure structure)
+        static LinkableConstant structure(JITCompiler& jit, RegisteredStructure structure)
         {
-            return LinkableConstant(graph, structure.get());
+            return LinkableConstant(jit, structure.get());
         }
 
         bool isUnlinked() const { return m_index != UINT_MAX; }
 
         void* pointer() const { return m_pointer; }
+        LinkerIR::Constant index() const { return m_index; }
 
 #if USE(JSVALUE64)
         Address unlinkedAddress()
@@ -337,12 +342,13 @@ public:
 #endif
 
     private:
-        LinkableConstant(Graph&, void*, NonCellTag);
+        LinkableConstant(JITCompiler&, void*, NonCellTag);
 
-        unsigned m_index { UINT_MAX };
+        LinkerIR::Constant m_index { UINT_MAX };
         void* m_pointer { nullptr };
     };
 
+    void loadConstant(LinkerIR::Constant, GPRReg);
     void loadLinkableConstant(LinkableConstant, GPRReg);
     void storeLinkableConstant(LinkableConstant, Address);
 
@@ -363,6 +369,9 @@ public:
 #endif
         return CCallHelpers::branchPtr(cond, left, CCallHelpers::TrustedImmPtr(constant.pointer()));
     }
+
+    std::tuple<CompileTimeStructureStubInfo, LinkableConstant> addStructureStubInfo();
+    LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 
 private:
     friend class OSRExitJumpPlaceholder;
@@ -440,6 +449,9 @@ private:
     Vector<DFG::OSREntryData> m_osrEntry;
     Vector<DFG::OSRExit> m_osrExit;
     Vector<DFG::SpeculationRecovery> m_speculationRecovery;
+    Vector<LinkerIR::Value> m_constantPool;
+    HashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;
+    SegmentedVector<DFG::UnlinkedStructureStubInfo> m_unlinkedStubInfos;
     
     struct ExceptionHandlingOSRExitInfo {
         OSRExitCompilationInfo& exitInfo;

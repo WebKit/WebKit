@@ -157,8 +157,6 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::Instanceof::valueJSR;
     using BaselineJITRegisters::Instanceof::protoJSR;
     using BaselineJITRegisters::Instanceof::FastPath::stubInfoGPR;
-    using BaselineJITRegisters::Instanceof::FastPath::scratch1GPR;
-    using BaselineJITRegisters::Instanceof::FastPath::scratch2GPR;
 
     emitGetVirtualRegister(value, valueJSR);
     emitGetVirtualRegister(proto, protoJSR);
@@ -167,20 +165,15 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(valueJSR, value);
     emitJumpSlowCaseIfNotJSCell(protoJSR, proto);
 
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     JITInstanceOfGenerator gen(
-        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
         resultJSR.payloadGPR(),
         valueJSR.payloadGPR(),
         protoJSR.payloadGPR(),
-        stubInfoGPR,
-        scratch1GPR, scratch2GPR);
-
-    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    stubInfo->accessType = AccessType::InstanceOf;
-    stubInfo->bytecodeIndex = m_bytecodeIndex;
+        stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
-    gen.m_unlinkedStubInfo = stubInfo;
 
     gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
 #if USE(JSVALUE32_64)

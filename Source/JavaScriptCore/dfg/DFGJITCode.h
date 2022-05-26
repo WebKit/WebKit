@@ -47,7 +47,78 @@ struct StringJumpTable;
 
 namespace DFG {
 
+class JITCode;
 class JITCompiler;
+
+struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
+    CodeOrigin codeOrigin;
+    CallSiteIndex callSiteIndex;
+    RegisterSet usedRegisters;
+    GPRReg m_baseGPR { InvalidGPRReg };
+    GPRReg m_valueGPR { InvalidGPRReg };
+    GPRReg m_extraGPR { InvalidGPRReg };
+    GPRReg m_stubInfoGPR { InvalidGPRReg };
+#if USE(JSVALUE32_64)
+    GPRReg m_valueTagGPR { InvalidGPRReg };
+    GPRReg m_baseTagGPR { InvalidGPRReg };
+    GPRReg m_extraTagGPR { InvalidGPRReg };
+#endif
+    bool hasConstantIdentifier { false };
+};
+
+class LinkerIR {
+    WTF_MAKE_NONCOPYABLE(LinkerIR);
+public:
+    using Constant = unsigned;
+
+    enum class Type : uint16_t {
+        Invalid,
+        StructureStubInfo,
+        CellPointer,
+        NonCellPointer,
+    };
+
+    using Value = CompactPointerTuple<void*, Type>;
+
+    struct ValueHash {
+        static unsigned hash(const Value& p)
+        {
+            return computeHash(p.type(), p.pointer());
+        }
+
+        static bool equal(const Value& a, const Value& b)
+        {
+            return a == b;
+        }
+
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    };
+
+    struct ValueTraits : public WTF::GenericHashTraits<Value> {
+        static constexpr bool emptyValueIsZero = true;
+        static Value emptyValue() { return Value(); }
+        static void constructDeletedValue(Value& slot) { slot = Value(reinterpret_cast<void*>(static_cast<uintptr_t>(0x1)), Type::Invalid); }
+        static bool isDeletedValue(Value value)
+        {
+            return value == Value(reinterpret_cast<void*>(static_cast<uintptr_t>(0x1)), Type::Invalid);
+        }
+    };
+
+    LinkerIR() = default;
+    LinkerIR(LinkerIR&&) = default;
+    LinkerIR& operator=(LinkerIR&&) = default;
+
+    LinkerIR(Vector<Value>&& constants)
+        : m_constants(WTFMove(constants))
+    {
+    }
+
+    size_t size() const { return m_constants.size(); }
+    Value at(size_t i) const { return m_constants[i]; }
+
+private:
+    FixedVector<Value> m_constants;
+};
 
 class JITData final : public TrailingArray<JITData, void*> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -59,10 +130,7 @@ public:
     static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
     static ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
 
-    static std::unique_ptr<JITData> create(unsigned poolSize, ExitVector&& exits)
-    {
-        return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) JITData(poolSize, WTFMove(exits)) };
-    }
+    static std::unique_ptr<JITData> create(const JITCode& jitCode, ExitVector&& exits);
 
     void setExitCode(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code)
     {
@@ -77,13 +145,12 @@ public:
         m_isInvalidated = 1;
     }
 
-private:
-    explicit JITData(unsigned size, ExitVector&& exits)
-        : Base(size)
-        , m_exits(WTFMove(exits))
-    {
-    }
+    FixedVector<StructureStubInfo>& stubInfos() { return m_stubInfos; }
 
+private:
+    explicit JITData(const JITCode&, ExitVector&&);
+
+    FixedVector<StructureStubInfo> m_stubInfos;
     ExitVector m_exits;
     uint8_t m_isInvalidated { 0 };
 };
@@ -157,8 +224,10 @@ public:
     FixedVector<DFG::SpeculationRecovery> m_speculationRecovery;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
+    FixedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
+    LinkerIR m_linkerIR;
 
 #if ENABLE(FTL_JIT)
     uint8_t neverExecutedEntry { 1 };
@@ -191,6 +260,11 @@ public:
     bool abandonOSREntry { false };
 #endif // ENABLE(FTL_JIT)
 };
+
+inline std::unique_ptr<JITData> JITData::create(const JITCode& jitCode, ExitVector&& exits)
+{
+    return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(jitCode.m_linkerIR.size()))) JITData(jitCode, WTFMove(exits)) };
+}
 
 } } // namespace JSC::DFG
 

@@ -259,8 +259,6 @@ public:
 
     static ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
 
-    StructureStubInfo* addOptimizingStubInfo(AccessType, CodeOrigin);
-
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
 
@@ -346,11 +344,8 @@ public:
         return jitType() == JITType::BaselineJIT;
     }
 
-    bool useDataIC() const
-    {
-        return JITCode::useDataIC(jitType());
-    }
-    
+    bool useDataIC() const;
+
 #if ENABLE(JIT)
     CodeBlock* replacement();
 
@@ -914,6 +909,9 @@ private:
 
     void insertBasicBlockBoundariesForControlFlowProfiler();
     void ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&, BytecodeIndex);
+
+    template<typename Func>
+    void forEachStructureStubInfo(Func);
 
     unsigned m_numCalleeLocals;
     unsigned m_numVars;
