@@ -526,13 +526,13 @@ int TextTrack::trackIndexRelativeToRenderedTracks()
     return m_renderedTrackIndex.value();
 }
 
-bool TextTrack::hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
+RefPtr<TextTrackCue> TextTrack::matchCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
 {
     if (cue.startMediaTime() < MediaTime::zeroTime() || cue.endMediaTime() < MediaTime::zeroTime())
-        return false;
+        return nullptr;
     
     if (!m_cues || !m_cues->length())
-        return false;
+        return nullptr;
     
     size_t searchStart = 0;
     size_t searchEnd = m_cues->length();
@@ -546,7 +546,7 @@ bool TextTrack::hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
         // Cues in the TextTrackCueList are maintained in start time order.
         if (searchStart == searchEnd) {
             if (!searchStart)
-                return false;
+                return nullptr;
 
             // If there is more than one cue with the same start time, back up to first one so we
             // consider all of them.
@@ -559,17 +559,17 @@ bool TextTrack::hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
                     ++searchStart;
                 firstCompare = false;
                 if (searchStart > m_cues->length())
-                    return false;
+                    return nullptr;
 
                 existingCue = m_cues->item(searchStart - 1);
                 if (!existingCue)
-                    return false;
+                    return nullptr;
 
                 if (cue.startMediaTime() > (existingCue->startMediaTime() + startTimeVariance()))
-                    return false;
+                    return nullptr;
 
                 if (existingCue->isEqual(cue, match))
-                    return true;
+                    return existingCue;
             }
         }
         
@@ -582,7 +582,7 @@ bool TextTrack::hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
     }
     
     ASSERT_NOT_REACHED();
-    return false;
+    return nullptr;
 }
 
 bool TextTrack::isMainProgramContent() const

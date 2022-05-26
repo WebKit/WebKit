@@ -138,7 +138,8 @@ protected:
 
     Document& document() const;
 
-    bool hasCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
+    RefPtr<TextTrackCue> matchCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
+    bool hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules rules = TextTrackCue::MatchAllFields) { return matchCue(cue, rules); }
     void setKind(Kind);
 
     void newCuesAvailable(const TextTrackCueList&);
