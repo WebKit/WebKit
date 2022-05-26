@@ -352,7 +352,6 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
     return result;
 }
 
-#if USE(NON_VARIABLE_SYSTEM_FONT)
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (isSystemFont(font))
@@ -361,7 +360,6 @@ static inline bool fontIsSystemFont(CTFontRef font)
     auto name = adoptCF(CTFontCopyPostScriptName(font));
     return fontNameIsSystemFont(name.get());
 }
-#endif
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
 // FIXME: <rdar://problem/31312602> Get the real values from Core Text.
@@ -664,7 +662,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
-        if (shouldEnhanceTextLegibility()) {
+        if (shouldEnhanceTextLegibility() && fontIsSystemFont(originalFont)) {
             // FIXME: Implement this
         }
         if (needsConversion) {
