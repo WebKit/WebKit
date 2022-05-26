@@ -118,7 +118,7 @@ class Branch(Command):
 
         if not issue and Tracker.instance():
             if ' ' in args.issue:
-                if getattr(Tracker.instance(), 'credentials'):
+                if getattr(Tracker.instance(), 'credentials', None):
                     Tracker.instance().credentials(required=True, validate=True)
                 issue = Tracker.instance().create(
                     title=args.issue,

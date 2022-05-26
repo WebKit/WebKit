@@ -125,8 +125,7 @@ class TestBranch(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), "'eng/reject_underscores' is an invalid branch name, cannot create it\n")
 
     def test_create_bug(self):
-        self.maxDiff = None
-        with MockTerminal.input('2'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
@@ -172,6 +171,49 @@ What version of 'WebKit' should the bug be associated with?:
     4) WebKit Local Build
 : 
 Created 'https://bugs.example.com/show_bug.cgi?id=4 [Area] New Issue'
+Created the local development branch 'eng/Area-New-Issue'
+''',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_create_radar(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+        ), patch('webkitbugspy.Tracker._trackers', [radar.Tracker(project='WebKit')]), mocks.local.Svn(), MockTime, wkmocks.Terminal.input(
+            '[Area] New Issue', 'Issue created via command line prompts.',
+            '1', '2',
+        ):
+            self.assertEqual(0, program.main(
+                args=('branch',),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Area-New-Issue')
+
+            issue = radar.Tracker(project='WebKit').issue(4)
+            self.assertEqual(issue.title, '[Area] New Issue')
+            self.assertEqual(issue.description, 'Issue created via command line prompts.')
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'SVG')
+            self.assertEqual(issue.version, 'Safari 15')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''Enter issue URL or title of new issue: 
+Issue description: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+What version of 'WebKit SVG' should the bug be associated with?:
+    1) Other
+    2) Safari 15
+    3) Safari Technology Preview
+    4) WebKit Local Build
+: 
+Created '<rdar://4> [Area] New Issue'
 Created the local development branch 'eng/Area-New-Issue'
 ''',
         )
