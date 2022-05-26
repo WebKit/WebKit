@@ -384,7 +384,6 @@ static struct {
 };
 static_assert(WTF_ARRAY_LENGTH(keyframes) > 0);
 
-static inline float normalizeCTWeight(float); // FIXME: Once this is called, delete this forward declaration.
 static inline float normalizeCTWeight(float value)
 {
     if (value < keyframes[0].ctWeight)
@@ -410,7 +409,6 @@ static inline float denormalizeGXWeight(float value)
     return (value + 109.3) / 523.7;
 }
 
-static inline float denormalizeCTWeight(float); // FIXME: Once this is called, delete this forward declaration.
 static inline float denormalizeCTWeight(float value)
 {
     if (value < keyframes[0].cssWeight)
@@ -663,7 +661,9 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
         if (shouldEnhanceTextLegibility() && fontIsSystemFont(originalFont)) {
-            // FIXME: Implement this
+            auto ctWeight = denormalizeCTWeight(weight);
+            ctWeight = CTFontGetAccessibilityBoldWeightOfWeight(ctWeight);
+            weight = normalizeCTWeight(ctWeight);
         }
         if (needsConversion) {
             weight = denormalizeGXWeight(weight);
