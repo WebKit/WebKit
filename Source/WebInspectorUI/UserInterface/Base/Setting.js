@@ -232,6 +232,7 @@ WI.settings = {
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
     experimentalCSSCompletionFuzzyMatching: new WI.Setting("experimental-css-completion-fuzzy-matching", true),
+    experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", false),
     experimentalShowScreenshotsTimeline: new WI.Setting("experimental-show-screenshots-timeline", false),
 
     // Protocol

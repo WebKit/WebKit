@@ -2,6 +2,31 @@ Testing methods of CSSProperty.
 
 
 == Running test suite: CSSProperty
+-- Running test case: CSSProperty.NameCount
+PASS: "display" should have at least 2 counts.
+PASS: "background-repeat" should have at least 1 count.
+PASS: "background-repeat-x" should not be counted.
+PASS: "background-repeat-y" should not be counted.
+PASS: "background-repeat-invalid" should not be counted.
+[
+  "Fake Property 200 Seen",
+  "Fake Property 150 Seen",
+  "Fake Property 101 Seen",
+  "Fake Property 100 Seen",
+  "Fake Property 99 Unseen",
+  "Fake Property 99 Seen",
+  "Fake Property 1 Unseen",
+  "Fake Property 1 Seen",
+  "Fake Property 100 Unseen",
+  "Fake Property 0 Unseen",
+  "Fake Property 0 Seen",
+  "Fake Property 101 Unseen",
+  "Fake Property 150 Unseen",
+  "Fake Property 50 Unseen",
+  "Fake Property 50 Seen",
+  "Fake Property 200 Unseen"
+]
+
 -- Running test case: CSSProperty.prototype.get valid
 PASS: "background-repeat" is a valid property.
 PASS: "background-repeat-x" is an invalid property.

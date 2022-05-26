@@ -1503,6 +1503,7 @@ localizedStrings["Subject"] = "Subject";
 localizedStrings["Subscript @ Font Details Sidebar Property Value"] = "Subscript";
 /* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
 localizedStrings["Subtree Modified @ DOM Breakpoint"] = "Subtree Modified";
+localizedStrings["Suggest property names based on usage"] = "Suggest property names based on usage";
 localizedStrings["Summary"] = "Summary";
 /* Property value for `font-variant-position: super`. */
 localizedStrings["Superscript @ Font Details Sidebar Property Value"] = "Superscript";

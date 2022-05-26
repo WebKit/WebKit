@@ -67,7 +67,7 @@ WI.ObjectStore = class ObjectStore
 
         WI.ObjectStore._databaseCallbacks = [callback];
 
-        const version = 5; // Increment this for every edit to `WI.objectStores`.
+        const version = 6; // Increment this for every edit to `WI.objectStores`.
 
         let databaseRequest = window.indexedDB.open(WI.ObjectStore._databaseName, version);
         databaseRequest.addEventListener("upgradeneeded", (event) => {
@@ -133,6 +133,14 @@ WI.ObjectStore = class ObjectStore
             return [];
 
         return this._operation("readonly", (objectStore) => objectStore.getAll(...args));
+    }
+
+    async getAllKeys(...args)
+    {
+        if (!WI.ObjectStore.supported())
+            return [];
+
+        return this._operation("readonly", (objectStore) => objectStore.getAllKeys(...args));
     }
 
     async put(...args)
@@ -248,11 +256,23 @@ WI.ObjectStore.toJSONSymbol = Symbol("ObjectStore-toJSON");
 
 // Be sure to update the `version` above when making changes.
 WI.objectStores = {
-    general: new WI.ObjectStore("general"),
+    // Version 1
     audits: new WI.ObjectStore("audit-manager-tests", {keyPath: "__id", autoIncrement: true}),
+
+    // Version 2
     breakpoints: new WI.ObjectStore("debugger-breakpoints", {keyPath: "__id"}),
+
+    // Version 3
     domBreakpoints: new WI.ObjectStore("dom-debugger-dom-breakpoints", {keyPath: "__id"}),
     eventBreakpoints: new WI.ObjectStore("dom-debugger-event-breakpoints", {keyPath: "__id"}),
     urlBreakpoints: new WI.ObjectStore("dom-debugger-url-breakpoints", {keyPath: "__id"}),
+
+    // Version 4
     localResourceOverrides: new WI.ObjectStore("local-resource-overrides", {keyPath: "__id"}),
+
+    // Version 5
+    general: new WI.ObjectStore("general"),
+
+    // Version 6
+    cssPropertyNameCounts: new WI.ObjectStore("css-property-name-counts"),
 };

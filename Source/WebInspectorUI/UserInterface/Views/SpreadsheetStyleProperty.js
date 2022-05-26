@@ -368,6 +368,13 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         textField.value = isEditingName ? this._property.name : this._property.rawValue;
     }
 
+    spreadsheetTextFieldInitialCompletionIndex(textField, completions)
+    {
+        if (textField === this._nameTextField && WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage.value)
+            return completions.minIndex(WI.CSSProperty.sortByPropertyNameUsageCount);
+        return 0;
+    }
+
     spreadsheetTextFieldAllowsNewlines(textField)
     {
         return textField === this._valueTextField;

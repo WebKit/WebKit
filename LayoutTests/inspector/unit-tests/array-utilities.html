@@ -8,6 +8,24 @@ function test()
     let suite = InspectorTest.createSyncSuite("ArrayUtilities");
 
     suite.addTestCase({
+        name: "Array.prototype.minIndex",
+        test() {
+            InspectorTest.expectEqual([].minIndex(), 0, "minIndex of an empty array should be 0.");
+            InspectorTest.expectEqual([1].minIndex(), 0, "minIndex of an array with one item should be the index of the item.");
+            InspectorTest.expectEqual([1, 2, 3, 4].minIndex(), 0, "minIndex of an increasing array should be 0.");
+            InspectorTest.expectEqual([4, 3, 2, 1].minIndex(), 3, "minIndex of an decreasing array should be length - 1.");
+            InspectorTest.expectEqual([3, 4, 1, 2].minIndex(), 2, "minIndex of a mixed array should be the index of the smallest item.");
+            InspectorTest.expectEqual([3, 1, 1, 3].minIndex(), 1, "minIndex of an array with duplicates should be the index of the smallest item.");
+
+            let objs = [{value: 3}, {value: 4}, {value: 1}, {value: 2}];
+            let comparator = (a, b) => a.value - b.value;
+            InspectorTest.expectEqual(objs.minIndex(comparator), 2, "minIndex with a comparator of a mixed array should be the index of the smallest item.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "Array.prototype.lowerBound",
         test() {
             // Index:  0  1  2  3  4  5  6  7  8  9

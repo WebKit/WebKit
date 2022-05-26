@@ -1,5 +1,14 @@
 
 == Running test suite: ArrayUtilities
+-- Running test case: Array.prototype.minIndex
+PASS: minIndex of an empty array should be 0.
+PASS: minIndex of an array with one item should be the index of the item.
+PASS: minIndex of an increasing array should be 0.
+PASS: minIndex of an decreasing array should be length - 1.
+PASS: minIndex of a mixed array should be the index of the smallest item.
+PASS: minIndex of an array with duplicates should be the index of the smallest item.
+PASS: minIndex with a comparator of a mixed array should be the index of the smallest item.
+
 -- Running test case: Array.prototype.lowerBound
 PASS: lowerBound of a value before the first value should produce the first index.
 PASS: lowerBound of a value in the list should return the value's index.

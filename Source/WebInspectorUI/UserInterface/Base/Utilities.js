@@ -1592,6 +1592,25 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
     return new RegExp(regexString, regExpFlags);
 }
 
+Object.defineProperty(Array.prototype, "minIndex",
+{
+    value(comparator)
+    {
+        function defaultComparator(a, b)
+        {
+            return a - b;
+        }
+        comparator = comparator || defaultComparator;
+
+        let minIndex = 0;
+        for (let i = 1; i < this.length; ++i) {
+            if (comparator(this[minIndex], this[i]) > 0)
+                minIndex = i;
+        }
+        return minIndex;
+    },
+});
+
 Object.defineProperty(Array.prototype, "lowerBound",
 {
     // Return index of the leftmost element that is equal or greater

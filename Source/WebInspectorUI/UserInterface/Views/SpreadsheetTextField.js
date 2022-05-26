@@ -463,8 +463,10 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._suggestionsView.selectedIndex = NaN;
         if (this._completionPrefix) {
-            // Select first item and call completionSuggestionsSelectedCompletion.
-            this._suggestionsView.selectNext();
+            if (this._delegate?.spreadsheetTextFieldInitialCompletionIndex)
+                this._suggestionsView.selectedIndex = this._delegate.spreadsheetTextFieldInitialCompletionIndex(this, completions.map((completion) => this._suggestionsView.getCompletionText(completion)));
+            else
+                this._suggestionsView.selectNext();
         } else
             this.suggestionHint = "";
     }

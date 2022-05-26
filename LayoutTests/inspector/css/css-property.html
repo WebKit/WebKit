@@ -9,6 +9,27 @@ function test() {
     let suite = InspectorTest.createAsyncSuite("CSSProperty");
 
     suite.addTestCase({
+        name: "CSSProperty.NameCount",
+        description: "Ensure that the name counts are being tracked.",
+        async test() {
+            InspectorTest.expectGreaterThanOrEqual(WI.CSSProperty._cachedNameCounts["display"], 2, `"display" should have at least 2 counts.`);
+            InspectorTest.expectGreaterThanOrEqual(WI.CSSProperty._cachedNameCounts["background-repeat"], 1, `"background-repeat" should have at least 1 count.`);
+            InspectorTest.expectThat(!("background-repeat-x" in WI.CSSProperty._cachedNameCounts), `"background-repeat-x" should not be counted.`);
+            InspectorTest.expectThat(!("background-repeat-y" in WI.CSSProperty._cachedNameCounts), `"background-repeat-y" should not be counted.`);
+            InspectorTest.expectThat(!("background-repeat-invalid" in WI.CSSProperty._cachedNameCounts), `"background-repeat-invalid" should not be counted.`);
+
+            const counts = [99, 1, 100, 0, 101, 150, 50, 200];
+            let seenProperty = (count) => `Fake Property ${count} Seen`;
+            let unseenProperty = (count) => `Fake Property ${count} Unseen`;
+            for (const count of counts)
+                WI.CSSProperty._cachedNameCounts[seenProperty(count)] = count;
+            InspectorTest.json(counts.flatMap((count) => [unseenProperty(count), seenProperty(count)]).sort(WI.CSSProperty.sortByPropertyNameUsageCount))
+            for (const count of counts)
+                delete WI.CSSProperty._cachedNameCounts[seenProperty(count)];
+        }
+    });
+
+    suite.addTestCase({
         name: "CSSProperty.prototype.get valid",
         description: "Ensure valid, invalid, and internal-only have correct valid state.",
         test(resolve, reject) {
@@ -250,6 +271,8 @@ function test() {
 
     <style>
     div#x {
+        display: initial;
+        display: initial;
         background-repeat: repeat;
         background-repeat-x: repeat;
         background-repeat-invalid: repeat;

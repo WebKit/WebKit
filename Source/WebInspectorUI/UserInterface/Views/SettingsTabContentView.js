@@ -392,6 +392,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show jump to effective property button"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToVariableDeclaration, WI.UIString("Show jump to variable declaration button"));
             stylesGroup.addSetting(WI.settings.experimentalCSSCompletionFuzzyMatching, WI.UIString("Use fuzzy matching for completion suggestions"));
+            stylesGroup.addSetting(WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage, WI.UIString("Suggest property names based on usage"));
 
             experimentalSettingsView.addSeparator();
         }

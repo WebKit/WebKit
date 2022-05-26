@@ -27,6 +27,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 {
     constructor(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange)
     {
+        WI.CSSProperty._initializePropertyNameCounts();
+
         super();
 
         this._ownerStyle = null;
@@ -81,6 +83,49 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         }
 
         return names;
+    }
+
+    static sortByPropertyNameUsageCount(propertyNameA, propertyNameB)
+    {
+        let countA = WI.CSSProperty._cachedNameCounts[propertyNameA];
+        let countB = WI.CSSProperty._cachedNameCounts[propertyNameB];
+
+        const minimumCount = 100;
+        let validA = countA >= minimumCount;
+        let validB = countB >= minimumCount;
+
+        if (validA && !validB)
+            return -1;
+        if (!validA && validB)
+            return 1;
+
+        if (validA && validB) {
+            if (countA !== countB)
+                return countB - countA;
+
+            let canonicalPropertyNameA = WI.cssManager.canonicalNameForPropertyName(propertyNameA);
+            let canonicalPropertyNameB = WI.cssManager.canonicalNameForPropertyName(propertyNameB);
+            if (canonicalPropertyNameA !== propertyNameA || canonicalPropertyNameB !== propertyNameB)
+                return WI.CSSProperty.sortByPropertyNameUsageCount(canonicalPropertyNameA, canonicalPropertyNameB);
+        }
+
+        return 0;
+    }
+
+    static _initializePropertyNameCounts()
+    {
+        if (WI.CSSProperty._cachedNameCounts)
+            return;
+
+        WI.CSSProperty._cachedNameCounts = {};
+
+        WI.objectStores.cssPropertyNameCounts.getAllKeys().then((propertyNames) => {
+            for (let propertyName of propertyNames) {
+                WI.objectStores.cssPropertyNameCounts.get(propertyName).then((storedCount) => {
+                    WI.CSSProperty._cachedNameCounts[propertyName] = (WI.CSSProperty._cachedNameCounts[propertyName] || 0) + storedCount;
+                });
+            }
+        });
     }
 
     // Public
@@ -140,7 +185,6 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             this._overridingProperty = null;
 
         this._text = text;
-        this._name = name;
         this._rawValue = value;
         this._value = undefined;
         this._priority = priority;
@@ -163,6 +207,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._isShorthand = undefined;
         this._shorthandPropertyNames = undefined;
 
+        this._updateName(name);
         this._relatedShorthandProperty = null;
         this._relatedLonghandProperties = [];
 
@@ -180,7 +225,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._markModified();
 
         // Setting name or value to an empty string removes the entire CSSProperty.
-        this._name = "";
+        this._updateName("");
         const forceRemove = true;
         this._updateStyleText(forceRemove);
     }
@@ -268,7 +313,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         }
 
         this._markModified();
-        this._name = name;
+        this._updateName(name);
         this._updateStyleText();
     }
 
@@ -503,6 +548,42 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     // Private
 
+    _updateName(name)
+    {
+        if (name === this._name)
+            return;
+
+        let changeCount = (propertyName, delta) => {
+            if (!propertyName || this._implicit || this._anonymous || !this._enabled)
+                return;
+
+            let oldCount = WI.CSSProperty._cachedNameCounts[propertyName];
+
+            // Allow property counts to be updated if the property name has already been counted before.
+            // This can happen when inspecting a device that has different CSS properties enabled.
+            if (isNaN(oldCount) && !WI.cssManager.propertyNameCompletions.isValidPropertyName(propertyName))
+                return;
+
+            console.assert(delta > 0 || oldCount >= delta, oldCount, delta);
+            let newCount = Math.max(0, (oldCount || 0) + delta);
+            WI.CSSProperty._cachedNameCounts[propertyName] = newCount;
+
+            WI.objectStores.cssPropertyNameCounts.get(propertyName).then((storedCount) => {
+                console.assert(delta > 0 || storedCount >= delta, storedCount, delta);
+                storedCount = Math.max(0, (storedCount || 0) + delta);
+                WI.CSSProperty._cachedNameCounts[propertyName] = storedCount;
+                WI.objectStores.cssPropertyNameCounts.put(storedCount, propertyName);
+            });
+
+            if (propertyName !== this.canonicalName)
+                changeCount(this.canonicalName, delta);
+        };
+
+        changeCount(this._name, -1);
+        this._name = name;
+        changeCount(this._name, 1);
+    }
+
     _updateStyleText(forceRemove = false)
     {
         let text = "";
@@ -536,6 +617,8 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             this._ownerStyle.markModified();
     }
 };
+
+WI.CSSProperty._cachedNameCounts = null;
 
 WI.CSSProperty.Event = {
     Changed: "css-property-changed",
