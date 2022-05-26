@@ -25,6 +25,7 @@
 #include "ColorComponents.h"
 #include "ColorTypes.h"
 #include "FilterEffectApplier.h"
+#include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 
 namespace WebCore {

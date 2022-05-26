@@ -28,6 +28,7 @@
 #include "FilterEffectApplier.h"
 #include "FloatPoint.h"
 #include "IntRect.h"
+#include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 
 namespace WebCore {

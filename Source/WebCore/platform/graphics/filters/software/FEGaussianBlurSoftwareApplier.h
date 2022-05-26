@@ -24,6 +24,7 @@
 
 #include "FilterEffectApplier.h"
 #include "IntSize.h"
+#include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 
 namespace WebCore {

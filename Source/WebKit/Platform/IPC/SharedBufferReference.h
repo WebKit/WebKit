@@ -29,6 +29,7 @@
 #pragma once
 
 #include "DataReference.h"
+#include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
 #include <optional>
 
