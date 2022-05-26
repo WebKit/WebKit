@@ -131,35 +131,27 @@ if (COMPILER_IS_GCC_OR_CLANG)
 
     WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-noexcept-type)
 
-    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80947
-    if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "8.0" AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-attributes)
-    endif ()
+    # These GCC warnings produce too many false positives to be useful. We'll
+    # rely on developers who build with Clang to notice these warnings.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
 
-    # Since GCC 11, these warnings produce too many false positives to be useful. We'll rely on
-    # developers who build with Clang to notice these warnings.
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+        # https://bugs.webkit.org/show_bug.cgi?id=228601
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-array-bounds)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-nonnull)
-    endif ()
 
-    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
-    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
-    # https://bugs.webkit.org/show_bug.cgi?id=226557
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+        # https://bugs.webkit.org/show_bug.cgi?id=240596
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overflow)
+
+        # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
+        # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
+        # https://bugs.webkit.org/show_bug.cgi?id=226557
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
-    endif ()
 
-    # -Wodr trips over our bindings integrity feature when LTO is enabled.
-    # https://bugs.webkit.org/show_bug.cgi?id=229867
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        # -Wodr trips over our bindings integrity feature when LTO is enabled.
+        # https://bugs.webkit.org/show_bug.cgi?id=229867
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-odr)
-    endif ()
-
-    # -Wexpansion-to-defined produces false positives with GCC but not Clang
-    # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
     endif ()
 
     # Force SSE2 fp on x86 builds.
