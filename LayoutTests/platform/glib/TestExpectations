@@ -956,6 +956,9 @@ webkit.org/b/235885 webrtc/vp9.html [ Failure ]
 # Hits an ASSERT because we don't have a WebRTC provider handling WebRTC-related media-capabilities.
 webkit.org/b/235885 [ Debug ] media/mediacapabilities/mock-encodingInfo.html [ Crash ]
 
+# Expected to pass with GStreamer 1.22.
+webkit.org/b/235885 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

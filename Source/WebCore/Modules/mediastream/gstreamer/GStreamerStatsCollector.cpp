@@ -22,7 +22,7 @@
 
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
-#include "GUniquePtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "JSDOMMapLike.h"
 #include "JSRTCStatsReport.h"
 
@@ -201,6 +201,75 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
     // stats.srtpCipher =
 }
 
+static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& type)
+{
+    if (type == "host")
+        return RTCIceCandidateType::Host;
+    if (type == "srflx")
+        return RTCIceCandidateType::Srflx;
+    if (type == "prflx")
+        return RTCIceCandidateType::Prflx;
+    if (type == "relay")
+        return RTCIceCandidateType::Relay;
+
+    return { };
+}
+
+static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stats, GstWebRTCStatsType statsType, const GstStructure* structure)
+{
+    stats.type = statsType == GST_WEBRTC_STATS_REMOTE_CANDIDATE ? RTCStatsReport::Type::RemoteCandidate : RTCStatsReport::Type::LocalCandidate;
+
+    fillRTCStats(stats, structure);
+
+    stats.transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
+    stats.address = String::fromLatin1(gst_structure_get_string(structure, "address"));
+    stats.protocol = String::fromLatin1(gst_structure_get_string(structure, "protocol"));
+    stats.url = String::fromLatin1(gst_structure_get_string(structure, "url"));
+
+    unsigned port;
+    if (gst_structure_get_uint(structure, "port", &port))
+        stats.port = port;
+
+    auto candidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
+    stats.candidateType = iceCandidateType(candidateType);
+
+    uint64_t priority;
+    if (gst_structure_get_uint64(structure, "priority", &priority))
+        stats.priority = priority;
+}
+
+static inline void fillRTCCandidatePairStats(RTCStatsReport::IceCandidatePairStats& stats, const GstStructure* structure)
+{
+    fillRTCStats(stats, structure);
+
+    stats.localCandidateId = String::fromLatin1(gst_structure_get_string(structure, "local-candidate-id"));
+    stats.remoteCandidateId = String::fromLatin1(gst_structure_get_string(structure, "remote-candidate-id"));
+
+    // FIXME
+    // stats.transportId =
+    // stats.state =
+    // stats.priority =
+    // stats.nominated =
+    // stats.writable =
+    // stats.readable =
+    // stats.bytesSent =
+    // stats.bytesReceived =
+    // stats.totalRoundTripTime =
+    // stats.currentRoundTripTime =
+    // stats.availableOutgoingBitrate =
+    // stats.availableIncomingBitrate =
+    // stats.requestsReceived =
+    // stats.requestsSent =
+    // stats.responsesReceived =
+    // stats.responsesSent =
+    // stats.retransmissionsReceived =
+    // stats.retransmissionsSent =
+    // stats.consentRequestsReceived =
+    // stats.consentRequestsSent =
+    // stats.consentResponsesReceived =
+    // stats.consentResponsesSent =
+}
+
 static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userData)
 {
     if (!GST_VALUE_HOLDS_STRUCTURE(value))
@@ -265,10 +334,20 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     case GST_WEBRTC_STATS_DATA_CHANNEL:
         GST_FIXME("Missing data-channel stats support");
         break;
-    case GST_WEBRTC_STATS_CANDIDATE_PAIR:
     case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
     case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
-        GST_FIXME("Missing candidate stats support");
+        if (webkitGstCheckVersion(1, 21, 0)) {
+            RTCStatsReport::IceCandidateStats stats;
+            fillRTCCandidateStats(stats, statsType, structure);
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidateStats>>(stats.id, WTFMove(stats));
+        }
+        break;
+    case GST_WEBRTC_STATS_CANDIDATE_PAIR:
+        if (webkitGstCheckVersion(1, 21, 0)) {
+            RTCStatsReport::IceCandidatePairStats stats;
+            fillRTCCandidatePairStats(stats, structure);
+            report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));
+        }
         break;
     case GST_WEBRTC_STATS_CERTIFICATE:
         GST_FIXME("Missing certificate stats support");
