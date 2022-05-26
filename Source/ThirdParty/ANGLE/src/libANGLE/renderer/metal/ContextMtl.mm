@@ -2216,6 +2216,32 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                                     const void *indices,
                                     bool xfbPass)
 {
+    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
+                            indexTypeOrNone, indices, xfbPass));
+    if (!mRenderEncoder.valid())
+    {
+        // Flush occurred during setup, due to running out of memory while setting up the render
+        // pass state. This would happen for example when there is no more space in the uniform
+        // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
+        // buffer memory for new usage. In this case, re-run the setup.
+        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
+                                indexTypeOrNone, indices, xfbPass));
+        // Setup with flushed state should either produce a working encoder or fail with an error
+        // result.
+        ASSERT(mRenderEncoder.valid());
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+                                        gl::PrimitiveMode mode,
+                                        GLint firstVertex,
+                                        GLsizei vertexOrIndexCount,
+                                        GLsizei instances,
+                                        gl::DrawElementsType indexTypeOrNone,
+                                        const void *indices,
+                                        bool xfbPass)
+{
     ASSERT(mProgram);
 
     // instances=0 means no instanced draw.
