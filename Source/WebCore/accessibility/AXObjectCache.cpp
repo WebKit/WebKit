@@ -1911,6 +1911,10 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         textChanged(element);
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
+    else if (attrName == aria_grabbedAttr)
+        postNotification(element, AXGrabbedStateChanged);
+    else if (attrName == aria_posinsetAttr)
+        postNotification(element, AXPositionInSetChanged);
     else if (attrName == aria_selectedAttr)
         selectedStateChanged(element);
     else if (attrName == aria_expandedAttr)
@@ -3433,6 +3437,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXExpandedChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
             break;
+        case AXPositionInSetChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsPosInSet);
+            break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
@@ -3452,6 +3460,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
         case AXElementBusyChanged:
+        case AXGrabbedStateChanged:
         case AXInvalidStatusChanged:
         case AXMenuListValueChanged:
         case AXPressedStateChanged:

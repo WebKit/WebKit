@@ -359,11 +359,17 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::IsSelected:
         propertyMap.set(AXPropertyName::IsSelected, axObject.isSelected());
         break;
+    case AXPropertyName::PosInSet:
+        propertyMap.set(AXPropertyName::PosInSet, axObject.posInSet());
+        break;
     case AXPropertyName::ReadOnlyValue:
         propertyMap.set(AXPropertyName::ReadOnlyValue, axObject.readOnlyValue().isolatedCopy());
         break;
     case AXPropertyName::SortDirection:
         propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
+        break;
+    case AXPropertyName::SupportsPosInSet:
+        propertyMap.set(AXPropertyName::SupportsPosInSet, axObject.supportsPosInSet());
         break;
     default:
         return;

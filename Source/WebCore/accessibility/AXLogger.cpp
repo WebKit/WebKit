@@ -391,6 +391,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXFrameLoadComplete:
         stream << "AXFrameLoadComplete";
         break;
+    case AXObjectCache::AXNotification::AXGrabbedStateChanged:
+        stream << "AXGrabbedStateChanged";
+        break;
     case AXObjectCache::AXNotification::AXIdAttributeChanged:
         stream << "AXIdAttributeChanged";
         break;
@@ -411,6 +414,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXPageScrolled:
         stream << "AXPageScrolled";
+        break;
+    case AXObjectCache::AXNotification::AXPositionInSetChanged:
+        stream << "AXPositionInSetChanged";
         break;
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";
