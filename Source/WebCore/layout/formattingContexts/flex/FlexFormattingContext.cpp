@@ -204,18 +204,72 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
     }
 }
 
-void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints)
+void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
 {
     auto& formattingState = this->formattingState();
 
-    auto flexDirection = root().style().flexDirection();
-    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-    auto availableSpace = std::optional<LayoutUnit> { flexDirectionIsInlineAxis ? std::make_optional(flexConstraints.horizontal().logicalWidth) : flexConstraints.availableVerticalSpace() };
+    auto totalShrink = 0.f;
+    auto totalFlexibleSpace = LayoutUnit { };
+    auto flexShrinkBase = 0.f;
+    Vector<size_t> shrinkingItems;
+
+    auto computeTotalShrinkAndOverflowingSpace = [&] {
+        // Collect flex items with non-zero flex-shrink value. flex-shrink: 0 flex items
+        // don't participate in content flexing.
+        for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
+            auto& logicalFlexItem = logicalFlexItemList[index];
+            if (auto flexShrink = logicalFlexItem.layoutBox->style().flexShrink()) {
+                shrinkingItems.append(index);
+                totalShrink += flexShrink;
+                totalFlexibleSpace += logicalFlexItem.rect.width();
+            } else
+                availableSpace -= logicalFlexItem.rect.width();
+        }
+        if (totalShrink)
+            flexShrinkBase = (totalFlexibleSpace - availableSpace) / totalShrink;
+    };
+    computeTotalShrinkAndOverflowingSpace();
+
+    auto adjustShrinkBase = [&] {
+        // Now that we know how much each flex item needs to be shrunk, let's check
+        // if they hit their minimum content width (i.e. whether they can be sized that small).
+        for (auto flexItemIndex : shrinkingItems) {
+            auto& flexItem = logicalFlexItemList[flexItemIndex];
+
+            auto flexShrink = flexItem.layoutBox->style().flexShrink();
+            auto flexedSize = flexItem.rect.width() - (flexShrink * flexShrinkBase);
+            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
+            if (minimumSize >= flexedSize) {
+                totalShrink -= flexShrink;
+                totalFlexibleSpace -= flexItem.rect.width();
+                availableSpace -= minimumSize;
+            }
+        }
+        flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
+    };
+    adjustShrinkBase();
+
+    auto computeLogicalWidth = [&] {
+        // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
+        for (auto flexItemIndex : shrinkingItems) {
+            auto& flexItem = logicalFlexItemList[flexItemIndex];
+
+            auto flexShrink = flexItem.layoutBox->style().flexShrink();
+            auto flexedSize = LayoutUnit { flexItem.rect.width() - (flexShrink * flexShrinkBase) };
+            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
+            flexItem.rect.setWidth(std::max(minimumSize, flexedSize));
+        }
+    };
+    computeLogicalWidth();
+}
+
+void FlexFormattingContext::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
+{
+    auto& formattingState = this->formattingState();
 
     auto totalGrowth = 0.f;
-    auto totalFlexibleSpace = *availableSpace;
     auto flexGrowBase = 0.f;
-    Vector<size_t> flexingItems;
+    Vector<size_t> stretchingItems;
 
     auto computeTotalGrowthAndFlexibleSpace = [&] {
         // Collect flex items with non-zero flex-grow value. flex-grow: 0 (initial) flex items
@@ -223,22 +277,24 @@ void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& lo
         for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
             auto& logicalFlexItem = logicalFlexItemList[index];
             if (auto flexGrow = logicalFlexItem.layoutBox->style().flexGrow()) {
-                flexingItems.append(index);
+                stretchingItems.append(index);
                 totalGrowth += flexGrow;
             } else
-                totalFlexibleSpace -= logicalFlexItem.rect.width();
+                availableSpace -= logicalFlexItem.rect.width();
         }
         if (totalGrowth)
-            flexGrowBase = totalFlexibleSpace / totalGrowth;
+            flexGrowBase = availableSpace / totalGrowth;
     };
     computeTotalGrowthAndFlexibleSpace();
+    if (!totalGrowth)
+        return;
 
     auto totalLogicalWidth = [&] {
         // This is where we compute how much space the flexing boxes take up if we just
         // let them flex by their flex-grow value. Note that we can't size them below their minimum content width.
         // Such flex items are removed from the final overflow distribution.
         auto accumulatedWidth = LayoutUnit { };
-        for (auto flexItemIndex : flexingItems) {
+        for (auto flexItemIndex : stretchingItems) {
             auto& flexItem = logicalFlexItemList[flexItemIndex];
 
             auto flexGrow = flexItem.layoutBox->style().flexGrow();
@@ -251,13 +307,13 @@ void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& lo
                 accumulatedWidth += flexedSize;
         }
         return accumulatedWidth;
-    }();
-    auto overflowWidth = totalLogicalWidth - totalFlexibleSpace;
+    };
+    auto overflowWidth = totalLogicalWidth() - availableSpace;
     ASSERT(overflowWidth >= 0);
 
     auto computeLogicalWidth = [&] {
         // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto flexItemIndex : flexingItems) {
+        for (auto flexItemIndex : stretchingItems) {
             auto& flexItem = logicalFlexItemList[flexItemIndex];
 
             auto flexGrow = flexItem.layoutBox->style().flexGrow();
@@ -272,6 +328,26 @@ void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& lo
         }
     };
     computeLogicalWidth();
+}
+
+void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints)
+{
+    auto flexDirection = root().style().flexDirection();
+    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+    auto availableSpace = std::optional<LayoutUnit> { flexDirectionIsInlineAxis ? std::make_optional(flexConstraints.horizontal().logicalWidth) : flexConstraints.availableVerticalSpace() };
+    auto contentLogicalWidth = [&] {
+        auto logicalWidth = LayoutUnit { };
+        for (auto& logicalFlexItem : logicalFlexItemList)
+            logicalWidth += logicalFlexItem.rect.width();
+        return logicalWidth;
+    };
+
+    if (!availableSpace)
+        ASSERT_NOT_IMPLEMENTED_YET();
+    else if (*availableSpace > contentLogicalWidth())
+        computeLogicalWidthForStretchingFlexItems(logicalFlexItemList, *availableSpace);
+    else
+        computeLogicalWidthForShrinkingFlexItems(logicalFlexItemList, *availableSpace);
 }
 
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)

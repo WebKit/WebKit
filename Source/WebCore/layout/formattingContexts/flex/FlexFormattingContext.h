@@ -66,6 +66,8 @@ private:
     LogicalFlexItems convertFlexItemsToLogicalSpace();
     void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForFlexContent&);
     void computeLogicalWidthForFlexItems(LogicalFlexItems&, const ConstraintsForFlexContent&);
+    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
+    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
