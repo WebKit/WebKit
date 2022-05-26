@@ -2818,7 +2818,7 @@ PAUSES AT: 3:0
 
 INSERTING AT: 0:0
 PAUSES AT: 1:4
- ->   0    #function test() {
+ ->   0    #function multilineTest() {
  =>   1        |var x;
       2    }
       3
@@ -2826,7 +2826,7 @@ PAUSES AT: 1:4
 
 INSERTING AT: 1:5
 PAUSES AT: 2:0
-      0    function test() {
+      0    function multilineTest() {
  ->   1        v#ar x;
  =>   2    |}
       3
@@ -2835,13 +2835,13 @@ PAUSES AT: 2:0
 
 INSERTING AT: 2:1
 PAUSES AT: 5:0
-      0    function test() {
+      0    function multilineTest() {
       1        var x;
  ->   2    }#
       3
       4    // Strings
  =>   5    |let multiline1 = "test\
-      6    string", multiline2 = test();
+      6    string", multiline2 = multilineTest();
       7
       8    // Template Strings
 
@@ -2851,7 +2851,7 @@ PAUSES AT: 6:9
       3
       4    // Strings
  ->   5    l#et multiline1 = "test\
- =>   6    string", |multiline2 = test();
+ =>   6    string", |multiline2 = multilineTest();
       7
       8    // Template Strings
       9    let multiline3 = `test
@@ -2861,21 +2861,21 @@ PAUSES AT: 9:0
       3
       4    // Strings
       5    let multiline1 = "test\
- ->   6    string", m#ultiline2 = test();
+ ->   6    string", m#ultiline2 = multilineTest();
       7
       8    // Template Strings
  =>   9    |let multiline3 = `test
-     10    string`, multiline4 = test();
+     10    string`, multiline4 = multilineTest();
      11
      12    // Comments
 
 INSERTING AT: 9:1
 PAUSES AT: 10:9
-      6    string", multiline2 = test();
+      6    string", multiline2 = multilineTest();
       7
       8    // Template Strings
  ->   9    l#et multiline3 = `test
- =>  10    string`, |multiline4 = test();
+ =>  10    string`, |multiline4 = multilineTest();
      11
      12    // Comments
      13    /* test
@@ -2885,11 +2885,11 @@ PAUSES AT: 14:11
       7
       8    // Template Strings
       9    let multiline3 = `test
- ->  10    string`, m#ultiline4 = test();
+ ->  10    string`, m#ultiline4 = multilineTest();
      11
      12    // Comments
      13    /* test
- =>  14    comment */ |let multiline5 = test();
+ =>  14    comment */ |let multiline5 = multilineTest();
      15
 
 
