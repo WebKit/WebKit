@@ -36,6 +36,7 @@
 #include "SystemFontDatabaseCoreText.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
+#include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
@@ -753,7 +754,7 @@ static float stretchFromCoreTextTraits(CFDictionaryRef traits)
 
 static void invalidateFontCache();
 
-static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
+static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
 
