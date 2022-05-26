@@ -2300,3 +2300,5 @@ webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/240989 http/tests/media/hls/hls-webvtt-flashing.html [ Pass Failure ]
