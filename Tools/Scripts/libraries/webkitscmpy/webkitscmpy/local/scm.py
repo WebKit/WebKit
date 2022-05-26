@@ -107,6 +107,10 @@ class Scm(ScmBase):
         raise NotImplementedError()
 
     @property
+    def common_directory(self):
+        raise NotImplementedError()
+
+    @property
     def branch(self):
         raise NotImplementedError()
 

@@ -284,7 +284,7 @@ class Setup(Command):
                         python=os.path.basename(sys.executable),
                     )
 
-                target = os.path.join(repository.root_path, '.git', 'hooks', hook)
+                target = os.path.join(repository.common_directory, 'hooks', hook)
                 if not os.path.exists(os.path.dirname(target)):
                     os.makedirs(os.path.dirname(target))
                 with open(target, 'w') as f:

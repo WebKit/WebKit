@@ -70,7 +70,7 @@ class Git(Scm):
 
         @property
         def path(self):
-            return os.path.join(self.repo.root_path, '.git', 'identifiers.json')
+            return os.path.join(self.repo.common_directory, 'identifiers.json')
 
         def _fill(self, branch):
             default_branch = self.repo.default_branch
@@ -396,7 +396,7 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def is_svn(self):
-        config = os.path.join(self.root_path, '.git/config')
+        config = os.path.join(self.common_directory, 'config')
         if not os.path.isfile(config):
             return False
 
@@ -417,6 +417,14 @@ class Git(Scm):
         if result.returncode:
             return None
         return result.stdout.rstrip()
+
+    @property
+    @decorators.Memoize()
+    def common_directory(self):
+        result = run([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            return os.path.join(self.root_path, '.git')
+        return os.path.join(self.root_path, result.stdout.rstrip())
 
     @property
     @decorators.Memoize()

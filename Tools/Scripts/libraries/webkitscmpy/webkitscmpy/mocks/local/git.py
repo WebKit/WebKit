@@ -210,6 +210,13 @@ nothing to commit, working tree clean
                     stdout='{}\n'.format(self.path),
                 ),
             ), mocks.Subprocess.Route(
+                self.executable, 'rev-parse', '--git-common-dir',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='.git\n',
+                ),
+            ), mocks.Subprocess.Route(
                 self.executable, 'rev-parse', '--abbrev-ref', 'HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
