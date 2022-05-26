@@ -53,7 +53,7 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
     // - For __proto__ getter, that the incoming value is an object,
     //   and if it overrides getPrototype structure flags.
     // So for these cases, it's simpler to just call the getter directly.
-    if (stubInfo.thisValueIsInThisGPR())
+    if (stubInfo.thisValueIsInExtraGPR())
         return false;
 
     switch (getter->intrinsic()) {

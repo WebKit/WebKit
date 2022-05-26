@@ -1025,8 +1025,10 @@ private:
             if (m_graph.m_plan.isUnlinked())
                 break;
 
-            if (JITCode::useDataIC(m_graph.m_plan.isFTL() ? JITType::FTLJIT : JITType::DFGJIT))
-                break;
+            if (m_graph.m_plan.isFTL()) {
+                if (Options::useDataICInFTL())
+                    break;
+            }
 
             // FIXME: Support wasm IC.
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.

@@ -955,7 +955,7 @@ void AccessCase::generateWithGuard(
 
     if (requiresIdentifierNameMatch() && !stubInfo.hasConstantIdentifier) {
         RELEASE_ASSERT(m_identifier);
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
         // non-rope string check done inside polymorphic access.
 
         if (uid()->isSymbol())
@@ -1094,7 +1094,7 @@ void AccessCase::generateWithGuard(
     case IndexedScopedArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ScopedArgumentsType)));
@@ -1156,7 +1156,7 @@ void AccessCase::generateWithGuard(
     case IndexedDirectArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(DirectArgumentsType)));
         
@@ -1183,7 +1183,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1276,7 +1276,7 @@ void AccessCase::generateWithGuard(
     case IndexedStringLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         fallThrough.append(jit.branchIfNotString(baseGPR));
 
@@ -1328,7 +1328,7 @@ void AccessCase::generateWithGuard(
     case IndexedArrayStorageLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1427,7 +1427,7 @@ void AccessCase::generateWithGuard(
     case IndexedContiguousStore:
     case IndexedArrayStorageStore: {
         ASSERT(!viaProxy());
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1581,7 +1581,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.u.propertyGPR;
+        GPRReg propertyGPR = state.propertyGPR();
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1686,13 +1686,13 @@ void AccessCase::generateWithGuard(
         
         fallThrough.append(
             jit.branchPtr(
-                CCallHelpers::NotEqual, state.u.prototypeGPR,
+                CCallHelpers::NotEqual, state.prototypeGPR(),
                 CCallHelpers::TrustedImmPtr(as<InstanceOfAccessCase>().prototype())));
         break;
         
     case InstanceOfGeneric: {
         ASSERT(!viaProxy());
-        GPRReg prototypeGPR = state.u.prototypeGPR;
+        GPRReg prototypeGPR = state.prototypeGPR();
         // Legend: value = `base instanceof prototypeGPR`.
         
         GPRReg valueGPR = valueRegs.payloadGPR();
@@ -1789,7 +1789,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
-    GPRReg thisGPR = stubInfo.thisValueIsInThisGPR() ? state.u.thisGPR : baseGPR;
+    GPRReg thisGPR = stubInfo.thisValueIsInExtraGPR() ? state.thisGPR() : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     for (const ObjectPropertyCondition& condition : m_conditionSet) {

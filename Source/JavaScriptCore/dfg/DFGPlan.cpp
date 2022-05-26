@@ -683,19 +683,11 @@ void Plan::cleanMustHandleValuesIfNecessary()
     }
 }
 
-unsigned Plan::addLinkableConstant(void* ptr)
-{
-    ASSERT(ptr);
-    return m_constantPool.add(ptr, m_constantPool.size()).iterator->value;
-}
-
 std::unique_ptr<JITData> Plan::finalizeJITData(const JITCode& jitCode)
 {
     auto osrExitThunk = m_vm->getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
     auto exits = JITData::ExitVector::createWithSizeAndConstructorArguments(jitCode.m_osrExit.size(), osrExitThunk);
-    auto jitData = JITData::create(m_constantPool.size(), WTFMove(exits));
-    for (auto& pair : m_constantPool)
-        jitData->at(pair.value) = pair.key;
+    auto jitData = JITData::create(jitCode, WTFMove(exits));
     return jitData;
 }
 

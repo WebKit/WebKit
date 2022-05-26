@@ -74,7 +74,7 @@ public:
     constexpr bool operator==(JSValueRegs other) const { return m_gpr == other.m_gpr; }
     constexpr bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
-    GPRReg gpr() const { return m_gpr; }
+    constexpr GPRReg gpr() const { return m_gpr; }
     constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
     constexpr GPRReg payloadGPR() const { return m_gpr; }
     
@@ -168,7 +168,7 @@ private:
 #if USE(JSVALUE32_64)
 class JSValueRegs {
 public:
-    JSValueRegs()
+    constexpr JSValueRegs()
         : m_tagGPR(InvalidGPRReg)
         , m_payloadGPR(InvalidGPRReg)
     {
@@ -180,7 +180,7 @@ public:
     {
     }
     
-    static JSValueRegs withTwoAvailableRegs(GPRReg gpr1, GPRReg gpr2)
+    static constexpr JSValueRegs withTwoAvailableRegs(GPRReg gpr1, GPRReg gpr2)
     {
         return JSValueRegs(gpr1, gpr2);
     }

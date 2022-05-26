@@ -37,7 +37,7 @@ namespace JSC {
 
 class BinaryArithProfile;
 class UnaryArithProfile;
-struct UnlinkedStructureStubInfo;
+struct BaselineUnlinkedStructureStubInfo;
 struct SimpleJumpTable;
 struct StringJumpTable;
 
@@ -94,7 +94,7 @@ public:
     PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
 
     FixedVector<UnlinkedCallLinkInfo> m_unlinkedCalls;
-    FixedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
+    FixedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
     JITCodeMap m_jitCodeMap;

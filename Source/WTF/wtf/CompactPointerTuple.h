@@ -95,6 +95,16 @@ public:
 
     uint64_t data() const { return m_data; }
 
+    bool operator==(const CompactPointerTuple& other) const
+    {
+        return m_data == other.m_data;
+    }
+
+    bool operator!=(const CompactPointerTuple& other) const
+    {
+        return !(*this == other);
+    }
+
 private:
     static constexpr uint64_t encodeType(Type type)
     {
@@ -130,6 +140,16 @@ public:
     void setPointer(PointerType pointer) { m_pointer = pointer; }
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
+
+    bool operator==(const CompactPointerTuple& other) const
+    {
+        return m_type == other.m_type && m_pointer == other.m_pointer;
+    }
+
+    bool operator!=(const CompactPointerTuple& other) const
+    {
+        return !(*this == other);
+    }
 
 private:
     PointerType m_pointer { nullptr };
