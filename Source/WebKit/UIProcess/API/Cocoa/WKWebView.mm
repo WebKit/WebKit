@@ -1602,25 +1602,33 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 {
     auto frame = WebCore::FloatSize(self.frame.size);
 
-    auto minimumUnobscuredSize = frame - WebCore::FloatSize(maximumViewportInset.left + maximumViewportInset.right, maximumViewportInset.top + maximumViewportInset.bottom);
+    auto maximumViewportInsetSize = WebCore::FloatSize(maximumViewportInset.left + maximumViewportInset.right, maximumViewportInset.top + maximumViewportInset.bottom);
+    auto minimumUnobscuredSize = frame - maximumViewportInsetSize;
     if (minimumUnobscuredSize.isEmpty()) {
-        if (throwOnInvalidInput) {
-            [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be larger than frame"];
-            return;
+        if (!maximumViewportInsetSize.isEmpty()) {
+            if (throwOnInvalidInput) {
+                [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be larger than frame"];
+                return;
+            }
+
+            RELEASE_LOG_ERROR(ViewportSizing, "maximumViewportInset cannot be larger than frame");
         }
 
-        RELEASE_LOG_ERROR(ViewportSizing, "maximumViewportInset cannot be larger than frame");
         minimumUnobscuredSize = frame;
     }
 
-    auto maximumUnobscuredSize = frame - WebCore::FloatSize(minimumViewportInset.left + minimumViewportInset.right, minimumViewportInset.top + minimumViewportInset.bottom);
+    auto minimumViewportInsetSize = WebCore::FloatSize(minimumViewportInset.left + minimumViewportInset.right, minimumViewportInset.top + minimumViewportInset.bottom);
+    auto maximumUnobscuredSize = frame - minimumViewportInsetSize;
     if (maximumUnobscuredSize.isEmpty()) {
-        if (throwOnInvalidInput) {
-            [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than frame"];
-            return;
+        if (!minimumViewportInsetSize.isEmpty()) {
+            if (throwOnInvalidInput) {
+                [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than frame"];
+                return;
+            }
+
+            RELEASE_LOG_ERROR(ViewportSizing, "minimumViewportInset cannot be larger than frame");
         }
 
-        RELEASE_LOG_ERROR(ViewportSizing, "minimumViewportInset cannot be larger than frame");
         maximumUnobscuredSize = frame;
     }
 
