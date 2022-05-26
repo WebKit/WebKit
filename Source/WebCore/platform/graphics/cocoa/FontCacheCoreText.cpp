@@ -577,7 +577,6 @@ static bool& platformShouldEnhanceTextLegibility()
     return shouldEnhanceTextLegibility.get();
 }
 
-static inline bool shouldEnhanceTextLegibility(); // FIXME: Once this is called, delete this forward declaration.
 static inline bool shouldEnhanceTextLegibility()
 {
     return platformShouldEnhanceTextLegibility() || FontCache::forCurrentThread().shouldMockBoldSystemFontForAccessibility();
@@ -665,6 +664,9 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
+        if (shouldEnhanceTextLegibility()) {
+            // FIXME: Implement this
+        }
         if (needsConversion) {
             weight = denormalizeGXWeight(weight);
             width = denormalizeVariationWidth(width);
