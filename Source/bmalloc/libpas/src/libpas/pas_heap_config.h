@@ -174,6 +174,9 @@ struct pas_heap_config {
     bool aligned_allocator_talks_to_sharing_pool;
     pas_deallocator deallocator;
 
+    /* Configure whether probabilistic guard malloc may be called or not during allocation. */
+    bool pgm_enabled;
+
     /* Tells if it's OK to call mmap on memory managed by this heap. */
     pas_mmap_capability mmap_capability;
 

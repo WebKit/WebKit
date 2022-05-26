@@ -1,20 +1,20 @@
 # libpas - Phil's Awesome System
 
 Libpas is a configurable memory allocator toolkit designed to enable adoption
-of isoheaps. Currently, libpas's main client is WebKit's bmalloc project, where
+of isoheaps. Currently, libpas' main client is WebKit's bmalloc project, where
 it's used as a replacement for all of bmalloc's functionality (bmalloc::api,
-IsoHeap<>, and Gigacage). Libpas's jit_heap API is also used by WebKit's
+IsoHeap<>, and Gigacage). Libpas' jit_heap API is also used by WebKit's
 ExecutableAllocator.
 
 
 # How To Build And Test
 
 This section describes how to build libpas standalone. You'll be doing this a
-lot when making changes to libpas. It's wise to run libpas's tests before
+lot when making changes to libpas. It's wise to run libpas' tests before
 trying out your change in any larger system (like WebKit) since libpas tests
 are great at catching bugs. If libpas passes its own tests then basic browsing
 will seem to work. In production, libpas gets built as part of some other
-project (like bmalloc), which just pulls all of libpas's files into that
+project (like bmalloc), which just pulls all of libpas' files into that
 project's build system.
 
 Build and test:
@@ -64,7 +64,7 @@ production use, libpas is meant to be built as part of some larger malloc
 project; for example, when libpas sees the PAS_BMALLOC macro, it will provide
 everything that WebKit's bmalloc library needs to create an allocator.
 
-Libpas's toolkit of allocators has three building blocks:
+Libpas' toolkit of allocators has three building blocks:
 
 - The segregated heap. This implements something like simple segregated
   storage. Roughly speaking, size classes hold onto collections of pages, and
@@ -99,7 +99,7 @@ trade-offs, and so on.
 
 All of the heaps are able to participate in physical page sharing. This means
 that anytime any system page of memory managed by the heap becomes totally
-empty, it becomes eligible for being returned to the OS via decommit. Libpas's
+empty, it becomes eligible for being returned to the OS via decommit. Libpas'
 decommit strategy is particularly well tuned so as to compensate for the
 inherent memory overheads of isoheaping. Libpas achieves much better memory
 usage than bmalloc because it returns pages sooner than bmalloc would have, and
@@ -109,7 +109,7 @@ configured to return a page to the OS anytime it has been free for 300ms.
 Libpas is a heavy user of fine-grained locking and intricate lock dancing. Some
 data structures will be protected by any of a collection of different locks,
 and lock acquisition involves getting the lock, checking if you got the right
-lock, and possibly relooping. Libpas's algorithms are designed around:
+lock, and possibly relooping. Libpas' algorithms are designed around:
 
 - Reducing the likelihood that any long-running operation would want to hold a
   lock that any frequently-running operation would ever need. For example,

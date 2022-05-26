@@ -91,7 +91,7 @@ public:
     size_t getNext() const override
     {
         PAS_ASSERT(!m_indices.empty());
-        size_t index = pas_get_random(pas_fast_random, static_cast<unsigned>(m_indices.size()));
+        size_t index = pas_get_fast_random(static_cast<unsigned>(m_indices.size()));
         size_t result = m_indices[index];
         m_indices[index] = m_indices.back();
         m_indices.pop_back();

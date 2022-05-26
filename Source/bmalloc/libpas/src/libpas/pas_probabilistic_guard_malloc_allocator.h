@@ -28,21 +28,48 @@
 #define PAS_PROBABILISTIC_GUARD_MALLOC_ALLOCATOR
 
 #include "pas_utils.h"
+#include "pas_large_heap.h"
+#include <stdbool.h>
 
 PAS_BEGIN_EXTERN_C;
 
-/* Initial Function Definitions */
+// structure for holding metadata of pgm allocations
+// FIXME : Reduce size of structure
+typedef struct pas_pgm_storage pas_pgm_storage;
+struct pas_pgm_storage {
+    size_t allocation_size_requested;
+    size_t size_of_data_pages;
+    size_t mem_to_waste;
+    size_t mem_to_alloc;
+    uintptr_t start_of_data_pages;
+    uintptr_t upper_guard_page;
+    uintptr_t lower_guard_page;
+};
 
-void pas_probabilistic_guard_malloc_trigger(void);
-bool pas_probabilistic_guard_malloc_can_use(void);
-bool pas_probabilistic_guard_malloc_should_use(void);
+// max amount of free memory that can be wasted (1MB)
+#define PAS_PGM_MAX_WASTED_MEMORY (1024 * 1024)
 
-void* pas_probabilistic_guard_malloc_allocate(size_t size, pas_heap* heap, pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
+// max amount of virtual memory that can be used by PGM (1GB)
+// including guard pages and wasted memory
+#define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
+
+// Probability that we should call PGM in percentage (0-100)
+#define PAS_PGM_PROBABILITY (1)
+
+/* We want a fast way to determine if we can call PGM or not.
+ * It would be really wasteful to recompute this answer each time we try to allocate,
+ * so just update this variable each time we allocate or deallocate. */
+extern PAS_API bool pas_pgm_can_use;
+
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
 void pas_probabilistic_guard_malloc_deallocate(void* memory);
 
-/* Helper functions */
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);
 size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
+
+bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
+
+static PAS_ALWAYS_INLINE void pas_probabilistic_guard_malloc_debug_info(const void *key, const pas_pgm_storage *value, const char *operation);
 
 PAS_END_EXTERN_C;
 

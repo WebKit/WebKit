@@ -1178,7 +1178,8 @@ The header file usually looks like this:
         .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
         .use_marge_bitfit = true, \
         .marge_bitfit_min_align_shift = PAS_MIN_MARGE_ALIGN_SHIFT, \
-        .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE)
+        .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
+        .pgm_enabled = false)
     
     PAS_API extern pas_heap_config iso_heap_config;
     
@@ -1235,6 +1236,28 @@ The large heap trivially supports both requirements. The bitfit heap trivially s
 and can be made to support the first requirement if we use page header tables for all kinds of memory, not just
 medium or marge. So, the JIT heap config focuses on just using bitfit and large and it forces bitfit to use
 page header tables even for the small bitfit page config.
+
+## Security Considerations
+
+### Probabilistic Guard Malloc
+
+ Probabilistic Guard Malloc (PGM) is a new allocator designed to catch use after free attempts and out of bounds accesses.
+ It behaves similarly to AddressSanitizer (ASAN), but aims to have minimal runtime overhead.
+
+ The design of PGM is quite simple. Each time an allocation is performed an additional guard page is added above and below the newly
+ allocated page(s). An allocation may span multiple pages. When a deallocation is performed, the page(s) allocated will be protected
+ using mprotect to ensure that any use after frees will trigger a crash. Virtual memory addresses are never reused, so we will never run
+ into a case where object 1 is freed, object 2 is allocated over the same address space, and object 1 then accesses the memory address
+ space of now object 2.
+
+ PGM does add notable memory overhead. Each allocation, no matter the size, adds an additional 2 guard pages (8KB for X86_64 and 32KB
+ for ARM64). In addition, there may be free memory left over in the page(s) allocated for the user. This memory may not be used by any
+ other allocation.
+
+ We added limits on virtual memory and wasted memory to help limit the memory impact on the overall system. Virtual memory for this
+ allocator is limited to 1GB. Wasted memory, which is the unused memory in the page(s) allocated by the user, is limited to 1MB.
+ These overall limits should ensure that the memory impact on the system is minimal, while helping to tackle the problems of catching
+ use after frees and out of bounds accesses.
 
 ## The Fast Paths
 

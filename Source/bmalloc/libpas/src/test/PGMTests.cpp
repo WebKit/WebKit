@@ -45,25 +45,25 @@ void testPGMSingleAlloc() {
 
     pas_heap_lock_lock();
 
-    size_t init_free_virt_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t init_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
     size_t init_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
     size_t alloc_size = 1024;
-    void * mem = pas_probabilistic_guard_malloc_allocate(alloc_size, heap, &iso_heap_config, &transaction);
-    CHECK(mem);
+    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, &iso_heap_config, &transaction);
+    CHECK(result.begin);
 
-    size_t updated_free_virt_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t updated_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
     size_t updated_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
-    CHECK_EQUAL(init_free_virt_mem - (3 * getpagesize()), updated_free_virt_mem);
+    CHECK_EQUAL(init_free_virtual_mem - (3 * getpagesize()), updated_free_virtual_mem);
     CHECK_EQUAL(init_free_wasted_mem - (getpagesize() - alloc_size), updated_free_wasted_mem);
 
-    pas_probabilistic_guard_malloc_deallocate(mem);
+    pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(result.begin));
 
-    updated_free_virt_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    updated_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
     updated_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
-    CHECK_EQUAL(init_free_virt_mem, updated_free_virt_mem);
+    CHECK_EQUAL(init_free_virtual_mem, updated_free_virtual_mem);
     CHECK_EQUAL(init_free_wasted_mem, updated_free_wasted_mem);
 
     pas_heap_lock_unlock();
@@ -79,27 +79,27 @@ void testPGMMultipleAlloc() {
 
     pas_heap_lock_lock();
 
-    size_t init_free_virt_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t init_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
     size_t init_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
     size_t num_allocations = 100;
-    void* mem_storage[num_allocations];
+    pas_allocation_result mem_storage[num_allocations];
 
     for (size_t i = 0; i < num_allocations; i++ ) {
         size_t alloc_size = random() % 100000;
-        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(alloc_size, heap, &iso_heap_config, &transaction);
-        void * mem = mem_storage[i];
-        memset(mem, 0x42, alloc_size);
+        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, &iso_heap_config, &transaction);
+        pas_allocation_result mem = mem_storage[i];
+        memset(reinterpret_cast<void *>(mem.begin), 0x42, alloc_size);
     }
 
     for (size_t i = 0; i < num_allocations; i++ ) {
-        pas_probabilistic_guard_malloc_deallocate(mem_storage[i]);
+        pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(mem_storage[i].begin));
     }
 
-    size_t updated_free_virt_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t updated_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
     size_t updated_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
 
-    CHECK_EQUAL(init_free_virt_mem, updated_free_virt_mem);
+    CHECK_EQUAL(init_free_virtual_mem, updated_free_virtual_mem);
     CHECK_EQUAL(init_free_wasted_mem, updated_free_wasted_mem);
 
     pas_heap_lock_unlock();
@@ -114,46 +114,51 @@ void testPGMErrors() {
 
     pas_heap_lock_lock();
 
-    void *mem = NULL;
+    pas_allocation_result result;
 
     // Test invalid alloc size
-    mem = pas_probabilistic_guard_malloc_allocate(0, heap, &iso_heap_config, &transaction);
-    CHECK(!mem);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 0, &iso_heap_config, &transaction);
+    CHECK(!result.begin);
+    CHECK(!result.did_succeed);
 
     // Test NULL heap
-    mem = pas_probabilistic_guard_malloc_allocate(1024, NULL, &iso_heap_config, &transaction);
-    CHECK(!mem);
+    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024, &iso_heap_config, &transaction);
+    CHECK(!result.begin);
+    CHECK(!result.did_succeed);
 
     // Test allocating more than virtual memory available
-    mem = pas_probabilistic_guard_malloc_allocate(1024 * 1024 * 1024 + 1, NULL, &iso_heap_config, &transaction);
-    CHECK(!mem);
+    result = pas_probabilistic_guard_malloc_allocate(nullptr, 1024 * 1024 * 1024 + 1, &iso_heap_config, &transaction);
+    CHECK(!result.begin);
+    CHECK(!result.did_succeed);
 
     // Test allocating when wasted memory is full
     size_t num_allocations = 1000;
-    void* mem_storage[num_allocations];
+    pas_allocation_result mem_storage[num_allocations];
     for (size_t i = 0; i < num_allocations; i++ ) {
         size_t alloc_size = 1; // A small alloc size wastes more memory
-        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(alloc_size, heap, &iso_heap_config, &transaction);
+        mem_storage[i] = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, &iso_heap_config, &transaction);
     }
 
-    mem = pas_probabilistic_guard_malloc_allocate(1, heap, &iso_heap_config, &transaction);
-    CHECK(!mem);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, &iso_heap_config, &transaction);
+    CHECK(!result.begin);
+    CHECK(!result.did_succeed);
 
     for (size_t i = 0; i < num_allocations; i++ ) {
-        pas_probabilistic_guard_malloc_deallocate(mem_storage[i]);
+        pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(mem_storage[i].begin));
     }
 
     // Test deallocating invalid memory locations
-    pas_probabilistic_guard_malloc_deallocate(NULL);
+    pas_probabilistic_guard_malloc_deallocate(nullptr);
     pas_probabilistic_guard_malloc_deallocate((void *) -1);
     pas_probabilistic_guard_malloc_deallocate((void *) 0x42);
 
     // Test deallocating same memory location multiple times
-    mem = pas_probabilistic_guard_malloc_allocate(1, heap, &iso_heap_config, &transaction);
-    CHECK(mem);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 1, &iso_heap_config, &transaction);
+    CHECK(result.begin);
+    CHECK(result.did_succeed);
 
-    pas_probabilistic_guard_malloc_deallocate(mem);
-    pas_probabilistic_guard_malloc_deallocate(mem);
+    pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(result.begin));
+    pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(result.begin));
 
     pas_heap_lock_unlock();
 }

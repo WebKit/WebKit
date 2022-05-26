@@ -62,6 +62,12 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
                             pas_heap_config* config,
                             pas_physical_memory_transaction* transaction);
 
+PAS_API pas_allocation_result
+pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
+                            size_t size, size_t alignment,
+                            pas_heap_config* config,
+                            pas_physical_memory_transaction* transaction);
+
 /* Returns true if an object was found and deallocated. */
 PAS_API bool pas_large_heap_try_deallocate(uintptr_t base,
                                            pas_heap_config* config);

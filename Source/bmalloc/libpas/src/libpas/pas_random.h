@@ -31,56 +31,50 @@
 
 PAS_BEGIN_EXTERN_C;
 
-enum pas_random_kind {
-    /* This is a PRNG optimized for speed and nothing else. It's used whenever we need a random
-       number only as a performance optimization. */
-    pas_fast_random,
-
-    /* This is a PRNG optimized for security. It's used whenever we need unpredictable data.
-       This will incur significant performance penalties over pas_fast_random. */
-    pas_secure_random
-};
-
-typedef enum pas_random_kind pas_random_kind;
-
 extern PAS_API unsigned pas_fast_random_state;
 
 /* This is useful for testing. */
 extern PAS_API unsigned (*pas_mock_fast_random)(void);
 
-/* Returns a random number in [0, upper_bound).
-   If the upper_bound is set to zero, than the range shall be [0, UINT32_MAX). */
-static inline unsigned pas_get_random(pas_random_kind kind, unsigned upper_bound)
+/* This is a PRNG optimized for speed and nothing else. It's used whenever we need a random number only as a
+   performance optimization. Returns a random number in [0, upper_bound). If the upper_bound is set to zero, than
+   the range shall be [0, UINT32_MAX). */
+static inline unsigned pas_get_fast_random(unsigned upper_bound)
 {
     unsigned rand_value;
 
     if (!upper_bound)
         upper_bound = UINT32_MAX;
 
-    switch (kind) {
-    case pas_fast_random:
-        if (PAS_LIKELY(!pas_mock_fast_random)) {
-            pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
-            rand_value = pas_fast_random_state % upper_bound;
-        } else {
-            /* This is testing code. It will not be called during regular code flow. */
-            rand_value = pas_mock_fast_random() % upper_bound;
-        }
-
-        break;
-
-    case pas_secure_random:
-        /* Secure random is only supported on Darwin and FreeBSD at the moment due to arc4random being built into the
-          stdlib. Fall back to fast behavior on other operating systems. */
-#if PAS_OS(DARWIN) || (PAS_OS(FREEBSD) && !PAS_PLATFORM(PLAYSTATION))
-        rand_value = arc4random_uniform(upper_bound);
-#else
+    if (PAS_LIKELY(!pas_mock_fast_random)) {
         pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
         rand_value = pas_fast_random_state % upper_bound;
-#endif
-
-        break;
+    } else {
+        /* This is testing code. It will not be called during regular code flow. */
+        rand_value = pas_mock_fast_random() % upper_bound;
     }
+
+    return rand_value;
+}
+
+/* This is a PRNG optimized for security. It's used whenever we need unpredictable data. This will incur significant
+  performance penalties over pas_fast_random. Returns a random number in [0, upper_bound). If the upper_bound is set
+  to zero, than the range shall be [0, UINT32_MAX). */
+static inline unsigned pas_get_secure_random(unsigned upper_bound)
+{
+    unsigned rand_value;
+
+    if (!upper_bound)
+        upper_bound = UINT32_MAX;
+
+    /* Secure random is only supported on Darwin and FreeBSD at the moment due to arc4random being built into the
+      stdlib. Fall back to fast behavior on other operating systems. */
+#if PAS_OS(DARWIN) || (PAS_OS(FREEBSD) && !PAS_PLATFORM(PLAYSTATION))
+    rand_value = arc4random_uniform(upper_bound);
+#else
+    pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
+    rand_value = pas_fast_random_state % upper_bound;
+#endif
 
     return rand_value;
 }
@@ -88,4 +82,3 @@ static inline unsigned pas_get_random(pas_random_kind kind, unsigned upper_bound
 PAS_END_EXTERN_C;
 
 #endif /* PAS_RANDOM_H */
-
