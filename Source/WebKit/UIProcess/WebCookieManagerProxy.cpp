@@ -49,7 +49,8 @@ WebCookieManagerProxy::~WebCookieManagerProxy()
 {
     if (m_networkProcess)
         m_networkProcess->removeMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName());
-    ASSERT(m_cookieObservers.isEmpty());
+    if (!m_cookieObservers.isEmpty())
+        RELEASE_LOG(Storage, "WebCookieManagerProxy::~WebCookieManagerProxy %u cookie observers will be invalidated", m_cookieObservers.size());
 }
 
 void WebCookieManagerProxy::getHostnamesWithCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&&)>&& callbackFunction)
