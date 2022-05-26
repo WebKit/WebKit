@@ -362,6 +362,31 @@ bool AccessibilityTable::computeIsTableExposableThroughAccessibility() const
     return isDataTable();
 }
 
+
+void AccessibilityTable::recomputeIsExposable()
+{
+    bool previouslyExposable = m_isExposable;
+    m_isExposable = computeIsTableExposableThroughAccessibility();
+    if (previouslyExposable != m_isExposable) {
+        // A table's role value is dependent on whether it's exposed, so notify the cache this has changed.
+        if (auto* cache = axObjectCache())
+            cache->handleRoleChange(this);
+
+        // Before resetting our existing children, possibly losing references to them, ensure we update their role (since a table cell's role is dependent on whether its parent table is exposable).
+        updateChildrenRoles();
+
+        m_childrenDirty = true;
+    }
+}
+
+void AccessibilityTable::updateChildrenRoles()
+{
+    for (const auto& row : m_rows) {
+        for (const auto& cell : row->children())
+            downcast<AccessibilityObject>(*cell).updateRole();
+    }
+}
+
 void AccessibilityTable::clearChildren()
 {
     AccessibilityRenderObject::clearChildren();
@@ -427,10 +452,7 @@ void AccessibilityTable::addChildren()
     // determines whether it is an accessibility table. Iterate all the cells and allow them to
     // update their roles now that the table knows its status.
     // see bug: https://bugs.webkit.org/show_bug.cgi?id=147001
-    for (const auto& row : m_rows) {
-        for (const auto& cell : row->children())
-            downcast<AccessibilityObject>(*cell).updateRole();
-    }
+    updateChildrenRoles();
 }
 
 void AccessibilityTable::addTableCellChild(AccessibilityObject* rowObject, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)

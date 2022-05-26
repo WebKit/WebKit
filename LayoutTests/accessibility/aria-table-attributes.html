@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div id="grid" role="grid" aria-colcount="16" aria-rowcount="30">
   <div role="rowgroup">
@@ -64,46 +65,53 @@
 </table>
 
 <script>
-
-    description("This tests that attributes related to aria table/grid are working correctly.");
+    var testOutput = "This tests that attributes related to aria table/grid are working correctly.\n\n";
 
     if (window.accessibilityController) {
-    
-          var grid = accessibilityController.accessibleElementById("grid");
-          var cell1 = accessibilityController.accessibleElementById("cell1");
-          var cell2 = accessibilityController.accessibleElementById("cell2");
-          var cell3 = accessibilityController.accessibleElementById("cell3");
-          var cell4 = accessibilityController.accessibleElementById("cell4");
-          var cell5 = accessibilityController.accessibleElementById("cell5");
-          var cell6 = accessibilityController.accessibleElementById("cell6");
-          var cell7 = accessibilityController.accessibleElementById("cell7");
-          
-          // aria-colcount and aria-rowcount
-          shouldBe("grid.numberAttributeValue('AXARIAColumnCount')", "16");
-          shouldBe("grid.numberAttributeValue('AXARIARowCount')", "30");
-          shouldBe("grid.rowCount", "4");
-          shouldBe("grid.columnCount", "4");
+        window.jsTestIsAsync = true;
 
-          // aria-colindex and aria-rowindex
-          shouldBe("cell1.numberAttributeValue('AXARIAColumnIndex')", "2");
-          shouldBe("cell1.numberAttributeValue('AXARIARowIndex')", "7");
-          shouldBe("cell2.numberAttributeValue('AXARIAColumnIndex')", "4");
-          shouldBe("cell2.numberAttributeValue('AXARIARowIndex')", "8");
-          // aria-colindex from parent row
-          shouldBe("cell4.numberAttributeValue('AXARIAColumnIndex')", "3");
-          
-          // aria-colspan and aria-rowspan, including aria-rowspan="0"
-          shouldBe("cell2.rowIndexRange()", "'{1, 2}'");
-          shouldBe("cell5.columnIndexRange()", "'{2, 3}'");
-          shouldBe("cell3.rowIndexRange()", "'{1, 2}'");
+        var grid = accessibilityController.accessibleElementById("grid");
+        var cell1 = accessibilityController.accessibleElementById("cell1");
+        var cell2 = accessibilityController.accessibleElementById("cell2");
+        var cell3 = accessibilityController.accessibleElementById("cell3");
+        var cell4 = accessibilityController.accessibleElementById("cell4");
+        var cell5 = accessibilityController.accessibleElementById("cell5");
+        var cell6 = accessibilityController.accessibleElementById("cell6");
+        var cell7 = accessibilityController.accessibleElementById("cell7");
 
-          shouldBe("cell6.rowIndexRange()", "'{0, 2}'");
-          // use rowspan for native table
-          shouldBe("cell7.rowIndexRange()", "'{0, 2}'");
+        // aria-colcount and aria-rowcount
+        testOutput += expect("grid.numberAttributeValue('AXARIAColumnCount')", "16");
+        testOutput += expect("grid.numberAttributeValue('AXARIARowCount')", "30");
+        testOutput += expect("grid.rowCount", "4");
+        testOutput += expect("grid.columnCount", "4");
+
+        // aria-colindex and aria-rowindex
+        testOutput += expect("cell1.numberAttributeValue('AXARIAColumnIndex')", "2");
+        testOutput += expect("cell1.numberAttributeValue('AXARIARowIndex')", "7");
+        testOutput += expect("cell2.numberAttributeValue('AXARIAColumnIndex')", "4");
+        testOutput += expect("cell2.numberAttributeValue('AXARIARowIndex')", "8");
+        // aria-colindex from parent row
+        testOutput += expect("cell4.numberAttributeValue('AXARIAColumnIndex')", "3");
+
+        // aria-colspan and aria-rowspan, including aria-rowspan="0"
+        testOutput += expect("cell2.rowIndexRange()", "'{1, 2}'");
+        testOutput += expect("cell5.columnIndexRange()", "'{2, 3}'");
+        testOutput += expect("cell3.rowIndexRange()", "'{1, 2}'");
+
+        testOutput += expect("cell6.rowIndexRange()", "'{0, 2}'");
+        // use rowspan for native table
+        testOutput += expect("cell7.rowIndexRange()", "'{0, 2}'");
+
+        document.getElementById("grid").setAttribute("aria-rowcount", "60");
+        setTimeout(async function() {
+            await waitFor(() => { return grid.numberAttributeValue('AXARIARowCount') === 60 });
+            testOutput += "PASS: #grid AXARIARowCount dynamically changed to 60.\n";
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+
