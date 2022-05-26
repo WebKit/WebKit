@@ -65,6 +65,9 @@ void TextureMapperPlatformLayerProxyGL::activateOnCompositingThread(Compositor* 
     {
         Locker locker { m_lock };
         m_compositor = compositor;
+        // If the proxy is already active on another layer, remove the layer's reference to the current buffer.
+        if (m_targetLayer)
+            m_targetLayer->setContentsLayer(nullptr);
         m_targetLayer = targetLayer;
         if (m_targetLayer && m_currentBuffer)
             m_targetLayer->setContentsLayer(m_currentBuffer.get());
@@ -91,7 +94,10 @@ void TextureMapperPlatformLayerProxyGL::invalidate()
     {
         Locker locker { m_lock };
         m_compositor = nullptr;
-        m_targetLayer = nullptr;
+        if (m_targetLayer) {
+            m_targetLayer->setContentsLayer(nullptr);
+            m_targetLayer = nullptr;
+        }
 
         m_currentBuffer = nullptr;
         m_pendingBuffer = nullptr;
