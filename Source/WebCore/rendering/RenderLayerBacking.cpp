@@ -2995,7 +2995,8 @@ LayoutRect RenderLayerBacking::contentsBox() const
         contentsRect = downcast<RenderVideo>(renderBox).videoBox();
     else
 #endif
-    if (is<RenderReplaced>(renderBox)) {
+
+    if (is<RenderReplaced>(renderBox) && !is<RenderWidget>(renderBox)) {
         RenderReplaced& renderReplaced = downcast<RenderReplaced>(renderBox);
         contentsRect = renderReplaced.replacedContentRect();
     } else
