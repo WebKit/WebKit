@@ -203,7 +203,7 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 {
     bool secure = includeSecureCookies == IncludeSecureCookies::Yes;
     
-    ASSERT(!secure || (secure && url.protocolIs("https")));
+    ASSERT(!secure || (secure && url.protocolIs("https"_s)));
     
     UNUSED_PARAM(firstParty);
     return adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), url.createCFURL().get(), secure));
