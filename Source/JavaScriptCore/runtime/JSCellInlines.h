@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -167,15 +167,16 @@ inline Allocator allocatorForConcurrently(VM& vm, size_t allocationSize, Allocat
     return { };
 }
 
-template<typename T>
-ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+template<typename T, AllocationFailureMode failureMode>
+ALWAYS_INLINE void* tryAllocateCellHelper(VM& vm, size_t size, GCDeferralContext* deferralContext)
 {
-    VM& vm = heap.vm();
-    ASSERT(deferralContext || heap.isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
+    ASSERT(deferralContext || vm.heap.isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
     JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, size, deferralContext, failureMode));
-    if (failureMode == AllocationFailureMode::ReturnNull && !result)
-        return nullptr;
+    if constexpr (failureMode == AllocationFailureMode::ReturnNull) {
+        if (!result)
+            return nullptr;
+    }
 #if ENABLE(GC_VALIDATION)
     ASSERT(!vm.isInitializingObject());
     vm.setInitializingObjectClass(T::info());
@@ -187,25 +188,25 @@ ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, size_t size, GCDeferralCon
 template<typename T>
 void* allocateCell(VM& vm, size_t size)
 {
-    return tryAllocateCellHelper<T>(vm.heap, size, nullptr, AllocationFailureMode::Assert);
+    return tryAllocateCellHelper<T, AllocationFailureMode::Assert>(vm, size, nullptr);
 }
 
 template<typename T>
 void* tryAllocateCell(VM& vm, size_t size)
 {
-    return tryAllocateCellHelper<T>(vm.heap, size, nullptr, AllocationFailureMode::ReturnNull);
+    return tryAllocateCellHelper<T, AllocationFailureMode::ReturnNull>(vm, size, nullptr);
 }
 
 template<typename T>
 void* allocateCell(VM& vm, GCDeferralContext* deferralContext, size_t size)
 {
-    return tryAllocateCellHelper<T>(vm.heap, size, deferralContext, AllocationFailureMode::Assert);
+    return tryAllocateCellHelper<T, AllocationFailureMode::Assert>(vm, size, deferralContext);
 }
 
 template<typename T>
 void* tryAllocateCell(VM& vm, GCDeferralContext* deferralContext, size_t size)
 {
-    return tryAllocateCellHelper<T>(vm.heap, size, deferralContext, AllocationFailureMode::ReturnNull);
+    return tryAllocateCellHelper<T, AllocationFailureMode::ReturnNull>(vm, size, deferralContext);
 }
 
 inline bool JSCell::isObject() const
