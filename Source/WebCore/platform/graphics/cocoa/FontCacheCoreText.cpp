@@ -827,6 +827,8 @@ void FontCache::platformInit()
 
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kAXSApplePreferredContentSizeCategoryNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+
 #if PLATFORM(MAC)
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     const CFStringRef notificationName = kCFLocaleCurrentLocaleDidChangeNotification;

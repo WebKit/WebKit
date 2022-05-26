@@ -50,6 +50,8 @@ void _AXSSetIsolatedTreeMode(AXSIsolatedTreeMode);
 extern CFStringRef kAXSEnhanceTextLegibilityChangedNotification;
 Boolean _AXSEnhanceTextLegibilityEnabled(void);
 
+extern CFStringRef kAXSApplePreferredContentSizeCategoryNotification;
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
