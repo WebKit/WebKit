@@ -208,7 +208,7 @@ enum class FinalizeRenderingUpdateFlags : uint8_t {
     InvalidateImagesWithAsyncDecodes    = 1 << 1,
 };
 
-enum class RenderingUpdateStep : uint16_t {
+enum class RenderingUpdateStep : uint32_t {
     Resize                          = 1 << 0,
     Scroll                          = 1 << 1,
     MediaQueryEvaluation            = 1 << 2,
@@ -227,6 +227,7 @@ enum class RenderingUpdateStep : uint16_t {
 #endif
     FlushAutofocusCandidates        = 1 << 14,
     VideoFrameCallbacks             = 1 << 15,
+    PrepareCanvasesForDisplay       = 1 << 16,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
@@ -243,6 +244,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::WheelEventMonitorCallbacks,
     RenderingUpdateStep::CursorUpdate,
     RenderingUpdateStep::EventRegionUpdate,
+    RenderingUpdateStep::PrepareCanvasesForDisplay,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {

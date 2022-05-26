@@ -9095,13 +9095,20 @@ void Document::clearCanvasPreparation(HTMLCanvasElement& canvas)
     m_canvasesNeedingDisplayPreparation.remove(canvas);
 }
 
-void Document::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>&)
+void Document::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect)
 {
     if (!is<HTMLCanvasElement>(canvasBase))
         return;
     auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
-    if (canvas.needsPreparationForDisplay())
+    if (canvas.needsPreparationForDisplay()) {
         m_canvasesNeedingDisplayPreparation.add(canvas);
+        // Schedule a rendering update to force handling of prepareForDisplay
+        // for any queued canvases. This is especially important for any canvas
+        // that is not in the DOM, as those don't have a rect to invalidate to
+        // trigger an update. <http://bugs.webkit.org/show_bug.cgi?id=240380>.
+        if (!changedRect)
+            scheduleRenderingUpdate(RenderingUpdateStep::PrepareCanvasesForDisplay);
+    }
 }
 
 void Document::canvasDestroyed(CanvasBase& canvasBase)

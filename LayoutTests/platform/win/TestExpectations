@@ -3704,6 +3704,8 @@ fast/events/contextmenu-lookup-action-for-image.html [ Failure ]
 fast/events/webkit-media-key-events-constructor.html [ Failure ]
 fast/forms/validation-message-maxLength.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Failure ]
+# canvas.captureStream is not a function
+webkit.org/b/240380 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-creation.html [ Failure ]

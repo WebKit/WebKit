@@ -1793,6 +1793,8 @@ void Page::doAfterUpdateRendering()
 
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplay);
+
     forEachDocument([] (Document& document) {
         document.prepareCanvasesForDisplayIfNeeded();
     });
@@ -3836,6 +3838,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
+    case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
     }
     return ts;
 }
