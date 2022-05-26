@@ -19,6 +19,67 @@ WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-dll-attribute-on-redeclaration)
 set(ENABLE_WEBKIT_LEGACY OFF)
 set(ENABLE_WEBINSPECTORUI OFF)
 
+# Specify third party library directory
+if (NOT WEBKIT_LIBRARIES_DIR)
+    if (DEFINED ENV{WEBKIT_LIBRARIES})
+        set(WEBKIT_LIBRARIES_DIR "$ENV{WEBKIT_LIBRARIES}" CACHE PATH "Path to PlayStationRequirements")
+    else ()
+        set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/playstation" CACHE PATH "Path to PlayStationRequirements")
+    endif ()
+endif ()
+
+if (DEFINED ENV{WEBKIT_IGNORE_PATH})
+    set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
+endif ()
+
+list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
+
+# Find libraries
+find_library(C_STD_LIBRARY c)
+find_library(KERNEL_LIBRARY kernel)
+find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
+
+set(USE_WPE_BACKEND_PLAYSTATION OFF)
+
+if (ENABLE_WEBCORE)
+    set(WebKitRequirements_COMPONENTS
+        JPEG
+        LibPSL
+        LibXml2
+        ProcessLauncher
+        SQLite3
+        ZLIB
+    )
+
+    find_package(WPEBackendPlayStation)
+    if (WPEBackendPlayStation_FOUND)
+        # WPE::libwpe is compiled into the PlayStation backend
+        set(WPE_NAMES SceWPE)
+        find_package(WPE REQUIRED)
+
+        SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
+    else ()
+        list(APPEND WebKitRequirements_COMPONENTS libwpe)
+    endif ()
+
+    find_package(WebKitRequirements REQUIRED COMPONENTS ${WebKitRequirements_COMPONENTS})
+
+    # The OpenGL ES implementation is in the same library as the EGL implementation
+    set(OpenGLES2_NAMES ${EGL_NAMES})
+
+    find_package(CURL 7.77.0 REQUIRED)
+    find_package(Cairo REQUIRED)
+    find_package(EGL REQUIRED)
+    find_package(Fontconfig REQUIRED)
+    find_package(Freetype REQUIRED)
+    find_package(HarfBuzz REQUIRED COMPONENTS ICU)
+    find_package(OpenGLES2 REQUIRED)
+    find_package(OpenSSL REQUIRED)
+    find_package(PNG REQUIRED)
+    find_package(Threads REQUIRED)
+    find_package(WebP REQUIRED COMPONENTS demux)
+endif ()
+
 WEBKIT_OPTION_BEGIN()
 
 # Developer mode options
@@ -93,10 +154,6 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XSLT PRIVATE OFF)
 
 WEBKIT_OPTION_END()
 
-if (DEFINED ENV{WEBKIT_IGNORE_PATH})
-    set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
-endif ()
-
 # Do not use a separate directory based on configuration when building
 # with the Visual Studio generator
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
@@ -110,66 +167,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
-# Specify third party library directory
-if (NOT WEBKIT_LIBRARIES_DIR)
-    if (DEFINED ENV{WEBKIT_LIBRARIES})
-        set(WEBKIT_LIBRARIES_DIR "$ENV{WEBKIT_LIBRARIES}" CACHE PATH "Path to PlayStationRequirements")
-    else ()
-        set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/playstation" CACHE PATH "Path to PlayStationRequirements")
-    endif ()
-endif ()
-
-list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
-
-set(WebKitRequirements_COMPONENTS
-    JPEG
-    LibPSL
-    LibXml2
-    ProcessLauncher
-    SQLite3
-    ZLIB
-)
-
-find_package(WPEBackendPlayStation)
-if (WPEBackendPlayStation_FOUND)
-    # WPE::libwpe is compiled into the PlayStation backend
-    set(WPE_NAMES SceWPE)
-    find_package(WPE REQUIRED)
-
-    SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
-else ()
-    list(APPEND WebKitRequirements_COMPONENTS libwpe)
-endif ()
-
-find_library(C_STD_LIBRARY c)
-find_library(KERNEL_LIBRARY kernel)
-find_package(WebKitRequirements REQUIRED COMPONENTS ${WebKitRequirements_COMPONENTS})
-
-# The OpenGL ES implementation is in the same library as the EGL implementation
-set(OpenGLES2_NAMES ${EGL_NAMES})
-
-find_package(Cairo REQUIRED)
-find_package(CURL 7.77.0 REQUIRED)
-find_package(EGL REQUIRED)
-find_package(Fontconfig REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(HarfBuzz REQUIRED COMPONENTS ICU)
-find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
-find_package(OpenGLES2 REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(PNG REQUIRED)
-find_package(Threads REQUIRED)
-find_package(WebP REQUIRED COMPONENTS demux)
-
 set(CMAKE_C_STANDARD_LIBRARIES
     "${CMAKE_C_STANDARD_LIBRARIES} ${C_STD_LIBRARY}"
-  )
+)
 set(CMAKE_CXX_STANDARD_LIBRARIES
     "${CMAKE_CXX_STANDARD_LIBRARIES} ${C_STD_LIBRARY}"
-  )
+)
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_PTHREAD_SETNAME_NP ON)
 
+# Platform options
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)
 SET_AND_EXPOSE_TO_BUILD(USE_CURL ON)
 SET_AND_EXPOSE_TO_BUILD(USE_FREETYPE ON)
@@ -190,6 +197,7 @@ SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER ON)
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL ON)
 SET_AND_EXPOSE_TO_BUILD(USE_TILED_BACKING_STORE ON)
 
+# WebDriver options
 if (ENABLE_WEBDRIVER)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS ON)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_MOUSE_INTERACTIONS ON)
