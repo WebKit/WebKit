@@ -785,8 +785,7 @@ public:
     String documentEncoding() const override;
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
-    AccessibilityChildrenVector ariaElementsFromAttribute(const QualifiedName&) const;
-    AccessibilityChildrenVector ariaElementsReferencedByAttribute(const QualifiedName&) const;
+    AccessibilityChildrenVector relatedObjects(AXRelationType) const;
 protected:
     AccessibilityObject() = default;
 

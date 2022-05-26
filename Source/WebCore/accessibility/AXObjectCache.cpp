@@ -116,7 +116,9 @@
 #include "TextIterator.h"
 #include <utility>
 #include <wtf/DataLog.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/AtomString.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
@@ -948,7 +950,7 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
 {
     ASSERT(isMainThread());
 
-    return axIDs.map([this] (AXID axID) -> RefPtr<AXCoreObject> {
+    return axIDs.map([this] (const auto& axID) -> RefPtr<AXCoreObject> {
         ASSERT(axID.isValid());
         return objectFromAXID(axID);
     });
@@ -1839,9 +1841,9 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
         if (object->isComboBox()) {
-            if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, aria_ownsAttr, *activeDescendant))
+            if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
                 target = ownedObject;
-            else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, aria_controlsAttr, *activeDescendant))
+            else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
                 target = controlledObject;
         }
 #endif
@@ -1889,11 +1891,14 @@ bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName& attrName, 
 
     return false;
 }
-    
+
 void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element* element)
 {
     if (!shouldProcessAttributeChange(attrName, element))
         return;
+
+    if (relationAttributes().contains(attrName))
+        relationsNeedUpdate(true);
 
     if (attrName == roleAttr) {
         if (auto* axObject = get(element))
@@ -1910,8 +1915,10 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
-    else if (attrName == idAttr)
+    else if (attrName == idAttr) {
+        relationsNeedUpdate(true);
         updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
+    }
 #endif
     else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
         deferModalChange(element);
@@ -3430,7 +3437,6 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree"_s);
-    AXLOG(*this);
 
     if (!m_pageID) {
         AXLOG("No pageID.");
@@ -3655,6 +3661,191 @@ AXTreeData AXObjectCache::treeData()
 #endif
 
     return data;
+}
+
+Vector<QualifiedName>& AXObjectCache::relationAttributes()
+{
+    static NeverDestroyed<Vector<QualifiedName>> relationAttributes = Vector<QualifiedName> {
+        aria_activedescendantAttr,
+        aria_controlsAttr,
+        aria_describedbyAttr,
+        aria_detailsAttr,
+        aria_errormessageAttr,
+        aria_flowtoAttr,
+        aria_labelledbyAttr,
+        aria_labeledbyAttr,
+        aria_ownsAttr,
+        headersAttr,
+    };
+    return relationAttributes;
+}
+
+AXRelationType AXObjectCache::symmetricRelation(AXRelationType relationType)
+{
+    switch (relationType) {
+    case AXRelationType::ActiveDescendant:
+        return AXRelationType::ActiveDescendantOf;
+    case AXRelationType::ActiveDescendantOf:
+        return AXRelationType::ActiveDescendant;
+    case AXRelationType::ControlledBy:
+        return AXRelationType::ControllerFor;
+    case AXRelationType::ControllerFor:
+        return AXRelationType::ControlledBy;
+    case AXRelationType::DescribedBy:
+        return AXRelationType::DescriptionFor;
+    case AXRelationType::DescriptionFor:
+        return AXRelationType::DescribedBy;
+    case AXRelationType::Details:
+        return AXRelationType::DetailsFor;
+    case AXRelationType::DetailsFor:
+        return AXRelationType::Details;
+    case AXRelationType::ErrorMessage:
+        return AXRelationType::ErrorMessageFor;
+    case AXRelationType::ErrorMessageFor:
+        return AXRelationType::ErrorMessage;
+    case AXRelationType::FlowsFrom:
+        return AXRelationType::FlowsTo;
+    case AXRelationType::FlowsTo:
+        return AXRelationType::FlowsFrom;
+    case AXRelationType::Headers:
+        return AXRelationType::HeaderFor;
+    case AXRelationType::HeaderFor:
+        return AXRelationType::Headers;
+    case AXRelationType::LabelledBy:
+        return AXRelationType::LabelFor;
+    case AXRelationType::LabelFor:
+        return AXRelationType::LabelledBy;
+    case AXRelationType::OwnedBy:
+        return AXRelationType::OwnerFor;
+    case AXRelationType::OwnerFor:
+        return AXRelationType::OwnedBy;
+    case AXRelationType::None:
+        return AXRelationType::None;
+    }
+}
+
+AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attribute)
+{
+    if (attribute == aria_activedescendantAttr)
+        return AXRelationType::ActiveDescendant;
+    if (attribute == aria_controlsAttr)
+        return AXRelationType::ControllerFor;
+    if (attribute == aria_describedbyAttr)
+        return AXRelationType::DescribedBy;
+    if (attribute == aria_detailsAttr)
+        return AXRelationType::Details;
+    if (attribute == aria_errormessageAttr)
+        return AXRelationType::ErrorMessage;
+    if (attribute == aria_flowtoAttr)
+        return AXRelationType::FlowsTo;
+    if (attribute == aria_labelledbyAttr || attribute == aria_labeledbyAttr)
+        return AXRelationType::LabelledBy;
+    if (attribute == aria_ownsAttr)
+        return AXRelationType::OwnerFor;
+    if (attribute == headersAttr)
+        return AXRelationType::Headers;
+    return AXRelationType::None;
+}
+
+void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
+{
+    if (!origin || !target || origin == target || relationType == AXRelationType::None) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    addRelation(getOrCreate(origin), getOrCreate(target), relationType);
+}
+
+void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType, AddingSymmetricRelation addingSymmetricRelation)
+{
+    if (!origin || !target || origin == target || relationType == AXRelationType::None)
+        return;
+
+    auto relationsIterator = m_relations.find(origin->objectID());
+    if (relationsIterator == m_relations.end()) {
+        // No relations for this object, add the first one.
+        m_relations.add(origin->objectID(), Relations { { static_cast<uint8_t>(relationType), { target->objectID() } } });
+    } else if (auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType)); targetsIterator == relationsIterator->value.end()) {
+        // No relation of this type for this object, add the first one.
+        relationsIterator->value.add(static_cast<uint8_t>(relationType), Vector<AXID> { target->objectID() });
+    } else {
+        // There are already relations of this type for the object. Add the new relation.
+        if (relationType == AXRelationType::ActiveDescendant
+            || relationType == AXRelationType::OwnedBy) {
+            // There should be only one active descendant and only one owner. Enforce that by removing any existing targets.
+            targetsIterator->value.clear();
+        }
+        targetsIterator->value.append(target->objectID());
+    }
+
+    if (addingSymmetricRelation == AddingSymmetricRelation::No) {
+        if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
+            addRelation(target, origin, symmetric, AddingSymmetricRelation::Yes);
+    }
+}
+
+void AXObjectCache::updateRelationsIfNeeded()
+{
+    AXTRACE("AXObjectCache::updateRelationsIfNeeded"_s);
+
+    if (!m_relationsNeedUpdate)
+        return;
+    relationsNeedUpdate(false);
+    AXLOG("Updating relations.");
+    m_relations.clear();
+
+    struct RelationOrigin {
+        Element* originElement { nullptr };
+        AtomString targetID;
+        AXRelationType relationType;
+    };
+
+    struct RelationTarget {
+        Element* targetElement { nullptr };
+        AtomString targetID;
+    };
+
+    Vector<RelationOrigin> origins;
+    Vector<RelationTarget> targets;
+    for (auto& element : descendantsOfType<Element>(m_document.rootNode())) {
+        // Collect all possible origins, i.e., elements with non-empty relation attributes.
+        for (const auto& attribute : relationAttributes()) {
+            auto& idsString = element.attributeWithoutSynchronization(attribute);
+            SpaceSplitString ids(idsString, SpaceSplitString::ShouldFoldCase::No);
+            for (size_t i = 0; i < ids.size(); ++i)
+                origins.append({ &element, ids[i], attributeToRelationType(attribute) });
+        }
+
+        // Collect all possible targets, i.e., elements with a non-empty id attribute.
+        auto elementID = element.attributeWithoutSynchronization(idAttr);
+        if (!elementID.isEmpty())
+            targets.append({ &element, elementID });
+    }
+
+    for (const auto& origin : origins) {
+        for (const auto& target : targets) {
+            if (origin.originElement == target.targetElement) {
+                // Relationship should be between different elements.
+                continue;
+            }
+
+            if (origin.targetID == target.targetID)
+                addRelation(origin.originElement, target.targetElement, origin.relationType);
+        }
+    }
+}
+
+std::optional<Vector<AXID>> AXObjectCache::relatedObjectsFor(const AXCoreObject& object, AXRelationType relationType)
+{
+    updateRelationsIfNeeded();
+    auto relationsIterator = m_relations.find(object.objectID());
+    if (relationsIterator == m_relations.end())
+        return std::nullopt;
+
+    auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
+    if (targetsIterator == relationsIterator->value.end())
+        return std::nullopt;
+    return targetsIterator->value;
 }
 
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)

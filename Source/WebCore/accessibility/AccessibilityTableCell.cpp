@@ -244,7 +244,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
         return { };
 
     // Choose columnHeaders as the place where the "headers" attribute is reported.
-    auto headers = ariaElementsFromAttribute(headersAttr);
+    auto headers = relatedObjects(AXRelationType::Headers);
     // If the headers attribute returned valid values, then do not further search for column headers.
     if (!headers.isEmpty())
         return headers;

@@ -1049,7 +1049,6 @@ HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> AccessibilityObjectA
         }
         if (!wrappers.isEmpty())
             map.add(relation, WTFMove(wrappers));
-
     };
 
     AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;

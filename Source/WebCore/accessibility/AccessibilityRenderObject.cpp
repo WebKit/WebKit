@@ -2681,7 +2681,7 @@ bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
 
 AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
 {
-    auto activeDescendants = ariaElementsFromAttribute(aria_activedescendantAttr);
+    auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
     ASSERT(activeDescendants.size() <= 1);
     if (!activeDescendants.isEmpty())
         return downcast<AccessibilityObject>(activeDescendants[0].get());

@@ -776,6 +776,29 @@ enum class AccessibilityVisiblePositionForBounds {
 enum class AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum class AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 
+// Relationships between AX objects.
+enum class AXRelationType : uint8_t {
+    None,
+    ActiveDescendant,
+    ActiveDescendantOf,
+    ControlledBy,
+    ControllerFor,
+    DescribedBy,
+    DescriptionFor,
+    Details,
+    DetailsFor,
+    ErrorMessage,
+    ErrorMessageFor,
+    FlowsFrom,
+    FlowsTo,
+    Headers,
+    HeaderFor,
+    LabelledBy,
+    LabelFor,
+    OwnedBy,
+    OwnerFor,
+};
+
 // Use this struct to store the isIgnored data that depends on the parents, so that in addChildren()
 // we avoid going up the parent chain for each element while traversing the tree with useful information already.
 struct AccessibilityIsIgnoredFromParentData {
@@ -1617,9 +1640,9 @@ T* findAncestor(const T& object, bool includeSelf, const F& matches)
 }
 
 template<typename T>
-T* findRelatedObjectInAncestry(const T& object, const QualifiedName& relationAttribute, const T& descendant)
+T* findRelatedObjectInAncestry(const T& object, AXRelationType relationType, const T& descendant)
 {
-    auto relatedObjects = object.ariaElementsFromAttribute(relationAttribute);
+    auto relatedObjects = object.relatedObjects(relationType);
     for (const auto& object : relatedObjects) {
         auto* ancestor = findAncestor(descendant, false, [&object] (const auto& ancestor) {
             return object.get() == &ancestor;

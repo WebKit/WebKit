@@ -1932,7 +1932,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self computedRoleString];
 
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
-
         // This will return the parent of the AXWebArea, if this is a web area.
         id scrollViewParent = [self scrollViewParent];
         if (scrollViewParent)
@@ -4138,6 +4137,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
 {
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:", String(attribute)));
+
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return 0;
