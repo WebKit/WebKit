@@ -1,9 +1,13 @@
+<!DOCTYPE html>
+<html>
 <head>
+<script src="../../resources/ui-helper.js"></script>
 <script>
-function test()
+async function test()
 {
     if (window.testRunner)
         testRunner.dumpAsText();
+
     var ta = document.getElementById('ta')
     var res = document.getElementById('res');
 
@@ -13,19 +17,23 @@ function test()
     ta.blur();
 
     ta.focus();
+
     // click
     if (window.eventSender) {
+
         testRunner.waitUntilDone();
-        requestAnimationFrame(() => {
-            eventSender.mouseMoveTo(90, 20);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-            if (ta.selectionEnd == 17)
-                res.innerHTML = "Test Succeeded";
-            else
-                res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
-            testRunner.notifyDone();
-        });
+        await UIHelper.renderingUpdate();
+
+        eventSender.mouseMoveTo(90, 20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        if (ta.selectionEnd == 17)
+            res.innerHTML = "Test Succeeded";
+        else
+            res.innerHTML = "Test Failed: caret is at " + ta.selectionEnd;
+
+        testRunner.notifyDone();
     } else {
         res.innerHTML = "Test can't run without event sender (part of DumpRenderTree). "
             + "To test manually, click at the middle of the line marked 9 and check that the caret appears after the 9.";
@@ -47,3 +55,4 @@ function test()
 10</textarea>
 <div id="res"></div>
 </body>
+</html>
