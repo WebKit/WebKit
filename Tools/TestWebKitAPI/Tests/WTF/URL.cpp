@@ -136,10 +136,10 @@ TEST_F(WTF_URL, URLSetQuery)
     URL url3 = createURL("http://www.webkit.org/?test"_s);
     URL url4 = createURL("http://www.webkit.org/?test1"_s);
 
-    url1.setQuery("test");
-    url2.setQuery("test");
-    url3.setQuery("test");
-    url4.setQuery("test");
+    url1.setQuery("test"_s);
+    url2.setQuery("test"_s);
+    url3.setQuery("test"_s);
+    url4.setQuery("test"_s);
 
     EXPECT_EQ(url.string(), url1.string());
     EXPECT_EQ(url.string(), url2.string());
@@ -151,9 +151,9 @@ TEST_F(WTF_URL, URLSetQuery)
     URL urlWithFragmentIdentifier2 = createURL("http://www.webkit.org/?#newFragment"_s);
     URL urlWithFragmentIdentifier3 = createURL("http://www.webkit.org/?test1#newFragment"_s);
 
-    urlWithFragmentIdentifier1.setQuery("test\xc3\xa5");
-    urlWithFragmentIdentifier2.setQuery("test\xc3\xa5");
-    urlWithFragmentIdentifier3.setQuery("test\xc3\xa5");
+    urlWithFragmentIdentifier1.setQuery("test\xc3\xa5"_s);
+    urlWithFragmentIdentifier2.setQuery("test\xc3\xa5"_s);
+    urlWithFragmentIdentifier3.setQuery("test\xc3\xa5"_s);
 
     EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier1.string());
     EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier2.string());
@@ -167,9 +167,9 @@ TEST_F(WTF_URL, URLSetFragmentIdentifier)
     URL url2 = createURL("http://www.webkit.org/#test2"_s);
     URL url3 = createURL("http://www.webkit.org/#"_s);
 
-    url1.setFragmentIdentifier("newFragment\xc3\xa5");
-    url2.setFragmentIdentifier("newFragment\xc3\xa5");
-    url3.setFragmentIdentifier("newFragment\xc3\xa5");
+    url1.setFragmentIdentifier("newFragment\xc3\xa5"_s);
+    url2.setFragmentIdentifier("newFragment\xc3\xa5"_s);
+    url3.setFragmentIdentifier("newFragment\xc3\xa5"_s);
 
     EXPECT_EQ(url.string(), url1.string());
     EXPECT_EQ(url.string(), url2.string());
@@ -180,9 +180,9 @@ TEST_F(WTF_URL, URLSetFragmentIdentifier)
     URL urlWithQuery2 = createURL("http://www.webkit.org/?test1#"_s);
     URL urlWithQuery3 = createURL("http://www.webkit.org/?test1#test2"_s);
 
-    urlWithQuery1.setFragmentIdentifier("newFragment");
-    urlWithQuery2.setFragmentIdentifier("newFragment");
-    urlWithQuery3.setFragmentIdentifier("newFragment");
+    urlWithQuery1.setFragmentIdentifier("newFragment"_s);
+    urlWithQuery2.setFragmentIdentifier("newFragment"_s);
+    urlWithQuery3.setFragmentIdentifier("newFragment"_s);
 
     EXPECT_EQ(urlWithQuery.string(), urlWithQuery1.string());
     EXPECT_EQ(urlWithQuery.string(), urlWithQuery2.string());
@@ -267,59 +267,59 @@ TEST_F(WTF_URL, EqualIgnoringFragmentIdentifier)
 TEST_F(WTF_URL, ProtocolIsInHTTPFamily)
 {
     EXPECT_FALSE(WTF::protocolIsInHTTPFamily({ }));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily(""));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("a"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("ab"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abc"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcd"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcde"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdef"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdefg"));
-    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("http:"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("http"));
-    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https:"));
-    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("https"));
-    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https://!@#$%^&*()"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily(""_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("a"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("ab"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abc"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcd"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcde"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdef"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdefg"_s));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("http:"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("http"_s));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https:"_s));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("https"_s));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https://!@#$%^&*()"_s));
 }
 
 TEST_F(WTF_URL, HostIsIPAddress)
 {
     EXPECT_FALSE(URL::hostIsIPAddress({ }));
-    EXPECT_FALSE(URL::hostIsIPAddress(""));
-    EXPECT_FALSE(URL::hostIsIPAddress("localhost"));
-    EXPECT_FALSE(URL::hostIsIPAddress("127.localhost"));
-    EXPECT_FALSE(URL::hostIsIPAddress("localhost.127"));
-    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0"));
-    EXPECT_FALSE(URL::hostIsIPAddress("127.0 .0.1"));
-    EXPECT_FALSE(URL::hostIsIPAddress(" 127.0.0.1"));
-    EXPECT_FALSE(URL::hostIsIPAddress("127..0.0.1"));
-    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0."));
-    EXPECT_FALSE(URL::hostIsIPAddress("256.0.0.1"));
-    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98"));
-    EXPECT_FALSE(URL::hostIsIPAddress("012x:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_FALSE(URL::hostIsIPAddress(""_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("localhost"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.localhost"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("localhost.127"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0 .0.1"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress(" 127.0.0.1"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("127..0.0.1"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0."_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("256.0.0.1"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("012x:4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
 #if !PLATFORM(COCOA)
     // FIXME: This fails in Mac.
-    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0.01"));
-    EXPECT_FALSE(URL::hostIsIPAddress("00123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0.01"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("00123:4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
 #endif
-    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:123.45.67.89"));
-    EXPECT_FALSE(URL::hostIsIPAddress(":::"));
-    EXPECT_FALSE(URL::hostIsIPAddress("0123::89AB:cdef:3210:7654::FeDc"));
-    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:"));
-    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc:"));
-    EXPECT_FALSE(URL::hostIsIPAddress(":4567:89AB:cdef:3210:7654:ba98:FeDc"));
-    EXPECT_FALSE(URL::hostIsIPAddress(":0123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:123.45.67.89"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress(":::"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123::89AB:cdef:3210:7654::FeDc"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc:"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress(":4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
+    EXPECT_FALSE(URL::hostIsIPAddress(":0123:4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
 
-    EXPECT_TRUE(URL::hostIsIPAddress("127.0.0.1"));
-    EXPECT_TRUE(URL::hostIsIPAddress("255.1.10.100"));
-    EXPECT_TRUE(URL::hostIsIPAddress("0.0.0.0"));
-    EXPECT_TRUE(URL::hostIsIPAddress("::1"));
-    EXPECT_TRUE(URL::hostIsIPAddress("::"));
-    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
-    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98::"));
-    EXPECT_TRUE(URL::hostIsIPAddress("::4567:89AB:cdef:3210:7654:ba98:FeDc"));
-    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:123.45.67.89"));
-    EXPECT_TRUE(URL::hostIsIPAddress("::123.45.67.89"));
+    EXPECT_TRUE(URL::hostIsIPAddress("127.0.0.1"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("255.1.10.100"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("0.0.0.0"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("::1"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("::"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98::"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("::4567:89AB:cdef:3210:7654:ba98:FeDc"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:123.45.67.89"_s));
+    EXPECT_TRUE(URL::hostIsIPAddress("::123.45.67.89"_s));
 }
 
 TEST_F(WTF_URL, HostIsMatchingDomain)
@@ -328,22 +328,22 @@ TEST_F(WTF_URL, HostIsMatchingDomain)
 
     EXPECT_TRUE(url.isMatchingDomain(String { }));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
-    EXPECT_TRUE(url.isMatchingDomain("org"));
-    EXPECT_TRUE(url.isMatchingDomain("webkit.org"));
-    EXPECT_TRUE(url.isMatchingDomain("www.webkit.org"));
+    EXPECT_TRUE(url.isMatchingDomain("org"_s));
+    EXPECT_TRUE(url.isMatchingDomain("webkit.org"_s));
+    EXPECT_TRUE(url.isMatchingDomain("www.webkit.org"_s));
 
-    EXPECT_FALSE(url.isMatchingDomain("rg"));
-    EXPECT_FALSE(url.isMatchingDomain(".org"));
-    EXPECT_FALSE(url.isMatchingDomain("ww.webkit.org"));
-    EXPECT_FALSE(url.isMatchingDomain("http://www.webkit.org"));
+    EXPECT_FALSE(url.isMatchingDomain("rg"_s));
+    EXPECT_FALSE(url.isMatchingDomain(".org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("ww.webkit.org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("http://www.webkit.org"_s));
 
     url = createURL("file:///www.webkit.org"_s);
 
     EXPECT_TRUE(url.isMatchingDomain(String { }));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
-    EXPECT_FALSE(url.isMatchingDomain("org"));
-    EXPECT_FALSE(url.isMatchingDomain("webkit.org"));
-    EXPECT_FALSE(url.isMatchingDomain("www.webkit.org"));
+    EXPECT_FALSE(url.isMatchingDomain("org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("webkit.org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("www.webkit.org"_s));
 
     URL emptyURL;
     EXPECT_FALSE(emptyURL.isMatchingDomain(String { }));

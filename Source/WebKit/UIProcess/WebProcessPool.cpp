@@ -630,7 +630,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
     m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.reserveCapacity(m_configuration->additionalReadAccessAllowedPaths().size());
     for (const auto& path : m_configuration->additionalReadAccessAllowedPaths())
-        m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.uncheckedAppend(resolvePathForSandboxExtension(path.data()));
+        m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.uncheckedAppend(resolvePathForSandboxExtension(path));
 
     platformResolvePathsForSandboxExtensions();
 }

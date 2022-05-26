@@ -56,7 +56,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return String();
 
-    if (mimeType.startsWith("text/plain"))
+    if (mimeType.startsWith("text/plain"_s))
         return String();
 
     String returnValue;

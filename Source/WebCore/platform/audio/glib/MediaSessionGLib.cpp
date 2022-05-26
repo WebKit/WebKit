@@ -45,7 +45,7 @@ static std::optional<PlatformMediaSession::RemoteControlCommandType> getCommand(
     };
 
     static const SortedArrayMap map { commandList };
-    auto value = map.get(name, PlatformMediaSession::RemoteControlCommandType::NoCommand);
+    auto value = map.get(StringView::fromLatin1(name), PlatformMediaSession::RemoteControlCommandType::NoCommand);
     if (value == PlatformMediaSession::RemoteControlCommandType::NoCommand)
         return { };
     return value;
@@ -112,7 +112,7 @@ static std::optional<MprisProperty> getMprisProperty(const char* propertyName)
         { "SupportedUriSchemes", MprisProperty::SupportedUriSchemes }
     };
     static constexpr SortedArrayMap map { propertiesList };
-    auto value = map.get(propertyName, MprisProperty::NoProperty);
+    auto value = map.get(StringView::fromLatin1(propertyName), MprisProperty::NoProperty);
     if (value == MprisProperty::NoProperty)
         return { };
     return value;

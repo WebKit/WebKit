@@ -75,7 +75,7 @@ void WebProcessPool::platformInitialize()
 {
 #if ENABLE(REMOTE_INSPECTOR)
     if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER"))
-        initializeRemoteInspectorServer(address);
+        initializeRemoteInspectorServer(StringView::fromLatin1(address));
 #endif
 }
 

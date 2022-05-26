@@ -323,7 +323,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
     // line starts with the substring "REGION" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these charecters it is invalid.
-    if (line.startsWith("REGION") && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
+    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
         m_currentRegion = VTTRegion::create(m_document);
         return true;
     }
@@ -396,7 +396,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         auto selector = selectorList.selectorAt(0);
         auto selectorText = selector->selectorText();
         
-        bool isCue = selectorText == "::cue" || selectorText.startsWith("::cue(");
+        bool isCue = selectorText == "::cue"_s || selectorText.startsWith("::cue("_s);
         if (!isCue)
             return true;
 

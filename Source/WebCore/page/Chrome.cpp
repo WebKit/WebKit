@@ -597,7 +597,7 @@ void Chrome::didReceiveDocType(Frame& frame)
         return;
 
     auto* doctype = frame.document()->doctype();
-    m_client.didReceiveMobileDocType(doctype && doctype->publicId().containsIgnoringASCIICase("xhtml mobile"));
+    m_client.didReceiveMobileDocType(doctype && doctype->publicId().containsIgnoringASCIICase("xhtml mobile"_s));
 #endif
 }
 

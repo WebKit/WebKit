@@ -53,7 +53,7 @@ static const char* const gDictionaryDirectories[] = {
 
 static AtomString extractLocaleFromDictionaryFileName(const String& fileName)
 {
-    if (!fileName.startsWith("hyph_") || !fileName.endsWith(".dic"))
+    if (!fileName.startsWith("hyph_"_s) || !fileName.endsWith(".dic"_s))
         return nullAtom();
 
     // Dictionary files always have the form "hyph_<locale name>.dic"

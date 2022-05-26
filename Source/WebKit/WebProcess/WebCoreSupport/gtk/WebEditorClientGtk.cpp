@@ -53,7 +53,7 @@ bool WebEditorClient::executePendingEditorCommands(Frame& frame, const Vector<WT
 {
     Vector<std::variant<Editor::Command, String>> commands;
     for (auto& commandString : pendingEditorCommands) {
-        if (commandString.startsWith("Gtk"))
+        if (commandString.startsWith("Gtk"_s))
             commands.append(commandString);
         else {
             Editor::Command command = frame.editor().command(commandString);

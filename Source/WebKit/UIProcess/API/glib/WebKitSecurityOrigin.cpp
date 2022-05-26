@@ -88,7 +88,7 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
     g_return_val_if_fail(host, nullptr);
 
     std::optional<uint16_t> optionalPort;
-    if (port && !WTF::isDefaultPortForProtocol(port, protocol))
+    if (port && !WTF::isDefaultPortForProtocol(port, StringView::fromLatin1(protocol)))
         optionalPort = port;
 
     return webkitSecurityOriginCreate(WebCore::SecurityOriginData(String::fromUTF8(protocol), String::fromUTF8(host), optionalPort));

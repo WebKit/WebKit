@@ -416,7 +416,7 @@ void CurlHandle::setUrl(const URL& url)
     // url is in ASCII so latin1() will only convert it to char* without character translation.
     curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().data());
 
-    if (url.protocolIs("https"))
+    if (url.protocolIs("https"_s))
         enableSSLForHost(m_url.host().toString());
 }
 
@@ -470,7 +470,7 @@ void CurlHandle::enableRequestHeaders()
 
 void CurlHandle::enableHttp()
 {
-    if (m_url.protocolIs("https") && CurlContext::singleton().isHttp2Enabled()) {
+    if (m_url.protocolIs("https"_s) && CurlContext::singleton().isHttp2Enabled()) {
         curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
         curl_easy_setopt(m_handle, CURLOPT_PIPEWAIT, 1L);
         curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_ALPN, 1L);

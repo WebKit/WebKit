@@ -34,26 +34,26 @@ namespace TestWebKitAPI {
 
 TEST(HTTPParsers, ParseCrossOriginResourcePolicyHeader)
 {
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::None);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" ") == CrossOriginResourcePolicy::None);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(""_s) == CrossOriginResourcePolicy::None);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" "_s) == CrossOriginResourcePolicy::None);
 
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same-origin") == CrossOriginResourcePolicy::SameOrigin);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same-Origin") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME-ORIGIN") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same-orIGIN ") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same-origin"_s) == CrossOriginResourcePolicy::SameOrigin);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same-Origin"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME-ORIGIN"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same-orIGIN "_s) == CrossOriginResourcePolicy::Invalid);
 
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same-site") == CrossOriginResourcePolicy::SameSite);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same-Site") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME-SITE") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same-site ") == CrossOriginResourcePolicy::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same-site"_s) == CrossOriginResourcePolicy::SameSite);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("Same-Site"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAME-SITE"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(" same-site "_s) == CrossOriginResourcePolicy::SameSite);
 
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SameOrigin") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("zameorigin") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("samesite") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same site") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same–site") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAMESITE") == CrossOriginResourcePolicy::Invalid);
-    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SameOrigin"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("zameorigin"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("samesite"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same site"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("same–site"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("SAMESITE"_s) == CrossOriginResourcePolicy::Invalid);
+    EXPECT_TRUE(parseCrossOriginResourcePolicyHeader(StringView::fromLatin1("")) == CrossOriginResourcePolicy::Invalid);
 }
 
 #if USE(GLIB)

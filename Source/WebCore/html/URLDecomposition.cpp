@@ -197,7 +197,7 @@ static std::optional<std::optional<uint16_t>> parsePort(StringView string, Strin
 void URLDecomposition::setPort(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file") || !fullURL.canSetHostOrPort())
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"_s) || !fullURL.canSetHostOrPort())
         return;
     auto port = parsePort(value, fullURL.protocol());
     if (!port)

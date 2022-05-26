@@ -1466,7 +1466,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
     auto stringURL = axURL.string();
     if (axURL.isLocalFile()) {
         // Do not expose absolute paths.
-        auto index = stringURL.find("LayoutTests");
+        auto index = stringURL.find("LayoutTests"_s);
         if (index != notFound)
             stringURL = stringURL.substring(index);
     }

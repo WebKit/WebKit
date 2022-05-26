@@ -1462,7 +1462,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     if (!contentExtensionsPath)
         contentExtensionsPath = "/tmp/wktr-contentextensions";
 
-    if (!test.urlContains("contentextensions/")) {
+    if (!test.urlContains("contentextensions/"_s)) {
         WKPageSetUserContentExtensionsEnabled(m_mainWebView->page(), false);
         return;
     }

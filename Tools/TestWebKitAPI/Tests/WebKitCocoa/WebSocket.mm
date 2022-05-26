@@ -180,7 +180,7 @@ TEST(WebSocket, CloseCode)
     };
 
     auto webView = adoptNS([WKWebView new]);
-    [webView loadRequest:httpServer.request("/navigateAway")];
+    [webView loadRequest:httpServer.request("/navigateAway"_s)];
     Util::run(&receivedWebSocketClose);
     Vector<uint8_t> expected { 0x3, 0xe9 }; // NSURLSessionWebSocketCloseCodeGoingAway
     appendString(expected, "WebSocket is closed due to suspension.");
@@ -189,14 +189,14 @@ TEST(WebSocket, CloseCode)
     receivedWebSocketClose = false;
     closeData = { };
     expected = { 0xb, 0xb8 }; // 3000
-    [webView loadRequest:httpServer.request("/closeCustomCode")];
+    [webView loadRequest:httpServer.request("/closeCustomCode"_s)];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 
     receivedWebSocketClose = false;
     closeData = { };
     expected = { };
-    [webView loadRequest:httpServer.request("/closeNoArguments")];
+    [webView loadRequest:httpServer.request("/closeNoArguments"_s)];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 
@@ -204,7 +204,7 @@ TEST(WebSocket, CloseCode)
     closeData = { };
     expected = { 0xb, 0xb9 }; // 3001
     appendString(expected, "custom reason");
-    [webView loadRequest:httpServer.request("/closeBothParameters")];
+    [webView loadRequest:httpServer.request("/closeBothParameters"_s)];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 }

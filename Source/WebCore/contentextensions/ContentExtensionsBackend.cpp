@@ -57,14 +57,14 @@ namespace WebCore::ContentExtensions {
 #else
 static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url, const URL& redirectFrom = { })
 {
-    if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"))
+    if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"_s))
         return;
 
-    if (!url.protocolIs("http"))
+    if (!url.protocolIs("http"_s))
         return;
-    if (url.host() == "www.opengl.org"
-        || url.host() == "webkit.org"
-        || url.host() == "download")
+    if (url.host() == "www.opengl.org"_s
+        || url.host() == "webkit.org"_s
+        || url.host() == "download"_s)
         results.summary.madeHTTPS = true;
 }
 #endif

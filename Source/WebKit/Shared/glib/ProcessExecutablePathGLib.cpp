@@ -47,20 +47,20 @@ static String findWebKitProcess(const char* processName)
 #if ENABLE(DEVELOPER_MODE)
     static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
-        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), processName);
+        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), StringView::fromLatin1(processName));
         if (FileSystem::fileExists(processPath))
             return processPath;
     }
 
     static String executablePath = getExecutablePath();
     if (!executablePath.isNull()) {
-        String processPath = FileSystem::pathByAppendingComponent(executablePath, processName);
+        String processPath = FileSystem::pathByAppendingComponent(executablePath, StringView::fromLatin1(processName));
         if (FileSystem::fileExists(processPath))
             return processPath;
     }
 #endif
 
-    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(PKGLIBEXECDIR), processName);
+    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(PKGLIBEXECDIR), StringView::fromLatin1(processName));
 }
 
 String executablePathOfWebProcess()

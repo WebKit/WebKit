@@ -115,7 +115,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     if (webViewResult.isNewEntry) {
         g_signal_connect(webView, "notify::uri", G_CALLBACK(+[](WebKitWebView* webView, GParamSpec*, RemoteInspectorProtocolHandler* handler) {
             URL webViewURL = URL(String::fromUTF8(webkit_web_view_get_uri(webView)));
-            if (!webViewURL.protocolIs("inspector") || !handler->m_inspectorClients.contains(webViewURL.hostAndPort())) {
+            if (!webViewURL.protocolIs("inspector"_s) || !handler->m_inspectorClients.contains(webViewURL.hostAndPort())) {
                 g_signal_handlers_disconnect_by_data(webView, handler);
                 g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), handler);
                 handler->m_webViews.remove(webView);

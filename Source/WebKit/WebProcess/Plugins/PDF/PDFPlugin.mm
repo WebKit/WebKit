@@ -1670,7 +1670,7 @@ void PDFPlugin::streamDidReceiveResponse(const WebCore::ResourceResponse& respon
     m_suggestedFilename = response.suggestedFilename();
     if (m_suggestedFilename.isEmpty())
         m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
-    if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
+    if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"_s))
         m_suggestedFilename = makeString(m_suggestedFilename, ".pdf"_s);
 }
 

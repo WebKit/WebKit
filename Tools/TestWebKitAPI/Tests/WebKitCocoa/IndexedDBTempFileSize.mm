@@ -68,7 +68,7 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
     NSURL *databaseRootDirectory = [NSURL fileURLWithPath:databaseRootDirectoryString isDirectory:YES];
-    NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTempFileSize");
+    NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTempFileSize"_s);
     NSURL *databaseDirectory = [databaseRootDirectory URLByAppendingPathComponent:hash];
     NSURL *walFilePath = [databaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];
 

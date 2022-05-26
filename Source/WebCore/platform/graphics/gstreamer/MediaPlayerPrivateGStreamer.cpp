@@ -75,6 +75,7 @@
 #include "AudioSourceProviderGStreamer.h"
 #endif
 
+#include <cstring>
 #include <glib.h>
 #include <gst/audio/streamvolume.h>
 #include <gst/gst.h>
@@ -2177,7 +2178,7 @@ void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
     g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
     GST_DEBUG_OBJECT(pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
 
-    auto newDownloadPrefixPath = makeStringByReplacingAll(String::fromLatin1(newDownloadTemplate.get()), "XXXXXX", "");
+    auto newDownloadPrefixPath = makeStringByReplacingAll(String::fromLatin1(newDownloadTemplate.get()), "XXXXXX"_s, ""_s);
     purgeOldDownloadFiles(newDownloadPrefixPath);
 }
 
@@ -2593,7 +2594,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
         return result;
 
     // This player doesn't support pictures rendering.
-    if (parameters.type.raw().startsWith("image"))
+    if (parameters.type.raw().startsWith("image"_s))
         return result;
 
     auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();
@@ -2705,7 +2706,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
     // WEBKIT_GST_USE_PLAYBIN3 environment variable.
     const char* usePlaybin3 = g_getenv("WEBKIT_GST_USE_PLAYBIN3");
-    if ((isMediaSource() || url.protocolIs("mediastream") || (usePlaybin3 && equal(usePlaybin3, "1"))))
+    if (isMediaSource() || url.protocolIs("mediastream"_s) || (usePlaybin3 && !strcmp(usePlaybin3, "1")))
         playbinName = "playbin3";
 
     ASSERT(!m_pipeline);
@@ -2714,7 +2715,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (elementId.isEmpty())
         elementId = "media-player"_s;
 
-    const char* type = isMediaSource() ? "MSE-" : url.protocolIs("mediastream") ? "mediastream-" : "";
+    const char* type = isMediaSource() ? "MSE-" : url.protocolIs("mediastream"_s) ? "mediastream-" : "";
 
     m_isLegacyPlaybin = !g_strcmp0(playbinName, "playbin");
 
@@ -3727,7 +3728,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkDMABuf()
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
     const char* disableGLSink = g_getenv("WEBKIT_GST_DISABLE_GL_SINK");
-    if (disableGLSink && equal(disableGLSink, "1")) {
+    if (disableGLSink && !strcmp(disableGLSink, "1")) {
         GST_INFO("Disabling hardware-accelerated rendering per user request.");
         return nullptr;
     }

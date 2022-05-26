@@ -1502,9 +1502,9 @@ static void changeWindowScaleIfNeeded(const char* testPathOrURL)
     auto localPathOrURL = String::fromUTF8(testPathOrURL);
     float currentScaleFactor = [[[mainFrame webView] window] backingScaleFactor];
     float requiredScaleFactor = 1;
-    if (localPathOrURL.containsIgnoringASCIICase("/hidpi-3x-"))
+    if (localPathOrURL.containsIgnoringASCIICase("/hidpi-3x-"_s))
         requiredScaleFactor = 3;
-    else if (localPathOrURL.containsIgnoringASCIICase("/hidpi-"))
+    else if (localPathOrURL.containsIgnoringASCIICase("/hidpi-"_s))
         requiredScaleFactor = 2;
     if (currentScaleFactor == requiredScaleFactor)
         return;

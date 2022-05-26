@@ -470,8 +470,8 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
     }
 
     auto transactionScope = beginTransactionIfNecessary();
-    deleteTable("UnattributedPrivateClickMeasurement");
-    deleteTable("AttributedPrivateClickMeasurement");
+    deleteTable("UnattributedPrivateClickMeasurement"_s);
+    deleteTable("AttributedPrivateClickMeasurement"_s);
 }
 
 void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
@@ -958,11 +958,11 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
     ASSERT(!RunLoop::isMain());
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
-    const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%" : "1";
+    const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%"_s : "1"_s;
     auto sortedStatistics = m_database.prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
         || sortedStatistics->bindText(1, prevalentDomainsBindParameter)
-        || sortedStatistics->bindText(2, "%") != SQLITE_OK) {
+        || sortedStatistics->bindText(2, "%"_s) != SQLITE_OK) {
         RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return thirdPartyDataList;

@@ -227,9 +227,9 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
             ASSERT(process().connection() && process().connection()->getAuditToken());
             if (process().connection() && process().connection()->getAuditToken()) {
-                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/", *(process().connection()->getAuditToken())))
+                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(process().connection()->getAuditToken())))
                     fileReadHandle = WTFMove(*handle);
-            } else if (auto handle = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly))
+            } else if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly))
                 fileReadHandle = WTFMove(*handle);
             willAcquireUniversalFileReadSandboxExtension(m_process);
         }
@@ -899,7 +899,7 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 #if PLATFORM(MAC)
 bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 {
-    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"))
+    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"_s))
         return false;
 
     NSURL *fileURL = [NSURL URLWithString:fileURLString];

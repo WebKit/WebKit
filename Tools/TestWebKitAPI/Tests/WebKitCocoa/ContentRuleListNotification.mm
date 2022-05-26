@@ -434,7 +434,7 @@ TEST(ContentRuleList, CSPReport)
         TestWebKitAPI::Util::spinRunLoop();
 
     URL expectedURL = server.request().URL;
-    expectedURL.setPath("/resources/save-report.py");
+    expectedURL.setPath("/resources/save-report.py"_s);
     EXPECT_STREQ(expectedURL.string().utf8().data(), notificationList.first().url.utf8().data());
 }
 

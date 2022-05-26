@@ -70,7 +70,7 @@ static size_t computeMemoryFootprint()
             }
             if (scannedCount == 7) {
                 StringView pathString(path);
-                isAnonymous = pathString == "[heap]" || pathString.startsWith("[stack");
+                isAnonymous = pathString == "[heap]"_s || pathString.startsWith("[stack"_s);
                 return;
             }
         }

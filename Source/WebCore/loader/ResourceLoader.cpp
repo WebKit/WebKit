@@ -248,7 +248,7 @@ void ResourceLoader::start()
 #endif
 
 #if USE(SOUP)
-    if (m_request.url().protocolIs("resource") || isPDFJSResourceLoad()) {
+    if (m_request.url().protocolIs("resource"_s) || isPDFJSResourceLoad()) {
         loadGResource();
         return;
     }

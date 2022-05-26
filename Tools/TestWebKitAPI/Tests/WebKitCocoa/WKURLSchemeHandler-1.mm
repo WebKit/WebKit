@@ -1291,7 +1291,7 @@ TEST(WKWebViewConfiguration, LoadsSubresources)
 
     {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView loadRequest:server.request("/main.html")];
+        [webView loadRequest:server.request("/main.html"_s)];
         TestWebKitAPI::Util::run(&loadedImage);
         TestWebKitAPI::Util::run(&loadedIFrame);
     }
@@ -1304,7 +1304,7 @@ TEST(WKWebViewConfiguration, LoadsSubresources)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         auto delegate = adoptNS([TestNavigationDelegate new]);
         webView.get().navigationDelegate = delegate.get();
-        [webView loadRequest:server.request("/main.html")];
+        [webView loadRequest:server.request("/main.html"_s)];
         [delegate waitForDidFinishNavigation];
         TestWebKitAPI::Util::spinRunLoop(100);
         EXPECT_FALSE(loadedIFrame);

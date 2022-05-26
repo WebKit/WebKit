@@ -87,7 +87,7 @@ TEST(WKWebView, FTPMainResourceRedirect)
     
     consoleMessages = [NSMutableArray arrayWithCapacity:2];
 
-    [webView loadRequest:httpServer.request("/ftp_redirect")];
+    [webView loadRequest:httpServer.request("/ftp_redirect"_s)];
     [webView _test_waitForDidFailProvisionalNavigation];
 
     EXPECT_EQ([consoleMessages count], 1u);

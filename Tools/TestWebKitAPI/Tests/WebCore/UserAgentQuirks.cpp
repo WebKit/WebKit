@@ -36,33 +36,33 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL(String::fromLatin1(url)));
 
-    EXPECT_TRUE(uaString.contains("Chrome"));
-    EXPECT_TRUE(uaString.contains("Safari"));
-    EXPECT_FALSE(uaString.contains("Chromium"));
-    EXPECT_FALSE(uaString.contains("Firefox"));
-    EXPECT_FALSE(uaString.contains("Version"));
+    EXPECT_TRUE(uaString.contains("Chrome"_s));
+    EXPECT_TRUE(uaString.contains("Safari"_s));
+    EXPECT_FALSE(uaString.contains("Chromium"_s));
+    EXPECT_FALSE(uaString.contains("Firefox"_s));
+    EXPECT_FALSE(uaString.contains("Version"_s));
 }
 
 static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL(String::fromLatin1(url)));
 
-    EXPECT_FALSE(uaString.contains("Chrome"));
-    EXPECT_FALSE(uaString.contains("Safari"));
-    EXPECT_FALSE(uaString.contains("Chromium"));
-    EXPECT_TRUE(uaString.contains("Firefox"));
-    EXPECT_FALSE(uaString.contains("Version"));
+    EXPECT_FALSE(uaString.contains("Chrome"_s));
+    EXPECT_FALSE(uaString.contains("Safari"_s));
+    EXPECT_FALSE(uaString.contains("Chromium"_s));
+    EXPECT_TRUE(uaString.contains("Firefox"_s));
+    EXPECT_FALSE(uaString.contains("Version"_s));
 }
 
 static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL(String::fromLatin1(url)));
 
-    EXPECT_TRUE(uaString.contains("Macintosh"));
-    EXPECT_TRUE(uaString.contains("Mac OS X"));
-    EXPECT_FALSE(uaString.contains("Linux"));
-    EXPECT_FALSE(uaString.contains("Chrome"));
-    EXPECT_FALSE(uaString.contains("FreeBSD"));
+    EXPECT_TRUE(uaString.contains("Macintosh"_s));
+    EXPECT_TRUE(uaString.contains("Mac OS X"_s));
+    EXPECT_FALSE(uaString.contains("Linux"_s));
+    EXPECT_FALSE(uaString.contains("Chrome"_s));
+    EXPECT_FALSE(uaString.contains("FreeBSD"_s));
 }
 
 // Some Google domains require an unbranded user agent, which is a little

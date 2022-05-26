@@ -566,8 +566,8 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithIdenticalActionAreMerged)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("foo\\.org", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("ba\\.org", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("foo\\.org"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("ba\\.org"_s, false, 0));
 
     Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
     EXPECT_EQ(1ul, nfas.size());
@@ -591,8 +591,8 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithDistinguishableActionAreNotMerged
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("foo\\.org", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("ba\\.org", false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("foo\\.org"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("ba\\.org"_s, false, 1));
 
     Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
 
@@ -1107,13 +1107,13 @@ TEST_F(ContentExtensionTest, UselessTermsMatchingEverythingAreEliminated)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(".*web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.*)web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.)*web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)*web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)*web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)?web", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)+web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(".*web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.*)web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.)*web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)*web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)*web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)?web"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)+web"_s, false, 0));
 
     Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
     EXPECT_EQ(1ul, nfas.size());
@@ -1358,13 +1358,13 @@ TEST_F(ContentExtensionTest, DeepNFA)
     StringBuilder lotsOfAs;
     for (unsigned i = 0; i < size; ++i)
         lotsOfAs.append('A');
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(lotsOfAs.toString().utf8().data(), false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(lotsOfAs.toString(), false, 0));
     
     // FIXME: Yarr ought to be able to handle 2MB regular expressions.
     StringBuilder tooManyAs;
     for (unsigned i = 0; i < size * 20; ++i)
         tooManyAs.append('A');
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::YarrError, parser.addPattern(tooManyAs.toString().utf8().data(), false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::YarrError, parser.addPattern(tooManyAs.toString(), false, 0));
     
     StringBuilder nestedGroups;
     for (unsigned i = 0; i < size; ++i)
@@ -1618,11 +1618,11 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1Partitioning)
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
 
     // Those two share a prefix.
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*foo", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("bar$", false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*foo"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("bar$"_s, false, 1));
 
     // Not this one.
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^[ab]+bang", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^[ab]+bang"_s, false, 0));
 
     EXPECT_EQ(2ul, createNFAs(combinedURLFilters).size());
 }
@@ -1651,10 +1651,10 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines2Partitioning)
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
 
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^foo", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*[a-c]+bar", false, 1));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^webkit:", false, 2));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("[a-c]+b+oom", false, 3));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^foo"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^.*[a-c]+bar"_s, false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^webkit:"_s, false, 2));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("[a-c]+b+oom"_s, false, 3));
 
     // "^foo" and "^webkit:" can be grouped, the other two have a variable prefix.
     EXPECT_EQ(3ul, createNFAs(combinedURLFilters).size());
@@ -1683,9 +1683,9 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines3Partitioning)
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
     
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*D", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*BA+", false, 1));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*BC", false, 2));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*D"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*BA+"_s, false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A*BC"_s, false, 2));
     
     // "A*A" and "A*BC" can be grouped, "A*BA+" should not.
     EXPECT_EQ(2ul, createNFAs(combinedURLFilters).size());
@@ -1699,9 +1699,9 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
         ContentExtensions::CombinedURLFilters combinedURLFilters;
         ContentExtensions::URLFilterParser parser(combinedURLFilters);
         
-        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+BBB", false, 1));
-        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+CCC", false, 2));
-        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+DDD", false, 2));
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+BBB"_s, false, 1));
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+CCC"_s, false, 2));
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+DDD"_s, false, 2));
         
         Vector<ContentExtensions::NFA> nfas;
         combinedURLFilters.processNFAs(i, [&](ContentExtensions::NFA&& nfa) {
@@ -1739,11 +1739,11 @@ TEST_F(ContentExtensionTest, QuantifierInGroup)
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
     
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A+)B)C)", false, 0));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B+)C)", false, 1));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B+)C)D", false, 2));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B)C+)", false, 3));
-    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B)C)", false, 4));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A+)B)C)"_s, false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B+)C)"_s, false, 1));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B+)C)D"_s, false, 2));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B)C+)"_s, false, 3));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(((A)B)C)"_s, false, 4));
     
     // (((A)B+)C) and (((A)B+)C)D should be in the same NFA.
     EXPECT_EQ(4ul, createNFAs(combinedURLFilters).size());

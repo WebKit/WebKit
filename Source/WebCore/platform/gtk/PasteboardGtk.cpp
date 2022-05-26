@@ -403,7 +403,7 @@ String Pasteboard::readOrigin()
 String Pasteboard::readString(const String& type)
 {
     if (!m_selectionData) {
-        if (type.startsWith("text/plain"))
+        if (type.startsWith("text/plain"_s))
             return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, type);

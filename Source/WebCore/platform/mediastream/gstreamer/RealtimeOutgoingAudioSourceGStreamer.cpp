@@ -54,7 +54,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     GST_DEBUG_OBJECT(m_bin.get(), "Outgoing audio source payload caps: %" GST_PTR_FORMAT, caps.get());
     auto* structure = gst_caps_get_structure(caps.get(), 0);
     if (const char* encodingName = gst_structure_get_string(structure, "encoding-name")) {
-        if (equal(encodingName, "OPUS")) {
+        if (!strcmp(encodingName, "OPUS")) {
             m_encoder = makeGStreamerElement("opusenc", nullptr);
             m_payloader = makeGStreamerElement("rtpopuspay", nullptr);
             if (!m_encoder || !m_payloader)
@@ -67,11 +67,11 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
                 if (!strcmp(useInbandFec, "1"))
                     g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
             }
-        } else if (equal(encodingName, "G722")) {
+        } else if (!strcmp(encodingName, "G722")) {
             m_payloader = makeGStreamerElement("rtpg722pay", nullptr);
             if (!m_payloader)
                 return false;
-        } else if (equal(encodingName, "PCMA") || equal(encodingName, "PCMU")) {
+        } else if (!strcmp(encodingName, "PCMA") || !strcmp(encodingName, "PCMU")) {
             auto payloaderName = makeString("rtp", encodingName, "pay");
             m_payloader = makeGStreamerElement(payloaderName.convertToASCIILowercase().ascii().data(), nullptr);
             m_encoder = makeGStreamerElement("alawenc", nullptr);

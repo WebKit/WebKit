@@ -84,9 +84,9 @@ bool LibWebRTCRtpTransceiverBackend::stopped() const
 static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const RTCRtpCodecCapability& codec)
 {
     webrtc::RtpCodecCapability rtcCodec;
-    if (codec.mimeType.startsWith("video/"))
+    if (codec.mimeType.startsWith("video/"_s))
         rtcCodec.kind = cricket::MEDIA_TYPE_VIDEO;
-    else if (codec.mimeType.startsWith("audio/"))
+    else if (codec.mimeType.startsWith("audio/"_s))
         rtcCodec.kind = cricket::MEDIA_TYPE_AUDIO;
     else
         return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };

@@ -874,7 +874,7 @@ TEST(WebKit, MigrateIndexedDBDataToGeneralStorageDirectory)
 {
     NSURL *indexedDBDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *indexedDBOriginDirectory = [indexedDBDirectory URLByAppendingPathComponent:@"v1/https_webkit.org_0"];
-    static const char indexedDBDatabaseName[] = "TestDatabase";
+    static constexpr auto indexedDBDatabaseName = "TestDatabase"_s;
     NSString *hashedIndexedDBDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName(indexedDBDatabaseName);
     NSURL *indexedDBDatabaseDirectory = [indexedDBOriginDirectory URLByAppendingPathComponent:hashedIndexedDBDatabaseName];
     NSURL *indexedDBFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];

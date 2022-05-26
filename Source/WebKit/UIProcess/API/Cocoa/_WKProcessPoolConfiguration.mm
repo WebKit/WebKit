@@ -158,19 +158,19 @@
         return @[ ];
 
     return createNSArray(paths, [] (auto& path) {
-        return [NSURL fileURLWithFileSystemRepresentation:path.data() isDirectory:NO relativeToURL:nil];
+        return [NSURL fileURLWithFileSystemRepresentation:path.utf8().data() isDirectory:NO relativeToURL:nil];
     }).autorelease();
 }
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
-    Vector<CString> paths;
+    Vector<String> paths;
     paths.reserveInitialCapacity(additionalReadAccessAllowedURLs.count);
     for (NSURL *url in additionalReadAccessAllowedURLs) {
         if (!url.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
 
-        paths.uncheckedAppend(url.fileSystemRepresentation);
+        paths.uncheckedAppend(String::fromUTF8(url.fileSystemRepresentation));
     }
 
     _processPoolConfiguration->setAdditionalReadAccessAllowedPaths(WTFMove(paths));

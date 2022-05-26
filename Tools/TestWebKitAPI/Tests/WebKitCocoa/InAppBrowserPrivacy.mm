@@ -966,7 +966,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 
     // Expect the service worker load to complete successfully.
     expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain"_s;
-    [webView loadRequest:server.requestWithLocalhost("/main.html")];
+    [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
@@ -993,7 +993,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
     });
 
     expectedMessage = "Unregistration success"_s;
-    [webView loadRequest:server.requestWithLocalhost("/main.html")];
+    [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;
@@ -1021,7 +1021,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorkerMaxRegistrationCount)
     });
 
     expectedMessage = "Unregistration success"_s;
-    [webView loadRequest:server.requestWithLocalhost("/main.html")];
+    [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;
@@ -1050,7 +1050,7 @@ TEST(InAppBrowserPrivacy, ReregisterServiceWorkerMaxRegistrationCount)
     });
 
     expectedMessage = "Reregistration success"_s;
-    [webView loadRequest:server.requestWithLocalhost("/main.html")];
+    [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;

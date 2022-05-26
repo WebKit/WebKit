@@ -202,7 +202,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #endif
 
 #if SOUP_CHECK_VERSION(2, 67, 1)
-    if ((m_currentRequest.url().protocolIs("https") && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http") && !shouldAllowHSTSProtocolUpgrade()))
+    if ((m_currentRequest.url().protocolIs("https"_s) && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http"_s) && !shouldAllowHSTSProtocolUpgrade()))
         soup_message_disable_feature(m_soupMessage.get(), SOUP_TYPE_HSTS_ENFORCER);
     else {
 #if USE(SOUP2)
@@ -1651,7 +1651,7 @@ void NetworkDataTaskSoup::didStartRequest()
     m_networkLoadMetrics.domainLookupEnd = MonotonicTime::fromRawSeconds(domainLookupEnd.seconds());
     m_networkLoadMetrics.connectStart = MonotonicTime::fromRawSeconds(connectStart.seconds());
     m_networkLoadMetrics.connectEnd = MonotonicTime::fromRawSeconds(connectEnd.seconds());
-    if (!secureConnectionStart && m_currentRequest.url().protocolIs("https"))
+    if (!secureConnectionStart && m_currentRequest.url().protocolIs("https"_s))
         m_networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
     else
         m_networkLoadMetrics.secureConnectionStart = MonotonicTime::fromRawSeconds(secureConnectionStart.seconds());

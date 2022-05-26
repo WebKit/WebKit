@@ -605,7 +605,7 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     bool didAccessSecureCookies = false;
 
     // libsoup should omit secure cookies itself if the protocol is not https.
-    if (url.protocolIs("https")) {
+    if (url.protocolIs("https"_s)) {
         GSList* item = cookies;
         while (item) {
             auto cookie = static_cast<SoupCookie*>(item->data);

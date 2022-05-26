@@ -48,11 +48,11 @@ AuthenticationChallenge::AuthenticationChallenge(const URL& url, const Certifica
 
 ProtectionSpace::ServerType AuthenticationChallenge::protectionSpaceServerTypeFromURI(const URL& url, bool isForProxy)
 {
-    if (url.protocolIs("https"))
+    if (url.protocolIs("https"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTPS : ProtectionSpace::ServerType::HTTPS;
-    if (url.protocolIs("http"))
+    if (url.protocolIs("http"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
-    if (url.protocolIs("ftp"))
+    if (url.protocolIs("ftp"_s))
         return isForProxy ? ProtectionSpace::ServerType::ProxyFTP : ProtectionSpace::ServerType::FTP;
     return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
 }

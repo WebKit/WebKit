@@ -129,13 +129,13 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     std::sort(values.begin(), values.end(), [](const auto& a, const auto& b) {
         const auto& nameA = a.key;
         const auto& nameB = b.key;
-        if (nameA.startsWith("--"))
-            return nameB.startsWith("--") && codePointCompareLessThan(nameA, nameB);
+        if (nameA.startsWith("--"_s))
+            return nameB.startsWith("--"_s) && codePointCompareLessThan(nameA, nameB);
 
-        if (nameA.startsWith("-"))
-            return nameB.startsWith("--") || (nameB.startsWith("-") && codePointCompareLessThan(nameA, nameB));
+        if (nameA.startsWith('-'))
+            return nameB.startsWith("--"_s) || (nameB.startsWith('-') && codePointCompareLessThan(nameA, nameB));
 
-        return nameB.startsWith("-") || codePointCompareLessThan(nameA, nameB);
+        return nameB.startsWith('-') || codePointCompareLessThan(nameA, nameB);
     });
 
     return values;

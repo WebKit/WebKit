@@ -87,11 +87,11 @@ void CurlResourceHandleDelegate::curlDidSendData(CurlRequest&, unsigned long lon
 
 static void handleCookieHeaders(ResourceHandleInternal* d, const ResourceRequest& request, const CurlResponse& response)
 {
-    static const auto setCookieHeader = "set-cookie: ";
+    static constexpr auto setCookieHeader = "set-cookie: "_s;
 
     for (const auto& header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-            const auto contents = header.right(header.length() - strlen(setCookieHeader));
+            const auto contents = header.right(header.length() - setCookieHeader.length());
             d->m_context->storageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, contents);
         }
     }

@@ -490,11 +490,11 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
 
 static bool checkSecureCookie(const Cookie& cookie)
 {
-    if (cookie.name.startsWith("__Secure-") && !cookie.secure)
+    if (cookie.name.startsWith("__Secure-"_s) && !cookie.secure)
         return false;
 
     // Cookies for __Host must have the Secure attribute, path explicitly set to "/", and no domain attribute
-    if (cookie.name.startsWith("__Host-") && (!cookie.secure || cookie.path != "/"_s || !cookie.domain.isEmpty()))
+    if (cookie.name.startsWith("__Host-"_s) && (!cookie.secure || cookie.path != "/"_s || !cookie.domain.isEmpty()))
         return false;
 
     return true;

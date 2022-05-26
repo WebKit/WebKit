@@ -75,7 +75,7 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
 {
     m_baseWebSocketURL = URL(m_baseURL, "/websocket/"_s);
-    m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http") ? "ws" : "wss");
+    m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http"_s) ? "ws"_s : "wss"_s);
 
     if (m_queue) {
         m_queue->dispatch([this, callback, userData] {

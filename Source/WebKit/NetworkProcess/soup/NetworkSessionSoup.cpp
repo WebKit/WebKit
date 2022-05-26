@@ -125,7 +125,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPagePr
     if (!soupMessage)
         return nullptr;
 
-    if (request.url().protocolIs("wss")) {
+    if (request.url().protocolIs("wss"_s)) {
 #if USE(SOUP2)
         g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
 #else

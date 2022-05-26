@@ -224,7 +224,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #if USE(SOUP)
     // For apps that call g_resource_load in a web extension.
     // https://blogs.gnome.org/alexl/2012/01/26/resources-in-glib/
-    if (resourceLoader.request().url().protocolIs("resource")) {
+    if (resourceLoader.request().url().protocolIs("resource"_s)) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader.url().string().utf8().data());
         WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be handled as a GResource");
         startLocalLoad(resourceLoader);
@@ -278,7 +278,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
 #if ENABLE(PDFJS)
 bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)
 {
-    if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"))
+    if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"_s))
         return false;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a PDFJS resource.", resourceLoader.url().string().utf8().data());

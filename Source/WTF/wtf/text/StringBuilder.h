@@ -234,7 +234,7 @@ inline void StringBuilder::appendSubstring(const String& string, unsigned offset
 
 inline void StringBuilder::append(const char* characters)
 {
-    append(StringView { characters });
+    append(StringView::fromLatin1(characters));
 }
 
 inline void StringBuilder::appendCharacter(UChar32 c)

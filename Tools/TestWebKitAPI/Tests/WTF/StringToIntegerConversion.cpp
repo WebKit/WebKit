@@ -30,56 +30,56 @@ namespace TestWebKitAPI {
 
 TEST(WTF, ParseInteger)
 {
-    EXPECT_EQ(std::nullopt, parseInteger<int>(static_cast<const char*>(nullptr)));
-    EXPECT_EQ(std::nullopt, parseInteger<int>(""));
-    EXPECT_EQ(0, parseInteger<int>("0"));
-    EXPECT_EQ(1, parseInteger<int>("1"));
-    EXPECT_EQ(3, parseInteger<int>("3"));
-    EXPECT_EQ(-3, parseInteger<int>("-3"));
-    EXPECT_EQ(12345, parseInteger<int>("12345"));
-    EXPECT_EQ(-12345, parseInteger<int>("-12345"));
-    EXPECT_EQ(2147483647, parseInteger<int>("2147483647"));
-    EXPECT_EQ(std::nullopt, parseInteger<int>("2147483648"));
-    EXPECT_EQ(-2147483647 - 1, parseInteger<int>("-2147483648"));
-    EXPECT_EQ(std::nullopt, parseInteger<int>("-2147483649"));
-    EXPECT_EQ(std::nullopt, parseInteger<int>("x1"));
-    EXPECT_EQ(1, parseInteger<int>(" 1"));
-    EXPECT_EQ(std::nullopt, parseInteger<int>("1x"));
+    EXPECT_EQ(std::nullopt, parseInteger<int>({ }));
+    EXPECT_EQ(std::nullopt, parseInteger<int>(""_s));
+    EXPECT_EQ(0, parseInteger<int>("0"_s));
+    EXPECT_EQ(1, parseInteger<int>("1"_s));
+    EXPECT_EQ(3, parseInteger<int>("3"_s));
+    EXPECT_EQ(-3, parseInteger<int>("-3"_s));
+    EXPECT_EQ(12345, parseInteger<int>("12345"_s));
+    EXPECT_EQ(-12345, parseInteger<int>("-12345"_s));
+    EXPECT_EQ(2147483647, parseInteger<int>("2147483647"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<int>("2147483648"_s));
+    EXPECT_EQ(-2147483647 - 1, parseInteger<int>("-2147483648"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<int>("-2147483649"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<int>("x1"_s));
+    EXPECT_EQ(1, parseInteger<int>(" 1"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<int>("1x"_s));
 
-    EXPECT_EQ(0U, 0U + *parseInteger<uint16_t>("0"));
-    EXPECT_EQ(3U, 0U + *parseInteger<uint16_t>("3"));
-    EXPECT_EQ(12345U, 0U + *parseInteger<uint16_t>("12345"));
-    EXPECT_EQ(65535U, 0U + *parseInteger<uint16_t>("65535"));
-    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("-1"));
-    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("-3"));
-    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("65536"));
+    EXPECT_EQ(0U, 0U + *parseInteger<uint16_t>("0"_s));
+    EXPECT_EQ(3U, 0U + *parseInteger<uint16_t>("3"_s));
+    EXPECT_EQ(12345U, 0U + *parseInteger<uint16_t>("12345"_s));
+    EXPECT_EQ(65535U, 0U + *parseInteger<uint16_t>("65535"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("-1"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("-3"_s));
+    EXPECT_EQ(std::nullopt, parseInteger<uint16_t>("65536"_s));
 }
 
 TEST(WTF, ParseIntegerAllowingTrailingJunk)
 {
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>(static_cast<const char*>(nullptr)));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>(""));
-    EXPECT_EQ(0, parseIntegerAllowingTrailingJunk<int>("0"));
-    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>("1"));
-    EXPECT_EQ(3, parseIntegerAllowingTrailingJunk<int>("3"));
-    EXPECT_EQ(-3, parseIntegerAllowingTrailingJunk<int>("-3"));
-    EXPECT_EQ(12345, parseIntegerAllowingTrailingJunk<int>("12345"));
-    EXPECT_EQ(-12345, parseIntegerAllowingTrailingJunk<int>("-12345"));
-    EXPECT_EQ(2147483647, parseIntegerAllowingTrailingJunk<int>("2147483647"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("2147483648"));
-    EXPECT_EQ(-2147483647 - 1, parseIntegerAllowingTrailingJunk<int>("-2147483648"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("-2147483649"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("x1"));
-    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>(" 1"));
-    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>("1x"));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>({ }));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>(""_s));
+    EXPECT_EQ(0, parseIntegerAllowingTrailingJunk<int>("0"_s));
+    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>("1"_s));
+    EXPECT_EQ(3, parseIntegerAllowingTrailingJunk<int>("3"_s));
+    EXPECT_EQ(-3, parseIntegerAllowingTrailingJunk<int>("-3"_s));
+    EXPECT_EQ(12345, parseIntegerAllowingTrailingJunk<int>("12345"_s));
+    EXPECT_EQ(-12345, parseIntegerAllowingTrailingJunk<int>("-12345"_s));
+    EXPECT_EQ(2147483647, parseIntegerAllowingTrailingJunk<int>("2147483647"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("2147483648"_s));
+    EXPECT_EQ(-2147483647 - 1, parseIntegerAllowingTrailingJunk<int>("-2147483648"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("-2147483649"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<int>("x1"_s));
+    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>(" 1"_s));
+    EXPECT_EQ(1, parseIntegerAllowingTrailingJunk<int>("1x"_s));
 
-    EXPECT_EQ(0U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("0"));
-    EXPECT_EQ(3U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("3"));
-    EXPECT_EQ(12345U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("12345"));
-    EXPECT_EQ(65535U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("65535"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("-1"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("-3"));
-    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("65536"));
+    EXPECT_EQ(0U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("0"_s));
+    EXPECT_EQ(3U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("3"_s));
+    EXPECT_EQ(12345U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("12345"_s));
+    EXPECT_EQ(65535U, 0U + *parseIntegerAllowingTrailingJunk<uint16_t>("65535"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("-1"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("-3"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("65536"_s));
 }
 
 } // namespace TestWebKitAPI

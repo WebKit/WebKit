@@ -44,21 +44,21 @@ TEST(WTF, TestUUIDVersion4Parsing)
 {
     // xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
 
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-5de0-89AB-0123456789ab"));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4dea-79AB-0123456789ab"));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-7fff-0123456789ab"));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-c0000-0123456789ab"));
+    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-5de0-89AB-0123456789ab"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4dea-79AB-0123456789ab"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-7fff-0123456789ab"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-c0000-0123456789ab"_s));
 
-    EXPECT_FALSE(!!UUID::parseVersion4("+ef944c1-5cb8-48aa-Ad12-C5f823f005c3"));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-+cb8-48aa-Ad12-C5f823f005c3"));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-+8aa-Ad12-C5f823f005c3"));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-+d12-C5f823f005c3"));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-Ad12-+5f823f005c3"));
+    EXPECT_FALSE(!!UUID::parseVersion4("+ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-+cb8-48aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-+8aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-+d12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-Ad12-+5f823f005c3"_s));
 
-    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000000"));
-    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000001"));
-    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000000"));
-    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000001"));
+    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000000"_s));
+    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000001"_s));
+    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000000"_s));
+    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000001"_s));
 
     for (size_t cptr = 0; cptr < 10; ++cptr) {
         auto createdUUID = UUID::createVersion4();

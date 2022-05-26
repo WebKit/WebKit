@@ -111,7 +111,7 @@ static String readContentsOfFile(const String& path)
         return emptyString();
 
     String result(static_cast<const LChar*>(buffer->data()), buffer->size());
-    if (result.endsWith("\n"))
+    if (result.endsWith('\n'))
         return result.left(result.length() - 1);
 
     return result;

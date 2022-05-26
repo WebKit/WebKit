@@ -78,7 +78,7 @@ AtomString GStreamerMediaDescription::extractCodecName()
 
     // Report "H.264 (Main Profile)" and "H.264 (High Profile)" just as "H.264" to allow changes between both variants
     // go unnoticed to the SourceBuffer layer.
-    if (codecName.startsWith("H.264")) {
+    if (codecName.startsWith("H.264"_s)) {
         size_t braceStart = codecName.find(" ("_s);
         size_t braceEnd = codecName.find(')', braceStart + 1);
         if (braceStart != notFound && braceEnd != notFound) {

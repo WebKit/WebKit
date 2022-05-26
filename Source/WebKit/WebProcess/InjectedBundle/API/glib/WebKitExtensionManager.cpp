@@ -43,7 +43,7 @@ void WebKitExtensionManager::scanModules(const String& webExtensionsDirectory, V
 {
     auto moduleNames = FileSystem::listDirectory(webExtensionsDirectory);
     for (auto& moduleName : moduleNames) {
-        if (!moduleName.endsWith(".so"))
+        if (!moduleName.endsWith(".so"_s))
             continue;
 
         auto modulePath = FileSystem::pathByAppendingComponent(webExtensionsDirectory, moduleName);

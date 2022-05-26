@@ -201,7 +201,7 @@ static void collectCPUUsage(float period)
 
     struct dirent* dp;
     while ((dp = readdir(dir))) {
-        auto id = parseInteger<pid_t>(dp->d_name);
+        auto id = parseInteger<pid_t>(StringView::fromLatin1(dp->d_name));
         if (!id)
             continue;
 

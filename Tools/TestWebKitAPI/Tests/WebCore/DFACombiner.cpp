@@ -59,11 +59,11 @@ Vector<DFA> combine(Vector<DFA> dfas, unsigned minimumSize)
 
 TEST_F(DFACombinerTest, Basic)
 {
-    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"}), buildDFAFromPatterns({ "bar"}) };
+    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"_s }), buildDFAFromPatterns({ "bar"_s }) };
     Vector<DFA> combinedDFAs = combine(dfas, 10000);
     EXPECT_EQ(static_cast<size_t>(1), combinedDFAs.size());
 
-    DFA reference = buildDFAFromPatterns({ "foo", "bar"});
+    DFA reference = buildDFAFromPatterns({ "foo"_s, "bar"_s });
     reference.minimize();
     EXPECT_EQ(countLiveNodes(reference), countLiveNodes(combinedDFAs.first()));
 }
@@ -71,12 +71,12 @@ TEST_F(DFACombinerTest, Basic)
 
 TEST_F(DFACombinerTest, IdenticalDFAs)
 {
-    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"}), buildDFAFromPatterns({ "foo"}) };
+    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"_s }), buildDFAFromPatterns({ "foo"_s }) };
     Vector<DFA> combinedDFAs = combine(dfas, 10000);
     EXPECT_EQ(static_cast<size_t>(1), combinedDFAs.size());
 
     // The result should have the exact same size as the minimized input.
-    DFA reference = buildDFAFromPatterns({ "foo"});
+    DFA reference = buildDFAFromPatterns({ "foo"_s });
     reference.minimize();
     EXPECT_EQ(countLiveNodes(reference), countLiveNodes(combinedDFAs.first()));
 }
@@ -93,18 +93,18 @@ TEST_F(DFACombinerTest, NoInput)
 
 TEST_F(DFACombinerTest, SingleInput)
 {
-    Vector<DFA> dfas = { buildDFAFromPatterns({ "WebKit"}) };
+    Vector<DFA> dfas = { buildDFAFromPatterns({ "WebKit"_s }) };
     Vector<DFA> combinedDFAs = combine(dfas, 10000);
     EXPECT_EQ(static_cast<size_t>(1), combinedDFAs.size());
 
-    DFA reference = buildDFAFromPatterns({ "WebKit"});
+    DFA reference = buildDFAFromPatterns({ "WebKit"_s });
     reference.minimize();
     EXPECT_EQ(countLiveNodes(reference), countLiveNodes(combinedDFAs.first()));
 }
 
 TEST_F(DFACombinerTest, InputTooLargeForMinimumSize)
 {
-    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"}), buildDFAFromPatterns({ "bar"}) };
+    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"_s }), buildDFAFromPatterns({ "bar"_s }) };
     Vector<DFA> combinedDFAs = combine(dfas, 2);
     EXPECT_EQ(static_cast<size_t>(2), combinedDFAs.size());
     EXPECT_EQ(static_cast<size_t>(4), countLiveNodes(combinedDFAs[0]));
@@ -113,7 +113,7 @@ TEST_F(DFACombinerTest, InputTooLargeForMinimumSize)
 
 TEST_F(DFACombinerTest, CombinedInputReachesMinimumSize)
 {
-    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"}), buildDFAFromPatterns({ "bar"}), buildDFAFromPatterns({ "WebKit"}) };
+    Vector<DFA> dfas = { buildDFAFromPatterns({ "foo"_s }), buildDFAFromPatterns({ "bar"_s }), buildDFAFromPatterns({ "WebKit"_s }) };
     Vector<DFA> combinedDFAs = combine(dfas, 5);
     EXPECT_EQ(static_cast<size_t>(2), combinedDFAs.size());
     EXPECT_EQ(static_cast<size_t>(7), countLiveNodes(combinedDFAs[0]));

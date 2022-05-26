@@ -40,4 +40,4 @@ enum SnapshotRegion {
     SnapshotRegionFullDocument
 };
 
-static const char networkCacheSubdirectory[] = "WebKitCache";
+static constexpr auto networkCacheSubdirectory = "WebKitCache"_s;

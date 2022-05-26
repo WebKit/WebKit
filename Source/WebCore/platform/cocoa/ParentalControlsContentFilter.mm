@@ -75,7 +75,7 @@ UniqueRef<ParentalControlsContentFilter> ParentalControlsContentFilter::create()
 static inline bool canHandleResponse(const ResourceResponse& response)
 {
 #if HAVE(SYSTEM_HTTP_CONTENT_FILTERING)
-    return response.url().protocolIs("https");
+    return response.url().protocolIs("https"_s);
 #else
     return response.url().protocolIsInHTTPFamily();
 #endif

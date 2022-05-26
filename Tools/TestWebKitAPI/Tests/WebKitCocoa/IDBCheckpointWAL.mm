@@ -100,7 +100,7 @@ TEST(IndexedDB, CheckpointsWALAutomatically)
     }];
     TestWebKitAPI::Util::run(&done);
     NSURL *indexedDBDirectory = [NSURL fileURLWithPath:indexedDBDirectoryString isDirectory:YES];
-    NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("test-wal-checkpoint");
+    NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("test-wal-checkpoint"_s);
     NSURL *indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:databaseHash];
     NSURL *indexedDBDatabaseFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
     NSURL *indexedDBDatabaseWAL = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];

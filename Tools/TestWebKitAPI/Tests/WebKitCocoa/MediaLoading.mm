@@ -37,8 +37,8 @@ namespace TestWebKitAPI {
 
 static String parseUserAgent(const Vector<char>& request)
 {
-    auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n");
-    auto index = headers.findIf([] (auto& header) { return header.startsWith("User-Agent:"); });
+    auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+    auto index = headers.findIf([] (auto& header) { return header.startsWith("User-Agent:"_s); });
     if (index != notFound)
         return headers[index];
     return emptyString();

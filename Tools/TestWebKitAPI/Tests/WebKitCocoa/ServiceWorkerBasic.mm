@@ -623,7 +623,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -639,7 +639,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -759,7 +759,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -776,7 +776,7 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -808,7 +808,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -826,7 +826,7 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -857,7 +857,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
 
     // Register a service worker and activate it.
     expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -875,7 +875,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
 
     // Verify service worker is intercepting load.
     expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -890,7 +890,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load goes well when policy delegate is ok.
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_FALSE(navigationFailed);
@@ -904,7 +904,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load fails well when policy delegate is not ok.
-    [webView loadRequest:server.request("/main.html")];
+    [webView loadRequest:server.request("/main.html"_s)];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_TRUE(navigationFailed);
@@ -976,23 +976,23 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<WKWebView> newRegularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Test that a regular page does not trigger a service worker connection to network process if there is no registered service worker.
-    [regularPageWebView loadRequest:server.request("/first.html")];
+    [regularPageWebView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Test that a sw scheme page can register a service worker.
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
 
     // Now that a service worker is registered, the regular page should have a service worker connection.
-    [regularPageWebView loadRequest:server.request("/third.html")];
+    [regularPageWebView loadRequest:server.request("/third.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     regularPageWebView = nullptr;
 
-    [newRegularPageWebView loadRequest:server.request("/fourth.html")];
+    [newRegularPageWebView loadRequest:server.request("/fourth.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     newRegularPageWebView = nullptr;
@@ -1077,7 +1077,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Load a page that registers a service worker.
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
@@ -1092,7 +1092,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1101,7 +1101,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request("/third.html")];
+    [webView loadRequest:server.request("/third.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1176,12 +1176,12 @@ TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
@@ -1329,19 +1329,19 @@ TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
     });
 
     auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [defaultWebView synchronouslyLoadRequest:server.request("/first.html")];
+    [defaultWebView synchronouslyLoadRequest:server.request("/first.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [defaultWebView synchronouslyLoadRequest:server.request("/second.html")];
+    [defaultWebView synchronouslyLoadRequest:server.request("/second.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html")];
+    [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -1387,7 +1387,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
@@ -1395,10 +1395,10 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"));
+    EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"_s));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1430,7 +1430,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![websiteDataStore _hasRegisteredServiceWorker])
@@ -1438,10 +1438,10 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""));
+    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""_s));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1929,7 +1929,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         protectedProcessPool = webView.get().configuration.processPool;
         protectedWebsiteDataStore = webView.get().configuration.websiteDataStore;
 
-        [webView loadRequest:server.request("/first.html")];
+        [webView loadRequest:server.request("/first.html"_s)];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1952,7 +1952,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        [webView loadRequest:server.request("/second.html")];
+        [webView loadRequest:server.request("/second.html"_s)];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1990,7 +1990,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     done = false;
 
     // Normal load to get SW registered.
-    [webView loadRequest:server.request("/first.html")];
+    [webView loadRequest:server.request("/first.html"_s)];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -2013,7 +2013,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 
     [webView.get().configuration.websiteDataStore _sendNetworkProcessDidResume];
 
-    [webView loadRequest:server.request("/second.html")];
+    [webView loadRequest:server.request("/second.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -2584,7 +2584,7 @@ static bool didStartURLSchemeTask = false;
     NSURL *finalURL = task.request.URL;
 
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
-    if (URL(finalURL).string().endsWith(".js"))
+    if (URL(finalURL).string().endsWith(".js"_s))
         [headerDictionary setObject:@"text/javascript" forKey:@"Content-Type"];
     else
         [headerDictionary setObject:@"text/html" forKey:@"Content-Type"];

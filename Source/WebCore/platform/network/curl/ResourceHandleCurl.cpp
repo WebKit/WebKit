@@ -143,7 +143,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
     if (status == RequestStatus::NewRequest) {
         addCacheValidationHeaders(request);
 
-        auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+        auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
         String cookieHeaderField = d->m_context->storageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
         if (!cookieHeaderField.isEmpty())
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
@@ -530,7 +530,7 @@ void ResourceHandle::handleDataURL()
     String data = url.substring(index + 1);
     auto originalSize = data.length();
 
-    bool base64 = mediaType.endsWithIgnoringASCIICase(";base64");
+    bool base64 = mediaType.endsWithIgnoringASCIICase(";base64"_s);
     if (base64)
         mediaType = mediaType.left(mediaType.length() - 7);
 

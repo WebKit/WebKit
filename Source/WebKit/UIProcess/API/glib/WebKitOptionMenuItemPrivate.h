@@ -29,7 +29,7 @@ struct _WebKitOptionMenuItem {
     _WebKitOptionMenuItem(const WebKit::WebPopupItem& item)
         : label(item.m_text.stripWhiteSpace().utf8())
         , isGroupLabel(item.m_isLabel)
-        , isGroupChild(item.m_text.startsWith("    "))
+        , isGroupChild(item.m_text.startsWith("    "_s))
         , isEnabled(item.m_isEnabled)
     {
         if (!item.m_toolTip.isEmpty())
