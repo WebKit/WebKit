@@ -98,16 +98,13 @@ public:
 
     bool contains(UChar character) const { return m_string.contains(character); }
     bool contains(ASCIILiteral literal) const { return m_string.contains(literal); }
-    bool contains(const char*) const = delete;
     bool contains(StringView) const;
     bool containsIgnoringASCIICase(StringView) const;
 
     size_t find(UChar character, unsigned start = 0) const { return m_string.find(character, start); }
     size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_string.find(literal, start); }
-    size_t find(const char*, unsigned start = 0) const = delete;
     size_t find(StringView, unsigned start = 0) const;
     size_t findIgnoringASCIICase(StringView) const;
-    size_t findIgnoringASCIICase(const char*) const = delete;
     size_t findIgnoringASCIICase(StringView, unsigned start) const;
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
 
@@ -190,7 +187,6 @@ bool equalIgnoringASCIICase(const AtomString&, const AtomString&);
 bool equalIgnoringASCIICase(const AtomString&, const String&);
 bool equalIgnoringASCIICase(const String&, const AtomString&);
 bool equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
-bool equalIgnoringASCIICase(const AtomString&, const char*) = delete;
 
 bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);

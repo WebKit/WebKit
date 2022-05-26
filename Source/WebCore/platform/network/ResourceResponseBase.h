@@ -130,9 +130,9 @@ public:
     WEBCORE_EXPORT void addUncommonHTTPHeaderField(const String& name, const String& value);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;
-    template<size_t length> void setHTTPHeaderField(const char (&)[length], const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(const char (&)[length], const String&) = delete;
+    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
+    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
 
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 

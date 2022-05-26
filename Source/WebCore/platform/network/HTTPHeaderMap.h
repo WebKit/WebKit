@@ -178,10 +178,10 @@ public:
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String get(const char (&)[length]) const = delete;
-    template<size_t length> void set(const char (&)[length], const String&) = delete;
-    template<size_t length> bool contains(const char (&)[length]) = delete;
-    template<size_t length> bool remove(const char (&)[length]) = delete;
+    template<size_t length> String get(ASCIILiteral) const = delete;
+    template<size_t length> void set(ASCIILiteral, const String&) = delete;
+    template<size_t length> bool contains(ASCIILiteral) = delete;
+    template<size_t length> bool remove(ASCIILiteral) = delete;
 
     const CommonHeadersVector& commonHeaders() const { return m_commonHeaders; }
     const UncommonHeadersVector& uncommonHeaders() const { return m_uncommonHeaders; }

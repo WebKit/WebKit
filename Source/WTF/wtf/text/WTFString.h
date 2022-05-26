@@ -354,7 +354,6 @@ template<size_t inlineCapacity> inline bool operator!=(const String& a, const Ve
 
 bool equalIgnoringASCIICase(const String&, const String&);
 bool equalIgnoringASCIICase(const String&, ASCIILiteral);
-bool equalIgnoringASCIICase(const String&, const char*) = delete;
 
 bool equalLettersIgnoringASCIICase(const String&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const String&, ASCIILiteral);
@@ -494,8 +493,6 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& s
         return String { impl->replace(target, literal.characters(), literal.length()) };
     return string;
 }
-
-String makeStringByReplacingAll(const String&, UChar target, const char*) = delete;
 
 WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByRemoving(const String&, unsigned position, unsigned lengthToRemove);
 

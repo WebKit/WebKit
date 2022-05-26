@@ -111,9 +111,9 @@ public:
     WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;
-    template<size_t length> void setHTTPHeaderField(const char (&)[length], const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(const char (&)[length], const String&) = delete;
+    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
+    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
 
     WEBCORE_EXPORT void clearHTTPAuthorization();
 

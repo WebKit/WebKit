@@ -433,7 +433,6 @@ public:
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction, unsigned start = 0);
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) { return find(literal.characters8(), literal.length(), start); }
-    size_t find(const char*, unsigned start = 0) = delete;
     WTF_EXPORT_PRIVATE size_t find(StringView);
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start);
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
@@ -442,7 +441,6 @@ public:
     WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned start = MaxLength);
     WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = MaxLength);
     ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) { return reverseFind(literal.characters8(), literal.length(), start); }
-    size_t reverseFind(const char*, unsigned start = MaxLength) = delete;
 
     WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
     WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(StringView) const;
@@ -589,8 +587,6 @@ bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
 bool equalIgnoringASCIICase(const StringImpl&, ASCIILiteral);
 bool equalIgnoringASCIICase(const StringImpl*, ASCIILiteral);
-bool equalIgnoringASCIICase(const StringImpl&, const char*) = delete;
-bool equalIgnoringASCIICase(const StringImpl*, const char*) = delete;
 
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
