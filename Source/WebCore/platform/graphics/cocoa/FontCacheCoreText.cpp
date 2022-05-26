@@ -571,6 +571,18 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
     }
 }
 
+static bool& platformShouldEnhanceTextLegibility()
+{
+    static NeverDestroyed<bool> shouldEnhanceTextLegibility = _AXSEnhanceTextLegibilityEnabled();
+    return shouldEnhanceTextLegibility.get();
+}
+
+static inline bool shouldEnhanceTextLegibility(); // FIXME: Once this is called, delete this forward declaration.
+static inline bool shouldEnhanceTextLegibility()
+{
+    return platformShouldEnhanceTextLegibility() || FontCache::forCurrentThread().shouldMockBoldSystemFontForAccessibility();
+}
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
     if (!originalFont)
@@ -1302,6 +1314,8 @@ static void invalidateFontCache()
         FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 
         FontCache::invalidateAllFontCaches();
+
+        platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
     });
 }
 
