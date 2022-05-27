@@ -434,6 +434,13 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)
     return true;
 }
 
+void RemoteDisplayListRecorderProxy::setNeedsFlush(bool needsFlush)
+{
+    if (UNLIKELY(!m_imageBuffer))
+        return;
+    m_imageBuffer->setNeedsFlush(needsFlush);
+}
+
 void RemoteDisplayListRecorderProxy::flushContext(GraphicsContextFlushIdentifier identifier)
 {
     send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));

@@ -95,6 +95,9 @@ void Recorder::appendStateChangeItemIfNecessary()
     // FIXME: This is currently invoked in an ad-hoc manner when recording drawing items. We should consider either
     // splitting GraphicsContext state changes into individual display list items, or refactoring the code such that
     // this method is automatically invoked when recording a drawing item.
+
+    setNeedsFlush(true);
+
     auto& state = currentState().state;
     if (!state.changes())
         return;
