@@ -167,19 +167,6 @@ function some(callback /* [, thisArg] */)
 }
 
 @globalPrivate
-function typedArrayElementCompare(array, a, b, comparator)
-{
-    "use strict";
-
-    var result = @toNumber(comparator(a, b));
-
-    if (@isDetached(array))
-        @throwTypeError("Underlying ArrayBuffer has been detached from the view");
-
-    return result;
-}
-
-@globalPrivate
 function typedArrayMerge(array, dst, src, srcIndex, srcEnd, width, comparator)
 {
     "use strict";
@@ -191,7 +178,7 @@ function typedArrayMerge(array, dst, src, srcIndex, srcEnd, width, comparator)
 
     for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
         if (right < rightEnd) {
-            if (left >= leftEnd || @typedArrayElementCompare(array, src[right], src[left], comparator) < 0) {
+            if (left >= leftEnd || @toNumber(comparator(src[right], src[left])) < 0) {
                 dst[dstIndex] = src[right++];
                 continue;
             }

@@ -1092,12 +1092,6 @@ test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezon
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: PlainDateTime'
   strict mode: 'Test262Error: PlainDateTime'
-test/built-ins/TypedArray/prototype/set/array-arg-targetbuffer-detached-on-get-src-value-no-throw.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/sort/sort-tonumber.js:
-  default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
 test/harness/temporalHelpers-one-shift-time-zone.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"

@@ -324,16 +324,6 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
-        auto trySetIndex = [&](size_t index, JSValue value) -> bool {
-            bool success = setIndex(globalObject, index, value);
-            EXCEPTION_ASSERT(!scope.exception() || !success);
-            if (!success) {
-                if (isDetached())
-                    throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-                return false;
-            }
-            return true;
-        };
         // It is not valid to ever call object->get() with an index of more than MAX_ARRAY_INDEX.
         // So we iterate in the optimized loop up to MAX_ARRAY_INDEX, then if there is anything to do beyond this, we rely on slower code.
         size_t safeUnadjustedLength = std::min(length, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
@@ -342,14 +332,18 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             ASSERT(i + objectOffset <= MAX_ARRAY_INDEX);
             JSValue value = object->get(globalObject, static_cast<unsigned>(i + objectOffset));
             RETURN_IF_EXCEPTION(scope, false);
-            if (!trySetIndex(offset + i, value))
+            bool success = setIndex(globalObject, offset + i, value);
+            EXCEPTION_ASSERT(!scope.exception() || !success);
+            if (!success)
                 return false;
         }
         for (size_t i = safeLength; i < length; ++i) {
             Identifier ident = Identifier::from(vm, static_cast<uint64_t>(i + objectOffset));
             JSValue value = object->get(globalObject, ident);
             RETURN_IF_EXCEPTION(scope, false);
-            if (!trySetIndex(offset + i, value))
+            bool success = setIndex(globalObject, offset + i, value);
+            EXCEPTION_ASSERT(!scope.exception() || !success);
+            if (!success)
                 return false;
         }
         return true;

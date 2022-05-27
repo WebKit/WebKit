@@ -77,9 +77,7 @@ for (var i = 0; i < 1000; i++)
 prototypeFunctions = [
     { func:proto.copyWithin, args:["prim", "prim", "prim"] },
     { func:proto.fill, args:["prim", "prim", "prim"] },
-    { func:proto.set, args:["array", "prim"] },
     { func:proto.slice, args:["prim", "prim"] },
-    { func:proto.sort, args:["func"] },
     { func:proto.subarray, args:["prim", "prim"] },
 ];
 

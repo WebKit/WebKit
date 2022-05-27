@@ -170,7 +170,10 @@ public:
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(globalObject, jsValue);
         RETURN_IF_EXCEPTION(scope, false);
 
-        if (isDetached() || i >= m_length)
+        if (isDetached())
+            return true;
+
+        if (i >= m_length)
             return false;
 
         setIndexQuicklyToNativeValue(i, value);
