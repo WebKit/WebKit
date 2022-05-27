@@ -360,9 +360,14 @@ macro(PRINT_WEBKIT_OPTIONS)
 endmacro()
 
 set(_WEBKIT_CONFIG_FILE_VARIABLES "")
+set(_WEBKIT_CONFIG_FILE_STRING_VARIABLES "")
 
 macro(EXPOSE_VARIABLE_TO_BUILD _variable_name)
     list(APPEND _WEBKIT_CONFIG_FILE_VARIABLES ${_variable_name})
+endmacro()
+
+macro(EXPOSE_STRING_VARIABLE_TO_BUILD _variable_name)
+    list(APPEND _WEBKIT_CONFIG_FILE_STRING_VARIABLES ${_variable_name})
 endmacro()
 
 macro(SET_AND_EXPOSE_TO_BUILD _variable_name)
@@ -393,6 +398,9 @@ macro(CREATE_CONFIGURATION_HEADER)
 
     foreach (_variable_name ${_WEBKIT_CONFIG_FILE_VARIABLES})
         _ADD_CONFIGURATION_LINE_TO_HEADER_STRING(_file_contents ${_variable_name} ${_variable_name})
+    endforeach ()
+    foreach (_variable_name ${_WEBKIT_CONFIG_FILE_STRING_VARIABLES})
+        set(_file_contents "${_file_contents}#define ${_variable_name} \"${${_variable_name}}\"\n")
     endforeach ()
     set(_file_contents "${_file_contents}\n#endif /* CMAKECONFIG_H */\n")
 
