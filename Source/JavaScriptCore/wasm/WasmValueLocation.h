@@ -41,27 +41,25 @@ class ValueLocation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Kind : uint8_t {
-        GPRRegister,
-        FPRRegister,
+        Register,
         Stack,
         StackArgument,
     };
 
     ValueLocation()
-        : m_kind(GPRRegister)
+        : m_kind(Register)
     {
     }
 
-    explicit ValueLocation(JSValueRegs regs)
-        : m_kind(GPRRegister)
+    explicit ValueLocation(Reg reg)
+        : m_kind(Register)
     {
-        u.jsr = regs;
+        u.reg = reg;
     }
 
-    explicit ValueLocation(FPRReg reg)
-        : m_kind(FPRRegister)
+    static ValueLocation reg(Reg reg)
     {
-        u.fpr = reg;
+        return ValueLocation(reg);
     }
 
     static ValueLocation stack(intptr_t offsetFromFP)
@@ -82,28 +80,29 @@ public:
 
     Kind kind() const { return m_kind; }
 
-    bool isGPR() const { return kind() == GPRRegister; }
-    bool isFPR() const { return kind() == FPRRegister; }
+    bool isReg() const { return kind() == Register; }
+
+    Reg reg() const
+    {
+        ASSERT(isReg());
+        return u.reg;
+    }
+
+    bool isGPR() const { return isReg() && reg().isGPR(); }
+    bool isFPR() const { return isReg() && reg().isFPR(); }
+
+    GPRReg gpr() const { return reg().gpr(); }
+    FPRReg fpr() const { return reg().fpr(); }
+
     bool isStack() const { return kind() == Stack; }
-    bool isStackArgument() const { return kind() == StackArgument; }
-
-    JSValueRegs jsr() const
-    {
-        ASSERT(isGPR());
-        return u.jsr;
-    }
-
-    FPRReg fpr() const
-    {
-        ASSERT(isFPR());
-        return u.fpr;
-    }
 
     intptr_t offsetFromFP() const
     {
         ASSERT(isStack());
         return u.offsetFromFP;
     }
+
+    bool isStackArgument() const { return kind() == StackArgument; }
 
     intptr_t offsetFromSP() const
     {
@@ -115,8 +114,7 @@ public:
 
 private:
     union U {
-        JSValueRegs jsr;
-        FPRReg fpr;
+        Reg reg;
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;
 

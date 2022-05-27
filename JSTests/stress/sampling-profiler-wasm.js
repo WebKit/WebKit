@@ -1,4 +1,3 @@
-//@ skip if $architecture == "arm"
 //@ runDefault
 
 if (platformSupportsSamplingProfiler() && $vm.isWasmSupported()) {

@@ -208,7 +208,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseUInt32(uint32_t& result)
 {
     if (length() < 4 || m_offset > length() - 4)
         return false;
-    memcpy(&result, source() + m_offset, sizeof(uint32_t)); // src can be unaligned
+    result = *reinterpret_cast<const uint32_t*>(source() + m_offset);
     m_offset += 4;
     return true;
 }
@@ -218,7 +218,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseUInt64(uint64_t& result)
 {
     if (length() < 8 || m_offset > length() - 8)
         return false;
-    memcpy(&result, source() + m_offset, sizeof(uint64_t)); // src can be unaligned
+    result = *reinterpret_cast<const uint64_t*>(source() + m_offset);
     m_offset += 8;
     return true;
 }

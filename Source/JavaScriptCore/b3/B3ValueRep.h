@@ -126,13 +126,9 @@ public:
     ValueRep(Wasm::ValueLocation location)
     {
         switch (location.kind()) {
-        case Wasm::ValueLocation::Kind::GPRRegister:
+        case Wasm::ValueLocation::Kind::Register:
             m_kind = Register;
-            u.reg = location.jsr().payloadGPR();
-            break;
-        case Wasm::ValueLocation::Kind::FPRRegister:
-            m_kind = Register;
-            u.reg = location.fpr();
+            u.reg = location.reg();
             break;
         case Wasm::ValueLocation::Kind::Stack:
             m_kind = Stack;

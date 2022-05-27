@@ -61,6 +61,7 @@ public:
     void* memory() const;
     size_t size() const { return m_size; }
     size_t mappedCapacity() const { return m_mappedCapacity; }
+    size_t boundsCheckingSize() const { return m_mappedCapacity; }
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
     MemorySharingMode sharingMode() const { return m_sharingMode; }
@@ -105,16 +106,14 @@ public:
 
     JS_EXPORT_PRIVATE ~Memory();
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static size_t fastMappedRedzoneBytes();
     static size_t fastMappedBytes(); // Includes redzone.
-#endif
     static bool addressIsInGrowableOrFastMemory(void*);
 
     void* memory() const { return m_handle->memory(); }
     size_t size() const { return m_handle->size(); }
     PageCount sizeInPages() const { return PageCount::fromBytes(size()); }
-    size_t mappedCapacity() const { return m_handle->mappedCapacity(); }
+    size_t boundsCheckingSize() const { return m_handle->boundsCheckingSize(); }
     PageCount initial() const { return m_handle->initial(); }
     PageCount maximum() const { return m_handle->maximum(); }
     MemoryHandle& handle() { return m_handle.get(); }

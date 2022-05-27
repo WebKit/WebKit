@@ -47,23 +47,22 @@ namespace Wasm {
 class Instance;
 class TypeDefinition;
 
-typedef int64_t EncodedWasmValue;
+void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer);
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer);
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame*));
 
-JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame*, JSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (CallFrame*, JSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame*, JSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, JSValue));
 
-JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame*, Instance*, EncodedWasmValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame*, Instance*, int64_t));
 
-JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const TypeDefinition*, JSValue, uint64_t*, uint64_t*));
 JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const TypeDefinition*, IndexingType, JSValue*));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));

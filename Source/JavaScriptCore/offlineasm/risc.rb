@@ -259,12 +259,8 @@ def riscLowerMalformedAddressesDouble(list)
             case node.opcode
             when "loadd"
                 newList << Instruction.new(node.codeOrigin, "loadd", [node.operands[0].riscDoubleAddress(newList), node.operands[1]], node.annotation)
-            when "loadf"
-                newList << Instruction.new(node.codeOrigin, "loadf", [node.operands[0].riscDoubleAddress(newList), node.operands[1]], node.annotation)
             when "stored"
                 newList << Instruction.new(node.codeOrigin, "stored", [node.operands[0], node.operands[1].riscDoubleAddress(newList)], node.annotation)
-            when "storef"
-                newList << Instruction.new(node.codeOrigin, "storef", [node.operands[0], node.operands[1].riscDoubleAddress(newList)], node.annotation)
             else
                 newList << node
             end
@@ -373,7 +369,7 @@ def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates)
         if node.is_a? Instruction
             annotation = node.annotation
             case node.opcode
-            when "move", "moveii"
+            when "move"
                 newList << node
             when "addi", "addp", "addq", "addis", "subi", "subp", "subq", "subis"
                 if node.operands[0].is_a? Immediate and

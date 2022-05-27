@@ -1403,10 +1403,7 @@ public:
         jitAssertIsJSDouble(gpr);
         return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr, mode);
     }
-    void unboxDouble(JSValueRegs regs, FPRReg fpr)
-    {
-        unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr);
-    }
+    
     void boxDouble(FPRReg fpr, JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
         boxDouble(fpr, regs.gpr(), mode);
