@@ -330,7 +330,8 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     if (sweepMode == SweepToFreeList 
         && newlyAllocatedMode == DoesNotHaveNewlyAllocated 
-        && footer.m_sweepListVersion == space()->markingVersion()) {
+        && footer.m_sweepListMarkingVersion == space()->markingVersion()
+        && footer.m_sweepListAllocVersion == space()->newlyAllocatedVersion()) {
         if (false)
             dataLogLn("Sweep is stealing from parallel sweeper! ", RawPointer(atomAt(0)));
         ASSERT(destructionMode == BlockHasNoDestructors);
@@ -338,10 +339,35 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         head = footer.m_sweepListHead;
         isEmpty = head == nullptr;
         count = footer.m_sweepListCount;
-        footer.m_sweepListVersion = MarkedSpace::nullVersion;
+        footer.m_sweepListMarkingVersion = MarkedSpace::nullVersion;
+        footer.m_sweepListAllocVersion = MarkedSpace::nullVersion;
         footer.m_sweepListHead = nullptr;
         footer.m_sweepListSecret = 0;
         footer.m_sweepListCount = 0;
+
+#if ASSERT_ENABLED
+    FreeCell* h = nullptr;
+    size_t s = 0;
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
+        if (emptyMode == NotEmpty
+            && ((marksMode == MarksNotStale && footer.m_marks.get(i))
+                || (newlyAllocatedMode == HasNewlyAllocated && footer.m_newlyAllocated.get(i)))) {
+            ASSERT(!isEmpty);
+            continue;
+        }
+        
+        ASSERT(destructionMode != BlockHasDestructorsAndCollectorIsRunning);
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
+        ASSERT(destructionMode == BlockHasNoDestructors);
+        ASSERT(sweepMode == SweepToFreeList);
+        FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
+        ASSERT(freeCell->next(secret) == h);
+        h = freeCell;
+        ++s;
+    }
+    ASSERT(s == count);
+    ASSERT(h == head);
+#endif
     } else {
         for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
             if (emptyMode == NotEmpty

@@ -103,7 +103,8 @@ MarkedBlock::Footer::Footer(VM& vm, Handle& handle)
     , m_vm(&vm)
     , m_markingVersion(MarkedSpace::nullVersion)
     , m_newlyAllocatedVersion(MarkedSpace::nullVersion)
-    , m_sweepListVersion(MarkedSpace::nullVersion)
+    , m_sweepListMarkingVersion(MarkedSpace::nullVersion)
+    , m_sweepListAllocVersion(MarkedSpace::nullVersion)
 {
 }
 
@@ -491,14 +492,15 @@ void MarkedBlock::Handle::sweepInParallel(const AbstractLocker& footerLock)
     if (!m_directory->isUnswept(NoLockingNecessary, this))
         return;
 
-    auto currentVersion = space()->markingVersion();
+    auto markingVersion = space()->markingVersion();
+    auto allocVersion = space()->newlyAllocatedVersion();
     EmptyMode emptyMode = this->emptyMode();
     ScribbleMode scribbleMode = this->scribbleMode();
     NewlyAllocatedMode newlyAllocatedMode = this->newlyAllocatedMode();
     MarksMode marksMode = this->marksMode();
     auto cellSize = this->cellSize();
     
-    if (blockFooter().m_sweepListVersion == currentVersion
+    if ((blockFooter().m_sweepListMarkingVersion == markingVersion && blockFooter().m_sweepListAllocVersion == allocVersion)
             || newlyAllocatedMode == HasNewlyAllocated
             || marksMode == MarksStale
             || emptyMode == IsEmpty)
@@ -555,11 +557,12 @@ void MarkedBlock::Handle::sweepInParallel(const AbstractLocker& footerLock)
 
     blockFooter().m_sweepListHead = head;
     blockFooter().m_sweepListSecret = secret;
-    blockFooter().m_sweepListVersion = currentVersion;
+    blockFooter().m_sweepListMarkingVersion = markingVersion;
+    blockFooter().m_sweepListAllocVersion = allocVersion;
     blockFooter().m_sweepListCount = count;
 
     if (false)
-        dataLogLn("Built freelist for sweeping in parallel: atom 0:", RawPointer(atomAt(0)), " head: ", RawPointer(head), " version: ", currentVersion, " count: ", count);
+        dataLogLn("Built freelist for sweeping in parallel: atom 0:", RawPointer(atomAt(0)), " head: ", RawPointer(head), " version: ", markingVersion, " count: ", count);
 }
 
 bool MarkedBlock::Handle::isFreeListedCell(const void* target) const

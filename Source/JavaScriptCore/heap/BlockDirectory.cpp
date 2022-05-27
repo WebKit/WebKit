@@ -129,6 +129,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
     unsigned index;
     if (m_freeBlockIndices.isEmpty()) {
+        Locker locker { m_bitvectorLock };
         index = m_blocks.size();
 
         size_t oldCapacity = m_blocks.capacity();
@@ -137,7 +138,6 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
             ASSERT(m_bits.numBits() == oldCapacity);
             ASSERT(m_blocks.capacity() > oldCapacity);
             
-            Locker locker { m_bitvectorLock };
             subspace()->didResizeBits(m_blocks.capacity());
             m_bits.resize(m_blocks.capacity());
         }
@@ -315,6 +315,7 @@ void BlockDirectory::sweep()
 
 void BlockDirectory::shrink()
 {
+    Locker locker { m_bitvectorLock };
     (m_bits.empty() & ~m_bits.destructible()).forEachSetBit(
         [&] (size_t index) {
             markedSpace().freeBlock(m_blocks[index]);

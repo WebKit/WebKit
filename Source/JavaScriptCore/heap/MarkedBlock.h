@@ -295,7 +295,8 @@ public:
 
         HeapVersion m_markingVersion;
         HeapVersion m_newlyAllocatedVersion;
-        HeapVersion m_sweepListVersion;
+        HeapVersion m_sweepListMarkingVersion;
+        HeapVersion m_sweepListAllocVersion;
         uint16_t m_sweepListCount { 0 };
 
         Bitmap<atomsPerBlock> m_marks;

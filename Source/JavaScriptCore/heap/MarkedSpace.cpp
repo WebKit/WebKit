@@ -26,6 +26,7 @@
 #include "IncrementalSweeper.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
+#include "wtf/Compiler.h"
 #include <wtf/ListDump.h>
 #include <wtf/SimpleStats.h>
 
@@ -376,9 +377,11 @@ bool MarkedSpace::isPagedOut()
 
 void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
 {
-    m_capacity -= MarkedBlock::blockSize;
-    m_blocks.remove(&block->block());
-    delete block;
+    // lol no
+    // m_capacity -= MarkedBlock::blockSize;
+    // m_blocks.remove(&block->block());
+    // delete block;
+    UNUSED_PARAM(block);
 }
 
 void MarkedSpace::freeOrShrinkBlock(MarkedBlock::Handle* block)
