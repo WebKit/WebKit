@@ -42,7 +42,9 @@ class Code;
 
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
-Tmp cCallResult(Type);
+size_t cCallResultCount(CCallValue*);
+
+Tmp cCallResult(CCallValue*, unsigned);
 
 Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 

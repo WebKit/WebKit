@@ -37,14 +37,28 @@ namespace JSC { namespace B3 { namespace Air {
 namespace {
 
 template<typename BankInfo>
-Arg marshallCCallArgumentImpl(unsigned& argumentCount, unsigned& stackOffset, Value* child)
+void marshallCCallArgumentImpl(Vector<Arg> &result, unsigned& argumentCount, unsigned& stackOffset, Value* child)
 {
-    unsigned argumentIndex = argumentCount++;
-    if (argumentIndex < BankInfo::numberOfArgumentRegisters)
-        return Tmp(BankInfo::toArgumentRegister(argumentIndex));
+    // FIXME: ARMv7 softfp support?
+
+#if USE(JSVALUE32_64)
+    if (child->type() == Int64)
+        argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
+#endif
+
+    if (argumentCount < BankInfo::numberOfArgumentRegisters) {
+        result.append(Tmp(BankInfo::toArgumentRegister(argumentCount++)));
+#if USE(JSVALUE32_64)
+        if (child->type() == Int64) {
+            ASSERT(argumentCount < BankInfo::numberOfArgumentRegisters);
+            result.append(Tmp(BankInfo::toArgumentRegister(argumentCount++)));
+        }
+#endif
+        return;
+    }
 
     unsigned slotSize;
-    if (isARM64() && isDarwin()) {
+    if ((isARM64() && isDarwin()) || isARM()) {
         // Arguments are packed.
         slotSize = sizeofType(child->type());
     } else {
@@ -53,22 +67,25 @@ Arg marshallCCallArgumentImpl(unsigned& argumentCount, unsigned& stackOffset, Va
     }
 
     stackOffset = WTF::roundUpToMultipleOf(slotSize, stackOffset);
-    Arg result = Arg::callArg(stackOffset);
+    result.append(Arg::callArg(stackOffset));
+#if USE(JSVALUE32_64)
+    if (child->type() == Int64)
+        result.append(Arg::callArg(stackOffset + 4));
+#endif
     stackOffset += slotSize;
-    return result;
 }
 
-Arg marshallCCallArgument(
-    unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Value* child)
+void marshallCCallArgument(Vector<Arg> &result, unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Value* child)
 {
     switch (bankForType(child->type())) {
     case GP:
-        return marshallCCallArgumentImpl<GPRInfo>(gpArgumentCount, stackOffset, child);
+        marshallCCallArgumentImpl<GPRInfo>(result, gpArgumentCount, stackOffset, child);
+        return;
     case FP:
-        return marshallCCallArgumentImpl<FPRInfo>(fpArgumentCount, stackOffset, child);
+        marshallCCallArgumentImpl<FPRInfo>(result, fpArgumentCount, stackOffset, child);
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return Arg();
 }
 
 } // anonymous namespace
@@ -76,25 +93,45 @@ Arg marshallCCallArgument(
 Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
 {
     Vector<Arg> result;
-    result.append(Tmp(CCallSpecial::scratchRegister));
+    result.append(Tmp(CCallSpecial::scratchRegister)); // For callee
     unsigned gpArgumentCount = 0;
     unsigned fpArgumentCount = 0;
     unsigned stackOffset = 0;
-    for (unsigned i = 1; i < value->numChildren(); ++i) {
-        result.append(
-            marshallCCallArgument(gpArgumentCount, fpArgumentCount, stackOffset, value->child(i)));
-    }
+    for (unsigned i = 1; i < value->numChildren(); ++i)
+        marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i));
     code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
     return result;
 }
 
-Tmp cCallResult(Type type)
+size_t cCallResultCount(CCallValue* value)
 {
-    switch (type.kind()) {
+    switch (value->type().kind()) {
+    case Void:
+        return 0;
+#if USE(JSVALUE32_64)
+    case Int64:
+        return 2;
+#endif
+    case Tuple:
+        RELEASE_ASSERT_NOT_REACHED();
+    default:
+        return 1;
+    }
+}
+
+Tmp cCallResult(CCallValue* value, unsigned index)
+{
+    ASSERT_UNUSED(index, index <= (is64Bit() ? 1 : 2));
+    switch (value->type().kind()) {
     case Void:
         return Tmp();
     case Int32:
+        return Tmp(GPRInfo::returnValueGPR);
     case Int64:
+#if USE(JSVALUE32_64)
+        if (index == 1)
+            return Tmp(GPRInfo::returnValueGPR2);
+#endif
         return Tmp(GPRInfo::returnValueGPR);
     case Float:
     case Double:

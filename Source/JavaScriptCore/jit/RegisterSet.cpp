@@ -80,6 +80,15 @@ RegisterSet RegisterSet::volatileRegistersForJSCall()
     return volatileRegisters;
 }
 
+RegisterSet RegisterSet::volatileRegistersForCCall()
+{
+    RegisterSet volatileRegisters = allRegisters();
+    volatileRegisters.exclude(RegisterSet::stackRegisters());
+    volatileRegisters.exclude(RegisterSet::reservedHardwareRegisters());
+    volatileRegisters.exclude(RegisterSet::calleeSaveRegisters());
+    return volatileRegisters;
+}
+
 RegisterSet RegisterSet::stubUnavailableRegisters()
 {
     // FIXME: This is overly conservative. We could subtract out those callee-saves that we

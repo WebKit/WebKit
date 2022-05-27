@@ -74,7 +74,8 @@ std::optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 {
 #if CPU(ARM64) || CPU(RISCV64)
     return MacroAssembler::dataTempRegister;
-#elif CPU(X86_64)
+#elif CPU(X86_64) || CPU(ARM)
+    // Note: On ARM we solve this via the macro assembler, so this should not yet be required
     return std::nullopt;
 #else
 #error Unhandled architecture.

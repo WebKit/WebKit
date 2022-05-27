@@ -193,7 +193,9 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
 {
     CompilerTimingScope timingScope("Air", "generateWithAlreadyAllocatedRegisters");
 
+#if !CPU(ARM)
     DisallowMacroScratchRegisterUsage disallowScratch(jit);
+#endif
 
     // And now, we generate code.
     GenerationContext context;
