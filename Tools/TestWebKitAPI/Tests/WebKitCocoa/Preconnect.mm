@@ -87,20 +87,16 @@ TEST(Preconnect, ConnectionCount)
     });
     auto webView = adoptNS([WKWebView new]);
 
-    // The preconnect to the server will use the default setting of "use the credential store",
-    // and therefore use the credential-store-blessed NSURLSession.
     [webView _preconnectToServer:server.request().URL];
     Util::run(&anyConnections);
     Util::spinRunLoop(10);
     EXPECT_FALSE(requested);
 
-    // Then this request will *not* use the credential store, therefore using a different NSURLSession
-    // that doesn't know about the above preconnect, triggering a second connection to the server.
     webView.get()._canUseCredentialStorage = NO;
     [webView loadRequest:server.request()];
     Util::run(&requested);
 
-    EXPECT_EQ(connectionCount, 2u);
+    EXPECT_EQ(connectionCount, 1u);
 }
 
 TEST(Preconnect, HTTPS)

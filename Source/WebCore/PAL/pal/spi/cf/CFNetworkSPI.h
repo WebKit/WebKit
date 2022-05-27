@@ -60,6 +60,12 @@
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
+@interface NSURLSessionEffectiveConfiguration : NSObject <NSCopying>
+- (instancetype)_initWithConfiguration:(NSURLSessionConfiguration *)config;
+@end
+#endif // HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
+
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
 
 @interface _NSHTTPConnectionInfo : NSObject
@@ -280,6 +286,11 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 
 @interface NSURLSessionTask ()
+#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT)
+- (void)_adoptEffectiveConfiguration:(NSURLSessionEffectiveConfiguration *) newConfiguration;
+#else
+- (void)_adoptEffectiveConfiguration:(NSURLSessionConfiguration *) newConfiguration;
+#endif
 - (NSDictionary *)_timingData;
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
