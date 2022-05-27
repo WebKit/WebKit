@@ -1741,3 +1741,5 @@ webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattrib
 
 webkit.org/b/240927 [ BigSur Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
+webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass Failure ]
+webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass Failure ]
