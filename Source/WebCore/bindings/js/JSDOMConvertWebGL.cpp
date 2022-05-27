@@ -38,6 +38,7 @@
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionRGTC.h"
 #include "JSEXTTextureFilterAnisotropic.h"
+#include "JSEXTTextureNorm16.h"
 #include "JSEXTsRGB.h"
 #include "JSKHRParallelShaderCompile.h"
 #include "JSOESElementIndexUint.h"
@@ -168,6 +169,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureCompressionRGTC&>(extension));
     case WebGLExtension::EXTTextureFilterAnisotropicName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureFilterAnisotropic&>(extension));
+    case WebGLExtension::EXTTextureNorm16Name:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureNorm16&>(extension));
     case WebGLExtension::EXTsRGBName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTsRGB&>(extension));
     case WebGLExtension::EXTFragDepthName:

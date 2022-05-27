@@ -766,6 +766,16 @@ public:
     static constexpr GCGLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
     static constexpr GCGLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
 
+    // GL_EXT_texture_norm16
+    static constexpr GCGLenum R16_EXT = 0x822A;
+    static constexpr GCGLenum RG16_EXT = 0x822C;
+    static constexpr GCGLenum RGB16_EXT = 0x8054;
+    static constexpr GCGLenum RGBA16_EXT = 0x805B;
+    static constexpr GCGLenum R16_SNORM_EXT = 0x8F98;
+    static constexpr GCGLenum RG16_SNORM_EXT = 0x8F99;
+    static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
+    static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
+
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
     static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;

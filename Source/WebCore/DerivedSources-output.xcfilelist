@@ -778,6 +778,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureCompressionRGTC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureCompressionRGTC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureNorm16.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTTextureNorm16.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTsRGB.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTsRGB.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEcKeyParams.cpp

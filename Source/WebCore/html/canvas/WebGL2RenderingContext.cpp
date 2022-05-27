@@ -34,6 +34,7 @@
 #include "EXTFloatBlend.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
+#include "EXTTextureNorm16.h"
 #include "EventLoop.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -2712,6 +2713,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
 
     ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc"_s, enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic"_s, enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
+    ENABLE_IF_REQUESTED(EXTTextureNorm16, m_extTextureNorm16, "EXT_texture_norm16"_s, EXTTextureNorm16::supported(*m_context));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear"_s, enableSupportedExtension("GL_OES_texture_float_linear"_s));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
     ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc"_s, WebGLCompressedTextureASTC::supported(*m_context));
@@ -2748,6 +2750,8 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append("EXT_texture_compression_rgtc"_s);
     if (m_context->supportsExtension("GL_EXT_texture_filter_anisotropic"_s))
         result.append("EXT_texture_filter_anisotropic"_s);
+    if (EXTTextureNorm16::supported(*m_context))
+        result.append("EXT_texture_norm16"_s);
     if (WebGLCompressedTextureASTC::supported(*m_context))
         result.append("WEBGL_compressed_texture_astc"_s);
     if (WebGLCompressedTextureATC::supported(*m_context))
@@ -3049,6 +3053,15 @@ void WebGL2RenderingContext::renderbufferStorageImpl(GCGLenum target, GCGLsizei 
     case GraphicsContextGL::R11F_G11F_B10F:
         if (!extensionIsEnabled("EXT_color_buffer_float"_s)) {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_color_buffer_float not enabled");
+            return;
+        }
+        renderbufferStorageHelper(target, samples, internalformat, width, height);
+        break;
+    case GraphicsContextGL::R16_EXT:
+    case GraphicsContextGL::RG16_EXT:
+    case GraphicsContextGL::RGBA16_EXT:
+        if (!extensionIsEnabled("EXT_texture_norm16"_s)) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_texture_norm16 not enabled");
             return;
         }
         renderbufferStorageHelper(target, samples, internalformat, width, height);

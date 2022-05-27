@@ -78,6 +78,7 @@ class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
 class EXTTextureCompressionRGTC;
 class EXTTextureFilterAnisotropic;
+class EXTTextureNorm16;
 class EXTShaderTextureLOD;
 class EXTsRGB;
 class EXTFragDepth;
@@ -707,6 +708,7 @@ protected:
     RefPtr<EXTsRGB> m_extsRGB;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
     RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
+    RefPtr<EXTTextureNorm16> m_extTextureNorm16;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<KHRParallelShaderCompile> m_khrParallelShaderCompile;
     RefPtr<OESTextureFloat> m_oesTextureFloat;

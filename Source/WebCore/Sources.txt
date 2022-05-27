@@ -1366,6 +1366,7 @@ html/canvas/EXTFragDepth.cpp
 html/canvas/EXTShaderTextureLOD.cpp
 html/canvas/EXTTextureCompressionRGTC.cpp
 html/canvas/EXTTextureFilterAnisotropic.cpp
+html/canvas/EXTTextureNorm16.cpp
 html/canvas/EXTsRGB.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
@@ -3125,6 +3126,7 @@ JSEXTFragDepth.cpp
 JSEXTShaderTextureLOD.cpp
 JSEXTTextureCompressionRGTC.cpp
 JSEXTTextureFilterAnisotropic.cpp
+JSEXTTextureNorm16.cpp
 JSEXTsRGB.cpp
 JSKHRParallelShaderCompile.cpp
 JSEcKeyParams.cpp

@@ -42,6 +42,7 @@
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
+#include "EXTTextureNorm16.h"
 #include "EXTsRGB.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -4002,6 +4003,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
+    CHECK_EXTENSION(m_extTextureNorm16, "EXT_texture_norm16");
     CHECK_EXTENSION(m_extShaderTextureLOD, "EXT_shader_texture_lod");
     CHECK_EXTENSION(m_khrParallelShaderCompile, "KHR_parallel_shader_compile");
     CHECK_EXTENSION(m_oesTextureFloat, "OES_texture_float");
@@ -5648,7 +5650,7 @@ void WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypes()
 
 void WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypesWebGL2()
 {
-    // FIXME: add EXT_texture_norm16 support.
+    // FIXME: add EXT_texture_norm16_dom_source support.
 }
 
 bool WebGLRenderingContextBase::validateTexImageSourceFormatAndType(const char* functionName, TexImageFunctionType functionType, GCGLenum internalformat, GCGLenum format, GCGLenum type)
@@ -8102,6 +8104,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extsRGB);
     LOSE_EXTENSION(m_extTextureCompressionRGTC);
     LOSE_EXTENSION(m_extTextureFilterAnisotropic);
+    LOSE_EXTENSION(m_extTextureNorm16);
     LOSE_EXTENSION(m_extShaderTextureLOD);
     LOSE_EXTENSION(m_khrParallelShaderCompile);
     LOSE_EXTENSION(m_oesTextureFloat);

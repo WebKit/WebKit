@@ -43,6 +43,7 @@ public:
         EXTShaderTextureLODName,
         EXTTextureCompressionRGTCName,
         EXTTextureFilterAnisotropicName,
+        EXTTextureNorm16Name,
         EXTsRGBName,
         KHRParallelShaderCompileName,
         OESTextureFloatName,
