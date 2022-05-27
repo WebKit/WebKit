@@ -29,6 +29,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebCookieManager.h"
+#include "WebSocketTaskCurl.h"
 #include <WebCore/CookieJarDB.h>
 #include <WebCore/CurlContext.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -56,6 +57,11 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const Net
 NetworkSessionCurl::~NetworkSessionCurl()
 {
 
+}
+
+std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin&, bool)
+{
+    return makeUnique<WebSocketTask>(channel, request, protocol);
 }
 
 } // namespace WebKit

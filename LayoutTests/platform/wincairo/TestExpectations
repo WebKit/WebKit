@@ -886,14 +886,14 @@ http/tests/webshare [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
-http/tests/websocket/tests/hybi/httponly-cookie.pl [ Pass Failure ]
-http/tests/websocket/tests/hybi/inspector [ Skip ]
-http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Pass Failure ]
+
+# [Win] Seeing Internal Server Error when running some http websocket tests
+# https://bugs.webkit.org/show_bug.cgi?id=237722
+http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/workers/worker-reload.html [ Timeout Pass ]
 
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure Timeout ]
@@ -2009,7 +2009,6 @@ http/tests/misc/large-js-program.py [ Skip ] # Timeout
 http/tests/misc/webtiming-one-redirect.py [ Failure ]
 http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
-http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ] # Crash by assertion failure
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
 http/tests/xmlhttprequest/origin-header-same-origin-get-async.html [ Failure ]

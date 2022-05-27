@@ -53,7 +53,7 @@ namespace WebCore {
 
 Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-#if USE(SOUP)
+#if USE(SOUP) || USE(CURL)
     auto channel = provider.createWebSocketChannel(document, client);
     ASSERT(channel);
     return channel.releaseNonNull();
