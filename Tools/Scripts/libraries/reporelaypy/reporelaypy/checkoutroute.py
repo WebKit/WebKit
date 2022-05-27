@@ -22,6 +22,7 @@
 
 import json
 import re
+import sys
 
 from flask import abort, current_app, json as fjson, redirect, Flask, Response
 from reporelaypy import Database
@@ -180,6 +181,11 @@ class CheckoutRoute(AuthedBlueprint):
         self.add_url_rule('/changeset/<path:revision>/webkit', 'trac', self.trac, methods=('GET',))
 
     def commit(self, ref=None):
+        import redis
+
+        if ref and isinstance(ref, str) and ref.isnumeric():
+            ref = 'r{}'.format(ref)
+
         try:
             retrieved = self.database.get(ref)
             if retrieved:
