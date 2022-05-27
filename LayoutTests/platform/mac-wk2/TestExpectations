@@ -1712,6 +1712,27 @@ webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrat
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r16f-red-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r8-red-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-rgb5_a1-rgba-unsigned_short_5_5_5_1.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgb16f-rgb-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgb565-rgb-unsigned_short_5_6_5.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgb9_e5-rgb-half_float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgba32f-rgba-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r32f-red-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-rgb8-rgb-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-rgb9_e5-rgb-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-rgba4-rgba-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgb16f-rgb-half_float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-srgb8-rgb-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r11f_g11f_b10f-rgb-float.html [ Pass Failure ]
+webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r16f-red-half_float.html [ Pass Failure ]
+
 webkit.org/b/240814 webrtc/canvas-to-peer-connection.html [ Pass Failure ]
 
 webkit.org/b/240821 [ Monterey Release ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Slow ]

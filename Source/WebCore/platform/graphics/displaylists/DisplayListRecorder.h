@@ -135,8 +135,6 @@ protected:
     virtual bool recordResourceUse(const SourceImage&) = 0;
     virtual bool recordResourceUse(Font&) = 0;
 
-    virtual void setNeedsFlush(bool) { }
-
     struct ContextState {
         GraphicsContextState state;
         std::optional<GraphicsContextState> lastDrawingState;

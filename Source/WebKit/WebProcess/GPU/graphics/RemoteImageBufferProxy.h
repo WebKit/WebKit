@@ -66,7 +66,7 @@ public:
     ~RemoteImageBufferProxy()
     {
         if (!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isGPUProcessConnectionClosed()) {
-            setNeedsFlush(false);
+            m_remoteDisplayList.resetNeedsFlush();
             return;
         }
 
@@ -114,11 +114,6 @@ protected:
         Locker locker { m_receivedFlushIdentifierLock };
         m_receivedFlushIdentifier = flushIdentifier;
         m_receivedFlushIdentifierChangedCondition.notifyAll();
-    }
-
-    void setNeedsFlush(bool needsFlush) final
-    {
-        m_needsFlush = needsFlush;
     }
 
     void waitForDidFlushWithTimeout()
@@ -251,7 +246,7 @@ protected:
 
     void clearBackend() final
     {
-        setNeedsFlush(false);
+        m_remoteDisplayList.resetNeedsFlush();
         didFlush(m_sentFlushIdentifier);
         BaseConcreteImageBuffer::clearBackend();
     }
@@ -276,7 +271,6 @@ protected:
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.flushDrawingContextAsync();
         m_remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
-        setNeedsFlush(true);
     }
 
     void convertToLuminanceMask() final
@@ -315,13 +309,13 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return false;
 
-        if (!m_needsFlush)
+        if (!m_remoteDisplayList.needsFlush())
             return hasPendingFlush();
         
         m_sentFlushIdentifier = WebCore::GraphicsContextFlushIdentifier::generate();
         LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
         m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
-        setNeedsFlush(false);
+        m_remoteDisplayList.resetNeedsFlush();
         return true;
     }
 
@@ -354,7 +348,6 @@ protected:
     WebCore::GraphicsContextFlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
-    bool m_needsFlush { false };
 };
 
 template<typename BackendType>

@@ -100,7 +100,6 @@ public:
     virtual void flushDrawingContext() { }
     virtual bool flushDrawingContextAsync() { return false; }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
-    virtual void setNeedsFlush(bool) { }
 
     virtual FloatSize logicalSize() const = 0;
     virtual IntSize truncatedLogicalSize() const = 0; // This truncates the real size. You probably should be calling logicalSize() instead.

@@ -42,6 +42,9 @@ public:
     RemoteDisplayListRecorderProxy(WebCore::ImageBuffer&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&);
     ~RemoteDisplayListRecorderProxy() = default;
 
+    void resetNeedsFlush() { m_needsFlush = false; }
+    bool needsFlush() const { return m_needsFlush; }
+
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
     void flushContext(WebCore::GraphicsContextFlushIdentifier);
@@ -52,6 +55,8 @@ private:
     {
         if (UNLIKELY(!m_renderingBackend))
             return;
+
+        m_needsFlush = true;
         m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
     }
 
@@ -132,8 +137,6 @@ private:
     bool recordResourceUse(const WebCore::SourceImage&) final;
     bool recordResourceUse(WebCore::Font&) final;
 
-    void setNeedsFlush(bool) final;
-
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
@@ -141,6 +144,7 @@ private:
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<WebCore::ImageBuffer> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
+    bool m_needsFlush { false };
 };
 
 } // namespace WebKit
