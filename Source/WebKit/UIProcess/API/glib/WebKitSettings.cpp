@@ -236,7 +236,6 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_PLUGINS:
         break;
     case PROP_ENABLE_JAVA:
-        webkit_settings_set_enable_java(settings, g_value_get_boolean(value));
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         webkit_settings_set_javascript_can_open_windows_automatically(settings, g_value_get_boolean(value));
@@ -439,7 +438,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, FALSE);
         break;
     case PROP_ENABLE_JAVA:
-        g_value_set_boolean(value, webkit_settings_get_enable_java(settings));
+        g_value_set_boolean(value, FALSE);
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         g_value_set_boolean(value, webkit_settings_get_javascript_can_open_windows_automatically(settings));
@@ -752,13 +751,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:enable-java:
      *
      * Determines whether or not Java is enabled on the page.
+     *
+     * Deprecated: 2.38
      */
     sObjProperties[PROP_ENABLE_JAVA] =
         g_param_spec_boolean(
             "enable-java",
             _("Enable Java"),
             _("Whether Java support should be enabled."),
-            TRUE,
+            FALSE,
             readWriteConstructParamFlags);
 
     /**
@@ -1917,10 +1918,14 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  * Get the #WebKitSettings:enable-java property.
  *
  * Returns: %FALSE always.
+ *
+ * Deprecated: 2.38. This function always returns %FALSE.
  */
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    g_warning("webkit_settings_get_enable_java is deprecated and always returns FALSE. Java is no longer supported.");
 
     return FALSE;
 }
@@ -1931,10 +1936,15 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-java property. Deprecated function that does nothing.
+ *
+ * Deprecated: 2.38. This function does nothing.
  */
-void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean)
+void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    if (enabled)
+        g_warning("webkit_settings_set_enable_java is deprecated and does nothing. Java is no longer supported.");
 }
 
 /**

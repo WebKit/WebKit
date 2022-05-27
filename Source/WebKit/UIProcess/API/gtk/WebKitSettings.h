@@ -156,10 +156,10 @@ WEBKIT_DEPRECATED void
 webkit_settings_set_enable_plugins                             (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_java                                (WebKitSettings *settings);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_settings_set_enable_java                                (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
