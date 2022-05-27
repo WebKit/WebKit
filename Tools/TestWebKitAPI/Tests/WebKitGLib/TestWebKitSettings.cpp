@@ -77,14 +77,6 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_frame_flattening(settings));
 
-    // Java is not supported, and always disabled.
-    // Make warnings non-fatal for this test to make it pass.
-    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
-    g_assert_false(webkit_settings_get_enable_java(settings));
-    webkit_settings_set_enable_java(settings, FALSE);
-    g_assert_false(webkit_settings_get_enable_java(settings));
-    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
-
     // By default, JavaScript can open windows automatically is disabled.
     g_assert_false(webkit_settings_get_javascript_can_open_windows_automatically(settings));
     webkit_settings_set_javascript_can_open_windows_automatically(settings, TRUE);
@@ -369,6 +361,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
     webkit_settings_set_enable_xss_auditor(settings, TRUE);
     g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
+
+    // Java is not supported, and always disabled.
+    // Make warnings non-fatal for this test to make it pass.
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+    g_assert_false(webkit_settings_get_enable_java(settings));
+    webkit_settings_set_enable_java(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_java(settings));
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     g_object_unref(G_OBJECT(settings));
