@@ -30,6 +30,7 @@
 #include "Heap.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
+#include "wtf/Locker.h"
 #include "wtf/RawPointer.h"
 
 #include <wtf/FunctionTraits.h>
@@ -100,15 +101,6 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
 {
     for (;;) {
-        auto swept = ((~m_bits.unswept()) & (m_bits.canAllocateButNotEmpty() | m_bits.empty())).findBit(allocator.m_allocationCursor, true);
-        if (swept < m_blocks.size()) {
-            MarkedBlock::Handle* result = m_blocks[swept];
-            if (false)
-                dataLogLn("***Using pre-swept block to allocate in: ", RawPointer(result->atomAt(0)));
-            setIsCanAllocateButNotEmpty(NoLockingNecessary, swept, false);
-            return result;
-        }
-
         allocator.m_allocationCursor = (m_bits.canAllocateButNotEmpty() | m_bits.empty()).findBit(allocator.m_allocationCursor, true);
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
@@ -172,20 +164,31 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock wil
 {
     ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()] == block);
-    
-    subspace()->didRemoveBlock(block->index());
-    
-    m_blocks[block->index()] = nullptr;
-    m_freeBlockIndices.append(block->index());
-    
-    forEachBitVector(
-        Locker { m_bitvectorLock },
-        [&](auto vectorRef) {
-            vectorRef[block->index()] = false;
-        });
 
-    if (willDelete == WillDeleteBlock::No)
-        block->didRemoveFromDirectory();
+    while (true) {
+        Locker locker { m_bitvectorLock };
+
+        if (!block->block().lock().tryLock())
+            continue;
+        
+        subspace()->didRemoveBlock(block->index());
+        
+        m_blocks[block->index()] = nullptr;
+        m_freeBlockIndices.append(block->index());
+
+        forEachBitVector(
+            locker,
+            [&](auto vectorRef) {
+                vectorRef[block->index()] = false;
+            });
+
+        if (willDelete == WillDeleteBlock::No)
+            block->didRemoveFromDirectory(NoLockingNecessary);
+        
+        block->block().lock().unlock();
+        
+        break;
+    }
 }
 
 void BlockDirectory::stopAllocating()

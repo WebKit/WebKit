@@ -30,6 +30,7 @@
 #include "HeapInlines.h"
 #include "MarkedBlock.h"
 #include "VM.h"
+#include "wtf/Locker.h"
 #include "wtf/RawPointer.h"
 
 namespace JSC {
@@ -122,12 +123,26 @@ bool ParallelSweeper::sweepNextBlockInParallel(VM&)
             continue;
         
         MarkedBlock::Handle* block = nullptr;
-        {
+        bool foundBlock = false;
+        while (!foundBlock) {
             Locker bitvectorLock { m_currentDirectory->bitvectorLock() };
             block = m_currentDirectory->findBlockToSweep(m_unsweptCursor);
+            if (!block)
+                break;
+
+            if (!block->block().lock().tryLock())
+                return true;
+            
+            if (block->directory() != m_currentDirectory
+                || m_currentDirectory->isEmpty(NoLockingNecessary, block)) {
+                block->block().lock().unlock();
+                return true;
+            }
+            
+            foundBlock = true;
         }
 
-        if (!block) {
+        if (!foundBlock) {
             m_unsweptCursor = 0;
             continue;
         }
@@ -135,11 +150,8 @@ bool ParallelSweeper::sweepNextBlockInParallel(VM&)
         if (false)
             dataLogLn("Sweeping block in parallel ", RawPointer(block->atomAt(0)));
 
-        Locker footerLock { block->block().lock() };
-        if (block->directory() != m_currentDirectory)
-            continue;
-        
-        block->sweepInParallel(footerLock);
+        block->sweepInParallel(NoLockingNecessary);
+        block->block().lock().unlock();
         return true;
     }
     

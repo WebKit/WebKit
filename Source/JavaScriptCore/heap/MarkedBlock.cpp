@@ -33,6 +33,7 @@
 #include "SweepingScope.h"
 #include "heap/CellContainer.h"
 #include "wtf/Compiler.h"
+#include "wtf/Locker.h"
 #include "wtf/RawPointer.h"
 #include <wtf/CommaPrinter.h>
 
@@ -353,12 +354,11 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, unsigned 
     blockFooter().m_biasedMarkCount = blockFooter().m_markCountBias = static_cast<int16_t>(markCountBias);
 }
 
-void MarkedBlock::Handle::didRemoveFromDirectory()
+void MarkedBlock::Handle::didRemoveFromDirectory(const AbstractLocker& blockFooterLock)
 {
     ASSERT(m_index != std::numeric_limits<unsigned>::max());
     ASSERT(m_directory);
-
-    Locker locker { blockFooter().m_lock };
+    UNUSED_PARAM(blockFooterLock);
     
     m_index = std::numeric_limits<unsigned>::max();
     m_directory = nullptr;
@@ -478,7 +478,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-void MarkedBlock::Handle::sweepInParallel(AbstractLocker& footerLock)
+void MarkedBlock::Handle::sweepInParallel(const AbstractLocker& footerLock)
 {
     UNUSED_PARAM(footerLock);
     if (!m_directory)

@@ -636,6 +636,7 @@ private:
     
     void collectInMutatorThread();
     
+    void runParallelSweeper();
     void stopThePeriphery(GCConductor);
     void resumeThePeriphery();
     

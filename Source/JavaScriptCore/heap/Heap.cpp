@@ -544,6 +544,7 @@ void Heap::lastChanceToFinalize()
         dumpHeapStatisticsAtVMDestruction();
     
     m_arrayBuffers.lastChanceToFinalize();
+    ASSERT(!m_sweeperClient.numberOfActiveThreads());
     m_objectSpace.stopAllocatingForGood();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
@@ -1321,9 +1322,10 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
     return result ? RunCurrentPhaseResult::Continue : RunCurrentPhaseResult::Finished;
 }
 
-NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
+void Heap::runParallelSweeper()
 {
     if (!m_parallelSweepersWillRunSoon) {
+        ASSERT(!m_parallelSweepersShouldExit);
         m_parallelSweepersShouldExit = false;
         m_parallelSweepersWillRunSoon = true;
         m_sweeperClient.setFunction(
@@ -1357,6 +1359,11 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
                 }
             });
     }
+}
+
+NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
+{
+    runParallelSweeper();
 
     // Check m_requests since the mutator calls this to poll what's going on.
     {
@@ -1609,10 +1616,9 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_parallelMarkersShouldExit = true;
         m_markingConditionVariable.notifyAll();
     }
-    m_parallelSweepersShouldExit = true;
-    m_parallelSweepersWillRunSoon = false;
+    ASSERT(m_parallelSweepersWillRunSoon == false);
+    ASSERT(!m_sweeperClient.numberOfActiveThreads());
     m_helperClient.finish();
-    m_sweeperClient.finish();
     
     ASSERT(m_mutatorMarkStack->isEmpty());
     ASSERT(m_raceMarkStack->isEmpty());
@@ -1765,6 +1771,9 @@ void Heap::stopThePeriphery(GCConductor conn)
         RELEASE_ASSERT_NOT_REACHED();
     }
     
+    m_parallelSweepersShouldExit = true;
+    m_parallelSweepersWillRunSoon = false;
+
     if (m_mutatorDidRun)
         m_mutatorExecutionVersion++;
     
@@ -1783,6 +1792,9 @@ void Heap::stopThePeriphery(GCConductor conn)
     if (auto* shadowChicken = vm().shadowChicken())
         shadowChicken->update(vm(), vm().topCallFrame);
     
+    m_sweeperClient.finish();
+    m_parallelSweepersWillRunSoon = false;
+    m_parallelSweepersShouldExit = false;
     m_objectSpace.stopAllocating();
     
     m_stopTime = MonotonicTime::now();
@@ -1841,6 +1853,7 @@ NEVER_INLINE void Heap::resumeThePeriphery()
         visitor->updateMutatorIsStopped();
     
     resumeCompilerThreads();
+    runParallelSweeper();
 }
 
 bool Heap::stopTheMutator()

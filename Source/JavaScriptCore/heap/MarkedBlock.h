@@ -143,7 +143,7 @@ public:
         // the block. If it's not set and the block has nothing marked, then we'll make the
         // mistake of making a pop freelist rather than a bump freelist.
         void sweep(FreeList*);
-        void sweepInParallel(AbstractLocker& footerLock);
+        void sweepInParallel(const AbstractLocker& footerLock);
         
         // This is to be called by Subspace.
         template<typename DestroyFunc>
@@ -198,7 +198,7 @@ public:
         void removeFromDirectory();
         
         void didAddToDirectory(BlockDirectory*, unsigned index);
-        void didRemoveFromDirectory();
+        void didRemoveFromDirectory(const AbstractLocker& blockFooterLock);
         
         void* start() const { return &m_block->atoms()[0]; }
         void* end() const { return &m_block->atoms()[m_endAtom]; }
