@@ -341,19 +341,19 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
 
     if (current().m_type == TokenType::KeywordI32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "i32" });
+        RETURN_NODE_REF(NamedType, StringView { "i32"_s });
     }
     if (current().m_type == TokenType::KeywordF32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "f32" });
+        RETURN_NODE_REF(NamedType, StringView { "f32"_s });
     }
     if (current().m_type == TokenType::KeywordU32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "u32" });
+        RETURN_NODE_REF(NamedType, StringView { "u32"_s });
     }
     if (current().m_type == TokenType::KeywordBool) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "bool" });
+        RETURN_NODE_REF(NamedType, StringView { "bool"_s });
     }
     if (current().m_type == TokenType::Identifier) {
         CONSUME_TYPE_NAMED(name, Identifier);

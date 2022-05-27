@@ -271,7 +271,7 @@ void PlatformDisplay::initializeEGLDisplay()
 
     {
         const char* extensionsString = eglQueryString(m_eglDisplay, EGL_EXTENSIONS);
-        auto displayExtensions = StringView { extensionsString }.split(' ');
+        auto displayExtensions = StringView::fromLatin1(extensionsString).split(' ');
         auto findExtension =
             [&](auto extensionName) {
                 return std::any_of(displayExtensions.begin(), displayExtensions.end(),

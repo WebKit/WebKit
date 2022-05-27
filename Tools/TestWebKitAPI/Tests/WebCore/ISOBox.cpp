@@ -38,11 +38,11 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-static const char* base64EncodedSinfWithKeyID3 = "AAAAYXNpbmYAAAAMZnJtYW1wNGEAAAAUc2NobQAAAABjYmNzAAEAAAAAADlzY2hpAAAAMXRlbmMBAAAAAAABAAAAAAAAAAAAAAAAAAAAAAMQ1fvWuC7ZPk75iuQJMe4ztw==";
+static constexpr auto base64EncodedSinfWithKeyID3 = "AAAAYXNpbmYAAAAMZnJtYW1wNGEAAAAUc2NobQAAAABjYmNzAAEAAAAAADlzY2hpAAAAMXRlbmMBAAAAAAABAAAAAAAAAAAAAAAAAAAAAAMQ1fvWuC7ZPk75iuQJMe4ztw=="_s;
 
 TEST(ISOBox, ISOProtectionSchemeInfoBox)
 {
-    auto sinfArray = base64Decode(StringView(base64EncodedSinfWithKeyID3));
+    auto sinfArray = base64Decode(StringView { base64EncodedSinfWithKeyID3 });
     ASSERT_TRUE(sinfArray);
     ASSERT_EQ(97UL, sinfArray->size());
 
@@ -74,7 +74,7 @@ TEST(ISOBox, ISOProtectionSchemeInfoBox)
     ASSERT_EQ(defaultIV, trackEncryptionBox->defaultConstantIV());
 }
 
-static const char* base64EncodedPsshWithAssetId = "AAAAsHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAJAAAACQZnBzZAAAABBmcHNpAAAAAGNlbmMAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPEAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPI=";
+static constexpr auto base64EncodedPsshWithAssetId = "AAAAsHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAJAAAACQZnBzZAAAABBmcHNpAAAAAGNlbmMAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPEAAAA8ZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAYZmthaQAAAAAAAAAAAAAAAAAAAPI="_s;
 
 TEST(ISOBox, ISOFairPlayStreamingPsshBox)
 {

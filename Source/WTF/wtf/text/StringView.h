@@ -69,9 +69,6 @@ public:
     StringView(const char*, unsigned length);
     StringView(ASCIILiteral);
 
-    // FIXME: Make private once all call sites have been ported to fromLatin1.
-    explicit StringView(const char*);
-
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
     static StringView empty();
@@ -191,6 +188,9 @@ public:
     struct UnderlyingString;
 
 private:
+    // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
+    explicit StringView(const char*);
+
     friend bool equal(StringView, StringView);
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
 

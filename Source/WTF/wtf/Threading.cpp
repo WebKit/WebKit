@@ -166,7 +166,7 @@ const char* Thread::normalizeThreadName(const char* threadName)
     // This name can be com.apple.WebKit.ProcessLauncher or com.apple.CoreIPC.ReceiveQueue.
     // We are using those names for the thread name, but both are longer than the limit of
     // the platform thread name length, 32 for Windows and 16 for Linux.
-    StringView result(threadName);
+    auto result = StringView::fromLatin1(threadName);
     size_t size = result.reverseFind('.');
     if (size != notFound)
         result = result.substring(size + 1);
