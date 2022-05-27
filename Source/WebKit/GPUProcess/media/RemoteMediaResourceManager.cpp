@@ -61,7 +61,7 @@ void RemoteMediaResourceManager::removeMediaResource(RemoteMediaResourceIdentifi
 void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier identifier, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready()) {
+    if (!resource) {
         completionHandler(ShouldContinuePolicyCheck::No);
         return;
     }
@@ -72,7 +72,7 @@ void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier 
 void RemoteMediaResourceManager::redirectReceived(RemoteMediaResourceIdentifier identifier, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready()) {
+    if (!resource) {
         completionHandler({ });
         return;
     }
@@ -83,7 +83,7 @@ void RemoteMediaResourceManager::redirectReceived(RemoteMediaResourceIdentifier 
 void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifier, uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready())
+    if (!resource)
         return;
 
     resource->dataSent(bytesSent, totalBytesToBeSent);
@@ -92,7 +92,7 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
 void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, const SharedMemory::IPCHandle& bufferHandle)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready())
+    if (!resource)
         return;
 
     auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
@@ -104,7 +104,7 @@ void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier iden
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready())
+    if (!resource)
         return;
 
     resource->accessControlCheckFailed(error);
@@ -113,7 +113,7 @@ void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIde
 void RemoteMediaResourceManager::loadFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready())
+    if (!resource)
         return;
 
     resource->loadFailed(error);
@@ -122,7 +122,7 @@ void RemoteMediaResourceManager::loadFailed(RemoteMediaResourceIdentifier identi
 void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier identifier, const NetworkLoadMetrics& metrics)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
-    if (!resource || !resource->ready())
+    if (!resource)
         return;
 
     resource->loadFinished(metrics);
