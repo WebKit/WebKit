@@ -557,22 +557,19 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             if (!propertyName || this._implicit || this._anonymous || !this._enabled)
                 return;
 
-            let oldCount = WI.CSSProperty._cachedNameCounts[propertyName];
+            let cachedCount = WI.CSSProperty._cachedNameCounts[propertyName];
 
             // Allow property counts to be updated if the property name has already been counted before.
             // This can happen when inspecting a device that has different CSS properties enabled.
-            if (isNaN(oldCount) && !WI.cssManager.propertyNameCompletions.isValidPropertyName(propertyName))
+            if (isNaN(cachedCount) && !WI.cssManager.propertyNameCompletions.isValidPropertyName(propertyName))
                 return;
 
-            console.assert(delta > 0 || oldCount >= delta, oldCount, delta);
-            let newCount = Math.max(0, (oldCount || 0) + delta);
-            WI.CSSProperty._cachedNameCounts[propertyName] = newCount;
+            console.assert(delta > 0 || cachedCount >= delta, cachedCount, delta);
+            WI.CSSProperty._cachedNameCounts[propertyName] = Math.max(0, (cachedCount || 0) + delta);
 
             WI.objectStores.cssPropertyNameCounts.get(propertyName).then((storedCount) => {
                 console.assert(delta > 0 || storedCount >= delta, storedCount, delta);
-                storedCount = Math.max(0, (storedCount || 0) + delta);
-                WI.CSSProperty._cachedNameCounts[propertyName] = storedCount;
-                WI.objectStores.cssPropertyNameCounts.put(storedCount, propertyName);
+                WI.objectStores.cssPropertyNameCounts.put(Math.max(0, (storedCount || 0) + delta), propertyName);
             });
 
             if (propertyName !== this.canonicalName)
