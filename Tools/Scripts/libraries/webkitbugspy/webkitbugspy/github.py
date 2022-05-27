@@ -137,7 +137,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             save_in_keyring=save_in_keyring,
         )
 
-    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
+    def request(self, path=None, params=None, method='GET', headers=None, authenticated=None, paginate=True, json=None, error_message=None):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', 'application/vnd.github.v3+json')
 
@@ -158,10 +158,12 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             name=self.name,
             path='{}'.format(path) if path else '',
         )
-        response = requests.get(url, params=params, headers=headers, auth=auth)
+        response = requests.request(method, url, params=params, headers=headers, auth=auth, json=json)
         if authenticated is None and not auth and response.status_code // 100 == 4:
-            return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate)
-        if response.status_code != 200:
+            return self.request(path=path, params=params, method=method, headers=headers, authenticated=True, paginate=paginate, json=json, error_message=error_message)
+        if response.status_code // 100 != 2:
+            if error_message:
+                sys.stderr.write("{}\n".format(error_message))
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message')
             if message:
@@ -193,6 +195,9 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
         if response.status_code // 100 != 2:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
             sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
             return None
 
@@ -368,19 +373,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             for label in labels:
                 if not self.labels.get(label):
                     raise ValueError("'{}' is not a label for '{}'".format(label, self.url))
-            response = requests.put(
-                '{api_url}/repos/{owner}/{name}/issues/{id}/labels'.format(
-                    api_url=self.api_url,
-                    owner=self.owner,
-                    name=self.name,
-                    id=issue.id,
-                ), auth=HTTPBasicAuth(*self.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
+            response = self.request(
+                'issues/{id}/labels'.format(id=issue.id),
+                method='PUT',
+                authenticated=True,
                 json=dict(labels=labels),
+                error_message="Failed to modify '{}'\n".format(issue)
             )
-            if response.status_code // 100 != 2:
-                sys.stderr.write("Failed to modify '{}'\n".format(issue))
-                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
+            if not response:
                 if not update_dict:
                     return None
             elif project and component and version:
@@ -390,45 +390,33 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         if update_dict:
             update_dict['number'] = [issue.id]
-            response = requests.patch(
-                '{api_url}/repos/{owner}/{name}/issues/{id}'.format(
-                    api_url=self.api_url,
-                    owner=self.owner,
-                    name=self.name,
-                    id=issue.id,
-                ), auth=HTTPBasicAuth(*self.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
+            response = self.request(
+                'issues/{id}'.format(id=issue.id),
+                method='PATCH',
+                authenticated=True,
                 json=update_dict,
+                error_message="Failed to modify '{}'\n".format(issue)
             )
-            if response.status_code // 100 != 2:
+            if not response:
                 if assignee:
                     issue._assignee = None
                 if opened is not None:
                     issue._opened = None
-                sys.stderr.write("Failed to modify '{}'\n".format(issue))
-                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
                 return None
 
         return self.add_comment(issue, why) if why else issue
 
     def add_comment(self, issue, text):
-        response = requests.post(
-            '{api_url}/repos/{owner}/{name}/issues/{id}/comments'.format(
-                api_url=self.api_url,
-                owner=self.owner,
-                name=self.name,
-                id=issue.id,
-            ),
-            auth=HTTPBasicAuth(*self.credentials(required=True)),
-            headers=dict(Accept='application/vnd.github.v3+json'),
+        data = self.request(
+            'issues/{id}/comments'.format(id=issue.id),
+            method='POST',
+            authenticated=True,
             json=dict(body=text),
+            error_message="Failed to add comment to '{}'\n".format(issue)
         )
-        if response.status_code // 100 != 2:
-            sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
-            sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
+        if not data:
             return None
 
-        data = response.json()
         tm = data.get('updated_at', data.get('created_at'))
         if tm:
             tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
@@ -540,17 +528,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if assign:
             data['assignee'] = self.me().username
 
-        response = requests.post(
-            '{api_url}/repos/{owner}/{name}/issues'.format(
-                api_url=self.api_url,
-                owner=self.owner,
-                name=self.name,
-            ), auth=HTTPBasicAuth(*self.credentials(required=True)),
-            headers=dict(Accept='application/vnd.github.v3+json'),
+        response = self.request(
+            'issues',
+            method='POST',
+            authenticated=True,
             json=data,
+            error_message="Failed to create issue."
         )
-        if response.status_code // 100 != 2:
-            sys.stderr.write("Failed to create issue: '{}'\n".format(response.json().get('message', '?')))
+        if not response:
             return None
 
-        return self.issue(response.json()['number'])
+        return self.issue(response['number'])
