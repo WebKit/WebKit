@@ -257,6 +257,8 @@ public:
     bool contains(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
     Structure* get(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
 
+    size_t size() { return map()->size(); }
+
 private:
     friend class SingleSlotTransitionWeakOwner;
 

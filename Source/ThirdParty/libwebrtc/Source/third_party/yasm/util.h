@@ -48,9 +48,9 @@
 
 #endif
 
-#if !defined(lint) && !defined(NDEBUG)
+// #if !defined(lint) && !defined(NDEBUG)
 # define NDEBUG
-#endif
+// #endif
 
 #include <stdio.h>
 #include <stdarg.h>

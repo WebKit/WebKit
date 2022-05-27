@@ -1650,7 +1650,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_lastGCStartTime = m_currentGCStartTime;
     m_lastGCEndTime = MonotonicTime::now();
     m_totalGCTime += m_lastGCEndTime - m_lastGCStartTime;
-        
+
+    Structure::dumpStatistics();
     return changePhase(conn, CollectorPhase::NotRunning);
 }
 

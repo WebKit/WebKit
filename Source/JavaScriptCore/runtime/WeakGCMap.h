@@ -95,6 +95,8 @@ public:
         return false;
     }
 
+    size_t size() { return m_map.size(); }
+
     inline iterator find(const KeyType& key);
 
     inline const_iterator find(const KeyType& key) const;

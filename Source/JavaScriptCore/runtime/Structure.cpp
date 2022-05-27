@@ -37,12 +37,16 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 
-#define DUMP_STRUCTURE_ID_STATISTICS 0
+#define DUMP_STRUCTURE_ID_STATISTICS 1
 
 namespace JSC {
 
 #if DUMP_STRUCTURE_ID_STATISTICS
-static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
+static HashSet<Structure*>& liveStructureSet()
+{
+    static HashSet<Structure*>& set = *(new HashSet<Structure*>);
+    return set;
+}
 #endif
 
 class SingleSlotTransitionWeakOwner final : public WeakHandleOwner {
@@ -81,6 +85,7 @@ bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attribu
 
 void StructureTransitionTable::add(VM& vm, Structure* structure)
 {
+    liveStructureSet().add(structure);
     if (isUsingSingleSlot()) {
         Structure* existingTransition = singleTransition();
 
@@ -103,43 +108,43 @@ void StructureTransitionTable::add(VM& vm, Structure* structure)
 void Structure::dumpStatistics()
 {
 #if DUMP_STRUCTURE_ID_STATISTICS
-    unsigned numberLeaf = 0;
-    unsigned numberUsingSingleSlot = 0;
-    unsigned numberSingletons = 0;
+    // unsigned numberLeaf = 0;
+    // unsigned numberUsingSingleSlot = 0;
+    // unsigned numberSingletons = 0;
     unsigned numberWithPropertyTables = 0;
     unsigned totalPropertyTablesSize = 0;
 
-    HashSet<Structure*>::const_iterator end = liveStructureSet.end();
-    for (HashSet<Structure*>::const_iterator it = liveStructureSet.begin(); it != end; ++it) {
+    HashSet<Structure*>::const_iterator end = liveStructureSet().end();
+    for (HashSet<Structure*>::const_iterator it = liveStructureSet().begin(); it != end; ++it) {
         Structure* structure = *it;
+        // switch (structure->m_transitionTable.size()) {
+        //     case 0:
+        //         ++numberLeaf;
+        //         if (!structure->previousID())
+        //             ++numberSingletons;
+        //         break;
 
-        switch (structure->m_transitionTable.size()) {
-            case 0:
-                ++numberLeaf;
-                if (!structure->previousID())
-                    ++numberSingletons;
-                break;
-
-            case 1:
-                ++numberUsingSingleSlot;
-                break;
-        }
-
+        //     case 1:
+        //         ++numberUsingSingleSlot;
+        //         break;
+        //     default:
+        //         break;
+        // }
         if (PropertyTable* table = structure->propertyTableOrNull()) {
             ++numberWithPropertyTables;
             totalPropertyTablesSize += table->sizeInMemory();
         }
     }
 
-    dataLogF("Number of live Structures: %d\n", liveStructureSet.size());
-    dataLogF("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
-    dataLogF("Number of Structures that are leaf nodes: %d\n", numberLeaf);
-    dataLogF("Number of Structures that singletons: %d\n", numberSingletons);
+    dataLogF("Number of live Structures: %d\n", liveStructureSet().size());
+    // dataLogF("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
+    // dataLogF("Number of Structures that are leaf nodes: %d\n", numberLeaf);
+    // dataLogF("Number of Structures that singletons: %d\n", numberSingletons);
     dataLogF("Number of Structures with PropertyTables: %d\n", numberWithPropertyTables);
 
     dataLogF("Size of a single Structures: %d\n", static_cast<unsigned>(sizeof(Structure)));
     dataLogF("Size of sum of all property maps: %d\n", totalPropertyTablesSize);
-    dataLogF("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyTablesSize) / static_cast<double>(liveStructureSet.size()));
+    dataLogF("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyTablesSize) / static_cast<double>(liveStructureSet().size()));
 #else
     dataLogF("Dumping Structure statistics is not enabled.\n");
 #endif
