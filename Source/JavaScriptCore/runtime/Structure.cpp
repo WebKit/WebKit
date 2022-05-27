@@ -929,7 +929,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
         
         // Copies in our values to their compacted locations.
         for (unsigned i = 0; i < propertyCount; i++)
-            object->putDirect(vm, offsetForPropertyNumber(i, m_inlineCapacity), values[i]);
+            object->putDirectOffset(vm, offsetForPropertyNumber(i, m_inlineCapacity), values[i]);
 
         // We need to zero our unused property space; otherwise the GC might see a
         // stale pointer when we add properties in the future.

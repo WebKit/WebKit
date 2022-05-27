@@ -793,9 +793,10 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 else {
                     unsigned attributes;
                     PropertyOffset offset = object->getDirectOffset(vm, prop, attributes);
-                    if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None)))
-                        object->putDirect(vm, offset, filteredValue);
-                    else {
+                    if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None))) {
+                        object->putDirectOffset(vm, offset, filteredValue);
+                        object->structure()->didReplaceProperty(offset);
+                    } else {
                         bool shouldThrow = false;
                         object->createDataProperty(m_globalObject, prop, filteredValue, shouldThrow);
                     }

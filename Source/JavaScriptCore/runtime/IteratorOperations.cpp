@@ -145,8 +145,8 @@ JSObject* createIteratorResultObject(JSGlobalObject* globalObject, JSValue value
 {
     VM& vm = globalObject->vm();
     JSObject* resultObject = constructEmptyObject(vm, globalObject->iteratorResultObjectStructure());
-    resultObject->putDirect(vm, valuePropertyOffset, value);
-    resultObject->putDirect(vm, donePropertyOffset, jsBoolean(done));
+    resultObject->putDirectOffset(vm, valuePropertyOffset, value);
+    resultObject->putDirectOffset(vm, donePropertyOffset, jsBoolean(done));
     return resultObject;
 }
 

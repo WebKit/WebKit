@@ -218,7 +218,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     StructureID structureID = this->structureID();
     Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
-    putDirect(vm, offset, value);
+    putDirectOffset(vm, offset, value);
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 }
@@ -334,7 +334,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             if ((mode == PutModePut || mode == PutModeDefineOwnProperty) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
                 return ReadonlyPropertyChangeError;
 
-            putDirect(vm, offset, value);
+            putDirectOffset(vm, offset, value);
             structure->didReplaceProperty(offset);
 
             // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
@@ -354,7 +354,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
 
         offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
         validateOffset(offset);
-        putDirect(vm, offset, value);
+        putDirectOffset(vm, offset, value);
         slot.setNewProperty(this, offset);
         if (attributes & PropertyAttribute::ReadOnly)
             this->structure()->setContainsReadOnlyProperties();
@@ -379,7 +379,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
         // is running at the same time we put without transitioning.
         ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
-        putDirect(vm, offset, value);
+        putDirectOffset(vm, offset, value);
         setStructure(vm, newStructure);
         slot.setNewProperty(this, offset);
         return { };
@@ -392,7 +392,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             return ReadonlyPropertyChangeError;
 
         structure->didReplaceProperty(offset);
-        putDirect(vm, offset, value);
+        putDirectOffset(vm, offset, value);
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
@@ -430,7 +430,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
     // is running at the same time we put without transitioning.
     ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
-    putDirect(vm, offset, value);
+    putDirectOffset(vm, offset, value);
     setStructure(vm, newStructure);
     slot.setNewProperty(this, offset);
     if (attributes & PropertyAttribute::ReadOnly)

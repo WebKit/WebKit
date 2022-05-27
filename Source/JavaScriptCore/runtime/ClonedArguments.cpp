@@ -69,7 +69,7 @@ ClonedArguments* ClonedArguments::createEmpty(
     result->finishCreation(vm);
 
     result->m_callee.set(vm, result, callee);
-    result->putDirect(vm, clonedArgumentsLengthPropertyOffset, jsNumber(length));
+    result->putDirectOffset(vm, clonedArgumentsLengthPropertyOffset, jsNumber(length));
     return result;
 }
 

@@ -88,7 +88,7 @@ JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* gl
                 if (codeBlock->identifier(property.location().info()).impl() != entry.key())
                     continue;
 
-                object->putDirect(vm, entry.offset(), JSValue::decode(values[i]));
+                object->putDirectOffset(vm, entry.offset(), JSValue::decode(values[i]));
             }
         }
         break;
@@ -225,7 +225,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         // We use a random-ish number instead of a sensible value like
         // undefined to make possible bugs easier to track.
         for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently())
-            result->putDirect(vm, entry.offset(), jsNumber(19723));
+            result->putDirectOffset(vm, entry.offset(), jsNumber(19723));
 
         return result;
     }

@@ -1885,7 +1885,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
         Structure* newStructure = Structure::changePrototypeTransition(vm, structure(), prototype, deferred);
         setStructure(vm, newStructure);
     } else
-        putDirect(vm, knownPolyProtoOffset, prototype);
+        putDirectOffset(vm, knownPolyProtoOffset, prototype);
 
     if (!anyObjectInChainMayInterceptIndexedAccesses())
         return;
@@ -2035,7 +2035,7 @@ void JSObject::putDirectCustomGetterSetterWithoutTransition(VM& vm, PropertyName
     StructureID structureID = this->structureID();
     Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
-    putDirect(vm, offset, value);
+    putDirectOffset(vm, offset, value);
 
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
@@ -2062,7 +2062,7 @@ void JSObject::putDirectNonIndexAccessorWithoutTransition(VM& vm, PropertyName p
     StructureID structureID = this->structureID();
     Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
-    putDirect(vm, offset, accessor);
+    putDirectOffset(vm, offset, accessor);
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 

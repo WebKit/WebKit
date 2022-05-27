@@ -138,19 +138,19 @@ inline JSObject* constructObjectFromPropertyDescriptor(JSGlobalObject* globalObj
     if (descriptor.enumerablePresent() && descriptor.configurablePresent()) {
         if (descriptor.value() && descriptor.writablePresent()) {
             JSObject* result = constructEmptyObject(vm, globalObject->dataPropertyDescriptorObjectStructure());
-            result->putDirect(vm, dataPropertyDescriptorValuePropertyOffset, descriptor.value());
-            result->putDirect(vm, dataPropertyDescriptorWritablePropertyOffset, jsBoolean(descriptor.writable()));
-            result->putDirect(vm, dataPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
-            result->putDirect(vm, dataPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
+            result->putDirectOffset(vm, dataPropertyDescriptorValuePropertyOffset, descriptor.value());
+            result->putDirectOffset(vm, dataPropertyDescriptorWritablePropertyOffset, jsBoolean(descriptor.writable()));
+            result->putDirectOffset(vm, dataPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
+            result->putDirectOffset(vm, dataPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
             return result;
         }
 
         if (descriptor.getterPresent() && descriptor.setterPresent()) {
             JSObject* result = constructEmptyObject(vm, globalObject->accessorPropertyDescriptorObjectStructure());
-            result->putDirect(vm, accessorPropertyDescriptorGetPropertyOffset, descriptor.getter());
-            result->putDirect(vm, accessorPropertyDescriptorSetPropertyOffset, descriptor.setter());
-            result->putDirect(vm, accessorPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
-            result->putDirect(vm, accessorPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
+            result->putDirectOffset(vm, accessorPropertyDescriptorGetPropertyOffset, descriptor.getter());
+            result->putDirectOffset(vm, accessorPropertyDescriptorSetPropertyOffset, descriptor.setter());
+            result->putDirectOffset(vm, accessorPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
+            result->putDirectOffset(vm, accessorPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
             return result;
         }
     }
