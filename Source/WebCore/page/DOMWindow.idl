@@ -78,7 +78,7 @@
     // the user agent
     readonly attribute Navigator navigator;
     // FIXME: This is specified to be [SecureContext]
-    readonly attribute DOMApplicationCache applicationCache;
+    [EnabledBySetting=OfflineWebApplicationCacheEnabled] readonly attribute DOMApplicationCache applicationCache;
 
     // user prompts
     undefined alert();
