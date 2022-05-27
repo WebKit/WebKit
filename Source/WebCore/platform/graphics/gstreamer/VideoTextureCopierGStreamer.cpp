@@ -260,7 +260,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
                 glUniform1i(m_shaderProgram->samplerALocation(), texture.yuvPlane[3]);
                 break;
             }
-            glUniformMatrix3fv(m_shaderProgram->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&texture.yuvToRgbMatrix[0]));
+            glUniformMatrix4fv(m_shaderProgram->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&texture.yuvToRgbMatrix[0]));
 
             for (int i = texture.numberOfPlanes - 1; i >= 0; --i) {
                 glActiveTexture(GL_TEXTURE0 + i);

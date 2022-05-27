@@ -203,19 +203,21 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
             yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&m_videoFrame.info, i);
         }
 
-        std::array<GLfloat, 9> yuvToRgb;
+        std::array<GLfloat, 16> yuvToRgb;
         if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&m_videoFrame.info), GST_VIDEO_COLORIMETRY_BT709)) {
             yuvToRgb = {
-                1.164f,  0.0f,    1.787f,
-                1.164f, -0.213f, -0.531f,
-                1.164f,  2.112f,  0.0f
+                1.164383561643836f, -0.0f,                1.792741071428571f, -0.972945075016308f,
+                1.164383561643836f, -0.213248614273739f, -0.532909328559444f,  0.301482665475862f,
+                1.164383561643836f,  2.112401785714286f, -0.0f,               -1.133402217873451f,
+                0.0f,                0.0f,                0.0f,                1.0f,
             };
         } else {
             // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
             yuvToRgb = {
-                1.164f,  0.0f,    1.596f,
-                1.164f, -0.391f, -0.813f,
-                1.164f,  2.018f,  0.0f
+                1.164383561643836f,  0.0f,                1.596026785714286f, -0.874202217873451f,
+                1.164383561643836f, -0.391762290094914f, -0.812967647237771f,  0.531667823499146f,
+                1.164383561643836f,  2.017232142857143f, -0.0f,               -1.085630789302022f,
+                0.0f,                0.0f,                0.0f,                1.0f,
             };
         }
 

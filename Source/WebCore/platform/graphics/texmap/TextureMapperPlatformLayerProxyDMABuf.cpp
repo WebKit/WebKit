@@ -197,10 +197,11 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
 
     // TODO: this is the BT.601 colorspace conversion matrix. The exact desired colorspace should be included
     // in the DMABufObject, and the relevant matrix decided based on it. BT.601 should remain the default.
-    static constexpr std::array<GLfloat, 9> s_yuvToRGB {
-        1.164f,  0.0f,    1.596f,
-        1.164f, -0.391f, -0.813f,
-        1.164f,  2.018f,  0.0f
+    static constexpr std::array<GLfloat, 16> s_yuvToRGB {
+        1.164383561643836f,  0.0f,                1.596026785714286f, -0.874202217873451f,
+        1.164383561643836f, -0.391762290094914f, -0.812967647237771f,  0.531667823499146f,
+        1.164383561643836f,  2.017232142857143f, -0.0f,               -1.085630789302022f,
+        0.0f,                0.0f,                0.0f,                1.0f,
     };
 
     TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);

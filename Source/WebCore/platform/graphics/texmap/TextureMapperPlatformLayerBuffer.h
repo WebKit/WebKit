@@ -51,7 +51,7 @@ public:
         std::array<GLuint, 4> planes;
         std::array<unsigned, 4> yuvPlane;
         std::array<unsigned, 4> yuvPlaneOffset;
-        std::array<GLfloat, 9> yuvToRgbMatrix;
+        std::array<GLfloat, 16> yuvToRgbMatrix;
     };
     struct ExternalOESTexture {
         GLuint id;
