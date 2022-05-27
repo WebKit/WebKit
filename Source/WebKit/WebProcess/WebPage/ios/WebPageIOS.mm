@@ -4754,7 +4754,7 @@ void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<vo
         ElementContext context;
         context.webPageIdentifier = m_identifier;
         context.documentIdentifier = document.identifier();
-        context.elementIdentifier = document.identifierForElement(element);
+        context.elementIdentifier = element->identifier();
         context.boundingRect = element->boundingBoxInRootViewCoordinates();
         return context;
     });

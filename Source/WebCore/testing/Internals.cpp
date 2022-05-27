@@ -2791,12 +2791,12 @@ uint64_t Internals::storageAreaMapCount() const
 
 uint64_t Internals::elementIdentifier(Element& element) const
 {
-    return element.document().identifierForElement(element).toUInt64();
+    return element.identifier().toUInt64();
 }
 
-bool Internals::isElementAlive(Document& document, uint64_t elementIdentifier) const
+bool Internals::isElementAlive(uint64_t elementIdentifier) const
 {
-    return document.searchForElementByIdentifier(makeObjectIdentifier<ElementIdentifierType>(elementIdentifier));
+    return Element::fromIdentifier(makeObjectIdentifier<ElementIdentifierType>(elementIdentifier));
 }
 
 uint64_t Internals::frameIdentifier(const Document& document) const

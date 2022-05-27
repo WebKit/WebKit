@@ -593,7 +593,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     systemPreviewInfo.isPreview = isSystemPreviewLink() && document().settings().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
-        systemPreviewInfo.element.elementIdentifier = document().identifierForElement(*this);
+        systemPreviewInfo.element.elementIdentifier = identifier();
         systemPreviewInfo.element.documentIdentifier = document().identifier();
         systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document().frame()->loader().pageID());
         if (auto* child = firstElementChild())

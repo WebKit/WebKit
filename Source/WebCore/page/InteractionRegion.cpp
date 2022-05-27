@@ -77,7 +77,7 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
     Vector<FloatRect> rectsInContentCoordinates;
     InteractionRegion region;
 
-    region.elementIdentifier = document->identifierForElement(element);
+    region.elementIdentifier = element.identifier();
 
     auto linkRange = makeRangeSelectingNode(element);
     if (linkRange)

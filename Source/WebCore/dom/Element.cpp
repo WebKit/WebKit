@@ -2548,11 +2548,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
     if (UNLIKELY(isInTopLayer()))
         removeFromTopLayer();
-
-    if (hasNodeFlag(NodeFlag::HasElementIdentifier)) {
-        document().identifiedElementWasRemovedFromDocument(*this);
-        clearNodeFlag(NodeFlag::HasElementIdentifier);
-    }
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
@@ -4866,11 +4861,24 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
     return animations;
 }
 
-ElementIdentifier Element::createElementIdentifier()
+static WeakHashMap<Element, ElementIdentifier>& elementIdentifiersMap()
 {
-    ASSERT(!hasNodeFlag(NodeFlag::HasElementIdentifier));
-    setNodeFlag(NodeFlag::HasElementIdentifier);
-    return ElementIdentifier::generate();
+    static MainThreadNeverDestroyed<WeakHashMap<Element, ElementIdentifier>> map;
+    return map;
+}
+
+ElementIdentifier Element::identifier() const
+{
+    return elementIdentifiersMap().ensure(*this, [] { return ElementIdentifier::generate(); }).iterator->value;
+}
+
+Element* Element::fromIdentifier(ElementIdentifier identifier)
+{
+    for (auto [element, elementIdentifier] : elementIdentifiersMap()) {
+        if (elementIdentifier == identifier)
+            return &element;
+    }
+    return nullptr;
 }
 
 #if ENABLE(CSS_TYPED_OM)

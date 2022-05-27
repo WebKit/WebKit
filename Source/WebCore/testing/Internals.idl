@@ -958,7 +958,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);
-    [CallWith=CurrentDocument] boolean isElementAlive(unsigned long long documentIdentifier);
+    boolean isElementAlive(unsigned long long elementIdentifier);
     unsigned long long frameIdentifier(Document document);
     unsigned long long pageIdentifier(Document document);
 

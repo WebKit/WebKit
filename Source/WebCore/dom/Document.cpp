@@ -8906,30 +8906,6 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
     return resultLayer;
 }
 
-ElementIdentifier Document::identifierForElement(Element& element)
-{
-    ASSERT(&element.document() == this);
-    auto result = m_identifiedElementsMap.ensure(&element, [&] {
-        return element.createElementIdentifier();
-    });
-    return result.iterator->value;
-}
-
-Element* Document::searchForElementByIdentifier(const ElementIdentifier& identifier)
-{
-    for (auto it = m_identifiedElementsMap.begin(); it != m_identifiedElementsMap.end(); ++it) {
-        if (it->value == identifier)
-            return it->key;
-    }
-
-    return nullptr;
-}
-
-void Document::identifiedElementWasRemovedFromDocument(Element& element)
-{
-    m_identifiedElementsMap.remove(&element);
-}
-
 #if ENABLE(DEVICE_ORIENTATION)
 
 DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotionAccessController()
@@ -9024,11 +9000,11 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 #if USE(SYSTEM_PREVIEW)
 void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
 {
-    RefPtr element = searchForElementByIdentifier(systemPreviewInfo.element.elementIdentifier);
-    if (!element)
+    RefPtr element = Element::fromIdentifier(systemPreviewInfo.element.elementIdentifier);
+    if (!is<HTMLAnchorElement>(element))
         return;
 
-    if (!is<HTMLAnchorElement>(element))
+    if (!element->isConnected() || &element->document() != this)
         return;
 
     auto event = MessageEvent::create(message, securityOrigin().toString());

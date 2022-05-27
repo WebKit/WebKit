@@ -565,7 +565,7 @@ protected:
         HasCustomStyleResolveCallbacks = 1 << 21,
 
         HasPendingResources = 1 << 22,
-        HasElementIdentifier = 1 << 23,
+        // Bit 23 is free.
 #if ENABLE(FULLSCREEN_API)
         ContainsFullScreenElement = 1 << 24,
 #endif

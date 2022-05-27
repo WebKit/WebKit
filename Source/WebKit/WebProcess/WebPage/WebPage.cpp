@@ -7553,14 +7553,14 @@ RefPtr<Element> WebPage::elementForContext(const ElementContext& elementContext)
     if (elementContext.webPageIdentifier != m_identifier)
         return nullptr;
 
-    auto* document = Document::allDocumentsMap().get(elementContext.documentIdentifier);
-    if (!document)
+    RefPtr element = Element::fromIdentifier(elementContext.elementIdentifier);
+    if (!element)
         return nullptr;
 
-    if (document->page() != m_page.get())
+    if (!element->isConnected() || element->document().identifier() != elementContext.documentIdentifier || element->document().page() != m_page.get())
         return nullptr;
 
-    return document->searchForElementByIdentifier(elementContext.elementIdentifier);
+    return element;
 }
 
 std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& element) const
@@ -7573,7 +7573,7 @@ std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Eleme
     if (!frame)
         return std::nullopt;
 
-    return WebCore::ElementContext { element.boundingBoxInRootViewCoordinates(), m_identifier, document.identifier(), document.identifierForElement(element) };
+    return WebCore::ElementContext { element.boundingBoxInRootViewCoordinates(), m_identifier, document.identifier(), element.identifier() };
 }
 
 void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)

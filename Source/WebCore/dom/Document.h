@@ -35,7 +35,6 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
-#include "ElementIdentifier.h"
 #include "FocusOptions.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
@@ -391,10 +390,6 @@ public:
     using DocumentsMap = HashMap<ScriptExecutionContextIdentifier, Document*>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
-
-    WEBCORE_EXPORT ElementIdentifier identifierForElement(Element&);
-    WEBCORE_EXPORT Element* searchForElementByIdentifier(const ElementIdentifier&);
-    void identifiedElementWasRemovedFromDocument(Element&);
 
     MediaQueryMatcher& mediaQueryMatcher();
 
@@ -2262,8 +2257,6 @@ private:
 #endif
 
     std::unique_ptr<TextManipulationController> m_textManipulationController;
-
-    HashMap<Element*, ElementIdentifier> m_identifiedElementsMap;
 
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;

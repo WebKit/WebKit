@@ -660,7 +660,8 @@ public:
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
 
-    ElementIdentifier createElementIdentifier();
+    WEBCORE_EXPORT ElementIdentifier identifier() const;
+    WEBCORE_EXPORT static Element* fromIdentifier(ElementIdentifier);
 
     String description() const override;
     String debugDescription() const override;

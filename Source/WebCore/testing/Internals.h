@@ -513,7 +513,7 @@ public:
     uint64_t storageAreaMapCount() const;
 
     uint64_t elementIdentifier(Element&) const;
-    bool isElementAlive(Document&, uint64_t documentIdentifier) const;
+    bool isElementAlive(uint64_t elementIdentifier) const;
 
     uint64_t frameIdentifier(const Document&) const;
     uint64_t pageIdentifier(const Document&) const;
