@@ -1489,7 +1489,7 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(
     String host = activeURL.host().toString();
 
     WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
-    cookieManager.deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
+    cookieManager.deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
 
     return { };
 }

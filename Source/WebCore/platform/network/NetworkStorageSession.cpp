@@ -27,6 +27,7 @@
 #include "NetworkStorageSession.h"
 
 #include "Cookie.h"
+#include "CookieJar.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
@@ -430,5 +431,10 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
 }
 
 #endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)
+{
+    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, WTFMove(completionHandler));
+}
 
 }

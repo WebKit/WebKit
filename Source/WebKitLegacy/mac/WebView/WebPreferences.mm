@@ -2931,7 +2931,7 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 + (void)_clearNetworkLoaderSession
 {
-    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies();
+    NetworkStorageSessionMap::defaultStorageSession().deleteAllCookies([] { });
 }
 
 - (void)_setBoolPreferenceForTestingWithValue:(BOOL)value forKey:(NSString *)key

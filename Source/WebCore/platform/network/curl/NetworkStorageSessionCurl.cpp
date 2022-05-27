@@ -152,36 +152,36 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
     cookieDatabase().setCookie(cookie);
 }
 
-void NetworkStorageSession::deleteCookie(const Cookie& cookie)
+void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
 {
     String url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
     cookieDatabase().deleteCookie(url, cookie.name);
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteCookie(const URL& url, const String& name) const
+void NetworkStorageSession::deleteCookie(const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
 {
     cookieDatabase().deleteCookie(url.string(), name);
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteAllCookies()
+void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
 {
     cookieDatabase().deleteAllCookies();
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime)
+void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&& completionHandler)
 {
     // FIXME: Not yet implemented
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
 {
     for (auto hostname : cookieHostNames)
         cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);
-}
-
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames)
-{
-    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes);
+    completionHandler();
 }
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
@@ -214,11 +214,6 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 
     rawCookies = WTFMove(*cookies);
     return true;
-}
-
-void NetworkStorageSession::flushCookieStore()
-{
-    // FIXME: Implement for WebKit to use.
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ShouldAskITP, ShouldRelaxThirdPartyCookieBlocking) const

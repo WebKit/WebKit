@@ -81,7 +81,7 @@ void WebCookieCache::cookiesDeleted(const String& host, const Vector<WebCore::Co
         return;
 
     for (auto& cookie : cookies)
-        inMemoryStorageSession().deleteCookie(cookie);
+        inMemoryStorageSession().deleteCookie(cookie, [] { });
 }
 
 void WebCookieCache::allCookiesDeleted()
@@ -105,7 +105,7 @@ void WebCookieCache::clearForHost(const String& host)
     if (removedHost.isNull())
         return;
 
-    inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { removedHost });
+    inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { removedHost }, [] { });
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(HashSet<String> { removedHost }), 0);
 #endif

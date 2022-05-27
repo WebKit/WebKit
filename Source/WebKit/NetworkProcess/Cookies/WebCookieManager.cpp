@@ -63,30 +63,36 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Complet
     completionHandler(copyToVector(hostnames));
 }
 
-void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames)
+void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
-        storageSession->deleteCookiesForHostnames(hostnames);
+        storageSession->deleteCookiesForHostnames(hostnames, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
-void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID)
+void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
-        storageSession->deleteAllCookies();
+        storageSession->deleteAllCookies(WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
-        storageSession->deleteCookie(cookie);
-    completionHandler();
+        storageSession->deleteCookie(cookie, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* storageSession = m_process.storageSession(sessionID))
-        storageSession->deleteAllCookiesModifiedSince(time);
-    completionHandler();
+        storageSession->deleteAllCookiesModifiedSince(time, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void WebCookieManager::getAllCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)

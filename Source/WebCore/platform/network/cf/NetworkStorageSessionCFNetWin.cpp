@@ -347,7 +347,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     return true;
 }
 
-void NetworkStorageSession::deleteCookie(const URL& url, const String& name) const
+void NetworkStorageSession::deleteCookie(const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
     
@@ -364,6 +364,7 @@ void NetworkStorageSession::deleteCookie(const URL& url, const String& name) con
             break;
         }
     }
+    completionHandler();
 }
 
 void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
@@ -380,17 +381,20 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
     }
 }
 
-void NetworkStorageSession::deleteAllCookies()
+void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
 {
     CFHTTPCookieStorageDeleteAllCookies(cookieStorage().get());
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>&, IncludeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
-void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime)
+void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
 } // namespace WebCore

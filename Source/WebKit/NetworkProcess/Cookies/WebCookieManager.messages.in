@@ -25,8 +25,8 @@
  
 messages -> WebCookieManager NotRefCounted {
     void GetHostnamesWithCookies(PAL::SessionID sessionID) -> (Vector<String> hostnames)
-    void DeleteCookiesForHostnames(PAL::SessionID sessionID, Vector<String> hostnames)
-    void DeleteAllCookies(PAL::SessionID sessionID)
+    void DeleteCookiesForHostnames(PAL::SessionID sessionID, Vector<String> hostnames) -> ()
+    void DeleteAllCookies(PAL::SessionID sessionID) -> ()
 
     void SetCookie(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookie) -> ()
     void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, URL url, URL mainDocumentURL) -> ()

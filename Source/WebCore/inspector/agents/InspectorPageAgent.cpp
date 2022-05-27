@@ -674,7 +674,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& coo
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document()) {
             if (auto* page = document->page())
-                page->cookieJar().deleteCookie(*document, parsedURL, cookieName);
+                page->cookieJar().deleteCookie(*document, parsedURL, cookieName, [] { });
         }
     }
 

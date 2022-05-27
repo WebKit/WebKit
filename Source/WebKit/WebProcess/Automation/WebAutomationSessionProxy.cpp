@@ -953,9 +953,9 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
     }
 
     auto& document = *frame->coreFrame()->document();
-    page->corePage()->cookieJar().deleteCookie(document, document.cookieURL(), cookieName);
-
-    completionHandler(std::nullopt);
+    page->corePage()->cookieJar().deleteCookie(document, document.cookieURL(), cookieName, [completionHandler = WTFMove(completionHandler)] () mutable {
+        completionHandler(std::nullopt);
+    });
 }
 
 } // namespace WebKit

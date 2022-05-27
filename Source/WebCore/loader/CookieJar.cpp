@@ -186,12 +186,14 @@ void CookieJar::setRawCookie(const Document&, const Cookie& cookie)
         ASSERT_NOT_REACHED();
 }
 
-void CookieJar::deleteCookie(const Document&, const URL& url, const String& cookieName)
+void CookieJar::deleteCookie(const Document&, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = m_storageSessionProvider->storageSession())
-        session->deleteCookie(url, cookieName);
-    else
+        session->deleteCookie(url, cookieName, WTFMove(completionHandler));
+    else {
         ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 }

@@ -60,7 +60,7 @@ public:
     virtual std::pair<String, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies) const;
     virtual bool getRawCookies(const Document&, const URL&, Vector<Cookie>&) const;
     virtual void setRawCookie(const Document&, const Cookie&);
-    virtual void deleteCookie(const Document&, const URL&, const String& cookieName);
+    virtual void deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
     // Cookie Cache.
     virtual void clearCache() { }
