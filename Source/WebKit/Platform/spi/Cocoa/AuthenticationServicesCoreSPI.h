@@ -27,7 +27,7 @@
 
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && HAVE(ASC_WEBKIT_SPI)
 #import <AuthenticationServicesCore/ASCWebKitSPISupport.h>
 #else
 @interface ASCWebKitSPISupport : NSObject

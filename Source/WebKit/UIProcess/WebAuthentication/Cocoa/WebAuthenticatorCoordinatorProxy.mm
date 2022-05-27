@@ -32,7 +32,6 @@
 #import "WKError.h"
 #import "WebAuthenticationRequestData.h"
 #import "WebPageProxy.h"
-#import <AuthenticationServices/ASCOSEConstants.h>
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponseData.h>
 #import <WebCore/BufferSource.h>
