@@ -227,6 +227,17 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
     memory_object_size_t memoryObjectSize = *roundedSize;
     mach_port_t port = MACH_PORT_NULL;
 
+#if HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
+    if (kr != KERN_SUCCESS) {
+#if RELEASE_LOG_DISABLED
+        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+#else
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
+#endif
+        return { };
+    }
+#else
     // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
@@ -241,6 +252,7 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
             return { };
         }
     }
+#endif // HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
 
     RELEASE_ASSERT(memoryObjectSize >= size);
 
