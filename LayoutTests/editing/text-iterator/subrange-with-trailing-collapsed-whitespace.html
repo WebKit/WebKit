@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="test" style="width: 100px">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+<div id="console"></div>
+<script>
+
+if (!window.internals)
+    testFailed("This test requires internals object");
+
+debug("");
+
+let container = document.getElementById("test");
+
+function test(description, rangeToSelect) {
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(rangeToSelect);
+
+    debug(description);
+
+    [
+        [ ],
+        [ "IgnoresWhiteSpaceAtEndOfRun" ],
+    ].forEach((behaviors) => {
+        debug("  " + (behaviors.join("|") || "Default behavior"));
+        for (let {text, range} of internals.statesOfTextIterator(rangeToSelect, behaviors))
+            debug(`    '${text}' (location ${internals.locationFromRange(container, range, behaviors)} length ${internals.lengthFromRange(container, range, behaviors)})`);
+    });
+
+    debug("");
+}
+
+let rangeOfFirstLine = document.createRange();
+rangeOfFirstLine.setStart(container.firstChild, 0);
+rangeOfFirstLine.setEnd(container.firstChild, 12);
+test("Testing first line...", rangeOfFirstLine);
+
+let rangeOfSecondLine = document.createRange();
+rangeOfSecondLine.setStart(container.firstChild, 12);
+rangeOfSecondLine.setEnd(container.firstChild, 28);
+test("Testing second line...", rangeOfSecondLine);
+
+let rangeOfThirdLine = document.createRange();
+rangeOfThirdLine.setStart(container.firstChild, 28);
+rangeOfThirdLine.setEnd(container.firstChild, 40);
+test("Testing third line...", rangeOfThirdLine);
+
+let rangeOfFourthLine = document.createRange();
+rangeOfFourthLine.setStart(container.firstChild, 40);
+rangeOfFourthLine.setEnd(container.firstChild, 56);
+test("Testing fourth line...", rangeOfFourthLine);
+
+</script>
+</body>
+</html>

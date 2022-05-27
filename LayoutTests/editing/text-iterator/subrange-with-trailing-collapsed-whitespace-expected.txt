@@ -1,0 +1,33 @@
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+Testing first line...
+  Default behavior
+    'Lorem ipsum' (location 0 length 12)
+    ' ' (location 12 length 0)
+  IgnoresWhiteSpaceAtEndOfRun
+    'Lorem ipsum' (location 0 length 11)
+
+Testing second line...
+  Default behavior
+    'dolor sit amet,' (location 12 length 16)
+    ' ' (location 28 length 0)
+  IgnoresWhiteSpaceAtEndOfRun
+    'dolor sit amet,' (location 11 length 15)
+
+Testing third line...
+  Default behavior
+    'consectetur' (location 28 length 12)
+    ' ' (location 40 length 0)
+  IgnoresWhiteSpaceAtEndOfRun
+    'consectetur' (location 27 length 11)
+
+Testing fourth line...
+  Default behavior
+    'adipiscing elit.' (location 40 length 16)
+  IgnoresWhiteSpaceAtEndOfRun
+    'adipiscing elit.' (location 39 length 16)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

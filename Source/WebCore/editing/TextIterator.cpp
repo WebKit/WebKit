@@ -623,9 +623,20 @@ void TextIterator::handleTextRun()
         unsigned textRunStart = m_textRun->start();
         unsigned runStart = std::max(textRunStart, start);
 
+        unsigned textRunEnd = textRunStart + m_textRun->length();
+        unsigned runEnd = std::min(textRunEnd, end);
+
+        // Determine what the next text run will be, but don't advance yet
+        auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
+
         // Check for collapsed space at the start of this run.
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
         if (needSpace && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter) && m_lastCharacter) {
+            if (runStart >= runEnd && m_behaviors.contains(TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun)) {
+                m_textRun = nextTextRun;
+                continue;
+            }
+
             if (m_lastTextNode == &textNode && runStart && rendererText[runStart - 1] == ' ') {
                 unsigned spaceRunStart = runStart - 1;
                 while (spaceRunStart && rendererText[spaceRunStart - 1] == ' ')
@@ -635,11 +646,6 @@ void TextIterator::handleTextRun()
                 emitCharacter(' ', textNode, nullptr, runStart, runStart);
             return;
         }
-        unsigned textRunEnd = textRunStart + m_textRun->length();
-        unsigned runEnd = std::min(textRunEnd, end);
-        
-        // Determine what the next text run will be, but don't advance yet
-        auto nextTextRun = InlineIterator::nextTextBoxInLogicalOrder(m_textRun, m_textRunLogicalOrderCache);
 
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {

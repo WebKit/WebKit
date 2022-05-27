@@ -61,6 +61,8 @@ enum class TextIteratorBehavior : uint16_t {
     TraversesFlatTree = 1 << 9,
 
     EntersImageOverlays = 1 << 10,
+
+    IgnoresWhiteSpaceAtEndOfRun = 1 << 11,
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;

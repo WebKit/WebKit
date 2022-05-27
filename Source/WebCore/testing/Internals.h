@@ -352,13 +352,19 @@ public:
     ExceptionOr<void> invalidateControlTints();
 
     RefPtr<Range> rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength);
-    unsigned locationFromRange(Element& scope, const Range&);
-    unsigned lengthFromRange(Element& scope, const Range&);
+    unsigned locationFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
+    unsigned lengthFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
     String rangeAsText(const Range&);
     String rangeAsTextUsingBackwardsTextIterator(const Range&);
     Ref<Range> subrange(Range&, unsigned rangeLocation, unsigned rangeLength);
     ExceptionOr<RefPtr<Range>> rangeForDictionaryLookupAtLocation(int x, int y);
     RefPtr<Range> rangeOfStringNearLocation(const Range&, const String&, unsigned);
+
+    struct TextIteratorState {
+        String text;
+        RefPtr<Range> range;
+    };
+    Vector<TextIteratorState> statesOfTextIterator(const Range&, const Vector<String>& behaviors = { });
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 

@@ -171,15 +171,20 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    for (TextIterator it(*entireRange); !it.atEnd(); it.advance()) {
+    constexpr TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun };
+
+    for (TextIterator it(*entireRange, behaviors); !it.atEnd(); it.advance()) {
         if (!it.text().length())
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
         auto range = it.range();
         for (auto* marker : range.start.document().markers().markersInRange(range, DocumentMarker::PlatformTextChecking)) {
             auto& data = std::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
-            auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
-            [string addAttribute:data.key value:data.value range:characterRange(*entireRange, subrange)];
+            auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() }, behaviors);
+            auto attributeRange = characterRange(*entireRange, subrange, behaviors);
+            ASSERT(attributeRange.location + attributeRange.length <= [string length]);
+            if (attributeRange.location + attributeRange.length <= [string length])
+                [string addAttribute:data.key value:data.value range:WTFMove(attributeRange)];
         }
     }
 
