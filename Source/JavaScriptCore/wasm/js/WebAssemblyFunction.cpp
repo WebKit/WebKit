@@ -141,7 +141,7 @@ RegisterSet WebAssemblyFunction::calleeSaves() const
     // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
     RegisterSet result = Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
     if (usesTagRegisters()) {
-        RegisterSet tagCalleeSaves = RegisterSet::calleeSaveRegisters();
+        RegisterSet tagCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
         tagCalleeSaves.filter(RegisterSet::runtimeTagRegisters());
         result.merge(tagCalleeSaves);
     }

@@ -39,7 +39,7 @@
 # Argument kinds:
 # Tmp => temporary or register
 # Imm => 32-bit immediate int
-# BigImm => TrustedImm64
+# BigImm => TrustedImm64 on 64-bit targets, TrustedImm32 on 32-bit targets
 # Addr => address as temporary/register+offset
 # Index => BaseIndex address
 # Abs => AbsoluteAddress
@@ -147,6 +147,9 @@ x86: Add16 U:G:16, UD:G:16
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
 
+32: Add64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, D:G:32
+    Tmp, Tmp, Tmp, Tmp, Tmp, Tmp
+
 AddDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
     x86: Addr, Tmp, Tmp
@@ -177,7 +180,7 @@ Sub32 U:G:32, UZD:G:32
     x86: Tmp, Addr
     x86: Tmp, Index
 
-arm64: Sub32 U:G:32, U:G:32, ZD:G:32
+arm: Sub32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -195,8 +198,11 @@ arm64: Sub64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
+32: Sub64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, D:G:32
+    Tmp, Tmp, Tmp, Tmp, Tmp, Tmp
+
 SubDouble U:F:64, U:F:64, D:F:64
-    arm64: Tmp, Tmp, Tmp
+    arm: Tmp, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Tmp, Index, Tmp
 
@@ -205,7 +211,7 @@ x86: SubDouble U:F:64, UD:F:64
     Addr, Tmp
 
 SubFloat U:F:32, U:F:32, D:F:32
-    arm64: Tmp, Tmp, Tmp
+    arm: Tmp, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Tmp, Index, Tmp
 
@@ -223,10 +229,10 @@ Neg32 UZD:G:32
     x86: Addr
     x86: Index
 
-arm64: NegateDouble U:F:64, D:F:64
+arm: NegateDouble U:F:64, D:F:64
     Tmp, Tmp
 
-arm64: NegateFloat U:F:32, D:F:32
+arm: NegateFloat U:F:32, D:F:32
     Tmp, Tmp
 
 Mul32 U:G:32, UZD:G:32
@@ -239,10 +245,13 @@ Mul32 U:G:32, U:G:32, ZD:G:32
     x86: Tmp, Addr, Tmp
     x86: Imm, Tmp, Tmp
 
+32: UMull32 U:G:32, U:G:32, ZD:G:32, ZD:G:32
+    Tmp, Tmp, Tmp, Tmp
+
 64: Mul64 U:G:64, UD:G:64
     Tmp, Tmp
 
-Mul64 U:G:64, U:G:64, D:G:64
+64: Mul64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
 arm64: MultiplyAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32
@@ -319,14 +328,14 @@ x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp
     Addr, Tmp
 
-arm64: DivDouble U:F:64, U:F:32, D:F:64
+arm: DivDouble U:F:64, U:F:32, D:F:64
     Tmp, Tmp, Tmp
 
 x86: DivDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 
-arm64: DivFloat U:F:32, U:F:32, D:F:32
+arm: DivFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
 
 x86: DivFloat U:F:32, UD:F:32
@@ -358,13 +367,14 @@ Lea32 UA:G:32, D:G:32
     Addr, Tmp
     x86: Index, Tmp as x86Lea32
 
-Lea64 UA:G:64, D:G:64
+64: Lea64 UA:G:64, D:G:64
     Addr, Tmp
     x86: Index, Tmp as x86Lea64
 
 And32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     arm64: BitImm, Tmp, Tmp
+    32:  Imm, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Addr, Tmp, Tmp
 
@@ -428,7 +438,7 @@ x86: XorFloat U:F:32, U:F:32, D:F:32
 x86: XorFloat U:F:32, UD:F:32
     Tmp, Tmp
 
-arm64: Lshift32 U:G:32, U:G:32, ZD:G:32
+arm: Lshift32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -444,7 +454,7 @@ x86_64: Lshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: Rshift32 U:G:32, U:G:32, ZD:G:32
+arm: Rshift32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -460,7 +470,7 @@ x86_64: Rshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: Urshift32 U:G:32, U:G:32, ZD:G:32
+arm: Urshift32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -480,7 +490,7 @@ x86_64: RotateRight32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: RotateRight32 U:G:32, U:G:32, ZD:G:32
+arm: RotateRight32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -560,7 +570,7 @@ Xor32 U:G:32, UZD:G:32
     x86: Imm, Index
     x86: Imm, Tmp
 
-arm64: Not32 U:G:32, ZD:G:32
+arm: Not32 U:G:32, ZD:G:32
     Tmp, Tmp
 
 x86: Not32 UZD:G:32
@@ -576,10 +586,10 @@ x86_64: Not64 UD:G:64
     Addr
     Index
 
-arm64: AbsDouble U:F:64, D:F:64
+arm: AbsDouble U:F:64, D:F:64
     Tmp, Tmp
 
-arm64: AbsFloat U:F:32, D:F:32
+arm: AbsFloat U:F:32, D:F:32
     Tmp, Tmp
 
 CeilDouble U:F:64, D:F:64
@@ -677,7 +687,7 @@ Move32 U:G:32, ZD:G:32
     Tmp, Addr as store32
     Tmp, Index as store32
     x86: Imm, Tmp as zeroExtend32ToWord
-    x86: Imm, Addr as store32
+    x86 armv7: Imm, Addr as store32
     x86: Imm, Index as store32
 
 arm64: MoveWithIncrement32 UD:G:32, ZD:G:32
@@ -749,6 +759,12 @@ MoveZeroToDouble D:F:64
     x86: Addr, Tmp as loadDouble
     Index, Tmp as loadDouble
 
+32: Move64ToDouble U:G:32, U:G:32, D:F:64
+    Tmp, Tmp, Tmp
+
+32: Move32ToDoubleHi U:G:32, UD:F:64
+    Tmp, Tmp
+
 Move32ToFloat U:G:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp as loadFloat
@@ -759,6 +775,12 @@ Move32ToFloat U:G:32, D:F:32
     Addr, Tmp as load64
     Index, Tmp as load64
 
+32: MoveDoubleTo64 U:F:64, D:G:32, D:G:32
+    Tmp, Tmp, Tmp
+
+32: MoveDoubleHiTo32 U:F:64, D:G:32
+    Tmp, Tmp
+
 MoveFloatTo32 U:F:32, D:G:32
     Tmp, Tmp
     Addr, Tmp as load32
@@ -768,7 +790,7 @@ Load8 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq8 U:G:8, ZD:G:32 /effects
+arm64: LoadAcq8 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Store8 U:G:8, D:G:8
@@ -777,28 +799,28 @@ Store8 U:G:8, D:G:8
     x86: Imm, Index
     x86: Imm, Addr
 
-arm: StoreRel8 U:G:8, D:G:8 /effects
+arm64: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
 
 Load8SignedExtendTo32 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
+arm64: LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Load16 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq16 U:G:16, ZD:G:32 /effects
+arm64: LoadAcq16 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Load16SignedExtendTo32 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm: LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
+arm64: LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Store16 U:G:16, D:G:16
@@ -807,13 +829,13 @@ Store16 U:G:16, D:G:16
     x86: Imm, Index
     x86: Imm, Addr
 
-arm: StoreRel16 U:G:16, D:G:16 /effects
+arm64: StoreRel16 U:G:16, D:G:16 /effects
     Tmp, SimpleAddr
 
-arm: LoadAcq32 U:G:32, ZD:G:32 /effects
+arm64: LoadAcq32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-arm: StoreRel32 U:G:32, ZD:G:32 /effects
+arm64: StoreRel32 U:G:32, ZD:G:32 /effects
     Tmp, SimpleAddr
 
 arm64: LoadAcq64 U:G:64, ZD:G:64 /effects
@@ -1264,48 +1286,54 @@ x86_64: AtomicXchg64 UD:G:64, UD:G:64 /effects
     Tmp, Addr
     Tmp, Index
 
-arm64: LoadLink8 U:G:8, ZD:G:8 /effects
+arm: LoadLink8 U:G:8, ZD:G:8 /effects
     SimpleAddr, Tmp
 
 arm64: LoadLinkAcq8 U:G:8, ZD:G:8 /effects
     SimpleAddr, Tmp
 
 # Super confusing fact: this returns 0 to mean success, 1 to mean failure.
-arm64: StoreCond8 U:G:8, D:G:8, EZD:G:8 /effects
+arm: StoreCond8 U:G:8, D:G:8, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
 arm64: StoreCondRel8 U:G:8, D:G:8, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
-arm64: LoadLink16 U:G:16, ZD:G:16 /effects
+arm: LoadLink16 U:G:16, ZD:G:16 /effects
     SimpleAddr, Tmp
 
 arm64: LoadLinkAcq16 U:G:16, ZD:G:16 /effects
     SimpleAddr, Tmp
 
-arm64: StoreCond16 U:G:16, D:G:16, EZD:G:8 /effects
+arm: StoreCond16 U:G:16, D:G:16, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
 arm64: StoreCondRel16 U:G:16, D:G:16, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
-arm64: LoadLink32 U:G:32, ZD:G:32 /effects
+arm: LoadLink32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 arm64: LoadLinkAcq32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-arm64: StoreCond32 U:G:32, D:G:32, EZD:G:8 /effects
+arm: StoreCond32 U:G:32, D:G:32, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
 
 arm64: StoreCondRel32 U:G:32, D:G:32, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
+
+armv7: LoadLinkPair32 U:G:64, D:G:32, D:G:32 /effects
+    SimpleAddr, Tmp, Tmp
 
 arm64: LoadLink64 U:G:64, ZD:G:64 /effects
     SimpleAddr, Tmp
 
 arm64: LoadLinkAcq64 U:G:64, ZD:G:64 /effects
     SimpleAddr, Tmp
+
+armv7: StoreCondPair32 U:G:32, U:G:32, D:G:64, EZD:G:8 /effects
+    Tmp, Tmp, SimpleAddr, Tmp
 
 arm64: StoreCond64 U:G:64, D:G:64, EZD:G:8 /effects
     Tmp, SimpleAddr, Tmp
@@ -1432,6 +1460,7 @@ BranchTest8 U:G:32, U:G:8, U:G:8 /branch
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, BitImm
+    32: ResCond, Tmp, Imm
     x86: ResCond, Addr, BitImm
     x86: ResCond, Index, BitImm
 
@@ -1473,7 +1502,7 @@ BranchAdd32 U:G:32, U:G:32, UZD:G:32 /branch
     x86: ResCond, Tmp, Addr
     x86: ResCond, Addr, Tmp
 
-BranchAdd64 U:G:32, U:G:64, U:G:64, ZD:G:64 /branch
+64: BranchAdd64 U:G:32, U:G:64, U:G:64, ZD:G:64 /branch
     ResCond, Tmp, Tmp, Tmp
     x86:ResCond, Tmp, Addr, Tmp
     x86:ResCond, Addr, Tmp, Tmp
@@ -1516,10 +1545,10 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 64: BranchNeg64 U:G:32, UZD:G:64 /branch
     ResCond, Tmp
 
-MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
+64: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
 
@@ -1530,11 +1559,11 @@ MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
 
-MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
+64: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     x86: ResCond, Tmp, Imm, Tmp, Tmp
 
-MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
 
@@ -1546,19 +1575,19 @@ MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     x86_64: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
 
-MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64: MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, UD:G:Ptr
+64: MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64: MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, UD:G:Ptr
+64: MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
+64: MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
     x86: RelCond, Addr, Imm, Tmp, Tmp, Tmp
@@ -1574,7 +1603,7 @@ MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     x86_64: RelCond, Addr, Imm, Tmp, Tmp, Tmp
     x86_64: RelCond, Index, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
+64: MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
     x86: ResCond, Addr, Imm, Tmp, Tmp, Tmp
@@ -1589,10 +1618,10 @@ MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     x86_64: ResCond, Addr, Tmp, Tmp, Tmp, Tmp
     x86_64: ResCond, Index, Imm, Tmp, Tmp, Tmp
 
-MoveDoubleConditionallyDouble U:G:32, U:F:64, U:F:64, U:F:64, U:F:64, D:F:64
+64: MoveDoubleConditionallyDouble U:G:32, U:F:64, U:F:64, U:F:64, U:F:64, D:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, U:F:64, D:F:64
+64: MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, U:F:64, D:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 MemoryFence /effects

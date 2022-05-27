@@ -59,7 +59,7 @@ void handleCalleeSaves(Code& code)
 void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
 {
     // We filter to really get the callee saves.
-    usedCalleeSaves.filter(RegisterSet::calleeSaveRegisters());
+    usedCalleeSaves.filter(RegisterSet::vmCalleeSaveRegisters());
     usedCalleeSaves.filter(code.mutableRegs());
     usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 

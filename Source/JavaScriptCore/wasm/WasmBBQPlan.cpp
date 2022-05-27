@@ -106,7 +106,10 @@ void BBQPlan::work(CompilationEffort effort)
 
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
-    std::unique_ptr<TierUpCount> tierUp = makeUnique<TierUpCount>();
+    std::unique_ptr<TierUpCount> tierUp;
+#if !CPU(ARM) // We don't want to attempt tier up to OMG on ARM just yet. Not initialising this counter achieves just that.
+    tierUp = makeUnique<TierUpCount>();
+#endif
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, context, unlinkedWasmToWasmCalls, tierUp.get());
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
@@ -178,7 +181,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 {
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
-    if (Options::useBBQTierUpChecks())
+    if (Options::useBBQTierUpChecks() && !isARM())
         m_tierUpCounts[functionIndex] = makeUnique<TierUpCount>();
     else
         m_tierUpCounts[functionIndex] = nullptr;

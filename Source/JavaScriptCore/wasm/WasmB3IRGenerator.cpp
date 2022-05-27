@@ -1217,6 +1217,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
 auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
+#if USE(JSVALUE64)
     static_assert(sizeof(std::declval<Memory*>()->size()) == sizeof(uint64_t), "codegen relies on this size");
 
     Value* memory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfMemory()));
@@ -1229,7 +1230,10 @@ auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
         size, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), shiftValue));
 
     result = push(m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), numPages));
-
+#elif USE(JSVALUE32_64)
+    UNUSED_PARAM(result);
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     return { };
 }
 
@@ -2190,6 +2194,7 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
         case Ext1OpType::I32TruncSatF64U:
             jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
             break;
+#if USE(JSVALUE64)
         case Ext1OpType::I64TruncSatF32S:
             jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
             break;
@@ -2220,6 +2225,7 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
             jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
             break;
         }
+#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -2596,7 +2602,7 @@ PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlo
 auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Value* operationResult = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
-    Value* payload = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), pointerType(), operationResult, 1);
+    Value* payload = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), pointerType(), operationResult, 0);
     for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
         Type type = signature.as<FunctionSignature>()->argumentType(i);
         Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, i * sizeof(uint64_t));
@@ -2654,25 +2660,36 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
         connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
     }
 
-    PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), pointerType() }), origin());
+    PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), B3::Int64 }), origin());
     result->effects.exitsSideways = true;
     result->clobber(RegisterSet::macroScratchRegisters());
     RegisterSet clobberLate = RegisterSet::volatileRegistersForJSCall();
     clobberLate.add(GPRInfo::argumentGPR0);
+    clobberLate.add(GPRInfo::argumentGPR1);
     result->clobberLate(clobberLate);
     result->append(instanceValue(), ValueRep::SomeRegister);
     result->resultConstraints.append(ValueRep::reg(GPRInfo::returnValueGPR));
-    result->resultConstraints.append(ValueRep::reg(GPRInfo::returnValueGPR2));
+    result->resultConstraints.append(B3::ValueRep::SomeRegister);
     result->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
+        // Returning one EncodedJSValue on the stack
+        constexpr int32_t resultSpace = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(static_cast<int32_t>(sizeof(EncodedJSValue)));
+        jit.subPtr(CCallHelpers::TrustedImm32(resultSpace), MacroAssembler::stackPointerRegister);
         jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
+        jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR1);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
             linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmRetrieveAndClearExceptionIfCatchable));
         });
+#if USE(JSVALUE64)
+        jit.loadValue(CCallHelpers::Address(MacroAssembler::stackPointerRegister), JSValueRegs(params[1].gpr()));
+#elif USE(JSVALUE32_64)
+        UNREACHABLE_FOR_PLATFORM(); // Needs porting, see WasmAirIRGenerator::emitCatchImpl
+#endif
+        jit.addPtr(CCallHelpers::TrustedImm32(resultSpace), MacroAssembler::stackPointerRegister);
     });
 
-    Value* exception = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), pointerType(), result, 0);
+    Value* exception = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, result, 1);
     set(data.exception(), exception);
 
     return result;
@@ -3067,9 +3084,14 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& s
             calleeIndex, constant(pointerType(), sizeof(WasmToWasmImportableFunction)));
         callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
 
+#if USE(JSVALUE64)
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
         static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+#elif USE(JSVALUE32_64)
+        UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
+
         Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex()));
         {
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -3186,9 +3208,13 @@ void B3IRGenerator::dump(const ControlStack& controlStack, const Stack* expressi
 
 auto B3IRGenerator::origin() -> Origin
 {
+#if USE(JSVALUE64)
     OpcodeOrigin origin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
     ASSERT(isValidOpType(static_cast<uint8_t>(origin.opcode())));
     return bitwise_cast<Origin>(origin);
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
 }
 
 static bool shouldDumpIRFor(uint32_t functionIndex)
@@ -3222,10 +3248,12 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
         procedure.setNeedsPCToOriginMap();
     }
 
+#if USE(JSVALUE64)
     procedure.setOriginPrinter([] (PrintStream& out, Origin origin) {
         if (origin.data())
             out.print("Wasm: ", OpcodeOrigin(origin));
     });
+#endif
     
     // This means we cannot use either StackmapGenerationParams::usedRegisters() or
     // StackmapGenerationParams::unavailableRegisters(). In exchange for this concession, we
@@ -3418,7 +3446,13 @@ auto B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType argVar, ExpressionType&
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+#if USE(JSVALUE64)
         jit.countTrailingZeros64(params[1].gpr(), params[0].gpr());
+#elif USE(JSVALUE32_64)
+        UNUSED_PARAM(jit);
+        UNUSED_PARAM(params);
+        UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     });
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
@@ -3474,10 +3508,11 @@ auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType argVar, ExpressionType&
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
+    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+#if USE(JSVALUE64)
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
     patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -3486,6 +3521,9 @@ auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType argVar, ExpressionType&
         jit.convertUInt64ToDouble(params[1].gpr(), params[0].fpr());
 #endif
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };
@@ -3496,10 +3534,11 @@ auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType argVar, Express
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
+    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+#if USE(JSVALUE64)
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
     patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -3508,6 +3547,9 @@ auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType argVar, Express
         jit.convertUInt64ToFloat(params[1].gpr(), params[0].fpr());
 #endif
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };
@@ -3681,10 +3723,14 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType argVar, Expressio
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
+#if USE(JSVALUE64)
     patchpoint->append(arg, ValueRep::SomeRegister);
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };
@@ -3705,6 +3751,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType argVar, Expressio
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
+#if USE(JSVALUE64)
     Value* signBitConstant;
     if (isX86()) {
         // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
@@ -3712,7 +3760,6 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType argVar, Expressio
         // so we can pool them if needed.
         signBitConstant = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
     }
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
     if (isX86()) {
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
@@ -3729,6 +3776,9 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType argVar, Expressio
         }
         jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };
@@ -3749,10 +3799,14 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType argVar, Expressio
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
+#if USE(JSVALUE64)
     patchpoint->append(arg, ValueRep::SomeRegister);
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };
@@ -3773,6 +3827,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType argVar, Expressio
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
+#if USE(JSVALUE64)
     Value* signBitConstant;
     if (isX86()) {
         // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
@@ -3780,7 +3836,6 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType argVar, Expressio
         // so we can pool them if needed.
         signBitConstant = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
     }
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
     if (isX86()) {
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
@@ -3797,6 +3852,9 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType argVar, Expressio
         }
         jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
     });
+#elif USE(JSVALUE32_64)
+    UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
     patchpoint->effects = Effects::none();
     result = push(patchpoint);
     return { };

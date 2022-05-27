@@ -182,6 +182,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                 // If necessary, undo the operation.
                 switch (m_checkKind.opcode) {
                 case BranchAdd32:
+#if USE(JSVALUE64)
                     if ((m_numCheckArgs == 4 && args[1] == args[2] && args[2] == args[3])
                         || (m_numCheckArgs == 3 && args[1] == args[2])) {
                         // This is ugly, but that's fine - we won't have to do this very often.
@@ -203,8 +204,12 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                             Inst(Sub32, nullptr, args[1], args[3]).generate(jit, context);
                     } else if (m_numCheckArgs == 3)
                         Inst(Sub32, nullptr, args[1], args[2]).generate(jit, context);
+#elif USE(JSVALUE32_64)
+                    UNREACHABLE_FOR_PLATFORM(); // Needs porting when used
+#endif
                     break;
                 case BranchAdd64:
+#if USE(JSVALUE64)
                     if ((m_numCheckArgs == 4 && args[1] == args[2] && args[2] == args[3])
                         || (m_numCheckArgs == 3 && args[1] == args[2])) {
                         // This is ugly, but that's fine - we won't have to do this very often.
@@ -226,6 +231,9 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                             Inst(Sub64, nullptr, args[1], args[3]).generate(jit, context);
                     } else if (m_numCheckArgs == 3)
                         Inst(Sub64, nullptr, args[1], args[2]).generate(jit, context);
+#elif USE(JSVALUE32_64)
+                    UNREACHABLE_FOR_PLATFORM(); // Needs porting when used
+#endif
                     break;
                 case BranchSub32:
                     Inst(Add32, nullptr, args[1], args[2]).generate(jit, context);
