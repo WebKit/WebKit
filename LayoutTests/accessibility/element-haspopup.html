@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <a href="#" aria-haspopup="true" tabindex="0" id="link1">Link 1</a>
 <a href="#" aria-haspopup="false" tabindex="0" id="link2">Link 2</a>
@@ -20,23 +21,31 @@
     <p id="paragraph3">Paragraph 3.</p>
 </a>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that an element will report that it has a popup correctly.");
+    var testOutput = "This tests that an element will report that it has a popup correctly.\n\n";
 
     if (window.accessibilityController) {
-        shouldBe("accessibilityController.accessibleElementById('link1').hasPopup", "true");
-        shouldBe("accessibilityController.accessibleElementById('link2').hasPopup", "false");
+        window.jsTestIsAsync = true;
 
-        shouldBe("accessibilityController.accessibleElementById('paragraph1').hasPopup", "true");
-        shouldBe("accessibilityController.accessibleElementById('paragraph2').hasPopup", "false");
-        shouldBe("accessibilityController.accessibleElementById('paragraph3').hasPopup", "false");
+        var linkOne = accessibilityController.accessibleElementById("link1");
+        testOutput += expect("linkOne.hasPopup", "true");
+        testOutput += expect("accessibilityController.accessibleElementById('link2').hasPopup", "false");
+
+        testOutput += expect("accessibilityController.accessibleElementById('paragraph1').hasPopup", "true");
+        testOutput += expect("accessibilityController.accessibleElementById('paragraph2').hasPopup", "false");
+        testOutput += expect("accessibilityController.accessibleElementById('paragraph3').hasPopup", "false");
+
+        testOutput += "\nSetting aria-haspopup to false for #link1.\n";
+        document.getElementById("link1").ariaHasPopup = "false";
+        setTimeout(async function() {
+            await waitFor(() => !linkOne.hasPopup );
+            testOutput += expect("linkOne.hasPopup", "false");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

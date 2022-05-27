@@ -1938,6 +1938,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         textChanged(element);
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
+    else if (attrName == aria_describedbyAttr)
+        postNotification(element, AXDescribedByChanged);
     else if (attrName == aria_grabbedAttr)
         postNotification(element, AXGrabbedStateChanged);
     else if (attrName == aria_posinsetAttr)
@@ -1946,6 +1948,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         selectedStateChanged(element);
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
+    else if (attrName == aria_haspopupAttr)
+        postNotification(element, AXHasPopupChanged);
     else if (attrName == aria_hiddenAttr) {
         if (auto* parent = get(element->parentNode()))
             handleChildrenChanged(*parent);
@@ -3503,8 +3507,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
+        case AXDescribedByChanged:
         case AXElementBusyChanged:
         case AXGrabbedStateChanged:
+        case AXHasPopupChanged:
         case AXInvalidStatusChanged:
         case AXMenuListValueChanged:
         case AXPressedStateChanged:

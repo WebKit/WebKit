@@ -385,6 +385,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXDisabledStateChanged:
         stream << "AXDisabledStateChanged";
         break;
+    case AXObjectCache::AXNotification::AXDescribedByChanged:
+        stream << "AXDescribedByChanged";
+        break;
     case AXObjectCache::AXNotification::AXFocusedUIElementChanged:
         stream << "AXFocusedUIElementChanged";
         break;
@@ -393,6 +396,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXGrabbedStateChanged:
         stream << "AXGrabbedStateChanged";
+        break;
+    case AXObjectCache::AXNotification::AXHasPopupChanged:
+        stream << "AXHasPopupChanged";
         break;
     case AXObjectCache::AXNotification::AXIdAttributeChanged:
         stream << "AXIdAttributeChanged";
