@@ -1098,9 +1098,6 @@ test/built-ins/TypedArray/prototype/set/array-arg-targetbuffer-detached-on-get-s
 test/built-ins/TypedArray/prototype/sort/sort-tonumber.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/no-species.js:
-  default: 'Test262Error: unreachable'
-  strict mode: 'Test262Error: unreachable'
 test/harness/temporalHelpers-one-shift-time-zone.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainDateTime(2021, 3, 28, 1)')"
