@@ -52,10 +52,11 @@ public:
     RegisterSet toSave(MemoryMode mode) const
     {
         RegisterSet result;
-        result.set(baseMemoryPointer);
+        if (baseMemoryPointer != InvalidGPRReg)
+            result.set(baseMemoryPointer);
         if (wasmContextInstancePointer != InvalidGPRReg)
             result.set(wasmContextInstancePointer);
-        if (mode != MemoryMode::Signaling)
+        if (mode == MemoryMode::BoundsChecking && boundsCheckingSizeRegister != InvalidGPRReg)
             result.set(boundsCheckingSizeRegister);
         return result;
     }

@@ -589,12 +589,12 @@
 #endif
 
 #if USE(JSVALUE32_64)
-/* Disable WebAssembly on all 32bit platforms. Its LLInt tier could
- * work on them, but still needs some final touches. */
+#if !CPU(ARM)
 #undef ENABLE_WEBASSEMBLY
 #define ENABLE_WEBASSEMBLY 0
 #undef ENABLE_WEBASSEMBLY_B3JIT
 #define ENABLE_WEBASSEMBLY_B3JIT 0
+#endif
 #if (CPU(ARM_THUMB2) || CPU(MIPS)) && OS(LINUX)
 /* On ARMv7 and MIPS on Linux the JIT is enabled unless explicitly disabled. */
 #if !defined(ENABLE_JIT)
@@ -712,7 +712,7 @@
 #define ENABLE_SAMPLING_PROFILER 1
 #endif
 
-#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
+#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT) && CPU(ADDRESS64)
 #define ENABLE_WEBASSEMBLY_SIGNALING_MEMORY 1
 #endif
 

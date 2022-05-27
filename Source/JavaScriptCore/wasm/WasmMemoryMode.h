@@ -34,7 +34,9 @@ namespace JSC { namespace Wasm {
 // FIXME: We should support other modes. see: https://bugs.webkit.org/show_bug.cgi?id=162693
 enum class MemoryMode : uint8_t {
     BoundsChecking,
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     Signaling
+#endif
 };
 
 static constexpr size_t NumberOfMemoryModes = 2;

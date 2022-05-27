@@ -847,6 +847,15 @@ private:
     template <typename Function>
     void forEachLiveValue(Function);
 
+    bool useSignalingMemory() const
+    {
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+        return m_mode == MemoryMode::Signaling;
+#else
+        return false;
+#endif
+    }
+
     FunctionParser<AirIRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
@@ -964,7 +973,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     if (!Context::useFastTLS())
         m_code.pinRegister(m_wasmContextInstanceGPR);
 
-    if (mode != MemoryMode::Signaling) {
+    if (mode == MemoryMode::BoundsChecking) {
         m_boundsCheckingSizeGPR = pinnedRegs.boundsCheckingSizeRegister;
         m_code.pinRegister(m_boundsCheckingSizeGPR);
     }
@@ -1800,6 +1809,7 @@ inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer
         break;
     }
 
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     case MemoryMode::Signaling: {
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
@@ -1826,6 +1836,7 @@ inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer
         }
         break;
     }
+#endif
     }
 
     append(Add64, Tmp(m_memoryBaseGPR), result);
@@ -3709,7 +3720,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         auto* patchpoint = pair.first;
         auto exceptionHandle = pair.second;
         // We need to clobber the size register since the LLInt always bounds checks
-        if (m_mode == MemoryMode::Signaling || m_info.memory.isShared())
+        if (useSignalingMemory() || m_info.memory.isShared())
             patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
         patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);

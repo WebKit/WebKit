@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 //@ requireOptions("--useWebAssemblyFastMemory=true")
 
 import * as assert from '../assert.js';
