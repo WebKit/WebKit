@@ -727,7 +727,7 @@ textarea {
     padding: 2px;
 #else
     -webkit-nbsp-mode: space;
-    -webkit-line-break: after-white-space;
+    line-break: after-white-space;
 
     /* On iOS we want to inherit the left and right padding for consistency with
      other form controls (e.g. <input type="text">). We want to override the top
