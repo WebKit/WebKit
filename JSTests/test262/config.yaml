@@ -8,6 +8,7 @@ flags:
   String.prototype.at: useAtMethod
   Temporal: useTemporal
   array-find-from-last: useArrayFindLastMethod
+  array-grouping: useArrayGroupByMethod
   Object.hasOwn: useHasOwn
   ShadowRealm: useShadowRealm
 skip:
