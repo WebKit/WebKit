@@ -4677,10 +4677,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return nil;
 
     return [self menuWithInlineAction:WebCore::contextMenuItemTitleMarkupImage() identifier:@"WKActionMarkupImage" handler:[](WKContentView *view) {
-        if (!view->_imageAnalysisMarkupData)
+        auto markupData = std::exchange(view->_imageAnalysisMarkupData, { });
+        if (!markupData)
             return;
 
-        auto [elementContext, image, preferredMIMEType] = *view->_imageAnalysisMarkupData;
+        auto [elementContext, image, preferredMIMEType] = *markupData;
         if (auto [data, type] = WebKit::imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get()); data)
             view->_page->replaceImageWithMarkupResults(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
     }];
