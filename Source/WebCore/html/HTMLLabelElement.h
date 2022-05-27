@@ -40,6 +40,9 @@ public:
 private:
     HTMLLabelElement(const QualifiedName&, Document&);
 
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) final;
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
+
     bool isEventTargetedAtInteractiveDescendants(Event&) const;
 
     bool accessKeyAction(bool sendMouseEvents) final;

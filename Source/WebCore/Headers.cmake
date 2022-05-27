@@ -838,6 +838,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLAnchorElement.h
     html/HTMLAnchorElementInlines.h
     html/HTMLAreaElement.h
+    html/HTMLArticleElement.h
     html/HTMLAttachmentElement.h
     html/HTMLAudioElement.h
     html/HTMLBRElement.h

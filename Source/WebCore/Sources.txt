@@ -1211,6 +1211,7 @@ html/GenericCachedHTMLCollection.cpp
 html/HTMLAllCollection.cpp
 html/HTMLAnchorElement.cpp
 html/HTMLAreaElement.cpp
+html/HTMLArticleElement.cpp
 html/HTMLAttachmentElement.cpp
 html/HTMLAudioElement.cpp
 html/HTMLBDIElement.cpp

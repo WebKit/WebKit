@@ -10,7 +10,7 @@ acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
 applet interfaceName=HTMLUnknownElement
 area
-article interfaceName=HTMLElement
+article interfaceName=HTMLArticleElement, JSInterfaceName=HTMLElement
 aside interfaceName=HTMLElement
 attachment conditional=ATTACHMENT_ELEMENT, runtimeEnabled=attachmentElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper

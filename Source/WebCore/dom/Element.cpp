@@ -2461,11 +2461,6 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             updateNameForDocument(*newDocument, nullAtom(), nameValue);
     }
 
-    if (newScope && hasTagName(labelTag)) {
-        if (newScope->shouldCacheLabelsByForAttribute())
-            updateLabel(*newScope, nullAtom(), attributeWithoutSynchronization(forAttr));
-    }
-
     if (becomeConnected) {
         if (UNLIKELY(isCustomElementUpgradeCandidate())) {
             ASSERT(isConnected());
@@ -2474,9 +2469,6 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
         if (UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
-
-    if (UNLIKELY(hasTagName(articleTag) && newDocument))
-        newDocument->registerArticleElement(*this);
 
     if (shouldAutofocus(*this))
         document().topDocument().appendAutofocusCandidate(*this);
@@ -2523,16 +2515,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
                 updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
         }
 
-        if (oldScope && hasTagName(labelTag)) {
-            if (oldScope->shouldCacheLabelsByForAttribute())
-                updateLabel(*oldScope, attributeWithoutSynchronization(forAttr), nullAtom());
-        }
-
         if (oldDocument) {
             if (oldDocument->cssTarget() == this)
                 oldDocument->setCSSTarget(nullptr);
-            if (UNLIKELY(hasTagName(articleTag)))
-                oldDocument->unregisterArticleElement(*this);
         }
 
         if (removalType.disconnectedFromDocument && UNLIKELY(isDefinedCustomElement()))
