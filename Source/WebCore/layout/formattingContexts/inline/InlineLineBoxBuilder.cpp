@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, const LineBuilder::LineContent& lineContent, bool isLeftToRightDirection)
+static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, TextAlignLast textAlignLast, const LineBuilder::LineContent& lineContent, bool isLeftToRightDirection)
 {
     // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
     auto& runs = lineContent.runs;
@@ -64,8 +64,29 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
         // Text is justified according to the method specified by the text-justify property,
         // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
         // the last line before a forced break or the end of the block is start-aligned.
-        if (lineContent.isLastLineWithInlineContent || (!runs.isEmpty() && runs.last().isLineBreak()))
-            return TextAlignMode::Start;
+        if (lineContent.isLastLineWithInlineContent || (!runs.isEmpty() && runs.last().isLineBreak())) {
+            switch (textAlignLast) {
+            case TextAlignLast::Auto:
+                if (textAlign == TextAlignMode::Justify)
+                    return TextAlignMode::Start;
+                return textAlign;
+            case TextAlignLast::Start:
+                return TextAlignMode::Start;
+            case TextAlignLast::End:
+                return TextAlignMode::End;
+            case TextAlignLast::Left:
+                return TextAlignMode::Left;
+            case TextAlignLast::Right:
+                return TextAlignMode::Right;
+            case TextAlignLast::Center:
+                return TextAlignMode::Center;
+            case TextAlignLast::Justify:
+                return TextAlignMode::Justify;
+            default:
+                ASSERT_NOT_REACHED();
+                return TextAlignMode::Start;
+            }
+        }
         return TextAlignMode::Justify;
     };
 
@@ -106,7 +127,7 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
-    auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
+    auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle.textAlign(), rootStyle.textAlignLast(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
     // FIXME: The overflowing hanging content should be part of the ink overflow.  
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox, lineContent, lineIndex);
