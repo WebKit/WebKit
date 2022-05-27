@@ -29,7 +29,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
