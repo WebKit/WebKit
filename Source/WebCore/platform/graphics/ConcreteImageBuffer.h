@@ -89,6 +89,7 @@ protected:
     GraphicsContext& context() const override
     {
         ASSERT(m_backend);
+        ASSERT(volatilityState() == VolatilityState::NonVolatile);
         return m_backend->context();
     }
 

@@ -61,6 +61,9 @@ public:
 
     ~RemoteImageBuffer()
     {
+        // Volatile image buffers do not have contexts.
+        if (this->volatilityState() == WebCore::VolatilityState::Volatile)
+            return;
         // Unwind the context's state stack before destruction, since calls to restore may not have
         // been flushed yet, or the web process may have terminated.
         while (context().stackSize())
