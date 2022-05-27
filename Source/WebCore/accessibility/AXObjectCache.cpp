@@ -306,7 +306,6 @@ Element* AXObjectCache::currentModalNode()
         return activeModalDialog;
     }
 
-    SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
     // If any of the modal nodes contains the keyboard focus, we want to pick that one.
     // If not, we want to pick the last visible dialog in the DOM.
     RefPtr<Element> focusedElement = document().focusedElement();

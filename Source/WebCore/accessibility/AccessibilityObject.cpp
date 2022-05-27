@@ -3746,10 +3746,7 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         }
     }
 
-    // If we are in the midst of retrieving the current modal node, we only need to consider whether the object
-    // is inherently ignored via computeAccessibilityIsIgnored. Also, calling ignoredFromModalPresence
-    // in this state would cause infinite recursion.
-    bool ignored = cache && cache->isRetrievingCurrentModalNode() ? false : ignoredFromModalPresence();
+    bool ignored = ignoredFromModalPresence();
     if (!ignored)
         ignored = computeAccessibilityIsIgnored();
 

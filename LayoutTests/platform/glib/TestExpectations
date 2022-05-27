@@ -351,7 +351,6 @@ accessibility/aria-busy-updates-after-dynamic-change.html [ Skip ]
 accessibility/text-updates-after-dynamic-change.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
-accessibility/aria-modal-with-text-crash.html [ Skip ]
 accessibility/display-contents-search-traversal.html [ Skip ]
 accessibility/search-traversal-after-role-change.html [ Skip ]
 accessibility/table-search-traversal.html [ Skip ]
