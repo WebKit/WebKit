@@ -351,6 +351,9 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(KillOldProcesses())
 
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(RunWebKitTests())
+
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
