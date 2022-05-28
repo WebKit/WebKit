@@ -621,7 +621,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::Rotate: ts << "rotate"; break;
     case ItemType::Scale: ts << "scale"; break;
     case ItemType::SetCTM: ts << "set-ctm"; break;
-    case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
+    case ItemType::ConcatenateCTM: ts << "concatenate-ctm"; break;
     case ItemType::SetInlineFillColor: ts << "set-inline-fill-color"; break;
     case ItemType::SetInlineStrokeColor: ts << "set-inline-stroke-color"; break;
     case ItemType::SetStrokeThickness: ts << "set-stroke-thickness"; break;
