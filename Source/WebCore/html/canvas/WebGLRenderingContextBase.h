@@ -76,6 +76,7 @@ class EXTBlendMinMax;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
+class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
 class EXTTextureFilterAnisotropic;
 class EXTTextureNorm16;
@@ -441,6 +442,7 @@ protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
+    friend class EXTTextureCompressionBPTC;
     friend class EXTTextureCompressionRGTC;
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
@@ -706,6 +708,7 @@ protected:
     RefPtr<EXTFragDepth> m_extFragDepth;
     RefPtr<EXTBlendMinMax> m_extBlendMinMax;
     RefPtr<EXTsRGB> m_extsRGB;
+    RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
     RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     RefPtr<EXTTextureNorm16> m_extTextureNorm16;

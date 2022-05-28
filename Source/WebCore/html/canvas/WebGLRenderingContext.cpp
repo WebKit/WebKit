@@ -35,6 +35,7 @@
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
+#include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
@@ -163,7 +164,8 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return m_extShaderTextureLOD.get();
     }
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
-    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
+    ENABLE_IF_REQUESTED(EXTTextureCompressionBPTC, m_extTextureCompressionBPTC, "EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context));
     ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context));
     ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"_s));
     ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", OESTextureFloat::supported(*m_context));
@@ -244,7 +246,9 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_standard_derivatives"_s);
     if (m_context->supportsExtension("GL_EXT_shader_texture_lod"_s) || m_context->supportsExtension("GL_ARB_shader_texture_lod"_s))
         result.append("EXT_shader_texture_lod"_s);
-    if (m_context->supportsExtension("GL_EXT_texture_compression_rgtc"_s))
+    if (EXTTextureCompressionBPTC::supported(*m_context))
+        result.append("EXT_texture_compression_bptc"_s);
+    if (EXTTextureCompressionRGTC::supported(*m_context))
         result.append("EXT_texture_compression_rgtc"_s);
     if (m_context->supportsExtension("GL_EXT_texture_filter_anisotropic"_s))
         result.append("EXT_texture_filter_anisotropic"_s);

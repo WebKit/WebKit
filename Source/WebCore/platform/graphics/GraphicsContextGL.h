@@ -756,6 +756,12 @@ public:
     static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC;
     static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD;
 
+    // GL_EXT_texture_compression_bptc
+    static constexpr GCGLenum COMPRESSED_RGBA_BPTC_UNORM_EXT = 0x8E8C;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT = 0x8E8D;
+    static constexpr GCGLenum COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT = 0x8E8E;
+    static constexpr GCGLenum COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT = 0x8E8F;
+
     // GL_EXT_texture_compression_rgtc
     static constexpr GCGLenum COMPRESSED_RED_RGTC1_EXT = 0x8DBB;
     static constexpr GCGLenum COMPRESSED_SIGNED_RED_RGTC1_EXT = 0x8DBC;

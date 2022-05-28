@@ -40,6 +40,7 @@
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
+#include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTTextureNorm16.h"
@@ -4000,6 +4001,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extsRGB, "EXT_sRGB");
+    CHECK_EXTENSION(m_extTextureCompressionBPTC, "EXT_texture_compression_bptc");
     CHECK_EXTENSION(m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
@@ -7099,7 +7101,11 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
         break;
     }
     case GraphicsContextGL::COMPRESSED_RED_GREEN_RGTC2_EXT:
-    case GraphicsContextGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: {
+    case GraphicsContextGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT:
+    case GraphicsContextGL::COMPRESSED_RGBA_BPTC_UNORM_EXT:
+    case GraphicsContextGL::COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT:
+    case GraphicsContextGL::COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT:
+    case GraphicsContextGL::COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT: {
         const int kBlockSize = 16;
         const int kBlockWidth = 4;
         const int kBlockHeight = 4;
@@ -8102,6 +8108,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extFragDepth);
     LOSE_EXTENSION(m_extBlendMinMax);
     LOSE_EXTENSION(m_extsRGB);
+    LOSE_EXTENSION(m_extTextureCompressionBPTC);
     LOSE_EXTENSION(m_extTextureCompressionRGTC);
     LOSE_EXTENSION(m_extTextureFilterAnisotropic);
     LOSE_EXTENSION(m_extTextureNorm16);
