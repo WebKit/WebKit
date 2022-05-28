@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSWorkerNavigator.h"
 
+#include "WebCoreOpaqueRoot.h"
+
 namespace WebCore {
 
 template<typename Visitor>

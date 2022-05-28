@@ -30,6 +30,7 @@
 
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

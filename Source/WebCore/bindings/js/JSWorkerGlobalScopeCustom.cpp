@@ -28,6 +28,7 @@
 
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMMicrotask.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLocation.h"
 

@@ -27,6 +27,7 @@
 #include "JSNavigator.h"
 
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCJSValue.h>
 
