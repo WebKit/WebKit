@@ -226,8 +226,9 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         // don't participate in content flexing.
         for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
             auto& flexItem = logicalFlexItemList[index];
-            auto baseSize = flexItem.rect.width();
-            if (auto shrinkValue = flexItem.layoutBox->style().flexShrink()) {
+            auto& style = flexItem.layoutBox->style();
+            auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.rect.width();
+            if (auto shrinkValue = style.flexShrink()) {
                 auto flexShrink = shrinkValue * baseSize;
                 shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem, { } });
                 totalShrink += flexShrink;
