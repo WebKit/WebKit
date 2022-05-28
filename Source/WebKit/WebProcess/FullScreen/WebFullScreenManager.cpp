@@ -387,7 +387,8 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
     }
 
     if (targetElement == m_mainVideoElement.get()) {
-        if (m_mainVideoElement && m_mainVideoElement->paused())
+        auto& targetVideoElement = downcast<HTMLVideoElement>(*targetElement);
+        if (targetVideoElement.paused() && !targetVideoElement.seeking())
             scheduleMainVideoElementExtraction();
         else
             endMainVideoElementExtractionIfNeeded();
@@ -439,6 +440,7 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
 
     static NeverDestroyed eventsToObserve = std::array {
         WebCore::eventNames().seekingEvent,
+        WebCore::eventNames().seekedEvent,
         WebCore::eventNames().playingEvent,
         WebCore::eventNames().pauseEvent,
     };
