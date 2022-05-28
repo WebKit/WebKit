@@ -708,6 +708,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Whether to enable the XSS auditor. This feature filters some kinds of
      * reflective XSS attacks on vulnerable web sites.
+     *
+     * Deprecated: 2.38
      */
     sObjProperties[PROP_ENABLE_XSS_AUDITOR] =
         g_param_spec_boolean(
@@ -715,7 +717,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable XSS auditor"),
             _("Whether to enable the XSS auditor."),
             TRUE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-frame-flattening:
@@ -745,7 +747,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable plugins"),
             _("Enable embedded plugin objects."),
             FALSE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-java:
@@ -1273,7 +1275,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable accelerated 2D canvas"),
             _("Whether to enable accelerated 2D canvas"),
             FALSE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-write-console-messages-to-stdout:
