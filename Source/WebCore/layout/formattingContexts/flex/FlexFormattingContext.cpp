@@ -224,8 +224,7 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
     auto computeTotalShrinkAndOverflowingSpace = [&] {
         // Collect flex items with non-zero flex-shrink value. flex-shrink: 0 flex items
         // don't participate in content flexing.
-        for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
-            auto& flexItem = logicalFlexItemList[index];
+        for (auto& flexItem : logicalFlexItemList) {
             auto& style = flexItem.layoutBox->style();
             auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.rect.width();
             if (auto shrinkValue = style.flexShrink()) {
@@ -277,64 +276,68 @@ void FlexFormattingContext::computeLogicalWidthForStretchingFlexItems(LogicalFle
 {
     auto& formattingState = this->formattingState();
 
+    auto totalFlexibleSpace = LayoutUnit { };
     auto totalGrowth = 0.f;
     auto flexGrowBase = 0.f;
-    Vector<size_t> stretchingItems;
+    struct StrechingFlexItem {
+        float flexGrow { 0 };
+        LayoutUnit minimumSize;
+        LayoutUnit flexBasis;
+        LogicalFlexItem& flexItem;
+        bool isFrozen { false };
+    };
+    Vector<StrechingFlexItem> stretchingItems;
 
     auto computeTotalGrowthAndFlexibleSpace = [&] {
         // Collect flex items with non-zero flex-grow value. flex-grow: 0 (initial) flex items
         // don't participate in available space distribution.
-        for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
-            auto& logicalFlexItem = logicalFlexItemList[index];
-            if (auto flexGrow = logicalFlexItem.layoutBox->style().flexGrow()) {
-                stretchingItems.append(index);
+        for (auto& flexItem : logicalFlexItemList) {
+            auto& style = flexItem.layoutBox->style();
+            auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.rect.width();
+            if (auto growValue = style.flexGrow()) {
+                auto flexGrow = growValue * baseSize;
+                stretchingItems.append({ flexGrow, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem, { } });
                 totalGrowth += flexGrow;
+                totalFlexibleSpace += baseSize;
             } else
-                availableSpace -= logicalFlexItem.rect.width();
+                availableSpace -= baseSize;
         }
         if (totalGrowth)
-            flexGrowBase = availableSpace / totalGrowth;
+            flexGrowBase = (availableSpace - totalFlexibleSpace) / totalGrowth;
     };
     computeTotalGrowthAndFlexibleSpace();
     if (!totalGrowth)
         return;
 
-    auto totalLogicalWidth = [&] {
+    auto adjustGrowthBase = [&] {
         // This is where we compute how much space the flexing boxes take up if we just
         // let them flex by their flex-grow value. Note that we can't size them below their minimum content width.
         // Such flex items are removed from the final overflow distribution.
         auto accumulatedWidth = LayoutUnit { };
-        for (auto flexItemIndex : stretchingItems) {
-            auto& flexItem = logicalFlexItemList[flexItemIndex];
-
-            auto flexGrow = flexItem.layoutBox->style().flexGrow();
-            auto flexedSize = flexGrow * flexGrowBase;
-            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
-            if (minimumSize >= flexedSize) {
-                accumulatedWidth += minimumSize;
-                totalGrowth -= flexGrow;
-            } else
-                accumulatedWidth += flexedSize;
+        while (true) {
+            auto didFreeze = false;
+            for (auto& stretchingFlex : stretchingItems) {
+                auto flexedSize = stretchingFlex.flexBasis + stretchingFlex.flexGrow * flexGrowBase;
+                if (stretchingFlex.minimumSize >= flexedSize) {
+                    stretchingFlex.isFrozen = true;
+                    didFreeze = true;
+                    totalGrowth -= stretchingFlex.flexGrow;
+                    totalFlexibleSpace -= stretchingFlex.flexBasis;
+                    availableSpace -= stretchingFlex.minimumSize;
+                }
+            }
+            if (!didFreeze)
+                break;
+            flexGrowBase = totalGrowth ? (totalFlexibleSpace - availableSpace) / totalGrowth : 0.f;
         }
-        return accumulatedWidth;
     };
-    auto overflowWidth = totalLogicalWidth() - availableSpace;
-    ASSERT(overflowWidth >= 0);
+    adjustGrowthBase();
 
     auto computeLogicalWidth = [&] {
         // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto flexItemIndex : stretchingItems) {
-            auto& flexItem = logicalFlexItemList[flexItemIndex];
-
-            auto flexGrow = flexItem.layoutBox->style().flexGrow();
-            auto flexedSize = flexGrow * flexGrowBase;
-            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
-            if (minimumSize >= flexedSize)
-                flexItem.rect.setWidth(minimumSize);
-            else {
-                auto distributedOverflow = overflowWidth / totalGrowth * flexGrow;
-                flexItem.rect.setWidth(std::max(minimumSize, LayoutUnit { flexedSize - distributedOverflow }));
-            }
+        for (auto& stretchingFlex : stretchingItems) {
+            auto flexedSize = LayoutUnit { stretchingFlex.flexBasis + (stretchingFlex.flexGrow * flexGrowBase) };
+            stretchingFlex.flexItem.rect.setWidth(std::max(stretchingFlex.minimumSize, flexedSize));
         }
     };
     computeLogicalWidth();
