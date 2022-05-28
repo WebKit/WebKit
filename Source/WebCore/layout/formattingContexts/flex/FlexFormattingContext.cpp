@@ -119,6 +119,20 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
+static inline std::optional<LayoutUnit> availableLogicalVerticalSpace(const ContainerBox& root, const ConstraintsForFlexContent& flexConstraints)
+{
+    auto flexDirection = root.style().flexDirection();
+    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+    return { flexDirectionIsInlineAxis ? flexConstraints.availableVerticalSpace() : std::make_optional(flexConstraints.horizontal().logicalWidth) };
+}
+
+static inline std::optional<LayoutUnit> availableLogicalHorizontalSpace(const ContainerBox& root, const ConstraintsForFlexContent& flexConstraints)
+{
+    auto flexDirection = root.style().flexDirection();
+    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+    return { flexDirectionIsInlineAxis ? std::make_optional(flexConstraints.horizontal().logicalWidth) : flexConstraints.availableVerticalSpace() };
+}
+
 FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace()
 {
     auto& formattingState = this->formattingState();
@@ -197,10 +211,13 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
             break;
         }
         flexItemGeometry.setLogicalTopLeft(topLeft);
-        if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+        if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
             flexItemGeometry.setContentBoxWidth(logicalFlexItem.rect.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
-        else
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.rect.height() - flexItemGeometry.verticalMarginBorderAndPadding());
+        } else {
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.rect.height() - flexItemGeometry.horizontalMarginBorderAndPadding());
             flexItemGeometry.setContentBoxHeight(logicalFlexItem.rect.width() - flexItemGeometry.verticalMarginBorderAndPadding());
+        }
     }
 }
 
@@ -345,9 +362,7 @@ void FlexFormattingContext::computeLogicalWidthForStretchingFlexItems(LogicalFle
 
 void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints)
 {
-    auto flexDirection = root().style().flexDirection();
-    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-    auto availableSpace = std::optional<LayoutUnit> { flexDirectionIsInlineAxis ? std::make_optional(flexConstraints.horizontal().logicalWidth) : flexConstraints.availableVerticalSpace() };
+    auto availableSpace = availableLogicalHorizontalSpace(root(), flexConstraints);
     auto contentLogicalWidth = [&] {
         auto logicalWidth = LayoutUnit { };
         for (auto& logicalFlexItem : logicalFlexItemList)
@@ -363,6 +378,26 @@ void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& lo
         computeLogicalWidthForShrinkingFlexItems(logicalFlexItemList, *availableSpace);
 }
 
+void FlexFormattingContext::computeLogicalHeightForFlexItems(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints)
+{
+    auto availableSpace = availableLogicalVerticalSpace(root(), flexConstraints);
+    auto alignItems = root().style().alignItems();
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        auto& height = logicalFlexItem.layoutBox->style().height();
+        if (!height.isAuto())
+            continue;
+        switch (alignItems.position()) {
+        case ItemPosition::Normal:
+        case ItemPosition::Stretch:
+            logicalFlexItem.rect.setHeight(*availableSpace);
+            break;
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
+    }
+}
+
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
     auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
@@ -372,6 +407,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     auto logicalTop = LayoutUnit { };
 
     computeLogicalWidthForFlexItems(logicalFlexItemList, flexConstraints);
+    computeLogicalHeightForFlexItems(logicalFlexItemList, flexConstraints);
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
         logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
