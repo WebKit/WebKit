@@ -236,7 +236,7 @@ const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
-    response->priv->mimeType = response->priv->resourceResponse.mimeType().string().utf8();
+    response->priv->mimeType = response->priv->resourceResponse.mimeType().utf8();
     return response->priv->mimeType.data();
 }
 

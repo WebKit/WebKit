@@ -131,12 +131,12 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     r->suspendIfNeeded();
 
     r->m_contentType = contentType;
-    AtomString mimeType { extractMIMETypeFromMediaType(contentType) };
-    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
-    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
+    auto mimeType = extractMIMETypeFromMediaType(contentType);
+    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? String { defaultMIMEType() } : WTFMove(mimeType));
+    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
     r->m_internalResponse.setHTTPStatusCode(status);
-    r->m_internalResponse.setHTTPStatusText(statusText);
+    r->m_internalResponse.setHTTPStatusText(statusText.releaseString());
 
     return r;
 }

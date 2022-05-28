@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
@@ -32,15 +33,18 @@
 OBJC_CLASS NSURLRequest;
 OBJC_CLASS WebCoreNSURLSessionDataTask;
 
+namespace WTF {
+class WorkQueue;
+}
 namespace WebCore {
 
 struct ParsedRequestRange;
 class PlatformMediaResource;
 class ResourceResponse;
 
-class RangeResponseGenerator : public ThreadSafeRefCounted<RangeResponseGenerator, WTF::DestructionThread::Main>, public CanMakeWeakPtr<RangeResponseGenerator> {
+class RangeResponseGenerator : public ThreadSafeRefCounted<RangeResponseGenerator>, public CanMakeWeakPtr<RangeResponseGenerator> {
 public:
-    static Ref<RangeResponseGenerator> create() { return adoptRef(*new RangeResponseGenerator); }
+    static Ref<RangeResponseGenerator> create(WTF::WorkQueue& targetQueue) { return adoptRef(*new RangeResponseGenerator(targetQueue)); }
     ~RangeResponseGenerator();
 
     bool willSynthesizeRangeResponses(WebCoreNSURLSessionDataTask *, PlatformMediaResource&, const ResourceResponse&);
@@ -48,7 +52,7 @@ public:
     void removeTask(WebCoreNSURLSessionDataTask *);
 
 private:
-    RangeResponseGenerator();
+    RangeResponseGenerator(WTF::WorkQueue&);
 
     struct Data;
     class MediaResourceClient;
@@ -57,6 +61,7 @@ private:
     static std::optional<size_t> expectedContentLengthFromData(const Data&);
 
     HashMap<String, std::unique_ptr<Data>> m_map;
+    Ref<WTF::WorkQueue> m_targetQueue;
 };
 
 } // namespace WebCore

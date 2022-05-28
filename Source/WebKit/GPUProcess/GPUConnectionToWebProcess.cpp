@@ -337,6 +337,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     m_libWebRTCCodecsProxy = nullptr;
 #endif
+
+    if (m_remoteMediaResourceManager)
+        m_remoteMediaResourceManager->stopListeningForIPC();
+
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
 }
@@ -476,8 +480,11 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
-    if (!m_remoteMediaResourceManager)
+    ASSERT(isMainRunLoop());
+    if (!m_remoteMediaResourceManager) {
         m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
+        m_remoteMediaResourceManager->initializeConnection(&connection());
+    }
 
     return *m_remoteMediaResourceManager;
 }

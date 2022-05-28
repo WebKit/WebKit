@@ -27,12 +27,14 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
 #include "DataReference.h"
 #include "MessageReceiver.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "SharedMemory.h"
 #include <WebCore/PolicyChecker.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -50,16 +52,19 @@ namespace WebKit {
 class RemoteMediaResource;
 
 class RemoteMediaResourceManager
-    : public IPC::MessageReceiver {
+    : public IPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaResourceManager();
     ~RemoteMediaResourceManager();
 
+    void initializeConnection(IPC::Connection*);
+    void stopListeningForIPC();
+
     void addMediaResource(RemoteMediaResourceIdentifier, RemoteMediaResource&);
     void removeMediaResource(RemoteMediaResourceIdentifier);
 
-    // IPC::MessageReceiver
+    // IPC::Connection::WorkQueueMessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
@@ -71,7 +76,12 @@ private:
     void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);
 
-    HashMap<RemoteMediaResourceIdentifier, RemoteMediaResource*> m_remoteMediaResources;
+    RefPtr<RemoteMediaResource> resourceForId(RemoteMediaResourceIdentifier);
+
+    Lock m_lock;
+    HashMap<RemoteMediaResourceIdentifier, RefPtr<RemoteMediaResource>> m_remoteMediaResources WTF_GUARDED_BY_LOCK(m_lock);
+
+    RefPtr<IPC::Connection> m_connection;
 };
 
 } // namespace WebKit

@@ -1902,9 +1902,9 @@ URL DocumentLoader::documentURL() const
 #if PLATFORM(IOS_FAMILY)
 
 // FIXME: This method seems to violate the encapsulation of this class.
-void DocumentLoader::setResponseMIMEType(const AtomString& responseMIMEType)
+void DocumentLoader::setResponseMIMEType(const String& responseMIMEType)
 {
-    m_response.setMimeType(responseMIMEType);
+    m_response.setMimeType(String { responseMIMEType });
 }
 
 #endif

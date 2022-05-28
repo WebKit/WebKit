@@ -33,6 +33,7 @@
 #include "FetchOptions.h"
 #include "PlatformMediaResourceLoader.h"
 #include "ResourceResponse.h"
+#include <wtf/Atomics.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -78,8 +79,8 @@ public:
     virtual ~MediaResource();
 
     // PlatformMediaResource
-    void stop() override;
-    bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck; }
+    void shutdown() override;
+    bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck.load(); }
 
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
@@ -91,8 +92,9 @@ public:
 
 private:
     MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);
-    Ref<MediaResourceLoader> m_loader;
-    bool m_didPassAccessControlCheck { false };
+    void ensureShutdown();
+    const Ref<MediaResourceLoader> m_loader;
+    Atomic<bool> m_didPassAccessControlCheck { false };
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 

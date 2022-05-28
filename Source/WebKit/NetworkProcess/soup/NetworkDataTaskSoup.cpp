@@ -1715,10 +1715,10 @@ void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
         m_response.setExpectedContentLength(-1);
     } else {
         auto contentType = String::fromLatin1(g_file_info_get_content_type(info));
-        m_response.setMimeType(AtomString { extractMIMETypeFromMediaType(contentType) });
-        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
+        m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
+        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
         if (m_response.mimeType().isEmpty())
-            m_response.setMimeType(AtomString { MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()) });
+            m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
         m_response.setExpectedContentLength(g_file_info_get_size(info));
     }
 }

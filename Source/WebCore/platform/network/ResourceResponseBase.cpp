@@ -92,13 +92,13 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     CrossThreadData data;
 
     data.url = url().isolatedCopy();
-    data.mimeType = mimeType().string().isolatedCopy();
+    data.mimeType = mimeType().isolatedCopy();
     data.expectedContentLength = expectedContentLength();
-    data.textEncodingName = textEncodingName().string().isolatedCopy();
+    data.textEncodingName = textEncodingName().isolatedCopy();
 
     data.httpStatusCode = httpStatusCode();
-    data.httpStatusText = httpStatusText().string().isolatedCopy();
-    data.httpVersion = httpVersion().string().isolatedCopy();
+    data.httpStatusText = httpStatusText().isolatedCopy();
+    data.httpVersion = httpVersion().isolatedCopy();
 
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     if (m_networkLoadMetrics)
@@ -116,13 +116,13 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     ResourceResponse response;
 
     response.setURL(data.url);
-    response.setMimeType(AtomString { data.mimeType });
+    response.setMimeType(WTFMove(data.mimeType));
     response.setExpectedContentLength(data.expectedContentLength);
-    response.setTextEncodingName(AtomString { WTFMove(data.textEncodingName) });
+    response.setTextEncodingName(WTFMove(data.textEncodingName));
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(AtomString { data.httpStatusText });
-    response.setHTTPVersion(AtomString { data.httpVersion });
+    response.setHTTPStatusText(WTFMove(data.httpStatusText));
+    response.setHTTPVersion(WTFMove(data.httpVersion));
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     if (data.networkLoadMetrics)
@@ -230,20 +230,20 @@ void ResourceResponseBase::setURL(const URL& url)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::mimeType() const
+const String& ResourceResponseBase::mimeType() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_mimeType; 
 }
 
-void ResourceResponseBase::setMimeType(const AtomString& mimeType)
+void ResourceResponseBase::setMimeType(String&& mimeType)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
     // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
-    m_mimeType = mimeType;
+    m_mimeType = WTFMove(mimeType);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -266,14 +266,14 @@ void ResourceResponseBase::setExpectedContentLength(long long expectedContentLen
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::textEncodingName() const
+const String& ResourceResponseBase::textEncodingName() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_textEncodingName;
 }
 
-void ResourceResponseBase::setTextEncodingName(AtomString&& encodingName)
+void ResourceResponseBase::setTextEncodingName(String&& encodingName)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
@@ -343,30 +343,30 @@ bool ResourceResponseBase::isRedirection() const
     return isRedirectionStatusCode(m_httpStatusCode);
 }
 
-const AtomString& ResourceResponseBase::httpStatusText() const
+const String& ResourceResponseBase::httpStatusText() const
 {
     lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
-void ResourceResponseBase::setHTTPStatusText(const AtomString& statusText)
+void ResourceResponseBase::setHTTPStatusText(String&& statusText)
 {
     lazyInit(AllFields);
 
-    m_httpStatusText = statusText; 
+    m_httpStatusText = WTFMove(statusText);
 
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::httpVersion() const
+const String& ResourceResponseBase::httpVersion() const
 {
     lazyInit(AllFields);
     
     return m_httpVersion;
 }
 
-void ResourceResponseBase::setHTTPVersion(const AtomString& versionText)
+void ResourceResponseBase::setHTTPVersion(String&& versionText)
 {
     lazyInit(AllFields);
     

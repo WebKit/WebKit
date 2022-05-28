@@ -139,6 +139,12 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     if (m_audioSourceProvider)
         m_audioSourceProvider->close();
 #endif
+    // Shutdown any stale MediaResources.
+    // This condition can happen if the MediaPlayer gets reloaded half-way.
+    callOnMainRunLoop([resources = WTFMove(m_mediaResources)] {
+        for (auto&& resource : resources)
+            resource.value->shutdown();
+    });
 }
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
@@ -1465,7 +1471,9 @@ void MediaPlayerPrivateRemote::sendH2Ping(const URL& url, CompletionHandler<void
 void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
 {
     // The client(RemoteMediaResourceProxy) will be destroyed as well
-    m_mediaResources.remove(remoteMediaResourceIdentifier);
+    ASSERT(m_mediaResources.contains(remoteMediaResourceIdentifier));
+    auto resource = m_mediaResources.take(remoteMediaResourceIdentifier);
+    resource->shutdown();
 }
 
 void MediaPlayerPrivateRemote::resourceNotSupported()

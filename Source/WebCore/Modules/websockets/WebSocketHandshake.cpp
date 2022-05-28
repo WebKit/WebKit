@@ -220,7 +220,7 @@ int WebSocketHandshake::readServerHandshake(const uint8_t* header, size_t len)
 {
     m_mode = Incomplete;
     int statusCode;
-    AtomString statusText;
+    String statusText;
     int lineLength = readStatusLine(header, len, statusCode, statusText);
     if (lineLength == -1)
         return -1;
@@ -232,7 +232,7 @@ int WebSocketHandshake::readServerHandshake(const uint8_t* header, size_t len)
 
     m_serverHandshakeResponse = ResourceResponse();
     m_serverHandshakeResponse.setHTTPStatusCode(statusCode);
-    m_serverHandshakeResponse.setHTTPStatusText(statusText);
+    m_serverHandshakeResponse.setHTTPStatusText(WTFMove(statusText));
 
     if (statusCode != 101) {
         m_mode = Failed;
@@ -356,7 +356,7 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
 // If the line is malformed or the status code is not a 3-digit number,
 // statusCode and statusText will be set to -1 and a null string, respectively.
-int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, AtomString& statusText)
+int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, String& statusText)
 {
     // Arbitrary size limit to prevent the server from sending an unbounded
     // amount of data with no newlines and forcing us to buffer it all.
@@ -426,7 +426,7 @@ int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLengt
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = AtomString(space2 + 1, end - space2 - 3); // Exclude "\r\n".
+    statusText = String(space2 + 1, end - space2 - 3); // Exclude "\r\n".
     return lineLength;
 }
 

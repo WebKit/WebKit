@@ -32,6 +32,7 @@
 #include <wtf/Function.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetTrack;
@@ -481,6 +482,7 @@ private:
     std::unique_ptr<Observer<void()>> m_currentImageChangedObserver;
     std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
     ProcessIdentity m_resourceOwner;
+    Ref<WorkQueue> m_targetQueue { WorkQueue::main() };
 };
 
 }
