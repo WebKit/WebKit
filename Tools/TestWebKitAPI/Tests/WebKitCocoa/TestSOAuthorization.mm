@@ -250,28 +250,24 @@ static const char* samlResponse =
 
 @implementation TestSOAuthorizationScriptMessageHandler {
     RetainPtr<NSMutableArray> _messages;
+    RetainPtr<NSArray> _expectedMessages;
+}
+
+- (instancetype)initWithExpectation:(NSArray *)expectedMessages
+{
+    _messages = adoptNS([[NSMutableArray alloc] init]);
+    _expectedMessages = expectedMessages;
+    return self;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    if (!_messages)
-        _messages = adoptNS([[NSMutableArray alloc] init]);
+    auto curIndex = [_messages count];
     [_messages addObject:message.body];
-
-    if ([message.body isEqual:@""]) {
+    if ([_messages count] == [_expectedMessages count])
         allMessagesReceived = true;
-        EXPECT_EQ([_messages count], 5u);
-        EXPECT_WK_STREQ("SOAuthorizationDidStart", [_messages objectAtIndex:1]);
-        EXPECT_WK_STREQ("SOAuthorizationDidCancel", [_messages objectAtIndex:3]);
-        EXPECT_WK_STREQ("", [_messages objectAtIndex:4]);
-    }
-
-    if ([message.body isEqual:@"Hello."]) {
-        allMessagesReceived = true;
-        EXPECT_EQ([_messages count], 4u);
-        EXPECT_WK_STREQ("SOAuthorizationDidStart", [_messages objectAtIndex:1]);
-        EXPECT_WK_STREQ("Hello.", [_messages objectAtIndex:3]);
-    }
+    if (curIndex < [_expectedMessages count] && [_expectedMessages objectAtIndex:curIndex] != [NSNull null])
+        EXPECT_WK_STREQ([_expectedMessages objectAtIndex:curIndex], [_messages objectAtIndex:curIndex]);
 }
 
 @end
@@ -2635,7 +2631,7 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=239311
-TEST(SOAuthorizationSubFrame, DISABLED_InterceptionErrorWithReferrer)
+TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
 {
     resetState();
     ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
@@ -2668,21 +2664,22 @@ TEST(SOAuthorizationSubFrame, DISABLED_InterceptionErrorWithReferrer)
             });
         });
     });
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto origin = makeString("http://127.0.0.1:", server.port());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[origin, @"SOAuthorizationDidStart", origin, @"SOAuthorizationDidCancel", origin, @"Hello.", origin, makeString("Referrer: ", origin, "/")]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
-    auto origin = makeString("http://127.0.0.1:", server.port());
     [webView _loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)origin]] shouldOpenExternalURLs:NO];
-    [webView waitForMessage:(id)origin];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+
+    Util::run(&authorizationPerformed);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorization:gAuthorization didCompleteWithError:adoptNS([[NSError alloc] initWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]).get()];
-    [webView waitForMessage:(id)origin];
-    [webView waitForMessage:@"SOAuthorizationDidCancel"];
-    [webView waitForMessage:(id)makeString("Referrer: ", origin, "/")]; // Referrer policy requires '/' after origin.
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationSubFrame, InterceptionErrorMessageOrder)
@@ -2699,7 +2696,7 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorMessageOrder)
     auto testHtml = generateHtml(parentTemplate, testURL.get().absoluteString);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[[NSNull null], @"SOAuthorizationDidStart", [NSNull null], @"SOAuthorizationDidCancel", @""]]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
@@ -2726,7 +2723,7 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccessMessageOrder)
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[[NSNull null], @"SOAuthorizationDidStart", [NSNull null], @"Hello."]]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
