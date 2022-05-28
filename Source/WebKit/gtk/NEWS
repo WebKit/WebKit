@@ -1,4 +1,21 @@
 ================
+WebKitGTK 2.36.3
+================
+
+What's new in WebKitGTK 2.36.3?
+
+  - Support capturing already encoded video streams, which takes advantage
+    of encoding done in hardware by devices which support this feature.
+  - Avoid using experimental GStreamer elements for video demuxing.
+  - Avoid using the legacy GStreamer VA-API decoding plug-ins, which often
+    cause rendering issues and are not much maintained. Their usage can be
+    re-enabled setting WEBKIT_GST_ENABLE_LEGACY_VAAPI=1 in the environment.
+  - Fix playback of YouTube streams which use dynamic ad insertion.
+  - Fix display capture with Pipewire.
+  - Fix the build without the X11 target when X11 headers are not present.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.2
 ================
 
