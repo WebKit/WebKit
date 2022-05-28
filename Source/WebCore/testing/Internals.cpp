@@ -3216,8 +3216,8 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
         return Exception { InvalidAccessError };
 
     OptionSet<DisplayList::AsTextFlag> displayListFlags;
-    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
-        displayListFlags.add(DisplayList::AsTextFlag::IncludesPlatformOperations);
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
 
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
@@ -3241,8 +3241,8 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
         return Exception { InvalidAccessError };
 
     OptionSet<DisplayList::AsTextFlag> displayListFlags;
-    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
-        displayListFlags.add(DisplayList::AsTextFlag::IncludesPlatformOperations);
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
 
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
@@ -3274,8 +3274,8 @@ ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, un
         return Exception { InvalidAccessError };
 
     OptionSet<DisplayList::AsTextFlag> displayListFlags;
-    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
-        displayListFlags.add(DisplayList::AsTextFlag::IncludesPlatformOperations);
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
 
     return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(downcast<Text>(node), displayListFlags);
 }

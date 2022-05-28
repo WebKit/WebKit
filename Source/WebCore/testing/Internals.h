@@ -480,7 +480,7 @@ public:
 
     enum {
         // Values need to be kept in sync with Internals.idl.
-        DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1,
+        DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS = 1,
     };
     ExceptionOr<String> displayListForElement(Element&, unsigned short flags);
     ExceptionOr<String> replayDisplayListForElement(Element&, unsigned short flags);

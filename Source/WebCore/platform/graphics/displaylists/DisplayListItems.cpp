@@ -767,7 +767,7 @@ void dumpItem(TextStream& ts, const ClipOut& item, OptionSet<AsTextFlag>)
 
 void dumpItem(TextStream& ts, const ClipToImageBuffer& item, OptionSet<AsTextFlag> flags)
 {
-    if (!flags.contains(AsTextFlag::IncludesResourceIdentifiers))
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
         ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
     ts.dumpProperty("dest-rect", item.destinationRect());
 }
@@ -785,7 +785,7 @@ void dumpItem(TextStream& ts, const ClipPath& item, OptionSet<AsTextFlag>)
 
 void dumpItem(TextStream& ts, const DrawFilteredImageBuffer& item, OptionSet<AsTextFlag> flags)
 {
-    if (!flags.contains(AsTextFlag::IncludesResourceIdentifiers))
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
         ts.dumpProperty("source-image-identifier", item.sourceImageIdentifier());
     ts.dumpProperty("source-image-rect", item.sourceImageRect());
 }
@@ -801,7 +801,7 @@ void dumpItem(TextStream& ts, const DrawGlyphs& item, OptionSet<AsTextFlag>)
 
 void dumpItem(TextStream& ts, const DrawImageBuffer& item, OptionSet<AsTextFlag> flags)
 {
-    if (!flags.contains(AsTextFlag::IncludesResourceIdentifiers))
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
         ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
     ts.dumpProperty("source-rect", item.source());
     ts.dumpProperty("dest-rect", item.destinationRect());
@@ -809,7 +809,7 @@ void dumpItem(TextStream& ts, const DrawImageBuffer& item, OptionSet<AsTextFlag>
 
 void dumpItem(TextStream& ts, const DrawNativeImage& item, OptionSet<AsTextFlag> flags)
 {
-    if (!flags.contains(AsTextFlag::IncludesResourceIdentifiers))
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
         ts.dumpProperty("image-identifier", item.imageIdentifier());
     ts.dumpProperty("source-rect", item.source());
     ts.dumpProperty("dest-rect", item.destinationRect());
@@ -823,7 +823,7 @@ void dumpItem(TextStream& ts, const DrawSystemImage& item, OptionSet<AsTextFlag>
 
 void dumpItem(TextStream& ts, const DrawPattern& item, OptionSet<AsTextFlag> flags)
 {
-    if (!flags.contains(AsTextFlag::IncludesResourceIdentifiers))
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
         ts.dumpProperty("image-identifier", item.imageIdentifier());
     ts.dumpProperty("pattern-transform", item.patternTransform());
     ts.dumpProperty("tile-rect", item.tileRect());

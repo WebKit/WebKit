@@ -87,7 +87,7 @@ bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle ite
 {
     switch (item.type()) {
     case ItemType::SetState:
-        if (!flags.contains(AsTextFlag::IncludesPlatformOperations)) {
+        if (flags.contains(AsTextFlag::IncludePlatformOperations)) {
             const auto& stateItem = item.get<SetState>();
             // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
             if (stateItem.state().changes() == GraphicsContextState::Change::ShouldSubpixelQuantizeFonts)
@@ -97,7 +97,7 @@ bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle ite
 #if USE(CG)
     case ItemType::ApplyFillPattern:
     case ItemType::ApplyStrokePattern:
-        if (!flags.contains(AsTextFlag::IncludesPlatformOperations))
+        if (flags.contains(AsTextFlag::IncludePlatformOperations))
             return false;
         break;
 #endif
@@ -136,7 +136,7 @@ void DisplayList::dump(TextStream& ts) const
     for (auto displayListItem : *this) {
         auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
-        dumpItemHandle(ts, item, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
+        dumpItemHandle(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
         if (item.isDrawingItem())
             ts << " extent " << extent;
     }
