@@ -3676,7 +3676,6 @@
 		1CEF45BB27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModuleCompilationHint.cpp; sourceTree = "<group>"; };
 		1CEF45BC27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleCompilationHint.h; sourceTree = "<group>"; };
 		1CF18F3E26BB5D90004B1722 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
-		1D0530D2259162C900E436F7 /* WebKit.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1D0B66192624C11800F9712F /* WebMediaKeySystemClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaKeySystemClient.cpp; sourceTree = "<group>"; };
 		1D0B661A2624C19600F9712F /* MediaKeySystemPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaKeySystemPermissionRequestManager.cpp; path = EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp; sourceTree = "<group>"; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
@@ -7521,7 +7520,6 @@
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
-				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
@@ -7777,7 +7775,6 @@
 		1AADDF4B10D82AF000D3D63D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				932CA81B283C35EB00C20BEB /* StorageAreaIdentifier.h */,
 				BCDDB314124EBCEF0048D13C /* API */,
 				1AB1F7761D1B30A9007C9BD1 /* ApplePay */,
 				518E8EF116B208F000E91429 /* Authentication */,
@@ -7914,6 +7911,7 @@
 				8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */,
 				83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */,
 				83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */,
+				932CA81B283C35EB00C20BEB /* StorageAreaIdentifier.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */,
 				7BE37F6F27B1475F007A6CD3 /* ThreadSafeObjectHeap.h */,
@@ -8596,14 +8594,6 @@
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
-			isa = PBXGroup;
-			children = (
-				1D0530D2259162C900E436F7 /* WebKit.plist */,
-			);
-			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1F0181681858DC1500F92884 /* Cocoa */ = {
@@ -14341,7 +14331,6 @@
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
-				932CA81C283C35EC00C20BEB /* StorageAreaIdentifier.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */,
 				5C826D6C26D482F2008AEC91 /* PrivateClickMeasurementDatabase.h in Headers */,
@@ -14485,6 +14474,7 @@
 				93E799DA276121080074008A /* SQLiteStorageArea.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
 				93E799DC276121080074008A /* StorageAreaBase.h in Headers */,
+				932CA81C283C35EC00C20BEB /* StorageAreaIdentifier.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				93AEC161278F8CD30066666F /* StorageAreaMapIdentifier.h in Headers */,
@@ -15539,7 +15529,6 @@
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
-				2DE7751928233C75004336C1 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
@@ -15877,25 +15866,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
-		};
-		2DE7751928233C75004336C1 /* Copy Feature Flags Plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/FeatureFlags/WebKit.plist",
-			);
-			name = "Copy Feature Flags Plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == maccatalyst || \"${WK_PLATFORM_NAME}\" == iosmac || \"${WK_PLATFORM_NAME}\" == macosx ]]; then\n    exit 0\nfi\n\nFEATURE_FLAGS_PLIST_SOURCE=\"${SRCROOT}/FeatureFlags/WebKit.plist\"\nFEATURE_FLAGS_PLIST_DESTINATION=\"${DSTROOT}/System/Library/FeatureFlags/Domain/WebKit.plist\"\necho \"copying feature flags plist\"\nmkdir -p \"$(dirname \"${FEATURE_FLAGS_PLIST_DESTINATION}\")\"\necho plutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\nplutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\n";
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;
