@@ -211,7 +211,14 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
     auto totalShrink = 0.f;
     auto totalFlexibleSpace = LayoutUnit { };
     auto flexShrinkBase = 0.f;
-    Vector<size_t> shrinkingItems;
+
+    struct ShrinkingFlexItem {
+        float flexShrink { 0 };
+        LayoutUnit minimumSize;
+        LayoutUnit flexBasis;
+        LogicalFlexItem& flexItem;
+    };
+    Vector<ShrinkingFlexItem> shrinkingItems;
 
     auto computeTotalShrinkAndOverflowingSpace = [&] {
         // Collect flex items with non-zero flex-shrink value. flex-shrink: 0 flex items
@@ -219,9 +226,10 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
             auto& flexItem = logicalFlexItemList[index];
             auto baseSize = flexItem.rect.width();
-            if (auto flexShrink = flexItem.layoutBox->style().flexShrink()) {
-                shrinkingItems.append(index);
-                totalShrink += flexShrink * baseSize;
+            if (auto shrinkValue = flexItem.layoutBox->style().flexShrink()) {
+                auto flexShrink = shrinkValue * baseSize;
+                shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem });
+                totalShrink += flexShrink;
                 totalFlexibleSpace += baseSize;
             } else
                 availableSpace -= baseSize;
@@ -234,17 +242,12 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
     auto adjustShrinkBase = [&] {
         // Now that we know how much each flex item needs to be shrunk, let's check
         // if they hit their minimum content width (i.e. whether they can be sized that small).
-        for (auto flexItemIndex : shrinkingItems) {
-            auto& flexItem = logicalFlexItemList[flexItemIndex];
-
-            auto baseSize = flexItem.rect.width();
-            auto flexShrink = flexItem.layoutBox->style().flexShrink() * baseSize;
-            auto flexedSize = baseSize - (flexShrink * flexShrinkBase);
-            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
-            if (minimumSize >= flexedSize) {
-                totalShrink -= flexShrink;
-                totalFlexibleSpace -= baseSize;
-                availableSpace -= minimumSize;
+        for (auto& shirinkingFlex : shrinkingItems) {
+            auto flexedSize = shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase);
+            if (shirinkingFlex.minimumSize > flexedSize) {
+                totalShrink -= shirinkingFlex.flexShrink;
+                totalFlexibleSpace -= shirinkingFlex.flexBasis;
+                availableSpace -= shirinkingFlex.minimumSize;
             }
         }
         flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
@@ -253,14 +256,9 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
 
     auto computeLogicalWidth = [&] {
         // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto flexItemIndex : shrinkingItems) {
-            auto& flexItem = logicalFlexItemList[flexItemIndex];
-
-            auto baseSize = flexItem.rect.width();
-            auto flexShrink = flexItem.layoutBox->style().flexShrink() * baseSize;
-            auto flexedSize = LayoutUnit { baseSize - (flexShrink * flexShrinkBase) };
-            auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
-            flexItem.rect.setWidth(std::max(minimumSize, flexedSize));
+        for (auto& shirinkingFlex : shrinkingItems) {
+            auto flexedSize = LayoutUnit { shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase) };
+            shirinkingFlex.flexItem.rect.setWidth(std::max(shirinkingFlex.minimumSize, flexedSize));
         }
     };
     computeLogicalWidth();
