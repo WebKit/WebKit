@@ -29,11 +29,6 @@
 GCC_PREFIX_HEADER = WebCorePrefix.h;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) BUILDING_WEBKIT GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1 $(inherited);
 
-PROFILE_DATA_PATH = $(PROFILE_DATA_PATH_INTERNAL_$(USE_INTERNAL_SDK));
-PROFILE_DATA_PATH_INTERNAL_ = $(SRCROOT)/../../Tools/Profiling/Empty.profdata;
-PROFILE_DATA_PATH_INTERNAL_YES = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed;
-PROFILE_DATA_PATH_INTERNAL_YES[config=Production] = $(SDK_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed;
-
 PROFILE_DATA_FLAGS_ENABLED = -fprofile-instr-use=$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.profdata;
 
 PROFILE_DATA_FLAGS = $(PROFILE_DATA_FLAGS_$(CONFIGURATION)_$(WK_PLATFORM_NAME));

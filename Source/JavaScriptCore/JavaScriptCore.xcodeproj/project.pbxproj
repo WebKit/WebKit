@@ -1827,7 +1827,6 @@
 		DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */ = {isa = PBXBuildFile; fileRef = 86A054461556451B00445157 /* LowLevelInterpreter.asm */; };
 		DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */ = {isa = PBXBuildFile; fileRef = 86A054461556451B00445157 /* LowLevelInterpreter.asm */; };
 		DD41FA8927CDDDEF00394D95 /* LowLevelInterpreter.asm in Sources */ = {isa = PBXBuildFile; fileRef = 86A054461556451B00445157 /* LowLevelInterpreter.asm */; };
-		DD5F74F9283EF58D0027A8C6 /* copy-profiling-data.sh in Headers */ = {isa = PBXBuildFile; fileRef = DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDB04F41278E569A008D3678 /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
 		DDB04F42278E56A2008D3678 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
 		DDE99310278D087D00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
@@ -5254,7 +5253,6 @@
 		DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyPropertyInlines.h; sourceTree = "<group>"; };
 		DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BottomProvider.h; path = b3/B3BottomProvider.h; sourceTree = "<group>"; };
 		DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3TypeMap.h; path = b3/B3TypeMap.h; sourceTree = "<group>"; };
-		DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-profiling-data.sh"; sourceTree = "<group>"; };
 		DDE9930E278D086600F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
@@ -9139,7 +9137,6 @@
 			children = (
 				535E08C9225460AB00DF00CA /* postprocess-header-rule */,
 				99DA00971BD598E000F4575C /* wkbuiltins */,
-				DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */,
 				9959E9271BD17FA0001AA413 /* cssmin.py */,
 				9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */,
 				99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */,
@@ -10012,7 +10009,6 @@
 				E3FCCB642310A90D00238E72 /* ConstructorKind.h in Headers */,
 				A57D23F21891B5B40031C7FA /* ContentSearchUtilities.h in Headers */,
 				52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */,
-				DD5F74F9283EF58D0027A8C6 /* copy-profiling-data.sh in Headers */,
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
 				C4F4B6F31A05C944005CAB76 /* cpp_generator_templates.py in Headers */,
 				0F30D7C01D95D6320053089D /* CPU.h in Headers */,
@@ -12110,9 +12106,9 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(PROFILE_DATA_PATH)",
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed",
 				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
-				"$(SRCROOT)/Scripts/copy-profiling-data.sh",
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed",
 			);
 			name = "Copy Profiling Data";
 			outputFileListPaths = (
@@ -12122,7 +12118,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n${SCRIPT_INPUT_FILE_2}\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -z \"${PROFILE_DATA_FLAGS}\" ]; then\n    exit 0;\nfi\n\nRELATIVE_PROFILE_DATA_PATH=\"usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed\";\nABSOLUTE_PROFILE_DATA_PATH=\"${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ]; then\n    ABSOLUTE_PROFILE_DATA_PATH=\"${SDK_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\nfi\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ] || [ $(wc -c <${ABSOLUTE_PROFILE_DATA_PATH}) -lt 4096 ]; then\n    if [ \"${CONFIGURATION}\" = \"Production\" ]; then\n        echo \"Error: production build missing profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n        exit 1;\n    fi\n    echo \"Missing or invalid profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH} - falling back to empty file\";\n    cp ${SRCROOT}/../../Tools/Profiling/Empty.profdata ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;\nelse\n    echo \"Copying profiling data at ${ABSOLUTE_PROFILE_DATA_PATH}\";\n    compression_tool -decode -i ${ABSOLUTE_PROFILE_DATA_PATH} -o ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.profdata -a lzfse;\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
