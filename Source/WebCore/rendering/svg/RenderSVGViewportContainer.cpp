@@ -78,7 +78,7 @@ bool RenderSVGViewportContainer::calculateLocalTransform()
     if (!m_needsTransformUpdate)
         return false;
     
-    m_localToParentTransform = AffineTransform::translation(m_viewport.x(), m_viewport.y()) * viewportTransform();
+    m_localToParentTransform = AffineTransform::makeTranslation(toFloatSize(m_viewport.location())) * viewportTransform();
     m_needsTransformUpdate = false;
     return true;
 }

@@ -1603,7 +1603,7 @@ public:
         , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
         , m_fontData(&glyphBuffer.fontAt(m_index))
-        , m_translation(AffineTransform::translation(textOrigin.x(), textOrigin.y()))
+        , m_translation(AffineTransform::makeTranslation(toFloatSize(textOrigin)))
     {
 #if USE(CG)
         m_translation.flipY();

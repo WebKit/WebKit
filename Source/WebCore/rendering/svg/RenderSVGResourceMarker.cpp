@@ -80,7 +80,7 @@ FloatRect RenderSVGResourceMarker::markerBoundaries(const AffineTransform& marke
 
 const AffineTransform& RenderSVGResourceMarker::localToParentTransform() const
 {
-    m_localToParentTransform = AffineTransform::translation(m_viewport.x(), m_viewport.y()) * viewportTransform();
+    m_localToParentTransform = AffineTransform::makeTranslation(toFloatSize(m_viewport.location())) * viewportTransform();
     return m_localToParentTransform;
     // If this class were ever given a localTransform(), then the above would read:
     // return viewportTranslation * localTransform() * viewportTransform();

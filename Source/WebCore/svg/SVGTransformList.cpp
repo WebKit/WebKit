@@ -78,7 +78,7 @@ template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsi
         if (!parsedTransformValue)
             return false;
 
-        append(SVGTransform::create(*parsedTransformValue));
+        append(SVGTransform::create(WTFMove(*parsedTransformValue)));
 
         skipOptionalSVGSpaces(buffer);
 
