@@ -217,6 +217,7 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         LayoutUnit minimumSize;
         LayoutUnit flexBasis;
         LogicalFlexItem& flexItem;
+        bool isFrozen { false };
     };
     Vector<ShrinkingFlexItem> shrinkingItems;
 
@@ -228,7 +229,7 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
             auto baseSize = flexItem.rect.width();
             if (auto shrinkValue = flexItem.layoutBox->style().flexShrink()) {
                 auto flexShrink = shrinkValue * baseSize;
-                shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem });
+                shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem, { } });
                 totalShrink += flexShrink;
                 totalFlexibleSpace += baseSize;
             } else
@@ -242,15 +243,22 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
     auto adjustShrinkBase = [&] {
         // Now that we know how much each flex item needs to be shrunk, let's check
         // if they hit their minimum content width (i.e. whether they can be sized that small).
-        for (auto& shirinkingFlex : shrinkingItems) {
-            auto flexedSize = shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase);
-            if (shirinkingFlex.minimumSize > flexedSize) {
-                totalShrink -= shirinkingFlex.flexShrink;
-                totalFlexibleSpace -= shirinkingFlex.flexBasis;
-                availableSpace -= shirinkingFlex.minimumSize;
+        while (true) {
+            auto didFreeze = false;
+            for (auto& shirinkingFlex : shrinkingItems) {
+                auto flexedSize = shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase);
+                if (!shirinkingFlex.isFrozen && shirinkingFlex.minimumSize > flexedSize) {
+                    shirinkingFlex.isFrozen = true;
+                    didFreeze = true;
+                    totalShrink -= shirinkingFlex.flexShrink;
+                    totalFlexibleSpace -= shirinkingFlex.flexBasis;
+                    availableSpace -= shirinkingFlex.minimumSize;
+                }
             }
+            if (!didFreeze)
+                break;
+            flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
         }
-        flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
     };
     adjustShrinkBase();
 
