@@ -62,7 +62,7 @@ public:
     void step(int amount);
     
     bool willRespondToMouseMoveEvents() const override;
-    bool willRespondToMouseClickEvents() const override;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
     void forwardEvent(Event&);
 

@@ -1224,12 +1224,12 @@ void HTMLInputElement::defaultEventHandler(Event& event)
         HTMLTextFormControlElement::defaultEventHandler(event);
 }
 
-bool HTMLInputElement::willRespondToMouseClickEvents() const
+bool HTMLInputElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     if (!isDisabledFormControl())
         return true;
 
-    return HTMLTextFormControlElement::willRespondToMouseClickEvents();
+    return HTMLTextFormControlElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 bool HTMLInputElement::isURLAttribute(const Attribute& attribute) const

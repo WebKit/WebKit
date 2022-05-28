@@ -531,12 +531,13 @@ bool HTMLSelectElement::isRequiredFormControl() const
     return isRequired();
 }
 
-bool HTMLSelectElement::willRespondToMouseClickEvents() const
+bool HTMLSelectElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
 #if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(editability);
     return !isDisabledFormControl();
 #else
-    return HTMLFormControlElementWithState::willRespondToMouseClickEvents();
+    return HTMLFormControlElementWithState::willRespondToMouseClickEventsWithEditability(editability);
 #endif
 }
 

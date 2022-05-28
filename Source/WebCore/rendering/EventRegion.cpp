@@ -299,6 +299,8 @@ const Region& EventRegion::eventListenerRegionForType(EventListenerRegionType ty
         return m_wheelEventListenerRegion;
     case EventListenerRegionType::NonPassiveWheel:
         return m_nonPassiveWheelEventListenerRegion;
+    case EventListenerRegionType::MouseClick:
+        break;
     }
     ASSERT_NOT_REACHED();
     return m_wheelEventListenerRegion;

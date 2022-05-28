@@ -66,7 +66,7 @@ private:
 
     void defaultEventHandler(Event&) final;
     bool willRespondToMouseMoveEvents() const final;
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void didAttachRenderers() final;

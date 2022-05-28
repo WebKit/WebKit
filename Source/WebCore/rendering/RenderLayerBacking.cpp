@@ -3399,6 +3399,8 @@ static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType
             return { "wheel"_s, { }, Color::darkGreen.colorWithAlphaByte(128) };
         case EventListenerRegionType::NonPassiveWheel:
             return { "sync"_s, { 0, 9 }, SRGBA<uint8_t> { 200, 0, 0, 128 } };
+        case EventListenerRegionType::MouseClick:
+            break;
         }
         ASSERT_NOT_REACHED();
         return { ""_s, { }, Color::black };

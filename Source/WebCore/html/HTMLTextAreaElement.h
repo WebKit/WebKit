@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT void setCols(unsigned);
     WEBCORE_EXPORT void setRows(unsigned);
 
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     RenderTextControlMultiLine* renderer() const;
 

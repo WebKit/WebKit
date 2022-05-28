@@ -65,7 +65,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool willRespondToMouseMoveEvents() const final { return false; }
 #endif
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     virtual bool isPlugInImageElement() const = 0;
 

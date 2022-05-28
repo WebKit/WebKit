@@ -225,9 +225,9 @@ void MathMLSelectElement::defaultEventHandler(Event& event)
     MathMLRowElement::defaultEventHandler(event);
 }
 
-bool MathMLSelectElement::willRespondToMouseClickEvents() const
+bool MathMLSelectElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle" || MathMLRowElement::willRespondToMouseClickEvents();
+    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle" || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void MathMLSelectElement::toggle()

@@ -156,12 +156,12 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-bool HTMLSummaryElement::willRespondToMouseClickEvents() const
+bool HTMLSummaryElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     if (isActiveSummary() && renderer())
         return true;
 
-    return HTMLElement::willRespondToMouseClickEvents();
+    return HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 }

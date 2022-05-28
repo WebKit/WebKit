@@ -180,9 +180,9 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
     return is<MathMLElement>(child);
 }
 
-bool MathMLElement::willRespondToMouseClickEvents() const
+bool MathMLElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return isLink() || StyledElement::willRespondToMouseClickEvents();
+    return isLink() || StyledElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void MathMLElement::defaultEventHandler(Event& event)

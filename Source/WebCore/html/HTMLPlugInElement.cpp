@@ -72,7 +72,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
     ASSERT(!m_instance); // cleared in detach()
 }
 
-bool HTMLPlugInElement::willRespondToMouseClickEvents() const
+bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
 {
     if (isDisabledFormControl())
         return false;

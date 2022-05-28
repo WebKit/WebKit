@@ -278,7 +278,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents() const
+bool SearchFieldResultsButtonElement::willRespondToMouseClickEventsWithEditability(Editability) const
 {
     return true;
 }
@@ -338,13 +338,13 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents() const
+bool SearchFieldCancelButtonElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 
-    return HTMLDivElement::willRespondToMouseClickEvents();
+    return HTMLDivElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 #endif
 

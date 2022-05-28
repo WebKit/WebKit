@@ -96,7 +96,7 @@ public:
 
     bool willRespondToMouseMoveEvents() const override;
     bool willRespondToMouseWheelEvents() const override;
-    bool willRespondToMouseClickEvents() const override;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem();

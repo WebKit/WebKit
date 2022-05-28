@@ -167,10 +167,10 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-bool HTMLLabelElement::willRespondToMouseClickEvents() const
+bool HTMLLabelElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     auto element = control();
-    return (element && element->willRespondToMouseClickEvents()) || HTMLElement::willRespondToMouseClickEvents();
+    return (element && element->willRespondToMouseClickEventsWithEditability(editability)) || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void HTMLLabelElement::focus(const FocusOptions& options)

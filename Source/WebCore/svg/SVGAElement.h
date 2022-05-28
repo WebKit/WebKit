@@ -65,7 +65,7 @@ private:
     bool canStartSelection() const final;
     int defaultTabIndex() const final;
 
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };

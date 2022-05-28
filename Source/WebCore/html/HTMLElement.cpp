@@ -1005,9 +1005,9 @@ bool HTMLElement::willRespondToMouseWheelEvents() const
     return !isDisabledFormControl() && Element::willRespondToMouseWheelEvents();
 }
 
-bool HTMLElement::willRespondToMouseClickEvents() const
+bool HTMLElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return !isDisabledFormControl() && Element::willRespondToMouseClickEvents();
+    return !isDisabledFormControl() && Element::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 bool HTMLElement::canBeActuallyDisabled() const

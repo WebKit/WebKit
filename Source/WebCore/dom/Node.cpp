@@ -754,44 +754,33 @@ void Node::inspect()
         document().page()->inspectorController().inspect(this);
 }
 
-static Node::Editability computeEditabilityFromComputedStyle(const Node& startNode, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
+static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
     // would fire in the middle of Document::setFocusedElement().
 
-    for (const Node* node = &startNode; node; node = node->parentNode()) {
-        auto* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
-        if (!style)
-            continue;
-
-        // Elements with user-select: all style are considered atomic
-        // therefore non editable.
-        if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->effectiveUserSelect() == UserSelect::All)
-            return Node::Editability::ReadOnly;
-
-        if (pageIsEditable == PageIsEditable::Yes)
-            return Node::Editability::CanEditRichly;
-
-        switch (style->effectiveUserModify()) {
-        case UserModify::ReadOnly:
-            return Node::Editability::ReadOnly;
-        case UserModify::ReadWrite:
-            return Node::Editability::CanEditRichly;
-        case UserModify::ReadWritePlaintextOnly:
-            return Node::Editability::CanEditPlainText;
-        }
-        ASSERT_NOT_REACHED();
+    // Elements with user-select: all style are considered atomic
+    // therefore non editable.
+    if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style.effectiveUserSelect() == UserSelect::All)
         return Node::Editability::ReadOnly;
-    }
 
     if (pageIsEditable == PageIsEditable::Yes)
         return Node::Editability::CanEditRichly;
 
+    switch (style.effectiveUserModify()) {
+    case UserModify::ReadOnly:
+        return Node::Editability::ReadOnly;
+    case UserModify::ReadWrite:
+        return Node::Editability::CanEditRichly;
+    case UserModify::ReadWritePlaintextOnly:
+        return Node::Editability::CanEditPlainText;
+    }
+    ASSERT_NOT_REACHED();
     return Node::Editability::ReadOnly;
 }
 
-Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* style, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
@@ -808,7 +797,17 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
         document->updateStyleIfNeeded();
     }
 
-    return computeEditabilityFromComputedStyle(*this, treatment, pageIsEditable);
+    if (!style)
+        style = isDocumentNode() ? renderStyle() : const_cast<Node*>(this)->computedStyle();
+    if (!style)
+        return Editability::ReadOnly;
+
+    return computeEditabilityFromComputedStyle(*style, treatment, pageIsEditable);
+}
+
+Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+{
+    return computeEditabilityWithStyle(nullptr, treatment, shouldUpdateStyle);
 }
 
 RenderBox* Node::renderBox() const
@@ -2540,24 +2539,42 @@ bool Node::willRespondToTouchEvents() const
     });
 }
 
-bool Node::willRespondToMouseClickEvents() const
+Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle* style) const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
-#if PLATFORM(IOS_FAMILY)
-    if (isContentEditable())
-        return true;
-    auto& eventNames = WebCore::eventNames();
-    return hasEventListeners(eventNames.mouseupEvent) || hasEventListeners(eventNames.mousedownEvent) || hasEventListeners(eventNames.clickEvent);
+#if PLATFORM(IOS_FAMILY)    
+    auto userSelectAllTreatment = UserSelectAllDoesNotAffectEditability;
 #else
+    auto userSelectAllTreatment = UserSelectAllIsAlwaysNonEditable;
+#endif
+
+    return computeEditabilityWithStyle(style, userSelectAllTreatment, style ? ShouldUpdateStyle::DoNotUpdate : ShouldUpdateStyle::Update);
+}
+
+bool Node::willRespondToMouseClickEvents() const
+{
+    return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents());
+}
+
+bool Node::willRespondToMouseClickEventsWithEditability(Editability editability) const
+{
+    // FIXME: Why is the iOS code path different from the non-iOS code path?
+#if !PLATFORM(IOS_FAMILY)
     if (!is<Element>(*this))
         return false;
     if (downcast<Element>(*this).isDisabledFormControl())
         return false;
-    if (computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly)
+#endif
+    if (editability != Editability::ReadOnly)
         return true;
     auto& eventNames = WebCore::eventNames();
-    return hasEventListeners(eventNames.mouseupEvent) || hasEventListeners(eventNames.mousedownEvent) || hasEventListeners(eventNames.clickEvent) || hasEventListeners(eventNames.DOMActivateEvent);
+    return hasEventListeners(eventNames.mouseupEvent)
+        || hasEventListeners(eventNames.mousedownEvent)
+        || hasEventListeners(eventNames.clickEvent)
+#if !PLATFORM(IOS_FAMILY)
+        || hasEventListeners(eventNames.DOMActivateEvent)
 #endif
+    ;
 }
 
 bool Node::willRespondToMouseWheelEvents() const

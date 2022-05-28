@@ -352,6 +352,7 @@ public:
     enum class Editability { ReadOnly, CanEditPlainText, CanEditRichly };
     enum class ShouldUpdateStyle { Update, DoNotUpdate };
     WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
+    Editability computeEditabilityWithStyle(const RenderStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
 
     WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
@@ -461,7 +462,9 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    virtual bool willRespondToMouseClickEvents() const;
+    bool willRespondToMouseClickEvents() const;
+    Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
+    virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToMouseWheelEvents() const;
     virtual bool willRespondToTouchEvents() const;
 
