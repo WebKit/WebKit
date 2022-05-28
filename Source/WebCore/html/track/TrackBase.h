@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ContextDestructionObserver.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -65,7 +66,7 @@ public:
     void setTrackList(TrackListBase&);
     void clearTrackList();
     TrackListBase* trackList() const;
-    void* opaqueRoot();
+    WebCoreOpaqueRoot opaqueRoot();
 
     virtual bool enabled() const = 0;
 
@@ -117,7 +118,7 @@ private:
     AtomString m_kind;
 };
 
-inline void* root(TrackBase* track)
+inline WebCoreOpaqueRoot root(TrackBase* track)
 {
     return track->opaqueRoot();
 }

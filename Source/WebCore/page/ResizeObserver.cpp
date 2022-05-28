@@ -30,8 +30,10 @@
 
 #include "Element.h"
 #include "InspectorInstrumentation.h"
+#include "JSNodeCustom.h"
 #include "ResizeObserverEntry.h"
 #include "ResizeObserverOptions.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 
 namespace WebCore {
@@ -149,11 +151,11 @@ void ResizeObserver::deliverObservations()
 bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& observation : m_observations) {
-        if (auto* target = observation->target(); target && visitor.containsOpaqueRoot(target->opaqueRoot()))
+        if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
     for (auto& target : m_activeObservationTargets) {
-        if (visitor.containsOpaqueRoot(target->opaqueRoot()))
+        if (containsWebCoreOpaqueRoot(visitor, target.get()))
             return true;
     }
     return false;

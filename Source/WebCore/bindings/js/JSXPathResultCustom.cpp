@@ -39,7 +39,7 @@ void JSXPathResult::visitAdditionalChildren(Visitor& visitor)
     if (value.isNodeSet()) {
         // FIXME: This looks like it might race, but I'm not sure.
         for (auto& node : value.toNodeSet())
-            visitor.addOpaqueRoot(root(node.get()));
+            addWebCoreOpaqueRoot(visitor, node.get());
     }
 }
 

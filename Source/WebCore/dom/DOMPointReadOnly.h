@@ -40,6 +40,7 @@ namespace WebCore {
 
 struct DOMMatrixInit;
 class DOMPoint;
+class WebCoreOpaqueRoot;
 
 class DOMPointReadOnly : public ScriptWrappable, public RefCounted<DOMPointReadOnly> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMPointReadOnly, WEBCORE_EXPORT);
@@ -70,6 +71,8 @@ protected:
     double m_z;
     double m_w;
 };
+
+WebCoreOpaqueRoot root(DOMPointReadOnly*);
 
 } // namespace WebCore
 

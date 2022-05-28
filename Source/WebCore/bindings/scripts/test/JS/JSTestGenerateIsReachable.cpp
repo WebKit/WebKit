@@ -33,6 +33,7 @@
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -212,10 +213,10 @@ void JSTestGenerateIsReachable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
-    TestGenerateIsReachable* root = &jsTestGenerateIsReachable->wrapped();
+    TestGenerateIsReachable* owner = &jsTestGenerateIsReachable->wrapped();
     if (UNLIKELY(reason))
         *reason = "Reachable from TestGenerateIsReachable";
-    return visitor.containsOpaqueRoot(root);
+    return containsWebCoreOpaqueRoot(visitor, owner);
 }
 
 void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

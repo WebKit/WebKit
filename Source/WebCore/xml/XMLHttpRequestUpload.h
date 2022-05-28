@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class WebCoreOpaqueRoot;
+
 class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
     WTF_MAKE_ISO_ALLOCATED(XMLHttpRequestUpload);
 public:
@@ -53,5 +55,7 @@ private:
 
     XMLHttpRequest& m_request;
 };
+
+WebCoreOpaqueRoot root(XMLHttpRequestUpload*);
     
 } // namespace WebCore

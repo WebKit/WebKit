@@ -62,6 +62,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
@@ -1058,6 +1059,11 @@ void HTMLCanvasElement::prepareForDisplay()
 bool HTMLCanvasElement::isControlledByOffscreen() const
 {
     return m_context && m_context->isPlaceholder();
+}
+
+WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)
+{
+    return root(static_cast<Node*>(canvas));
 }
 
 #if PLATFORM(COCOA)

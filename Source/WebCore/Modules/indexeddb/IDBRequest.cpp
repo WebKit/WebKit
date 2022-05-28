@@ -44,6 +44,7 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <variant>
 #include <wtf/IsoMallocInlines.h>
@@ -573,6 +574,11 @@ bool IDBRequest::willAbortTransactionAfterDispatchingEvent() const
         return true;
 
     return !m_eventBeingDispatched->defaultPrevented() && m_eventBeingDispatched->type() == eventNames().errorEvent;
+}
+
+WebCoreOpaqueRoot root(IDBRequest* request)
+{
+    return WebCoreOpaqueRoot { request };
 }
 
 } // namespace WebCore

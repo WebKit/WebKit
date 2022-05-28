@@ -38,6 +38,7 @@
 #include "JSCallbackData.h"
 #include "JSDOMExceptionHandling.h"
 #include "MessagePort.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
 #include <wtf/IsoMallocInlines.h>
@@ -262,6 +263,11 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     copyDataFromJSArrayToBuses(globalObject, *toJSArray(m_jsOutputs), outputs);
 
     return result.toBoolean(&globalObject);
+}
+
+WebCoreOpaqueRoot root(AudioWorkletProcessor* processor)
+{
+    return WebCoreOpaqueRoot { processor };
 }
 
 } // namespace WebCore

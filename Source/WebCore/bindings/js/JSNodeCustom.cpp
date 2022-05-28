@@ -33,6 +33,7 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "JSAttr.h"
@@ -74,13 +75,12 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
                 *reason = "Node is scheduled to be used in an async script invocation)";
             return true;
         }
-        return visitor.containsOpaqueRoot(node.traverseToOpaqueRoot());
     }
 
     if (UNLIKELY(reason))
         *reason = "Connected node";
 
-    return visitor.containsOpaqueRoot(&node.document());
+    return containsWebCoreOpaqueRoot(visitor, node);
 }
 
 JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* node) const
@@ -93,7 +93,7 @@ JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSSc
 template<typename Visitor>
 void JSNode::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(root(wrapped()));
+    addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNode);

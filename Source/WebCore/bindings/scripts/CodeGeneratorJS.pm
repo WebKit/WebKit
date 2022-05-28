@@ -4947,9 +4947,10 @@ sub GenerateImplementation
         push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
             AddToImplIncludes("<wtf/GetPtr.h>");
+            AddToImplIncludes("WebCoreOpaqueRoot.h");
             my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};
             $functionName = "opaqueRoot" if $functionName eq "VALUE_IS_MISSING";
-            push(@implContent, "    visitor.addOpaqueRoot(WTF::getPtr(thisObject->wrapped().${functionName}()));\n");
+            push(@implContent, "    addWebCoreOpaqueRoot(visitor, thisObject->wrapped().${functionName}());\n");
         }
         if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
             push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());\n");
@@ -5053,6 +5054,8 @@ sub GenerateImplementation
             push(@implContent, "        return true;\n");
         }
         if (GetGenerateIsReachable($interface)) {
+           AddToImplIncludes("WebCoreOpaqueRoot.h");
+
             if (!$emittedJSCast) {
                 push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
                 $emittedJSCast = 1;
@@ -5060,74 +5063,71 @@ sub GenerateImplementation
 
             my $rootString;
             if (GetGenerateIsReachable($interface) eq "Impl") {
-                $rootString  = "    ${implType}* root = &js${interfaceName}->wrapped();\n";
+                $rootString  = "    ${implType}* owner = &js${interfaceName}->wrapped();\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
+                $rootString  = "    WebGLRenderingContextBase* owner = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ReachableFromDOMWindow") {
-                $rootString  = "    auto* root = WTF::getPtr(js${interfaceName}->wrapped().window());\n";
-                $rootString .= "    if (!root)\n";
+                $rootString  = "    auto* owner = WTF::getPtr(js${interfaceName}->wrapped().window());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from Window\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ReachableFromNavigator") {
                 $implIncludes{"Navigator.h"} = 1;
                 $implIncludes{"WorkerNavigator.h"} = 1;
-                $rootString  = "    NavigatorBase* root = WTF::getPtr(js${interfaceName}->wrapped().navigator());\n";
-                $rootString .= "    if (!root)\n";
+                $rootString  = "    NavigatorBase* owner = WTF::getPtr(js${interfaceName}->wrapped().navigator());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from Navigator\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplCanvasBase") {
-                $rootString  = "    CanvasBase* root = WTF::getPtr(&(js${interfaceName}->wrapped().canvasBase()));\n";
-                $rootString .= "    if (!root)\n";
-                $rootString .= "        return false;\n";
+                $rootString  = "    auto& owner = js${interfaceName}->wrapped().canvasBase();\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from CanvasBase\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
-                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->wrapped().document());\n";
-                $rootString .= "    if (!root)\n";
+                $rootString  = "    Document* owner = WTF::getPtr(js${interfaceName}->wrapped().document());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from Document\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}->wrapped().element());\n";
-                $rootString .= "    if (!element)\n";
+                $rootString  = "    Element* owner = WTF::getPtr(js${interfaceName}->wrapped().element());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}Owner\";\n";
-                $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->wrapped().ownerNode());\n";
+                $rootString  = "    auto* owner = WTF::getPtr(js${interfaceName}->wrapped().ownerNode());\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName} ownerNode\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplScriptExecutionContext") {
-                $rootString  = "    ScriptExecutionContext* root = WTF::getPtr(js${interfaceName}->wrapped().scriptExecutionContext());\n";
-                $rootString .= "    if (!root)\n";
+                $rootString  = "    ScriptExecutionContext* owner = WTF::getPtr(js${interfaceName}->wrapped().scriptExecutionContext());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ScriptExecutionContext\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplWebXRSessionRoot") {
-                $rootString  = "    WebXRSession* root = WTF::getPtr(js${interfaceName}->wrapped().session());\n";
-                $rootString .= "    if (!root)\n";
+                $rootString  = "    WebXRSession* owner = WTF::getPtr(js${interfaceName}->wrapped().session());\n";
+                $rootString .= "    if (!owner)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from WebXRSession\";\n";
             } else {
-                $rootString  = "    void* root = WebCore::root(&js${interfaceName}->wrapped());\n";
+                $rootString  = "    auto& owner = js${interfaceName}->wrapped();\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from js${interfaceName}\";\n";
             }
 
             push(@implContent, $rootString);
-            push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
+            push(@implContent, "    return containsWebCoreOpaqueRoot(visitor, owner);\n");
         } else {
             if (!$emittedJSCast) {
                 push(@implContent, "    UNUSED_PARAM(handle);\n");

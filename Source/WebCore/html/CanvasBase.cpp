@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <atomic>
@@ -247,4 +248,9 @@ void CanvasBase::resetGraphicsContextState() const
     }
 }
 
+WebCoreOpaqueRoot root(CanvasBase* canvas)
+{
+    return WebCoreOpaqueRoot { canvas };
 }
+
+} // namespace WebCore

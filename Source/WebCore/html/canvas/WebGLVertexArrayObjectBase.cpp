@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "WebCoreOpaqueRoot.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Locker.h>
@@ -134,9 +135,9 @@ void WebGLVertexArrayObjectBase::setVertexAttribDivisor(GCGLuint index, GCGLuint
 
 void WebGLVertexArrayObjectBase::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(m_boundElementArrayBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundElementArrayBuffer.get());
     for (auto& state : m_vertexAttribState)
-        visitor.addOpaqueRoot(state.bufferBinding.get());
+        addWebCoreOpaqueRoot(visitor, state.bufferBinding.get());
 }
 
 bool WebGLVertexArrayObjectBase::areAllEnabledAttribBuffersBound()
@@ -151,6 +152,11 @@ bool WebGLVertexArrayObjectBase::areAllEnabledAttribBuffersBound()
         }();
     }
     return *m_allEnabledAttribBuffersBoundCache;
+}
+
+WebCoreOpaqueRoot root(WebGLVertexArrayObjectBase* array)
+{
+    return WebCoreOpaqueRoot { array };
 }
 
 }

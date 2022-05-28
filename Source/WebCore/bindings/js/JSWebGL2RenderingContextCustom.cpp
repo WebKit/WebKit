@@ -36,7 +36,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSWebGL2RenderingContext::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(&wrapped());
+    addWebCoreOpaqueRoot(visitor, wrapped());
     wrapped().addMembersToOpaqueRoots(visitor);
 }
 

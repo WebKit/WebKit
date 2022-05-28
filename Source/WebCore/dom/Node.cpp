@@ -77,6 +77,7 @@
 #include "TextEvent.h"
 #include "TextManipulationController.h"
 #include "TouchEvent.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -2655,7 +2656,7 @@ bool Node::inRenderedDocument() const
     return isConnected() && document().hasLivingRenderTree();
 }
 
-void* Node::traverseToOpaqueRoot() const
+WebCoreOpaqueRoot Node::traverseToOpaqueRoot() const
 {
     ASSERT_WITH_MESSAGE(!isConnected(), "Call opaqueRoot() or document() when the node is connected");
     const Node* node = this;
@@ -2665,7 +2666,7 @@ void* Node::traverseToOpaqueRoot() const
             break;
         node = nextNode;
     }
-    return const_cast<void*>(static_cast<const void*>(node));
+    return WebCoreOpaqueRoot { const_cast<Node*>(node) };
 }
 
 template<> ContainerNode* parent<Tree>(const Node& node)

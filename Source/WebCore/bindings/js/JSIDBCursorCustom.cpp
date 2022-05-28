@@ -53,7 +53,7 @@ void JSIDBCursor::visitAdditionalChildren(Visitor& visitor)
 {
     auto& cursor = wrapped();
     if (auto* request = cursor.request())
-        visitor.addOpaqueRoot(request);
+        addWebCoreOpaqueRoot(visitor, *request);
     cursor.keyWrapper().visit(visitor);
     cursor.primaryKeyWrapper().visit(visitor);
 }

@@ -79,6 +79,7 @@
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
@@ -8185,27 +8186,27 @@ void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor
 {
     Locker locker { objectGraphLock() };
 
-    visitor.addOpaqueRoot(m_boundArrayBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundArrayBuffer.get());
 
-    visitor.addOpaqueRoot(m_boundVertexArrayObject.get());
+    addWebCoreOpaqueRoot(visitor, m_boundVertexArrayObject.get());
     if (m_boundVertexArrayObject)
         m_boundVertexArrayObject->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_currentProgram.get());
+    addWebCoreOpaqueRoot(visitor, m_currentProgram.get());
     if (m_currentProgram)
         m_currentProgram->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_framebufferBinding.get());
+    addWebCoreOpaqueRoot(visitor, m_framebufferBinding.get());
     if (m_framebufferBinding)
         m_framebufferBinding->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_renderbufferBinding.get());
+    addWebCoreOpaqueRoot(visitor, m_renderbufferBinding.get());
 
     for (auto& unit : m_textureUnits) {
-        visitor.addOpaqueRoot(unit.texture2DBinding.get());
-        visitor.addOpaqueRoot(unit.textureCubeMapBinding.get());
-        visitor.addOpaqueRoot(unit.texture3DBinding.get());
-        visitor.addOpaqueRoot(unit.texture2DArrayBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture2DBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.textureCubeMapBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture3DBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture2DArrayBinding.get());
     }
 
     // Extensions' IDL files use GenerateIsReachable=ImplWebGLRenderingContext,
@@ -8231,6 +8232,11 @@ void WebGLRenderingContextBase::prepareForDisplay()
 void WebGLRenderingContextBase::updateActiveOrdinal()
 {
     m_activeOrdinal = s_lastActiveOrdinal++;
+}
+
+WebCoreOpaqueRoot root(WebGLRenderingContextBase* context)
+{
+    return WebCoreOpaqueRoot { context };
 }
 
 } // namespace WebCore

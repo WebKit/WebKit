@@ -37,6 +37,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -342,6 +343,11 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
 const char* FetchRequest::activeDOMObjectName() const
 {
     return "Request";
+}
+
+WebCoreOpaqueRoot root(FetchRequest* request)
+{
+    return WebCoreOpaqueRoot { request };
 }
 
 } // namespace WebCore

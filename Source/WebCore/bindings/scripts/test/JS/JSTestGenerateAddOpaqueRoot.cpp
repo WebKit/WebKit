@@ -33,6 +33,7 @@
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -196,7 +197,7 @@ void JSTestGenerateAddOpaqueRoot::visitChildrenImpl(JSCell* cell, Visitor& visit
     auto* thisObject = jsCast<JSTestGenerateAddOpaqueRoot*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(WTF::getPtr(thisObject->wrapped().ownerObjectConcurrently()));
+    addWebCoreOpaqueRoot(visitor, thisObject->wrapped().ownerObjectConcurrently());
 }
 
 DEFINE_VISIT_CHILDREN(JSTestGenerateAddOpaqueRoot);

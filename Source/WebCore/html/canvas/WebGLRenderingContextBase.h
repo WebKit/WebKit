@@ -98,6 +98,7 @@ class OESFBORenderMipmap;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
+class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
 class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
@@ -1200,6 +1201,8 @@ inline unsigned WebGLRenderingContextBase::getMaxIndex(const RefPtr<JSC::ArrayBu
 
     return maxIndex;
 }
+
+WebCoreOpaqueRoot root(WebGLRenderingContextBase*);
 
 } // namespace WebCore
 

@@ -1195,7 +1195,7 @@ private:
     RefPtr<Blob> m_blob;
     URL m_blobURLForReading;
     MediaProvider m_mediaProvider;
-    WTF::Observer<void*()> m_opaqueRootProvider;
+    WTF::Observer<WebCoreOpaqueRoot()> m_opaqueRootProvider;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool m_hasNeedkeyListener { false };

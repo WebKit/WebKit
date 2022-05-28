@@ -29,8 +29,8 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
 
 [
     ActiveDOMObject,
+    GenerateAddOpaqueRoot,
     GenerateIsReachable=Impl,
-    JSCustomMarkFunction,
     SkipVTableValidation,
     Exposed=(Window,Worker)
 ] interface IDBIndex {

@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSCast.h>
 #include <wtf/IsoMallocInlines.h>
@@ -153,6 +154,11 @@ void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
     auto& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwException(&lexicalGlobalObject, scope, m_reason.getValue());
+}
+
+WebCoreOpaqueRoot root(AbortSignal* signal)
+{
+    return WebCoreOpaqueRoot { signal };
 }
 
 } // namespace WebCore

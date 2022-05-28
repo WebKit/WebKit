@@ -42,7 +42,7 @@ template<typename Visitor>
 void JSHTMLTemplateElement::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* content = wrapped().contentIfAvailable())
-        visitor.addOpaqueRoot(root(content));
+        addWebCoreOpaqueRoot(visitor, *content);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSHTMLTemplateElement);

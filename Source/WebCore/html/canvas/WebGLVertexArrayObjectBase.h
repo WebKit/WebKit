@@ -42,6 +42,8 @@ class AbstractLocker;
 
 namespace WebCore {
 
+class WebCoreOpaqueRoot;
+
 class WebGLVertexArrayObjectBase : public WebGLContextObject {
 public:
     enum class Type { Default, User };
@@ -95,6 +97,8 @@ protected:
     Vector<VertexAttribState> m_vertexAttribState;
     std::optional<bool> m_allEnabledAttribBuffersBoundCache;
 };
+
+WebCoreOpaqueRoot root(WebGLVertexArrayObjectBase*);
 
 } // namespace WebCore
 

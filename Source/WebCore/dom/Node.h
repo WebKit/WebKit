@@ -70,6 +70,7 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
+class WebCoreOpaqueRoot;
 
 enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
@@ -266,8 +267,8 @@ public:
     };
     Node& getRootNode(const GetRootNodeOptions&) const;
     
-    void* opaqueRoot() const;
-    void* traverseToOpaqueRoot() const;
+    inline WebCoreOpaqueRoot opaqueRoot() const; // Defined in DocumentInlines.h.
+    WebCoreOpaqueRoot traverseToOpaqueRoot() const;
 
     void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
@@ -846,15 +847,6 @@ inline ContainerNode* Node::parentNode() const
 {
     ASSERT(isMainThreadOrGCThread());
     return m_parentNode;
-}
-
-inline void* Node::opaqueRoot() const
-{
-    // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return &document();
-    return traverseToOpaqueRoot();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const

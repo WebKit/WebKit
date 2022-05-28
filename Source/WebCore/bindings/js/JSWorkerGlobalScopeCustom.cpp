@@ -29,6 +29,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMMicrotask.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerLocation.h"
 
 namespace WebCore {
 using namespace JSC;
@@ -37,11 +38,11 @@ template<typename Visitor>
 void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* location = wrapped().optionalLocation())
-        visitor.addOpaqueRoot(location);
+        addWebCoreOpaqueRoot(visitor, *location);
     if (auto* navigator = wrapped().optionalNavigator())
-        visitor.addOpaqueRoot(navigator);
+        addWebCoreOpaqueRoot(visitor, *navigator);
     ScriptExecutionContext& context = wrapped();
-    visitor.addOpaqueRoot(&context);
+    addWebCoreOpaqueRoot(visitor, context);
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
     // even though WorkerGlobalScope is an EventTarget, JSWorkerGlobalScope does not subclass

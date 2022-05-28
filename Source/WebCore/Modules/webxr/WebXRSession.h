@@ -47,6 +47,7 @@
 namespace WebCore {
 
 class XRFrameRequestCallback;
+class WebCoreOpaqueRoot;
 class WebXRSystem;
 class WebXRView;
 class WebXRViewerSpace;
@@ -164,6 +165,8 @@ private:
     // https://immersive-web.github.io/webxr/#xrsession-promise-resolved
     bool m_inputInitialized { false };
 };
+
+WebCoreOpaqueRoot root(WebXRSession*);
 
 } // namespace WebCore
 

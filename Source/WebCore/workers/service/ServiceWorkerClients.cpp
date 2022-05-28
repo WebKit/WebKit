@@ -35,6 +35,7 @@
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
@@ -171,6 +172,11 @@ ServiceWorkerClients::PromiseIdentifier ServiceWorkerClients::addPendingPromise(
 RefPtr<DeferredPromise> ServiceWorkerClients::takePendingPromise(PromiseIdentifier identifier)
 {
     return m_pendingPromises.take(identifier);
+}
+
+WebCoreOpaqueRoot root(ServiceWorkerClients* clients)
+{
+    return WebCoreOpaqueRoot { clients };
 }
 
 } // namespace WebCore

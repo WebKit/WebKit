@@ -26,9 +26,11 @@
 
 #pragma once
 
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace JSC {
 namespace JSCastingHelpers {
@@ -76,14 +78,19 @@ inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
         willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
 }
 
-inline void* root(Node* node)
+inline WebCoreOpaqueRoot root(Node& node)
 {
-    return node ? node->opaqueRoot() : nullptr;
+    return node.opaqueRoot();
 }
 
-inline void* root(Node& node)
+inline WebCoreOpaqueRoot root(Node* node)
 {
-    return root(&node);
+    return node ? root(*node) : nullptr;
+}
+
+inline WebCoreOpaqueRoot root(Document* document)
+{
+    return root(static_cast<Node*>(document));
 }
 
 ALWAYS_INLINE JSC::JSValue JSNode::nodeType(JSC::JSGlobalObject&) const

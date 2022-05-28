@@ -75,7 +75,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_webkit);
 template<typename Visitor>
 void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(&wrapped());
+    addWebCoreOpaqueRoot(visitor, wrapped());
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
     // even though DOMWindow is an EventTarget, JSDOMWindow does not subclass JSEventTarget, so we need

@@ -35,7 +35,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSNavigator::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(static_cast<NavigatorBase*>(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, static_cast<NavigatorBase&>(wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNavigator);

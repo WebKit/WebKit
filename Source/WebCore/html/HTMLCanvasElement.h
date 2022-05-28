@@ -53,6 +53,7 @@ class OffscreenCanvas;
 class VideoFrame;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
+class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
@@ -196,6 +197,8 @@ private:
     mutable bool m_mustGuardAgainstUseByPendingLayerTransaction { false };
 #endif
 };
+
+WebCoreOpaqueRoot root(HTMLCanvasElement*);
 
 } // namespace WebCore
 

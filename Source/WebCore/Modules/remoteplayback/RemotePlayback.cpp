@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSNodeCustom.h"
 #include "Logging.h"
 #include "MediaElementSession.h"
 #include "MediaPlaybackTarget.h"
@@ -60,11 +61,9 @@ RemotePlayback::~RemotePlayback()
 {
 }
 
-void* RemotePlayback::opaqueRootConcurrently() const
+WebCoreOpaqueRoot RemotePlayback::opaqueRootConcurrently() const
 {
-    if (auto* element = m_mediaElement.get())
-        return element->opaqueRoot();
-    return nullptr;
+    return root(m_mediaElement.get());
 }
 
 Node* RemotePlayback::ownerNode() const

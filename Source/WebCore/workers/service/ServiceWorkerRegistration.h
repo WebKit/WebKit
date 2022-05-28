@@ -49,6 +49,7 @@ class NavigationPreloadManager;
 class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;
+class WebCoreOpaqueRoot;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorkerRegistration, WEBCORE_EXPORT);
@@ -125,6 +126,8 @@ private:
 
     std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
 };
+
+WebCoreOpaqueRoot root(ServiceWorkerRegistration*);
 
 } // namespace WebCore
 

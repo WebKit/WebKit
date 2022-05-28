@@ -43,6 +43,7 @@ class JSValue;
 namespace WebCore {
 
 class Frame;
+class WebCoreOpaqueRoot;
 
 struct StructuredSerializeOptions;
 
@@ -131,5 +132,7 @@ private:
 
     mutable std::atomic<unsigned> m_refCount { 1 };
 };
+
+WebCoreOpaqueRoot root(MessagePort*);
 
 } // namespace WebCore

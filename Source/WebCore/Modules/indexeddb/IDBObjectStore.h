@@ -50,6 +50,7 @@ class IDBKeyRange;
 class IDBRequest;
 class IDBTransaction;
 class SerializedScriptValue;
+class WebCoreOpaqueRoot;
 
 struct IDBKeyRangeData;
 
@@ -142,5 +143,7 @@ private:
     HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
     HashMap<uint64_t, std::unique_ptr<IDBIndex>> m_deletedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
 };
+
+WebCoreOpaqueRoot root(IDBObjectStore*);
 
 } // namespace WebCore

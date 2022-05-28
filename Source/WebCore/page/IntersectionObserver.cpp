@@ -36,7 +36,9 @@
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "JSNodeCustom.h"
 #include "Performance.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Vector.h>
 
@@ -302,11 +304,11 @@ void IntersectionObserver::notify()
 bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& target : m_observationTargets) {
-        if (auto* element = target.get(); element && visitor.containsOpaqueRoot(element->opaqueRoot()))
+        if (auto* element = target.get(); containsWebCoreOpaqueRoot(visitor, element))
             return true;
     }
     for (auto& target : m_pendingTargets) {
-        if (visitor.containsOpaqueRoot(target->opaqueRoot()))
+        if (containsWebCoreOpaqueRoot(visitor, target.get()))
             return true;
     }
     return !m_targetsWaitingForFirstObservation.isEmpty();

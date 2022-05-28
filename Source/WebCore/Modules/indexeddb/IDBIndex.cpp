@@ -34,6 +34,7 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -432,6 +433,16 @@ void IDBIndex::ref()
 void IDBIndex::deref()
 {
     m_objectStore.deref();
+}
+
+WebCoreOpaqueRoot IDBIndex::opaqueRoot()
+{
+    return WebCoreOpaqueRoot { &m_objectStore };
+}
+
+WebCoreOpaqueRoot root(IDBIndex* index)
+{
+    return index ? index->opaqueRoot() : nullptr;
 }
 
 } // namespace WebCore

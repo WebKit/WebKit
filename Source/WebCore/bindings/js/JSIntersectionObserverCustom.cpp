@@ -37,7 +37,7 @@ void JSIntersectionObserver::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* callback = wrapped().callbackConcurrently())
         callback->visitJSFunction(visitor);
-    visitor.addOpaqueRoot(root(wrapped().root()));
+    addWebCoreOpaqueRoot(visitor, wrapped().root());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIntersectionObserver);

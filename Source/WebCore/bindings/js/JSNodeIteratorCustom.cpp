@@ -28,8 +28,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSNodeIterator::visitAdditionalChildren(Visitor& visitor)
 {
-    if (NodeFilter* filter = wrapped().filter())
-        visitor.addOpaqueRoot(filter);
+    if (auto* filter = wrapped().filter())
+        addWebCoreOpaqueRoot(visitor, *filter);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNodeIterator);

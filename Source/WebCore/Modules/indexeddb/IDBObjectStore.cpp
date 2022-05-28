@@ -43,6 +43,7 @@
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -742,9 +743,9 @@ void IDBObjectStore::visitReferencedIndexes(Visitor& visitor) const
 {
     Locker locker { m_referencedIndexLock };
     for (auto& index : m_referencedIndexes.values())
-        visitor.addOpaqueRoot(index.get());
+        addWebCoreOpaqueRoot(visitor, index.get());
     for (auto& index : m_deletedIndexes.values())
-        visitor.addOpaqueRoot(index.get());
+        addWebCoreOpaqueRoot(visitor, index.get());
 }
 
 template void IDBObjectStore::visitReferencedIndexes(AbstractSlotVisitor&) const;
@@ -774,6 +775,11 @@ void IDBObjectStore::ref()
 void IDBObjectStore::deref()
 {
     m_transaction.deref();
+}
+
+WebCoreOpaqueRoot root(IDBObjectStore* store)
+{
+    return WebCoreOpaqueRoot { store };
 }
 
 } // namespace WebCore

@@ -34,7 +34,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSHTMLCanvasElement::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(static_cast<CanvasBase*>(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, static_cast<CanvasBase&>(wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSHTMLCanvasElement);

@@ -566,7 +566,6 @@ bindings/js/JSHTMLTemplateElementCustom.cpp
 bindings/js/JSHistoryCustom.cpp
 bindings/js/JSIDBCursorCustom.cpp
 bindings/js/JSIDBCursorWithValueCustom.cpp
-bindings/js/JSIDBIndexCustom.cpp
 bindings/js/JSIDBObjectStoreCustom.cpp
 bindings/js/JSIDBRequestCustom.cpp
 bindings/js/JSIDBTransactionCustom.cpp

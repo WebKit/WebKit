@@ -51,6 +51,7 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -1472,9 +1473,9 @@ void IDBTransaction::visitReferencedObjectStores(Visitor& visitor) const
 {
     Locker locker { m_referencedObjectStoreLock };
     for (auto& objectStore : m_referencedObjectStores.values())
-        visitor.addOpaqueRoot(objectStore.get());
+        addWebCoreOpaqueRoot(visitor, objectStore.get());
     for (auto& objectStore : m_deletedObjectStores.values())
-        visitor.addOpaqueRoot(objectStore.get());
+        addWebCoreOpaqueRoot(visitor, objectStore.get());
 }
 
 template void IDBTransaction::visitReferencedObjectStores(JSC::AbstractSlotVisitor&) const;

@@ -34,6 +34,7 @@
 #include "MessagePortChannelProvider.h"
 #include "MessageWithMessagePorts.h"
 #include "StructuredSerializeOptions.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
@@ -435,6 +436,11 @@ bool MessagePort::removeEventListener(const AtomString& eventType, EventListener
 const char* MessagePort::activeDOMObjectName() const
 {
     return "MessagePort";
+}
+
+WebCoreOpaqueRoot root(MessagePort* port)
+{
+    return WebCoreOpaqueRoot { port };
 }
 
 } // namespace WebCore

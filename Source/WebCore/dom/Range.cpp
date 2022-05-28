@@ -1102,8 +1102,8 @@ RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
 
 void Range::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
 {
-    visitor.addOpaqueRoot(root(&m_start.container()));
-    visitor.addOpaqueRoot(root(&m_end.container()));
+    addWebCoreOpaqueRoot(visitor, m_start.container());
+    addWebCoreOpaqueRoot(visitor, m_end.container());
 }
 
 } // namespace WebCore

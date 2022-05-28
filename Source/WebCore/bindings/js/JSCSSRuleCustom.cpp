@@ -64,7 +64,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSCSSRule::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);

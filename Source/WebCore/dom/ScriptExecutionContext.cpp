@@ -62,6 +62,7 @@
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerNavigator.h"
@@ -782,6 +783,11 @@ ScriptExecutionContext::NotificationCallbackIdentifier ScriptExecutionContext::a
 CompletionHandler<void()> ScriptExecutionContext::takeNotificationCallback(NotificationCallbackIdentifier identifier)
 {
     return m_notificationCallbacks.take(identifier);
+}
+
+WebCoreOpaqueRoot root(ScriptExecutionContext* context)
+{
+    return WebCoreOpaqueRoot { context };
 }
 
 } // namespace WebCore

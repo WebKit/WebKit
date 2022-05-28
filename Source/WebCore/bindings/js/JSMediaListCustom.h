@@ -29,16 +29,17 @@
 #include "CSSStyleSheet.h"
 #include "JSStyleSheetCustom.h"
 #include "MediaList.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
-inline void* root(MediaList* mediaList)
+inline WebCoreOpaqueRoot root(MediaList* mediaList)
 {
     if (CSSRule* parentRule = mediaList->parentRule())
         return root(parentRule);
     if (CSSStyleSheet* parentStyleSheet = mediaList->parentStyleSheet())
         return root(parentStyleSheet);
-    return mediaList;
+    return WebCoreOpaqueRoot { mediaList };
 }
 
 } // namespace WebCore
