@@ -217,13 +217,14 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         // Collect flex items with non-zero flex-shrink value. flex-shrink: 0 flex items
         // don't participate in content flexing.
         for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
-            auto& logicalFlexItem = logicalFlexItemList[index];
-            if (auto flexShrink = logicalFlexItem.layoutBox->style().flexShrink()) {
+            auto& flexItem = logicalFlexItemList[index];
+            auto baseSize = flexItem.rect.width();
+            if (auto flexShrink = flexItem.layoutBox->style().flexShrink()) {
                 shrinkingItems.append(index);
-                totalShrink += flexShrink;
-                totalFlexibleSpace += logicalFlexItem.rect.width();
+                totalShrink += flexShrink * baseSize;
+                totalFlexibleSpace += baseSize;
             } else
-                availableSpace -= logicalFlexItem.rect.width();
+                availableSpace -= baseSize;
         }
         if (totalShrink)
             flexShrinkBase = (totalFlexibleSpace - availableSpace) / totalShrink;
@@ -236,12 +237,13 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         for (auto flexItemIndex : shrinkingItems) {
             auto& flexItem = logicalFlexItemList[flexItemIndex];
 
-            auto flexShrink = flexItem.layoutBox->style().flexShrink();
-            auto flexedSize = flexItem.rect.width() - (flexShrink * flexShrinkBase);
+            auto baseSize = flexItem.rect.width();
+            auto flexShrink = flexItem.layoutBox->style().flexShrink() * baseSize;
+            auto flexedSize = baseSize - (flexShrink * flexShrinkBase);
             auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
             if (minimumSize >= flexedSize) {
                 totalShrink -= flexShrink;
-                totalFlexibleSpace -= flexItem.rect.width();
+                totalFlexibleSpace -= baseSize;
                 availableSpace -= minimumSize;
             }
         }
@@ -254,8 +256,9 @@ void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlex
         for (auto flexItemIndex : shrinkingItems) {
             auto& flexItem = logicalFlexItemList[flexItemIndex];
 
-            auto flexShrink = flexItem.layoutBox->style().flexShrink();
-            auto flexedSize = LayoutUnit { flexItem.rect.width() - (flexShrink * flexShrinkBase) };
+            auto baseSize = flexItem.rect.width();
+            auto flexShrink = flexItem.layoutBox->style().flexShrink() * baseSize;
+            auto flexedSize = LayoutUnit { baseSize - (flexShrink * flexShrinkBase) };
             auto minimumSize = formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum;
             flexItem.rect.setWidth(std::max(minimumSize, flexedSize));
         }
@@ -340,13 +343,13 @@ void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& lo
         for (auto& logicalFlexItem : logicalFlexItemList)
             logicalWidth += logicalFlexItem.rect.width();
         return logicalWidth;
-    };
+    }();
 
     if (!availableSpace)
         ASSERT_NOT_IMPLEMENTED_YET();
-    else if (*availableSpace > contentLogicalWidth())
+    else if (*availableSpace > contentLogicalWidth)
         computeLogicalWidthForStretchingFlexItems(logicalFlexItemList, *availableSpace);
-    else
+    else if (*availableSpace < contentLogicalWidth)
         computeLogicalWidthForShrinkingFlexItems(logicalFlexItemList, *availableSpace);
 }
 
