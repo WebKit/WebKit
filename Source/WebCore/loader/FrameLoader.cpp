@@ -3748,6 +3748,9 @@ Frame* FrameLoader::findFrameForNavigation(const AtomString& name, Document* act
     if (!activeDocument)
         activeDocument = m_frame.document();
 
+    if (!activeDocument)
+        return nullptr;
+
     auto* frame = m_frame.tree().find(name, activeDocument->frame() ? *activeDocument->frame() : m_frame);
 
     if (!activeDocument->canNavigate(frame))

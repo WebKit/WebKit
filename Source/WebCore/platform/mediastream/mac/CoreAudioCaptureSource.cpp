@@ -101,9 +101,10 @@ private:
     bool isProducingData() const final { return m_ioUnitStarted; }
     void isProducingMicrophoneSamplesChanged() final;
     void validateOutputDevice(uint32_t deviceID) final;
+    int actualSampleRate() const final;
 
-    OSStatus configureSpeakerProc();
-    OSStatus configureMicrophoneProc();
+    OSStatus configureSpeakerProc(int sampleRate);
+    OSStatus configureMicrophoneProc(int sampleRate);
     OSStatus defaultOutputDevice(uint32_t*);
     OSStatus defaultInputDevice(uint32_t*);
 
@@ -149,7 +150,7 @@ private:
     Timer m_verifyCapturingTimer;
 
     bool m_isReconfiguring { false };
-    Lock m_speakerSamplesProducerLock;
+    mutable Lock m_speakerSamplesProducerLock;
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
 };
 
@@ -258,11 +259,13 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     setOutputDeviceID(!err ? defaultOutputDeviceID : 0);
 #endif
 
-    err = configureMicrophoneProc();
+    // FIXME: Add support for different speaker/microphone sample rates.
+    int actualSampleRate = this->actualSampleRate();
+    err = configureMicrophoneProc(actualSampleRate);
     if (err)
         return err;
 
-    err = configureSpeakerProc();
+    err = configureSpeakerProc(actualSampleRate);
     if (err)
         return err;
 
@@ -285,10 +288,15 @@ void CoreAudioSharedUnit::unduck()
         AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
 }
 
-OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
+int CoreAudioSharedUnit::actualSampleRate() const
 {
-    if (!isProducingMicrophoneSamples())
-        return noErr;
+    Locker locker { m_speakerSamplesProducerLock };
+    return m_speakerSamplesProducer ? m_speakerSamplesProducer->format().streamDescription().mSampleRate : sampleRate();
+}
+
+OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
+{
+    ASSERT(isMainThread());
 
     AURenderCallbackStruct callback = { microphoneCallback, this };
     auto err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback));
@@ -306,7 +314,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
         return err;
     }
 
-    microphoneProcFormat.mSampleRate = sampleRate();
+    microphoneProcFormat.mSampleRate = sampleRate;
     err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus, &microphoneProcFormat, size);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set output stream format, error %d (%.4s)", this, (int)err, (char*)&err);
@@ -319,8 +327,10 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
     return err;
 }
 
-OSStatus CoreAudioSharedUnit::configureSpeakerProc()
+OSStatus CoreAudioSharedUnit::configureSpeakerProc(int sampleRate)
 {
+    ASSERT(isMainThread());
+
     AURenderCallbackStruct callback = { speakerCallback, this };
     auto err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, outputBus, &callback, sizeof(callback));
     if (err) {
@@ -332,17 +342,18 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc()
     UInt32 size = sizeof(speakerProcFormat);
     {
         Locker locker { m_speakerSamplesProducerLock };
-        if (m_speakerSamplesProducer)
+        if (m_speakerSamplesProducer) {
             speakerProcFormat = m_speakerSamplesProducer->format().streamDescription();
-        else {
+            ASSERT(speakerProcFormat.mSampleRate == sampleRate);
+        } else {
             err = PAL::AudioUnitGetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, &size);
             if (err) {
                 RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
                 return err;
             }
-            speakerProcFormat.mSampleRate = sampleRate();
         }
     }
+    speakerProcFormat.mSampleRate = sampleRate;
 
     err = PAL::AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus, &speakerProcFormat, size);
     if (err) {
@@ -492,6 +503,8 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
 
 OSStatus CoreAudioSharedUnit::startInternal()
 {
+    ASSERT(isMainThread());
+
     setIsProducingMicrophoneSamples(true);
 
     OSStatus err;
@@ -572,6 +585,8 @@ void CoreAudioSharedUnit::verifyIsCapturing()
 
 void CoreAudioSharedUnit::stopInternal()
 {
+    ASSERT(isMainThread());
+
     m_verifyCapturingTimer.stop();
 
     if (!m_ioUnit || !m_ioUnitStarted)
@@ -631,6 +646,8 @@ OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
 
 void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
+    ASSERT(isMainThread());
+
     setIsRenderingAudio(true);
 
     CoreAudioSpeakerSamplesProducer* oldProducer;
@@ -648,6 +665,8 @@ void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamples
 
 void CoreAudioSharedUnit::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
+    ASSERT(isMainThread());
+
     {
         Locker locker { m_speakerSamplesProducerLock };
         if (m_speakerSamplesProducer != &producer)
@@ -826,6 +845,7 @@ void CoreAudioCaptureSource::startProducingData()
 
     initializeToStartProducingData();
     unit().startProducingData();
+    m_currentSettings = { };
 }
 
 void CoreAudioCaptureSource::stopProducingData()
@@ -852,7 +872,7 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
         settings.setVolume(volume());
-        settings.setSampleRate(sampleRate());
+        settings.setSampleRate(unit().actualSampleRate());
         settings.setDeviceId(hashedId());
         settings.setLabel(name());
         settings.setEchoCancellation(echoCancellation());

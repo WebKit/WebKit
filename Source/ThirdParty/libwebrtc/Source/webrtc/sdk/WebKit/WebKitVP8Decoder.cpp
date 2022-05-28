@@ -55,12 +55,12 @@ static CFStringRef copyVP8DecoderDebugDescription(CMBaseObjectRef);
 #endif
 
 #pragma pack(push, 4)
-struct DecoderClass {
+struct DecoderBaseClass {
     uint8_t pad[padSize];
     CMBaseClass alignedClass;
 };
 
-static const DecoderClass WebKitVP8Decoder_BaseClass {
+static const DecoderBaseClass WebKitVP8Decoder_BaseClass {
     { },
     {
         kCMBaseObject_ClassVersion_1,
@@ -82,31 +82,49 @@ static const DecoderClass WebKitVP8Decoder_BaseClass {
 #else
     static_assert(sizeof(WebKitVP8Decoder_BaseClass.alignedClass.version) == sizeof(uintptr_t), "CMBaseClass fixup is not required!");
 #endif
-static_assert(offsetof(DecoderClass, alignedClass) == padSize, "CMBaseClass offset is incorrect!");
-static_assert(alignof(DecoderClass) == 4, "CMBaseClass must have 4 byte alignment");
+static_assert(offsetof(DecoderBaseClass, alignedClass) == padSize, "CMBaseClass offset is incorrect!");
+static_assert(alignof(DecoderBaseClass) == 4, "CMBaseClass must have 4 byte alignment");
 
 static OSStatus startVP8DecoderSession(VTVideoDecoderRef, VTVideoDecoderSession, CMVideoFormatDescriptionRef);
 static OSStatus decodeVP8DecoderFrame(VTVideoDecoderRef, VTVideoDecoderFrame, CMSampleBufferRef, VTDecodeFrameFlags, VTDecodeInfoFlags*);
 
-static const VTVideoDecoderClass WebKitVP8Decoder_VideoDecoderClass =
-{
-    kVTVideoDecoder_ClassVersion_1,
-    startVP8DecoderSession,
-    decodeVP8DecoderFrame,
-    nullptr, // VTVideoDecoderFunction_CopySupportedPropertyDictionary,
-    nullptr, // VTVideoDecoderFunction_SetProperties
-    nullptr, // VTVideoDecoderFunction_CopySerializableProperties
-    nullptr, // VTVideoDecoderFunction_CanAcceptFormatDescription
-    nullptr, // VTVideoDecoderFunction_FinishDelayedFrames
-    nullptr, // VTVideoDecoderFunction_StartTileSession
-    nullptr, // VTVideoDecoderFunction_DecodeTile
-    nullptr // VTVideoDecoderFunction_FinishDelayedTiles
+#pragma pack(push, 4)
+struct DecoderClass {
+    uint8_t pad[padSize];
+    VTVideoDecoderClass alignedClass;
 };
+
+static const DecoderClass WebKitVP8Decoder_VideoDecoderClass =
+{
+    { },
+    {
+        kVTVideoDecoder_ClassVersion_1,
+        startVP8DecoderSession,
+        decodeVP8DecoderFrame,
+        nullptr, // VTVideoDecoderFunction_CopySupportedPropertyDictionary,
+        nullptr, // VTVideoDecoderFunction_SetProperties
+        nullptr, // VTVideoDecoderFunction_CopySerializableProperties
+        nullptr, // VTVideoDecoderFunction_CanAcceptFormatDescription
+        nullptr, // VTVideoDecoderFunction_FinishDelayedFrames
+        nullptr, // VTVideoDecoderFunction_StartTileSession
+        nullptr, // VTVideoDecoderFunction_DecodeTile
+        nullptr // VTVideoDecoderFunction_FinishDelayedTiles
+    }
+};
+#pragma pack(pop)
+
+#if defined(CMBASE_OBJECT_NEEDS_ALIGNMENT) && CMBASE_OBJECT_NEEDS_ALIGNMENT
+    static_assert(sizeof(WebKitVP8Decoder_VideoDecoderClass.alignedClass.version) == sizeof(uint32_t), "CMBaseClass fixup is required!");
+#else
+    static_assert(sizeof(WebKitVP8Decoder_VideoDecoderClass.alignedClass.version) == sizeof(uintptr_t), "CMBaseClass fixup is not required!");
+#endif
+static_assert(offsetof(DecoderClass, alignedClass) == padSize, "CMBaseClass offset is incorrect!");
+static_assert(alignof(DecoderClass) == 4, "CMBaseClass must have 4 byte alignment");
 
 static const VTVideoDecoderVTable WebKitVP8DecoderVTable =
 {
     { nullptr, &WebKitVP8Decoder_BaseClass.alignedClass },
-    &WebKitVP8Decoder_VideoDecoderClass
+    &WebKitVP8Decoder_VideoDecoderClass.alignedClass
 };
 
 OSStatus createWebKitVP8Decoder(FigVideoCodecType, CFAllocatorRef allocator, VTVideoDecoderRef* decoderOut)

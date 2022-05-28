@@ -110,7 +110,7 @@ public:
     RenderLayer* layerParent() const;
     RenderLayer* layerNextSibling(RenderLayer& parentLayer) const;
     void addLayers(RenderLayer* parentLayer);
-    void removeLayers(RenderLayer* parentLayer);
+    void removeLayers();
     void moveLayers(RenderLayer& newParent);
 
     virtual void dirtyLinesFromChangedChild(RenderObject&) { }

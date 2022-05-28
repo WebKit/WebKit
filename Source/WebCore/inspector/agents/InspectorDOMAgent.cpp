@@ -588,7 +588,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::requestChildNodes(Protocol::DOM
     return { };
 }
 
-Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::querySelector(Protocol::DOM::NodeId nodeId, const String& selector)
+Protocol::ErrorStringOr<std::optional<Protocol::DOM::NodeId>> InspectorDOMAgent::querySelector(Protocol::DOM::NodeId nodeId, const String& selector)
 {
     Protocol::ErrorString errorString;
 
@@ -602,11 +602,15 @@ Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::querySelector(
     if (queryResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(queryResult.releaseException()));
 
-    auto resultNodeId = pushNodePathToFrontend(errorString, queryResult.releaseReturnValue());
+    auto* queryResultNode = queryResult.releaseReturnValue();
+    if (!queryResultNode)
+        return { };
+
+    auto resultNodeId = pushNodePathToFrontend(errorString, queryResultNode);
     if (!resultNodeId)
         return makeUnexpected(errorString);
 
-    return resultNodeId;
+    return { resultNodeId };
 }
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOM::NodeId>>> InspectorDOMAgent::querySelectorAll(Protocol::DOM::NodeId nodeId, const String& selector)

@@ -244,7 +244,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
         }
 
         if (auto nativeImage = resourceCache().cachedNativeImage({ *resourceIdentifier, m_webProcessIdentifier })) {
-            feImage.setImageSource(Ref<Image> { BitmapImage::create(nativeImage) });
+            feImage.setImageSource(Ref<Image> { BitmapImage::create(Ref<NativeImage> { *nativeImage }) });
             continue;
         }
 
