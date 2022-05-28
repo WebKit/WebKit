@@ -42,6 +42,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
 
+CharacterData::~CharacterData()
+{
+    willBeDeletedFrom(document());
+}
+
 static bool canUseSetDataOptimization(const CharacterData& node)
 {
     auto& document = node.document();

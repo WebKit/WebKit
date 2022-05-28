@@ -52,6 +52,8 @@ protected:
         ASSERT(type == CreateCharacterData || type == CreateText || type == CreateEditingText);
     }
 
+    ~CharacterData();
+
     void setDataWithoutUpdate(const String& data)
     {
         ASSERT(!data.isNull());

@@ -71,6 +71,8 @@ Attr::~Attr()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!isInShadowTree());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
+
+    willBeDeletedFrom(document());
 }
 
 ExceptionOr<void> Attr::setPrefix(const AtomString& prefix)

@@ -369,20 +369,13 @@ Node::~Node()
     liveNodeSet().remove(*this);
 #endif
 
-    RELEASE_ASSERT(!renderer());
+    ASSERT(!renderer());
     ASSERT(!parentNode());
     ASSERT(!m_previous);
     ASSERT(!m_next);
 
-    if (hasRareData())
-        clearRareData();
-
-    auto* textManipulationController = document().textManipulationControllerIfExists();
-    if (UNLIKELY(textManipulationController))
+    if (auto* textManipulationController = document().textManipulationControllerIfExists(); UNLIKELY(textManipulationController))
         textManipulationController->removeNode(*this);
-
-    if (!isContainerNode())
-        willBeDeletedFrom(document());
 
     if (hasEventTargetData())
         clearEventTargetData();
