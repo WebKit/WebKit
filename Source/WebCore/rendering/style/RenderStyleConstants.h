@@ -752,7 +752,6 @@ enum class TextDecorationStyle : uint8_t {
     Wavy
 };
 
-#if ENABLE(CSS3_TEXT)
 enum class TextAlignLast : uint8_t {
     Auto,
     Start,
@@ -769,7 +768,6 @@ enum class TextJustify : uint8_t {
     InterWord,
     Distribute
 };
-#endif // CSS3_TEXT
 
 enum class TextDecorationSkipInk : uint8_t {
     None,

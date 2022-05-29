@@ -114,6 +114,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , subgridEnabled { document.settings().subgridEnabled() }
     , containIntrinsicSizeEnabled { document.settings().cssContainIntrinsicSizeEnabled() }
     , motionPathEnabled { document.settings().cssMotionPathEnabled() }
+    , cssTextAlignLastEnabled { document.settings().cssTextAlignLastEnabled() }
+    , cssTextJustifyEnabled { document.settings().cssTextJustifyEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -169,6 +171,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.subgridEnabled == b.subgridEnabled
         && a.containIntrinsicSizeEnabled == b.containIntrinsicSizeEnabled
         && a.motionPathEnabled == b.motionPathEnabled
+        && a.cssTextAlignLastEnabled == b.cssTextAlignLastEnabled
+        && a.cssTextJustifyEnabled == b.cssTextJustifyEnabled
     ;
 }
 
@@ -215,7 +219,10 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.subgridEnabled                            << 31
         | (uint64_t)context.containIntrinsicSizeEnabled     << 32
         | (uint64_t)context.motionPathEnabled               << 33
-        | (uint64_t)context.mode                            << 34; // This is multiple bits, so keep it last.
+        | (uint64_t)context.cssTextAlignLastEnabled         << 34
+        | (uint64_t)context.cssTextJustifyEnabled           << 35
+        | (uint64_t)context.mode                            << 36; // This is multiple bits, so keep it last.
+
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -275,6 +282,10 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyOffsetAnchor:
     case CSSPropertyOffsetRotate:
         return !motionPathEnabled;
+    case CSSPropertyWebkitTextAlignLast:
+        return !cssTextAlignLastEnabled;
+    case CSSPropertyWebkitTextJustify:
+        return !cssTextJustifyEnabled;
     default:
         return false;
     }

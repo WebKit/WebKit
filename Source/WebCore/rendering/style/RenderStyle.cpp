@@ -823,10 +823,8 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
     ASSERT(&first != &second);
 
     if (first.indent != second.indent
-#if ENABLE(CSS3_TEXT)
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
-#endif
         || first.textIndentLine != second.textIndentLine
         || first.effectiveZoom != second.effectiveZoom
         || first.textZoom != second.textZoom

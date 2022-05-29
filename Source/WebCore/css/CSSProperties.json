@@ -6838,7 +6838,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS3_TEXT"
+                "settings-flag": "cssTextAlignLastEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -6857,7 +6857,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS3_TEXT"
+                "settings-flag": "cssTextJustifyEnabled"
             },
             "status": {
                 "status": "experimental"

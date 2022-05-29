@@ -389,10 +389,8 @@ public:
 
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
-#if ENABLE(CSS3_TEXT)
     TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(m_rareInheritedData->textAlignLast); }
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
-#endif
 
     const Length& wordSpacing() const;
     float letterSpacing() const;
@@ -1044,10 +1042,8 @@ public:
 
     void setTextIndentLine(TextIndentLine v) { SET_VAR(m_rareInheritedData, textIndentLine, static_cast<unsigned>(v)); }
     void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, static_cast<unsigned>(v)); }
-#if ENABLE(CSS3_TEXT)
     void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, static_cast<unsigned>(v)); }
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length&&);
@@ -1778,10 +1774,8 @@ public:
 
     static TextIndentLine initialTextIndentLine() { return TextIndentLine::FirstLine; }
     static TextIndentType initialTextIndentType() { return TextIndentType::Normal; }
-#if ENABLE(CSS3_TEXT)
     static TextAlignLast initialTextAlignLast() { return TextAlignLast::Auto; }
     static TextJustify initialTextJustify() { return TextJustify::Auto; }
-#endif
 
 #if ENABLE(CURSOR_VISIBILITY)
     static CursorVisibility initialCursorVisibility() { return CursorVisibility::Auto; }

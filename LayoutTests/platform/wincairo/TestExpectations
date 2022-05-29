@@ -1060,9 +1060,6 @@ fast/css-generated-content/initial-letter-pagination-raised.html [ ImageOnlyFail
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 
-# TODO CSS3_TEXT is disabled on Windows
-fast/css3-text/ [ Skip ]
-
 webkit.org/b/150949 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure ]
 
 # color-filters are off by default

@@ -2911,9 +2911,10 @@ imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Sk
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.html [ Skip ]
 
-# CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
-webkit.org/b/76173 fast/css3-text/css3-text-align-last [ Skip ]
-webkit.org/b/99945 fast/css3-text/css3-text-justify [ Skip ]
+# text-align-last
+webkit.org/b/76173 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
+# text-justify
+webkit.org/b/99945 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
 
 # Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
 webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]

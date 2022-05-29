@@ -405,6 +405,30 @@ CSSRelativeColorSyntaxEnabled:
     WebCore:
       default: false
 
+CSSTextAlignLastEnabled:
+  type: bool
+  humanReadableName: "CSS text-align-last property"
+  humanReadableDescription: "Enable the property text-align-last, defined in CSS Text 3"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSTextJustifyEnabled:
+  type: bool
+  humanReadableName: "CSS text-justify property"
+  humanReadableDescription: "Enable the property text-justify, defined in CSS Text 3"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTypedOMEnabled:
   type: bool
   humanReadableName: "CSS Typed OM"

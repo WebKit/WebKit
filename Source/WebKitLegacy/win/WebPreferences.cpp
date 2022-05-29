@@ -2649,3 +2649,13 @@ bool WebPreferences::cssInputSecurityEnabled()
 {
     return boolValueForKey("WebKitCSSInputSecurityEnabled");
 }
+
+bool WebPreferences::cssTextAlignLastEnabled()
+{
+    return boolValueForKey("WebKitCSSTextAlignLastEnabled");
+}
+
+bool WebPreferences::cssTextJustifyEnabled()
+{
+    return boolValueForKey("WebKitCSSTextJustifyEnabled");
+}

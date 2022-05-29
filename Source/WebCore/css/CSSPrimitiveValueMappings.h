@@ -2213,7 +2213,6 @@ template<> inline CSSPrimitiveValue::operator TextAlignMode() const
     }
 }
 
-#if ENABLE(CSS3_TEXT)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextAlignLast e)
     : CSSValue(PrimitiveClass)
 {
@@ -2310,7 +2309,6 @@ template<> inline CSSPrimitiveValue::operator TextJustify() const
     ASSERT_NOT_REACHED();
     return TextJustify::Auto;
 }
-#endif // CSS3_TEXT
 
 template<> inline CSSPrimitiveValue::operator OptionSet<TextDecorationLine>() const
 {

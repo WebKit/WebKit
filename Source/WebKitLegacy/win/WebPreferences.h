@@ -350,6 +350,8 @@ public:
     bool cssGradientPremultipliedAlphaInterpolationEnabled();
     bool mockScrollbarsControllerEnabled();
     bool cssInputSecurityEnabled();
+    bool cssTextAlignLastEnabled();
+    bool cssTextJustifyEnabled();
 
 private:
     WebPreferences();

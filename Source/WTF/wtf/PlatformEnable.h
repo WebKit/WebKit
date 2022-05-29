@@ -204,10 +204,6 @@
 #define ENABLE_CONTEXT_MENU_EVENT 1
 #endif
 
-#if !defined(ENABLE_CSS3_TEXT)
-#define ENABLE_CSS3_TEXT 0
-#endif
-
 #if !defined(ENABLE_CSS_BOX_DECORATION_BREAK)
 #define ENABLE_CSS_BOX_DECORATION_BREAK 1
 #endif

@@ -898,9 +898,6 @@ fast/css/visited-link-mix-blend-mode.html [ Skip ]
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 
 
-# TODO CSS3_TEXT is disabled on Windows
-fast/css3-text/ [ Skip ]
-
 # TODO ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html [ Skip ]
 compositing/overflow/updating-scrolling-content.html [ Skip ]
@@ -5054,3 +5051,10 @@ imported/mozilla/svg/blend-color.svg [ Skip ]
 imported/mozilla/svg/blend-hard-light.svg [ Skip ]
 imported/mozilla/svg/blend-hue.svg [ Skip ]
 imported/mozilla/svg/blend-luminosity.svg [ Skip ]
+
+# css3-text failures.
+fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure ]

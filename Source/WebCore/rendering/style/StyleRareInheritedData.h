@@ -140,10 +140,8 @@ public:
     unsigned imageResolutionSource : 1; // ImageResolutionSource
     unsigned imageResolutionSnap : 1; // ImageResolutionSnap
 #endif
-#if ENABLE(CSS3_TEXT)
     unsigned textAlignLast : 3; // TextAlignLast
     unsigned textJustify : 2; // TextJustify
-#endif
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
     unsigned textUnderlinePosition : 2; // TextUnderlinePosition
     unsigned rubyPosition : 2; // RubyPosition

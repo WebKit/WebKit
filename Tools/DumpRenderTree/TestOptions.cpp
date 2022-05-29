@@ -136,6 +136,8 @@ const TestFeatures& TestOptions::defaults()
             { "CSSInputSecurityEnabled", true },
             { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
+            { "CSSTextAlignLastEnabled", true },
+            { "CSSTextJustifyEnabled", true },
             { "CanvasColorSpaceEnabled", true },
             { "ColorFilterEnabled", false },
             { "ContactPickerAPIEnabled", false },
