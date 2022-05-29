@@ -401,23 +401,11 @@ inline void HTMLToken::appendToComment(UChar character)
     m_data8BitCheck |= character;
 }
 
-inline bool nameMatches(const HTMLToken::Attribute& attribute, StringView name)
-{
-    unsigned size = name.length();
-    if (attribute.name.size() != size)
-        return false;
-    for (unsigned i = 0; i < size; ++i) {
-        // FIXME: The one caller that uses this probably wants to ignore letter case.
-        if (attribute.name[i] != name[i])
-            return false;
-    }
-    return true;
-}
-
-inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, StringView name)
+inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, Span<const UChar> name)
 {
     for (auto& attribute : attributes) {
-        if (nameMatches(attribute, name))
+        // FIXME: The one caller that uses this probably wants to ignore letter case.
+        if (attribute.name.size() == name.size() && equal(attribute.name.data(), name.data(), name.size()))
             return &attribute;
     }
     return nullptr;
