@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO) && PLATFORM(COCOA)
 
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/PixelBufferConformerCV.h>
 #include <WebCore/CoreVideoSoftLink.h>
 
@@ -36,7 +37,7 @@ namespace WebKit {
 void RemoteVideoFrameObjectHeap::createPixelConformerIfNeeded()
 {
     if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+        m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>(kCVPixelFormatType_32BGRA, WebCore::DestinationColorSpace::SRGB());
 }
 
 }

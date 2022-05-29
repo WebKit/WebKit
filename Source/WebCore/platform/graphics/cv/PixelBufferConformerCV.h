@@ -25,25 +25,38 @@
 
 #pragma once
 
+#include "DestinationColorSpace.h"
+#include "FourCC.h"
 #include <wtf/RetainPtr.h>
 
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGImage* CGImageRef;
-typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
+typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
+
 
 namespace WebCore {
 
 class PixelBufferConformerCV {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
+    WEBCORE_EXPORT PixelBufferConformerCV(FourCC&& pixelFormat, const DestinationColorSpace&);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
     static WEBCORE_EXPORT RetainPtr<CGImageRef> imageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&&, CGColorSpaceRef);
 
+    const DestinationColorSpace& destinationColorSpace() const { return m_destinationColorSpace; }
+
 private:
-    RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;
+    bool isConformantPixelBuffer(CVPixelBufferRef) const;
+
+    FourCC m_pixelFormat;
+    DestinationColorSpace m_destinationColorSpace;
+    RetainPtr<VTPixelTransferSessionRef> m_pixelTransferSession;
+    size_t m_lastWidth { 0 };
+    size_t m_lastHeight { 0 };
+    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
 };
 
 }

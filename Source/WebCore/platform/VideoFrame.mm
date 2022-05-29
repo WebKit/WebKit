@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 
+#import "DestinationColorSpace.h"
 #import "PixelBufferConformerCV.h"
 #include "VideoFrameCV.h"
 #import <JavaScriptCore/TypedArrayInlines.h>
@@ -39,7 +40,7 @@ namespace WebCore {
 
 RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
 {
-    PixelBufferConformerCV pixelBufferConformer((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32RGBA) });
+    PixelBufferConformerCV pixelBufferConformer(kCVPixelFormatType_32RGBA, DestinationColorSpace::SRGB());
 
     auto pixelBuffer = this->pixelBuffer();
     auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);

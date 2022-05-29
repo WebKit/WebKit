@@ -697,10 +697,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
 
     ASSERT(m_lastPixelBuffer);
 
-    if (!m_rgbConformer) {
-        auto attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-        m_rgbConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
-    }
+    if (!m_rgbConformer)
+        m_rgbConformer = makeUnique<PixelBufferConformerCV>(kCVPixelFormatType_32BGRA, DestinationColorSpace::SRGB());
 
     m_lastImage = NativeImage::create(m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
     return true;

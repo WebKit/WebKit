@@ -2712,10 +2712,8 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
         return;
 
-    if (!m_pixelBufferConformer) {
-        NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
-    }
+    if (!m_pixelBufferConformer)
+        m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>(kCVPixelFormatType_32BGRA, DestinationColorSpace::SRGB());
 
     MonotonicTime start = MonotonicTime::now();
 

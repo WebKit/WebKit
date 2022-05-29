@@ -27,6 +27,7 @@
 #include "PixelBufferConformerCV.h"
 
 #include "CVUtilities.h"
+#include "DestinationColorSpace.h"
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
@@ -36,12 +37,70 @@
 
 namespace WebCore {
 
-PixelBufferConformerCV::PixelBufferConformerCV(CFDictionaryRef attributes)
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+static void configureSessionForDisplayP3(VTPixelTransferSessionRef session)
 {
-    VTPixelBufferConformerRef conformer = nullptr;
-    VTPixelBufferConformerCreateWithAttributes(kCFAllocatorDefault, attributes, &conformer);
-    ASSERT(conformer);
-    m_pixelConformer = adoptCF(conformer);
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationColorPrimaries, kCVImageBufferColorPrimaries_DCI_P3);
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2);
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationTransferFunction, kCVImageBufferTransferFunction_sRGB);
+}
+
+static bool isPixelBufferConfiguredForDisplayP3(CVPixelBufferRef buffer)
+{
+    return CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferColorPrimariesKey, nullptr), kCVImageBufferColorPrimaries_DCI_P3)
+        && CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferYCbCrMatrixKey, nullptr), kCVImageBufferYCbCrMatrix_ITU_R_709_2)
+        && CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferTransferFunctionKey, nullptr), kCVImageBufferTransferFunction_sRGB);
+}
+#endif
+
+static void configureSessionForSRGB(VTPixelTransferSessionRef session)
+{
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationColorPrimaries, kCVImageBufferColorPrimaries_ITU_R_709_2);
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2);
+    VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationTransferFunction, kCVImageBufferTransferFunction_sRGB);
+}
+
+static bool isPixelBufferConfiguredForSRGB(CVPixelBufferRef buffer)
+{
+    return CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferColorPrimariesKey, nullptr), kCVImageBufferColorPrimaries_ITU_R_709_2)
+        && CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferYCbCrMatrixKey, nullptr), kCVImageBufferYCbCrMatrix_ITU_R_709_2)
+        && CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferTransferFunctionKey, nullptr), kCVImageBufferTransferFunction_sRGB);
+}
+
+static void configureSessionForColorSpace(VTPixelTransferSessionRef session, CGColorSpaceRef colorSpace)
+{
+    if (auto iccData = RetainPtr { CGColorSpaceCopyICCData(colorSpace) }) {
+        VTSessionSetProperty(session, kVTPixelTransferPropertyKey_DestinationICCProfile, iccData.get());
+        return;
+    }
+
+    // VTPixelTransferSession requires either color properties or ICC data.
+    ASSERT_NOT_REACHED();
+}
+
+static bool isPixelBufferConfiguredForColorSpace(CVPixelBufferRef buffer, CGColorSpaceRef colorSpace)
+{
+    return CFEqual(CVBufferGetAttachment(buffer, kCVImageBufferCGColorSpaceKey, nullptr), colorSpace);
+}
+
+PixelBufferConformerCV::PixelBufferConformerCV(FourCC&& pixelFormat, const DestinationColorSpace& colorSpace)
+    : m_pixelFormat(WTFMove(pixelFormat))
+    , m_destinationColorSpace(colorSpace)
+{
+    VTPixelTransferSessionRef transferSession = nullptr;
+    VTPixelTransferSessionCreate(kCFAllocatorDefault, &transferSession);
+    ASSERT(transferSession);
+
+    if (colorSpace == DestinationColorSpace::SRGB())
+        configureSessionForSRGB(transferSession);
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    else if (colorSpace == DestinationColorSpace::DisplayP3())
+        configureSessionForDisplayP3(transferSession);
+#endif
+    else if (auto* platformColorSpace = colorSpace.platformColorSpace())
+        configureSessionForColorSpace(transferSession, platformColorSpace);
+
+    m_pixelTransferSession = adoptCF(transferSession);
 }
 
 struct CVPixelBufferInfo {
@@ -132,32 +191,40 @@ static void CVPixelBufferReleaseInfoCallback(void* refcon)
 
 RetainPtr<CVPixelBufferRef> PixelBufferConformerCV::convert(CVPixelBufferRef rawBuffer)
 {
+    if (isConformantPixelBuffer(rawBuffer))
+        return rawBuffer;
+
     RetainPtr<CVPixelBufferRef> buffer { rawBuffer };
 
-    if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer.get(), buffer.get())) {
-        CVPixelBufferRef outputBuffer = nullptr;
-        OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer.get(), buffer.get(), false, &outputBuffer);
-        if (status != noErr || !outputBuffer)
+    size_t bufferWidth = CVPixelBufferGetWidth(rawBuffer);
+    size_t bufferHeight = CVPixelBufferGetHeight(rawBuffer);
+
+    if (!m_pixelBufferPool || m_lastWidth != bufferWidth || m_lastHeight != bufferHeight) {
+        auto expectedPixelBufferPool = createCVPixelBufferPool(bufferWidth, bufferHeight, m_pixelFormat.value, 0, true, true);
+        ASSERT(expectedPixelBufferPool);
+        if (!expectedPixelBufferPool)
             return nullptr;
-        return adoptCF(outputBuffer);
+        m_pixelBufferPool = WTFMove(expectedPixelBufferPool.value());
     }
-    return nullptr;
+
+    auto expectedPixelBuffer = createCVPixelBufferFromPool(m_pixelBufferPool.get());
+    ASSERT(expectedPixelBuffer);
+    if (!expectedPixelBuffer)
+        return nullptr;
+
+    auto outputPixelBuffer = WTFMove(expectedPixelBuffer.value());
+
+    OSStatus status = VTPixelTransferSessionTransferImage(m_pixelTransferSession.get(), buffer.get(), outputPixelBuffer.get());
+    if (status != noErr || !outputPixelBuffer)
+        return nullptr;
+
+    return outputPixelBuffer;
 }
 
 RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBufferRef rawBuffer)
 {
-    RetainPtr<CVPixelBufferRef> buffer { rawBuffer };
-
-    if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer.get(), buffer.get())) {
-        CVPixelBufferRef outputBuffer = nullptr;
-        OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer.get(), buffer.get(), false, &outputBuffer);
-        if (status != noErr || !outputBuffer)
-            return nullptr;
-        buffer = adoptCF(outputBuffer);
-    }
-
-    auto colorSpace = createCGColorSpaceForCVPixelBuffer(rawBuffer);
-    return imageFrom32BGRAPixelBuffer(WTFMove(buffer), colorSpace.get());
+    RetainPtr<CVPixelBufferRef> buffer = convert(rawBuffer);
+    return imageFrom32BGRAPixelBuffer(WTFMove(buffer), m_destinationColorSpace.platformColorSpace());
 }
 
 RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&& buffer, CGColorSpaceRef colorSpace)
@@ -181,6 +248,24 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainP
     RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateDirect(info, byteLength, &providerCallbacks));
 
     return adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace, bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
+}
+
+bool PixelBufferConformerCV::isConformantPixelBuffer(CVPixelBufferRef pixelBuffer) const
+{
+    if (CVPixelBufferGetPixelFormatType(pixelBuffer) != m_pixelFormat.value)
+        return false;
+
+    if (m_destinationColorSpace == DestinationColorSpace::SRGB())
+        return isPixelBufferConfiguredForSRGB(pixelBuffer);
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (m_destinationColorSpace == DestinationColorSpace::DisplayP3())
+        return isPixelBufferConfiguredForDisplayP3(pixelBuffer);
+#endif
+    if (auto* platformColorSpace = m_destinationColorSpace.platformColorSpace())
+        return isPixelBufferConfiguredForColorSpace(pixelBuffer, platformColorSpace);
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 }

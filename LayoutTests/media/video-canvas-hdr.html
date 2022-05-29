@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>video-canvas-hdr</title>
+<script src=video-test.js></script>
+<script src=utilities.js></script>
+
+<script>
+function arraysAreEqual(array1, array2) {
+    if (array1.length !== array2.length)
+        return false;
+    for (var i = 0; i < array1.length; i++) {
+        if (array1[i] !== array2[i])
+            return false;
+    }
+    return true;
+}
+
+function testContextPixelsAreDifferent(context, location1, location2) {
+    let pixel1 = context.getImageData(location1.x, location1.y, 1, 1).data;
+    let pixel2 = context.getImageData(location2.x, location2.y, 1, 1).data;
+    if (arraysAreEqual(pixel1, pixel2))
+        logResult(Failed, `Expected pixels at ${location1.x},${location1.y} to be different than pixels at ${location2.x},${location2.y}; both were ${pixel1}`);
+    else
+        logResult(Success, `Pixels at ${location1.x},${location1.y} were different than pixels at ${location2.x},${location2.y}`);
+}
+
+window.addEventListener('load', async event => {
+    let video = document.createElement('video');
+    video.src = 'content/smpte-hlg.mp4';
+    await waitForVideoFrame(video);
+
+    let canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    window.context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    consoleWrite("When HDR samples are painted to SDR canvas contexts without color correction, the resulting colors are are washed out or 'crushed' to their most extreme possible values; the 100% color sections of this SMPTE pattern should be rendered as different colors than the 75% color sections.");
+    testContextPixelsAreDifferent(context, {x:342, y:45}, {x:342, y:360});
+    testContextPixelsAreDifferent(context, {x:448, y:45}, {x:448, y:360});
+    testContextPixelsAreDifferent(context, {x:552, y:45}, {x:552, y:360});
+    testContextPixelsAreDifferent(context, {x:656, y:45}, {x:656, y:360});
+    testContextPixelsAreDifferent(context, {x:760, y:45}, {x:760, y:360});
+    endTest();
+});
+</script>
+</head>
+
+<body>
+</body>
+</html>
