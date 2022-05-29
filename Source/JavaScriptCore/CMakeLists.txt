@@ -1176,7 +1176,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureCache.h
     runtime/StructureChain.h
     runtime/StructureID.h
-    runtime/StructureIDBlob.h
     runtime/StructureInlines.h
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h
@@ -1193,6 +1192,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h
     runtime/TypeError.h
+    runtime/TypeInfoBlob.h
     runtime/TypeSet.h
     runtime/TypedArrayAdaptersForwardDeclarations.h
     runtime/TypedArrayAdaptors.h

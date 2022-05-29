@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,50 +25,14 @@
 
 #pragma once
 
-#include "TinyBloomFilter.h"
-#include <wtf/text/UniquedStringImpl.h>
+#include <wtf/CompactPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace JSC {
+namespace WTF {
 
-struct GetByValHistory {
-    void observeNonUID()
-    {
-        uintptr_t count = Options::getByValICMaxNumberOfIdentifiers() + 1;
-        update(count, filter());
-    }
+template <typename T>
+using CompactRefPtr = RefPtr<T, CompactPtrTraits<T>>;
 
-    void observe(const UniquedStringImpl* impl)
-    {
-        if (!impl) {
-            observeNonUID();
-            return;
-        }
+} // namespace WTF
 
-        uintptr_t count = this->count();
-        uintptr_t filter = this->filter();
-
-        TinyBloomFilter<uintptr_t> bloomFilter(filter);
-        uintptr_t implBits = bitwise_cast<uintptr_t>(impl);
-        ASSERT(((static_cast<uint64_t>(implBits) << 8) >> 8) == static_cast<uint64_t>(implBits));
-        if (bloomFilter.ruleOut(implBits)) {
-            bloomFilter.add(implBits);
-            ++count;
-            update(count, bloomFilter.bits());
-        }
-    }
-
-    uintptr_t count() const { return static_cast<uintptr_t>(m_payload >> 56); }
-
-private:
-    uintptr_t filter() const { return static_cast<uintptr_t>((m_payload << 8) >> 8); }
-
-    void update(uint64_t count, uint64_t filter)
-    {
-        ASSERT(((filter << 8) >> 8) == filter);
-        m_payload = (count << 56) | filter;
-    }
-
-    uint64_t m_payload { 0 };
-};
-
-} // namespace JSC
+using WTF::CompactRefPtr;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,59 +25,34 @@
 
 #pragma once
 
-#include "MarkedBlock.h"
-#include "TinyBloomFilter.h"
-#include <wtf/HashSet.h>
+#include "Logger.h"
 
-namespace JSC {
+namespace TestWebKitAPI {
 
-class MarkedBlock;
+struct alignas(16) AlignedRefLogger {
+    AlignedRefLogger(const char* name)
+        : name { *name }
+    {
+    }
 
-class MarkedBlockSet {
-public:
-    void add(MarkedBlock*);
-    void remove(MarkedBlock*);
+    void ref()
+    {
+        log() << "ref(" << &name << ") ";
+    }
 
-    TinyBloomFilter<uintptr_t> filter() const;
-    const HashSet<MarkedBlock*>& set() const;
+    void deref()
+    {
+        log() << "deref(" << &name << ") ";
+    }
 
-private:
-    void recomputeFilter();
-
-    TinyBloomFilter<uintptr_t> m_filter;
-    HashSet<MarkedBlock*> m_set;
+    const char& name;
 };
 
-inline void MarkedBlockSet::add(MarkedBlock* block)
-{
-    m_filter.add(reinterpret_cast<uintptr_t>(block));
-    m_set.add(block);
-}
+struct DerivedAlignedRefLogger : AlignedRefLogger {
+    DerivedAlignedRefLogger(const char* name)
+        : AlignedRefLogger { name }
+    {
+    }
+};
 
-inline void MarkedBlockSet::remove(MarkedBlock* block)
-{
-    unsigned oldCapacity = m_set.capacity();
-    m_set.remove(block);
-    if (m_set.capacity() != oldCapacity) // Indicates we've removed a lot of blocks.
-        recomputeFilter();
 }
-
-inline void MarkedBlockSet::recomputeFilter()
-{
-    TinyBloomFilter<uintptr_t> filter;
-    for (HashSet<MarkedBlock*>::iterator it = m_set.begin(); it != m_set.end(); ++it)
-        filter.add(reinterpret_cast<uintptr_t>(*it));
-    m_filter = filter;
-}
-
-inline TinyBloomFilter<uintptr_t> MarkedBlockSet::filter() const
-{
-    return m_filter;
-}
-
-inline const HashSet<MarkedBlock*>& MarkedBlockSet::set() const
-{
-    return m_set;
-}
-
-} // namespace JSC
