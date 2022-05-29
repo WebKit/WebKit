@@ -428,10 +428,12 @@ void FlexFormattingContext::computeLogicalHeightForFlexItems(LogicalFlexItems& l
 void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
 {
     // FIXME: Check if height computation and vertical alignment should merge.
-    auto alignItems = root().style().alignItems();
+    auto flexBoxAlignItems = root().style().alignItems();
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
-        switch (alignItems.position()) {
+        auto& flexItemAlignSelf = logicalFlexItem.layoutBox->style().alignSelf();
+        auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexBoxAlignItems;
+        switch (alignValue.position()) {
         case ItemPosition::Normal:
         case ItemPosition::Stretch:
             logicalFlexItem.rect.setTop({ });
