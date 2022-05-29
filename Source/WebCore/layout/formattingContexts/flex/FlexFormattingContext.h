@@ -65,11 +65,13 @@ private:
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     LogicalFlexItems convertFlexItemsToLogicalSpace();
     void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForFlexContent&);
-    void computeLogicalWidthForFlexItems(LogicalFlexItems&, const ConstraintsForFlexContent&);
+    void computeLogicalWidthForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
     void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
     void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalHeightForFlexItems(LogicalFlexItems&, const ConstraintsForFlexContent&);
-    void alignFlexItems(LogicalFlexItems&, const ConstraintsForFlexContent&);
+    void computeLogicalHeightForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
+    void alignFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
+    LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
