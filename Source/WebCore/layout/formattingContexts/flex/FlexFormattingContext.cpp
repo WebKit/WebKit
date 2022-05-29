@@ -456,6 +456,44 @@ void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList
     }
 }
 
+void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
+{
+    auto justifyContent = root().style().justifyContent();
+
+    auto initialOffset = [&] {
+        auto contentLogicalWidth = [&] {
+            auto logicalWidth = LayoutUnit { };
+            for (auto& logicalFlexItem : logicalFlexItemList)
+                logicalWidth += logicalFlexItem.rect.width();
+            return logicalWidth;
+        };
+
+        switch (justifyContent.position()) {
+        case ContentPosition::Normal:
+        case ContentPosition::Start:
+        case ContentPosition::FlexStart:
+        case ContentPosition::Left:
+            return LayoutUnit { };
+        case ContentPosition::End:
+        case ContentPosition::FlexEnd:
+        case ContentPosition::Right:
+            return availableSpace - contentLogicalWidth();
+        case ContentPosition::Center:
+            return availableSpace / 2 - contentLogicalWidth() / 2;
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
+        return LayoutUnit { };
+    };
+
+    auto logicalLeft = initialOffset();
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        logicalFlexItem.rect.setLeft(logicalLeft);
+        logicalLeft = logicalFlexItem.rect.right();
+    }
+}
+
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
     auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
@@ -467,12 +505,8 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     auto availableLogicalVerticalSpace = computeAvailableLogicalVerticalSpace(logicalFlexItemList, flexConstraints);
     computeLogicalHeightForFlexItems(logicalFlexItemList, availableLogicalVerticalSpace);
     alignFlexItems(logicalFlexItemList, availableLogicalVerticalSpace);
+    justifyFlexItems(logicalFlexItemList, availableLogicalHorizontalSpace);
 
-    auto logicalLeft = LayoutUnit { };
-    for (auto& logicalFlexItem : logicalFlexItemList) {
-        logicalFlexItem.rect.setLeft(logicalLeft);
-        logicalLeft = logicalFlexItem.rect.right();
-    }
     setFlexItemsGeometry(logicalFlexItemList, flexConstraints);
 }
 

@@ -70,6 +70,7 @@ private:
     void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
     void computeLogicalHeightForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
     void alignFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
+    void justifyFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
     LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
     LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
 
