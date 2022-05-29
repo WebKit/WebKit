@@ -332,4 +332,4 @@ async function awaitedPromisesAreWrapped() {
 awaitedPromisesAreWrapped();
 Promise.resolve().then(() => log.push("Promise.resolve()"));
 drainMicrotasks();
-shouldBe("before|Promise.resolve()|after", log.join("|"));
+shouldBe("before|after|Promise.resolve()", log.join("|"));

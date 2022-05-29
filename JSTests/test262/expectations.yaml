@@ -1815,18 +1815,6 @@ test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
 test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/await/async-await-interleaved.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
-test/language/expressions/await/async-generator-interleaved.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [await, 1, 2, await] and [await, 1, await, 2] to have the same contents. Async/await and promises should be interleaved'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [await, 1, 2, await] and [await, 1, await, 2] to have the same contents. Async/await and promises should be interleaved'
-test/language/expressions/await/await-monkey-patched-promise.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Promise: 1, Promise: 2, Await: 42] and [Promise: 1, Await: 42, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Promise: 1, Promise: 2, Await: 42] and [Promise: 1, Await: 42, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
-test/language/expressions/await/for-await-of-interleaved.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Promise: 6, Promise: 5, Promise: 4, Await: 3, Promise: 3, Promise: 2, Promise: 1, Await: 2, Promise: 0] and [Promise: 6, Promise: 5, Await: 3, Promise: 4, Promise: 3, Await: 2, Promise: 2, Promise: 1, Await: 1, Promise: 0] to have the same contents. Async/await and promises should be interleaved'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Promise: 6, Promise: 5, Promise: 4, Await: 3, Promise: 3, Promise: 2, Promise: 1, Await: 2, Promise: 0] and [Promise: 6, Promise: 5, Await: 3, Promise: 4, Promise: 3, Await: 2, Promise: 2, Promise: 1, Await: 1, Promise: 0] to have the same contents. Async/await and promises should be interleaved'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2061,18 +2049,9 @@ test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/const/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/for-await-of/async-from-sync-iterator-continuation-abrupt-completion-get-constructor.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, tick 2, catch] to have the same contents. '
 test/language/statements/for-await-of/head-lhs-async.js:
   default: "SyntaxError: Unexpected identifier 'of'"
   strict mode: "SyntaxError: Unexpected identifier 'of'"
-test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, tick 2, loop] and [pre, constructor, tick 1, loop, constructor, tick 2, post] to have the same contents. Ticks and constructor lookups'
-test/language/statements/for-await-of/ticks-with-sync-iter-resolved-promise-and-constructor-lookup.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
 test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:

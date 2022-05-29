@@ -141,7 +141,7 @@ function awaitValue(generator, value, onFulfilled)
     "use strict";
 
     var onRejected = function (result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeThrow); };
-    @resolveWithoutPromise(value, onFulfilled, onRejected);
+    @resolveWithoutPromiseForAsyncAwait(value, onFulfilled, onRejected);
 }
 
 @globalPrivate
@@ -223,7 +223,7 @@ function asyncGeneratorResumeNext(generator)
         if (state === @AsyncGeneratorStateCompleted) {
             if (next.resumeMode === @GeneratorResumeModeReturn) {
                 @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateAwaitingReturn);
-                @resolveWithoutPromise(next.value,
+                @resolveWithoutPromiseForAsyncAwait(next.value,
                     function (result) {
                         @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
                         @asyncGeneratorResolve(generator, result, true);
