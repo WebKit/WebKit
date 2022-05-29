@@ -149,7 +149,7 @@ public:
         return oldValue;
     }
 
-    void swap(nullptr_t) { set(nullptr); }
+    void swap(std::nullptr_t) { set(nullptr); }
 
     void swap(CompactPtr& other) { std::swap(m_ptr, other.m_ptr); }
 
