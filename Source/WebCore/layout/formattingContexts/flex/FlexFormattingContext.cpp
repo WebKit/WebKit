@@ -392,6 +392,10 @@ void FlexFormattingContext::computeLogicalHeightForFlexItems(LogicalFlexItems& l
             logicalFlexItem.rect.setHeight(*availableSpace);
             break;
         case ItemPosition::Center:
+        case ItemPosition::Start:
+        case ItemPosition::FlexStart:
+        case ItemPosition::End:
+        case ItemPosition::FlexEnd:
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
@@ -414,6 +418,14 @@ void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList
             break;
         case ItemPosition::Center:
             logicalFlexItem.rect.setTop({ *availableSpace / 2 -  logicalFlexItem.rect.height() / 2 });
+            break;
+        case ItemPosition::Start:
+        case ItemPosition::FlexStart:
+            logicalFlexItem.rect.setTop({ });
+            break;
+        case ItemPosition::End:
+        case ItemPosition::FlexEnd:
+            logicalFlexItem.rect.setTop({ *availableSpace - logicalFlexItem.rect.height() });
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
