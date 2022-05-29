@@ -321,7 +321,8 @@ struct UsedConstraints {
 };
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>& previousLine)
 {
-    initialize(initialConstraintsForLine(lineLogicalRect, previousLine), needsLayoutRange.start, previousLine);
+    auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
+    initialize(initialConstraintsForLine(lineLogicalRect, previousLineEndsWithLineBreak), needsLayoutRange.start, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
@@ -400,7 +401,8 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 {
     ASSERT(isInIntrinsicWidthMode());
     auto lineLogicalWidth = *intrinsicWidthMode() == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
-    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, previousLine);
+    auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
+    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, previousLineEndsWithLineBreak);
     initialize(lineConstraints, needsLayoutRange.start, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
@@ -627,7 +629,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
     return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
 }
 
-UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, const std::optional<PreviousLine>& previousLine) const
+UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
 {
     auto lineLogicalLeft = initialLineLogicalRect.left();
     auto lineLogicalRight = initialLineLogicalRect.right();
@@ -649,7 +651,7 @@ UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initial
         // If 'each-line' is specified, indentation also applies to all lines where the previous line ends with a hard break.
         // [Integration] root()->parent() would normally produce a valid layout box.
         bool shouldIndent = false;
-        if (!previousLine) {
+        if (!previousLineEndsWithLineBreak) {
             shouldIndent = !root.isAnonymous();
             if (root.isAnonymous()) {
                 auto isIntegratedRootBoxFirstChild = layoutState().isIntegratedRootBoxFirstChild();
@@ -658,9 +660,8 @@ UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initial
                 else
                     shouldIndent = isIntegratedRootBoxFirstChild == LayoutState::IsIntegratedRootBoxFirstChild::Yes;
             }
-        } else {
-            shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine && previousLine->endsWithLineBreak;
-        }
+        } else
+            shouldIndent = root.style().textIndentLine() == TextIndentLine::EachLine && *previousLineEndsWithLineBreak;
 
         // Specifying 'hanging' inverts whether the line should be indented or not.
         if (root.style().textIndentType() == TextIndentType::Hanging)
