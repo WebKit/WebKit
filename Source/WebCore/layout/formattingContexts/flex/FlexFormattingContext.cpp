@@ -391,6 +391,30 @@ void FlexFormattingContext::computeLogicalHeightForFlexItems(LogicalFlexItems& l
         case ItemPosition::Stretch:
             logicalFlexItem.rect.setHeight(*availableSpace);
             break;
+        case ItemPosition::Center:
+            break;
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
+    }
+}
+
+void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints)
+{
+    // FIXME: Check if height computation and vertical alignment should merge.
+    auto alignItems = root().style().alignItems();
+    auto availableSpace = availableLogicalVerticalSpace(root(), flexConstraints);
+
+    for (auto& logicalFlexItem : logicalFlexItemList) {
+        switch (alignItems.position()) {
+        case ItemPosition::Normal:
+        case ItemPosition::Stretch:
+            logicalFlexItem.rect.setTop({ });
+            break;
+        case ItemPosition::Center:
+            logicalFlexItem.rect.setTop({ *availableSpace / 2 -  logicalFlexItem.rect.height() / 2 });
+            break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
@@ -404,13 +428,13 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 
     auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
     auto logicalLeft = LayoutUnit { };
-    auto logicalTop = LayoutUnit { };
 
     computeLogicalWidthForFlexItems(logicalFlexItemList, flexConstraints);
     computeLogicalHeightForFlexItems(logicalFlexItemList, flexConstraints);
+    alignFlexItems(logicalFlexItemList, flexConstraints);
 
     for (auto& logicalFlexItem : logicalFlexItemList) {
-        logicalFlexItem.rect.setTopLeft({ logicalLeft, logicalTop });
+        logicalFlexItem.rect.setLeft(logicalLeft);
         logicalLeft = logicalFlexItem.rect.right();
     }
     setFlexItemsGeometry(logicalFlexItemList, flexConstraints);
