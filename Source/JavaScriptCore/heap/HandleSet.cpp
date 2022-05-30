@@ -70,27 +70,6 @@ void HandleSet::visitStrongHandles(Visitor& visitor)
 template void HandleSet::visitStrongHandles(AbstractSlotVisitor&);
 template void HandleSet::visitStrongHandles(SlotVisitor&);
 
-void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
-{
-    if (!value == !*slot && slot->isCell() == value.isCell())
-        return;
-
-    Node* node = toNode(slot);
-#if ENABLE(GC_VALIDATION)
-    RELEASE_ASSERT(isLiveNode(node));
-#endif
-    SentinelLinkedList<Node>::remove(node);
-    if (!value || !value.isCell()) {
-        m_immediateList.push(node);
-        return;
-    }
-
-    m_strongList.push(node);
-#if ENABLE(GC_VALIDATION)
-    RELEASE_ASSERT(isLiveNode(node));
-#endif
-}
-
 unsigned HandleSet::protectedGlobalObjectCount()
 {
     unsigned count = 0;
