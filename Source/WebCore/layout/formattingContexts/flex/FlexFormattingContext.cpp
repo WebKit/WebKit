@@ -459,14 +459,25 @@ void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList
 void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
 {
     auto justifyContent = root().style().justifyContent();
+    // FIXME: Make this optional.
+    auto contentLogicalWidth = [&] {
+        auto logicalWidth = LayoutUnit { };
+        for (auto& logicalFlexItem : logicalFlexItemList)
+            logicalWidth += logicalFlexItem.rect.width();
+        return logicalWidth;
+    }();
 
     auto initialOffset = [&] {
-        auto contentLogicalWidth = [&] {
-            auto logicalWidth = LayoutUnit { };
-            for (auto& logicalFlexItem : logicalFlexItemList)
-                logicalWidth += logicalFlexItem.rect.width();
-            return logicalWidth;
-        };
+        switch (justifyContent.distribution()) {
+        case ContentDistribution::Default:
+            // Fall back to justifyContent.position() 
+            break;
+        case ContentDistribution::SpaceBetween:
+            return LayoutUnit { };
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
 
         switch (justifyContent.position()) {
         case ContentPosition::Normal:
@@ -477,20 +488,38 @@ void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemLi
         case ContentPosition::End:
         case ContentPosition::FlexEnd:
         case ContentPosition::Right:
-            return availableSpace - contentLogicalWidth();
+            return availableSpace - contentLogicalWidth;
         case ContentPosition::Center:
-            return availableSpace / 2 - contentLogicalWidth() / 2;
+            return availableSpace / 2 - contentLogicalWidth / 2;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
         }
+        ASSERT_NOT_REACHED();
+        return LayoutUnit { };
+    };
+
+    auto gapBetweenItems = [&] {
+        switch (justifyContent.distribution()) {
+        case ContentDistribution::Default:
+            return LayoutUnit { };
+        case ContentDistribution::SpaceBetween:
+            if (logicalFlexItemList.size() == 1)
+                return LayoutUnit { };
+            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() - 1); 
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
+        ASSERT_NOT_REACHED();
         return LayoutUnit { };
     };
 
     auto logicalLeft = initialOffset();
+    auto gap = gapBetweenItems();
     for (auto& logicalFlexItem : logicalFlexItemList) {
         logicalFlexItem.rect.setLeft(logicalLeft);
-        logicalLeft = logicalFlexItem.rect.right();
+        logicalLeft = logicalFlexItem.rect.right() + gap;
     }
 }
 
