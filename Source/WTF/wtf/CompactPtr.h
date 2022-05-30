@@ -169,25 +169,25 @@ public:
         set(t1);
     }
 
-    static ALWAYS_INLINE constexpr StorageType encode(T* ptr)
+    static ALWAYS_INLINE StorageType encode(T* ptr)
     {
         uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
 #if HAVE(36BIT_ADDRESS)
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(!(intPtr & alignmentMask));
-        StorageType encoded = static_cast<uint32_t>(intPtr >> bitsShift);
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(decode(encoded) == ptr);
+        ASSERT(!(intPtr & alignmentMask));
+        StorageType encoded = static_cast<StorageType>(intPtr >> bitsShift);
+        ASSERT(decode(encoded) == ptr);
         return encoded;
 #else
         return intPtr;
 #endif
     }
 
-    ALWAYS_INLINE constexpr T* decode(const StorageType& ptr) const
+    static ALWAYS_INLINE T* decode(StorageType ptr)
     {
 #if HAVE(36BIT_ADDRESS)
-        return reinterpret_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
 #else
-        return reinterpret_cast<T*>(ptr);
+        return bitwise_cast<T*>(ptr);
 #endif
     }
 
