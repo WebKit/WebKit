@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -363,7 +363,7 @@ static inline bool fontIsSystemFont(CTFontRef font)
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
 // FIXME: <rdar://problem/31312602> Get the real values from Core Text.
-static inline float normalizeWeight(float value)
+static inline float normalizeGXWeight(float value)
 {
     return 523.7 * value - 109.3;
 }
@@ -373,7 +373,7 @@ static inline float normalizeSlope(float value)
     return value * 300;
 }
 
-static inline float denormalizeWeight(float value)
+static inline float denormalizeGXWeight(float value)
 {
     return (value + 109.3) / 523.7;
 }
@@ -604,7 +604,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
         if (needsConversion) {
-            weight = denormalizeWeight(weight);
+            weight = denormalizeGXWeight(weight);
             width = denormalizeVariationWidth(width);
             slope = denormalizeSlope(slope);
         }
@@ -1063,7 +1063,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
 
     if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
         if (result.weight)
-            result.weight = { { normalizeWeight(result.weight.value().minimum), normalizeWeight(result.weight.value().maximum) } };
+            result.weight = { { normalizeGXWeight(result.weight.value().minimum), normalizeGXWeight(result.weight.value().maximum) } };
         if (result.width)
             result.width = { { normalizeVariationWidth(result.width.value().minimum), normalizeVariationWidth(result.width.value().maximum) } };
         if (result.slope)
