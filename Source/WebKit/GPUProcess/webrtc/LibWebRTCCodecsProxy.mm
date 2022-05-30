@@ -39,6 +39,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/CVUtilities.h>
 #import <WebCore/LibWebRTCProvider.h>
+#import <WebCore/PixelBufferConformerCV.h>
 #import <WebCore/VideoFrameCV.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
 #import <webrtc/sdk/WebKit/WebKitEncoder.h>
@@ -46,8 +47,10 @@
 #import <wtf/MediaTime.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <WebCore/CoreVideoSoftLink.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection)
 {
@@ -241,6 +244,15 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, SharedVi
     auto pixelBuffer = encoder->frameReader->readBuffer(WTFMove(sharedVideoFrame.buffer));
     if (!pixelBuffer)
         return;
+
+    if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) == kCVPixelFormatType_32BGRA) {
+        if (!m_pixelBufferConformer) {
+            m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) });
+        }
+        pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
+        if (!pixelBuffer)
+            return;
+    }
 
 #if !PLATFORM(MACCATALYST)
     webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sharedVideoFrame.time.toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);

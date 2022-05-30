@@ -58,10 +58,6 @@ private:
     size_t m_rotatedHeight { 0 };
     OSType m_rotatedFormat;
 
-    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
-    size_t m_pixelBufferPoolWidth { 0 };
-    size_t m_pixelBufferPoolHeight { 0 };
-
 #if !RELEASE_LOG_DISABLED
     size_t m_numberOfFrames { 0 };
 #endif

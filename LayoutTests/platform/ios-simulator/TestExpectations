@@ -33,6 +33,9 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
 webkit.org/b/235765 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8-2d.html [ Failure ]
 
 # Simulator doesn't support WebAssembly.
 imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]

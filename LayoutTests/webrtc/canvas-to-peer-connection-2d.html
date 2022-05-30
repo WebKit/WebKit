@@ -17,7 +17,7 @@ function testDescription(subcase) {
     return Object.keys(subcase).map((k) => `${k}: ${typeof subcase[k] === "function" ? subcase[k].name : subcase[k]}`).join(",");
 }
 
-const testcase = {draw: withWebGL};
+const testcase = {draw: with2DContext};
 promise_test(async t => { await testCanvasToPeerConnection(t, testcase); }, testDescription(testcase));
 </script>
 </body>

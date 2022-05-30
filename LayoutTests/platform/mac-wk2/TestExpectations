@@ -1733,8 +1733,6 @@ webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_f
 webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r11f_g11f_b10f-rgb-float.html [ Pass Failure ]
 webkit.org/b/240735 [ Release ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r16f-red-half_float.html [ Pass Failure ]
 
-webkit.org/b/240814 webrtc/canvas-to-peer-connection.html [ Pass Failure ]
-
 webkit.org/b/240821 [ Monterey Release ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Slow ]
 
 webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]

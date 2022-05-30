@@ -18,6 +18,9 @@ function testDescription(subcase) {
 }
 
 const testcase = {draw: withWebGL};
+useVP8 = true;
+// FIXME: We should reduce to 25 when having a good RGB -> YUC conversion story for VPx.
+pixelColorTestError = 50;
 promise_test(async t => { await testCanvasToPeerConnection(t, testcase); }, testDescription(testcase));
 </script>
 </body>

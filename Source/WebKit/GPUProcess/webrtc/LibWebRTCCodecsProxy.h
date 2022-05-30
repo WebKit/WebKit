@@ -49,6 +49,10 @@ using LocalDecoder = void*;
 using LocalEncoder = void*;
 }
 
+namespace WebCore {
+class PixelBufferConformerCV;
+}
+
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
@@ -102,6 +106,8 @@ private:
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<RTCEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
+
+    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
 };
 
 }

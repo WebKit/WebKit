@@ -393,14 +393,38 @@ function drawCanvasTestPatternWebGL(canvas, patternNumber)
     }
 }
 
-function assertImageSourceContainsCanvasTestPattern(imageSource, patternNumber, desc)
+function drawCanvasTestPattern2D(canvas, patternNumber)
+{
+    patternNumber = patternNumber || 0;
+    const context = canvas.getContext("2d");
+    const boxSize = [ canvas.width, canvas.height ];
+    const boxes = [
+        [0.0, 0.0, 0.5, 0.5],
+        [0.5, 0.0, 1.0, 0.5],
+        [0.5, 0.5, 1.0, 1.0],
+        [0.0, 0.5, 0.5, 1.0],
+    ];
+    const boxColors = Object.values(testColors);
+    for (let n = 0; n < 4; ++n) {
+        const i = (n + patternNumber) % boxes.length;
+        const color = boxColors[i];
+        const box = boxes[n];
+
+        context.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        context.fillRect(box[0] * boxSize[0], box[1] * boxSize[1], box[2] * boxSize[0], box[3] * boxSize[1]);
+    }
+}
+
+
+function assertImageSourceContainsCanvasTestPattern(imageSource, patternNumber, desc, err)
 {
     patternNumber = patternNumber || 0;
     desc = desc || "";
     const verifyWidth = 300;
     // FIXME: canvas-to-peer-connection on Catalina-WK2 would fail with 0 -> 8 and 255 -> 240 for some reason.
     // https://bugs.webkit.org/show_bug.cgi?id=235708
-    const err = 25;
+    if (!err)
+        err = 25;
     let imageSourceSize;
     let imageSourceHeight;
     if (imageSource instanceof HTMLVideoElement)
