@@ -3728,6 +3728,7 @@ AXRelationType AXObjectCache::symmetricRelation(AXRelationType relationType)
     case AXRelationType::None:
         return AXRelationType::None;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attribute)
