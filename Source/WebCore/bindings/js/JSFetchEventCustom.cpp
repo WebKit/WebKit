@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

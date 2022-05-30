@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "DOMWindow.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class DOMWindow;
 class Frame;
 
 class DOMWindowProperty {

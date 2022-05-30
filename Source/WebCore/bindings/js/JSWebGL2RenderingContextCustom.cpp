@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL) && ENABLE(WEBGL2)
 
 #include "JSWebGL2RenderingContext.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {

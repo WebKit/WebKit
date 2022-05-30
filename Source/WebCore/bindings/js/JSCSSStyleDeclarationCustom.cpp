@@ -34,6 +34,7 @@
 #include "JSNodeCustom.h"
 #include "JSStyleSheetCustom.h"
 #include "StyledElement.h"
+#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {

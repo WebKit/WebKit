@@ -222,7 +222,7 @@ void WebFullScreenManager::didEnterFullScreen()
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
-    setPIPStandbyElement(dynamicDowncast<HTMLVideoElement>(currentPlaybackControlsElement));
+    setPIPStandbyElement(dynamicDowncast<WebCore::HTMLVideoElement>(currentPlaybackControlsElement));
 #endif
 
 #if ENABLE(VIDEO)
@@ -387,7 +387,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
     }
 
     if (targetElement == m_mainVideoElement.get()) {
-        auto& targetVideoElement = downcast<HTMLVideoElement>(*targetElement);
+        auto& targetVideoElement = downcast<WebCore::HTMLVideoElement>(*targetElement);
         if (targetVideoElement.paused() && !targetVideoElement.seeking())
             scheduleMainVideoElementExtraction();
         else

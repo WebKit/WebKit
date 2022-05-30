@@ -28,6 +28,7 @@
 #include "JSIntersectionObserverEntry.h"
 
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

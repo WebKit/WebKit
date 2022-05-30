@@ -60,6 +60,7 @@
 #include "ShadowRoot.h"
 #include "GCReachableRef.h"
 #include "Text.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

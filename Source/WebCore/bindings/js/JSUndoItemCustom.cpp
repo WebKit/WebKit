@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "JSNodeCustom.h"
 #include "JSUndoItem.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>

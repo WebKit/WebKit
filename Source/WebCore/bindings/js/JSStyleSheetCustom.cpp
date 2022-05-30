@@ -27,6 +27,7 @@
 #include "JSStyleSheet.h"
 
 #include "JSCSSStyleSheet.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

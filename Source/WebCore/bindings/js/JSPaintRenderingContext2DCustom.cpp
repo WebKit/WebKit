@@ -29,6 +29,7 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 using namespace JSC;

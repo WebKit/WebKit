@@ -21,6 +21,7 @@
 #include "JSCanvasRenderingContext2D.h"
 
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

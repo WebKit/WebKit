@@ -30,6 +30,7 @@
 #include "JSAttr.h"
 
 #include "Element.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

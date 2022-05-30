@@ -29,6 +29,9 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSMessageChannel.h"
+#include "JSNodeCustom.h"
+#include "MessagePort.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {

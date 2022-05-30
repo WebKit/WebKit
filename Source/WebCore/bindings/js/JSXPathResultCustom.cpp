@@ -28,6 +28,7 @@
 #include "JSXPathResult.h"
 
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRoot.h"
 #include "XPathValue.h"
 
 namespace WebCore {

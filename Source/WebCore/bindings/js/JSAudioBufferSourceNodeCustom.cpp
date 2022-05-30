@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioBufferSourceNode.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 

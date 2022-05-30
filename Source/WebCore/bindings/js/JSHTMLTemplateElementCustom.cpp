@@ -34,6 +34,7 @@
 
 #include "JSDOMConvert.h"
 #include "JSDocumentFragment.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 using namespace JSC;

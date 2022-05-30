@@ -52,6 +52,7 @@
 #include "InMemoryDisplayList.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
+#include "JSNodeCustom.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvas.h"
 #include "PlaceholderRenderingContext.h"

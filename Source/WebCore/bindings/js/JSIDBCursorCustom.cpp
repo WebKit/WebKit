@@ -29,6 +29,7 @@
 #include "IDBBindingUtilities.h"
 #include "JSDOMBinding.h"
 #include "JSIDBCursorWithValue.h"
+#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
