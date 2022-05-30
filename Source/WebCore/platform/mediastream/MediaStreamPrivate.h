@@ -133,15 +133,13 @@ private:
     WeakHashSet<Observer> m_observers;
     String m_id;
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
-    MemoryCompactRobinHoodHashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
+    MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrackPrivate>> m_trackSet;
     bool m_isActive { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };
-
-typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;
 
 } // namespace WebCore
 

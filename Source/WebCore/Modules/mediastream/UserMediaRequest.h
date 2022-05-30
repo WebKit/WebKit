@@ -39,6 +39,7 @@
 #include "IDLTypes.h"
 #include "MediaConstraints.h"
 #include "MediaStreamPrivate.h"
+#include "MediaStreamTrack.h"
 #include "MediaStreamRequest.h"
 #include "UserMediaRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
@@ -54,7 +55,8 @@ template<typename IDLType> class DOMPromiseDeferred;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:
-    static Ref<UserMediaRequest> create(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
+    using TrackConstraints = std::variant<bool, MediaTrackConstraints>;
+    static Ref<UserMediaRequest> create(Document&, MediaStreamRequest&&, TrackConstraints&&, TrackConstraints&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
     virtual ~UserMediaRequest();
 
     UserMediaRequestIdentifier identifier() const { return m_identifier; }
@@ -79,7 +81,7 @@ public:
     const MediaStreamRequest& request() const { return m_request; }
 
 private:
-    UserMediaRequest(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
+    UserMediaRequest(Document&, MediaStreamRequest&&, TrackConstraints&&, TrackConstraints&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
 
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -92,6 +94,8 @@ private:
     UniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>> m_promise;
     CompletionHandler<void()> m_allowCompletionHandler;
     MediaStreamRequest m_request;
+    TrackConstraints m_audioConstraints;
+    TrackConstraints m_videoConstraints;
 };
 
 } // namespace WebCore

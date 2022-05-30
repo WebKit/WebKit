@@ -7205,10 +7205,10 @@ void HTMLMediaElement::updateSleepDisabling()
 }
 
 #if ENABLE(MEDIA_STREAM)
-static inline bool isRemoteMediaStreamVideoTrack(RefPtr<MediaStreamTrack>& item)
+static inline bool isRemoteMediaStreamVideoTrack(const Ref<MediaStreamTrack>& item)
 {
-    auto* track = item.get();
-    return track->privateTrack().type() == RealtimeMediaSource::Type::Video && !track->isCaptureTrack() && !track->isCanvas();
+    auto& track = item.get();
+    return track.privateTrack().type() == RealtimeMediaSource::Type::Video && !track.isCaptureTrack() && !track.isCanvas();
 }
 #endif
 
@@ -7233,7 +7233,7 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 #if ENABLE(MEDIA_STREAM)
     // Remote media stream video tracks may have their corresponding audio tracks being played outside of the media element. Let's ensure to not IDLE the screen in that case.
     // FIXME: We should check that audio is being/to be played. Ideally, we would come up with a media stream agnostic heuristisc.
-    shouldBeAbleToSleep = shouldBeAbleToSleep && !(m_mediaStreamSrcObject && WTF::anyOf(m_mediaStreamSrcObject->getTracks(), isRemoteMediaStreamVideoTrack));
+    shouldBeAbleToSleep = shouldBeAbleToSleep && !(m_mediaStreamSrcObject && m_mediaStreamSrcObject->hasMatchingTrack(isRemoteMediaStreamVideoTrack));
 #endif
 
     if (shouldBeAbleToSleep)

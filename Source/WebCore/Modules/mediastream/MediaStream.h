@@ -59,7 +59,7 @@ class MediaStream final
 public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
-    static Ref<MediaStream> create(Document&, const MediaStreamTrackVector&);
+    static Ref<MediaStream> create(Document&, const Vector<RefPtr<MediaStreamTrack>>&);
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
     virtual ~MediaStream();
 
@@ -69,6 +69,9 @@ public:
     void removeTrack(MediaStreamTrack&);
     MediaStreamTrack* getTrackById(String);
 
+    MediaStreamTrack* getFirstAudioTrack() const;
+    MediaStreamTrack* getFirstVideoTrack() const;
+
     MediaStreamTrackVector getAudioTracks() const;
     MediaStreamTrackVector getVideoTracks() const;
     MediaStreamTrackVector getTracks() const;
@@ -77,6 +80,8 @@ public:
 
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }
+
+    template<typename Function> bool hasMatchingTrack(Function&& function) const { return anyOf(m_trackMap.values(), WTFMove(function)); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
 
@@ -99,7 +104,7 @@ public:
 #endif
 
 protected:
-    MediaStream(Document&, const MediaStreamTrackVector&);
+    MediaStream(Document&, const Vector<Ref<MediaStreamTrack>>&);
     MediaStream(Document&, Ref<MediaStreamPrivate>&&);
 
 #if !RELEASE_LOG_DISABLED
@@ -141,7 +146,7 @@ private:
 
     Ref<MediaStreamPrivate> m_private;
 
-    MemoryCompactRobinHoodHashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
+    MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrack>> m_trackMap;
 
     MediaProducerMediaStateFlags m_state;
 

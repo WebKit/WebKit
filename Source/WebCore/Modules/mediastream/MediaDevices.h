@@ -79,13 +79,13 @@ public:
         std::variant<bool, MediaTrackConstraints> video;
         std::variant<bool, MediaTrackConstraints> audio;
     };
-    void getUserMedia(const StreamConstraints&, Promise&&);
+    void getUserMedia(StreamConstraints&&, Promise&&);
 
     struct DisplayMediaStreamConstraints {
         std::variant<bool, MediaTrackConstraints> video;
         std::variant<bool, MediaTrackConstraints> audio;
     };
-    void getDisplayMedia(const DisplayMediaStreamConstraints&, Promise&&);
+    void getDisplayMedia(DisplayMediaStreamConstraints&&, Promise&&);
 
     void enumerateDevices(EnumerateDevicesPromise&&);
     MediaTrackSupportedConstraints getSupportedConstraints();
