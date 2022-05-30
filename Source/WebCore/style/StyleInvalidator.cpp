@@ -346,7 +346,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case MatchElement::HasNonSubject: {
+    case MatchElement::HasNonSubjectOrScopeBreaking: {
         SelectorMatchingState selectorMatchingState;
         invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
         break;
