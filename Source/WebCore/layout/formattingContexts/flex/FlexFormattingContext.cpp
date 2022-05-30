@@ -476,6 +476,8 @@ void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemLi
             return LayoutUnit { };
         case ContentDistribution::SpaceAround:
             return (availableSpace - contentLogicalWidth) / logicalFlexItemList.size() / 2; 
+        case ContentDistribution::SpaceEvenly:
+            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() + 1);
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
@@ -511,6 +513,8 @@ void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemLi
             return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() - 1); 
         case ContentDistribution::SpaceAround:
             return (availableSpace - contentLogicalWidth) / logicalFlexItemList.size(); 
+        case ContentDistribution::SpaceEvenly:
+            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() + 1);
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
