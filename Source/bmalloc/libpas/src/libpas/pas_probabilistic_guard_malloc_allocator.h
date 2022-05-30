@@ -69,8 +69,6 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
 
-static PAS_ALWAYS_INLINE void pas_probabilistic_guard_malloc_debug_info(const void *key, const pas_pgm_storage *value, const char *operation);
-
 PAS_END_EXTERN_C;
 
 #endif
