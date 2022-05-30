@@ -282,7 +282,7 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyOffsetAnchor:
     case CSSPropertyOffsetRotate:
         return !motionPathEnabled;
-    case CSSPropertyWebkitTextAlignLast:
+    case CSSPropertyTextAlignLast:
         return !cssTextAlignLastEnabled;
     case CSSPropertyWebkitTextJustify:
         return !cssTextJustifyEnabled;

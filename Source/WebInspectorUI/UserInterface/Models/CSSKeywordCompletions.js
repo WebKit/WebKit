@@ -311,7 +311,6 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-overflow-scrolling",
     "-webkit-rtl-ordering",
     "-webkit-ruby-position",
-    "-webkit-text-align-last",
     "-webkit-text-combine",
     "-webkit-text-decoration-skip",
     "-webkit-text-decorations-in-effect",
@@ -400,6 +399,7 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "stroke-width",
     "tab-size",
     "text-align",
+    "text-align-last",
     "text-anchor",
     "text-indent",
     "text-rendering",
@@ -1126,9 +1126,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-ruby-position": [
         "after", "before", "inter-character",
     ],
-    "-webkit-text-align-last": [
-        "auto", "start", "end", "left", "right", "center", "justify",
-    ],
     "-webkit-text-combine": [
         "none", "horizontal",
     ],
@@ -1338,6 +1335,9 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "text-align": [
         "-webkit-auto", "left", "right", "center", "justify", "match-parent", "-webkit-left", "-webkit-right", "-webkit-center", "-webkit-match-parent", "start", "end",
+    ],
+    "text-align-last": [
+        "auto", "start", "end", "left", "right", "center", "justify", "match-parent",
     ],
     "text-anchor": [
         "middle", "start", "end",

@@ -3555,12 +3555,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.tableLayout());
         case CSSPropertyTextAlign:
             return cssValuePool.createValue(style.textAlign());
-        case CSSPropertyTextDecoration:
-            return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
-        case CSSPropertyWebkitTextAlignLast:
+        case CSSPropertyTextAlignLast:
             if (!m_element->document().settings().cssTextAlignLastEnabled())
                 return nullptr;
             return cssValuePool.createValue(style.textAlignLast());
+        case CSSPropertyTextDecoration:
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
         case CSSPropertyWebkitTextJustify:
             if (!m_element->document().settings().cssTextJustifyEnabled())
                 return nullptr;

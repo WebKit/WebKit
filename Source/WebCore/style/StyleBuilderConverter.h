@@ -106,6 +106,7 @@ public:
     static AtomString convertStringOrNoneAtom(BuilderState& state, const CSSValue& value) { return AtomString { convertStringOrNone(state, value) }; }
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
+    static TextAlignLast convertTextAlignLast(BuilderState&, const CSSValue&);
     static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
     static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
@@ -619,6 +620,21 @@ inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderSta
     if (parentStyle.textAlign() == TextAlignMode::End)
         return parentStyle.isLeftToRightDirection() ? TextAlignMode::Right : TextAlignMode::Left;
     return parentStyle.textAlign();
+}
+inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builderState, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    ASSERT(primitiveValue.isValueID());
+
+    if (primitiveValue.valueID() != CSSValueMatchParent)
+        return primitiveValue;
+
+    auto& parentStyle = builderState.parentStyle();
+    if (parentStyle.textAlignLast() == TextAlignLast::Start)
+        return parentStyle.isLeftToRightDirection() ? TextAlignLast::Left : TextAlignLast::Right;
+    if (parentStyle.textAlignLast() == TextAlignLast::End)
+        return parentStyle.isLeftToRightDirection() ? TextAlignLast::Right : TextAlignLast::Left;
+    return parentStyle.textAlignLast();
 }
 
 inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState& builderState, const CSSValue& value)

@@ -141,6 +141,8 @@ public:
     // Custom handling of initial + value only.
     static void applyInitialTextAlign(BuilderState&);
     static void applyValueTextAlign(BuilderState&, CSSValue&);
+    static void applyInitialTextAlignLast(BuilderState&);
+    static void applyValueTextAlignLast(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
@@ -204,6 +206,16 @@ inline void BuilderCustom::applyValueTextAlign(BuilderState& builderState, CSSVa
 {
     builderState.style().setTextAlign(BuilderConverter::convertTextAlign(builderState, value));
     builderState.style().setHasExplicitlySetTextAlign(true);
+}
+
+inline void BuilderCustom::applyInitialTextAlignLast(BuilderState& builderState)
+{
+    builderState.style().setTextAlignLast(RenderStyle::initialTextAlignLast());
+}
+
+inline void BuilderCustom::applyValueTextAlignLast(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setTextAlignLast(BuilderConverter::convertTextAlignLast(builderState, value));
 }
 
 inline void BuilderCustom::resetEffectiveZoom(BuilderState& builderState)

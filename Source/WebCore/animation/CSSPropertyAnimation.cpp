@@ -3652,8 +3652,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
         case CSSPropertyUserSelect:
-        // TODO (webkit.org/b/240591): implement animation support for the following two elements.
-        case CSSPropertyWebkitTextAlignLast:
+        // TODO (webkit.org/b/240591): Implement animation support for the two following properties.
+        case CSSPropertyTextAlignLast:
         case CSSPropertyWebkitTextJustify:
             continue;
         default:

@@ -716,9 +716,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueFixed;
     case CSSPropertyTextAlign:
         return (valueID >= CSSValueWebkitAuto && valueID <= CSSValueWebkitMatchParent) || valueID == CSSValueStart || valueID == CSSValueEnd;
-    case CSSPropertyWebkitTextAlignLast:
-        // auto | start | end | left | right | center | justify
-        return (valueID >= CSSValueLeft && valueID <= CSSValueJustify) || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueAuto;
+    case CSSPropertyTextAlignLast:
+        // auto | start | end | left | right | center | justify | match-parent
+        return (valueID >= CSSValueLeft && valueID <= CSSValueJustify) || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueAuto || valueID == CSSValueMatchParent;
     case CSSPropertyTextAnchor:
         return valueID == CSSValueStart || valueID == CSSValueMiddle || valueID == CSSValueEnd;
     case CSSPropertyTextDecorationStyle:
@@ -961,6 +961,8 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyResize:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
+    case CSSPropertyTextAlignLast:
+    case CSSPropertyWebkitTextJustify:
     case CSSPropertyTextOrientation:
     case CSSPropertyTextOverflow:
     case CSSPropertyTextRendering:
@@ -1018,14 +1020,9 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // case CSSPropertyAll:
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
-    // case CSSPropertyBackfaceVisibility:
     // case CSSPropertyHyphens:
     // case CSSPropertyOverflowAnchor:
     // case CSSPropertyScrollSnapType:
-    // case CSSPropertyTextAlignLast:
-    // case CSSPropertyTextCombineUpright:
-    // case CSSPropertyTextJustify:
-    // case CSSPropertyUserSelect:
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord:
 #endif
@@ -1042,8 +1039,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
-    case CSSPropertyWebkitTextAlignLast:
-    case CSSPropertyWebkitTextJustify:
 #if PLATFORM(IOS_FAMILY)
     // Apple specific property. This will never be standardized and is purely to
     // support custom WebKit-based Apple applications.

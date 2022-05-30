@@ -289,6 +289,7 @@ PASS stroke-width
 PASS tab-size
 PASS table-layout
 PASS text-align
+PASS text-align-last
 PASS text-anchor
 PASS text-combine-upright
 PASS text-decoration-color
@@ -382,7 +383,6 @@ PASS -webkit-nbsp-mode
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-tap-highlight-color
-PASS -webkit-text-align-last
 PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-justify

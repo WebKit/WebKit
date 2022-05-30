@@ -378,6 +378,7 @@ public:
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
+    TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(m_rareInheritedData->textAlignLast); }
     TextTransform textTransform() const { return static_cast<TextTransform>(m_inheritedFlags.textTransform); }
     OptionSet<TextDecorationLine> textDecorationsInEffect() const { return OptionSet<TextDecorationLine>::fromRaw(m_inheritedFlags.textDecorationLines); }
     OptionSet<TextDecorationLine> textDecorationLine() const { return OptionSet<TextDecorationLine>::fromRaw(m_visualData->textDecorationLine); }
@@ -389,7 +390,6 @@ public:
 
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
-    TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(m_rareInheritedData->textAlignLast); }
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
 
     const Length& wordSpacing() const;
@@ -1023,6 +1023,7 @@ public:
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }
     void setTextAlign(TextAlignMode v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
+    void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, static_cast<unsigned>(v)); }
     void setTextTransform(TextTransform v) { m_inheritedFlags.textTransform = static_cast<unsigned>(v); }
     void addToTextDecorationsInEffect(OptionSet<TextDecorationLine> v) { m_inheritedFlags.textDecorationLines |= static_cast<unsigned>(v.toRaw()); }
     void setTextDecorationsInEffect(OptionSet<TextDecorationLine> v) { m_inheritedFlags.textDecorationLines = v.toRaw(); }
@@ -1042,7 +1043,6 @@ public:
 
     void setTextIndentLine(TextIndentLine v) { SET_VAR(m_rareInheritedData, textIndentLine, static_cast<unsigned>(v)); }
     void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, static_cast<unsigned>(v)); }
-    void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, static_cast<unsigned>(v)); }
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1662,6 +1662,7 @@ public:
     // Returning -100% percent here means the line-height is not set.
     static Length initialLineHeight() { return Length(-100.0f, LengthType::Percent); }
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
+    static TextAlignLast initialTextAlignLast() { return TextAlignLast::Auto; }
     static OptionSet<TextDecorationLine> initialTextDecorationLine() { return OptionSet<TextDecorationLine> { }; }
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
     static TextDecorationSkipInk initialTextDecorationSkipInk() { return TextDecorationSkipInk::Auto; }
@@ -1774,7 +1775,6 @@ public:
 
     static TextIndentLine initialTextIndentLine() { return TextIndentLine::FirstLine; }
     static TextIndentType initialTextIndentType() { return TextIndentType::Normal; }
-    static TextAlignLast initialTextAlignLast() { return TextAlignLast::Auto; }
     static TextJustify initialTextJustify() { return TextJustify::Auto; }
 
 #if ENABLE(CURSOR_VISIBILITY)
