@@ -284,6 +284,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case InnerSpinButtonPart:
         return adjustInnerSpinButtonStyle(style, element);
 #endif
+    case ListboxPart:
+        return adjustListboxStyle(style, element);
     case TextFieldPart:
         return adjustTextFieldStyle(style, element);
     case TextAreaPart:
@@ -1076,12 +1078,22 @@ bool RenderTheme::paintColorWell(const RenderObject& box, const PaintInfo& paint
 
 #endif
 
-void RenderTheme::adjustTextFieldStyle(RenderStyle&, const Element*) const
+void RenderTheme::adjustListboxStyle(RenderStyle& style, const Element*) const
 {
+    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+        style.setOutlineOffset(-2);
 }
 
-void RenderTheme::adjustTextAreaStyle(RenderStyle&, const Element*) const
+void RenderTheme::adjustTextFieldStyle(RenderStyle& style, const Element*) const
 {
+    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+        style.setOutlineOffset(-2);
+}
+
+void RenderTheme::adjustTextAreaStyle(RenderStyle& style, const Element*) const
+{
+    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+        style.setOutlineOffset(-2);
 }
 
 void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const

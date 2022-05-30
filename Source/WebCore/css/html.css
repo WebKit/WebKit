@@ -1246,7 +1246,7 @@ nobr {
 
 /* states */
 
-:focus-visible {
+:not(input, textarea, select):focus-visible {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     outline: auto 3px -webkit-focus-ring-color;
 #else
@@ -1254,20 +1254,8 @@ nobr {
 #endif
 }
 
-/* Read-only text fields do not show a focus ring but do still receive focus */
-html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe:focus, object:focus {
-    outline: none;
-}
-
-#if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
-input:focus, textarea:focus, select:focus {
-    outline-offset: -2px;
-}
-#endif
-
-input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
-input[type="file"]:focus::file-selector-button {
-    outline-offset: 0;
+:is(input:not([readonly]), textarea, select):focus-visible {
+    outline-style: auto;
 }
 
 a:any-link {

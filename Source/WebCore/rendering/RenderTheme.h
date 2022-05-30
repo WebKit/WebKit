@@ -340,6 +340,8 @@ protected:
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
+    virtual void adjustListboxStyle(RenderStyle&, const Element*) const;
+
 #if ENABLE(DATALIST_ELEMENT)
     virtual void adjustListButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
