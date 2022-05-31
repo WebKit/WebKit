@@ -1,10 +1,10 @@
-if (ENABLE_REMOTE_INSPECTOR)
+if (true)
     if (USE_GLIB)
         include(inspector/remote/GLib.cmake)
+    elseif (USE_INSPECTOR_SOCKET_SERVER)
+        include(inspector/remote/Socket.cmake)
     elseif (APPLE)
         include(inspector/remote/Cocoa.cmake)
-    else ()
-        include(inspector/remote/Socket.cmake)
     endif ()
 endif ()
 

@@ -38,9 +38,6 @@ SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& source
 {
 }
 
-SourceProvider::~SourceProvider()
-{
-}
 
 void SourceProvider::getID()
 {
