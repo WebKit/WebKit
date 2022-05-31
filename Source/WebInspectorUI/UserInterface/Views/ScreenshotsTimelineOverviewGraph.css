@@ -35,5 +35,6 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.screensho
 }
 
 .timeline-overview-graph.screenshots > img.selected {
+    z-index: 1;
     border: 1px solid var(--glyph-color-active);
 }
