@@ -1568,21 +1568,58 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
 
-        merge_queue = self._is_pr_in_merge_queue(pr_json) if self.verifyMergeQueue else 1
-        if merge_queue == 0:
-            self.skip_build("PR {} does not have a merge queue label".format(pr_number))
-            return False
+        if self.verifyMergeQueue:
+            if not pr_json:
+                self.send_email_for_github_failure()
+                self.skip_build("Infrastructure issue: unable to check PR status")
+                return False
+            merge_queue = self._is_pr_in_merge_queue(pr_json)
+            if merge_queue == 0:
+                self.skip_build("PR {} does not have a merge queue label".format(pr_number))
+                return False
 
         draft = self._is_pr_draft(pr_json) if self.verifyNoDraftForMergeQueue else 0
         if draft == 1:
             self.fail_build("PR {} is a draft pull request".format(pr_number))
             return False
 
-        if -1 in (obsolete, pr_closed, blocked, merge_queue, draft):
+        if -1 in (obsolete, pr_closed, blocked, draft):
             self.finished(WARNINGS)
             return False
 
         return True
+
+    def send_email_for_github_failure(self):
+        try:
+            pr_number = self.getProperty('github.number', '')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+
+            change_string = 'Hash {}'.format(sha)
+            change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+            for error in errors:
+                print(error)
+                self._addToLog('stdio', error)
+
+            if not change_author:
+                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                return
+
+            builder_name = self.getProperty('buildername', '')
+            title = self.getProperty('github.title', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = f'Infrastructure failure on {builder_name} for PR #{pr_number}: {title}'
+            email_text = f'EWS has encountered infrastructure failure on {builder_name}'
+            repository = self.getProperty('repository')
+            email_text += ' while testing <a href="{}">{}</a>'.format(GitHub.commit_url(sha, repository), change_string)
+            email_text += ' for <a href="{}">PR #{}: {}</a>.'.format(GitHub.pr_url(pr_number, repository), pr_number, title)
+            email_text += '\n\nFull details are available at: {}\n\nChange author: {}'.format(build_url, change_author)
+            email_text += '\n\nPlease contact one of the WebKit administrators on Slack or email admin@webkit.org to fix the issue.'
+            self._addToLog('stdio', 'Sending email notification to {}.\nPlease contact an admin to fix the issue.\n'.format(change_author))
+            send_email_to_patch_author(change_author, email_subject, email_text, self.getProperty('github.head.sha', ''))
+        except Exception as e:
+            print('Error in sending email for github failure: {}'.format(e))
 
 
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
