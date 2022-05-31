@@ -57,7 +57,7 @@ public:
     virtual void startAnimation(SVGAttributeAnimator& animator) { m_animators.add(animator); }
     virtual void stopAnimation(SVGAttributeAnimator& animator) { m_animators.remove(animator); }
     
-    // Attach/Detach the animVal of the traget element's property by the instance element's property.
+    // Attach/Detach the animVal of the target element's property by the instance element's property.
     virtual void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty&) { startAnimation(animator); }
     virtual void instanceStopAnimation(SVGAttributeAnimator& animator) { stopAnimation(animator); }
     

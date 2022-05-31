@@ -136,18 +136,16 @@ public:
     // Controlling the instance animation.
     void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty& animated) override
     {
-        if (isAnimating())
-            return;
-        m_animVal = static_cast<decltype(*this)>(animated).m_animVal;
+        if (!isAnimating())
+            m_animVal = static_cast<decltype(*this)>(animated).m_animVal;
         SVGAnimatedProperty::instanceStartAnimation(animator, animated);
     }
 
     void instanceStopAnimation(SVGAttributeAnimator& animator) override
     {
-        if (!isAnimating())
-            return;
-        m_animVal = nullptr;
         SVGAnimatedProperty::instanceStopAnimation(animator);
+        if (!isAnimating())
+            m_animVal = nullptr;
     }
 
 protected:
