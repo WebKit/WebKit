@@ -4869,6 +4869,7 @@ static WeakHashMap<Element, ElementIdentifier>& elementIdentifiersMap()
 
 ElementIdentifier Element::identifier() const
 {
+    elementIdentifiersMap().removeNullReferences();
     return elementIdentifiersMap().ensure(*this, [] { return ElementIdentifier::generate(); }).iterator->value;
 }
 
