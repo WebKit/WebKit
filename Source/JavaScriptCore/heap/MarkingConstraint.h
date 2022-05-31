@@ -52,40 +52,40 @@ public:
     
     JS_EXPORT_PRIVATE virtual ~MarkingConstraint();
     
-    unsigned index() const { return m_index; }
+    JS_EXPORT_PRIVATE unsigned index() const { return m_index; }
     
-    const char* abbreviatedName() const { return m_abbreviatedName.data(); }
-    const char* name() const { return m_name.data(); }
+    JS_EXPORT_PRIVATE const char* abbreviatedName() const { return m_abbreviatedName.data(); }
+    JS_EXPORT_PRIVATE const char* name() const { return m_name.data(); }
     
-    void resetStats();
+    JS_EXPORT_PRIVATE void resetStats();
     
-    size_t lastVisitCount() const { return m_lastVisitCount; }
+    JS_EXPORT_PRIVATE size_t lastVisitCount() const { return m_lastVisitCount; }
     
     // The following functions are only used by the real GC via the MarkingConstraintSolver.
     // Hence, we only need the SlotVisitor version.
-    void execute(SlotVisitor&);
+    JS_EXPORT_PRIVATE void execute(SlotVisitor&);
 
     JS_EXPORT_PRIVATE virtual double quickWorkEstimate(SlotVisitor&);
     
-    double workEstimate(SlotVisitor&);
+    JS_EXPORT_PRIVATE double workEstimate(SlotVisitor&);
     
-    void prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
+    JS_EXPORT_PRIVATE void prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
     
-    void doParallelWork(SlotVisitor&, SharedTask<void(SlotVisitor&)>&);
+    JS_EXPORT_PRIVATE void doParallelWork(SlotVisitor&, SharedTask<void(SlotVisitor&)>&);
     
-    ConstraintVolatility volatility() const { return m_volatility; }
+    JS_EXPORT_PRIVATE ConstraintVolatility volatility() const { return m_volatility; }
     
-    ConstraintConcurrency concurrency() const { return m_concurrency; }
-    ConstraintParallelism parallelism() const { return m_parallelism; }
+    JS_EXPORT_PRIVATE ConstraintConcurrency concurrency() const { return m_concurrency; }
+    JS_EXPORT_PRIVATE ConstraintParallelism parallelism() const { return m_parallelism; }
 
 protected:
-    virtual void executeImpl(AbstractSlotVisitor&) = 0;
-    virtual void executeImpl(SlotVisitor&) = 0;
+    JS_EXPORT_PRIVATE virtual void executeImpl(AbstractSlotVisitor&) = 0;
+    JS_EXPORT_PRIVATE virtual void executeImpl(SlotVisitor&) = 0;
     JS_EXPORT_PRIVATE virtual void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, AbstractSlotVisitor&);
 
     // This function is only used by the verifier GC via Heap::verifyGC().
     // Hence, we only need the AbstractSlotVisitor version.
-    void executeSynchronously(AbstractSlotVisitor&);
+    JS_EXPORT_PRIVATE void executeSynchronously(AbstractSlotVisitor&);
 
 private:
     friend class MarkingConstraintSet; // So it can set m_index.

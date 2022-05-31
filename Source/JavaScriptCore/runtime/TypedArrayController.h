@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -34,14 +34,14 @@ class CallFrame;
 class JSArrayBuffer;
 class JSGlobalObject;
 
-class TypedArrayController : public RefCounted<TypedArrayController> {
+class JS_EXPORT TypedArrayController : public RefCounted<TypedArrayController> {
 public:
-    JS_EXPORT_PRIVATE TypedArrayController();
-    JS_EXPORT_PRIVATE virtual ~TypedArrayController();
-    
-    virtual JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) = 0;
-    virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;
-    virtual bool isAtomicsWaitAllowedOnCurrentThread() = 0;
+    JS_EXPORT TypedArrayController() { }
+    virtual ~TypedArrayController() { }
+
+    JS_EXPORT virtual JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) = 0;
+    JS_EXPORT virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;
+    JS_EXPORT virtual bool isAtomicsWaitAllowedOnCurrentThread() = 0;
 };
 
 } // namespace JSC
