@@ -2651,8 +2651,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/s
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-flex-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-grid-item-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-006.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ ImageOnlyFailure Pass ]
@@ -2915,6 +2913,16 @@ imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.htt
 webkit.org/b/76173 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
 # text-justify
 webkit.org/b/99945 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-001.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-006.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-002.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-003.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-004.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-005.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-006.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-distribute-001.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-character-001.html [ ImageOnlyFailure ]
+webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-word-001.html [ ImageOnlyFailure ]
 
 # Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
 webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]

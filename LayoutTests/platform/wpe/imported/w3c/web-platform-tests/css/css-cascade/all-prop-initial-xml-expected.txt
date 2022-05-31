@@ -301,6 +301,7 @@ PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style
 PASS text-indent
+PASS text-justify
 PASS text-orientation
 PASS text-overflow
 PASS text-rendering
@@ -385,7 +386,6 @@ PASS -webkit-ruby-position
 PASS -webkit-tap-highlight-color
 PASS -webkit-text-combine
 PASS -webkit-text-fill-color
-PASS -webkit-text-justify
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color
 PASS -webkit-text-stroke-width

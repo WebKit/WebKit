@@ -766,7 +766,7 @@ enum class TextJustify : uint8_t {
     Auto,
     None,
     InterWord,
-    Distribute
+    InterCharacter
 };
 
 enum class TextDecorationSkipInk : uint8_t {

@@ -319,7 +319,6 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-text-emphasis-position",
     "-webkit-text-emphasis-style",
     "-webkit-text-fill-color",
-    "-webkit-text-justify",
     "-webkit-text-orientation",
     "-webkit-text-security",
     "-webkit-text-size-adjust",
@@ -402,6 +401,7 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "text-align-last",
     "text-anchor",
     "text-indent",
+    "text-justify",
     "text-rendering",
     "text-shadow",
     "text-transform",
@@ -1132,9 +1132,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-text-decoration-style": [
         "dotted", "dashed", "solid", "double", "wavy",
     ],
-    "-webkit-text-justify": [
-        "auto", "none", "inter-word", "inter-ideograph", "inter-cluster", "distribute", "kashida",
-    ],
     "-webkit-text-orientation": [
         "sideways", "sideways-right", "upright", "mixed",
     ],
@@ -1341,6 +1338,9 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "text-anchor": [
         "middle", "start", "end",
+    ],
+    "text-justify": [
+        "auto", "none", "inter-word", "inter-character", "distribute",
     ],
     "text-line-through": [
         "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave", "continuous", "skip-white-space",

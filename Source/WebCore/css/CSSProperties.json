@@ -4652,6 +4652,23 @@
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-indent"
             }
         },
+        "text-justify": {
+            "inherited": true,
+            "values": [
+                "inter-word",
+                "inter-character",
+                "distribute",
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextJustifyEnabled"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
+            }
+        },
         "text-line-through": {
             "codegen-properties": {
                 "skip-codegen": true
@@ -6846,25 +6863,6 @@
             "specification": {
                 "category": "css-writing-modes",
                 "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
-            }
-        },
-        "-webkit-text-justify": {
-            "inherited": true,
-            "values": [
-                "inter-word",
-                "distribute",
-                "auto",
-                "none"
-            ],
-            "codegen-properties": {
-                "settings-flag": "cssTextJustifyEnabled"
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
         "-webkit-text-decoration": {

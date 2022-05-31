@@ -297,6 +297,7 @@ PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style
 PASS text-indent
+PASS text-justify
 PASS text-orientation
 PASS text-overflow
 PASS text-rendering
