@@ -29,6 +29,7 @@
 
 #if USE(LIBGBM)
 
+#include "DMABufColorSpace.h"
 #include "GBMDevice.h"
 #include <gbm.h>
 

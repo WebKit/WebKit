@@ -3049,6 +3049,21 @@ static uint32_t fourccValue(GstVideoFormat format)
     return gst_video_format_to_fourcc(format);
 }
 
+static DMABufColorSpace colorSpaceForColorimetry(const GstVideoColorimetry* cinfo)
+{
+    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_SRGB))
+        return DMABufColorSpace::SRGB;
+    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT601))
+        return DMABufColorSpace::BT601;
+    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT709))
+        return DMABufColorSpace::BT709;
+    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT2020))
+        return DMABufColorSpace::BT2020;
+    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_SMPTE240M))
+        return DMABufColorSpace::SMPTE240M;
+    return DMABufColorSpace::Invalid;
+}
+
 void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 {
     Locker sampleLocker { m_sampleMutex };
@@ -3103,6 +3118,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
             DMABufObject(reinterpret_cast<uintptr_t>(gst_buffer_peek_memory(buffer, 0))),
             [&](auto&& object) {
                 object.format = DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo)));
+                object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
                 object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
                 object.height = GST_VIDEO_INFO_HEIGHT(&videoInfo);
 
@@ -3248,8 +3264,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     // given GBMBufferSwapchain::Buffer object.
     downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
         DMABufObject(reinterpret_cast<uintptr_t>(m_swapchain.get()) + swapchainBuffer->handle()),
-        [&](auto&& object) {
-            return swapchainBuffer->createDMABufObject(object.handle);
+        [&](auto&& initialObject) {
+            auto object = swapchainBuffer->createDMABufObject(initialObject.handle);
+            object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
+            return object;
         });
 }
 #endif // USE(TEXTURE_MAPPER_DMABUF)
