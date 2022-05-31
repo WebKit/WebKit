@@ -1537,8 +1537,10 @@ public:
     void modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
 #endif
 
+#if ENABLE(VIDEO)
     void extractVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
     void cancelVideoExtractionInElementFullScreen();
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void shouldAllowImageMarkup(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&) const;
