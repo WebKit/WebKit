@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "DMABufColorSpace.h"
 #include "DMABufFormat.h"
 #include "DMABufReleaseFlag.h"
 #include <array>
@@ -56,6 +57,7 @@ struct DMABufObject {
 
     uintptr_t handle { 0 };
     DMABufFormat format { };
+    DMABufColorSpace colorSpace { DMABufColorSpace::Invalid };
     uint32_t width { 0 };
     uint32_t height { 0 };
     DMABufReleaseFlag releaseFlag { };
@@ -68,7 +70,7 @@ struct DMABufObject {
 template<class Encoder>
 void DMABufObject::encode(Encoder& encoder) const &
 {
-    encoder << handle << uint32_t(format.fourcc) << width << height;
+    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height;
     encoder << releaseFlag.fd.duplicate();
 
     for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
@@ -80,7 +82,7 @@ void DMABufObject::encode(Encoder& encoder) const &
 template<class Encoder>
 void DMABufObject::encode(Encoder& encoder) &&
 {
-    encoder << handle << uint32_t(format.fourcc) << width << height;
+    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height;
     encoder << WTFMove(releaseFlag.fd);
 
     for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
@@ -100,6 +102,10 @@ std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
     decoder >> fourcc;
     if (!fourcc)
         return std::nullopt;
+    std::optional<uint32_t> colorSpace;
+    decoder >> colorSpace;
+    if (!colorSpace)
+        return std::nullopt;
     std::optional<uint32_t> width;
     decoder >> width;
     if (!width)
@@ -111,6 +117,7 @@ std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
 
     DMABufObject dmabufObject(*handle);
     dmabufObject.format = DMABufFormat::create(*fourcc);
+    dmabufObject.colorSpace = DMABufColorSpace { *colorSpace };
     dmabufObject.width = *width;
     dmabufObject.height = *height;
 
