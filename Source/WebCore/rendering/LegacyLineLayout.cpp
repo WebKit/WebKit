@@ -385,7 +385,7 @@ TextAlignMode LegacyLineLayout::textAlignmentForLine(bool endsWithSoftBreak) con
     case TextAlignLast::Justify:
         return TextAlignMode::Justify;
     case TextAlignLast::Auto:
-        if (textJustify == TextJustify::Distribute)
+        if (textJustify == TextJustify::InterCharacter)
             return TextAlignMode::Justify;
         return TextAlignMode::Start;
     }
