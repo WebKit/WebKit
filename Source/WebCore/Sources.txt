@@ -1567,6 +1567,7 @@ layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/flex/FlexFormattingGeometry.cpp
+layout/formattingContexts/flex/FlexLayout.cpp
 layout/formattingContexts/flex/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp

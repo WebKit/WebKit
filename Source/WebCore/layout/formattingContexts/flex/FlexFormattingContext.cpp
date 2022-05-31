@@ -119,56 +119,23 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
-LayoutUnit FlexFormattingContext::computeAvailableLogicalVerticalSpace(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints) const
+FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace()
 {
-    auto availableLogicalVerticalSpaceFromConstraint = [&] {
-        auto flexDirection = root().style().flexDirection();
-        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        if (flexDirectionIsInlineAxis)
-            return flexConstraints.availableVerticalSpace();
-        return std::optional<LayoutUnit> { flexConstraints.horizontal().logicalWidth };
+    struct FlexItem {
+        FlexRect marginRect;
+        int logicalOrder { 0 };
     };
 
-    if (auto availableSpace = availableLogicalVerticalSpaceFromConstraint())
-        return *availableSpace;
-
-    auto availableSpace = LayoutUnit { };
-    for (auto& logicalFlexItem : logicalFlexItemList)
-        availableSpace = std::max(availableSpace, logicalFlexItem.rect.height());
-    return availableSpace;
-}
-
-LayoutUnit FlexFormattingContext::computeAvailableLogicalHorizontalSpace(LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& flexConstraints) const
-{
-    auto availableLogicalHorizontalSpaceFromConstraint = [&] {
-        auto flexDirection = root().style().flexDirection();
-        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        if (flexDirectionIsInlineAxis)
-            return std::optional<LayoutUnit> { flexConstraints.horizontal().logicalWidth }; 
-        return flexConstraints.availableVerticalSpace();
-    };
-
-    if (auto availableSpace = availableLogicalHorizontalSpaceFromConstraint())
-        return *availableSpace;
-
-    auto availableSpace = LayoutUnit { };
-    for (auto& logicalFlexItem : logicalFlexItemList)
-        availableSpace += logicalFlexItem.rect.width();
-    return availableSpace;
-}
-
-FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace()
-{
     auto& formattingState = this->formattingState();
-    LogicalFlexItems logicalFlexItemList;
+    Vector<FlexItem> flexItemList;
     auto flexItemsNeedReordering = false;
 
     auto convertVisualToLogical = [&] {
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
 
-        for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
-            auto& flexItemGeometry = formattingState.boxGeometry(flexItem);
+        for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+            auto& flexItemGeometry = formattingState.boxGeometry(*flexItem);
             auto logicalSize = LayoutSize { };
 
             switch (direction) {
@@ -184,11 +151,11 @@ FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsT
                 ASSERT_NOT_REACHED();
                 break;
             }
-            auto flexItemOrder = flexItem.style().order();
+            auto flexItemOrder = flexItem->style().order();
             flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
             previousLogicalOrder = flexItemOrder;
 
-            logicalFlexItemList.append({ { logicalSize }, flexItemOrder, &flexItem });
+            flexItemList.append({ { logicalSize }, flexItemOrder });
         }
     };
     convertVisualToLogical();
@@ -197,19 +164,25 @@ FlexFormattingContext::LogicalFlexItems FlexFormattingContext::convertFlexItemsT
         if (!flexItemsNeedReordering)
             return;
 
-        std::stable_sort(logicalFlexItemList.begin(), logicalFlexItemList.end(), [&] (auto& a, auto& b) {
+        std::stable_sort(flexItemList.begin(), flexItemList.end(), [&] (auto& a, auto& b) {
             return a.logicalOrder < b.logicalOrder;
         });
     };
     reorderFlexItemsIfApplicable();
 
+    auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
+    auto* layoutBox = root().firstInFlowChild();
+    for (size_t index = 0; index < flexItemList.size(); ++index) {
+        logicalFlexItemList[index] = { flexItemList[index].marginRect, downcast<ContainerBox>(layoutBox) };
+        layoutBox = layoutBox->nextInFlowSibling();
+    }
     return logicalFlexItemList;
 }
 
-void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& constraints)
+void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto logicalWidth = logicalFlexItemList.last().rect.right() - logicalFlexItemList.first().rect.left();
+    auto logicalWidth = logicalFlexItemList.last().marginRect.right() - logicalFlexItemList.first().marginRect.left();
     auto direction = root().style().flexDirection();
     for (auto& logicalFlexItem : logicalFlexItemList) {
         auto& flexItemGeometry = formattingState.boxGeometry(*logicalFlexItem.layoutBox);
@@ -217,18 +190,18 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
 
         switch (direction) {
         case FlexDirection::Row:
-            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.left(), constraints.logicalTop() + logicalFlexItem.rect.top() };
+            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.marginRect.left(), constraints.logicalTop() + logicalFlexItem.marginRect.top() };
             break;
         case FlexDirection::RowReverse:
-            topLeft = { constraints.horizontal().logicalRight() - logicalFlexItem.rect.right(), constraints.logicalTop() + logicalFlexItem.rect.top() };
+            topLeft = { constraints.horizontal().logicalRight() - logicalFlexItem.marginRect.right(), constraints.logicalTop() + logicalFlexItem.marginRect.top() };
             break;
         case FlexDirection::Column: {
-            auto flippedTopLeft = logicalFlexItem.rect.topLeft().transposedPoint();
+            auto flippedTopLeft = logicalFlexItem.marginRect.topLeft().transposedPoint();
             topLeft = { constraints.horizontal().logicalLeft + flippedTopLeft.x(), constraints.logicalTop() + flippedTopLeft.y() };
             break;
         }
         case FlexDirection::ColumnReverse:
-            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.rect.top(), constraints.logicalTop() + logicalWidth - logicalFlexItem.rect.right() };
+            topLeft = { constraints.horizontal().logicalLeft + logicalFlexItem.marginRect.top(), constraints.logicalTop() + logicalWidth - logicalFlexItem.marginRect.right() };
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -236,315 +209,22 @@ void FlexFormattingContext::setFlexItemsGeometry(const LogicalFlexItems& logical
         }
         flexItemGeometry.setLogicalTopLeft(topLeft);
         if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
-            flexItemGeometry.setContentBoxWidth(logicalFlexItem.rect.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
-            flexItemGeometry.setContentBoxHeight(logicalFlexItem.rect.height() - flexItemGeometry.verticalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.marginRect.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.marginRect.height() - flexItemGeometry.verticalMarginBorderAndPadding());
         } else {
-            flexItemGeometry.setContentBoxWidth(logicalFlexItem.rect.height() - flexItemGeometry.horizontalMarginBorderAndPadding());
-            flexItemGeometry.setContentBoxHeight(logicalFlexItem.rect.width() - flexItemGeometry.verticalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.marginRect.height() - flexItemGeometry.horizontalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.marginRect.width() - flexItemGeometry.verticalMarginBorderAndPadding());
         }
-    }
-}
-
-void FlexFormattingContext::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    auto& formattingState = this->formattingState();
-
-    auto totalShrink = 0.f;
-    auto totalFlexibleSpace = LayoutUnit { };
-    auto flexShrinkBase = 0.f;
-
-    struct ShrinkingFlexItem {
-        float flexShrink { 0 };
-        LayoutUnit minimumSize;
-        LayoutUnit flexBasis;
-        LogicalFlexItem& flexItem;
-        bool isFrozen { false };
-    };
-    Vector<ShrinkingFlexItem> shrinkingItems;
-
-    auto computeTotalShrinkAndOverflowingSpace = [&] {
-        // Collect flex items with non-zero flex-shrink value. flex-shrink: 0 flex items
-        // don't participate in content flexing.
-        for (auto& flexItem : logicalFlexItemList) {
-            auto& style = flexItem.layoutBox->style();
-            auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.rect.width();
-            if (auto shrinkValue = style.flexShrink()) {
-                auto flexShrink = shrinkValue * baseSize;
-                shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem, { } });
-                totalShrink += flexShrink;
-                totalFlexibleSpace += baseSize;
-            } else
-                availableSpace -= baseSize;
-        }
-        if (totalShrink)
-            flexShrinkBase = (totalFlexibleSpace - availableSpace) / totalShrink;
-    };
-    computeTotalShrinkAndOverflowingSpace();
-
-    auto adjustShrinkBase = [&] {
-        // Now that we know how much each flex item needs to be shrunk, let's check
-        // if they hit their minimum content width (i.e. whether they can be sized that small).
-        while (true) {
-            auto didFreeze = false;
-            for (auto& shirinkingFlex : shrinkingItems) {
-                auto flexedSize = shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase);
-                if (!shirinkingFlex.isFrozen && shirinkingFlex.minimumSize > flexedSize) {
-                    shirinkingFlex.isFrozen = true;
-                    didFreeze = true;
-                    totalShrink -= shirinkingFlex.flexShrink;
-                    totalFlexibleSpace -= shirinkingFlex.flexBasis;
-                    availableSpace -= shirinkingFlex.minimumSize;
-                }
-            }
-            if (!didFreeze)
-                break;
-            flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
-        }
-    };
-    adjustShrinkBase();
-
-    auto computeLogicalWidth = [&] {
-        // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto& shirinkingFlex : shrinkingItems) {
-            auto flexedSize = LayoutUnit { shirinkingFlex.flexBasis - (shirinkingFlex.flexShrink * flexShrinkBase) };
-            shirinkingFlex.flexItem.rect.setWidth(std::max(shirinkingFlex.minimumSize, flexedSize));
-        }
-    };
-    computeLogicalWidth();
-}
-
-void FlexFormattingContext::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    auto& formattingState = this->formattingState();
-
-    auto totalFlexibleSpace = LayoutUnit { };
-    auto totalGrowth = 0.f;
-    auto flexGrowBase = 0.f;
-    struct StrechingFlexItem {
-        float flexGrow { 0 };
-        LayoutUnit minimumSize;
-        LayoutUnit flexBasis;
-        LogicalFlexItem& flexItem;
-        bool isFrozen { false };
-    };
-    Vector<StrechingFlexItem> stretchingItems;
-
-    auto computeTotalGrowthAndFlexibleSpace = [&] {
-        // Collect flex items with non-zero flex-grow value. flex-grow: 0 (initial) flex items
-        // don't participate in available space distribution.
-        for (auto& flexItem : logicalFlexItemList) {
-            auto& style = flexItem.layoutBox->style();
-            auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.rect.width();
-            if (auto growValue = style.flexGrow()) {
-                auto flexGrow = growValue * baseSize;
-                stretchingItems.append({ flexGrow, formattingState.intrinsicWidthConstraintsForBox(*flexItem.layoutBox)->minimum, baseSize, flexItem, { } });
-                totalGrowth += flexGrow;
-                totalFlexibleSpace += baseSize;
-            } else
-                availableSpace -= baseSize;
-        }
-        if (totalGrowth)
-            flexGrowBase = (availableSpace - totalFlexibleSpace) / totalGrowth;
-    };
-    computeTotalGrowthAndFlexibleSpace();
-    if (!totalGrowth)
-        return;
-
-    auto adjustGrowthBase = [&] {
-        // This is where we compute how much space the flexing boxes take up if we just
-        // let them flex by their flex-grow value. Note that we can't size them below their minimum content width.
-        // Such flex items are removed from the final overflow distribution.
-        auto accumulatedWidth = LayoutUnit { };
-        while (true) {
-            auto didFreeze = false;
-            for (auto& stretchingFlex : stretchingItems) {
-                auto flexedSize = stretchingFlex.flexBasis + stretchingFlex.flexGrow * flexGrowBase;
-                if (stretchingFlex.minimumSize >= flexedSize) {
-                    stretchingFlex.isFrozen = true;
-                    didFreeze = true;
-                    totalGrowth -= stretchingFlex.flexGrow;
-                    totalFlexibleSpace -= stretchingFlex.flexBasis;
-                    availableSpace -= stretchingFlex.minimumSize;
-                }
-            }
-            if (!didFreeze)
-                break;
-            flexGrowBase = totalGrowth ? (totalFlexibleSpace - availableSpace) / totalGrowth : 0.f;
-        }
-    };
-    adjustGrowthBase();
-
-    auto computeLogicalWidth = [&] {
-        // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto& stretchingFlex : stretchingItems) {
-            auto flexedSize = LayoutUnit { stretchingFlex.flexBasis + (stretchingFlex.flexGrow * flexGrowBase) };
-            stretchingFlex.flexItem.rect.setWidth(std::max(stretchingFlex.minimumSize, flexedSize));
-        }
-    };
-    computeLogicalWidth();
-}
-
-void FlexFormattingContext::computeLogicalWidthForFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    auto contentLogicalWidth = [&] {
-        auto logicalWidth = LayoutUnit { };
-        for (auto& logicalFlexItem : logicalFlexItemList)
-            logicalWidth += logicalFlexItem.rect.width();
-        return logicalWidth;
-    }();
-
-    if (availableSpace > contentLogicalWidth)
-        computeLogicalWidthForStretchingFlexItems(logicalFlexItemList, availableSpace);
-    else if (availableSpace < contentLogicalWidth)
-        computeLogicalWidthForShrinkingFlexItems(logicalFlexItemList, availableSpace);
-}
-
-void FlexFormattingContext::computeLogicalHeightForFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    auto alignItems = root().style().alignItems();
-
-    for (auto& logicalFlexItem : logicalFlexItemList) {
-        auto& height = logicalFlexItem.layoutBox->style().height();
-        if (!height.isAuto())
-            continue;
-        switch (alignItems.position()) {
-        case ItemPosition::Normal:
-        case ItemPosition::Stretch:
-            logicalFlexItem.rect.setHeight(availableSpace);
-            break;
-        case ItemPosition::Center:
-        case ItemPosition::Start:
-        case ItemPosition::FlexStart:
-        case ItemPosition::End:
-        case ItemPosition::FlexEnd:
-            break;
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-    }
-}
-
-void FlexFormattingContext::alignFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    // FIXME: Check if height computation and vertical alignment should merge.
-    auto flexBoxAlignItems = root().style().alignItems();
-
-    for (auto& logicalFlexItem : logicalFlexItemList) {
-        auto& flexItemAlignSelf = logicalFlexItem.layoutBox->style().alignSelf();
-        auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexBoxAlignItems;
-        switch (alignValue.position()) {
-        case ItemPosition::Normal:
-        case ItemPosition::Stretch:
-            logicalFlexItem.rect.setTop({ });
-            break;
-        case ItemPosition::Center:
-            logicalFlexItem.rect.setTop({ availableSpace / 2 -  logicalFlexItem.rect.height() / 2 });
-            break;
-        case ItemPosition::Start:
-        case ItemPosition::FlexStart:
-            logicalFlexItem.rect.setTop({ });
-            break;
-        case ItemPosition::End:
-        case ItemPosition::FlexEnd:
-            logicalFlexItem.rect.setTop({ availableSpace - logicalFlexItem.rect.height() });
-            break;
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-    }
-}
-
-void FlexFormattingContext::justifyFlexItems(LogicalFlexItems& logicalFlexItemList, LayoutUnit availableSpace)
-{
-    auto justifyContent = root().style().justifyContent();
-    // FIXME: Make this optional.
-    auto contentLogicalWidth = [&] {
-        auto logicalWidth = LayoutUnit { };
-        for (auto& logicalFlexItem : logicalFlexItemList)
-            logicalWidth += logicalFlexItem.rect.width();
-        return logicalWidth;
-    }();
-
-    auto initialOffset = [&] {
-        switch (justifyContent.distribution()) {
-        case ContentDistribution::Default:
-            // Fall back to justifyContent.position() 
-            break;
-        case ContentDistribution::SpaceBetween:
-            return LayoutUnit { };
-        case ContentDistribution::SpaceAround:
-            return (availableSpace - contentLogicalWidth) / logicalFlexItemList.size() / 2; 
-        case ContentDistribution::SpaceEvenly:
-            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() + 1);
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-
-        switch (justifyContent.position()) {
-        case ContentPosition::Normal:
-        case ContentPosition::Start:
-        case ContentPosition::FlexStart:
-        case ContentPosition::Left:
-            return LayoutUnit { };
-        case ContentPosition::End:
-        case ContentPosition::FlexEnd:
-        case ContentPosition::Right:
-            return availableSpace - contentLogicalWidth;
-        case ContentPosition::Center:
-            return availableSpace / 2 - contentLogicalWidth / 2;
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return LayoutUnit { };
-    };
-
-    auto gapBetweenItems = [&] {
-        switch (justifyContent.distribution()) {
-        case ContentDistribution::Default:
-            return LayoutUnit { };
-        case ContentDistribution::SpaceBetween:
-            if (logicalFlexItemList.size() == 1)
-                return LayoutUnit { };
-            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() - 1); 
-        case ContentDistribution::SpaceAround:
-            return (availableSpace - contentLogicalWidth) / logicalFlexItemList.size(); 
-        case ContentDistribution::SpaceEvenly:
-            return (availableSpace - contentLogicalWidth) / (logicalFlexItemList.size() + 1);
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return LayoutUnit { };
-    };
-
-    auto logicalLeft = initialOffset();
-    auto gap = gapBetweenItems();
-    for (auto& logicalFlexItem : logicalFlexItemList) {
-        logicalFlexItem.rect.setLeft(logicalLeft);
-        logicalLeft = logicalFlexItem.rect.right() + gap;
     }
 }
 
 void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
 {
-    auto logicalFlexItemList = convertFlexItemsToLogicalSpace();
     auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
-
-    auto availableLogicalHorizontalSpace = computeAvailableLogicalHorizontalSpace(logicalFlexItemList, flexConstraints);
-    computeLogicalWidthForFlexItems(logicalFlexItemList, availableLogicalHorizontalSpace);
-
-    auto availableLogicalVerticalSpace = computeAvailableLogicalVerticalSpace(logicalFlexItemList, flexConstraints);
-    computeLogicalHeightForFlexItems(logicalFlexItemList, availableLogicalVerticalSpace);
-    alignFlexItems(logicalFlexItemList, availableLogicalVerticalSpace);
-    justifyFlexItems(logicalFlexItemList, availableLogicalHorizontalSpace);
-
-    setFlexItemsGeometry(logicalFlexItemList, flexConstraints);
+    auto logicalFlexItems = convertFlexItemsToLogicalSpace();
+    auto flexLayout = FlexLayout { formattingState(), root().style() };
+    flexLayout.layout(flexConstraints, logicalFlexItems);
+    setFlexItemsGeometry(logicalFlexItems, flexConstraints);
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()

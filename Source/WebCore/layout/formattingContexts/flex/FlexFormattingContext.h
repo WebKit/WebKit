@@ -30,6 +30,7 @@
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
+#include "FlexLayout.h"
 #include "FlexRect.h"
 #include "FormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
@@ -57,22 +58,8 @@ private:
     void sizeAndPlaceFlexItems(const ConstraintsForFlexContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
 
-    struct LogicalFlexItem {
-        FlexRect rect;
-        int logicalOrder { 0 };
-        CheckedPtr<const ContainerBox> layoutBox;
-    };
-    using LogicalFlexItems = Vector<LogicalFlexItem>;
-    LogicalFlexItems convertFlexItemsToLogicalSpace();
-    void setFlexItemsGeometry(const LogicalFlexItems&, const ConstraintsForFlexContent&);
-    void computeLogicalWidthForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalHeightForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void alignFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void justifyFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
-    LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace();
+    void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const ConstraintsForFlexContent&);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
