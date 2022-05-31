@@ -648,6 +648,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'kill-old-processes',
             'validate-change',
+            'layout-tests',
+            'validate-change',
             'canonicalize-commit',
             'push-commit-to-webkit-repo',
             'set-build-summary'
