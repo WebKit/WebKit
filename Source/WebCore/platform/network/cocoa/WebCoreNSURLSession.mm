@@ -37,11 +37,9 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/Lock.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
-using namespace WTF;
 
 #pragma mark - Private declarations
 
@@ -58,7 +56,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 }
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(WorkQueue*)workQueue;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics;
 @property (nullable, copy, readonly) NSDate *fetchStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupEndDate;
@@ -81,23 +79,21 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 @implementation WebCoreNSURLSessionTaskTransactionMetrics {
     WebCore::NetworkLoadMetrics _metrics;
-    RefPtr<WorkQueue> _targetQueue;
 }
 
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(WorkQueue*)queue
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
-    assertIsCurrent(*queue);
-
+    ASSERT(isMainThread());
     if (!(self = [super init]))
         return nil;
-    _metrics = WTFMove(metrics);
-    _targetQueue = queue;
+    _metrics = metrics;
     return self;
 }
 
 - (void)dealloc
 {
-    _targetQueue->dispatch([metrics = WTFMove(_metrics)] { });
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WebCoreNSURLSessionTaskTransactionMetrics.class, self))
+        return;
 
     [super dealloc];
 }
@@ -221,29 +217,28 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @end
 
 @interface WebCoreNSURLSessionTaskMetrics : NSObject
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull WorkQueue *)targetQueue;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics;
 @property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics;
 @end
 
 @implementation WebCoreNSURLSessionTaskMetrics {
     RetainPtr<WebCoreNSURLSessionTaskTransactionMetrics> _transactionMetrics;
-    RefPtr<WorkQueue> _targetQueue;
 }
 
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull WorkQueue *)targetQueue
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
-    assertIsCurrent(*targetQueue);
+    ASSERT(isMainThread());
 
     if (!(self = [super init]))
         return nil;
-    _targetQueue = targetQueue;
-    _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:WTFMove(metrics) onTarget:targetQueue]);
+    _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:WTFMove(metrics)]);
     return self;
 }
 
 - (void)dealloc
 {
-    _targetQueue->dispatch([metrics = WTFMove(_transactionMetrics)] { });
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WebCoreNSURLSessionTaskMetrics.class, self))
+        return;
 
     [super dealloc];
 }
@@ -251,8 +246,6 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @dynamic transactionMetrics;
 - (NSArray<NSURLSessionTaskTransactionMetrics *> *)transactionMetrics
 {
-    // TODO: This is likely not thread-safe. How to handle this object?
-    // Accessed from delegate thread.
     return @[ (NSURLSessionTaskTransactionMetrics *)self->_transactionMetrics.get() ];
 }
 
@@ -269,8 +262,9 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
-- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetQueue:(WorkQueue*)targetQueue;
-- (void)_cancel:(Function<void()>&&)completionHandler;
+- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request;
+- (void)_restart;
+- (void)_cancel;
 @property (assign) WebCoreNSURLSession * _Nullable session;
 
 @end
@@ -280,12 +274,8 @@ NS_ASSUME_NONNULL_END
 #pragma mark - WebCoreNSURLSession
 
 @implementation WebCoreNSURLSession
-@synthesize invalidated = _invalidated;
-@synthesize corsResults = _corsResults;
-
 - (id)initWithResourceLoader:(PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)inDelegate delegateQueue:(NSOperationQueue*)inQueue
 {
-    ASSERT(isMainThread());
     self = [super init];
     if (!self)
         return nil;
@@ -294,13 +284,10 @@ NS_ASSUME_NONNULL_END
     ASSERT(!_invalidated);
 
     _loader = &loader;
-    _targetQueue = _loader->targetQueue();
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
-    _internalQueue = WorkQueue::create("WebCoreNSURLSession _internalQueue");
-    _targetQueue->dispatch([strongSelf = retainPtr(self)] {
-        strongSelf->_rangeResponseGenerator = RangeResponseGenerator::create(*strongSelf->_targetQueue);
-    });
+    _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
+    _rangeResponseGenerator = RangeResponseGenerator::create();
 
     return self;
 }
@@ -309,13 +296,12 @@ NS_ASSUME_NONNULL_END
 {
     {
         Locker<Lock> locker(_dataTasksLock);
-        _targetQueue->dispatch([dataTasks = WTFMove(_dataTasks), rangeResponseGenerator = WTFMove(_rangeResponseGenerator)] () mutable {
-            for (auto&& task : dataTasks)
-                [task setSession:nil];
-        });
+        for (auto& task : _dataTasks)
+            [task setSession:nil];
     }
-    callOnMainThread([loader = std::exchange(_loader, nullptr)] { });
 
+    callOnMainThread([loader = std::exchange(_loader, nullptr)] {
+    });
     [super dealloc];
 }
 
@@ -329,7 +315,6 @@ NS_ASSUME_NONNULL_END
 
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task
 {
-    assertIsCurrent(*_targetQueue);
     task.session = nil;
 
     {
@@ -337,11 +322,12 @@ NS_ASSUME_NONNULL_END
 
         ASSERT(_dataTasks.contains(task));
         _dataTasks.remove(task);
-        if (!_dataTasks.isEmpty() || !self.invalidated)
+        if (!_dataTasks.isEmpty() || !_invalidated)
             return;
     }
 
-    [self addDelegateOperation:[strongSelf = retainPtr(self)] {
+    RetainPtr<WebCoreNSURLSession> strongSelf { self };
+    [self addDelegateOperation:[strongSelf] {
         if ([strongSelf.get().delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
             [strongSelf.get().delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
     }];
@@ -349,8 +335,9 @@ NS_ASSUME_NONNULL_END
 
 - (void)addDelegateOperation:(Function<void()>&&)function
 {
+    RetainPtr<WebCoreNSURLSession> strongSelf { self };
     RetainPtr<NSBlockOperation> operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr(WTFMove(function)).get()];
-    _internalQueue->dispatch([strongSelf = retainPtr(self), operation = WTFMove(operation)] {
+    dispatch_async(_internalQueue.get(), [strongSelf, operation] {
         [strongSelf.get().delegateQueue addOperation:operation.get()];
         [operation waitUntilFinished];
     });
@@ -358,24 +345,21 @@ NS_ASSUME_NONNULL_END
 
 - (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result
 {
-    assertIsCurrent(*_targetQueue);
     UNUSED_PARAM(task);
     if (!result)
-        self.corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Fail;
-    else if (self.corsResults != WebCoreNSURLSessionCORSAccessCheckResults::Fail)
-        self.corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
+        _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Fail;
+    else if (_corsResults != WebCoreNSURLSessionCORSAccessCheckResults::Fail)
+        _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
 - (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveResponseFromOrigin:(Ref<WebCore::SecurityOrigin>&&)origin
 {
-    assertIsCurrent(*_targetQueue);
     UNUSED_PARAM(task);
     _origins.add(WTFMove(origin));
 }
 
 - (WebCore::RangeResponseGenerator&)rangeResponseGenerator
 {
-    assertIsCurrent(*_targetQueue);
     return *_rangeResponseGenerator;
 }
 
@@ -422,7 +406,7 @@ NS_ASSUME_NONNULL_END
 @dynamic didPassCORSAccessChecks;
 - (BOOL)didPassCORSAccessChecks
 {
-    return self.corsResults == WebCoreNSURLSessionCORSAccessCheckResults::Pass;
+    return _corsResults == WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
 - (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin &)origin
@@ -436,7 +420,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)finishTasksAndInvalidate
 {
-    self.invalidated = YES;
+    _invalidated = YES;
     {
         Locker<Lock> locker(_dataTasksLock);
         if (!_dataTasks.isEmpty())
@@ -510,10 +494,10 @@ NS_ASSUME_NONNULL_END
 
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
 {
-    if (self.invalidated)
+    if (_invalidated)
         return nil;
 
-    auto task = adoptNS([[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request targetQueue:_targetQueue.get()]);
+    auto task = adoptNS([[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request]);
     {
         Locker<Lock> locker(_dataTasksLock);
         _dataTasks.add(task.get());
@@ -530,7 +514,7 @@ NS_ASSUME_NONNULL_END
 {
     callOnMainThread([self, strongSelf = retainPtr(self), url = retainPtr(url), pongHandler = makeBlockPtr(pongHandler)] () mutable {
 
-        if (self.invalidated)
+        if (_invalidated)
             return pongHandler(adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil]).get(), 0);
 
         self.loader.sendH2Ping(url.get(), [self, strongSelf = WTFMove(strongSelf), pongHandler = WTFMove(pongHandler)] (Expected<Seconds, ResourceError>&& result) mutable {
@@ -540,10 +524,8 @@ NS_ASSUME_NONNULL_END
                 interval = result.value().value();
             else
                 error = result.error();
-            [self addDelegateOperation:[pongHandler = WTFMove(pongHandler), error = WTFMove(error), interval] () mutable {
-                callOnMainThread([pongHandler = WTFMove(pongHandler), error = WTFMove(error), interval] {
-                    pongHandler(error.get(), interval);
-                });
+            [self addDelegateOperation:[pongHandler = WTFMove(pongHandler), error = WTFMove(error), interval] {
+                pongHandler(error.get(), interval);
             }];
         });
     });
@@ -615,9 +597,8 @@ namespace WebCore {
 class WebCoreNSURLSessionDataTaskClient : public PlatformMediaResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task, WorkQueue& target)
+    WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task)
         : m_task(task)
-        , m_targetQueue(target)
     {
     }
 
@@ -633,19 +614,19 @@ public:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
-    WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_CAPABILITY(m_targetQueue.get());
-    Ref<WorkQueue> m_targetQueue;
+    Lock m_taskLock;
+    WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_LOCK(m_taskLock);
 };
 
 void WebCoreNSURLSessionDataTaskClient::clearTask()
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     m_task = nullptr;
 }
 
 void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -654,8 +635,8 @@ void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource
 
 void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    assertIsCurrent(m_targetQueue.get());
     Ref protectedThis { *this };
+    Locker locker { m_taskLock };
     if (!m_task)
         return completionHandler(ShouldContinuePolicyCheck::No);
 
@@ -664,7 +645,7 @@ void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& 
 
 bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return false;
 
@@ -673,7 +654,7 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
 
 void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const SharedBuffer& buffer)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -682,16 +663,20 @@ void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& reso
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
-    [m_task resource:&resource receivedRedirect:response request:WTFMove(request) completionHandler:WTFMove(completionHandler)];
+    [m_task resource:&resource receivedRedirect:response request:WTFMove(request) completionHandler: [completionHandler = WTFMove(completionHandler)] (auto&& request) mutable {
+        callOnMainThread([request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(WTFMove(request));
+        });
+    }];
 }
 
 void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -700,7 +685,7 @@ void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaRe
 
 void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -709,7 +694,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resour
 
 void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource, const NetworkLoadMetrics& metrics)
 {
-    assertIsCurrent(m_targetQueue.get());
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -721,13 +706,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 #pragma mark - WebCoreNSURLSessionDataTask
 
 @implementation WebCoreNSURLSessionDataTask
-- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetQueue:(WorkQueue*)targetQueue
+- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request
 {
     self.taskIdentifier = identifier;
+    self.session = session;
     self.state = NSURLSessionTaskStateSuspended;
     self.priority = NSURLSessionTaskPriorityDefault;
-    self.session = session;
-    _targetQueue = targetQueue;
 
     // CoreMedia will explicitly add a user agent header. Remove if present.
     RetainPtr<NSMutableURLRequest> mutableRequest;
@@ -750,21 +734,39 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 #pragma mark - Internal methods
 
-- (void)_cancel:(Function<void()>&&)completionHandler
+- (void)_restart
 {
-    assertIsCurrent(*_targetQueue);
+    ASSERT(isMainThread());
 
-    auto resource = self.resource;
-    self.resource = nullptr;
-    callOnMainThread([resource = WTFMove(resource), completionHandler = WTFMove(completionHandler), strongSelf = retainPtr(self)] () mutable {
-        if (resource)
-            resource->shutdown();
-        strongSelf->_targetQueue->dispatch([completionHandler = WTFMove(completionHandler), strongSelf = WTFMove(strongSelf)] () mutable {
-            if (RetainPtr<WebCoreNSURLSession> strongSession = [strongSelf session])
-                [strongSession rangeResponseGenerator].removeTask(strongSelf.get());
-            completionHandler();
-        });
-    });
+    [self _cancel];
+
+    RetainPtr<WebCoreNSURLSession> retainedSession = self.session;
+    if (!retainedSession)
+        return;
+
+    if ([retainedSession rangeResponseGenerator].willHandleRequest(self, self.originalRequest))
+        return;
+
+    _resource = [retainedSession loader].requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
+    if (_resource) {
+        _resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(self)));
+        return;
+    }
+
+    // A nil return from requestResource means the load was cancelled by a delegate client
+    [self _resource:nil loadFinishedWithError:ResourceError(ResourceError::Type::Cancellation) metrics:{ }];
+}
+
+- (void)_cancel
+{
+    ASSERT(isMainThread());
+    if (_resource) {
+        _resource->stop();
+        _resource->setClient(nullptr);
+        _resource = nil;
+    }
+    if (RetainPtr<WebCoreNSURLSession> session = self.session)
+        [session rangeResponseGenerator].removeTask(self);
 }
 
 #pragma mark - NSURLSession API
@@ -788,7 +790,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (NSError *)error
 {
-    // TODO: _error is never set and is always nil.
     return adoptNS([_error copy]).autorelease();
 }
 
@@ -804,30 +805,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (WebCoreNSURLSession *)session
 {
-    @synchronized(self) {
-        return _session.get().autorelease();
-    }
+    return _session.get().get();
 }
 
 - (void)setSession:(WebCoreNSURLSession *)session
 {
-    @synchronized(self) {
-        _session = session;
-    }
-}
-
-- (WebCore::PlatformMediaResource *)resource
-{
-    @synchronized(self) {
-        return _resource.get();
-    }
-}
-
-- (void)setResource:(WebCore::PlatformMediaResource *)resource
-{
-    @synchronized(self) {
-        _resource = resource;
-    }
+    _session = session;
 }
 
 - (NSURLResponse *)response
@@ -837,65 +820,42 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)cancel
 {
-    _targetQueue->dispatch([strongSelf = retainPtr(self), self] () mutable {
-        if (self.state == NSURLSessionTaskStateCompleted)
-            return;
-        self.state = NSURLSessionTaskStateCanceling;
-        [self _cancel:[strongSelf = WTFMove(strongSelf), self] () mutable {
-            [self _resource:nullptr loadFinishedWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil] metrics:NetworkLoadMetrics { }];
-        }];
+    if (self.state == NSURLSessionTaskStateCompleted)
+        return;
+    self.state = NSURLSessionTaskStateCanceling;
+    callOnMainThread([protectedSelf = retainPtr(self)] {
+        [protectedSelf _cancel];
+        [protectedSelf _resource:nullptr loadFinishedWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil] metrics:NetworkLoadMetrics { }];
     });
 }
 
 - (void)suspend
 {
-    _targetQueue->dispatch([strongSelf = retainPtr(self), self] {
-        self.state = NSURLSessionTaskStateSuspended;
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
         // NSURLSessionDataTasks must start over after suspending, so while
         // we could defer loading at this point, instead cancel and restart
         // upon resume so as to adhere to NSURLSessionDataTask semantics.
-        [self _cancel:[] { }];
+        [protectedSelf _cancel];
+        protectedSelf.get().state = NSURLSessionTaskStateSuspended;
     });
 }
 
 - (void)resume
 {
-    _targetQueue->dispatch([strongSelf = retainPtr(self), self] () mutable {
-        if (self.state != NSURLSessionTaskStateSuspended)
+    callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
+        if (protectedSelf.get().state != NSURLSessionTaskStateSuspended)
             return;
-        [self _cancel:[strongSelf = WTFMove(strongSelf), self] () mutable {
-            RetainPtr<WebCoreNSURLSession> strongSession = self.session;
-            if (self.state != NSURLSessionTaskStateSuspended || !strongSession)
-                return;
-            if ([strongSession rangeResponseGenerator].willHandleRequest(self, self.originalRequest)) {
-                self.state = NSURLSessionTaskStateRunning;
-                return;
-            }
-            callOnMainThread([loader = Ref { [strongSession loader] }, strongSelf = retainPtr(self), self] () mutable {
-                auto resource = loader->requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
-                self.resource = resource.get();
-                if (resource)
-                    resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(strongSelf.get(), *_targetQueue)));
-                _targetQueue->dispatch([strongSelf = WTFMove(strongSelf), self, resource = WTFMove(resource)] () mutable {
-                    if (resource) {
-                        self.state = NSURLSessionTaskStateRunning;
-                        return;
-                    }
-                    // A nil return from requestResource means the load was cancelled by a delegate client
-                    [self _resource:nil loadFinishedWithError:ResourceError(ResourceError::Type::Cancellation) metrics: { }];
-                });
-            });
-        }];
+
+        [protectedSelf _restart];
+        protectedSelf.get().state = NSURLSessionTaskStateRunning;
     });
 }
 
 - (void)dealloc
 {
-    if (_resource) {
-        _targetQueue->dispatch([client = _resource->client()] () mutable {
-            if (client)
-                static_cast<WebCoreNSURLSessionDataTaskClient*>(client.get())->clearTask();
-        });
+    if (!isMainThread() && _resource) {
+        if (auto* client = _resource->client())
+            static_cast<WebCoreNSURLSessionDataTaskClient*>(client)->clearTask();
         callOnMainThread([resource = WTFMove(_resource)] { });
     }
 
@@ -914,8 +874,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource*)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
     UNUSED_PARAM(bytesSent);
     UNUSED_PARAM(totalBytesToBeSent);
     // No-op.
@@ -923,9 +882,9 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource*)resource receivedResponse:(const ResourceResponse&)response completionHandler:(CompletionHandler<void(ShouldContinuePolicyCheck)>&&)completionHandler
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
-
+    ASSERT(response.source() == ResourceResponse::Source::Network || response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation || response.source() == ResourceResponse::Source::ServiceWorker);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
+    ASSERT(isMainThread());
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     [strongSession task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
     [strongSession task:self didReceiveCORSAccessCheckResult:resource ? resource->didPassAccessControlCheck() : YES];
@@ -933,27 +892,26 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<NSURLResponse> strongResponse = response.nsURLResponse();
 
     if (resource && strongSession && [strongSession rangeResponseGenerator].willSynthesizeRangeResponses(self, *resource, response)) {
-        // The RangeResponseGenerator took a strong reference to resource. We can reset it now.
-        self.resource = nullptr;
+        _resource = nullptr;
         return completionHandler(ShouldContinuePolicyCheck::Yes);
     }
-
+    
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     if (!strongSession)
         return completionHandler(ShouldContinuePolicyCheck::No);
-    [strongSession addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler), targetQueue = _targetQueue] () mutable {
+    [strongSession addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler)] () mutable {
         strongSelf->_response = strongResponse.get();
 
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if (![dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveResponse:completionHandler:)]) {
-            targetQueue->dispatch([strongSelf, completionHandler = WTFMove(completionHandler)] () mutable {
+            callOnMainThread([strongSelf, completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(ShouldContinuePolicyCheck::Yes);
             });
             return;
         }
 
-        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongResponse.get() completionHandler:makeBlockPtr([strongSelf, targetQueue = WTFMove(targetQueue), completionHandler = WTFMove(completionHandler)] (NSURLSessionResponseDisposition disposition) mutable {
-            targetQueue->dispatch([strongSelf, disposition, completionHandler = WTFMove(completionHandler)] () mutable {
+        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongResponse.get() completionHandler:makeBlockPtr([strongSelf, completionHandler = WTFMove(completionHandler)] (NSURLSessionResponseDisposition disposition) mutable {
+            callOnMainThread([strongSelf, disposition, completionHandler = WTFMove(completionHandler)] () mutable {
                 if (disposition == NSURLSessionResponseCancel)
                     completionHandler(ShouldContinuePolicyCheck::No);
                 else {
@@ -967,8 +925,9 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (BOOL)resource:(PlatformMediaResource*)resource shouldCacheResponse:(const ResourceResponse&)response
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
+
+    ASSERT(isMainThread());
 
     // FIXME: remove if <rdar://problem/20001985> is ever resolved.
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
@@ -976,8 +935,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource*)resource receivedData:(RetainPtr<NSData>&&)data
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     [strongSession addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
         strongSelf.get().countOfBytesReceived += [data length];
@@ -989,13 +947,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource*)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&&)request completionHandler:(CompletionHandler<void(ResourceRequest&&)>&&)completionHandler
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
-    [strongSession addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler), targetQueue = _targetQueue] () mutable {
+    [strongSession addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
             ASSERT_NOT_REACHED();
-            targetQueue->dispatch([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
+            callOnMainThread([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(WTFMove(request));
             });
             return;
@@ -1003,14 +960,14 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]) {
-            auto completionHandlerBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler), targetQueue = WTFMove(targetQueue)](NSURLRequest *newRequest) mutable {
-                targetQueue->dispatch([request = ResourceRequest { newRequest }, completionHandler = WTFMove(completionHandler)] () mutable {
+            auto completionHandlerBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSURLRequest *newRequest) mutable {
+                ensureOnMainThread([request = ResourceRequest { newRequest }, completionHandler = WTFMove(completionHandler)] () mutable {
                     completionHandler(WTFMove(request));
                 });
             });
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session task:(NSURLSessionTask *)strongSelf.get() willPerformHTTPRedirection:(NSHTTPURLResponse *)response.get() newRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) completionHandler:completionHandlerBlock.get()];
         } else {
-            targetQueue->dispatch([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
+            callOnMainThread([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(WTFMove(request));
             });
         }
@@ -1019,8 +976,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)_resource:(PlatformMediaResource*)resource loadFinishedWithError:(NSError *)error metrics:(const NetworkLoadMetrics&)metrics
 {
-    assertIsCurrent(*_targetQueue);
-    ASSERT_UNUSED(resource, !resource || resource == self.resource);
+    ASSERT_UNUSED(resource, !resource || resource == _resource);
     if (self.state == NSURLSessionTaskStateCompleted)
         return;
     self.state = NSURLSessionTaskStateCompleted;
@@ -1028,8 +984,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     RetainPtr<NSError> strongError { error };
-    auto taskMetrics = adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:metrics.isolatedCopy() onTarget:_targetQueue.get()]);
-    [strongSession addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics), targetQueue = _targetQueue] () mutable {
+    auto taskMetrics = adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:NetworkLoadMetrics(metrics)]);
+    [strongSession addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics)] () mutable {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
@@ -1038,7 +994,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
             [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:strongError.get()];
 
-        targetQueue->dispatch([strongSelf, strongSession] {
+        callOnMainThread([strongSelf, strongSession] {
             [strongSession taskCompleted:strongSelf.get()];
         });
     }];
@@ -1046,19 +1002,16 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource*)resource accessControlCheckFailedWithError:(const ResourceError&)error
 {
-    assertIsCurrent(*_targetQueue);
     [self _resource:resource loadFinishedWithError:error.nsError() metrics:NetworkLoadMetrics { }];
 }
 
 - (void)resource:(PlatformMediaResource*)resource loadFailedWithError:(const ResourceError&)error
 {
-    assertIsCurrent(*_targetQueue);
     [self _resource:resource loadFinishedWithError:error.nsError() metrics:NetworkLoadMetrics { }];
 }
 
 - (void)resourceFinished:(PlatformMediaResource*)resource metrics:(const NetworkLoadMetrics&)metrics
 {
-    assertIsCurrent(*_targetQueue);
     [self _resource:resource loadFinishedWithError:nil metrics:metrics];
 }
 @end

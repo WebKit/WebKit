@@ -451,7 +451,7 @@ static void stopLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPr
 
     GST_DEBUG_OBJECT(src, "R%u: stopping download", members->requestNumber);
     members->isDownloadSuspended = true;
-    members->resource->shutdown();
+    members->resource->stop();
 }
 
 static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
@@ -828,7 +828,8 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
         GST_DEBUG_OBJECT(src, "Resource request R%u will be stopped", members->requestNumber);
         RunLoop::main().dispatch([protector = WTF::ensureGRef(src), resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG_OBJECT(protector.get(), "Stopping resource request R%u", requestNumber);
-            resource->shutdown();
+            resource->stop();
+            resource->setClient(nullptr);
         });
     }
     ASSERT(!members->resource);
@@ -1183,8 +1184,7 @@ bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
 {
     DataMutexLocker members { src->priv->dataMutex };
 
-    auto client = members->resource->client();
-    auto* cachedResourceStreamingClient = static_cast<CachedResourceStreamingClient*>(client.get());
+    auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(members->resource->client());
     for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
         if (!origin.isSameOriginDomain(*responseOrigin))
             return true;

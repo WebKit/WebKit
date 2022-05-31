@@ -30,7 +30,6 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -42,20 +41,9 @@ public:
     explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
     ~RemoteMediaResourceLoader();
 
-    static Ref<WorkQueue> defaultQueue()
-    {
-        static std::once_flag onceKey;
-        static LazyNeverDestroyed<Ref<WorkQueue>> messageQueue;
-        std::call_once(onceKey, [] {
-            messageQueue.construct(WorkQueue::create("PlatformMediaResourceLoader", WorkQueue::QOS::Background));
-        });
-        return messageQueue.get();
-    }
-
 private:
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
-    Ref<WorkQueue> targetQueue() final { return defaultQueue(); }
 
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 };

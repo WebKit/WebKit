@@ -35,6 +35,7 @@ class SharedBuffer;
 
 class CachedRawResourceClient : public CachedResourceClient {
 public:
+    virtual ~CachedRawResourceClient() = default;
     static CachedResourceClientType expectedType() { return RawResourceType; }
     CachedResourceClientType resourceClientType() const override { return expectedType(); }
 

@@ -29,7 +29,6 @@
 
 #include "RemoteMediaResourceIdentifier.h"
 #include <WebCore/PlatformMediaResourceLoader.h>
-#include <wtf/Atomics.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,8 +48,8 @@ public:
     static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
     ~RemoteMediaResource();
 
-    // PlatformMediaResource, called on the main thread.
-    void shutdown() final;
+    // PlatformMediaResource
+    void stop() final;
     bool didPassAccessControlCheck() const final;
 
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
@@ -67,8 +66,7 @@ private:
     WeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
-    Atomic<bool> m_didPassAccessControlCheck { false };
-    bool m_shutdown { false };
+    bool m_didPassAccessControlCheck { false };
 };
 
 } // namespace WebKit

@@ -102,8 +102,8 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
         break;
     }
 
-    setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
-    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toString());
+    setMimeType(AtomString { extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase() });
+    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
     setSource(ResourceResponse::Source::Network);
 }
 
@@ -140,7 +140,7 @@ void ResourceResponse::setStatusLine(StringView header)
     // Extract the http status text
     if (statusCodeEndPosition != notFound) {
         auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
-        setHTTPStatusText(statusText.toString());
+        setHTTPStatusText(statusText.toAtomString());
     }
 }
 

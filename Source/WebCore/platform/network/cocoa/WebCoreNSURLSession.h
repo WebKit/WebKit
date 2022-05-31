@@ -56,10 +56,6 @@ class WebCoreNSURLSessionDataTaskClient;
 enum class ShouldContinuePolicyCheck : bool;
 }
 
-namespace WTF {
-class WorkQueue;
-}
-
 enum class WebCoreNSURLSessionCORSAccessCheckResults : uint8_t {
     Unknown,
     Pass,
@@ -68,22 +64,20 @@ enum class WebCoreNSURLSessionCORSAccessCheckResults : uint8_t {
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Created on the main thread; used on targetQueue.
 WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @private
     RefPtr<WebCore::PlatformMediaResourceLoader> _loader;
-    RefPtr<WTF::WorkQueue> _targetQueue;
     WeakObjCPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
     RetainPtr<NSString> _sessionDescription;
+    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     Lock _dataTasksLock;
-    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks; // Protected by _dataTasksLock
-    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins; // Accessed on the main thread.
-    BOOL _invalidated; // Access on multiple thread, must be accessed via ObjC property.
+    BOOL _invalidated;
     NSUInteger _nextTaskIdentifier;
-    RefPtr<WTF::WorkQueue> _internalQueue;
+    OSObjectPtr<dispatch_queue_t> _internalQueue;
     WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
-    RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator; // Only created/accessed on _targetQueue
+    RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator;
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
@@ -91,8 +85,6 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
 @property (copy) NSString *sessionDescription;
 @property (readonly) BOOL didPassCORSAccessChecks;
-@property (assign, atomic) WebCoreNSURLSessionCORSAccessCheckResults corsResults;
-@property (assign, atomic) BOOL invalidated;
 - (void)finishTasksAndInvalidate;
 - (void)invalidateAndCancel;
 - (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin&)origin;
@@ -128,22 +120,20 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (void)sendH2Ping:(NSURL *)url pongHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
 @end
 
-// Created on com.apple.avfoundation.customurl.nsurlsession
 @interface WebCoreNSURLSessionDataTask : NSObject {
-    WeakObjCPtr<WebCoreNSURLSession> _session; // Accesssed from operation queue, main and loader thread. Must be accessed through Obj-C property.
-    RefPtr<WTF::WorkQueue> _targetQueue;
-    RefPtr<WebCore::PlatformMediaResource> _resource; // Accesssed from main and loader thread. Must be accessed through Obj-C property.
-    RetainPtr<NSURLResponse> _response; // Set on operation queue.
+    WeakObjCPtr<WebCoreNSURLSession> _session;
+    RefPtr<WebCore::PlatformMediaResource> _resource;
+    RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;
-    RetainPtr<NSURLRequest> _originalRequest; // Set on construction, never modified.
-    RetainPtr<NSURLRequest> _currentRequest; // Set on construction, never modified.
+    RetainPtr<NSURLRequest> _originalRequest;
+    RetainPtr<NSURLRequest> _currentRequest;
     int64_t _countOfBytesReceived;
     int64_t _countOfBytesSent;
     int64_t _countOfBytesExpectedToSend;
     int64_t _countOfBytesExpectedToReceive;
     NSURLSessionTaskState _state;
-    RetainPtr<NSError> _error; // Unused, always nil.
-    RetainPtr<NSString> _taskDescription; // Only set / read on the user's thread.
+    RetainPtr<NSError> _error;
+    RetainPtr<NSString> _taskDescription;
     float _priority;
 }
 

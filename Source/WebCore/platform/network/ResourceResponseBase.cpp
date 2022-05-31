@@ -92,13 +92,13 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     CrossThreadData data;
 
     data.url = url().isolatedCopy();
-    data.mimeType = mimeType().isolatedCopy();
+    data.mimeType = mimeType().string().isolatedCopy();
     data.expectedContentLength = expectedContentLength();
-    data.textEncodingName = textEncodingName().isolatedCopy();
+    data.textEncodingName = textEncodingName().string().isolatedCopy();
 
     data.httpStatusCode = httpStatusCode();
-    data.httpStatusText = httpStatusText().isolatedCopy();
-    data.httpVersion = httpVersion().isolatedCopy();
+    data.httpStatusText = httpStatusText().string().isolatedCopy();
+    data.httpVersion = httpVersion().string().isolatedCopy();
 
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     if (m_networkLoadMetrics)
@@ -116,13 +116,13 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     ResourceResponse response;
 
     response.setURL(data.url);
-    response.setMimeType(WTFMove(data.mimeType));
+    response.setMimeType(AtomString { data.mimeType });
     response.setExpectedContentLength(data.expectedContentLength);
-    response.setTextEncodingName(WTFMove(data.textEncodingName));
+    response.setTextEncodingName(AtomString { WTFMove(data.textEncodingName) });
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(WTFMove(data.httpStatusText));
-    response.setHTTPVersion(WTFMove(data.httpVersion));
+    response.setHTTPStatusText(AtomString { data.httpStatusText });
+    response.setHTTPVersion(AtomString { data.httpVersion });
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     if (data.networkLoadMetrics)
@@ -230,20 +230,20 @@ void ResourceResponseBase::setURL(const URL& url)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::mimeType() const
+const AtomString& ResourceResponseBase::mimeType() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_mimeType; 
 }
 
-void ResourceResponseBase::setMimeType(String&& mimeType)
+void ResourceResponseBase::setMimeType(const AtomString& mimeType)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
     // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
-    m_mimeType = WTFMove(mimeType);
+    m_mimeType = mimeType;
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -266,14 +266,14 @@ void ResourceResponseBase::setExpectedContentLength(long long expectedContentLen
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::textEncodingName() const
+const AtomString& ResourceResponseBase::textEncodingName() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_textEncodingName;
 }
 
-void ResourceResponseBase::setTextEncodingName(String&& encodingName)
+void ResourceResponseBase::setTextEncodingName(AtomString&& encodingName)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
@@ -343,30 +343,30 @@ bool ResourceResponseBase::isRedirection() const
     return isRedirectionStatusCode(m_httpStatusCode);
 }
 
-const String& ResourceResponseBase::httpStatusText() const
+const AtomString& ResourceResponseBase::httpStatusText() const
 {
     lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
-void ResourceResponseBase::setHTTPStatusText(String&& statusText)
+void ResourceResponseBase::setHTTPStatusText(const AtomString& statusText)
 {
     lazyInit(AllFields);
 
-    m_httpStatusText = WTFMove(statusText);
+    m_httpStatusText = statusText; 
 
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const String& ResourceResponseBase::httpVersion() const
+const AtomString& ResourceResponseBase::httpVersion() const
 {
     lazyInit(AllFields);
     
     return m_httpVersion;
 }
 
-void ResourceResponseBase::setHTTPVersion(String&& versionText)
+void ResourceResponseBase::setHTTPVersion(const AtomString& versionText)
 {
     lazyInit(AllFields);
     
