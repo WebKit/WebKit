@@ -75,18 +75,18 @@ JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, JSContextRef ctx, JSObj
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURLString, int startingLineNumber, JSValueRef* exception)
 {
-    if (!ctx) {
+  if (!ctx) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
 
+    // We keep the lock here
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSLockHolder locker(globalObject->vm());
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+    SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
 
     return JSEvaluateScriptInternal(locker, ctx, thisObject, source, exception);
 }
@@ -99,12 +99,11 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+    SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
     
     JSValue syntaxException;
     bool isValidSyntax = checkSyntax(globalObject, source, &syntaxException);
@@ -134,7 +133,7 @@ void JSGarbageCollect(JSContextRef ctx)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
 
     vm.heap.reportAbandonedObjectGraph();
 }
@@ -147,7 +146,7 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
 
     vm.heap.deprecatedReportExtraMemory(size);
 }
@@ -162,7 +161,7 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
     vm.heap.collectNow(Sync, CollectionScope::Full);
 }
 
@@ -173,7 +172,7 @@ void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
     vm.heap.collectSync(CollectionScope::Eden);
 }
 
@@ -202,7 +201,7 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
 
     auto typeCounts = vm.heap.objectTypeCounts();
     JSObject* objectTypeCounts = constructEmptyObject(globalObject);

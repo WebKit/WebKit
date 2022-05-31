@@ -58,7 +58,7 @@ int testJSObjectGetProxyTarget()
     JSProxy* jsProxyObject;
 
     {
-        JSLockHolder locker(vm);
+
         JSProxy* globalObjectProxyObject = jsCast<JSProxy*>(toJS(globalObjectProxy));
         globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
         Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype());
@@ -71,7 +71,7 @@ int testJSObjectGetProxyTarget()
     ProxyObject* proxyObjectObject;
 
     {
-        JSLockHolder locker(vm);
+
         Structure* emptyObjectStructure = JSFinalObject::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), 0);
         JSObject* handler = JSFinalObject::create(vm, emptyObjectStructure);
         proxyObjectObject = ProxyObject::create(globalObjectObject, toJS(array), handler);
@@ -85,7 +85,7 @@ int testJSObjectGetProxyTarget()
     test("proxy target of uninitialized JSProxy is null", !JSObjectGetProxyTarget(jsProxy));
     
     {
-        JSLockHolder locker(vm);
+
         jsProxyObject->setTarget(vm, globalObjectObject);
     }
     

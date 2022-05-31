@@ -108,7 +108,7 @@ static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef,
 {
     JSC::JSGlobalObject* globalObject = toJS(ctx);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+
 
     JSC::JSObject* constructor = toJS(constructorRef);
     JSC::JSValue instance = toJS(globalObject, possibleInstance);
@@ -119,7 +119,7 @@ static JSC::JSObject* makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrapp
 {
     JSC::JSGlobalObject* globalObject = toJS(ctx);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+
 
     ASSERT(jsClass);
     JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(globalObject, globalObject->objcWrapperObjectStructure(), jsClass, 0);
@@ -183,7 +183,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
         return;
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
+
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, [base JSValueRef]));
@@ -544,9 +544,6 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     JSC::Structure* structure = [self structureInContext:context];
 
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
-    JSC::VM& vm = globalObject->vm();
-    JSC::JSLockHolder locker(vm);
-
     auto wrapper = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(globalObject, structure, m_classRef, 0);
     wrapper->setWrappedObject((__bridge void*)object);
     return wrapper;
@@ -676,7 +673,6 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(context, value, &exception);
     ASSERT(!exception);
-    JSC::JSLockHolder locker(toJS(context));
     if (toJS(object)->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>())
         return (__bridge id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
     if (id target = tryUnwrapConstructor(object))

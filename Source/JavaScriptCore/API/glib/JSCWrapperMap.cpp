@@ -48,7 +48,7 @@ WrapperMap::~WrapperMap()
 GRefPtr<JSCValue> WrapperMap::gobjectWrapper(JSCContext* jscContext, JSValueRef jsValue)
 {
     auto* jsContext = jscContextGetJSContext(jscContext);
-    JSC::JSLockHolder locker(toJS(jsContext));
+
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     GRefPtr<JSCValue> value = m_cachedGObjectWrappers.get(jsValue);
     if (!value) {
@@ -81,7 +81,7 @@ JSObject* WrapperMap::createJSWrapper(JSGlobalContextRef jsContext, JSClassRef j
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     JSGlobalObject* globalObject = toJS(jsContext);
     VM& vm = globalObject->vm();
-    JSLockHolder locker(vm);
+
     auto* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(globalObject, globalObject->glibWrapperObjectStructure(), jsClass, nullptr);
     if (wrappedObject) {
         object->setWrappedObject(new JSC::JSCGLibWrapperObject(wrappedObject, destroyFunction));

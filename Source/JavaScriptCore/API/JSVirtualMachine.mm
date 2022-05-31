@@ -174,7 +174,7 @@ static id getInternalObjcObject(id object)
         if (!object || !owner)
             return;
 
-        JSC::JSLockHolder locker(toJS(m_group));
+
         if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
             [self addExternalRememberedObject:owner];
 
@@ -205,7 +205,7 @@ static id getInternalObjcObject(id object)
         if (!object || !owner)
             return;
 
-        JSC::JSLockHolder locker(toJS(m_group));
+
 
         Locker externalDataMutexLocker { m_externalDataMutex };
         NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
@@ -273,7 +273,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 - (void)shrinkFootprintWhenIdle
 {
     JSC::VM* vm = toJS(m_group);
-    JSC::JSLockHolder locker(vm);
+
     vm->shrinkFootprintWhenIdle();
 }
 
