@@ -5203,9 +5203,11 @@
    },
    {
       "emails" : [
-         "nvasilyev@apple.com"
+         "nvasilyev@apple.com",
+         "me@elv1s.ru"
       ],
       "expertise" : "Web Inspector",
+      "github" : "NV",
       "name" : "Nikita Vasilyev",
       "nicks" : [
          "NVI",
