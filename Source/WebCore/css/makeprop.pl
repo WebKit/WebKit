@@ -1482,6 +1482,7 @@ foreach my $name (@names) {
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"});
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"});
   next if (exists $synonyms{$name});
+  die "Property $name is logical but doesn't have skip-builder\n" if isLogical($name);
 
   my $indent = "    ";
   if (!$propertiesWithStyleBuilderOptions{$name}{"custom"}{"Initial"}) {

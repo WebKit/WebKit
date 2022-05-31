@@ -5290,7 +5290,7 @@
         },
         "contain-intrinsic-block-size": {
             "codegen-properties": {
-                "custom": "All",
+                "skip-builder": true,
                 "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
@@ -5307,7 +5307,7 @@
         },
         "contain-intrinsic-inline-size": {
             "codegen-properties": {
-                "custom": "All",
+                "skip-builder": true,
                 "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
