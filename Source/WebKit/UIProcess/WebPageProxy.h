@@ -522,9 +522,6 @@ public:
     void exitFullscreenImmediately();
     void fullscreenMayReturnToInline();
 
-    void didEnterFullscreen();
-    void didExitFullscreen();
-
     void suspend(CompletionHandler<void(bool)>&&);
     void resume(CompletionHandler<void(bool)>&&);
     bool isSuspended() const { return m_isSuspended; }
@@ -1971,6 +1968,9 @@ public:
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didChangePlaybackRate(PlaybackSessionContextIdentifier);
     void didChangeCurrentTime(PlaybackSessionContextIdentifier);
+#else
+    void didEnterFullscreen();
+    void didExitFullscreen();
 #endif
 
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }

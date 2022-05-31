@@ -295,6 +295,11 @@ private:
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    void didEnterFullscreen() final { }
+    void didExitFullscreen() final { }
+#endif
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

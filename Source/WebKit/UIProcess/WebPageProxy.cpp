@@ -6081,6 +6081,28 @@ void WebPageProxy::fullscreenMayReturnToInline()
     m_uiClient->fullscreenMayReturnToInline(this);
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    m_uiClient->didEnterFullscreen(this);
+
+    m_currentFullscreenVideoSessionIdentifier = identifier;
+    updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    m_uiClient->didExitFullscreen(this);
+
+    if (m_currentFullscreenVideoSessionIdentifier == identifier) {
+        m_currentFullscreenVideoSessionIdentifier = std::nullopt;
+        updateFullscreenVideoExtraction();
+    }
+}
+
+#else
+
 void WebPageProxy::didEnterFullscreen()
 {
     m_uiClient->didEnterFullscreen(this);
@@ -6091,27 +6113,7 @@ void WebPageProxy::didExitFullscreen()
     m_uiClient->didExitFullscreen(this);
 }
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
-{
-    didEnterFullscreen();
-
-    m_currentFullscreenVideoSessionIdentifier = identifier;
-    updateFullscreenVideoExtraction();
-}
-
-void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
-{
-    didExitFullscreen();
-
-    if (m_currentFullscreenVideoSessionIdentifier == identifier) {
-        m_currentFullscreenVideoSessionIdentifier = std::nullopt;
-        updateFullscreenVideoExtraction();
-    }
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+#endif
 
 void WebPageProxy::closePage()
 {
