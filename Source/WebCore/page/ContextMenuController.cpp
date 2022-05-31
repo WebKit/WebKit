@@ -967,20 +967,7 @@ void ContextMenuController::populate()
 
         auto selectedRange = frame->selection().selection().range();
         bool selectionIsInsideImageOverlay = selectedRange && ImageOverlay::isInsideOverlay(*selectedRange);
-        bool shouldShowItemsForNonEditableText = ([&] {
-            if (!linkURL.isEmpty())
-                return false;
-
-            if (!mediaURL.isEmpty())
-                return false;
-
-            if (!imageURL.isEmpty())
-                return selectionIsInsideImageOverlay;
-
-            return true;
-        })();
-
-        if (shouldShowItemsForNonEditableText) {
+        if (selectionIsInsideImageOverlay || (linkURL.isEmpty() && mediaURL.isEmpty() && imageURL.isEmpty())) {
             if (!imageURL.isEmpty())
                 appendItem(*separatorItem(), m_contextMenu.get());
 
@@ -992,12 +979,10 @@ void ContextMenuController::populate()
                 appendItem(*separatorItem(), m_contextMenu.get());
 
 #if ENABLE(APP_HIGHLIGHTS)
-                if (auto* page = frame->page()) {
-                    if (page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
-                        appendItem(AddHighlightToNewQuickNoteItem, m_contextMenu.get());
-                        appendItem(AddHighlightItem, m_contextMenu.get());
-                        appendItem(*separatorItem(), m_contextMenu.get());
-                    }
+                if (auto* page = frame->page(); page && page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
+                    appendItem(AddHighlightToNewQuickNoteItem, m_contextMenu.get());
+                    appendItem(AddHighlightItem, m_contextMenu.get());
+                    appendItem(*separatorItem(), m_contextMenu.get());
                 }
 #endif
 
