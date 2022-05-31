@@ -714,7 +714,11 @@
 )
 
 (when (defined? 'syscall-unix)
+#if !PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
     (deny syscall-unix (with telemetry))
+#else
+    (allow syscall-unix)
+#endif
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -825,7 +829,11 @@
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (when (defined? 'syscall-mach)
+#if !PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
     (deny syscall-mach (with telemetry))
+#else
+    (allow syscall-mach)
+#endif
     (allow syscall-mach
         (machtrap-number
             MSC__kernelrpc_mach_port_allocate_trap
