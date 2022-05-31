@@ -2,16 +2,30 @@ Testing WI.ResourceQueryController.
 
 
 == Running test suite: ResourceQueryController
--- Running test case: FindSpecialCharacterIndices
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
-PASS: Result should match expected special indices.
+-- Running test case: FindSpecialCharacterIndices.DisplayName
+PASS: The special characters in "Abcd" should match.
+PASS: The special characters in "ABCDE" should match.
+PASS: The special characters in "abcdef" should match.
+PASS: The special characters in "abc-def" should match.
+PASS: The special characters in "abc---def" should match.
+PASS: The special characters in "a-bc_de.f" should match.
+PASS: The special characters in "AxBxCxDxExFx" should match.
+PASS: The special characters in "ab-c_d.ef" should match.
+PASS: The special characters in "AxBxCxdxexDxyxEF" should match.
+
+-- Running test case: FindSpecialCharacterIndices.URL
+PASS: The special characters in "aBcd" should match.
+PASS: The special characters in "/aBcd" should match.
+PASS: The special characters in "aBcd_dEfg" should match.
+PASS: The special characters in "/aBcd_dEfg" should match.
+PASS: The special characters in "aBcd-dEfg" should match.
+PASS: The special characters in "/aBcd-dEfg" should match.
+PASS: The special characters in "aBcd.dEfg" should match.
+PASS: The special characters in "/aBcd.dEfg" should match.
+PASS: The special characters in "aBcd/dEfg" should match.
+PASS: The special characters in "/aBcd/dEfg" should match.
+PASS: The special characters in "aBcd/dEfg_hIjk-lMno.pQrs" should match.
+PASS: The special characters in "/aBcd/dEfg_hIjk-lMno.pQrs" should match.
 
 -- Running test case: ExecuteQueryAgainstNoResources
 PASS: Should return no results.

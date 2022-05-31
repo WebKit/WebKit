@@ -63,7 +63,7 @@ WI.CSSQueryController = class CSSQueryController extends WI.QueryController
 
         for (let value of this._values) {
             if (!this._cachedSpecialCharacterIndicesForValueMap.has(value))
-                this._cachedSpecialCharacterIndicesForValueMap.set(value, this._findSpecialCharacterIndices(value));
+                this._cachedSpecialCharacterIndicesForValueMap.set(value, this._findSpecialCharacterIndicesInPropertyName(value));
 
             let matches = this.findQueryMatches(query, value.toLowerCase(), this._cachedSpecialCharacterIndicesForValueMap.get(value));
             if (matches.length)
@@ -79,37 +79,8 @@ WI.CSSQueryController = class CSSQueryController extends WI.QueryController
 
     // Private
 
-    _findSpecialCharacterIndices(string)
+    _findSpecialCharacterIndicesInPropertyName(propertyName)
     {
-        if (!string.length)
-            return [];
-
-        const separators = "-_";
-
-        // Special characters include the following:
-        // 1. The first character.
-        // 2. Uppercase characters that follow a lowercase letter.
-        // 3. Separators and the first character following the separator.
-        let indices = [0];
-
-        for (let i = 1; i < string.length; ++i) {
-            let character = string[i];
-            let isSpecial = false;
-
-            if (separators.includes(character))
-                isSpecial = true;
-            else {
-                let previousCharacter = string[i - 1];
-                if (separators.includes(previousCharacter))
-                    isSpecial = true;
-                else if (character.isUpperCase() && previousCharacter.isLowerCase())
-                    isSpecial = true;
-            }
-
-            if (isSpecial)
-                indices.push(i);
-        }
-
-        return indices;
+        return this.findSpecialCharacterIndices(propertyName, "-_");
     }
 };

@@ -108,4 +108,39 @@ WI.QueryController = class QueryController
 
         return matches;
     }
+
+    // Protected
+
+    findSpecialCharacterIndices(string, separators)
+    {
+        if (!string.length)
+            return [];
+
+        // Special characters include the following:
+        // - The first character.
+        // - Uppercase characters that follow a lowercase letter.
+        // - Separators and the first character following the separator.
+
+        let indices = [0];
+
+        for (let i = 1; i < string.length; ++i) {
+            let character = string[i];
+            let isSpecial = false;
+
+            if (separators.includes(character))
+                isSpecial = true;
+            else {
+                let previousCharacter = string[i - 1];
+                if (separators.includes(previousCharacter))
+                    isSpecial = true;
+                else if (character.isUpperCase() && previousCharacter.isLowerCase())
+                    isSpecial = true;
+            }
+
+            if (isSpecial)
+                indices.push(i);
+        }
+
+        return indices;
+    }
 };
