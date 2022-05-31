@@ -330,6 +330,9 @@ public:
     bool hasEventTargetData() const { return hasNodeFlag(NodeFlag::HasEventTargetData); }
     void setHasEventTargetData(bool flag) { setNodeFlag(NodeFlag::HasEventTargetData, flag); }
 
+    bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
+    void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
+
     WEBCORE_EXPORT bool isContentEditable() const;
     bool isContentRichlyEditable() const;
 
@@ -569,7 +572,7 @@ protected:
         HasCustomStyleResolveCallbacks = 1 << 21,
 
         HasPendingResources = 1 << 22,
-        // Bit 23 is free.
+        IsInGCReachableRefMap = 1 << 23,
 #if ENABLE(FULLSCREEN_API)
         ContainsFullScreenElement = 1 << 24,
 #endif

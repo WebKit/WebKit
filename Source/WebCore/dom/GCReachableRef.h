@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Node.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/RefPtr.h>
@@ -35,9 +36,17 @@ class Node;
 
 class GCReachableRefMap {
 public:
-    static inline bool contains(Node& node) { return map().contains(&node); }
-    static inline void add(Node& node) { map().add(&node); }
-    static inline void remove(Node& node) { map().remove(&node); }
+    static inline bool contains(Node& node) { return node.isInGCReacheableRefMap(); }
+    static inline void add(Node& node)
+    {
+        if (map().add(&node).isNewEntry)
+            node.setIsInGCReacheableRefMap(true);
+    }
+    static inline void remove(Node& node)
+    {
+        if (map().remove(&node))
+            node.setIsInGCReacheableRefMap(false);
+    }
 
 private:
     static HashCountedSet<Node*>& map();
