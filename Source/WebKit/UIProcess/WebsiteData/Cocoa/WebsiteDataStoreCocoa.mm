@@ -351,7 +351,7 @@ String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s);
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, ShouldCreateDirectory::No);
 }
 
 String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
@@ -428,7 +428,7 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
     return url.absoluteURL.path;
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL;
@@ -451,8 +451,11 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     });
 
     NSURL *url = [websiteDataURL.get() URLByAppendingPathComponent:directoryName isDirectory:YES];
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
-        LOG_ERROR("Failed to create directory %@", url);
+
+    if (shouldCreateDirectory == ShouldCreateDirectory::Yes) {
+        if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+            LOG_ERROR("Failed to create directory %@", url);
+    }
 
     return url.absoluteURL.path;
 }
