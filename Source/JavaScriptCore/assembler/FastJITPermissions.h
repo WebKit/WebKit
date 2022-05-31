@@ -31,7 +31,7 @@
 
 #include <wtf/Platform.h>
 
-#if USE(PTHREAD_JIT_PERMISSIONS_API)
+#if CPU(ARM64)
 #include <pthread.h>
 #elif USE(APPLE_INTERNAL_SDK)
 #include <os/thread_self_restrict.h> 
@@ -41,7 +41,7 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
 
-#if USE(PTHREAD_JIT_PERMISSIONS_API) 
+#if CPU(ARM64)
     pthread_jit_write_protect_np(false);
 #elif USE(APPLE_INTERNAL_SDK)
     os_thread_self_restrict_rwx_to_rw();
@@ -56,7 +56,7 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
 
-#if USE(PTHREAD_JIT_PERMISSIONS_API) 
+#if CPU(ARM64)
     pthread_jit_write_protect_np(true);
 #elif USE(APPLE_INTERNAL_SDK)
     os_thread_self_restrict_rwx_to_rx();
