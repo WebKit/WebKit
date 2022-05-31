@@ -184,7 +184,9 @@ void PopUpSOAuthorizationSession::initSecretWebView()
         return;
     auto configuration = adoptNS([[initiatorWebView configuration] copy]);
     [configuration _setRelatedWebView:initiatorWebView.get()];
-    [configuration preferences]._extensibleSSOEnabled = NO;
+    auto secretViewPreferences = adoptNS([[configuration preferences] copy]);
+    [secretViewPreferences _setExtensibleSSOEnabled:NO];
+    [configuration setPreferences:secretViewPreferences.get()];
     m_secretWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
     m_secretDelegate = adoptNS([[WKSOSecretDelegate alloc] initWithSession:this]);
