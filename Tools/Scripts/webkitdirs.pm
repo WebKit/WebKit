@@ -664,12 +664,28 @@ sub isValidXcodeSDKPlatformName($) {
     return grep { $_ eq $name } @platforms;
 }
 
+sub genericDestinationForXcodeSDKPlatformName($) {
+    my $xcodeSDKPlatformName = shift;
+    my %destinations = (
+        "appletvos"        => "generic/platform=tvOS",
+        "appletvsimulator" => "generic/platform=tvOS Simulator",
+        "iphoneos"         => "generic/platform=iOS",
+        "iphonesimulator"  => "generic/platform=iOS Simulator",
+        "macosx"           => "generic/platform=macOS",
+        "maccatalyst"      => "generic/platform=macOS,variant=Mac Catalyst",
+        "watchos"          => "generic/platform=watchOS",
+        "watchsimulator"   => "generic/platform=watchOS Simulator",
+    );
+    my $destination = $destinations{$xcodeSDKPlatformName} or die "No known destination for $xcodeSDKPlatformName";
+    return $destination;
+}
+
 sub determineXcodeSDKPlatformName {
     return if defined $xcodeSDKPlatformName;
     my $sdk;
     
     # The user explicitly specified the sdk, don't assume anything
-    if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
+    if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk) || checkForArgumentAndRemoveFromARGVGettingValue("SDKROOT", \$sdk)) {
         $xcodeSDK = lc $sdk;
         $xcodeSDKPlatformName = $sdk;
         $xcodeSDKPlatformName =~ s/\.internal$//;
@@ -1030,6 +1046,7 @@ sub XcodeOptions
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
+    push @options, ("-destination", genericDestinationForXcodeSDKPlatformName($xcodeSDKPlatformName)) if $xcodeSDKPlatformName;
     if ($asanIsEnabled) {
         my $xcconfig = $ubsanIsEnabled ? "asan+ubsan.xcconfig" : "asan.xcconfig";
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", $xcconfig));
@@ -1076,7 +1093,11 @@ sub XcodeOptions
 
 sub XcodeOptionString
 {
-    return join " ", XcodeOptions();
+    my @options = XcodeOptions;
+    for (@options) {
+        s/ /\\ /g;
+    }
+    return join " ", @options;
 }
 
 sub XcodeOptionStringNoConfig

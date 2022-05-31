@@ -48,7 +48,7 @@ WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 #include "../../../../Tools/ccache/ccache.xcconfig"
 
 OTHER_LDFLAGS[config=Debug][sdk=iphone*] = $(inherited) -framework UIKit -framework CoreGraphics
-OTHER_LDFLAGS[config=Debug][sdk=tv*] = $(inherited) -framework UIKit -framework CoreGraphics
+OTHER_LDFLAGS[config=Debug][sdk=appletv*] = $(inherited) -framework UIKit -framework CoreGraphics
 OTHER_LDFLAGS[config=Debug][sdk=watch*] = $(inherited) -framework UIKit -framework CoreGraphics
 OTHER_LDFLAGS[config=Debug][sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_$(WK_IS_CATALYST))
 OTHER_LDFLAGS_YES = -framework UIKit -framework CoreGraphics

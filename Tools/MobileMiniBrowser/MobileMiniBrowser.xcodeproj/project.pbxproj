@@ -27,6 +27,7 @@
 		CDA985191D76483400EBC399 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDA985151D76477900EBC399 /* test.mp4 */; };
 		CDA9851A1D76483400EBC399 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985131D76474100EBC399 /* index.html */; };
 		CDA9851B1D76483400EBC399 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985171D7647CD00EBC399 /* looping.html */; };
+		DD403C5828500FE300D899FC /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,17 @@
 				CD498B431D76348000681FA7 /* MobileMiniBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD403C5728500FD800D899FC /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DD403C5828500FE300D899FC /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -268,6 +280,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD498B441D76348000681FA7 /* Build configuration list for PBXNativeTarget "MobileMiniBrowser.framework" */;
 			buildPhases = (
+				DD403C5728500FD800D899FC /* Product Dependencies */,
 				CD498B361D76348000681FA7 /* Sources */,
 				CD498B371D76348000681FA7 /* Frameworks */,
 				CD498B381D76348000681FA7 /* Headers */,
