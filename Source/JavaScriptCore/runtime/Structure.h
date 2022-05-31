@@ -939,8 +939,8 @@ private:
     }
 
     template<typename DetailsFunc>
-    bool checkOffsetConsistency(PropertyTable*, const DetailsFunc&) const;
-    bool checkOffsetConsistency() const;
+    void checkOffsetConsistency(PropertyTable*, const DetailsFunc&) const;
+    void checkOffsetConsistency() const;
 
     JS_EXPORT_PRIVATE void allocateRareData(VM&);
     
