@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -32,25 +32,31 @@ namespace WTF {
 
 class ExternalStringImpl;
 
-using ExternalStringImplFreeFunction = Function<void(ExternalStringImpl*, void*, unsigned)>;
+using ExternalStringImplFreeFunction = Function<void(void*, void*, unsigned)>;
 
 class ExternalStringImpl final : public StringImpl {
 public:
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const LChar* characters, unsigned length, ExternalStringImplFreeFunction&&);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const UChar* characters, unsigned length, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const LChar* characters, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const UChar* characters, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const char* string);
 
 private:
     friend class StringImpl;
 
-    ExternalStringImpl(const LChar* characters, unsigned length, ExternalStringImplFreeFunction&&);
-    ExternalStringImpl(const UChar* characters, unsigned length, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(const UChar* characters, unsigned length);
+    ExternalStringImpl(const LChar* characters, unsigned length);
 
     ALWAYS_INLINE void freeExternalBuffer(void* buffer, unsigned bufferSize)
     {
-        m_free(this, buffer, bufferSize);
+        m_free(m_freeCtx, buffer, bufferSize);
     }
 
     ExternalStringImplFreeFunction m_free;
+    void* m_freeCtx;
 };
 
 } // namespace WTF
