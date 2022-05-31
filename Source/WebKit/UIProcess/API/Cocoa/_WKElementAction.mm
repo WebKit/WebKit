@@ -40,7 +40,7 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
-#import <SafariServices/SSReadingList.h>
+#import "SafariServicesSPI.h"
 SOFT_LINK_FRAMEWORK(SafariServices);
 SOFT_LINK_CLASS(SafariServices, SSReadingList);
 #endif

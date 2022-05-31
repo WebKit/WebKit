@@ -2216,7 +2216,9 @@
 		DDA0A41727E67039005E086E /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41627E67039005E086E /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA0A41927E672A5005E086E /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41D27E94644005E086E /* WebKitLegacy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */; };
 		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */; };
 		DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */; };
 		DF0C5F28252ECB8E00D921DB /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F24252ECB8D00D921DB /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF0C5F2A252ECB8E00D921DB /* WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F26252ECB8E00D921DB /* WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2752,6 +2754,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+				DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6960,6 +6963,8 @@
 		DDA0A41627E67039005E086E /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEventRegion.h; path = ../WebCore/page/ios/WebEventRegion.h; sourceTree = "<group>"; };
 		DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ../WebCore/platform/ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
 		DDA0A41D27E94644005E086E /* WebKitLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy.h; sourceTree = "<group>"; };
+		DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AuthenticationServicesCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafariServicesSPI.h; sourceTree = "<group>"; };
 		DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF0C5F23252ECB8D00D921DB /* WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDownload.mm; sourceTree = "<group>"; };
 		DF0C5F24252ECB8D00D921DB /* WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownload.h; sourceTree = "<group>"; };
@@ -10465,6 +10470,7 @@
 		5750F3292032D4E300389347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */,
 				E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */,
 				E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */,
 				DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */,
@@ -13177,6 +13183,7 @@
 				E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */,
 				2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */,
 				46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */,
+				DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */,
 				079D1D9926960CD300883577 /* SystemStatusSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
 				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,
@@ -15078,6 +15085,7 @@
 				07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */,
 				1A4D664C18A3030E00D82E21 /* WKFrameInfo.h in Headers */,
 				2DF9EEE81A78245500B6CFBE /* WKFrameInfoInternal.h in Headers */,
+				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
 				1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */,
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
