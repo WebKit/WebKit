@@ -108,14 +108,14 @@ void pas_assertion_failed_no_inline(const char* filename, int line, const char* 
 {
     pas_log("[%d] pas assertion failed: ", getpid());
     pas_log("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
-    pas_crash_with_info_impl((uint64_t)filename, line, (uint64_t) function, (uint64_t) expression, 0xbeefbff0, 42, 1337);
+    pas_crash_with_info_impl((uint64_t)filename, (uint64_t)line, (uint64_t)function, (uint64_t)expression, 0xbeefbff0, 42, 1337);
 }
 
 void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra)
 {
     pas_log("[%d] pas assertion failed (with extra detail): ", getpid());
     pas_log("%s:%d: %s: assertion %s failed. Extra data: %" PRIu64 ".\n", filename, line, function, expression, extra);
-    pas_crash_with_info_impl((uint64_t)filename, line, (uint64_t) function, (uint64_t) expression, extra, 1337, 0xbeef0bff);
+    pas_crash_with_info_impl((uint64_t)filename, (uint64_t)line, (uint64_t)function, (uint64_t)expression, extra, 1337, 0xbeef0bff);
 }
 
 void pas_panic_on_out_of_memory_error()
