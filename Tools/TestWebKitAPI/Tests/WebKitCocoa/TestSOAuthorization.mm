@@ -618,7 +618,6 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
-    EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
 
     // Force App Links with a request.URL that has a different host than the current one (empty host) and ShouldOpenExternalURLsPolicy::ShouldAllow.
     URL testURL { "https://www.example.com"_str };
@@ -629,6 +628,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
     [webView evaluateJavaScript: [NSString stringWithFormat:@"location = '%@'", (id)testURL.string()] completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
+    EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
 #if PLATFORM(MAC)
     checkAuthorizationOptions(false, emptyString(), 0);
 #elif PLATFORM(IOS)
