@@ -44,23 +44,12 @@ bool JSString::equal(JSGlobalObject* globalObject, JSString* other) const
     return WTF::equal(*valueInternal().impl(), *other->valueInternal().impl());
 }
 
-ALWAYS_INLINE bool JSString::equalInline(JSGlobalObject* globalObject, JSString* other) const
+// --- ADDED ---
+bool JSString::equal(JSGlobalObject* globalObject, const char* ptr, size_t len) const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    unsigned length = this->length();
-    if (length != other->length())
-        return false;
-
-    auto str1 = unsafeView(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-    auto str2 = other->unsafeView(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-
-    ensureStillAliveHere(this);
-    ensureStillAliveHere(other);
-    return WTF::equal(str1, str2, length);
+    if (isRope())
+        return equalSlowCase(globalObject, ptr, len);
+    return WTF::equal(valueInternal().impl(), (reinterpret_cast<const LChar*>(ptr)), len);
 }
 
 template<typename StringType>
