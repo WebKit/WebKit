@@ -236,12 +236,6 @@ Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, size_t byteLengt
     return adoptRef(*new ArrayBuffer(const_cast<void*>(data), byteLength, WTFMove(destructor)));
 }
 
-Ref<ArrayBuffer> ArrayBuffer::createShared(Ref<SharedArrayBufferContents>&& shared)
-{
-    ArrayBufferContents contents(WTFMove(shared));
-    return create(WTFMove(contents));
-}
-
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength)
 {
     return tryCreate(numElements, elementByteSize, maxByteLength, ArrayBufferContents::InitializationPolicy::ZeroInitialize);
