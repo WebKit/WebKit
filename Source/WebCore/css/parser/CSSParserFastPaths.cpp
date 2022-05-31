@@ -724,7 +724,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
         return valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy;
-    case CSSPropertyWebkitTextJustify:
+    case CSSPropertyTextJustify:
         // auto | none | inter-word | distribute
         return valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
     case CSSPropertyTextOrientation:
@@ -962,7 +962,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
     case CSSPropertyTextAlignLast:
-    case CSSPropertyWebkitTextJustify:
+    case CSSPropertyTextJustify:
     case CSSPropertyTextOrientation:
     case CSSPropertyTextOverflow:
     case CSSPropertyTextRendering:

@@ -23,8 +23,8 @@
   {
       debug("Value '" + value + "':");
       e.style.webkitTextJustify = value;
-      testElementStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", value);
-      testComputedStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", value);
+      testElementStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", value);
+      testComputedStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", value);
       debug('');
   }
   
@@ -32,8 +32,8 @@
   {
       debug("Invalid value test - '" + value + "':");
       e.style.webkitTextJustify = value;
-      testElementStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", defaultValue);
-      testComputedStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", defaultValue);
+      testElementStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", defaultValue);
+      testComputedStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", defaultValue);
       debug('');
   }
   
@@ -41,17 +41,17 @@
   {
       debug("Computed value test - '" + value + "':");
       e.style.webkitTextJustify = value;
-      testElementStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", value);
-      testComputedStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", defaultValue);
+      testElementStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", value);
+      testComputedStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", defaultValue);
       debug('');
   }
   
-  description("This test checks that -webkit-text-justify parses properly the properties from CSS 3 Text.");
+  description("This test checks that text-justify parses properly the properties from CSS 3 Text.");
   
   e = document.getElementById('test');
   
   debug("Test the initial value:");
-  testComputedStyle("webkitTextJustify", "-webkit-text-justify", "[object CSSPrimitiveValue]", 'auto');
+  testComputedStyle("webkitTextJustify", "text-justify", "[object CSSPrimitiveValue]", 'auto');
   debug('');
   
   valueSettingTest('auto');

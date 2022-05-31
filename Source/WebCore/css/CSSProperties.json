@@ -6848,7 +6848,7 @@
                 "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
             }
         },
-        "-webkit-text-justify": {
+        "text-justify": {
             "inherited": true,
             "values": [
                 "inter-word",

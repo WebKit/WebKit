@@ -284,7 +284,7 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
         return !motionPathEnabled;
     case CSSPropertyTextAlignLast:
         return !cssTextAlignLastEnabled;
-    case CSSPropertyWebkitTextJustify:
+    case CSSPropertyTextJustify:
         return !cssTextJustifyEnabled;
     default:
         return false;

@@ -8,8 +8,8 @@
   <script>
   function testComputedStyle(a_value, c_value)
   {
-      shouldBe("window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText",  "'" + a_value + "'");
-      shouldBe("window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText",  "'" + c_value + "'");
+      shouldBe("window.getComputedStyle(ancestor).getPropertyCSSValue('text-justify').cssText",  "'" + a_value + "'");
+      shouldBe("window.getComputedStyle(child).getPropertyCSSValue('text-justify').cssText",  "'" + c_value + "'");
       debug('');
   }
   
@@ -28,7 +28,7 @@
       testComputedStyle(a_value, a_value);
   }
   
-  description("This test checks that the value of -webkit-text-justify is properly inherited to the child.");
+  description("This test checks that the value of text-justify is properly inherited to the child.");
   
   ancestor = document.getElementById('ancestor');
   child = document.getElementById('child');
