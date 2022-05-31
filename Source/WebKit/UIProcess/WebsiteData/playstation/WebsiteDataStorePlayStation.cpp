@@ -101,7 +101,7 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
     return { };
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)
 {
     return { };
 }

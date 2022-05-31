@@ -26,13 +26,4 @@ request.onerror = function()
 document.cookie = "testkey=value; expires=Mon, 01 Jan 2035 00:00:00 GMT";
 log('cookie written');
 
-try {
-openDatabase('WebsiteDataStoreCustomPathsSQL', '1.0', 'Test DB', 524288, function() {
-    log('WebSQL database created');
-});
-} catch(e) {
-    // An exception is fine, because the database tracker will still be installed at the expected path
-    log('Exception: ' + e);
-}
-
 </script>

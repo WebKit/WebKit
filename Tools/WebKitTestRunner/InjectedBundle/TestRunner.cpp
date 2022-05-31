@@ -374,7 +374,6 @@ void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSS
 
 void TestRunner::clearAllDatabases()
 {
-    WKBundleClearAllDatabases(InjectedBundle::singleton().bundle());
     postSynchronousMessage("DeleteAllIndexedDatabases", true);
 }
 

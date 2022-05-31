@@ -746,7 +746,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
         addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
-        Vector<String> extraPaths = { "applicationCacheDirectory"_s, "mediaKeysDirectory"_s, "waylandSocket"_s, "webSQLDatabaseDirectory"_s };
+        Vector<String> extraPaths = { "applicationCacheDirectory"_s, "mediaKeysDirectory"_s, "waylandSocket"_s };
         for (const auto& path : extraPaths) {
             String extraPath = launchOptions.extraInitializationData.get(path);
             if (!extraPath.isEmpty())
