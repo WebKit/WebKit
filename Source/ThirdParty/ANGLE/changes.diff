@@ -253,7 +253,7 @@ diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/me
 index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2f54269a2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -365,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
+@@ -365,7 +365,7 @@
      {
          if (buffer.offset == offset)
          {
@@ -262,7 +262,7 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
          }
      }
  
-@@ -520,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
+@@ -520,7 +520,7 @@
          default:
              // dynamic buffer, allow up to 10 update per frame/encoding without
              // waiting for GPU.
@@ -271,11 +271,48 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
              {
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
+diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
+index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..064d89f89f1b6ac6535cb7b8dd31e9a6c3e5d5f4 100644
+--- a/src/libANGLE/renderer/metal/ContextMtl.mm
++++ b/src/libANGLE/renderer/metal/ContextMtl.mm
+@@ -2215,6 +2215,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+                                     gl::DrawElementsType indexTypeOrNone,
+                                     const void *indices,
+                                     bool xfbPass)
++{
++    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
++                            indexTypeOrNone, indices, xfbPass));
++    if (!mRenderEncoder.valid())
++    {
++        // Flush occurred during setup, due to running out of memory while setting up the render
++        // pass state. This would happen for example when there is no more space in the uniform
++        // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
++        // buffer memory for new usage. In this case, re-run the setup.
++        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
++                                indexTypeOrNone, indices, xfbPass));
++        // Setup with flushed state should either produce a working encoder or fail with an error
++        // result.
++        ASSERT(mRenderEncoder.valid());
++    }
++    return angle::Result::Continue;
++}
++
++angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
++                                        gl::PrimitiveMode mode,
++                                        GLint firstVertex,
++                                        GLsizei vertexOrIndexCount,
++                                        GLsizei instances,
++                                        gl::DrawElementsType indexTypeOrNone,
++                                        const void *indices,
++                                        bool xfbPass)
+ {
+     ASSERT(mProgram);
+ 
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
 index 13aec00fac3e4ea8932a86883dcc6eff7f30f59c..295a3788aa012838660233608df48f10bd269831 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1210,8 +1210,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1210,8 +1210,7 @@ bool IsMetalDisplayAvailable()
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -289,7 +326,7 @@ diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/m
 index 8e2d6eb6967f907b8224641610a369a2000f90f7..7f0c4de62558749e79614996699519f5fc164d71 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1257,20 +1257,40 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
+@@ -1257,20 +1257,40 @@ void InitArgumentBufferEncoder(mtl::Context *context,
          {
              continue;
          }
@@ -365,7 +402,7 @@ diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/rend
 index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -2540,45 +2540,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2540,45 +2540,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -411,7 +448,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2583,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2615,8 +2583,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
              UNREACHABLE();
      }
  
@@ -561,7 +598,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -504,12 +506,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
+@@ -504,12 +506,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -576,7 +613,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  bool Texture::isCPUAccessible() const
-@@ -988,7 +990,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
+@@ -988,7 +990,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -585,7 +622,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1009,7 +1011,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
+@@ -1009,7 +1011,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
