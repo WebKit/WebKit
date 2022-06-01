@@ -87,7 +87,7 @@ build_variant_cmake() {
     echo $extra_cmake_options
 
     cmake -DCMAKE_BUILD_TYPE=$config -DCMAKE_C_FLAGS=$extra_cmake_options -DCMAKE_CXX_FLAGS=$extra_cmake_options -B $build_dir
-    cmake --build $build_dir --parallel
+    cmake --build $build_dir --target $target --parallel
 }
 
 build_variant() {
