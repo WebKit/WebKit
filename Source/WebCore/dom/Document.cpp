@@ -2148,8 +2148,6 @@ static bool isSafeToUpdateStyleOrLayout(const Document& document)
 
 bool Document::updateStyleIfNeeded()
 {
-    if (topDocument().isResolvingContainerQueries())
-        return false;
     RefPtr<FrameView> frameView = view();
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
