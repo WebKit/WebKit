@@ -3259,6 +3259,11 @@ std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(SizeType height
     return std::nullopt;
 }
 
+static inline bool isOrthogonal(const RenderBox& renderer, const RenderElement& ancestor)
+{
+    return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
+}
+
 std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
 {
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
@@ -3266,10 +3271,33 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
         if (intrinsicContentHeight)
             return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
-        return std::nullopt;
+        return { };
     }
-    if (logicalHeightLength.isFillAvailable())
-        return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
+    if (logicalHeightLength.isFillAvailable()) {
+        auto* containingBlock = this->containingBlock();
+
+        auto canResolveAvailableSpace = [&] {
+            // FIXME: We need to find a way to say: yes, the constraint value is set and we can resolve height against it.
+            // Until then, this is mostly just guesswork.
+            if (!containingBlock)
+                return false;
+            auto containingBlockHasSpecifiedSpace = [&] {
+                auto isOrthogonal = WebCore::isOrthogonal(*this, *containingBlock);
+                auto& style = containingBlock->style();
+                if ((!isOrthogonal && style.height().isSpecified()) || (isOrthogonal && style.width().isSpecified()))
+                    return true;
+                if (containingBlock->isOutOfFlowPositioned()) {
+                    if ((!isOrthogonal && !style.top().isAuto() && !style.bottom().isAuto()) || (isOrthogonal && !style.left().isAuto() && !style.right().isAuto()))
+                        return true;
+                }
+                return false;
+            };
+            return containingBlockHasSpecifiedSpace() || containingBlock->hasOverridingLogicalHeight();
+        };
+        if (canResolveAvailableSpace())
+            return containingBlock->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
+        return { };
+    }
     ASSERT_NOT_REACHED();
     return 0_lu;
 }
@@ -3630,12 +3658,6 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
     return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), std::nullopt);
 }
 
-// FIXME: evaluate whether this should be a method of RenderObject instead.
-static inline bool isOrthogonal(const RenderObject& renderer, const RenderObject& ancestor)
-{
-    return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
-}
-
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
 {
     // We need to stop here, since we don't want to increase the height of the table
@@ -3819,7 +3841,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     if (!logicalLeft.isAuto() || !logicalRight.isAuto())
         return;
 
-    RenderObject* parent = child->parent();
+    auto* parent = child->parent();
     TextDirection parentDirection = parent->style().direction();
 
     // This method is using enclosingBox() which is wrong for absolutely
@@ -4256,7 +4278,7 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     if (!logicalTop.isAuto() || !logicalBottom.isAuto())
         return;
     
-    RenderObject* parent = child->parent();
+    auto* parent = child->parent();
 
     // The static positions from the child's layer are relative to the container block's coordinate space (which is determined
     // by the writing mode and text direction), meaning that for orthogonal flows the logical top of the child (which depends on
