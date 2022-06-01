@@ -1692,10 +1692,19 @@ void ContextMtl::flushCommandBuffer(mtl::CommandBufferFinishOperation operation)
 
     endEncoding(true);
     mCmdBuffer.commit(operation);
+    mRenderPassesSinceFlush = 0;
 }
 
 void ContextMtl::flushCommandBufferIfNeeded()
 {
+    if (mRenderPassesSinceFlush >= mtl::kMaxRenderPassesPerCommandBuffer)
+    {
+        // WaitUntilScheduled here is intended to help the CPU-GPU pipeline and
+        // helps to keep the number of inflight render passes in the system to a
+        // minimum.
+        flushCommandBuffer(mtl::WaitUntilScheduled);
+    }
+
     if (mCmdBuffer.needsFlushForDrawCallLimits())
     {
         flushCommandBuffer(mtl::NoWait);
@@ -1716,6 +1725,7 @@ void ContextMtl::present(const gl::Context *context, id<CAMetalDrawable> present
     endEncoding(false);
     mCmdBuffer.present(presentationDrawable);
     mCmdBuffer.commit(mtl::NoWait);
+    mRenderPassesSinceFlush = 0;
 }
 
 angle::Result ContextMtl::finishCommandBuffer()
@@ -1751,6 +1761,7 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     endEncoding(false);
 
     ensureCommandBufferReady();
+    mRenderPassesSinceFlush++;
 
     // Need to re-apply everything on next draw call.
     mDirtyBits.set();

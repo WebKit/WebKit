@@ -271,11 +271,60 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
              {
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
+diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
+index 39b6a8b44d49ead070ccf5e615a845506b32122b..bc140d80e0d9d180027a2d33619ee05a6464ab6a 100644
+--- a/src/libANGLE/renderer/metal/ContextMtl.h
++++ b/src/libANGLE/renderer/metal/ContextMtl.h
+@@ -588,6 +588,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+     gl::AttributesMask mDirtyDefaultAttribsMask;
+     DirtyBits mDirtyBits;
+ 
++    uint32_t mRenderPassesSinceFlush = 0;
++
+     // State
+     mtl::RenderPipelineDesc mRenderPipelineDesc;
+     mtl::DepthStencilDesc mDepthStencilDesc;
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..064d89f89f1b6ac6535cb7b8dd31e9a6c3e5d5f4 100644
+index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d509454b10ca7 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -2215,6 +2215,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1692,10 +1692,19 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+ 
+     endEncoding(true);
+     mCmdBuffer.commit(operation);
++    mRenderPassesSinceFlush = 0;
+ }
+ 
+ void ContextMtl::flushCommandBufferIfNeeded()
+ {
++    if (mRenderPassesSinceFlush >= mtl::kMaxRenderPassesPerCommandBuffer)
++    {
++        // WaitUntilScheduled here is intended to help the CPU-GPU pipeline and
++        // helps to keep the number of inflight render passes in the system to a
++        // minimum.
++        flushCommandBuffer(mtl::WaitUntilScheduled);
++    }
++
+     if (mCmdBuffer.needsFlushForDrawCallLimits())
+     {
+         flushCommandBuffer(mtl::NoWait);
+@@ -1716,6 +1725,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+     endEncoding(false);
+     mCmdBuffer.present(presentationDrawable);
+     mCmdBuffer.commit(mtl::NoWait);
++    mRenderPassesSinceFlush = 0;
+ }
+ 
+ angle::Result ContextMtl::finishCommandBuffer()
+@@ -1751,6 +1761,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+     endEncoding(false);
+ 
+     ensureCommandBufferReady();
++    mRenderPassesSinceFlush++;
+ 
+     // Need to re-apply everything on next draw call.
+     mDirtyBits.set();
+@@ -2215,6 +2226,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
                                      gl::DrawElementsType indexTypeOrNone,
                                      const void *indices,
                                      bool xfbPass)
@@ -386,7 +435,7 @@ index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
-index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..3f3086c36d3ae3886af05a044bbdc834e63d2239 100644
+index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..c6618ecc2259f22756b61738d041e679420ce8bf 100644
 --- a/src/libANGLE/renderer/metal/mtl_common.h
 +++ b/src/libANGLE/renderer/metal/mtl_common.h
 @@ -139,7 +139,7 @@ constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
@@ -398,6 +447,18 @@ index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..3f3086c36d3ae3886af05a044bbdc834
  constexpr uint32_t kMaxViewports         = 1;
  
  // Restrict in-flight resource usage to 400 MB.
+@@ -147,6 +147,11 @@ constexpr uint32_t kMaxViewports         = 1;
+ // will be flushed next time
+ constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;
+ 
++// Restrict in-flight render passes per command buffer to 16.
++// The goal is to reduce the number of active render passes on the system at
++// anyone time and this value was determined through experimentation.
++constexpr uint32_t kMaxRenderPassesPerCommandBuffer = 16;
++
+ constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
+ // Alignment requirement for offset passed to setVertex|FragmentBuffer
+ #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm

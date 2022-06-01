@@ -588,6 +588,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     gl::AttributesMask mDirtyDefaultAttribsMask;
     DirtyBits mDirtyBits;
 
+    uint32_t mRenderPassesSinceFlush = 0;
+
     // State
     mtl::RenderPipelineDesc mRenderPipelineDesc;
     mtl::DepthStencilDesc mDepthStencilDesc;

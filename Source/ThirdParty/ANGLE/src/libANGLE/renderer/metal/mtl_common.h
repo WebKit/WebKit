@@ -147,6 +147,11 @@ constexpr uint32_t kMaxViewports         = 1;
 // will be flushed next time
 constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;
 
+// Restrict in-flight render passes per command buffer to 16.
+// The goal is to reduce the number of active render passes on the system at
+// anyone time and this value was determined through experimentation.
+constexpr uint32_t kMaxRenderPassesPerCommandBuffer = 16;
+
 constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
 // Alignment requirement for offset passed to setVertex|FragmentBuffer
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
