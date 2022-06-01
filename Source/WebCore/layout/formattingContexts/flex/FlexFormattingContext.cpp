@@ -152,6 +152,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     struct FlexItem {
         FlexRect marginRect;
         int logicalOrder { 0 };
+        CheckedPtr<const ContainerBox> layoutBox;
     };
 
     auto& formattingState = this->formattingState();
@@ -201,7 +202,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
             previousLogicalOrder = flexItemOrder;
 
-            flexItemList.append({ { logicalSize }, flexItemOrder });
+            flexItemList.append({ { logicalSize }, flexItemOrder, downcast<ContainerBox>(flexItem) });
         }
     };
     convertVisualToLogical();
@@ -217,11 +218,8 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     reorderFlexItemsIfApplicable();
 
     auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
-    auto* layoutBox = root().firstInFlowChild();
-    for (size_t index = 0; index < flexItemList.size(); ++index) {
-        logicalFlexItemList[index] = { flexItemList[index].marginRect, downcast<ContainerBox>(layoutBox) };
-        layoutBox = layoutBox->nextInFlowSibling();
-    }
+    for (size_t index = 0; index < flexItemList.size(); ++index)
+        logicalFlexItemList[index] = { flexItemList[index].marginRect, flexItemList[index].layoutBox };
     return logicalFlexItemList;
 }
 
