@@ -1873,7 +1873,7 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
 #if ENABLE(SERVICE_WORKER)
-        SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+        SWContextManager::singleton().setConnection(WebSWContextManagerConnection::create(ipcConnection, WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
         SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
 #endif
         break;

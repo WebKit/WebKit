@@ -59,17 +59,20 @@ class RemoteWorkerFrameLoaderClient;
 class WebUserContentController;
 struct RemoteWorkerInitializationData;
 
-class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
+class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
+    static Ref<WebSWContextManagerConnection> create(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData) { return adoptRef(*new WebSWContextManagerConnection(WTFMove(connection), WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData))); }
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     WebCore::PageIdentifier pageIdentifier() const final { return m_pageID; }
 
+    void ref() const final { IPC::Connection::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { IPC::Connection::WorkQueueMessageReceiver::deref(); }
+
 private:
-    void updatePreferencesStore(const WebPreferencesStore&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
 
     // WebCore::SWContextManager::Connection.
     void establishConnection(CompletionHandler<void()>&&) final;
@@ -89,8 +92,10 @@ private:
     void didFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier) final;
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool) final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
+    void stop() final;
 
     // IPC messages.
+    void updatePreferencesStore(WebPreferencesStore&&);
     void serviceWorkerStarted(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, bool doesHandleFetch) final;
     void serviceWorkerFailedToStart(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
     void installServiceWorker(WebCore::ServiceWorkerContextData&&, WebCore::ServiceWorkerData&&, String&& userAgent, WebCore::WorkerThreadMode);
@@ -108,6 +113,7 @@ private:
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
 #endif
     void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData>&&);
+    void skipWaitingCompleted(uint64_t matchAllRequestIdentifier);
     void setUserAgent(String&& userAgent);
     void close();
     void setThrottleState(bool isThrottleable);
@@ -123,11 +129,13 @@ private:
 
     HashSet<std::unique_ptr<RemoteWorkerFrameLoaderClient>> m_loaders;
     HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
+    HashMap<uint64_t, Function<void()>> m_skipWaitingCallbacks;
     uint64_t m_previousRequestIdentifier { 0 };
     String m_userAgent;
     bool m_isThrottleable { true };
     Ref<WebUserContentController> m_userContentController;
     std::optional<WebPreferencesStore> m_preferencesStore;
+    Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

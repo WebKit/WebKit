@@ -89,6 +89,14 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Scri
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
+void WebSWServerToContextConnection::skipWaiting(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+        worker->skipWaiting();
+
+    send(Messages::WebSWContextManagerConnection::SkipWaitingCompleted { requestIdentifier });
+}
+
 void WebSWServerToContextConnection::close()
 {
     send(Messages::WebSWContextManagerConnection::Close { });

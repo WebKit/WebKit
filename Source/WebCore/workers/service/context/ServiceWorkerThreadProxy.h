@@ -80,14 +80,15 @@ public:
     WEBCORE_EXPORT void continueDidReceiveFetchResponse(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void removeFetch(SWServerConnectionIdentifier, FetchIdentifier);
 
-    void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
+    WEBCORE_EXPORT void fireMessageEvent(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
+
     void fireInstallEvent();
     void fireActivateEvent();
     void firePushEvent(std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
     void firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData);
     void fireNotificationEvent(NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
 
-    void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
+    WEBCORE_EXPORT void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
@@ -118,9 +119,11 @@ private:
     bool m_isTerminatingOrTerminated { false };
 
     ServiceWorkerInspectorProxy m_inspectorProxy;
-    HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
     uint64_t m_functionalEventTasksCounter { 0 };
     HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
+
+    // Accessed in worker thread.
+    HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
 };
 
 } // namespace WebKit

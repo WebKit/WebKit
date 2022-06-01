@@ -117,14 +117,6 @@ void SWServerToContextConnection::claim(ServiceWorkerIdentifier serviceWorkerIde
     callback(server ? server->claim(*worker) : std::nullopt);
 }
 
-void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& completionHandler)
-{
-    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->skipWaiting();
-
-    completionHandler();
-}
-
 void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&& script)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))

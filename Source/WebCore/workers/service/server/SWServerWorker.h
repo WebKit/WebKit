@@ -109,7 +109,7 @@ public:
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
     void didSaveScriptsToDisk(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
 
-    void skipWaiting();
+    WEBCORE_EXPORT void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);

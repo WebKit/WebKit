@@ -57,8 +57,8 @@ struct ServiceWorkerClientData {
     uint64_t focusOrder { 0 };
     Vector<String> ancestorOrigins;
 
-    ServiceWorkerClientData isolatedCopy() const &;
-    ServiceWorkerClientData isolatedCopy() &&;
+    WEBCORE_EXPORT ServiceWorkerClientData isolatedCopy() const &;
+    WEBCORE_EXPORT ServiceWorkerClientData isolatedCopy() &&;
 
     WEBCORE_EXPORT static ServiceWorkerClientData from(ScriptExecutionContext&);
 
