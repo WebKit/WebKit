@@ -425,3 +425,43 @@ void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
     JSValue jsValue = toJSForGC(globalObject, value);
     gcUnprotect(jsValue);
 }
+
+bool JSValueIsEqualString(JSContextRef ctx, JSValueRef value, const char* ptr, size_t length, JSValueRef* exception) {
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue jsValue = toJS(globalObject, value);
+
+
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow || !isJSString(jsValue))
+        return false;
+
+
+    return static_cast<JSString*>(jsValue.asCell())->equal(globalObject, ptr, length);
+}
+
+void* JSValueGetCell(JSContextRef ctx, JSValueRef value) {
+    UNUSED_PARAM(ctx);
+    JSC::JSValue result = bitwise_cast<JSC::JSValue>(value);
+    if (!result.isCell()) {
+        return nullptr;
+    }
+    JSCell* cell = result.asCell();
+    gcProtect(cell);
+
+    return cell;
+}
+
+void JSValueReleaseCell(JSC::JSCell *cell) {
+    gcUnprotect(cell);
+}
+
+size_t JSStringLength(JSC::JSString *string) {
+    return string->length();
+}
+
+void JSStringIterate(JSC::JSString *string, jsstring_iterator *iter) {
+    string->value(iter);
+}
