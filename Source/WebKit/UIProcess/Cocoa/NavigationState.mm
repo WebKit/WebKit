@@ -575,13 +575,20 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     };
 
     if (delegateHasWebpagePreferences) {
+        auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy, WKWebpagePreferences *preferences) mutable {
+            ensureOnMainRunLoop([decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies), actionPolicy, retainedPreferences = RetainPtr { preferences }] () mutable {
+                decisionHandlerWithPreferencesOrPolicies(actionPolicy, retainedPreferences.get());
+            });
+        };
         if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
-            [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+            [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandler)).get()];
         else
-            [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandler)).get()];
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
-            decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
+            ensureOnMainRunLoop([decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies), actionPolicy] () mutable {
+                decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
+            });
         };
         [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:makeBlockPtr(WTFMove(decisionHandler)).get()];
     }
@@ -654,24 +661,26 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
         return;
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
+    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) mutable {
+        ensureOnMainRunLoop([responsePolicy, checker = WTFMove(checker), localListener = WTFMove(localListener)] {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
 
-        switch (responsePolicy) {
-        case WKNavigationResponsePolicyAllow:
-            localListener->use();
-            break;
+            switch (responsePolicy) {
+            case WKNavigationResponsePolicyAllow:
+                localListener->use();
+                break;
 
-        case WKNavigationResponsePolicyCancel:
-            localListener->ignore();
-            break;
+            case WKNavigationResponsePolicyCancel:
+                localListener->ignore();
+                break;
 
-        case WKNavigationResponsePolicyDownload:
-            localListener->download();
-            break;
-        }
+            case WKNavigationResponsePolicyDownload:
+                localListener->download();
+                break;
+            }
+        });
     }).get()];
 }
 
