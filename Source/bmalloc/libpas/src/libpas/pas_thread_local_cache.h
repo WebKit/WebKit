@@ -36,6 +36,8 @@
 #include "pas_local_allocator_result.h"
 #include "pas_segregated_page_config_kind_and_role.h"
 #include "pas_utils.h"
+
+#define _GNU_SOURCE
 #include <pthread.h>
 
 #if defined(__has_include) && __has_include(<pthread/private.h>)
