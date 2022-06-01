@@ -537,48 +537,46 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customNavigatorPlatform must be nil for subframe navigations."];
         }
 
-        switch (actionPolicy) {
-        case WKNavigationActionPolicyAllow:
-        case _WKNavigationActionPolicyAllowInNewProcess:
-            tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool interceptedNavigation) mutable {
-                if (interceptedNavigation) {
-                    localListener->ignore();
-                    return;
-                }
+        ensureOnMainRunLoop([navigationAction = WTFMove(navigationAction), webPageProxy = WTFMove(webPageProxy), actionPolicy, localListener = WTFMove(localListener), apiWebsitePolicies = WTFMove(apiWebsitePolicies)] () mutable {
+            switch (actionPolicy) {
+            case WKNavigationActionPolicyAllow:
+            case _WKNavigationActionPolicyAllowInNewProcess:
+                tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool interceptedNavigation) mutable {
+                    if (interceptedNavigation) {
+                        localListener->ignore();
+                        return;
+                    }
 
-                localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ProcessSwapRequestedByClient::Yes : ProcessSwapRequestedByClient::No);
-            });
-        
-            break;
+                    localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ProcessSwapRequestedByClient::Yes : ProcessSwapRequestedByClient::No);
+                });
+                break;
 
-        case WKNavigationActionPolicyCancel:
-            localListener->ignore();
-            break;
+            case WKNavigationActionPolicyCancel:
+                localListener->ignore();
+                break;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        case _WKNavigationActionPolicyDownload:
-            ALLOW_DEPRECATED_DECLARATIONS_END
-            localListener->download();
-            break;
+            case WKNavigationActionPolicyDownload:
+                localListener->download();
+                break;
 
-        case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-            trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
-                if (optimizedLoad) {
-                    localListener->ignore();
-                    return;
-                }
+            case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
+                trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
+                    if (optimizedLoad) {
+                        localListener->ignore();
+                        return;
+                    }
 
-                localListener->use(websitePolicies.get());
-            });
-            break;
-        }
+                    localListener->use(websitePolicies.get());
+                });
+                break;
+            }        });
     };
 
     if (delegateHasWebpagePreferences) {
         if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
         else
-            [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
             decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
@@ -654,24 +652,25 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
         return;
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) {
+    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
+        ensureOnMainRunLoop([responsePolicy, localListener = WTFMove(localListener)] {
+            switch (responsePolicy) {
+            case WKNavigationResponsePolicyAllow:
+                localListener->use();
+                break;
 
-        switch (responsePolicy) {
-        case WKNavigationResponsePolicyAllow:
-            localListener->use();
-            break;
+            case WKNavigationResponsePolicyCancel:
+                localListener->ignore();
+                break;
 
-        case WKNavigationResponsePolicyCancel:
-            localListener->ignore();
-            break;
-
-        case WKNavigationResponsePolicyDownload:
-            localListener->download();
-            break;
-        }
+            case WKNavigationResponsePolicyDownload:
+                localListener->download();
+                break;
+            }
+        });
     }).get()];
 }
 
