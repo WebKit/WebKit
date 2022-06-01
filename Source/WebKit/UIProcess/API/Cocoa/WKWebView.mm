@@ -39,6 +39,7 @@
 #import "FullscreenClient.h"
 #import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
+#import "ImageAnalysisUtilities.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
@@ -2328,7 +2329,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #if ENABLE(IMAGE_ANALYSIS)
     THROW_IF_SUSPENDED;
 
-    if (!_page || !_page->preferences().imageAnalysisQueueEnabled())
+    if (!_page || !_page->preferences().imageAnalysisQueueEnabled() || !WebKit::canStartImageAnalysis(source))
         return;
 
     _page->startImageAnalysis(source, target);

@@ -53,6 +53,7 @@ bool isLiveTextAvailableAndEnabled();
 bool textRecognitionEnhancementsSystemFeatureEnabled();
 bool imageAnalysisQueueSystemFeatureEnabled();
 bool isImageAnalysisMarkupSystemFeatureEnabled();
+bool canStartImageAnalysis(NSString *);
 
 WebCore::TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *);
 
