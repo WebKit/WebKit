@@ -40,6 +40,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/chrome-legacy-skip-recalc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/conditional-container-status.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-inner-at-rules.html
@@ -50,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-selection.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation-after-load.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-type-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-type-containment.html
@@ -59,9 +63,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-computational-independence.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-media-queries.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-selection.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-small-viewport-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-svglength.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-typed-om.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-flex-circular.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-in-container-dynamic-expected.html
@@ -85,6 +97,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/fragmented-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/get-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/iframe-in-container-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/iframe-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/ineligible-containment.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-and-min-width.html
@@ -93,6 +106,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-containment-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-containment.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inner-first-line-non-matching-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inner-first-line-non-matching-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inner-first-line-non-matching.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/layout-dependent-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/multicol-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/multicol-inside-container-expected.html
@@ -105,6 +121,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-content-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/reattach-container-with-dirty-child.html
@@ -115,6 +132,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/size-feature-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/style-change-in-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-child-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html

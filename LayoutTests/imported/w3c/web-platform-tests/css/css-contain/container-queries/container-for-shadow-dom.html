@@ -1,7 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>CSS Container Queries Test: query container for Shadow DOM</title>
-<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/5984">
 <link rel="help" href="https://drafts.csswg.org/css-contain-3/#query-container">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -229,19 +228,10 @@
 </div>
 
 <script>
-  setup(() => assert_implements_container_queries());
-
-  function attachShadowRoots(root) {
-    root.querySelectorAll("template[shadowroot]").forEach(template => {
-      const mode = template.getAttribute("shadowroot");
-      const shadowRoot = template.parentNode.attachShadow({ mode });
-      shadowRoot.appendChild(template.content);
-      template.remove();
-      attachShadowRoots(shadowRoot);
-    });
-  }
-  if (!document.querySelector("template[shadowroot]").parentNode.shadowRoot)
-    attachShadowRoots(document);
+  setup(() => {
+    assert_implements_container_queries();
+    polyfill_declarative_shadow_dom(document);
+  });
 
   const green = "rgb(0, 128, 0)";
 
