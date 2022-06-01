@@ -177,7 +177,9 @@ void WebFoundTextRangeController::clearAllDecoratedFoundText()
 
 void WebFoundTextRangeController::didBeginTextSearchOperation()
 {
-    if (!m_findPageOverlay) {
+    if (m_findPageOverlay)
+        m_findPageOverlay->stopFadeOutAnimation();
+    else {
         m_findPageOverlay = WebCore::PageOverlay::create(*this, WebCore::PageOverlay::OverlayType::Document);
         m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
     }
@@ -189,8 +191,6 @@ void WebFoundTextRangeController::didEndTextSearchOperation()
 {
     if (m_findPageOverlay)
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
-
-    m_findPageOverlay = nullptr;
 }
 
 void WebFoundTextRangeController::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
