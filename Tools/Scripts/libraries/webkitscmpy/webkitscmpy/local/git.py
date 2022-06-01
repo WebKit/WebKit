@@ -129,7 +129,7 @@ class Git(Scm):
                     kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
-                    [self.repo.executable(), 'log', branch, '--no-decorate', '--date=unix'],
+                    [self.repo.executable(), 'log', branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -592,7 +592,7 @@ class Git(Scm):
             # If the cache managed to convert the identifier to a hash, we can skip some computation
             if hash:
                 log = run(
-                    [self.executable(), 'log', hash] + log_format,
+                    [self.executable(), 'log', hash] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
                     encoding='utf-8',
@@ -615,7 +615,7 @@ class Git(Scm):
                 if identifier > base_count:
                     raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
                 log = run(
-                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format,
+                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
                     encoding='utf-8',
@@ -636,14 +636,14 @@ class Git(Scm):
             if branch and tag:
                 raise ValueError('Cannot define both tag and branch')
 
-            log = run([self.executable(), 'log', branch or tag] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', branch or tag] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
         # Determine the `git log` output for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
-            log = run([self.executable(), 'log', hash or 'HEAD'] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', hash or 'HEAD'] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
@@ -744,7 +744,7 @@ class Git(Scm):
         try:
             log = None
             log = subprocess.Popen(
-                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}...{}'.format(end.hash, begin.hash)],
+                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}...{}'.format(end.hash, begin.hash), '--'],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -907,7 +907,7 @@ class Git(Scm):
             ).returncode else self.commit()
 
         return None if run(
-            [self.executable(), 'checkout'] + [self._to_git_ref(argument)] + log_arg,
+            [self.executable(), 'checkout', self._to_git_ref(argument)] + log_arg + ['--'],
             cwd=self.root_path,
         ).returncode else self.commit()
 
