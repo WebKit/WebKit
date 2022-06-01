@@ -34,6 +34,7 @@
 
 #include "AudioBus.h"
 #include "SincResampler.h"
+#include <functional>
 
 namespace WebCore {
 

@@ -37,6 +37,7 @@
 #include <gst/gst.h>
 #include <mutex>
 #include <wtf/FileSystem.h>
+#include <wtf/PrintStream.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
