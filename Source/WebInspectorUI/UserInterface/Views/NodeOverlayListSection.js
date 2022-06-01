@@ -121,8 +121,7 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
                     domNode.hideLayoutOverlay();
             });
 
-            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, domNode.layoutOverlayColor);
-            swatch.shiftClickColorEnabled = false;
+            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, domNode.layoutOverlayColor, {preventChangingColorFormats: true});
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {

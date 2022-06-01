@@ -598,8 +598,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 innerElement.append(item);
         }
 
-        let readOnly = !this._isEditable();
-        let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
+        let swatch = new WI.InlineSwatch(type, valueObject, {readOnly: !this._isEditable()});
 
         swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, function(event) {
             let value = event.data.value && event.data.value.toString();
