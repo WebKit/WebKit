@@ -214,6 +214,12 @@ static bool isDocumentSandboxed(Frame& frame, SandboxFlags mask)
     return frame.document() && frame.document()->isSandboxed(mask);
 }
 
+static bool isInVisibleAndActivePage(const Frame& frame)
+{
+    auto* page = frame.page();
+    return page && page->isVisibleAndActive();
+}
+
 class PageLevelForbidScope {
 protected:
     explicit PageLevelForbidScope(Page* page)
@@ -1277,7 +1283,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
             sourceFrame = &m_frame;
         Frame* targetFrame = sourceFrame->loader().findFrameForNavigation(frameName);
         if (targetFrame && targetFrame != sourceFrame) {
-            if (Page* page = targetFrame->page())
+            if (auto* page = targetFrame->page(); page && isInVisibleAndActivePage(*sourceFrame))
                 page->chrome().focus();
         }
     };
@@ -4127,7 +4133,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {
         if (RefPtr<Frame> frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.document())) {
             if (!isSelfTargetFrameName(request.frameName())) {
-                if (Page* page = frame->page())
+                if (auto* page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
                     page->chrome().focus();
             }
             return frame;

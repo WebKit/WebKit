@@ -998,7 +998,13 @@ void DOMWindow::focus(DOMWindow& incumbentWindow)
 {
     RefPtr frame = this->frame();
     RefPtr openerFrame = frame ? frame->loader().opener() : nullptr;
-    focus(openerFrame && openerFrame != frame && incumbentWindow.frame() == openerFrame);
+    focus([&] {
+        if (!openerFrame || openerFrame == frame || incumbentWindow.frame() != openerFrame)
+            return false;
+
+        auto* page = openerFrame->page();
+        return page && page->isVisibleAndActive();
+    }());
 }
 
 void DOMWindow::focus(bool allowFocus)
