@@ -113,11 +113,11 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, Mutatio
 
 bool MutationObserverRegistration::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
-    if (visitor.containsOpaqueRoot(root(m_node)))
+    if (containsWebCoreOpaqueRoot(visitor, m_node))
         return true;
 
     for (auto& node : m_transientRegistrationNodes) {
-        if (visitor.containsOpaqueRoot(root(node)))
+        if (containsWebCoreOpaqueRoot(visitor, node.get()))
             return true;
     }
 

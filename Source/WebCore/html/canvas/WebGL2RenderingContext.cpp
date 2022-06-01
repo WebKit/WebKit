@@ -32,6 +32,7 @@
 #include "EXTColorBufferFloat.h"
 #include "EXTColorBufferHalfFloat.h"
 #include "EXTFloatBlend.h"
+#include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTTextureNorm16.h"
@@ -2711,7 +2712,8 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
         return variable.get(); \
     }
 
-    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc"_s, enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
+    ENABLE_IF_REQUESTED(EXTTextureCompressionBPTC, m_extTextureCompressionBPTC, "EXT_texture_compression_bptc"_s, EXTTextureCompressionBPTC::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc"_s, EXTTextureCompressionRGTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic"_s, enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
     ENABLE_IF_REQUESTED(EXTTextureNorm16, m_extTextureNorm16, "EXT_texture_norm16"_s, EXTTextureNorm16::supported(*m_context));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear"_s, enableSupportedExtension("GL_OES_texture_float_linear"_s));
@@ -2746,7 +2748,9 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
 
     if (m_context->supportsExtension("GL_OES_texture_float_linear"_s))
         result.append("OES_texture_float_linear"_s);
-    if (m_context->supportsExtension("GL_EXT_texture_compression_rgtc"_s))
+    if (EXTTextureCompressionBPTC::supported(*m_context))
+        result.append("EXT_texture_compression_bptc"_s);
+    if (EXTTextureCompressionRGTC::supported(*m_context))
         result.append("EXT_texture_compression_rgtc"_s);
     if (m_context->supportsExtension("GL_EXT_texture_filter_anisotropic"_s))
         result.append("EXT_texture_filter_anisotropic"_s);
@@ -3147,29 +3151,29 @@ void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& v
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
 
     Locker locker { objectGraphLock() };
-    visitor.addOpaqueRoot(m_readFramebufferBinding.get());
+    addWebCoreOpaqueRoot(visitor, m_readFramebufferBinding.get());
     if (m_readFramebufferBinding)
         m_readFramebufferBinding->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_boundTransformFeedback.get());
+    addWebCoreOpaqueRoot(visitor, m_boundTransformFeedback.get());
     if (m_boundTransformFeedback)
         m_boundTransformFeedback->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_boundCopyReadBuffer.get());
-    visitor.addOpaqueRoot(m_boundCopyWriteBuffer.get());
-    visitor.addOpaqueRoot(m_boundPixelPackBuffer.get());
-    visitor.addOpaqueRoot(m_boundPixelUnpackBuffer.get());
-    visitor.addOpaqueRoot(m_boundTransformFeedbackBuffer.get());
-    visitor.addOpaqueRoot(m_boundUniformBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundCopyReadBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundCopyWriteBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundPixelPackBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundPixelUnpackBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundTransformFeedbackBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundUniformBuffer.get());
 
     for (auto& buffer : m_boundIndexedUniformBuffers)
-        visitor.addOpaqueRoot(buffer.get());
+        addWebCoreOpaqueRoot(visitor, buffer.get());
 
     for (auto& entry : m_activeQueries)
-        visitor.addOpaqueRoot(entry.get());
+        addWebCoreOpaqueRoot(visitor, entry.get());
 
     for (auto& entry : m_boundSamplers)
-        visitor.addOpaqueRoot(entry.get());
+        addWebCoreOpaqueRoot(visitor, entry.get());
 }
 
 GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum internalformat)

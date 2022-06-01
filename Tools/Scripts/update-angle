@@ -131,6 +131,8 @@ cleanup_after_successful_rebase_and_exit() {
     echo "Removing temporary git repository from Source/ThirdParty/ANGLE"
     rm -rf .git
     git add -A .
+    # Undo the addition of commit-message.txt to make it easier for the user to remove.
+    git restore --staged commit-message.txt
     echo
     echo "ANGLE update is now staged. Ready to commit and upload patch."
     exit 0

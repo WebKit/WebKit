@@ -28,6 +28,7 @@
 
 #import "ColorSpaceCG.h"
 #import "IOSurface.h"
+#import "Logging.h"
 #import "RealtimeVideoUtilities.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -128,8 +129,10 @@ Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef
 {
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, pixelBufferCreationOptions(surface), &pixelBuffer);
-    if (status != kCVReturnSuccess || !pixelBuffer)
+    if (status != kCVReturnSuccess || !pixelBuffer) {
+        RELEASE_LOG_ERROR(WebRTC, "createCVPixelBuffer failed with IOSurface status=%d, pixelBuffer=%p", (int)status, pixelBuffer);
         return makeUnexpected(status);
+    }
     return adoptCF(pixelBuffer);
 }
 

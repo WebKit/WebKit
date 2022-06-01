@@ -36,6 +36,7 @@
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTShaderTextureLOD.h"
+#include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSEXTTextureNorm16.h"
@@ -165,6 +166,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLLoseContext&>(extension));
     case WebGLExtension::EXTShaderTextureLODName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTShaderTextureLOD&>(extension));
+    case WebGLExtension::EXTTextureCompressionBPTCName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureCompressionBPTC&>(extension));
     case WebGLExtension::EXTTextureCompressionRGTCName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureCompressionRGTC&>(extension));
     case WebGLExtension::EXTTextureFilterAnisotropicName:

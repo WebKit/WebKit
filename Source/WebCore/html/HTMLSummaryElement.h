@@ -32,7 +32,7 @@ public:
     static Ref<HTMLSummaryElement> create(const QualifiedName&, Document&);
 
     bool isActiveSummary() const;
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);

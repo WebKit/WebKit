@@ -44,7 +44,9 @@
 #import <mach/mach_error.h>
 #import <math.h>
 #elif BOS(UNIX)
+#if BOS(FREEBSD) || BOS(LINUX)
 #include <sys/sysinfo.h>
+#endif
 #if BOS(LINUX)
 #include <algorithm>
 #include <fcntl.h>

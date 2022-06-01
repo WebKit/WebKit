@@ -1821,7 +1821,6 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegexp, JSCell*, (JSGlobalObject* globalObj
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
-    ASSERT(regexp->isValid());
     static constexpr bool areLegacyFeaturesEnabled = true;
     return RegExpObject::create(vm, globalObject->regExpStructure(), regexp, areLegacyFeaturesEnabled);
 }

@@ -210,9 +210,9 @@ bool SVGAElement::childShouldCreateRenderer(const Node& child) const
     return SVGElement::childShouldCreateRenderer(child);
 }
 
-bool SVGAElement::willRespondToMouseClickEvents() const
+bool SVGAElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 { 
-    return isLink() || SVGGraphicsElement::willRespondToMouseClickEvents(); 
+    return isLink() || SVGGraphicsElement::willRespondToMouseClickEventsWithEditability(editability); 
 }
 
 SharedStringHash SVGAElement::visitedLinkHash() const

@@ -43,6 +43,7 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -339,6 +340,11 @@ const char* Blob::activeDOMObjectName() const
 BlobURLHandle Blob::handle() const
 {
     return BlobURLHandle { m_internalURL };
+}
+
+WebCoreOpaqueRoot root(Blob* blob)
+{
+    return WebCoreOpaqueRoot { blob };
 }
 
 } // namespace WebCore

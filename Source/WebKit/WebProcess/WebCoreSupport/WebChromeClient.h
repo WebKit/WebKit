@@ -147,7 +147,7 @@ private:
 
     void print(WebCore::Frame&, const WebCore::StringWithDirection&) final;
 
-    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
+    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final { }
 
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
     void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;

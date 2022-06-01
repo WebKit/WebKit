@@ -27,6 +27,7 @@
 #include "JSSVGViewSpec.h"
 
 #include "JSNode.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ template<typename Visitor>
 void JSSVGViewSpec::visitAdditionalChildren(Visitor& visitor)
 {
     ASSERT(wrapped().contextElementConcurrently().get());
-    visitor.addOpaqueRoot(root(wrapped().contextElementConcurrently().get()));
+    addWebCoreOpaqueRoot(visitor, wrapped().contextElementConcurrently().get());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSSVGViewSpec);

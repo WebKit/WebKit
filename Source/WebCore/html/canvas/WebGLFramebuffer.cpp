@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "WebCoreOpaqueRoot.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDrawBuffers.h"
 #include "WebGLRenderingContextBase.h"
@@ -146,7 +147,7 @@ namespace {
 
     void WebGLRenderbufferAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
     {
-        visitor.addOpaqueRoot(m_renderbuffer.get());
+        addWebCoreOpaqueRoot(visitor, m_renderbuffer.get());
     }
 
     class WebGLTextureAttachment : public WebGLFramebuffer::WebGLAttachment {
@@ -268,7 +269,7 @@ namespace {
 
     void WebGLTextureAttachment::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
     {
-        visitor.addOpaqueRoot(m_texture.get());
+        addWebCoreOpaqueRoot(visitor, m_texture.get());
     }
 
 } // anonymous namespace

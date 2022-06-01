@@ -161,7 +161,7 @@ private:
 #endif
 };
 
-typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
+typedef Vector<Ref<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
 
 } // namespace WebCore
 

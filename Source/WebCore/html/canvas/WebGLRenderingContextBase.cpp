@@ -40,6 +40,7 @@
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
+#include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTTextureNorm16.h"
@@ -78,6 +79,7 @@
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
@@ -4000,6 +4002,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extsRGB, "EXT_sRGB");
+    CHECK_EXTENSION(m_extTextureCompressionBPTC, "EXT_texture_compression_bptc");
     CHECK_EXTENSION(m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
@@ -7099,7 +7102,11 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
         break;
     }
     case GraphicsContextGL::COMPRESSED_RED_GREEN_RGTC2_EXT:
-    case GraphicsContextGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: {
+    case GraphicsContextGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT:
+    case GraphicsContextGL::COMPRESSED_RGBA_BPTC_UNORM_EXT:
+    case GraphicsContextGL::COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT:
+    case GraphicsContextGL::COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT:
+    case GraphicsContextGL::COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT: {
         const int kBlockSize = 16;
         const int kBlockWidth = 4;
         const int kBlockHeight = 4;
@@ -8102,6 +8109,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extFragDepth);
     LOSE_EXTENSION(m_extBlendMinMax);
     LOSE_EXTENSION(m_extsRGB);
+    LOSE_EXTENSION(m_extTextureCompressionBPTC);
     LOSE_EXTENSION(m_extTextureCompressionRGTC);
     LOSE_EXTENSION(m_extTextureFilterAnisotropic);
     LOSE_EXTENSION(m_extTextureNorm16);
@@ -8178,27 +8186,27 @@ void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor
 {
     Locker locker { objectGraphLock() };
 
-    visitor.addOpaqueRoot(m_boundArrayBuffer.get());
+    addWebCoreOpaqueRoot(visitor, m_boundArrayBuffer.get());
 
-    visitor.addOpaqueRoot(m_boundVertexArrayObject.get());
+    addWebCoreOpaqueRoot(visitor, m_boundVertexArrayObject.get());
     if (m_boundVertexArrayObject)
         m_boundVertexArrayObject->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_currentProgram.get());
+    addWebCoreOpaqueRoot(visitor, m_currentProgram.get());
     if (m_currentProgram)
         m_currentProgram->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_framebufferBinding.get());
+    addWebCoreOpaqueRoot(visitor, m_framebufferBinding.get());
     if (m_framebufferBinding)
         m_framebufferBinding->addMembersToOpaqueRoots(locker, visitor);
 
-    visitor.addOpaqueRoot(m_renderbufferBinding.get());
+    addWebCoreOpaqueRoot(visitor, m_renderbufferBinding.get());
 
     for (auto& unit : m_textureUnits) {
-        visitor.addOpaqueRoot(unit.texture2DBinding.get());
-        visitor.addOpaqueRoot(unit.textureCubeMapBinding.get());
-        visitor.addOpaqueRoot(unit.texture3DBinding.get());
-        visitor.addOpaqueRoot(unit.texture2DArrayBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture2DBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.textureCubeMapBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture3DBinding.get());
+        addWebCoreOpaqueRoot(visitor, unit.texture2DArrayBinding.get());
     }
 
     // Extensions' IDL files use GenerateIsReachable=ImplWebGLRenderingContext,
@@ -8224,6 +8232,11 @@ void WebGLRenderingContextBase::prepareForDisplay()
 void WebGLRenderingContextBase::updateActiveOrdinal()
 {
     m_activeOrdinal = s_lastActiveOrdinal++;
+}
+
+WebCoreOpaqueRoot root(WebGLRenderingContextBase* context)
+{
+    return WebCoreOpaqueRoot { context };
 }
 
 } // namespace WebCore

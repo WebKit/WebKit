@@ -446,7 +446,8 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                     return;
                 }
                 continueAfterRequest(credential, error, WTFMove(handler));
-                weakThis->m_proxy.clear();
+                if (weakThis->m_proxy)
+                    weakThis->m_proxy.clear();
             });
         }).get()];
         return;
@@ -462,7 +463,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
             if (!weakThis || !daemonEndpoint) {
                 LOG_ERROR("Could not connect to authorization daemon: %@\n", error.get());
                 handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "Operation failed."_s });
-                if (weakThis)
+                if (weakThis && weakThis->m_proxy)
                     weakThis->m_proxy.clear();
                 return;
             }
@@ -473,7 +474,8 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                 auto error = retainPtr(errorNotRetain);
 #endif
                 continueAfterRequest(credential, error, WTFMove(handler));
-                weakThis->m_proxy.clear();
+                if (weakThis && weakThis->m_proxy)
+                    weakThis->m_proxy.clear();
 #if PLATFORM(MAC)
             }).get()];
 #endif

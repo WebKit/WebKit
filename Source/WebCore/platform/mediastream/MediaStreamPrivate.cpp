@@ -116,13 +116,13 @@ MediaStreamTrackPrivateVector MediaStreamPrivate::tracks() const
 void MediaStreamPrivate::forEachTrack(const Function<void(const MediaStreamTrackPrivate&)>& callback) const
 {
     for (auto& track : m_trackSet.values())
-        callback(*track);
+        callback(track.get());
 }
 
 void MediaStreamPrivate::forEachTrack(const Function<void(MediaStreamTrackPrivate&)>& callback)
 {
     for (auto& track : m_trackSet.values())
-        callback(*track);
+        callback(track.get());
 }
 
 bool MediaStreamPrivate::computeActiveState()
@@ -249,7 +249,7 @@ void MediaStreamPrivate::updateActiveVideoTrack()
     m_activeVideoTrack = nullptr;
     for (auto& track : m_trackSet.values()) {
         if (!track->ended() && track->isVideo()) {
-            m_activeVideoTrack = track.get();
+            m_activeVideoTrack = track.ptr();
             break;
         }
     }

@@ -30,7 +30,7 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     DidFinishInstall(std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
     DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier)
     SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents)
-    SkipWaiting(WebCore::ServiceWorkerIdentifier identifier) -> ()
+    SkipWaiting(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier identifier)
     WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier)
     FindClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String clientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> data)
     MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);

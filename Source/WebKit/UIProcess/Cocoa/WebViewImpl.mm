@@ -276,7 +276,7 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
     auto startTime = MonotonicTime::now();
     processImageAnalyzerRequest(request.get(), [completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
         auto result = makeTextRecognitionResult(analysis);
-        RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
+        RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
         completion(WTFMove(result));
     });
 }
@@ -294,7 +294,7 @@ void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBi
     [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
         BOOL result = [analysis hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
         CFRunLoopPerformBlock(CFRunLoopGetMain(), (__bridge CFStringRef)NSEventTrackingRunLoopMode, makeBlockPtr([completion = WTFMove(completion), result, startTime] () mutable {
-            RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - startTime).milliseconds(), result);
+            RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - startTime).milliseconds(), result);
             completion(result);
         }).get());
         CFRunLoopWakeUp(CFRunLoopGetMain());
@@ -5926,36 +5926,6 @@ void WebViewImpl::didFinishPresentation(WKRevealItemPresenter *presenter)
 }
 
 #endif // ENABLE(REVEAL)
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
-{
-    if (!m_imageAnalysisOverlayView) {
-        m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
-        m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
-        [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
-        [m_imageAnalysisOverlayView setActiveInteractionTypes:VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors];
-        [m_imageAnalysisOverlayView setWantsAutomaticContentsRectCalculation:NO];
-        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
-    }
-
-    [m_imageAnalysisOverlayView setAnalysis:analysis];
-    [m_view addSubview:m_imageAnalysisOverlayView.get()];
-}
-
-void WebViewImpl::uninstallImageAnalysisOverlayView()
-{
-    if (!m_imageAnalysisOverlayView)
-        return;
-
-    [m_imageAnalysisOverlayView removeFromSuperview];
-    m_imageAnalysisOverlayViewDelegate = nil;
-    m_imageAnalysisOverlayView = nil;
-    m_imageAnalysisInteractionBounds = { };
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const
 {

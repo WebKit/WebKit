@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "SourceBuffer.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -106,6 +107,11 @@ void SourceBufferList::scheduleEvent(const AtomString& eventName)
 const char* SourceBufferList::activeDOMObjectName() const
 {
     return "SourceBufferList";
+}
+
+WebCoreOpaqueRoot root(SourceBufferList* list)
+{
+    return WebCoreOpaqueRoot { list };
 }
 
 } // namespace WebCore

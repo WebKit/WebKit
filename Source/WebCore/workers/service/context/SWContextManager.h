@@ -36,6 +36,7 @@
 #include "ServiceWorkerThreadProxy.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -48,7 +49,6 @@ public:
     WEBCORE_EXPORT static SWContextManager& singleton();
 
     class Connection {
-        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~Connection() { }
 
@@ -81,6 +81,10 @@ public:
         virtual bool isThrottleable() const = 0;
         virtual PageIdentifier pageIdentifier() const = 0;
 
+        virtual void ref() const = 0;
+        virtual void deref() const = 0;
+        virtual void stop() = 0;
+
         bool isClosed() const { return m_isClosed; }
 
     protected:
@@ -90,12 +94,12 @@ public:
         bool m_isClosed { false };
     };
 
-    WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);
+    WEBCORE_EXPORT void setConnection(Ref<Connection>&&);
     WEBCORE_EXPORT Connection* connection() const;
 
     WEBCORE_EXPORT void registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&&);
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(ServiceWorkerIdentifier) const;
-    WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
+    WEBCORE_EXPORT RefPtr<ServiceWorkerThreadProxy> serviceWorkerThreadProxyFromBackgroundThread(ServiceWorkerIdentifier) const;
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void firePushEvent(ServiceWorkerIdentifier, std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
@@ -103,7 +107,6 @@ public:
     WEBCORE_EXPORT void fireNotificationEvent(ServiceWorkerIdentifier, NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
 
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
-    WEBCORE_EXPORT void didSaveScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     void forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
 
@@ -111,8 +114,6 @@ public:
 
     using ServiceWorkerCreationCallback = void(uint64_t);
     void setServiceWorkerCreationCallback(ServiceWorkerCreationCallback* callback) { m_serviceWorkerCreationCallback = callback; }
-
-    ServiceWorkerThreadProxy* workerByID(ServiceWorkerIdentifier identifier) { return m_workerMap.get(identifier); }
 
     WEBCORE_EXPORT void stopAllServiceWorkers();
 
@@ -129,8 +130,9 @@ private:
 
     void stopWorker(ServiceWorkerThreadProxy&, Seconds, Function<void()>&&);
 
-    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> m_workerMap;
-    std::unique_ptr<Connection> m_connection;
+    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> m_workerMap WTF_GUARDED_BY_LOCK(m_workerMapLock);
+    mutable Lock m_workerMapLock;
+    RefPtr<Connection> m_connection;
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
 
     class ServiceWorkerTerminationRequest {

@@ -272,7 +272,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
 {
     m_thumbnail = thumbnail;
-    
+    removeAttribute(HTMLNames::progressAttr);
     if (auto* renderer = this->renderer())
         renderer->invalidate();
 }

@@ -30,6 +30,7 @@
 
 #import "APINavigationAction.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import "WKWebViewInternal.h"
@@ -183,13 +184,16 @@ void PopUpSOAuthorizationSession::initSecretWebView()
         return;
     auto configuration = adoptNS([[initiatorWebView configuration] copy]);
     [configuration _setRelatedWebView:initiatorWebView.get()];
+    auto secretViewPreferences = adoptNS([[configuration preferences] copy]);
+    [secretViewPreferences _setExtensibleSSOEnabled:NO];
+    [configuration setPreferences:secretViewPreferences.get()];
     m_secretWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
     m_secretDelegate = adoptNS([[WKSOSecretDelegate alloc] initWithSession:this]);
     [m_secretWebView setUIDelegate:m_secretDelegate.get()];
     [m_secretWebView setNavigationDelegate:m_secretDelegate.get()];
 
-    m_secretWebView->_page->preferences().setExtensibleSSOEnabled(false);
+    RELEASE_ASSERT(!m_secretWebView->_page->preferences().isExtensibleSSOEnabled());
     WTFLogAlways("SecretWebView is created.");
 }
 

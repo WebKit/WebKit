@@ -15,7 +15,10 @@
     <video id='video3' autoplay playsinline></video>
     <script>
     promise_test(async (t) => {
+        let constraints = { video: { width: 160 } };
         const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 160 } });
+        assert_equals(stream.getVideoTracks()[0].getConstraints().width, 160);
+
         const streamClone = stream.clone();
 
         video1.srcObject = stream;

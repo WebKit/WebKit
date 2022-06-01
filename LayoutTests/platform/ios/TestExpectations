@@ -2123,6 +2123,7 @@ accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
 accessibility/list-with-dynamically-changing-content.html [ Pass ]
+accessibility/node-only-inert-object.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/text-updates-after-dynamic-change.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
@@ -3352,8 +3353,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Pass ]
@@ -3654,3 +3653,6 @@ webkit.org/b/240918 [ Debug ]  fast/loader/user-style-sheet-resource-load-callba
 webkit.org/b/240927 [ Debug ]  storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
 webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
+
+webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ] 
+webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ] 

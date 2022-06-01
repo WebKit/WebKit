@@ -2216,7 +2216,9 @@
 		DDA0A41727E67039005E086E /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41627E67039005E086E /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA0A41927E672A5005E086E /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41D27E94644005E086E /* WebKitLegacy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */; };
 		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */; };
 		DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */; };
 		DF0C5F28252ECB8E00D921DB /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F24252ECB8D00D921DB /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF0C5F2A252ECB8E00D921DB /* WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F26252ECB8E00D921DB /* WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2751,6 +2753,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */,
 				DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 			);
 			name = "Product Dependencies";
@@ -3676,7 +3679,6 @@
 		1CEF45BB27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModuleCompilationHint.cpp; sourceTree = "<group>"; };
 		1CEF45BC27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleCompilationHint.h; sourceTree = "<group>"; };
 		1CF18F3E26BB5D90004B1722 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
-		1D0530D2259162C900E436F7 /* WebKit.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1D0B66192624C11800F9712F /* WebMediaKeySystemClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaKeySystemClient.cpp; sourceTree = "<group>"; };
 		1D0B661A2624C19600F9712F /* MediaKeySystemPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaKeySystemPermissionRequestManager.cpp; path = EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp; sourceTree = "<group>"; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
@@ -6961,6 +6963,8 @@
 		DDA0A41627E67039005E086E /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEventRegion.h; path = ../WebCore/page/ios/WebEventRegion.h; sourceTree = "<group>"; };
 		DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ../WebCore/platform/ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
 		DDA0A41D27E94644005E086E /* WebKitLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy.h; sourceTree = "<group>"; };
+		DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AuthenticationServicesCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafariServicesSPI.h; sourceTree = "<group>"; };
 		DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF0C5F23252ECB8D00D921DB /* WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDownload.mm; sourceTree = "<group>"; };
 		DF0C5F24252ECB8D00D921DB /* WKDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownload.h; sourceTree = "<group>"; };
@@ -7521,7 +7525,6 @@
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
-				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
@@ -7777,7 +7780,6 @@
 		1AADDF4B10D82AF000D3D63D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				932CA81B283C35EB00C20BEB /* StorageAreaIdentifier.h */,
 				BCDDB314124EBCEF0048D13C /* API */,
 				1AB1F7761D1B30A9007C9BD1 /* ApplePay */,
 				518E8EF116B208F000E91429 /* Authentication */,
@@ -7914,6 +7916,7 @@
 				8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */,
 				83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */,
 				83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */,
+				932CA81B283C35EB00C20BEB /* StorageAreaIdentifier.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */,
 				7BE37F6F27B1475F007A6CD3 /* ThreadSafeObjectHeap.h */,
@@ -8596,14 +8599,6 @@
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
-			isa = PBXGroup;
-			children = (
-				1D0530D2259162C900E436F7 /* WebKit.plist */,
-			);
-			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1F0181681858DC1500F92884 /* Cocoa */ = {
@@ -10475,6 +10470,7 @@
 		5750F3292032D4E300389347 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */,
 				E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */,
 				E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */,
 				DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */,
@@ -13187,6 +13183,7 @@
 				E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */,
 				2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */,
 				46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */,
+				DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */,
 				079D1D9926960CD300883577 /* SystemStatusSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
 				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,
@@ -14341,7 +14338,6 @@
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
-				932CA81C283C35EC00C20BEB /* StorageAreaIdentifier.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */,
 				5C826D6C26D482F2008AEC91 /* PrivateClickMeasurementDatabase.h in Headers */,
@@ -14435,6 +14431,7 @@
 				442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,
 				46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */,
+				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
 				0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */,
 				5CA9854A210BEB640057EB6B /* SafeBrowsingWarning.h in Headers */,
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
@@ -14485,6 +14482,7 @@
 				93E799DA276121080074008A /* SQLiteStorageArea.h in Headers */,
 				7A3FECA221F7C09700F267CD /* StorageAccessStatus.h in Headers */,
 				93E799DC276121080074008A /* StorageAreaBase.h in Headers */,
+				932CA81C283C35EC00C20BEB /* StorageAreaIdentifier.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				93AEC161278F8CD30066666F /* StorageAreaMapIdentifier.h in Headers */,
@@ -15539,7 +15537,6 @@
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
-				2DE7751928233C75004336C1 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
@@ -15877,25 +15874,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
-		};
-		2DE7751928233C75004336C1 /* Copy Feature Flags Plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/FeatureFlags/WebKit.plist",
-			);
-			name = "Copy Feature Flags Plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == maccatalyst || \"${WK_PLATFORM_NAME}\" == iosmac || \"${WK_PLATFORM_NAME}\" == macosx ]]; then\n    exit 0\nfi\n\nFEATURE_FLAGS_PLIST_SOURCE=\"${SRCROOT}/FeatureFlags/WebKit.plist\"\nFEATURE_FLAGS_PLIST_DESTINATION=\"${DSTROOT}/System/Library/FeatureFlags/Domain/WebKit.plist\"\necho \"copying feature flags plist\"\nmkdir -p \"$(dirname \"${FEATURE_FLAGS_PLIST_DESTINATION}\")\"\necho plutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\nplutil -convert binary1 -o \"${FEATURE_FLAGS_PLIST_DESTINATION}\" \"${FEATURE_FLAGS_PLIST_SOURCE}\"\n";
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16609,7 +16587,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n${SCRIPT_INPUT_FILE_2}\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\"${SCRIPT_INPUT_FILE_2}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

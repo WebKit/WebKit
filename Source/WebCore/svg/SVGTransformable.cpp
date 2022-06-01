@@ -105,45 +105,51 @@ template<typename CharacterType> static std::optional<SVGTransformValue> parseTr
         return std::nullopt;
 
     int valueCount = 0;
-    float values[] = {0, 0, 0, 0, 0, 0};
+    float values[] = { 0, 0, 0, 0, 0, 0 };
     if ((valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type])) < 0)
         return std::nullopt;
 
-    SVGTransformValue transform;
     switch (type) {
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
         ASSERT_NOT_REACHED();
-        break;
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
+        return std::nullopt;
+
+    case SVGTransformValue::SVG_TRANSFORM_SKEWX: {
+        SVGTransformValue transform;
         transform.setSkewX(values[0]);
-        break;
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
+        return transform;
+    }
+    case SVGTransformValue::SVG_TRANSFORM_SKEWY: {
+        SVGTransformValue transform;
         transform.setSkewY(values[0]);
-        break;
+        return transform;
+    }
     case SVGTransformValue::SVG_TRANSFORM_SCALE:
         if (valueCount == 1) // Spec: if only one param given, assume uniform scaling
-            transform.setScale(values[0], values[0]);
-        else
-            transform.setScale(values[0], values[1]);
-        break;
+            return SVGTransformValue::scaleTransformValue({ values[0], values[0] });
+
+        return SVGTransformValue::scaleTransformValue({ values[0], values[1] });
+
     case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
         if (valueCount == 1) // Spec: if only one param given, assume 2nd param to be 0
-            transform.setTranslate(values[0], 0);
-        else
-            transform.setTranslate(values[0], values[1]);
-        break;
+            return SVGTransformValue::translateTransformValue({ values[0], 0 });
+
+        return SVGTransformValue::translateTransformValue({ values[0], values[1] });
+
     case SVGTransformValue::SVG_TRANSFORM_ROTATE:
         if (valueCount == 1)
-            transform.setRotate(values[0], 0, 0);
-        else
-            transform.setRotate(values[0], values[1], values[2]);
-        break;
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
+            return SVGTransformValue::rotateTransformValue(values[0], { });
+
+        return SVGTransformValue::rotateTransformValue(values[0], { values[1], values[2] });
+
+    case SVGTransformValue::SVG_TRANSFORM_MATRIX: {
+        SVGTransformValue transform;
         transform.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
-        break;
+        return transform;
+    }
     }
 
-    return transform;
+    return std::nullopt;
 }
 
 std::optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, StringParsingBuffer<LChar>& buffer)

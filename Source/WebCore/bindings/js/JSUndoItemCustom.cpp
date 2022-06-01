@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "JSNodeCustom.h"
 #include "JSUndoItem.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
@@ -44,7 +46,7 @@ bool JSUndoItemOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
         *reason = "Document is an opaque root.";
 
     auto* documentForUndoItem = JSC::jsCast<JSUndoItem*>(handle.slot()->asCell())->wrapped().document();
-    return documentForUndoItem && visitor.containsOpaqueRoot(documentForUndoItem);
+    return containsWebCoreOpaqueRoot(visitor, documentForUndoItem);
 }
 
 } // namespace WebCore

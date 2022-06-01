@@ -29,16 +29,17 @@
 #include "CSSStyleSheet.h"
 #include "JSCSSRuleCustom.h"
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
-inline void* root(StyleSheet* styleSheet)
+inline WebCoreOpaqueRoot root(StyleSheet* styleSheet)
 {
     if (CSSImportRule* ownerRule = styleSheet->ownerRule())
         return root(ownerRule);
     if (Node* ownerNode = styleSheet->ownerNode())
         return root(ownerNode);
-    return styleSheet;
+    return WebCoreOpaqueRoot { styleSheet };
 }
 
 } // namespace WebCore

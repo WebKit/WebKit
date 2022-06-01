@@ -104,6 +104,7 @@ promise_test(async (test) => {
     context = new AudioContext();
 
     let stream = await navigator.mediaDevices.getUserMedia({audio: { echoCancellation : true}});
+    assert_true(stream.getAudioTracks()[0].getConstraints().echoCancellation);
     assert_true(stream.getAudioTracks()[0].getSettings().echoCancellation);
     assert_true(await checkForNoise(stream, false), "should not hear noise");
 

@@ -75,22 +75,6 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
     return m_rotationSession->rotate(pixelBuffer);
 }
 
-CVPixelBufferPoolRef RealtimeOutgoingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height)
-{
-    if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
-        auto result = createInMemoryCVPixelBufferPool(width, height, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-        if (!result) {
-            RELEASE_LOG_ERROR(WebRTC, "RealtimeOutgoingVideoSourceCocoa failed creating buffer pool with error %d", result.error());
-            return nullptr;
-        }
-
-        m_pixelBufferPool = WTFMove(*result);
-        m_pixelBufferPoolWidth = width;
-        m_pixelBufferPoolHeight = height;
-    }
-    return m_pixelBufferPool.get();
-}
-
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

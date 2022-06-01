@@ -200,8 +200,6 @@ set(LLINT_ASM
     llint/LowLevelInterpreter32_64.asm
     llint/LowLevelInterpreter64.asm
     llint/WebAssembly.asm
-    llint/WebAssembly32_64.asm
-    llint/WebAssembly64.asm
 )
 
 set(OFFLINE_ASM
@@ -465,7 +463,7 @@ if (MSVC AND NOT ENABLE_C_LOOP)
         COMMAND ${MASM_EXECUTABLE} ${LLINT_MASM_FLAGS} ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
         VERBATIM)
     list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj)
-    add_library(LowLevelInterpreterLib OBJECT llint/LowLevelInterpreter.cpp)
+    add_library(LowLevelInterpreterLib STATIC llint/LowLevelInterpreter.cpp)
 else ()
     # As there's poor toolchain support for using `.file` directives in
     # inline asm (i.e. there's no way to avoid clashes with the `.file`
@@ -474,7 +472,7 @@ else ()
     # an object file. We only need to do this for LowLevelInterpreter.cpp
     # and cmake doesn't allow us to introduce a compiler wrapper for a
     # single source file, so we need to create a separate target for it.
-    add_library(LowLevelInterpreterLib OBJECT llint/LowLevelInterpreter.cpp
+    add_library(LowLevelInterpreterLib STATIC llint/LowLevelInterpreter.cpp
         ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput})
 endif ()
 
@@ -1178,7 +1176,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureCache.h
     runtime/StructureChain.h
     runtime/StructureID.h
-    runtime/StructureIDBlob.h
     runtime/StructureInlines.h
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h
@@ -1195,6 +1192,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h
     runtime/TypeError.h
+    runtime/TypeInfoBlob.h
     runtime/TypeSet.h
     runtime/TypedArrayAdaptersForwardDeclarations.h
     runtime/TypedArrayAdaptors.h
@@ -1491,13 +1489,7 @@ if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
         COMPILE_OPTIONS "-fno-lto")
 endif ()
 
-# When building JavaScriptCore as an object library, we need to make sure the
-# lowlevelinterpreter lib objects get propogated.
-if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "OBJECT")
-    list(APPEND JavaScriptCore_PRIVATE_LIBRARIES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
-else ()
-    list(APPEND JavaScriptCore_SOURCES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
-endif ()
+list(APPEND JavaScriptCore_PRIVATE_LIBRARIES LowLevelInterpreterLib)
 
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_FRAMEWORK(JavaScriptCore)

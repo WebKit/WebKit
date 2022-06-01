@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class AudioBus;
+class WebCoreOpaqueRoot;
 
 class AudioBuffer : public RefCounted<AudioBuffer> {
 public:
@@ -104,5 +105,7 @@ private:
     bool m_isDetachable { true };
     mutable Lock m_channelsLock;
 };
+
+WebCoreOpaqueRoot root(AudioBuffer*);
 
 } // namespace WebCore

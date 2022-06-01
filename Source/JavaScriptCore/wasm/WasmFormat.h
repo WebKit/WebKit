@@ -442,9 +442,7 @@ struct Entrypoint {
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>> calleeMoveLocations;
-#if ENABLE(WEBASSEMBLY_B3JIT)
     StackMaps stackmaps;
-#endif
     Vector<UnlinkedHandlerInfo> exceptionHandlers;
     Entrypoint entrypoint;
     unsigned osrEntryScratchBufferSize { 0 };

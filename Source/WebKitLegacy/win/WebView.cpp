@@ -5414,6 +5414,8 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setCSSGradientPremultipliedAlphaInterpolationEnabled(m_preferences->cssGradientPremultipliedAlphaInterpolationEnabled());
     settings.setMockScrollbarsControllerEnabled(m_preferences->mockScrollbarsControllerEnabled());
     settings.setCSSInputSecurityEnabled(m_preferences->cssInputSecurityEnabled());
+    settings.setCSSTextAlignLastEnabled(m_preferences->cssTextAlignLastEnabled());
+    settings.setCSSTextJustifyEnabled(m_preferences->cssTextJustifyEnabled());
 
     return S_OK;
 }

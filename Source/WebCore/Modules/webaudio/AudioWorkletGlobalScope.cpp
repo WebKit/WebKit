@@ -40,6 +40,7 @@
 #include "JSAudioWorkletProcessor.h"
 #include "JSAudioWorkletProcessorConstructor.h"
 #include "JSDOMConvert.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/IsoMallocInlines.h>
@@ -212,7 +213,7 @@ void AudioWorkletGlobalScope::visitProcessors(JSC::AbstractSlotVisitor& visitor)
 {
     Locker locker { m_processorsLock };
     m_processors.forEach([&](auto& processor) {
-        visitor.addOpaqueRoot(&processor);
+        addWebCoreOpaqueRoot(visitor, processor);
     });
 }
 

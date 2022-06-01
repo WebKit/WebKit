@@ -27,6 +27,7 @@
 #include "XMLHttpRequestUpload.h"
 
 #include "EventNames.h"
+#include "WebCoreOpaqueRoot.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -63,6 +64,11 @@ void XMLHttpRequestUpload::dispatchProgressEvent(const AtomString& type, unsigne
 
     // https://xhr.spec.whatwg.org/#firing-events-using-the-progressevent-interface
     dispatchEvent(XMLHttpRequestProgressEvent::create(type, !!total, loaded, total));
+}
+
+WebCoreOpaqueRoot root(XMLHttpRequestUpload* upload)
+{
+    return WebCoreOpaqueRoot { upload };
 }
 
 } // namespace WebCore

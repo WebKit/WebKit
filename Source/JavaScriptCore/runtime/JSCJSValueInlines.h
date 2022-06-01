@@ -623,13 +623,6 @@ inline JSValue::JSValue(EncodeAsBigInt32Tag, int32_t value)
 }
 #endif // USE(BIGINT32)
 
-#if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
-inline JSValue::JSValue(EncodeAsUnboxedFloatTag, float value)
-{
-    u.asBits.payload = bitwise_cast<int32_t>(value);
-}
-#endif
-
 inline int64_t tryConvertToInt52(double number)
 {
     if (number != number)

@@ -106,9 +106,8 @@ public:
     void updateCachedMemory()
     {
         if (m_memory != nullptr) {
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), memory()->mappedCapacity());
-            // This is used by the non-signaling based bound checking, so use the actual size of the memory.
-            m_cachedBoundsCheckingSize = memory()->size();
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), memory()->boundsCheckingSize());
+            m_cachedBoundsCheckingSize = memory()->boundsCheckingSize();
             ASSERT(memory()->memory() == cachedMemory());
         }
     }

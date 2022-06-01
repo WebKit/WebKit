@@ -44,6 +44,7 @@
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerTypes.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -275,6 +276,11 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
     return *m_navigationPreload;
 }
 
+WebCoreOpaqueRoot root(ServiceWorkerRegistration* registration)
+{
+    return WebCoreOpaqueRoot { registration };
+}
+
 #if ENABLE(NOTIFICATION_EVENT)
 void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
 {
@@ -321,6 +327,7 @@ void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& f
 {
     m_container->getNotifications(m_registrationData.scopeURL, filter.tag, WTFMove(promise));
 }
+
 #endif // ENABLE(NOTIFICATION_EVENT)
 
 } // namespace WebCore

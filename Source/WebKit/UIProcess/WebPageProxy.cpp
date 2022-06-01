@@ -1447,7 +1447,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     addPlatformLoadParameters(process, loadParameters);
 
     if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
-        preconnectTo(url);
+        preconnectTo(url, predictedUserAgentForRequest(loadParameters.request));
 
     navigation.setIsLoadedWithNavigationShared(true);
 
@@ -4697,14 +4697,14 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
-void WebPageProxy::preconnectTo(const URL& url)
+void WebPageProxy::preconnectTo(const URL& url, const String& userAgent)
 {
     if (!m_websiteDataStore->configuration().allowsServerPreconnect())
         return;
 
     auto storedCredentialsPolicy = m_canUseCredentialStorage ? WebCore::StoredCredentialsPolicy::Use : WebCore::StoredCredentialsPolicy::DoNotUse;
 
-    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent(), storedCredentialsPolicy, isNavigatingToAppBoundDomain(), m_lastNavigationWasAppInitiated ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No);
+    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent, storedCredentialsPolicy, isNavigatingToAppBoundDomain(), m_lastNavigationWasAppInitiated ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No);
 }
 
 void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
@@ -5996,10 +5996,12 @@ using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCall
 static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
 #if HAVE(APP_SSO)
-    page.websiteDataStore().soAuthorizationCoordinator(page).tryAuthorize(WTFMove(navigationAction), page, WTFMove(newPageCallback), WTFMove(uiClientCallback));
-#else
-    uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+    if (page.preferences().isExtensibleSSOEnabled()) {
+        page.websiteDataStore().soAuthorizationCoordinator(page).tryAuthorize(WTFMove(navigationAction), page, WTFMove(newPageCallback), WTFMove(uiClientCallback));
+        return;
+    }
 #endif
+    uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
 }
 
 void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPageProxyIdentifier originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Messages::WebPageProxy::CreateNewPage::DelayedReply&& reply)
@@ -6081,6 +6083,28 @@ void WebPageProxy::fullscreenMayReturnToInline()
     m_uiClient->fullscreenMayReturnToInline(this);
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    m_uiClient->didEnterFullscreen(this);
+
+    m_currentFullscreenVideoSessionIdentifier = identifier;
+    updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    m_uiClient->didExitFullscreen(this);
+
+    if (m_currentFullscreenVideoSessionIdentifier == identifier) {
+        m_currentFullscreenVideoSessionIdentifier = std::nullopt;
+        updateFullscreenVideoExtraction();
+    }
+}
+
+#else
+
 void WebPageProxy::didEnterFullscreen()
 {
     m_uiClient->didEnterFullscreen(this);
@@ -6091,27 +6115,7 @@ void WebPageProxy::didExitFullscreen()
     m_uiClient->didExitFullscreen(this);
 }
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
-{
-    didEnterFullscreen();
-
-    m_currentFullscreenVideoSessionIdentifier = identifier;
-    updateFullscreenVideoExtraction();
-}
-
-void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
-{
-    didExitFullscreen();
-
-    if (m_currentFullscreenVideoSessionIdentifier == identifier) {
-        m_currentFullscreenVideoSessionIdentifier = std::nullopt;
-        updateFullscreenVideoExtraction();
-    }
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+#endif
 
 void WebPageProxy::closePage()
 {

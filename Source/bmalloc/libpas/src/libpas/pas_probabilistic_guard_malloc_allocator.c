@@ -51,6 +51,8 @@ bool pas_pgm_can_use = true;
 // value : metadata for tracking that allocation (pas_pgm_storage)
 pas_ptr_hash_map pas_pgm_hash_map = PAS_HASHTABLE_INITIALIZER;
 
+static void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_storage* value, const char* operation);
+
 #if PAS_COMPILER(CLANG)
 #pragma mark -
 #pragma mark ALLOC/DEALLOC
@@ -211,7 +213,7 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory()
     return free_wasted_mem;
 }
 
-static PAS_ALWAYS_INLINE void pas_probabilistic_guard_malloc_debug_info(const void *key, const pas_pgm_storage *value, const char *operation)
+void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_storage* value, const char* operation)
 {
     printf("******************************************************\n"
         " %s\n\n"
@@ -236,9 +238,9 @@ static PAS_ALWAYS_INLINE void pas_probabilistic_guard_malloc_debug_info(const vo
         value->mem_to_alloc,
         value->mem_to_waste,
         value->size_of_data_pages,
-        (uintptr_t *) value->lower_guard_page,
-        (uintptr_t *) value->upper_guard_page,
-        (uintptr_t *) value->start_of_data_pages,
+        (uintptr_t*) value->lower_guard_page,
+        (uintptr_t*) value->upper_guard_page,
+        (uintptr_t*) value->start_of_data_pages,
         key);
 }
 

@@ -384,12 +384,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.contentSizeCategory = RenderThemeCocoa::singleton().contentSizeCategory();
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    if (!_MGCacheValid()) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, std::nullopt))
-            parameters.mobileGestaltExtensionHandle = WTFMove(*handle);
-    }
-#endif
+    parameters.mobileGestaltExtensionHandle = process.createMobileGestaltSandboxExtensionIfNeeded();
 
 #if PLATFORM(MAC)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))

@@ -39,6 +39,7 @@ class GPU;
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
 class StorageManager;
+class WebCoreOpaqueRoot;
 class WebLockManager;
 
 class NavigatorBase : public RefCounted<NavigatorBase>, public ContextDestructionObserver, public CanMakeWeakPtr<NavigatorBase> {
@@ -82,5 +83,7 @@ private:
     std::unique_ptr<ServiceWorkerContainer> m_serviceWorkerContainer;
 #endif
 };
+
+WebCoreOpaqueRoot root(NavigatorBase*);
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "MediaProducer.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -92,4 +93,13 @@ inline bool Document::hasBrowsingContext() const
     return !!frame();
 }
 
+inline WebCoreOpaqueRoot Node::opaqueRoot() const
+{
+    // FIXME: Possible race?
+    // https://bugs.webkit.org/show_bug.cgi?id=165713
+    if (isConnected())
+        return WebCoreOpaqueRoot { &document() };
+    return traverseToOpaqueRoot();
 }
+
+} // namespace WebCore

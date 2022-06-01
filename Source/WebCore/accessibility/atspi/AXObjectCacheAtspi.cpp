@@ -199,6 +199,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXPositionInSetChanged:
         break;
+    case AXDescribedByChanged:
+        break;
     }
 }
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JSWebXRSession.h"
+#include "WebCoreOpaqueRoot.h"
 
 #if ENABLE(WEBXR)
 
@@ -33,7 +34,7 @@ namespace WebCore {
 template<typename Visitor>
 void JSWebXRSession::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(&wrapped());
+    addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWebXRSession);

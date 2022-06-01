@@ -1420,6 +1420,42 @@ bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequ
     return shouldRecommendDesktopClassBrowsing;
 }
 
+bool WebPageProxy::useDesktopClassBrowsing(const API::WebsitePolicies& policies, const WebCore::ResourceRequest& request) const
+{
+    switch (policies.preferredContentMode()) {
+    case WebContentMode::Recommended: {
+        return isDesktopClassBrowsingRecommended(request);
+    }
+    case WebContentMode::Mobile:
+        return false;
+    case WebContentMode::Desktop:
+        return !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+String WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest& request) const
+{
+    if (!customUserAgent().isEmpty())
+        return customUserAgent();
+    if (!m_configuration->defaultWebsitePolicies())
+        return userAgent();
+
+    const API::WebsitePolicies& policies = *m_configuration->defaultWebsitePolicies();
+    if (!policies.customUserAgent().isEmpty())
+        return policies.customUserAgent();
+
+    if (policies.applicationNameForDesktopUserAgent().isEmpty())
+        return userAgent();
+
+    if (!useDesktopClassBrowsing(policies, request))
+        return userAgent();
+
+    return standardUserAgentWithApplicationName(policies.applicationNameForDesktopUserAgent(), emptyString(), UserAgentType::Desktop);
+}
+
 WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::WebsitePolicies& policies, const WebCore::ResourceRequest& request)
 {
     if (m_preferences->mediaSourceEnabled()) {
@@ -1427,23 +1463,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
     }
 
-    bool useDesktopBrowsingMode;
-    switch (policies.preferredContentMode()) {
-    case WebContentMode::Recommended: {
-        useDesktopBrowsingMode = isDesktopClassBrowsingRecommended(request);
-        break;
-    }
-    case WebContentMode::Mobile:
-        useDesktopBrowsingMode = false;
-        break;
-    case WebContentMode::Desktop:
-        useDesktopBrowsingMode = !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        useDesktopBrowsingMode = false;
-        break;
-    }
+    bool useDesktopBrowsingMode = useDesktopClassBrowsing(policies, request);
 
     m_preferFasterClickOverDoubleTap = false;
 

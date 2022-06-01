@@ -217,6 +217,8 @@ public:
     WTF_EXPORT_PRIVATE static void registerGCThread(GCThreadType);
     WTF_EXPORT_PRIVATE static bool mayBeGCThread();
 
+    WTF_EXPORT_PRIVATE static void registerJSThread(Thread&);
+
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
     static void initializePlatformThreading();
@@ -270,6 +272,7 @@ public:
 #endif
 
     bool isCompilationThread() const { return m_isCompilationThread; }
+    bool isJSThread() const { return m_isJSThread; }
     GCThreadType gcThreadType() const { return static_cast<GCThreadType>(m_gcThreadType); }
 
     struct NewThreadContext;
@@ -357,6 +360,7 @@ protected:
     bool m_isDestroyedOnce : 1 { false };
     bool m_isCompilationThread: 1 { false };
     bool m_didUnregisterFromAllThreads : 1 { false };
+    bool m_isJSThread : 1 { false };
     unsigned m_gcThreadType : 2 { static_cast<unsigned>(GCThreadType::None) };
 
     // Lock & ParkingLot rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.

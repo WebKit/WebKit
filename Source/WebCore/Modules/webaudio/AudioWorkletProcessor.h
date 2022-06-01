@@ -52,6 +52,7 @@ class AudioWorkletProcessorConstructionData;
 class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
+class WebCoreOpaqueRoot;
 
 class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCounted<AudioWorkletProcessor>, public CanMakeWeakPtr<AudioWorkletProcessor> {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletProcessor);
@@ -79,6 +80,8 @@ private:
     JSValueInWrappedObject m_jsOutputs;
     JSValueInWrappedObject m_jsParamValues;
 };
+
+WebCoreOpaqueRoot root(AudioWorkletProcessor*);
 
 } // namespace WebCore
 

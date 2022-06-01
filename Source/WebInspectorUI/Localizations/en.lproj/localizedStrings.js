@@ -1387,7 +1387,6 @@ localizedStrings["Show Elements"] = "Show Elements";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
-localizedStrings["Show Screenshots"] = "Show Screenshots";
 localizedStrings["Show all actions"] = "Show all actions";
 localizedStrings["Show all resources"] = "Show all resources";
 localizedStrings["Show changes only for selected node"] = "Show changes only for selected node";
@@ -1593,7 +1592,6 @@ localizedStrings["Timeline Recording %d"] = "Timeline Recording %d";
 localizedStrings["Timeline Recording Import Error: %s"] = "Timeline Recording Import Error: %s";
 /* Name of Timelines Tab */
 localizedStrings["Timelines Tab Name"] = "Timelines";
-localizedStrings["Timelines:"] = "Timelines:";
 /* Text indicating that the local override will block the network activity with an timeout error. */
 localizedStrings["Timeout @ Local Override Type"] = "Timeout";
 localizedStrings["Timer %d Fired"] = "Timer %d Fired";

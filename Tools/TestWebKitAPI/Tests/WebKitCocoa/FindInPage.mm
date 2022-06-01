@@ -421,6 +421,23 @@ TEST(WebKit, FindTextInImageOverlay)
 
 @end
 
+static void traverseLayerTree(CALayer *layer, void(^block)(CALayer *))
+{
+    for (CALayer *child in layer.sublayers)
+        traverseLayerTree(child, block);
+    block(layer);
+}
+
+static size_t overlayCount(WKWebView *webView)
+{
+    __block size_t count = 0;
+    traverseLayerTree([webView layer], ^(CALayer *layer) {
+        if ([layer.name containsString:@"Overlay content"])
+            count++;
+    });
+    return count;
+}
+
 static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, TestTextSearchOptions *searchOptions, NSUInteger expectedMatches)
 {
     __block bool finishedSearching = false;
@@ -643,6 +660,34 @@ TEST(WebKit, ScrollToFoundRangeDoesNotFocusElement)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
+}
+
+TEST(WebKit, CannotHaveMultipleFindOverlays)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(overlayCount(webView.get()), 0U);
+
+    [webView didBeginTextSearchOperation];
+
+    // Wait for two presentation updates, as the document overlay root layer is
+    // created lazily.
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(overlayCount(webView.get()), 1U);
+
+    [webView didEndTextSearchOperation];
+    [webView didBeginTextSearchOperation];
+
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(overlayCount(webView.get()), 1U);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

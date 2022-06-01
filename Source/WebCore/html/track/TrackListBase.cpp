@@ -48,11 +48,11 @@ TrackListBase::~TrackListBase()
 {
 }
 
-void* TrackListBase::opaqueRoot()
+WebCoreOpaqueRoot TrackListBase::opaqueRoot()
 {
     if (auto* rootObserver = m_opaqueRootObserver.get())
         return (*rootObserver)();
-    return this;
+    return WebCoreOpaqueRoot { this };
 }
 
 unsigned TrackListBase::length() const

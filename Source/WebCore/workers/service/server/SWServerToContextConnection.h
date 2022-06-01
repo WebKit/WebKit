@@ -77,7 +77,6 @@ public:
     WEBCORE_EXPORT void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, bool wasSuccessful);
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
-    WEBCORE_EXPORT void skipWaiting(ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
     WEBCORE_EXPORT void claim(ServiceWorkerIdentifier, CompletionHandler<void(std::optional<ExceptionData>&&)>&&);

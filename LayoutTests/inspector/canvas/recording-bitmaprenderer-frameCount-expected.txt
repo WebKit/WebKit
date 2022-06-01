@@ -22,5 +22,6 @@ frames:
         4: asyncFunctionResume
         5: (anonymous function)
         6: promiseReactionJobWithoutPromise
+        7: promiseReactionJob
       snapshot: <filtered>
 

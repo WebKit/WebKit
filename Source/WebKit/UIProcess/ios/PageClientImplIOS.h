@@ -312,6 +312,11 @@ private:
 
     bool isInMultitaskingMode() const final;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    void didEnterFullscreen() final;
+    void didExitFullscreen() final;
+#endif
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

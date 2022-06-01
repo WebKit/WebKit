@@ -716,21 +716,17 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueFixed;
     case CSSPropertyTextAlign:
         return (valueID >= CSSValueWebkitAuto && valueID <= CSSValueWebkitMatchParent) || valueID == CSSValueStart || valueID == CSSValueEnd;
-#if ENABLE(CSS3_TEXT)
-    case CSSPropertyWebkitTextAlignLast:
-        // auto | start | end | left | right | center | justify
-        return (valueID >= CSSValueLeft && valueID <= CSSValueJustify) || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueAuto;
-#endif
+    case CSSPropertyTextAlignLast:
+        // auto | start | end | left | right | center | justify | match-parent
+        return (valueID >= CSSValueLeft && valueID <= CSSValueJustify) || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueAuto || valueID == CSSValueMatchParent;
     case CSSPropertyTextAnchor:
         return valueID == CSSValueStart || valueID == CSSValueMiddle || valueID == CSSValueEnd;
     case CSSPropertyTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
         return valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy;
-#if ENABLE(CSS3_TEXT)
-    case CSSPropertyWebkitTextJustify:
-        // auto | none | inter-word | distribute
-        return valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
-#endif
+    case CSSPropertyTextJustify:
+        // auto | none | inter-word | inter-character | distribute
+        return valueID == CSSValueInterWord || valueID == CSSValueInterCharacter || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
     case CSSPropertyTextOrientation:
         // mixed | upright | sideways
         return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways;
@@ -965,6 +961,8 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyResize:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
+    case CSSPropertyTextAlignLast:
+    case CSSPropertyTextJustify:
     case CSSPropertyTextOrientation:
     case CSSPropertyTextOverflow:
     case CSSPropertyTextRendering:
@@ -1022,14 +1020,9 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // case CSSPropertyAll:
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
-    // case CSSPropertyBackfaceVisibility:
     // case CSSPropertyHyphens:
     // case CSSPropertyOverflowAnchor:
     // case CSSPropertyScrollSnapType:
-    // case CSSPropertyTextAlignLast:
-    // case CSSPropertyTextCombineUpright:
-    // case CSSPropertyTextJustify:
-    // case CSSPropertyUserSelect:
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord:
 #endif
@@ -1045,10 +1038,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 #endif
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
-#endif
-#if ENABLE(CSS3_TEXT)
-    case CSSPropertyWebkitTextAlignLast:
-    case CSSPropertyWebkitTextJustify:
 #endif
 #if PLATFORM(IOS_FAMILY)
     // Apple specific property. This will never be standardized and is purely to

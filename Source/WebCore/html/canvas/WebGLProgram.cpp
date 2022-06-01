@@ -30,6 +30,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
@@ -209,8 +210,8 @@ bool WebGLProgram::detachShader(const AbstractLocker&, WebGLShader* shader)
 
 void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(m_vertexShader.get());
-    visitor.addOpaqueRoot(m_fragmentShader.get());
+    addWebCoreOpaqueRoot(visitor, m_vertexShader.get());
+    addWebCoreOpaqueRoot(visitor, m_fragmentShader.get());
 }
 
 void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGL* context3d)

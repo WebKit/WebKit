@@ -26,6 +26,7 @@ set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
     WebCore
     WebCoreTestSupport
+    WebKit
 )
 
 if (COMPILER_IS_GCC_OR_CLANG)

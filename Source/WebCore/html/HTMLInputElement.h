@@ -268,7 +268,7 @@ public:
     void addSearchResult();
     void onSearch();
 
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
 #if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;

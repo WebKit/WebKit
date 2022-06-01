@@ -56,6 +56,7 @@
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
+#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
@@ -64,7 +65,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSCSSRule::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);

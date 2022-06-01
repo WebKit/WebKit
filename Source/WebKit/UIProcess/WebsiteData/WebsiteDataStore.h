@@ -257,7 +257,6 @@ public:
     const String& resolvedAlternativeServicesStorageDirectory() const { return m_resolvedConfiguration->alternativeServicesDirectory(); }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration->mediaCacheDirectory(); }
     const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration->mediaKeysStorageDirectory(); }
-    const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration->webSQLDatabaseDirectory(); }
     const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration->javaScriptConfigurationDirectory(); }
     const String& resolvedCookieStorageFile() const { return m_resolvedConfiguration->cookieStorageFile(); }
     const String& resolvedIndexedDBDatabaseDirectory() const { return m_resolvedConfiguration->indexedDBDatabaseDirectory(); }
@@ -408,7 +407,7 @@ private:
     enum class ShouldCreateDirectory { No, Yes };
     static String tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
-    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
+    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 

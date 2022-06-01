@@ -8065,6 +8065,7 @@ void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::
     mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
 }
 
+#if ENABLE(VIDEO)
 void WebPage::extractVideoInElementFullScreen(const HTMLVideoElement& element)
 {
     RefPtr view = element.document().view();
@@ -8090,6 +8091,7 @@ void WebPage::cancelVideoExtractionInElementFullScreen()
 {
     send(Messages::WebPageProxy::CancelVideoExtractionInElementFullScreen());
 }
+#endif // ENABLE(VIDEO)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 void WebPage::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)

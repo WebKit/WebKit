@@ -85,6 +85,7 @@ class Screen;
 class Storage;
 class StyleMedia;
 class VisualViewport;
+class WebCoreOpaqueRoot;
 class WebKitNamespace;
 class WebKitPoint;
 
@@ -512,6 +513,8 @@ inline String DOMWindow::defaultStatus() const
 {
     return m_defaultStatus;
 }
+
+WebCoreOpaqueRoot root(DOMWindow*);
 
 } // namespace WebCore
 

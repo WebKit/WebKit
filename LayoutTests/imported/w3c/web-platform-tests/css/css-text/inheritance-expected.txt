@@ -13,12 +13,12 @@ PASS Property tab-size has initial value 8
 PASS Property tab-size inherits
 FAIL Property text-align-all has initial value start assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false
 FAIL Property text-align-all inherits assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-align-last has initial value auto assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-align-last inherits assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+PASS Property text-align-last has initial value auto
+PASS Property text-align-last inherits
 PASS Property text-indent has initial value 0px
 PASS Property text-indent inherits
-FAIL Property text-justify has initial value auto assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-justify inherits assert_true: text-justify doesn't seem to be supported in the computed style expected true got false
+PASS Property text-justify has initial value auto
+PASS Property text-justify inherits
 PASS Property text-transform has initial value none
 PASS Property text-transform inherits
 PASS Property white-space has initial value normal

@@ -52,20 +52,20 @@ video:-webkit-full-page-media::-webkit-media-controls-panel.no-video {
     width: inherit;
     height: inherit;
     position: relative;
-    display: -webkit-flex;
-    -webkit-align-items: stretch;
-    -webkit-justify-content: flex-end;
-    -webkit-flex-direction: column;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    flex-direction: column;
 }
 
 video::-webkit-media-text-track-container,
 audio::-webkit-media-text-track-container {
     position: relative;
-    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 video::-webkit-media-controls-panel-composited-parent {
-    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
     width: 100%;
 }
 
@@ -79,7 +79,7 @@ audio::-webkit-media-controls-panel {
     min-height: 25px;
     height: 25px;
     line-height: 25px;
-    -webkit-user-select: none;
+    user-select: none;
     background-color: transparent;
     background-image: -webkit-linear-gradient(top,
         rgba(0,  0,  0,  .92) 0,
@@ -94,10 +94,10 @@ audio::-webkit-media-controls-panel {
         rgba(17, 17, 17, .92) 100%
     );
 
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-    -webkit-align-items: center;
-    -webkit-user-select: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    user-select: none;
 
     direction: ltr;
 
@@ -118,7 +118,7 @@ video::-webkit-media-controls-panel:hover {
 
 video::-webkit-media-controls-panel button,
 audio::-webkit-media-controls-panel button {
-    -webkit-appearance: none;
+    appearance: none;
     display: block;
     padding: 0;
     border: 0;
@@ -129,12 +129,12 @@ audio::-webkit-media-controls-panel button {
     background-origin: content-box;
     background-repeat: no-repeat;
     background-position: center;
-    -webkit-filter: drop-shadow(black 0 1px 1px);
+    filter: drop-shadow(black 0 1px 1px);
 }
 
 video::-webkit-media-controls-panel button:active,
 audio::-webkit-media-controls-panel button:active {
-    -webkit-filter: drop-shadow(white 0 0 10px);
+    filter: drop-shadow(white 0 0 10px);
 }
 
 video::-webkit-media-controls-rewind-button,
@@ -166,10 +166,10 @@ audio::-webkit-media-controls-panel .mute-box {
     margin-right: 2px;
 
     position: relative;
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
-    -webkit-justify-content: center;
-    -webkit-align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 video::-webkit-media-controls-mute-button,
@@ -187,7 +187,7 @@ audio::-webkit-media-controls-panel .volume-box {
     bottom: 0;
     left: 0;
 
-    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
     -webkit-transform-origin: 11px 11px;
 
     background-color: transparent;
@@ -199,10 +199,10 @@ audio::-webkit-media-controls-panel .volume-box {
     border: 1px solid rgba(0, 0, 0, 0.95);
     border-radius: 12px;
 
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-    -webkit-align-items: center;
-    -webkit-justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
 
     opacity: 0;
     /* make zero width (rather than display:none) for AX and FKA */
@@ -224,7 +224,7 @@ audio::-webkit-media-controls-panel .volume-box:active {
 
 audio::-webkit-media-controls-volume-slider,
 video::-webkit-media-controls-volume-slider {
-    -webkit-appearance: none !important;
+    appearance: none !important;
     box-sizing: border-box !important;
     height: 10px !important;
     width: 80px !important;
@@ -244,7 +244,7 @@ video::-webkit-media-controls-volume-slider {
 
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb,
 audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
+    appearance: none !important;
     width: 8px !important;
     height: 8px !important;
     border-radius: 4px !important;
@@ -253,7 +253,7 @@ audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(0) !important;
+    transform: rotateZ(0) !important;
     background-image: -webkit-linear-gradient(
         left,
         rgba(99, 99, 99, 1),
@@ -289,7 +289,6 @@ audio::-webkit-media-controls-toggle-closed-captions-button {
 
 video::-webkit-media-controls-closed-captions-container,
 audio::-webkit-media-controls-closed-captions-container {
-    -webkit-appearance: media-closed-captions-container;
     position: absolute;
     display: block;
     right: 38px;
@@ -311,7 +310,7 @@ audio::-webkit-media-controls-closed-captions-container .list {
     display: block;
     font-family: "Helvetica Bold", Helvetica, sans-serif;
     font-size: 10pt;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 video::-webkit-media-controls-closed-captions-container h3,
@@ -411,12 +410,12 @@ audio::-webkit-media-controls-status-display {
 
     padding: 0 12px;
 
-    -webkit-flex: 1 1 0;
+    flex: 1 1 0;
 }
 video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
-    -webkit-appearance: none !important;
-    -webkit-flex: 1 1 0 !important;
+    appearance: none !important;
+    flex: 1 1 0 !important;
     height: 9px !important;
     margin: 0 !important;
 
@@ -426,7 +425,7 @@ audio::-webkit-media-controls-timeline {
 }
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
+    appearance: none !important;
     width:6px !important;
     height: 6px !important;
     background-color: white !important;
@@ -434,7 +433,7 @@ audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: translateY(1px) rotateZ(-45deg) !important;
+    transform: translateY(1px) rotateZ(-45deg) !important;
 
     background-image: -webkit-gradient(
         linear,
@@ -461,11 +460,11 @@ video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display,
 audio::-webkit-media-controls-time-remaining-display {
-    -webkit-user-select: none;
-    -webkit-flex: 0 0 0;
-    display: -webkit-flex;
-    -webkit-justify-content: center;
-    -webkit-align-items: center;
+    user-select: none;
+    flex: 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: default;
     font: -webkit-small-control;
     font-size: 9px;
@@ -490,11 +489,11 @@ audio::-webkit-media-controls-timeline-container .hour-long-time {
 
 video::-webkit-media-controls-timeline-container,
 audio::-webkit-media-controls-timeline-container {
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-    -webkit-align-items: center;
-    -webkit-user-select: none;
-    -webkit-flex: 1 1 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    user-select: none;
+    flex: 1 1 0;
     position: relative;
     padding: 0;
 }
@@ -502,12 +501,12 @@ audio::-webkit-media-controls-timeline-container {
 video::-webkit-media-controls-panel .thumbnail-track,
 audio::-webkit-media-controls-panel .thumbnail-track {
     position: relative;
-    -webkit-flex: 1 1 0;
+    flex: 1 1 0;
     height: 9px;
     margin: 0 2px;
-    display: -webkit-flex;
-    -webkit-align-items: stretch;
-    -webkit-flex-direction: column;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
 }
 
 video::-webkit-media-controls-panel .thumbnail,
@@ -550,8 +549,8 @@ audio::-webkit-media-controls-panel .hidden {
 */
 
 video:-webkit-full-screen::-webkit-media-controls-panel {
-    -webkit-align-items: flex-start !important;
-    -webkit-justify-content: flex-end !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
 
     width: 440px !important;
     height: 60px !important;
@@ -583,15 +582,15 @@ video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {
 }
 
 video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
-    -webkit-transform: none;
+    transform: none;
     opacity: 1;
     left: 11px;
     top: 13px;
     width: 90px;
     height: 14px;
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-    -webkit-align-items: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     background-image: none;
     border: none;
 }
@@ -614,7 +613,7 @@ video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(270deg) !important;
+    transform: rotateZ(270deg) !important;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {
@@ -656,7 +655,7 @@ video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
 
 video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
     position: absolute;
-    display: -webkit-flex;
+    display: flex;
     width: 29px;
     height: 16px;
     left: 262px;
@@ -713,9 +712,9 @@ video::-webkit-media-text-track-container {
     text-indent: 0;
     text-decoration: none;
     pointer-events: none;
-    -webkit-user-select: none;
+    user-select: none;
 
-    -webkit-flex: 1 1;
+    flex: 1 1;
 
     -webkit-line-box-contain: block inline-box replaced;
 }
@@ -728,7 +727,7 @@ video::-webkit-media-text-track-display {
     position: absolute;
     overflow: hidden;
     white-space: pre-wrap;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     font: 22px sans-serif;
 }
 

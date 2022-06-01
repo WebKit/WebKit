@@ -373,6 +373,12 @@ bool Thread::mayBeGCThread()
     return Thread::current().gcThreadType() != GCThreadType::None;
 }
 
+void Thread::registerJSThread(Thread& thread)
+{
+    ASSERT(&thread == &Thread::current());
+    thread.m_isJSThread = true;
+}
+
 void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)

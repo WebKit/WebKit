@@ -36,7 +36,8 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDocument.h"
-
+#include "WebCoreOpaqueRoot.h"
+#include "XMLHttpRequestUpload.h"
 
 namespace WebCore {
 using namespace JSC;
@@ -45,10 +46,10 @@ template<typename Visitor>
 void JSXMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* upload = wrapped().optionalUpload())
-        visitor.addOpaqueRoot(upload);
+        addWebCoreOpaqueRoot(visitor, *upload);
 
     if (auto* responseDocument = wrapped().optionalResponseXML())
-        visitor.addOpaqueRoot(responseDocument);
+        addWebCoreOpaqueRoot(visitor, *responseDocument);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSXMLHttpRequest);

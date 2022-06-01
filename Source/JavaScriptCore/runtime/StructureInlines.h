@@ -33,6 +33,7 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -164,7 +165,7 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfoForCells() == info());
 
-    if (m_seenProperties.ruleOut(bitwise_cast<uintptr_t>(propertyName.uid())))
+    if (m_seenProperties.ruleOut(CompactPtr<UniquedStringImpl>::encode(propertyName.uid())))
         return invalidOffset;
 
     PropertyTable* propertyTable = ensurePropertyTableIfNotEmpty(vm);
@@ -387,14 +388,14 @@ inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset
 }
 
 template<typename DetailsFunc>
-ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
+ALWAYS_INLINE void Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
 {
     // We cannot reliably assert things about the property table in the concurrent
     // compilation thread. It is possible for the table to be stolen and then have
     // things added to it, which leads to the offsets being all messed up. We could
     // get around this by grabbing a lock here, but I think that would be overkill.
     if (isCompilationThread())
-        return true;
+        return;
     
     unsigned totalSize = propertyTable->propertyStorageSize();
     unsigned inlineOverflowAccordingToTotalSize = totalSize < m_inlineCapacity ? 0 : totalSize - m_inlineCapacity;
@@ -418,27 +419,14 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTabl
         fail("numberOfSlotsForMaxOffset doesn't match totalSize");
     if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForMaxOffset(maxOffset()))
         fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForMaxOffset");
-
-    return true;
 }
 
-ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
+ALWAYS_INLINE void Structure::checkOffsetConsistency() const
 {
-    PropertyTable* propertyTable = propertyTableOrNull();
-
-    if (!propertyTable) {
+    if (auto* propertyTable = propertyTableOrNull())
+        checkOffsetConsistency(propertyTable, [] { });
+    else
         ASSERT(!isPinnedPropertyTable());
-        return true;
-    }
-
-    // We cannot reliably assert things about the property table in the concurrent
-    // compilation thread. It is possible for the table to be stolen and then have
-    // things added to it, which leads to the offsets being all messed up. We could
-    // get around this by grabbing a lock here, but I think that would be overkill.
-    if (isCompilationThread())
-        return true;
-
-    return checkOffsetConsistency(propertyTable, [] () { });
 }
 
 inline void Structure::checkConsistency()
@@ -489,7 +477,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
 
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
-    m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
+    m_seenProperties.add(CompactPtr<UniquedStringImpl>::encode(rep));
 
     auto [offset, attribute, result] = table->add(vm, PropertyTableEntry(rep, newOffset, attributes));
     ASSERT_UNUSED(result, result);

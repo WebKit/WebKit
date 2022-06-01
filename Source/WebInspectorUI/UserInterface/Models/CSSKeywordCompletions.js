@@ -311,7 +311,6 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-overflow-scrolling",
     "-webkit-rtl-ordering",
     "-webkit-ruby-position",
-    "-webkit-text-align-last",
     "-webkit-text-combine",
     "-webkit-text-decoration-skip",
     "-webkit-text-decorations-in-effect",
@@ -320,7 +319,6 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-text-emphasis-position",
     "-webkit-text-emphasis-style",
     "-webkit-text-fill-color",
-    "-webkit-text-justify",
     "-webkit-text-orientation",
     "-webkit-text-security",
     "-webkit-text-size-adjust",
@@ -400,8 +398,10 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "stroke-width",
     "tab-size",
     "text-align",
+    "text-align-last",
     "text-anchor",
     "text-indent",
+    "text-justify",
     "text-rendering",
     "text-shadow",
     "text-transform",
@@ -1126,17 +1126,11 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-ruby-position": [
         "after", "before", "inter-character",
     ],
-    "-webkit-text-align-last": [
-        "auto", "start", "end", "left", "right", "center", "justify",
-    ],
     "-webkit-text-combine": [
         "none", "horizontal",
     ],
     "-webkit-text-decoration-style": [
         "dotted", "dashed", "solid", "double", "wavy",
-    ],
-    "-webkit-text-justify": [
-        "auto", "none", "inter-word", "inter-ideograph", "inter-cluster", "distribute", "kashida",
     ],
     "-webkit-text-orientation": [
         "sideways", "sideways-right", "upright", "mixed",
@@ -1339,8 +1333,14 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "text-align": [
         "-webkit-auto", "left", "right", "center", "justify", "match-parent", "-webkit-left", "-webkit-right", "-webkit-center", "-webkit-match-parent", "start", "end",
     ],
+    "text-align-last": [
+        "auto", "start", "end", "left", "right", "center", "justify", "match-parent",
+    ],
     "text-anchor": [
         "middle", "start", "end",
+    ],
+    "text-justify": [
+        "auto", "none", "inter-word", "inter-character", "distribute",
     ],
     "text-line-through": [
         "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave", "continuous", "skip-white-space",

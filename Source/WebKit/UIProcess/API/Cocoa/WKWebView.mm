@@ -3438,7 +3438,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_preconnectToServer:(NSURL *)url
 {
     THROW_IF_SUSPENDED;
-    _page->preconnectTo(url);
+    _page->preconnectTo(url, _page->userAgent());
 }
 
 - (BOOL)_canUseCredentialStorage

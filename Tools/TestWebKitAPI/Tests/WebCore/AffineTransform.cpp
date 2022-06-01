@@ -925,7 +925,7 @@ TEST(AffineTransform, Blend)
 
 TEST(AffineTransform, Translation)
 {
-    auto test = WebCore::AffineTransform::translation(-5.0, -7.0);
+    auto test = WebCore::AffineTransform::makeTranslation({ -5.0, -7.0 });
     EXPECT_DOUBLE_EQ(1.0, test.a());
     EXPECT_DOUBLE_EQ(0.0, test.b());
     EXPECT_DOUBLE_EQ(0.0, test.c());

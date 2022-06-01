@@ -135,12 +135,19 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
     , m_delegate(adoptNS([[WebQueuedVideoOutputDelegate alloc] initWithParent:this]))
 {
     m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:nil]);
+    if (!m_videoOutput) {
+        // When bailing out early, also release these following objects
+        // to avoid doing unnecessary work in ::invalidate(). Failure to
+        // do so will result in exceptions being thrown from -removeObserver:.
+        m_player = nullptr;
+        m_playerItem = nullptr;
+        m_delegate = nullptr;
+        return;
+    }
+
     [m_videoOutput setDelegate:m_delegate.get() queue:globalOutputDelegateQueue()];
     [m_videoOutput requestNotificationOfMediaDataChangeAsSoonAsPossible];
 
-    if (!m_videoOutput)
-        return;
-    
     [m_playerItem addOutput:m_videoOutput.get()];
 
     [m_player addObserver:m_delegate.get() forKeyPath:@"rate" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];

@@ -36,6 +36,8 @@ public:
     virtual ~EXTTextureCompressionRGTC();
 
     ExtensionName getName() const override;
+
+    static bool supported(GraphicsContextGL&);
 };
 
 } // namespace WebCore

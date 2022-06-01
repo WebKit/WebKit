@@ -59,7 +59,7 @@ extern "C" {
     M(IPCMessages) \
     M(ITPDebug) \
     M(IconDatabase) \
-    M(Images) \
+    M(ImageAnalysis) \
     M(IncrementalPDF) \
     M(IncrementalPDFVerbose) \
     M(IndexedDB) \

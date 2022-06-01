@@ -491,6 +491,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/WebAssemblyCachedScriptSourceProvider.h
     bindings/js/WebAssemblyScriptSourceCode.h
     bindings/js/WebCoreJITOperations.h
+    bindings/js/WebCoreOpaqueRoot.h
     bindings/js/WebCoreTypedArrayController.h
     bindings/js/WindowProxy.h
     bindings/js/WorkerScriptFetcher.h
@@ -981,6 +982,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/formattingContexts/flex/FlexFormattingConstraints.h
     layout/formattingContexts/flex/FlexFormattingState.h
+    layout/formattingContexts/flex/FlexLayout.h
 
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/InlineRect.h

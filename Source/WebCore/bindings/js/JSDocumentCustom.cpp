@@ -26,6 +26,7 @@
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
 
 namespace WebCore {
@@ -95,7 +96,7 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 template<typename Visitor>
 void JSDocument::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, static_cast<ScriptExecutionContext&>(wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDocument);

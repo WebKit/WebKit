@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "JSWebXRReferenceSpace.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
@@ -652,6 +653,10 @@ bool WebXRSession::isHandTrackingEnabled() const
 }
 #endif
 
+WebCoreOpaqueRoot root(WebXRSession* session)
+{
+    return WebCoreOpaqueRoot { session };
+}
 
 } // namespace WebCore
 

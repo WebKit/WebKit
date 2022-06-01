@@ -1991,10 +1991,10 @@ public:
         m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(5), rd, VFPOperand(0));
     }
 
-    void vcvt_signedToFloatingPoint(FPDoubleRegisterID rd, FPSingleRegisterID rm, bool toDouble = true)
+    void vcvt_signedToFloatingPoint(FPDoubleRegisterID rd, FPSingleRegisterID rm)
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
-        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, toDouble, vcvtOp(false, false, false), rd, rm);
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(false, false, false), rd, rm);
     }
 
     void vcvt_floatingPointToSigned(FPSingleRegisterID rd, FPDoubleRegisterID rm)

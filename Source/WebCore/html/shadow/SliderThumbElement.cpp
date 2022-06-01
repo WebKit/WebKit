@@ -350,13 +350,13 @@ bool SliderThumbElement::willRespondToMouseMoveEvents() const
     return HTMLDivElement::willRespondToMouseMoveEvents();
 }
 
-bool SliderThumbElement::willRespondToMouseClickEvents() const
+bool SliderThumbElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     const auto input = hostInput();
     if (input && !input->isDisabledFormControl())
         return true;
 
-    return HTMLDivElement::willRespondToMouseClickEvents();
+    return HTMLDivElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void SliderThumbElement::willDetachRenderers()

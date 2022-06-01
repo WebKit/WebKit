@@ -38,6 +38,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class ScriptExecutionContext;
+class WebCoreOpaqueRoot;
 struct ServiceWorkerClientData;
 
 class ServiceWorkerClients : public RefCounted<ServiceWorkerClients> {
@@ -65,6 +66,8 @@ private:
 
     HashMap<PromiseIdentifier, Ref<DeferredPromise>> m_pendingPromises;
 };
+
+WebCoreOpaqueRoot root(ServiceWorkerClients*);
 
 } // namespace WebCore
 

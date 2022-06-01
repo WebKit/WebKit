@@ -15,55 +15,55 @@ function test()
             let tests = [
                 {
                     padvalue: "margin",
-                    expected: "^",
+                    expected: "^     ",
                 },
                 {
                     padvalue: "MARGIN",
-                    expected: "^",
+                    expected: "^     ",
                 },
                 {
                     padvalue: "margin-right",
-                    expected: "^     ^^",
+                    expected: "^     ^^    ",
                 },
                 {
                     padvalue: "-webkit-mask",
-                    expected: "^^     ^^",
+                    expected: "^^     ^^   ",
                 },
                 {
                     padvalue: "--var-kebab-case",
-                    expected: "^^^  ^^    ^^",
+                    expected: "^^^  ^^    ^^   ",
                 },
                 {
                     padvalue: "--varCamelCase",
-                    expected: "^^^  ^    ^",
+                    expected: "^^^  ^    ^   ",
                 },
                 {
                     padvalue: "--varlowercase",
-                    expected: "^^^",
+                    expected: "^^^           ",
                 },
                 {
                     padvalue: "--VARUPPERCASE",
-                    expected: "^^^",
+                    expected: "^^^           ",
                 },
                 {
                     padvalue: "--var_snake_case",
-                    expected: "^^^  ^^    ^^",
+                    expected: "^^^  ^^    ^^   ",
                 },
                 {
                     padvalue: "var(--name)",
-                    expected: "^   ^^^",
+                    expected: "^   ^^^    ",
                 },
                 {
                     padvalue: "rgb(0, 0, 0)",
-                    expected: "^",
+                    expected: "^           ",
                 },
                 {
                     padvalue: "rgb(0 0 0 / 100%)",
-                    expected: "^",
+                    expected: "^                ",
                 },
                 {
                     padvalue: "rgb(0 0 0 / 0.1)",
-                    expected: "^",
+                    expected: "^               ",
                 }
             ];
 
@@ -72,12 +72,12 @@ function test()
                 specialIndices.forEach((index) => {
                     mask = mask.substr(0, index) + "^" + mask.substr(index + 1);
                 });
-                return mask.trim();
+                return mask;
             }
 
             for (let {padvalue, expected} of tests) {
-                let actual = createSpecialMask(padvalue, matcher._findSpecialCharacterIndices(padvalue));
-                InspectorTest.expectEqual(actual, expected, `Result for ${padvalue} should match expected special indices.`);
+                let actual = createSpecialMask(padvalue, matcher._findSpecialCharacterIndicesInPropertyName(padvalue));
+                InspectorTest.expectEqual(actual, expected, `The special characters in "${padvalue}" should match.`);
             }
         }
     });

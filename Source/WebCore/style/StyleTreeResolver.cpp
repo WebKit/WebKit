@@ -208,7 +208,7 @@ auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity,
 
 auto TreeResolver::resolveElement(Element& element, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
-    if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
+    if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
         return { };
     }

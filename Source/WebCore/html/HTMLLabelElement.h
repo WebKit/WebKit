@@ -35,7 +35,7 @@ public:
     WEBCORE_EXPORT RefPtr<LabelableElement> control() const;
     WEBCORE_EXPORT HTMLFormElement* form() const final;
 
-    bool willRespondToMouseClickEvents() const final;
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
 private:
     HTMLLabelElement(const QualifiedName&, Document&);

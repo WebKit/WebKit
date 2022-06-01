@@ -91,6 +91,8 @@ struct CSSParserContext {
     bool subgridEnabled { false };
     bool containIntrinsicSizeEnabled { false };
     bool motionPathEnabled { false };
+    bool cssTextAlignLastEnabled { false };
+    bool cssTextJustifyEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

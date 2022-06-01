@@ -8,30 +8,30 @@ function test()
     let suite = InspectorTest.createSyncSuite("ResourceQueryController");
 
     suite.addTestCase({
-        name: "FindSpecialCharacterIndices",
-        description: "Should correctly find special filename characters.",
+        name: "FindSpecialCharacterIndices.DisplayName",
+        description: "Should correctly find special filename characters in the displayName.",
         test() {
             let matcher = new WI.ResourceQueryController;
             let tests = [
                 {
                     filename: "Abcd",
-                    expected: "^"
+                    expected: "^   ",
                 },
                 {
                     filename: "ABCDE",
-                    expected: "^"
+                    expected: "^    ",
                 },
                 {
                     filename: "abcdef",
-                    expected: "^",
+                    expected: "^     ",
                 },
                 {
                     filename: "abc-def",
-                    expected: "^  ^^",
+                    expected: "^  ^^  ",
                 },
                 {
                     filename: "abc---def",
-                    expected: "^  ^^^^",
+                    expected: "^  ^^^^  ",
                 },
                 {
                     filename: "a-bc_de.f",
@@ -39,15 +39,15 @@ function test()
                 },
                 {
                     filename: "AxBxCxDxExFx",
-                    expected: "^ ^ ^ ^ ^ ^",
+                    expected: "^ ^ ^ ^ ^ ^ ",
                 },
                 {
                     filename: "ab-c_d.ef",
-                    expected: "^ ^^^^^^",
+                    expected: "^ ^^^^^^ ",
                 },
                 {
                     filename: "AxBxCxdxexDxyxEF",
-                    expected: "^ ^ ^     ^   ^",
+                    expected: "^ ^ ^     ^   ^ ",
                 },
             ];
 
@@ -56,12 +56,83 @@ function test()
                 specialIndices.forEach((index) => {
                     mask = mask.substr(0, index) + "^" + mask.substr(index + 1);
                 });
-                return mask.trim();
+                return mask;
             }
 
             for (let {filename, expected} of tests) {
-                let actual = createSpecialMask(filename, matcher._findSpecialCharacterIndices(filename));
-                InspectorTest.expectEqual(actual, expected, "Result should match expected special indices.");
+                let actual = createSpecialMask(filename, matcher._findSpecialCharacterIndicesInDisplayName(filename));
+                InspectorTest.expectEqual(actual, expected, `The special characters in "${filename}" should match.`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "FindSpecialCharacterIndices.URL",
+        description: "Should correctly find special filename characters in the url.",
+        test() {
+            let matcher = new WI.ResourceQueryController;
+            let tests = [
+                {
+                    filename: "aBcd",
+                    expected: "^^  ",
+                },
+                {
+                    filename: "/aBcd",
+                    expected: "^^^  ",
+                },
+                {
+                    filename: "aBcd_dEfg",
+                    expected: "^^  ^^^  ",
+                },
+                {
+                    filename: "/aBcd_dEfg",
+                    expected: "^^^  ^^^  ",
+                },
+                {
+                    filename: "aBcd-dEfg",
+                    expected: "^^  ^^^  ",
+                },
+                {
+                    filename: "/aBcd-dEfg",
+                    expected: "^^^  ^^^  ",
+                },
+                {
+                    filename: "aBcd.dEfg",
+                    expected: "^^  ^^^  ",
+                },
+                {
+                    filename: "/aBcd.dEfg",
+                    expected: "^^^  ^^^  ",
+                },
+                {
+                    filename: "aBcd/dEfg",
+                    expected: "^^  ^^^  ",
+                },
+                {
+                    filename: "/aBcd/dEfg",
+                    expected: "^^^  ^^^  ",
+                },
+                {
+                    filename: "aBcd/dEfg_hIjk-lMno.pQrs",
+                    expected: "^^  ^^^  ^^^  ^^^  ^^^  ",
+                },
+                {
+                    filename: "/aBcd/dEfg_hIjk-lMno.pQrs",
+                    expected: "^^^  ^^^  ^^^  ^^^  ^^^  ",
+                },
+            ];
+
+            function createSpecialMask(filename, specialIndices) {
+                let mask = " ".repeat(filename.length);
+                specialIndices.forEach((index) => {
+                    mask = mask.substr(0, index) + "^" + mask.substr(index + 1);
+                });
+                return mask;
+            }
+
+            for (let {filename, expected} of tests) {
+                let actual = createSpecialMask(filename, matcher._findSpecialCharacterIndicesInURL(filename));
+                InspectorTest.expectEqual(actual, expected, `The special characters in "${filename}" should match.`);
             }
         }
     });

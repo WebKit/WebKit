@@ -4594,6 +4594,28 @@
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-align"
             }
         },
+        "text-align-last": {
+            "inherited": true,
+            "values": [
+                "left",
+                "right",
+                "center",
+                "justify",
+                "start",
+                "end",
+                "auto",
+                "match-parent"
+            ],
+            "codegen-properties": {
+                "converter": "TextAlignLast",
+                "custom": "Initial|Value",
+                "settings-flag": "cssTextAlignLastEnabled"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#text-align-last-property"
+            }
+        },
         "text-anchor": {
             "inherited": true,
             "values": [
@@ -4628,6 +4650,23 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-indent"
+            }
+        },
+        "text-justify": {
+            "inherited": true,
+            "values": [
+                "inter-word",
+                "inter-character",
+                "distribute",
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextJustifyEnabled"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
         "text-line-through": {
@@ -5251,7 +5290,7 @@
         },
         "contain-intrinsic-block-size": {
             "codegen-properties": {
-                "custom": "All",
+                "skip-builder": true,
                 "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
@@ -5268,7 +5307,7 @@
         },
         "contain-intrinsic-inline-size": {
             "codegen-properties": {
-                "custom": "All",
+                "skip-builder": true,
                 "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
@@ -6824,47 +6863,6 @@
             "specification": {
                 "category": "css-writing-modes",
                 "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
-            }
-        },
-        "-webkit-text-align-last": {
-            "inherited": true,
-            "values": [
-                "left",
-                "right",
-                "center",
-                "justify",
-                "start",
-                "end",
-                "auto"
-            ],
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS3_TEXT"
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#text-align-last-property"
-            }
-        },
-        "-webkit-text-justify": {
-            "inherited": true,
-            "values": [
-                "inter-word",
-                "distribute",
-                "auto",
-                "none"
-            ],
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS3_TEXT"
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
         "-webkit-text-decoration": {

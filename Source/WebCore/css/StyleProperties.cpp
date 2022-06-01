@@ -1801,10 +1801,8 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyPageBreakBefore,
     CSSPropertyPageBreakInside,
     CSSPropertyTextAlign,
-#if ENABLE(CSS3_TEXT)
-    CSSPropertyWebkitTextAlignLast,
-    CSSPropertyWebkitTextJustify,
-#endif // CSS3_TEXT
+    CSSPropertyTextAlignLast,
+    CSSPropertyTextJustify,
     CSSPropertyTextIndent,
     CSSPropertyWidows
 };

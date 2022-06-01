@@ -441,6 +441,7 @@ TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
     switch (listenerType) {
     case EventListenerRegionType::Wheel: ts << "wheel"; break;
     case EventListenerRegionType::NonPassiveWheel: ts << "active wheel"; break;
+    case EventListenerRegionType::MouseClick: ts << "mouse click"; break;
     }
     return ts;
 }

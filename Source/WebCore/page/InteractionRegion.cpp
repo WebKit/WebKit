@@ -174,8 +174,12 @@ Vector<InteractionRegion> interactionRegions(Page& page, FloatRect rect)
         if (!is<Element>(node.get()))
             continue;
         auto& element = downcast<Element>(node.get());
+        if (!element.renderer())
+            continue;
 
-        if (!element.willRespondToMouseClickEvents() && !element.willRespondToTouchEvents())
+        auto& renderer = *element.renderer();
+        // FIXME: Consider also allowing elements that only receive touch events.
+        if (!renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
             continue;
 
         if (cursorTypeForElement(element) != CursorType::Pointer && !is<HTMLFormControlElement>(element))

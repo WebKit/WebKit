@@ -59,7 +59,6 @@ WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabledForTesting(WKBundleRef
 WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLsForTesting(WKBundleRef bundle, bool excludeDocumentsInPageGroupPages);
 
 // Local storage API
-WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
 
 // Garbage collection API

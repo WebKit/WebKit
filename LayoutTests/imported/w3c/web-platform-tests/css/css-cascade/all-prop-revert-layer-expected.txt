@@ -285,6 +285,7 @@ PASS stroke-width
 PASS tab-size
 PASS table-layout
 PASS text-align
+PASS text-align-last
 PASS text-anchor
 PASS text-combine-upright
 PASS text-decoration-color
@@ -296,6 +297,7 @@ PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style
 PASS text-indent
+PASS text-justify
 PASS text-orientation
 PASS text-overflow
 PASS text-rendering

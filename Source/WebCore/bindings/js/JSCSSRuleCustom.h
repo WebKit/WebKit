@@ -27,18 +27,19 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
-void* root(StyleSheet*);
+WebCoreOpaqueRoot root(StyleSheet*);
 
-inline void* root(CSSRule* rule)
+inline WebCoreOpaqueRoot root(CSSRule* rule)
 {
     if (rule->parentRule())
         return root(rule->parentRule());
     if (rule->parentStyleSheet())
         return root(rule->parentStyleSheet());
-    return rule;
+    return WebCoreOpaqueRoot { rule };
 }
 
 } // namespace WebCore

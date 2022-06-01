@@ -104,7 +104,7 @@ WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::
     return FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), directoryName);
 }
 
-WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
+WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory)
 {
     return FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), directoryName);
 }

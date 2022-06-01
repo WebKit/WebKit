@@ -119,12 +119,15 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         WI.CSSProperty._cachedNameCounts = {};
 
-        WI.objectStores.cssPropertyNameCounts.getAllKeys().then((propertyNames) => {
-            for (let propertyName of propertyNames) {
-                WI.objectStores.cssPropertyNameCounts.get(propertyName).then((storedCount) => {
+        WI.CSSProperty._storedNameCountsQueue = new Promise((resolve, reject) => {
+            WI.objectStores.cssPropertyNameCounts.getAllKeys().then((propertyNames) => {
+                Promise.allSettled(propertyNames.map(async (propertyName) => {
+                    let storedCount = await WI.objectStores.cssPropertyNameCounts.get(propertyName);
+
                     WI.CSSProperty._cachedNameCounts[propertyName] = (WI.CSSProperty._cachedNameCounts[propertyName] || 0) + storedCount;
-                });
-            }
+                }))
+                .then(resolve, reject);
+            });
         });
     }
 
@@ -567,9 +570,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             console.assert(delta > 0 || cachedCount >= delta, cachedCount, delta);
             WI.CSSProperty._cachedNameCounts[propertyName] = Math.max(0, (cachedCount || 0) + delta);
 
-            WI.objectStores.cssPropertyNameCounts.get(propertyName).then((storedCount) => {
+            WI.CSSProperty._storedNameCountsQueue = WI.CSSProperty._storedNameCountsQueue.finally(async () => {
+                let storedCount = await WI.objectStores.cssPropertyNameCounts.get(propertyName);
+
                 console.assert(delta > 0 || storedCount >= delta, storedCount, delta);
-                WI.objectStores.cssPropertyNameCounts.put(Math.max(0, (storedCount || 0) + delta), propertyName);
+                await WI.objectStores.cssPropertyNameCounts.put(Math.max(0, (storedCount || 0) + delta), propertyName);
             });
 
             if (propertyName !== this.canonicalName)
@@ -616,6 +621,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 };
 
 WI.CSSProperty._cachedNameCounts = null;
+WI.CSSProperty._storedNameCountsQueue = null;
 
 WI.CSSProperty.Event = {
     Changed: "css-property-changed",

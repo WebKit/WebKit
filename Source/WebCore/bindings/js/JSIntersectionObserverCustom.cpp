@@ -28,6 +28,7 @@
 #include "JSIntersectionObserver.h"
 
 #include "JSNodeCustom.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ void JSIntersectionObserver::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* callback = wrapped().callbackConcurrently())
         callback->visitJSFunction(visitor);
-    visitor.addOpaqueRoot(root(wrapped().root()));
+    addWebCoreOpaqueRoot(visitor, wrapped().root());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIntersectionObserver);

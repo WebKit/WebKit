@@ -184,7 +184,7 @@ WI.DebugSetting = class DebugSetting extends WI.Setting
 };
 
 WI.settings = {
-    blackboxBreakpointEvaluations: new WI.Setting("blackbox-breakpoint-evaluations", false),
+    blackboxBreakpointEvaluations: new WI.Setting("blackbox-breakpoint-evaluations", true),
     canvasRecordingAutoCaptureEnabled: new WI.Setting("canvas-recording-auto-capture-enabled", false),
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     consoleAutoExpandTrace: new WI.Setting("console-auto-expand-trace", true),
@@ -232,8 +232,7 @@ WI.settings = {
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
     experimentalCSSCompletionFuzzyMatching: new WI.Setting("experimental-css-completion-fuzzy-matching", true),
-    experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", false),
-    experimentalShowScreenshotsTimeline: new WI.Setting("experimental-show-screenshots-timeline", false),
+    experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

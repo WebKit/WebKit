@@ -3,19 +3,19 @@ Testing WI.CSSQueryController
 
 == Running test suite: CSSQueryController
 -- Running test case: FindSpecialCharacterIndices
-PASS: Result for margin should match expected special indices.
-PASS: Result for MARGIN should match expected special indices.
-PASS: Result for margin-right should match expected special indices.
-PASS: Result for -webkit-mask should match expected special indices.
-PASS: Result for --var-kebab-case should match expected special indices.
-PASS: Result for --varCamelCase should match expected special indices.
-PASS: Result for --varlowercase should match expected special indices.
-PASS: Result for --VARUPPERCASE should match expected special indices.
-PASS: Result for --var_snake_case should match expected special indices.
-PASS: Result for var(--name) should match expected special indices.
-PASS: Result for rgb(0, 0, 0) should match expected special indices.
-PASS: Result for rgb(0 0 0 / 100%) should match expected special indices.
-PASS: Result for rgb(0 0 0 / 0.1) should match expected special indices.
+PASS: The special characters in "margin" should match.
+PASS: The special characters in "MARGIN" should match.
+PASS: The special characters in "margin-right" should match.
+PASS: The special characters in "-webkit-mask" should match.
+PASS: The special characters in "--var-kebab-case" should match.
+PASS: The special characters in "--varCamelCase" should match.
+PASS: The special characters in "--varlowercase" should match.
+PASS: The special characters in "--VARUPPERCASE" should match.
+PASS: The special characters in "--var_snake_case" should match.
+PASS: The special characters in "var(--name)" should match.
+PASS: The special characters in "rgb(0, 0, 0)" should match.
+PASS: The special characters in "rgb(0 0 0 / 100%)" should match.
+PASS: The special characters in "rgb(0 0 0 / 0.1)" should match.
 
 -- Running test case: ExecuteQueryAgainstNoValues
 PASS: Should return no results.

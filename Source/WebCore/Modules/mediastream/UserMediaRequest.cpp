@@ -52,18 +52,20 @@
 
 namespace WebCore {
 
-Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
+Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, TrackConstraints&& audioConstraints, TrackConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
 {
-    auto result = adoptRef(*new UserMediaRequest(document, WTFMove(request), WTFMove(promise)));
+    auto result = adoptRef(*new UserMediaRequest(document, WTFMove(request), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)));
     result->suspendIfNeeded();
     return result;
 }
 
-UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
+UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, TrackConstraints&& audioConstraints, TrackConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
     : ActiveDOMObject(document)
     , m_identifier(UserMediaRequestIdentifier::generate())
     , m_promise(makeUniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>>(WTFMove(promise)))
     , m_request(WTFMove(request))
+    , m_audioConstraints(WTFMove(audioConstraints))
+    , m_videoConstraints(WTFMove(videoConstraints))
 {
 }
 
@@ -176,6 +178,15 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             if (!isMediaStreamCorrectlyStarted(stream)) {
                 deny(MediaAccessDenialReason::HardwareError);
                 return;
+            }
+
+            if (auto* audioTrack = stream->getFirstAudioTrack()) {
+                if (std::holds_alternative<MediaTrackConstraints>(m_audioConstraints))
+                    audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_audioConstraints)));
+            }
+            if (auto* videoTrack = stream->getFirstVideoTrack()) {
+                if (std::holds_alternative<MediaTrackConstraints>(m_videoConstraints))
+                    videoTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_videoConstraints)));
             }
 
             ASSERT(document.isCapturing());

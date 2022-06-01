@@ -26,6 +26,7 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
@@ -46,6 +47,12 @@ typedef const struct __CFString * CFStringRef;
 
 #ifdef __OBJC__
 @class NSString;
+#endif
+
+#if HAVE(36BIT_ADDRESS)
+#define STRING_IMPL_ALIGNMENT alignas(16)
+#else
+#define STRING_IMPL_ALIGNMENT
 #endif
 
 namespace JSC {
@@ -132,7 +139,7 @@ struct StringStats {
 
 #endif
 
-class StringImplShape {
+class STRING_IMPL_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();

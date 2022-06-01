@@ -27,13 +27,14 @@
 #include "JSStyleSheet.h"
 
 #include "JSCSSStyleSheet.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
 template<typename Visitor>
 void JSStyleSheet::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, wrapped());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStyleSheet);

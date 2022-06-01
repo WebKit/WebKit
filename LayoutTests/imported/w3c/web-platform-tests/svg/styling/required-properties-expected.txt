@@ -60,7 +60,7 @@ PASS Property "stroke-opacity" is supported
 PASS Property "stroke-width" is supported
 PASS Property "text-align" is supported
 FAIL Property "text-align-all" is supported assert_true: expected true got false
-FAIL Property "text-align-last" is supported assert_true: expected true got false
+PASS Property "text-align-last" is supported
 PASS Property "text-anchor" is supported
 PASS Property "text-decoration" is supported
 PASS Property "text-decoration-color" is supported

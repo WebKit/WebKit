@@ -676,9 +676,9 @@ bool shouldProhibitLinks(Element* element)
     return isInSVGImage(element);
 }
 
-bool HTMLAnchorElement::willRespondToMouseClickEvents() const
+bool HTMLAnchorElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    return isLink() || HTMLElement::willRespondToMouseClickEvents();
+    return isLink() || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 static auto& rootEditableElementMap()

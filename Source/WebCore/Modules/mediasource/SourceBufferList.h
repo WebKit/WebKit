@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class SourceBuffer;
+class WebCoreOpaqueRoot;
 
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SourceBufferList);
@@ -82,6 +83,8 @@ private:
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };
+
+WebCoreOpaqueRoot root(SourceBufferList*);
 
 } // namespace WebCore
 

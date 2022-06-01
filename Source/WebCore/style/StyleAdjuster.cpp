@@ -212,21 +212,18 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
 
 void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
 {
-    auto regionTypes = computeEventListenerRegionTypes(document, { });
+    auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
     if (auto* window = document.domWindow())
-        regionTypes.add(computeEventListenerRegionTypes(*window, { }));
+        regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
 
     rootStyle.setEventListenerRegionTypes(regionTypes);
 }
 
-OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
+OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const RenderStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
 {
-#if ENABLE(WHEEL_EVENT_REGIONS)
-    if (!eventTarget.hasEventListeners())
-        return parentTypes;
-
     auto types = parentTypes;
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
     auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
         auto* eventListenerVector = eventTarget.eventTargetData()->eventListenerMap.find(eventName);
         if (!eventListenerVector)
@@ -246,15 +243,28 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
             types.add(nonPassiveType);
     };
 
-    findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
-    findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+    if (eventTarget.hasEventListeners()) {
+        findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+        findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+    }
+#endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (document.page() && document.page()->shouldBuildInteractionRegions() && eventTarget.isNode()) {
+        const auto& node = downcast<Node>(eventTarget);
+        if (node.willRespondToMouseClickEventsWithEditability(node.computeEditabilityForMouseClickEvents(&style)))
+            types.add(EventListenerRegionType::MouseClick);
+    }
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(style);
+#endif
+
+#if !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    UNUSED_PARAM(eventTarget);
+#endif
 
     return types;
-#else
-    UNUSED_PARAM(eventTarget);
-    UNUSED_PARAM(parentTypes);
-    return { };
-#endif
 }
 
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
@@ -556,7 +566,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (m_element == m_document.activeModalDialog() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 
-        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(*m_element, m_parentStyle.eventListenerRegionTypes()));
+        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, *m_element, m_parentStyle.eventListenerRegionTypes()));
 
 #if ENABLE(TEXT_AUTOSIZING)
         if (m_document.settings().textAutosizingUsesIdempotentMode())

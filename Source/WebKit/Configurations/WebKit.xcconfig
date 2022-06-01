@@ -190,7 +190,9 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 
-EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM)) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES) $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM)) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
+// These are only available in internal builds, so they must be explicitly ignored for the open-source build to succeed.
+EXCLUDED_PRODUCT_DEPENDENCY_NAMES = libWebKitAdditions.a AuthenticationServicesCore.framework;
 EXCLUDED_IOS_RESOURCE_FILE_NAMES = Resources/ios/*;
 EXCLUDED_IOS_RESOURCE_FILE_NAMES[sdk=iphone*] = ;
 // The legacy build system does not install headers.

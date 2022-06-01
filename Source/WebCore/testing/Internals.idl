@@ -291,6 +291,14 @@ enum HEVCParameterCodec {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+] dictionary TextIteratorState {
+    DOMString text;
+    Range range;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary ImageOverlayText {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -479,13 +487,14 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined scrollElementToRect(Element element, long x, long y, long w, long h);
 
     Range? rangeFromLocationAndLength(Element scope, unsigned long rangeLocation, unsigned long rangeLength);
-    unsigned long locationFromRange(Element scope, Range range);
-    unsigned long lengthFromRange(Element scope, Range range);
+    unsigned long locationFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
+    unsigned long lengthFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
     DOMString rangeAsText(Range range);
     DOMString rangeAsTextUsingBackwardsTextIterator(Range range);
     Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
     Range? rangeForDictionaryLookupAtLocation(long x, long y);
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
+    sequence<TextIteratorState> statesOfTextIterator(Range range, optional sequence<DOMString> behaviors = []);
 
     undefined setDelegatesScrolling(boolean enabled);
 
@@ -600,7 +609,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setElementTracksDisplayListReplay(Element element, boolean trackReplay);
 
     // Flags for displayListForElement.
-    const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
+    const unsigned short DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS = 1;
     // Returns the recorded display list.
     DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.

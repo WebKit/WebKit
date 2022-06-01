@@ -658,6 +658,11 @@ public:
 #if USE(GRAPHICS_LAYER_WC)
     virtual bool usesOffscreenRendering() const = 0;
 #endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    virtual void didEnterFullscreen() = 0;
+    virtual void didExitFullscreen() = 0;
+#endif
 };
 
 } // namespace WebKit

@@ -1,7 +1,7 @@
 If:
     PathMatch: [.*\.h]
 CompileFlags:
-    Add: [--include=config.h]
+    Add: [-xc++, --include=config.h]
 ---
 If:
     PathMatch: [.*\.cpp]

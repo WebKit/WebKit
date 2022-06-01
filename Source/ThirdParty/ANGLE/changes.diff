@@ -253,7 +253,7 @@ diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/me
 index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2f54269a2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -365,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
+@@ -365,7 +365,7 @@
      {
          if (buffer.offset == offset)
          {
@@ -262,7 +262,7 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
          }
      }
  
-@@ -520,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
+@@ -520,7 +520,7 @@
          default:
              // dynamic buffer, allow up to 10 update per frame/encoding without
              // waiting for GPU.
@@ -271,11 +271,97 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
              {
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
+diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
+index 39b6a8b44d49ead070ccf5e615a845506b32122b..bc140d80e0d9d180027a2d33619ee05a6464ab6a 100644
+--- a/src/libANGLE/renderer/metal/ContextMtl.h
++++ b/src/libANGLE/renderer/metal/ContextMtl.h
+@@ -588,6 +588,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+     gl::AttributesMask mDirtyDefaultAttribsMask;
+     DirtyBits mDirtyBits;
+ 
++    uint32_t mRenderPassesSinceFlush = 0;
++
+     // State
+     mtl::RenderPipelineDesc mRenderPipelineDesc;
+     mtl::DepthStencilDesc mDepthStencilDesc;
+diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
+index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d509454b10ca7 100644
+--- a/src/libANGLE/renderer/metal/ContextMtl.mm
++++ b/src/libANGLE/renderer/metal/ContextMtl.mm
+@@ -1692,10 +1692,19 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+ 
+     endEncoding(true);
+     mCmdBuffer.commit(operation);
++    mRenderPassesSinceFlush = 0;
+ }
+ 
+ void ContextMtl::flushCommandBufferIfNeeded()
+ {
++    if (mRenderPassesSinceFlush >= mtl::kMaxRenderPassesPerCommandBuffer)
++    {
++        // WaitUntilScheduled here is intended to help the CPU-GPU pipeline and
++        // helps to keep the number of inflight render passes in the system to a
++        // minimum.
++        flushCommandBuffer(mtl::WaitUntilScheduled);
++    }
++
+     if (mCmdBuffer.needsFlushForDrawCallLimits())
+     {
+         flushCommandBuffer(mtl::NoWait);
+@@ -1716,6 +1725,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+     endEncoding(false);
+     mCmdBuffer.present(presentationDrawable);
+     mCmdBuffer.commit(mtl::NoWait);
++    mRenderPassesSinceFlush = 0;
+ }
+ 
+ angle::Result ContextMtl::finishCommandBuffer()
+@@ -1751,6 +1761,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+     endEncoding(false);
+ 
+     ensureCommandBufferReady();
++    mRenderPassesSinceFlush++;
+ 
+     // Need to re-apply everything on next draw call.
+     mDirtyBits.set();
+@@ -2215,6 +2226,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+                                     gl::DrawElementsType indexTypeOrNone,
+                                     const void *indices,
+                                     bool xfbPass)
++{
++    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
++                            indexTypeOrNone, indices, xfbPass));
++    if (!mRenderEncoder.valid())
++    {
++        // Flush occurred during setup, due to running out of memory while setting up the render
++        // pass state. This would happen for example when there is no more space in the uniform
++        // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
++        // buffer memory for new usage. In this case, re-run the setup.
++        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
++                                indexTypeOrNone, indices, xfbPass));
++        // Setup with flushed state should either produce a working encoder or fail with an error
++        // result.
++        ASSERT(mRenderEncoder.valid());
++    }
++    return angle::Result::Continue;
++}
++
++angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
++                                        gl::PrimitiveMode mode,
++                                        GLint firstVertex,
++                                        GLsizei vertexOrIndexCount,
++                                        GLsizei instances,
++                                        gl::DrawElementsType indexTypeOrNone,
++                                        const void *indices,
++                                        bool xfbPass)
+ {
+     ASSERT(mProgram);
+ 
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
 index 13aec00fac3e4ea8932a86883dcc6eff7f30f59c..295a3788aa012838660233608df48f10bd269831 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1210,8 +1210,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1210,8 +1210,7 @@ bool IsMetalDisplayAvailable()
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -289,7 +375,7 @@ diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/m
 index 8e2d6eb6967f907b8224641610a369a2000f90f7..7f0c4de62558749e79614996699519f5fc164d71 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1257,20 +1257,40 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
+@@ -1257,20 +1257,40 @@ void InitArgumentBufferEncoder(mtl::Context *context,
          {
              continue;
          }
@@ -349,7 +435,7 @@ index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
-index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..3f3086c36d3ae3886af05a044bbdc834e63d2239 100644
+index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..c6618ecc2259f22756b61738d041e679420ce8bf 100644
 --- a/src/libANGLE/renderer/metal/mtl_common.h
 +++ b/src/libANGLE/renderer/metal/mtl_common.h
 @@ -139,7 +139,7 @@ constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
@@ -361,11 +447,23 @@ index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..3f3086c36d3ae3886af05a044bbdc834
  constexpr uint32_t kMaxViewports         = 1;
  
  // Restrict in-flight resource usage to 400 MB.
+@@ -147,6 +147,11 @@ constexpr uint32_t kMaxViewports         = 1;
+ // will be flushed next time
+ constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;
+ 
++// Restrict in-flight render passes per command buffer to 16.
++// The goal is to reduce the number of active render passes on the system at
++// anyone time and this value was determined through experimentation.
++constexpr uint32_t kMaxRenderPassesPerCommandBuffer = 16;
++
+ constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
+ // Alignment requirement for offset passed to setVertex|FragmentBuffer
+ #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -2540,45 +2540,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2540,45 +2540,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -411,7 +509,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2583,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2615,8 +2583,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
              UNREACHABLE();
      }
  
@@ -561,7 +659,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -504,12 +506,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
+@@ -504,12 +506,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -576,7 +674,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  bool Texture::isCPUAccessible() const
-@@ -988,7 +990,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
+@@ -988,7 +990,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -585,7 +683,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1009,7 +1011,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
+@@ -1009,7 +1011,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  

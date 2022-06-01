@@ -522,9 +522,6 @@ public:
     void exitFullscreenImmediately();
     void fullscreenMayReturnToInline();
 
-    void didEnterFullscreen();
-    void didExitFullscreen();
-
     void suspend(CompletionHandler<void(bool)>&&);
     void resume(CompletionHandler<void(bool)>&&);
     bool isSuspended() const { return m_isSuspended; }
@@ -1085,6 +1082,11 @@ public:
     void setCustomUserAgent(const String&);
     const String& customUserAgent() const { return m_customUserAgent; }
     static String standardUserAgent(const String& applicationName = String());
+#if PLATFORM(IOS_FAMILY)
+    String predictedUserAgentForRequest(const WebCore::ResourceRequest&) const;
+#else
+    String predictedUserAgentForRequest(const WebCore::ResourceRequest&) const { return userAgent(); }
+#endif
 
     bool supportsTextEncoding() const;
     void setCustomTextEncodingName(const String&);
@@ -1966,13 +1968,16 @@ public:
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didChangePlaybackRate(PlaybackSessionContextIdentifier);
     void didChangeCurrentTime(PlaybackSessionContextIdentifier);
+#else
+    void didEnterFullscreen();
+    void didExitFullscreen();
 #endif
 
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }
 
     WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
 
-    void preconnectTo(const URL&);
+    void preconnectTo(const URL&, const String& userAgent);
 
     bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
     void setCanUseCredentialStorage(bool);
@@ -2433,6 +2438,7 @@ private:
 
     bool isValidPerformActionOnElementAuthorizationToken(const String& authorizationToken) const;
     bool isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest&) const;
+    bool useDesktopClassBrowsing(const API::WebsitePolicies&, const WebCore::ResourceRequest&) const;
 #endif
 
     void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);

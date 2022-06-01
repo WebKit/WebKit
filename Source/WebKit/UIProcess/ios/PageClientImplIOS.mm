@@ -983,6 +983,20 @@ void PageClientImpl::showDataDetectorsUIForPositionInformation(const Interaction
     [m_contentView _showDataDetectorsUIForPositionInformation:positionInformation];
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void PageClientImpl::didEnterFullscreen()
+{
+    [m_contentView _didEnterFullscreen];
+}
+
+void PageClientImpl::didExitFullscreen()
+{
+    [m_contentView _didExitFullscreen];
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void PageClientImpl::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&& info)

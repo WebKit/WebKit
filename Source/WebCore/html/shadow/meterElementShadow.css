@@ -1,7 +1,7 @@
 /* use div# because the preprocessor doen't like # start */
 
 div#inner {
-    -webkit-appearance: inherit;
+    appearance: inherit;
     box-sizing: inherit;
     height: 100%;
     width: 100%;

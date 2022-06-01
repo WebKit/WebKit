@@ -97,7 +97,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 :is(audio, video)::-webkit-media-controls-timeline {
-    -webkit-appearance: media-slider;
+    appearance: media-slider;
     display: flex;
     flex: 1 1;
     height: 16px;

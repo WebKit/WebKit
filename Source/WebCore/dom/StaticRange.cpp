@@ -78,8 +78,8 @@ ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
 
 void StaticRange::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
 {
-    visitor.addOpaqueRoot(root(start.container.get()));
-    visitor.addOpaqueRoot(root(end.container.get()));
+    addWebCoreOpaqueRoot(visitor, start.container.get());
+    addWebCoreOpaqueRoot(visitor, end.container.get());
 }
 
-}
+} // namespace WebCore

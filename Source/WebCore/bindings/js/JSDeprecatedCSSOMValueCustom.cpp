@@ -44,7 +44,7 @@ bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
     if (UNLIKELY(reason))
         *reason = "CSSStyleDeclaration is opaque root";
 
-    return visitor.containsOpaqueRoot(root(&jsCSSValue->wrapped().owner()));
+    return containsWebCoreOpaqueRoot(visitor, jsCSSValue->wrapped().owner());
 }
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<DeprecatedCSSOMValue>&& value)

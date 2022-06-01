@@ -30,14 +30,15 @@
 #include "JSAttr.h"
 
 #include "Element.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
 template<typename Visitor>
 void JSAttr::visitAdditionalChildren(Visitor& visitor)
 {
-    if (Element* element = wrapped().ownerElement())
-        visitor.addOpaqueRoot(root(element));
+    if (auto* element = wrapped().ownerElement())
+        addWebCoreOpaqueRoot(visitor, *element);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAttr);

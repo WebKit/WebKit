@@ -114,6 +114,7 @@
 #include "UserContentProvider.h"
 #include "UserGestureIndicator.h"
 #include "VisualViewport.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebKitPoint.h"
 #include "WindowFeatures.h"
 #include "WindowFocusAllowedIndicator.h"
@@ -2736,6 +2737,11 @@ void DOMWindow::eventListenersDidChange()
         else
             windowsInterestedInStorageEvents().remove(*this);
     }
+}
+
+WebCoreOpaqueRoot root(DOMWindow* window)
+{
+    return WebCoreOpaqueRoot { window };
 }
 
 } // namespace WebCore

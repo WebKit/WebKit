@@ -565,7 +565,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     m_placeholder->setInnerText(String { placeholderText });
 }
 
-bool HTMLTextAreaElement::willRespondToMouseClickEvents() const
+bool HTMLTextAreaElement::willRespondToMouseClickEventsWithEditability(Editability) const
 {
     return !isDisabledFormControl();
 }

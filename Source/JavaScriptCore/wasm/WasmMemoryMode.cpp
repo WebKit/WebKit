@@ -37,9 +37,7 @@ const char* makeString(MemoryMode mode)
 {
     switch (mode) {
     case MemoryMode::BoundsChecking: return "BoundsChecking";
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     case MemoryMode::Signaling: return "Signaling";
-#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "";

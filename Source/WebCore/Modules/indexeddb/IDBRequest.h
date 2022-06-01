@@ -54,6 +54,7 @@ class IDBObjectStore;
 class IDBResultData;
 class IDBTransaction;
 class ThreadSafeDataBuffer;
+class WebCoreOpaqueRoot;
 
 namespace IDBClient {
 class IDBConnectionProxy;
@@ -199,5 +200,7 @@ private:
     bool m_hasUncaughtException { false };
     RefPtr<Event> m_eventBeingDispatched;
 };
+
+WebCoreOpaqueRoot root(IDBRequest*);
 
 } // namespace WebCore

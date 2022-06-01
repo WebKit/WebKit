@@ -27,18 +27,16 @@ CALL STACK:
 CALL STACK:
 0: [N] (anonymous function)
 1: [N] rejectPromise
-2: [N] rejectPromiseWithFirstResolvingFunctionCallCheck
-3: [N] reject
-4: [F] triggerUnhandledRejectionPromiseReject
+2: [N] reject
+3: [F] triggerUnhandledRejectionPromiseReject
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ExplicitReject
 CALL STACK:
 0: [N] (anonymous function)
 1: [N] rejectPromise
-2: [N] rejectPromiseWithFirstResolvingFunctionCallCheck
-3: [F] (anonymous function)
-4: [N] Promise
-5: [F] triggerUnhandledRejectionExplicit
+2: [F] (anonymous function)
+3: [N] Promise
+4: [F] triggerUnhandledRejectionExplicit
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ImplicitReject
 CALL STACK:

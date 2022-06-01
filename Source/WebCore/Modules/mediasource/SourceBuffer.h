@@ -55,6 +55,7 @@ class SourceBufferPrivate;
 class TextTrackList;
 class TimeRanges;
 class VideoTrackList;
+class WebCoreOpaqueRoot;
 
 class SourceBuffer final
     : public RefCounted<SourceBuffer>
@@ -141,7 +142,7 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    void* opaqueRoot() { return this; }
+    WebCoreOpaqueRoot opaqueRoot();
 
 private:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
@@ -222,7 +223,7 @@ private:
     MediaSource* m_source;
     AppendMode m_mode { AppendMode::Segments };
 
-    WTF::Observer<void*()> m_opaqueRootProvider;
+    WTF::Observer<WebCoreOpaqueRoot()> m_opaqueRootProvider;
 
     RefPtr<SharedBuffer> m_pendingAppendData;
     Timer m_appendBufferTimer;

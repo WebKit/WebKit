@@ -131,6 +131,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
         { nullptr, &InputTypeNames::search, &createInputType<SearchInputType> },
         { nullptr, &InputTypeNames::submit, &createInputType<SubmitInputType> },
         { nullptr, &InputTypeNames::telephone, &createInputType<TelephoneInputType> },
+        { nullptr, &InputTypeNames::text, &createInputType<TextInputType> },
 #if ENABLE(INPUT_TYPE_TIME)
         { &Settings::inputTypeTimeEnabled, &InputTypeNames::time, &createInputType<TimeInputType> },
 #endif
@@ -138,7 +139,6 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
 #if ENABLE(INPUT_TYPE_WEEK)
         { &Settings::inputTypeWeekEnabled, &InputTypeNames::week, &createInputType<WeekInputType> },
 #endif
-        // No need to register "text" because it is the default type.
     };
 
     InputTypeFactoryMap map;
@@ -147,12 +147,20 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
     return map;
 }
 
+static inline std::pair<InputTypeConditionalFunction, InputTypeFactoryFunction> findFactory(const AtomString& typeName)
+{
+    static NeverDestroyed factoryMap = createInputTypeFactoryMap();
+    auto factory = factoryMap.get().get(typeName);
+    if (UNLIKELY(!factory.second))
+        factory = factoryMap.get().get(typeName.convertToASCIILowercase());
+    return factory;
+}
+
 Ref<InputType> InputType::create(HTMLInputElement& element, const AtomString& typeName)
 {
     if (!typeName.isEmpty()) {
-        static NeverDestroyed factoryMap = createInputTypeFactoryMap();
-        auto&& [conditional, factory] = factoryMap.get().get(typeName.convertToASCIILowercase());
-        if (factory && (!conditional || std::invoke(conditional, element.document().settings())))
+        auto [conditional, factory] = findFactory(typeName);
+        if (LIKELY(factory && (!conditional || std::invoke(conditional, element.document().settings()))))
             return factory(element);
     }
     return adoptRef(*new TextInputType(element));

@@ -47,7 +47,7 @@ static void visitNodeList(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
     ASSERT(!nodeList.isLiveNodeList());
     unsigned length = nodeList.length();
     for (unsigned i = 0; i < length; ++i)
-        visitor.addOpaqueRoot(root(nodeList.item(i)));
+        addWebCoreOpaqueRoot(visitor, nodeList.item(i));
 }
 
 class ChildListRecord final : public MutationRecord {
@@ -71,7 +71,7 @@ private:
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
-        visitor.addOpaqueRoot(root(m_target.ptr()));
+        addWebCoreOpaqueRoot(visitor, m_target.get());
         if (m_addedNodes)
             visitNodeList(visitor, *m_addedNodes);
         if (m_removedNodes)
@@ -108,7 +108,7 @@ private:
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
-        visitor.addOpaqueRoot(root(m_target.ptr()));
+        addWebCoreOpaqueRoot(visitor, m_target.get());
     }
 
     Ref<Node> m_target;

@@ -1,4 +1,7 @@
 {
+    "text-align-last": {
+        "syntax": "auto | start | end | left | right | center | justify | match-parent"
+    },
     "shape-outside": {
         "description": "Defines a shape around which adjacent inline content should wrap."
     },

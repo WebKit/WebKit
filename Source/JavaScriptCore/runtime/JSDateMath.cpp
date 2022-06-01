@@ -100,7 +100,7 @@
 namespace JSC {
 
 #if PLATFORM(COCOA)
-static std::atomic<uint64_t> lastTimeZoneID { 1 };
+std::atomic<uint64_t> lastTimeZoneID { 1 };
 #endif
 
 #if HAVE(ICU_C_TIMEZONE_API)
@@ -470,14 +470,8 @@ void DateCache::timeZoneCacheSlow()
 #endif
 }
 
-void DateCache::resetIfNecessary()
+void DateCache::resetIfNecessarySlow()
 {
-#if PLATFORM(COCOA)
-    if (m_cachedTimezoneID == lastTimeZoneID)
-        return;
-    m_cachedTimezoneID = lastTimeZoneID;
-#endif
-
     // FIXME: We should clear it only when we know the timezone has been changed on Non-Cocoa platforms.
     // https://bugs.webkit.org/show_bug.cgi?id=218365
     m_timeZoneCache.reset();

@@ -26,12 +26,15 @@
 #include "config.h"
 #include "JSWorkerNavigator.h"
 
+#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRoot.h"
+
 namespace WebCore {
 
 template<typename Visitor>
 void JSWorkerNavigator::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(static_cast<NavigatorBase*>(&wrapped()));
+    addWebCoreOpaqueRoot(visitor, static_cast<NavigatorBase&>(wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSWorkerNavigator);

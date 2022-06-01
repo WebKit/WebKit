@@ -790,12 +790,12 @@ bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
 
 #if PLATFORM(IOS_FAMILY)
 // FIXME: We should find a better place for the touch callout logic. See rdar://problem/48937767.
-bool HTMLImageElement::willRespondToMouseClickEvents() const
+bool HTMLImageElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     auto renderer = this->renderer();
     if (!renderer || renderer->style().touchCalloutEnabled())
         return true;
-    return HTMLElement::willRespondToMouseClickEvents();
+    return HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 #endif
 

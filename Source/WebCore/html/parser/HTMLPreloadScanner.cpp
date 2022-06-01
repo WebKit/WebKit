@@ -478,7 +478,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool shouldRestrictBaseURLSchemes)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    auto* hrefAttribute = findAttribute(token.attributes(), hrefAttr->localName().string());
+    static constexpr UChar hrefAsUChar[] = { 'h', 'r', 'e', 'f' };
+    auto* hrefAttribute = findAttribute(token.attributes(), hrefAsUChar);
     if (!hrefAttribute)
         return;
     URL temp { m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value)) };

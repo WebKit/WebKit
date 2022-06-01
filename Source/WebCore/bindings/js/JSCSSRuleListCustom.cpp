@@ -46,14 +46,14 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
         if (UNLIKELY(reason))
             *reason = "CSSStyleSheet is opaque root";
 
-        return visitor.containsOpaqueRoot(root(styleSheet));
+        return containsWebCoreOpaqueRoot(visitor, styleSheet);
     }
     
     if (CSSRule* cssRule = jsCSSRuleList->wrapped().item(0)) {
         if (UNLIKELY(reason))
             *reason = "CSSRule is opaque root";
 
-        return visitor.containsOpaqueRoot(root(cssRule));
+        return containsWebCoreOpaqueRoot(visitor, cssRule);
     }
     return false;
 }

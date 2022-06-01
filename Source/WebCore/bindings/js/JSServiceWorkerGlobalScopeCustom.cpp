@@ -28,7 +28,9 @@
 #if ENABLE(SERVICE_WORKER)
 #include "JSServiceWorkerGlobalScope.h"
 
+#include "ServiceWorkerClients.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -37,8 +39,8 @@ using namespace JSC;
 template<typename Visitor>
 void JSServiceWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(&wrapped().clients());
-    visitor.addOpaqueRoot(&wrapped().registration());
+    addWebCoreOpaqueRoot(visitor, wrapped().clients());
+    addWebCoreOpaqueRoot(visitor, wrapped().registration());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSServiceWorkerGlobalScope);

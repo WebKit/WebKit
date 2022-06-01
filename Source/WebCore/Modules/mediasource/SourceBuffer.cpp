@@ -55,6 +55,7 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
+#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>
@@ -1360,6 +1361,11 @@ void SourceBuffer::setMediaSourceEnded(bool isEnded)
 size_t SourceBuffer::memoryCost() const
 {
     return sizeof(SourceBuffer) + m_extraMemoryCost;
+}
+
+WebCoreOpaqueRoot SourceBuffer::opaqueRoot()
+{
+    return WebCoreOpaqueRoot { this };
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioBufferSourceNode.h"
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ void JSAudioBufferSourceNode::visitAdditionalChildren(Visitor& visitor)
     // The AudioBufferSourceNode's buffer may hold on to a large amount of memory. This memory is
     // reported to GC via the JSAudioBuffer wrapper so we need to make sure that the buffer's
     // wrapper stays alive as long as the buffer is used by the AudioBufferSourceNode.
-    visitor.addOpaqueRoot(wrapped().buffer());
+    addWebCoreOpaqueRoot(visitor, wrapped().buffer());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSAudioBufferSourceNode);

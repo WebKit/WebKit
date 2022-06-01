@@ -87,6 +87,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    void skipWaiting(uint64_t requestIdentifier, WebCore::ServiceWorkerIdentifier);
 
     // Messages to the SW host WebProcess
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, const WebCore::ServiceWorkerData&, const String& userAgent, WebCore::WorkerThreadMode) final;

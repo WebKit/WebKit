@@ -53,19 +53,21 @@ namespace WebCore {
 
 Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-#if USE(SOUP) || USE(CURL)
-    auto channel = provider.createWebSocketChannel(document, client);
-    ASSERT(channel);
-    return channel.releaseNonNull();
+#if USE(CURL) || USE(SOUP)
+    bool enabled = true;
+#elif HAVE(NSURLSESSION_WEBSOCKET)
+    bool enabled = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
 #else
-
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    if (RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled()) {
+    bool enabled = false;
+#endif
+    if (enabled) {
         if (auto channel = provider.createWebSocketChannel(document, client))
             return channel.releaseNonNull();
     }
-#endif
 
+#if USE(SOUP)
+    RELEASE_ASSERT_NOT_REACHED();
+#else
     return WebSocketChannel::create(document, client, provider);
 #endif
 }

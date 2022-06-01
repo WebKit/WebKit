@@ -77,6 +77,7 @@ class RejectedPromiseTracker;
 class RTCDataChannelRemoteHandlerConnection;
 class ResourceRequest;
 class SocketProvider;
+class WebCoreOpaqueRoot;
 enum class LoadedFromOpaqueSource : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
@@ -405,5 +406,7 @@ private:
 
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
 };
+
+WebCoreOpaqueRoot root(ScriptExecutionContext*);
 
 } // namespace WebCore

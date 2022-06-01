@@ -462,6 +462,9 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=240750 (likely some missing AccessibilityUIElement implementation).
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=241022.
+accessibility/node-only-inert-object.html [ Failure ]
+
 # Probably wrong role after adding children to list (AXGroup instead of AXList).
 accessibility/list-with-dynamically-changing-content.html [ Skip ]
 accessibility/ignored-aria-role-description.html [ Skip ]
@@ -897,9 +900,6 @@ fast/css/visited-link-mix-blend-mode.html [ Skip ]
 
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 
-
-# TODO CSS3_TEXT is disabled on Windows
-fast/css3-text/ [ Skip ]
 
 # TODO ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html [ Skip ]
@@ -5054,3 +5054,10 @@ imported/mozilla/svg/blend-color.svg [ Skip ]
 imported/mozilla/svg/blend-hard-light.svg [ Skip ]
 imported/mozilla/svg/blend-hue.svg [ Skip ]
 imported/mozilla/svg/blend-luminosity.svg [ Skip ]
+
+# css3-text failures.
+fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure ]

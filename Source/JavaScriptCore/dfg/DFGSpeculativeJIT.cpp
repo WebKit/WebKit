@@ -11106,7 +11106,7 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
         GPRReg specifiedGPR = specified.gpr();
 
         m_jit.emitLoadStructure(vm(), baseGPR, otherGPR);
-        m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
+        m_jit.loadCompactPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
         m_jit.move(TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         CCallHelpers::Label loop = m_jit.label();
@@ -11317,7 +11317,7 @@ void SpeculativeJIT::compileFunctionToString(Node* node)
     speculateFunction(node->child1(), function.gpr());
 
     m_jit.emitLoadStructure(vm(), function.gpr(), result.gpr());
-    m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
+    m_jit.loadCompactPtr(JITCompiler::Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
     static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
     slowCases.append(m_jit.branchPtr(CCallHelpers::Equal, result.gpr(), TrustedImmPtr(JSBoundFunction::info())));
 
@@ -14886,7 +14886,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
     m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
+    slowCases.append(m_jit.branchCompactPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_jit, globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 
@@ -14935,7 +14935,7 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
     m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(JSClass::info()), scratch1GPR);
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
+    slowCases.append(m_jit.branchCompactPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_jit, globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 

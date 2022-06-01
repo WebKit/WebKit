@@ -2115,7 +2115,7 @@ WEBCORE_EXPORT void dumpItem(TextStream&, const ApplyDeviceScaleFactor&, OptionS
 template <typename T>
 TextStream& operator<<(TextStream& ts, const T& item)
 {
-    dumpItem(ts, item, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
+    dumpItem(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
     return ts;
 }
 
@@ -2123,7 +2123,7 @@ void dumpItemHandle(TextStream&, const ItemHandle&, OptionSet<AsTextFlag>);
 
 inline TextStream& operator<<(TextStream& ts, const ItemHandle& itemHandle)
 {
-    dumpItemHandle(ts, itemHandle, { AsTextFlag::IncludesPlatformOperations, AsTextFlag::IncludesResourceIdentifiers });
+    dumpItemHandle(ts, itemHandle, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
     return ts;
 }
 #endif

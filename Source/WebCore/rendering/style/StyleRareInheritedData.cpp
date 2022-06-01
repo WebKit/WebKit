@@ -117,10 +117,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , imageResolutionSource(RenderStyle::initialImageResolutionSource())
     , imageResolutionSnap(RenderStyle::initialImageResolutionSnap())
 #endif
-#if ENABLE(CSS3_TEXT)
     , textAlignLast(static_cast<unsigned>(RenderStyle::initialTextAlignLast()))
     , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
-#endif
     , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
     , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
@@ -215,10 +213,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , imageResolutionSource(o.imageResolutionSource)
     , imageResolutionSnap(o.imageResolutionSnap)
 #endif
-#if ENABLE(CSS3_TEXT)
     , textAlignLast(o.textAlignLast)
     , textJustify(o.textJustify)
-#endif
     , textDecorationSkipInk(o.textDecorationSkipInk)
     , textUnderlinePosition(o.textUnderlinePosition)
     , rubyPosition(o.rubyPosition)
@@ -345,10 +341,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && imageResolutionSnap == o.imageResolutionSnap
         && imageResolution == o.imageResolution
 #endif
-#if ENABLE(CSS3_TEXT)
         && textAlignLast == o.textAlignLast
         && textJustify == o.textJustify
-#endif // CSS3_TEXT
         && textDecorationSkipInk == o.textDecorationSkipInk
         && textUnderlinePosition == o.textUnderlinePosition
         && rubyPosition == o.rubyPosition

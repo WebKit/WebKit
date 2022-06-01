@@ -662,7 +662,7 @@ public:
     
     void firePrimitiveGigacageEnabledIfNecessary()
     {
-        if (m_needToFirePrimitiveGigacageEnabled) {
+        if (UNLIKELY(m_needToFirePrimitiveGigacageEnabled)) {
             m_needToFirePrimitiveGigacageEnabled = false;
             m_primitiveGigacageEnabled.fireAll(*this, "Primitive gigacage disabled asynchronously");
         }

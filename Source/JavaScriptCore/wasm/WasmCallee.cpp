@@ -131,8 +131,6 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegisters()
         registers.set(GPRInfo::regCS2); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
         registers.set(GPRInfo::regCS7); // PB
-#elif CPU(ARM)
-        registers.set(GPRInfo::regCS1); // PB
 #else
 #error Unsupported architecture.
 #endif
@@ -160,7 +158,6 @@ const WasmInstruction* LLIntCallee::outOfLineJumpTarget(const WasmInstruction* p
     return m_instructions->at(offset + target).ptr();
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
 void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)
 {
     size_t count = unlinkedExceptionHandlers.size();
@@ -187,7 +184,7 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
     RELEASE_ASSERT(iter != m_stackmaps.end());
     return iter->value;
 }
-#endif
+
 
 } } // namespace JSC::Wasm
 

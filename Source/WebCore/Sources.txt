@@ -566,7 +566,6 @@ bindings/js/JSHTMLTemplateElementCustom.cpp
 bindings/js/JSHistoryCustom.cpp
 bindings/js/JSIDBCursorCustom.cpp
 bindings/js/JSIDBCursorWithValueCustom.cpp
-bindings/js/JSIDBIndexCustom.cpp
 bindings/js/JSIDBObjectStoreCustom.cpp
 bindings/js/JSIDBRequestCustom.cpp
 bindings/js/JSIDBTransactionCustom.cpp
@@ -1364,6 +1363,7 @@ html/canvas/EXTColorBufferHalfFloat.cpp
 html/canvas/EXTFloatBlend.cpp
 html/canvas/EXTFragDepth.cpp
 html/canvas/EXTShaderTextureLOD.cpp
+html/canvas/EXTTextureCompressionBPTC.cpp
 html/canvas/EXTTextureCompressionRGTC.cpp
 html/canvas/EXTTextureFilterAnisotropic.cpp
 html/canvas/EXTTextureNorm16.cpp
@@ -1567,6 +1567,7 @@ layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/flex/FlexFormattingGeometry.cpp
+layout/formattingContexts/flex/FlexLayout.cpp
 layout/formattingContexts/flex/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
@@ -3124,6 +3125,7 @@ JSEXTColorBufferHalfFloat.cpp
 JSEXTFloatBlend.cpp
 JSEXTFragDepth.cpp
 JSEXTShaderTextureLOD.cpp
+JSEXTTextureCompressionBPTC.cpp
 JSEXTTextureCompressionRGTC.cpp
 JSEXTTextureFilterAnisotropic.cpp
 JSEXTTextureNorm16.cpp

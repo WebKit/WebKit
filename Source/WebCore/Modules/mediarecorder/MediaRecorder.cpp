@@ -105,9 +105,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
 {
     computeInitialBitRates();
 
-    m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
-        return track->privateTrack();
-    });
+    m_tracks = m_stream->privateStream().tracks();
     m_stream->privateStream().addObserver(*this);
 }
 

@@ -30,7 +30,7 @@ div#image-controls {
     position: relative;
     overflow: hidden;
     color: transparent;
-    -webkit-user-select: none;
+    user-select: none;
     pointer-events: none;
 }
 

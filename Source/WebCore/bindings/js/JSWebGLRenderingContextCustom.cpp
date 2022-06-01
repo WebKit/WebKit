@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "JSWebGLRenderingContext.h"
+#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
@@ -36,7 +37,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSWebGLRenderingContext::visitAdditionalChildren(Visitor& visitor)
 {
-    visitor.addOpaqueRoot(&wrapped());
+    addWebCoreOpaqueRoot(visitor, wrapped());
     wrapped().addMembersToOpaqueRoots(visitor);
 }
 

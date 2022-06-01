@@ -54,6 +54,7 @@ class DeferredPromise;
 class ReadableStream;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
+class WebCoreOpaqueRoot;
 
 template<typename> class ExceptionOr;
 
@@ -153,5 +154,7 @@ private:
 
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
+
+WebCoreOpaqueRoot root(Blob*);
 
 } // namespace WebCore

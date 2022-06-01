@@ -3652,6 +3652,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
         case CSSPropertyUserSelect:
+        // TODO (webkit.org/b/240591): Implement animation support for the two following properties.
+        case CSSPropertyTextAlignLast:
+        case CSSPropertyTextJustify:
             continue;
         default:
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());

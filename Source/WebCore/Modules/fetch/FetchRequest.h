@@ -41,6 +41,7 @@ namespace WebCore {
 class Blob;
 class ScriptExecutionContext;
 class URLSearchParams;
+class WebCoreOpaqueRoot;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
@@ -113,5 +114,7 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional
     m_request.setRequester(ResourceRequest::Requester::Fetch);
     updateContentType();
 }
+
+WebCoreOpaqueRoot root(FetchRequest*);
 
 } // namespace WebCore

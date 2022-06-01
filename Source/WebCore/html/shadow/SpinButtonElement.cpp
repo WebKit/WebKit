@@ -180,12 +180,12 @@ bool SpinButtonElement::willRespondToMouseMoveEvents() const
     return HTMLDivElement::willRespondToMouseMoveEvents();
 }
 
-bool SpinButtonElement::willRespondToMouseClickEvents() const
+bool SpinButtonElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     if (renderBox() && shouldRespondToMouseEvents())
         return true;
 
-    return HTMLDivElement::willRespondToMouseClickEvents();
+    return HTMLDivElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 void SpinButtonElement::doStepAction(int amount)

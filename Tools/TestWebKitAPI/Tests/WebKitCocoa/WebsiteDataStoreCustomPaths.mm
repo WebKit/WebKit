@@ -81,38 +81,31 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    NSURL *sqlPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/WebSQL/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
     NSURL *resourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *defaultSQLPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/WebSQL/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultIDBPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultLocalStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultResourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
 
-    [[NSFileManager defaultManager] removeItemAtURL:sqlPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:localStoragePath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:cookieStorageFile error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:resourceLoadStatisticsPath error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:defaultSQLPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultIDBPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultLocalStoragePath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultResourceLoadStatisticsPath error:nil];
 
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:resourceLoadStatisticsPath.path]);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = sqlPath;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
     websiteDataStoreConfiguration.get()._webStorageDirectory = localStoragePath;
     websiteDataStoreConfiguration.get()._cookieStorageFile = cookieStorageFile;
@@ -124,18 +117,14 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:handler.get()];
 
-    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
-    WKPreferencesSetWebSQLDisabled(preferences, false);
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 
-    // We expect 4 messages, 1 each for WebSQL, IndexedDB, cookies, and localStorage.
+    // We expect 3 messages, 1 each for IndexedDB, cookies, and localStorage.
     EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
     EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
-    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: UnknownError: Web SQL is deprecated");
     EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
 
     __block bool flushed = false;
@@ -164,7 +153,6 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     handler = nil;
     configuration = nil;
 
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
 
 #if PLATFORM(IOS_FAMILY)
@@ -187,8 +175,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
 #endif
 
 #if PLATFORM(MAC)
-    // FIXME: The default SQL and LocalStorage paths are being used for something, but they shouldn't be. (theses should be false, not true)
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
+    // FIXME: The default LocalStorage path is being used for something, but they shouldn't be. (theses should be false, not true)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
 #endif
 

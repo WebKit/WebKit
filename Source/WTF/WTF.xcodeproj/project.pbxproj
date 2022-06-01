@@ -811,6 +811,8 @@
 		FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
+		FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFEE46F42825DF80003BC981 /* CompactPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FFEE46F32825DF80003BC981 /* CompactPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1714,6 +1716,8 @@
 		FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackPointer.cpp; sourceTree = "<group>"; };
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
+		FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactRefPtr.h; sourceTree = "<group>"; };
+		FFEE46F32825DF80003BC981 /* CompactPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPtr.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1930,6 +1934,8 @@
 				0F66B2811DC97BAB004A1D3F /* ClockType.h */,
 				0FC4EDE51696149600F65041 /* CommaPrinter.h */,
 				E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */,
+				FFEE46F32825DF80003BC981 /* CompactPtr.h */,
+				FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */,
 				E38020DB2401C0930037CA9E /* CompactRefPtrTuple.h */,
 				9B96E9B324FF77B8001756C3 /* CompactUniquePtrTuple.h */,
 				0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */,
@@ -2861,6 +2867,8 @@
 				DDF307F427C086EA006A526F /* Collator.h in Headers */,
 				DD3DC91627A4BF8E007E5B61 /* CommaPrinter.h in Headers */,
 				DD3DC8F627A4BF8E007E5B61 /* CompactPointerTuple.h in Headers */,
+				FFEE46F42825DF80003BC981 /* CompactPtr.h in Headers */,
+				FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */,
 				DD3DC93927A4BF8E007E5B61 /* CompactRefPtrTuple.h in Headers */,
 				DD3DC93527A4BF8E007E5B61 /* CompactUniquePtrTuple.h in Headers */,
 				DD3DC90727A4BF8E007E5B61 /* CompilationThread.h in Headers */,

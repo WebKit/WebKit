@@ -748,7 +748,7 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
     for (auto& track : tracks) {
         if (!isVideoPlayer && track->isVideo())
             continue;
-        webkitMediaStreamSrcAddTrack(self, track.get(), onlyTrack);
+        webkitMediaStreamSrcAddTrack(self, track.ptr(), onlyTrack);
     }
     webkitMediaStreamSrcPostStreamCollection(self);
 }

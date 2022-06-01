@@ -70,6 +70,7 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
+class WebCoreOpaqueRoot;
 
 enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
@@ -266,8 +267,8 @@ public:
     };
     Node& getRootNode(const GetRootNodeOptions&) const;
     
-    void* opaqueRoot() const;
-    void* traverseToOpaqueRoot() const;
+    inline WebCoreOpaqueRoot opaqueRoot() const; // Defined in DocumentInlines.h.
+    WebCoreOpaqueRoot traverseToOpaqueRoot() const;
 
     void queueTaskKeepingThisNodeAlive(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
@@ -329,6 +330,9 @@ public:
     bool hasEventTargetData() const { return hasNodeFlag(NodeFlag::HasEventTargetData); }
     void setHasEventTargetData(bool flag) { setNodeFlag(NodeFlag::HasEventTargetData, flag); }
 
+    bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
+    void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
+
     WEBCORE_EXPORT bool isContentEditable() const;
     bool isContentRichlyEditable() const;
 
@@ -352,6 +356,7 @@ public:
     enum class Editability { ReadOnly, CanEditPlainText, CanEditRichly };
     enum class ShouldUpdateStyle { Update, DoNotUpdate };
     WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
+    Editability computeEditabilityWithStyle(const RenderStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
 
     WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
@@ -461,7 +466,9 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    virtual bool willRespondToMouseClickEvents() const;
+    bool willRespondToMouseClickEvents() const;
+    Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
+    virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToMouseWheelEvents() const;
     virtual bool willRespondToTouchEvents() const;
 
@@ -565,7 +572,7 @@ protected:
         HasCustomStyleResolveCallbacks = 1 << 21,
 
         HasPendingResources = 1 << 22,
-        // Bit 23 is free.
+        IsInGCReachableRefMap = 1 << 23,
 #if ENABLE(FULLSCREEN_API)
         ContainsFullScreenElement = 1 << 24,
 #endif
@@ -843,15 +850,6 @@ inline ContainerNode* Node::parentNode() const
 {
     ASSERT(isMainThreadOrGCThread());
     return m_parentNode;
-}
-
-inline void* Node::opaqueRoot() const
-{
-    // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return &document();
-    return traverseToOpaqueRoot();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const

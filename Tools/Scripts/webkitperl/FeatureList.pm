@@ -66,7 +66,6 @@ my (
     $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
-    $css3TextSupport,
     $cssBoxDecorationBreakSupport,
     $cssCompositingSupport,
     $cssConicGradientsSupport,
@@ -235,9 +234,6 @@ my @features = (
 
     { option => "context-menus", desc => "Toggle Context Menu support",
       define => "ENABLE_CONTEXT_MENUS", value => \$contextMenusSupport },
-
-    { option => "css3-text", desc => "Toggle CSS3 Text support",
-      define => "ENABLE_CSS3_TEXT", value => \$css3TextSupport },
 
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", value => \$cssBoxDecorationBreakSupport },

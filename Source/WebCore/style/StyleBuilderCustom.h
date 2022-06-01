@@ -87,8 +87,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicBlockSize);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicInlineSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
@@ -141,6 +139,8 @@ public:
     // Custom handling of initial + value only.
     static void applyInitialTextAlign(BuilderState&);
     static void applyValueTextAlign(BuilderState&, CSSValue&);
+    static void applyInitialTextAlignLast(BuilderState&);
+    static void applyValueTextAlignLast(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
@@ -204,6 +204,16 @@ inline void BuilderCustom::applyValueTextAlign(BuilderState& builderState, CSSVa
 {
     builderState.style().setTextAlign(BuilderConverter::convertTextAlign(builderState, value));
     builderState.style().setHasExplicitlySetTextAlign(true);
+}
+
+inline void BuilderCustom::applyInitialTextAlignLast(BuilderState& builderState)
+{
+    builderState.style().setTextAlignLast(RenderStyle::initialTextAlignLast());
+}
+
+inline void BuilderCustom::applyValueTextAlignLast(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setTextAlignLast(BuilderConverter::convertTextAlignLast(builderState, value));
 }
 
 inline void BuilderCustom::resetEffectiveZoom(BuilderState& builderState)
@@ -2155,58 +2165,6 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
     style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
     auto lengthValue = downcast<CSSPrimitiveValue>(list.item(1))->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
     style.setContainIntrinsicHeight(lengthValue);
-}
-
-inline void BuilderCustom::applyInitialContainIntrinsicBlockSize(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
-
-    if (resolvedID == CSSPropertyContainIntrinsicHeight)
-        applyInitialContainIntrinsicHeight(builderState);
-    else
-        applyInitialContainIntrinsicWidth(builderState);
-}
-
-inline void BuilderCustom::applyInheritContainIntrinsicBlockSize(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyValueContainIntrinsicBlockSize(BuilderState& builderState, CSSValue& value)
-{
-    auto& style = builderState.style();
-    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
-
-    if (resolvedID == CSSPropertyContainIntrinsicHeight)
-        applyValueContainIntrinsicHeight(builderState, value);
-    else
-        applyValueContainIntrinsicWidth(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialContainIntrinsicInlineSize(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
-
-    if (resolvedID == CSSPropertyContainIntrinsicWidth)
-        applyInitialContainIntrinsicWidth(builderState);
-    else
-        applyInitialContainIntrinsicHeight(builderState);
-}
-
-inline void BuilderCustom::applyInheritContainIntrinsicInlineSize(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyValueContainIntrinsicInlineSize(BuilderState& builderState, CSSValue& value)
-{
-    auto& style = builderState.style();
-    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
-
-    if (resolvedID == CSSPropertyContainIntrinsicWidth)
-        applyValueContainIntrinsicWidth(builderState, value);
-    else
-        applyValueContainIntrinsicHeight(builderState, value);
 }
 
 }

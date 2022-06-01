@@ -1371,7 +1371,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
-        [m_window setWindowLevel:PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel() + 1];
+        [m_window setWindowLevel:PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel() - 1];
         [m_window makeKeyAndVisible];
     }
 #endif

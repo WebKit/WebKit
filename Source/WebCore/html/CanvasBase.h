@@ -43,6 +43,7 @@ class ImageBuffer;
 class FloatRect;
 class ScriptExecutionContext;
 class SecurityOrigin;
+class WebCoreOpaqueRoot;
 
 class CanvasObserver {
 public:
@@ -146,6 +147,8 @@ private:
     HashSet<CanvasObserver*> m_observers;
     WeakHashSet<CanvasDisplayBufferObserver> m_displayBufferObservers;
 };
+
+WebCoreOpaqueRoot root(CanvasBase*);
 
 } // namespace WebCore
 

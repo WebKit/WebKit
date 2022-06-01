@@ -2502,7 +2502,6 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegexpWithLastIndex, JSCell*, (JSGlobalObje
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
-    ASSERT(regexp->isValid());
     return RegExpObject::create(vm, globalObject->regExpStructure(), regexp, JSValue::decode(encodedLastIndex));
 }
 

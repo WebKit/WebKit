@@ -2357,7 +2357,7 @@ CSSDocumentation = {
     },
     "text-align-last": {
         "description": "Describes how the last line of a block or a line right before a forced line break is aligned when 'text-align' is set to 'justify'.",
-        "syntax": "auto | start | end | left | right | center | justify",
+        "syntax": "auto | start | end | left | right | center | justify | match-parent",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-align-last"
     },
     "text-anchor": {
