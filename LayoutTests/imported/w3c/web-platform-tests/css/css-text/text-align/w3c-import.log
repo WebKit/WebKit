@@ -9,14 +9,16 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-text-align-last
+None
 Property values requiring vendor prefixes:
-match-parent
+None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-008.html
@@ -52,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-019.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-inline-end-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-002-expected.html
@@ -64,6 +67,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-shy-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-shy-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-002-expected.html
@@ -86,6 +91,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-011.html
@@ -93,8 +99,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-013.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-empty-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-wins-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-wins-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-01.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-02-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-02.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-03-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-03.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-04-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-04.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-ltr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-rtl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-002-expected.html
@@ -127,3 +149,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-019.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-webkit-match-parent.html
