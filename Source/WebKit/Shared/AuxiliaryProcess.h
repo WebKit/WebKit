@@ -150,6 +150,8 @@ protected:
     void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
+    void populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
+
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
 
