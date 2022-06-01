@@ -145,6 +145,8 @@ protected:
 #endif
     void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
 
+    void populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
+
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
 

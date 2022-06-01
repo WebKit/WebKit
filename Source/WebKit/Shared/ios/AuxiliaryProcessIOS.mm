@@ -34,6 +34,7 @@
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
+#import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
@@ -49,6 +50,43 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 void AuxiliaryProcess::setQOS(int, int)
 {
 
+}
+
+void AuxiliaryProcess::populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle)
+{
+    if (!mobileGestaltExtensionHandle)
+        return;
+
+    if (auto extension = SandboxExtension::create(WTFMove(*mobileGestaltExtensionHandle))) {
+        bool ok = extension->consume();
+        ASSERT_UNUSED(ok, ok);
+        // If we have an extension handle for MobileGestalt, it means the MobileGestalt cache is invalid.
+        // In this case, we perform a set of MobileGestalt queries while having access to the daemon,
+        // which will populate the MobileGestalt in-memory cache with correct values.
+        // The set of queries below was determined by finding all possible queries that have cachable
+        // values, and would reach out to the daemon for the answer. That way, the in-memory cache
+        // should be identical to a valid MobileGestalt cache after having queried all of these values.
+        MGGetFloat32Answer(kMGQMainScreenScale, 0);
+        MGGetSInt32Answer(kMGQMainScreenPitch, 0);
+        MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
+        MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
+        MGGetBoolAnswer(kMGQiPadCapability);
+        auto deviceName = adoptCF(MGCopyAnswer(kMGQDeviceName, nullptr));
+        MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
+        MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+        MGGetFloat32Answer(kMGQDeviceCornerRadius, 0);
+        MGGetBoolAnswer(kMGQSupportsForceTouch);
+
+        auto answer = adoptCF(MGCopyAnswer(kMGQBluetoothCapability, nullptr));
+        answer = MGCopyAnswer(kMGQDeviceProximityCapability, nullptr);
+        answer = MGCopyAnswer(kMGQDeviceSupportsARKit, nullptr);
+        answer = MGCopyAnswer(kMGQTimeSyncCapability, nullptr);
+        answer = MGCopyAnswer(kMGQWAPICapability, nullptr);
+        answer = MGCopyAnswer(kMGQMainDisplayRotation, nullptr);
+
+        ok = extension->revoke();
+        ASSERT_UNUSED(ok, ok);
+    }
 }
 
 } // namespace WebKit
