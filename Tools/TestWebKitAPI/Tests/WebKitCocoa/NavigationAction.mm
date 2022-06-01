@@ -215,31 +215,3 @@ TEST(WKNavigationAction, BlobRequestBody)
     [webView loadHTMLString:html baseURL:nil];
     TestWebKitAPI::Util::run(&done);
 }
-
-TEST(WKNavigationAction, NonMainThread)
-{
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { "hi"_s } },
-    });
-
-    auto delegate = adoptNS([TestNavigationDelegate new]);
-    auto webView = adoptNS([WKWebView new]);
-    [webView setNavigationDelegate:delegate.get()];
-    __block bool done = false;
-    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            completionHandler(WKNavigationActionPolicyAllow);
-        });
-    };
-    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *action, void (^completionHandler)(WKNavigationResponsePolicy)) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            completionHandler(WKNavigationResponsePolicyAllow);
-        });
-    };
-    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
-        done = true;
-    };
-
-    [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-}
