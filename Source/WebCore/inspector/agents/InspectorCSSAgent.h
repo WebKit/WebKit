@@ -177,7 +177,7 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 
-    HashMap<Inspector::Protocol::DOM::NodeId, std::optional<Inspector::Protocol::CSS::LayoutContextType>> m_nodesWithPendingLayoutContextTypeChanges;
+    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<RenderObject>> m_nodesWithPendingLayoutContextTypeChanges;
     Timer m_layoutContextTypeChangedTimer;
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
 };

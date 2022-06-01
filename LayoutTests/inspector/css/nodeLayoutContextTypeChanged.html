@@ -8,17 +8,25 @@ function changeElementDisplayValue(id, value)
     document.getElementById(id).style.display = value;
 }
 
+function appendElementToBody(tag, id)
+{
+    let element = document.createElement(tag);
+    element.id = id;
+    document.body.appendChild(element);
+}
+
 function test()
 {
     let documentNode;
 
     let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutContextTypeChanged");
 
-    function addTestCase({name, description, selector, domNodeHandler})
+    function addTestCase({name, description, selector, setup, domNodeHandler})
     {
         suite.addTestCase({
             name,
             description,
+            setup,
             async test() {
                 let nodeId = await documentNode.querySelector(selector);
                 let domNode = WI.domManager.nodeForId(nodeId);
@@ -31,6 +39,11 @@ function test()
     async function changeElementDisplayValue(id, value)
     {
         await InspectorTest.evaluateInPage(`changeElementDisplayValue("${id}", "${value}")`);
+    }
+
+    async function appendElementToBody(tag, id)
+    {
+        await InspectorTest.evaluateInPage(`appendElementToBody("${tag}", "${id}")`);
     }
 
     addTestCase({
@@ -113,9 +126,9 @@ function test()
         }
     });
 
-    function addEnsureLayoutContextTypeTestCase({name, description, selector, expectedLayoutContextType})
+    function addEnsureLayoutContextTypeTestCase({name, description, selector, expectedLayoutContextType, setup})
     {
-        addTestCase({name, description, selector, async domNodeHandler(domNode) {
+        addTestCase({name, description, selector, setup, async domNodeHandler(domNode) {
                 InspectorTest.expectEqual(domNode.layoutContextType, expectedLayoutContextType, `Layout context should be \`${expectedLayoutContextType}\`.`);
             }
         });
@@ -140,6 +153,16 @@ function test()
         description: "Make sure a `button` is not considered a flex container.",
         selector: "#flexButton",
         expectedLayoutContextType: null,
+    });
+
+    addEnsureLayoutContextTypeTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.DynamicallyAddedButton",
+        description: "Make sure a `button` that is added dynamically is not considered a flex container.",
+        selector: "#dynamicallyAddedFlexButton",
+        expectedLayoutContextType: null,
+        async setup() {
+            await appendElementToBody("button", "dynamicallyAddedFlexButton");
+        }
     });
 
     WI.domManager.requestDocument().then((doc) => {
