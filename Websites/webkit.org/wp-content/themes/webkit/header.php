@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="https://www.apple.com/wss/fonts?families=SF+Mono,v2" type="text/css">
     <meta name="supported-color-schemes" content="light dark">
 
+    <noscript>
+        <img src="https://shynet.webkit.org/ingress/561b9e53-fb8c-4297-ae4d-bde05e8daa59/pixel.gif">
+    </noscript>
+    <script defer src="https://shynet.webkit.org/ingress/561b9e53-fb8c-4297-ae4d-bde05e8daa59/script.js"></script>
+
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<?php bloginfo('rss2_url'); ?>">
     <link rel="alternate" type="text/xml" title="RSS .92" href="<?php bloginfo('rss_url'); ?>">
     <link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="<?php bloginfo('atom_url'); ?>">
