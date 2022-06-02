@@ -94,6 +94,7 @@ public:
     virtual void flushDrawingContext() { }
     virtual bool flushDrawingContextAsync() { return false; }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
+    virtual void setNeedsFlush(bool) { }
 
     virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
     virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }

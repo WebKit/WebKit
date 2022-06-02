@@ -44,9 +44,6 @@ public:
 
     ~RemoteDisplayListRecorderProxy() = default;
 
-    void resetNeedsFlush() { m_needsFlush = false; }
-    bool needsFlush() const { return m_needsFlush; }
-
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
     void flushContext(WebCore::GraphicsContextFlushIdentifier) final;
@@ -55,10 +52,10 @@ private:
     template<typename T>
     void send(T&& message)
     {
-        if (UNLIKELY(!m_renderingBackend))
+        if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
             return;
 
-        m_needsFlush = true;
+        m_imageBuffer->setNeedsFlush(true);
         m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
     }
 
@@ -145,7 +142,6 @@ private:
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<WebCore::ImageBuffer> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
-    bool m_needsFlush { false };
 };
 
 } // namespace WebKit

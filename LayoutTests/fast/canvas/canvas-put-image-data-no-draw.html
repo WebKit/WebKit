@@ -1,0 +1,50 @@
+<body>
+    <canvas id="target" width="400" height="400"></canvas>
+    <script>
+        const targetCanvas = document.getElementById('target');
+        const target = targetCanvas.getContext('2d');
+
+        const canvasWidth = targetCanvas.width;
+        const canvasHeight = targetCanvas.height
+
+        var sourceCanvas = document.createElement('canvas');
+        sourceCanvas.width  = canvasWidth;
+        sourceCanvas.height = canvasHeight;
+
+        const source = sourceCanvas.getContext('2d');
+
+        let progressX = 0;
+        let progressY = 0;
+        const paintSize = 100;
+
+        source.fillStyle = 'green';
+        source.fillRect(0, 0, canvasWidth, canvasHeight);
+        const imagedata = source.getImageData(0, 0, canvasWidth, canvasHeight);
+
+        function drawLoop() {
+            target.putImageData(imagedata, 0, 0, progressX, progressY, paintSize, paintSize);
+
+            progressX += paintSize;
+ 
+            if (progressX + paintSize <= canvasWidth) {
+                requestAnimationFrame(drawLoop);
+                return;
+            }
+
+            if (progressY + paintSize > canvasHeight) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+
+            progressX = 0;
+            progressY += paintSize;
+            requestAnimationFrame(drawLoop);
+        }
+
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        requestAnimationFrame(drawLoop);
+    </script>
+</body>
