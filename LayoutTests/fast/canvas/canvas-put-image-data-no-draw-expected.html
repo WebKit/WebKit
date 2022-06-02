@@ -1,0 +1,13 @@
+<body>
+    <canvas id="target" width="400" height="400"></canvas>
+    <script>
+        const targetCanvas = document.getElementById('target');
+        const target = targetCanvas.getContext('2d');
+
+        const canvasWidth = targetCanvas.width;
+        const canvasHeight = targetCanvas.height
+
+        target.fillStyle = 'green';
+        target.fillRect(0, 0, canvasWidth, canvasHeight);
+    </script>
+</body>
