@@ -189,6 +189,17 @@ void WebNotificationProvider::simulateWebNotificationClickForServiceWorkerNotifi
 }
 #endif
 
+WKRetainPtr<WKArrayRef> securityOriginsFromStrings(WKArrayRef originStrings)
+{
+    auto origins = adoptWK(WKMutableArrayCreate());
+    for (size_t i = 0; i < WKArrayGetSize(originStrings); i++) {
+        auto originString = static_cast<WKStringRef>(WKArrayGetItemAtIndex(originStrings, i));
+        auto origin = adoptWK(WKSecurityOriginCreateFromString(originString));
+        WKArrayAppendItem(origins.get(), static_cast<WKTypeRef>(origin.get()));
+    }
+    return origins;
+}
+
 void WebNotificationProvider::reset()
 {
     for (auto iterator : m_owningManager) {
@@ -199,6 +210,12 @@ void WebNotificationProvider::reset()
 
     m_knownPersistentNotifications.clear();
     m_owningManager.clear();
+
+    auto originStrings = adoptWK(WKDictionaryCopyKeys(static_cast<WKDictionaryRef>(m_permissions.get())));
+    auto origins = securityOriginsFromStrings(originStrings.get());
+    for (auto manager : m_knownManagers)
+        WKNotificationManagerProviderDidRemoveNotificationPolicies(manager.get(), origins.get());
+
     m_permissions = adoptWK(WKMutableDictionaryCreate());
 }
 
