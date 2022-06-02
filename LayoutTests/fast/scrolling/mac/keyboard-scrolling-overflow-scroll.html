@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+
+<html>
+
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <style>
+        body {
+            height: 2000px;
+        }
+        #scroller {
+            width: 20%;
+            height: 20%;
+            overflow: scroll;
+            border: 1px solid black;
+            padding: 10px;
+        }
+        #innerDiv {
+            height: 1000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function scrollerScrolled()
+        {
+            debug("Successful.")
+            testRunner.notifyDone();
+        }
+
+        function documentScrolled()
+        {
+            debug("Unsuccessful.");
+            testRunner.notifyDone();
+        }
+
+        async function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            let scroller = document.getElementById("scroller");
+
+            scroller.addEventListener("scroll", scrollerScrolled);
+            document.addEventListener("scroll", documentScrolled);
+
+            await UIHelper.activateAt(10, 10);
+            await UIHelper.keyDown("downArrow");
+        }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div id="scroller">
+        <div id="innerDiv"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

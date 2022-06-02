@@ -74,6 +74,7 @@ class FrameView;
 class HTMLFrameSetElement;
 class HitTestResult;
 class KeyboardEvent;
+class KeyboardScrollingAnimator;
 class MouseEventWithHitTestResults;
 class Node;
 class Pasteboard;
@@ -382,6 +383,7 @@ private:
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
+    KeyboardScrollingAnimator* keyboardScrollingAnimatorForFocusedNode();
     bool startKeyboardScrolling(KeyboardEvent&);
     void stopKeyboardScrolling();
 
