@@ -2645,7 +2645,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-010.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-011.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-wins-001.html [ ImageOnlyFailure ]
-webkit.org/b/241164 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-match-parent-root-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-join-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-tatweel-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-tatweel-003.html [ ImageOnlyFailure ]

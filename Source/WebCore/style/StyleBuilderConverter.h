@@ -614,6 +614,10 @@ inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderSta
     if (primitiveValue.valueID() != CSSValueWebkitMatchParent && primitiveValue.valueID() != CSSValueMatchParent)
         return primitiveValue;
 
+    auto* element = builderState.element();
+    if (element && element == builderState.document().documentElement())
+        return TextAlignMode::Start;
+
     auto& parentStyle = builderState.parentStyle();
     if (parentStyle.textAlign() == TextAlignMode::Start)
         return parentStyle.isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
