@@ -995,6 +995,21 @@ TextStream& operator<<(TextStream& ts, TextAlignMode alignMode)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, TextAlignLast textAlignLast)
+{
+    switch (textAlignLast) {
+    case TextAlignLast::Auto: ts << "auto"; break;
+    case TextAlignLast::Start: ts << "start"; break;
+    case TextAlignLast::End: ts << "end"; break;
+    case TextAlignLast::Left: ts << "left"; break;
+    case TextAlignLast::Right: ts << "right"; break;
+    case TextAlignLast::Center: ts << "center"; break;
+    case TextAlignLast::Justify: ts << "justify"; break;
+    }
+
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {
@@ -1069,6 +1084,18 @@ TextStream& operator<<(TextStream& ts, TextEmphasisPosition position)
     case TextEmphasisPosition::Left: ts << "Left"; break;
     case TextEmphasisPosition::Right: ts << "Right"; break;
     }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextJustify justify)
+{
+    switch (justify) {
+    case TextJustify::Auto: ts << "auto"; break;
+    case TextJustify::InterCharacter: ts << "inter-character"; break;
+    case TextJustify::InterWord: ts << "inter-word"; break;
+    case TextJustify::None: ts << "none"; break;
+    }
+
     return ts;
 }
 
