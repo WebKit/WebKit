@@ -127,16 +127,17 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::resolvePromise(JSC::JSGlobalObject
     if (!deferredPromise)
         return JSC::jsUndefined();
 
+    m_deferredPromises.append(*deferredPromise);
+
     if (m_valueOrException) {
+        // Calls to reject() / resolvePromiseCallback() may destroy |this|.
         if (m_valueOrException->hasException())
             deferredPromise->reject(m_valueOrException->exception());
         else
             resolvePromiseCallback(*deferredPromise);
     }
 
-    auto result = deferredPromise->promise();
-    m_deferredPromises.append(deferredPromise.releaseNonNull());
-    return result;
+    return deferredPromise->promise();
 }
 
 template<typename IDLType>
@@ -224,16 +225,17 @@ inline JSC::JSValue DOMPromiseProxy<IDLUndefined>::promise(JSC::JSGlobalObject& 
     if (!deferredPromise)
         return JSC::jsUndefined();
 
+    m_deferredPromises.append(*deferredPromise);
+
     if (m_valueOrException) {
+        // Calls to reject() / resolve() may destroy |this|.
         if (m_valueOrException->hasException())
             deferredPromise->reject(m_valueOrException->exception());
         else
             deferredPromise->resolve();
     }
 
-    auto result = deferredPromise->promise();
-    m_deferredPromises.append(deferredPromise.releaseNonNull());
-    return result;
+    return deferredPromise->promise();
 }
 
 inline void DOMPromiseProxy<IDLUndefined>::clear()
@@ -292,16 +294,17 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::JS
     if (!deferredPromise)
         return JSC::jsUndefined();
 
+    m_deferredPromises.append(*deferredPromise);
+
     if (m_valueOrException) {
+        // Calls to reject() / resolve() may destroy |this|.
         if (m_valueOrException->hasException())
             deferredPromise->reject(m_valueOrException->exception());
         else
             deferredPromise->template resolve<IDLType>(m_resolveCallback());
     }
 
-    auto result = deferredPromise->promise();
-    m_deferredPromises.append(deferredPromise.releaseNonNull());
-    return result;
+    return deferredPromise->promise();
 }
 
 template<typename IDLType>
