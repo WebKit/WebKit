@@ -432,6 +432,7 @@ namespace WebCore {
     macro(blur) \
     macro(body) \
     macro(byobRequest) \
+    macro(cachedAttrAssociatedElements) \
     macro(caches) \
     macro(cancel) \
     macro(cancelAlgorithm) \
