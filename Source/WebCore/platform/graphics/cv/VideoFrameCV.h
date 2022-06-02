@@ -41,7 +41,7 @@ class VideoFrameCV : public VideoFrame {
 public:
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(CMSampleBufferRef, bool isMirrored, Rotation);
-    static RefPtr<VideoFrameCV> createFromPixelBuffer(PixelBuffer&&);
+    static RefPtr<VideoFrameCV> createFromPixelBuffer(Ref<PixelBuffer>&&);
     WEBCORE_EXPORT ~VideoFrameCV();
 
     CVPixelBufferRef pixelBuffer() const final { return m_pixelBuffer.get(); }
@@ -75,7 +75,7 @@ template<typename Decoder> std::optional<RefPtr<VideoFrameCV>> VideoFrameCV::dec
     auto pixelBuffer = decoder.template decode<RetainPtr<CVPixelBufferRef>>();
     if (!decoder.isValid() || !*pixelBuffer)
         return std::nullopt;
-    return VideoFrameCV::create(*presentationTime, *isMirrored, *rotation, WTFMove(*pixelBuffer));
+    return VideoFrameCV::create(*presentationTime, *isMirrored, *rotation, pixelBuffer.releaseNonNull());
 }
 
 }

@@ -1460,10 +1460,10 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     }
 }
 
-std::optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()
+RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()
 {
     if (isContextLostOrPending())
-        return std::nullopt;
+        return nullptr;
     clearIfComposited(ClearCallerOther);
     return m_context->paintRenderingResultsToPixelBuffer();
 }

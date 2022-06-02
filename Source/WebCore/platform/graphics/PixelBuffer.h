@@ -25,12 +25,10 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
-#include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "PixelBufferFormat.h"
-#include "PixelFormat.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
+#include <wtf/RefCounted.h>
 
 namespace WTF {
 class TextStream;
@@ -38,28 +36,22 @@ class TextStream;
 
 namespace WebCore {
 
-class PixelBuffer {
+class PixelBuffer : public RefCounted<PixelBuffer> {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
     static bool supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
+    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
+    WEBCORE_EXPORT static Ref<PixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
 
-    PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
-    PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
     WEBCORE_EXPORT ~PixelBuffer();
-
-    PixelBuffer(PixelBuffer&&) = default;
-    PixelBuffer& operator=(PixelBuffer&&) = default;
 
     const PixelBufferFormat& format() const { return m_format; }
     const IntSize& size() const { return m_size; }
     JSC::Uint8ClampedArray& data() const { return m_data.get(); }
 
     Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
-
-    PixelBuffer deepClone() const;
 
     uint8_t* bytes() const;
     size_t sizeInBytes() const;
@@ -71,15 +63,18 @@ public:
     uint8_t item(size_t index) const;
     void set(size_t index, double value);
 
-    std::optional<PixelBuffer> createScratchPixelBuffer(const IntSize&) const;
+    RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PixelBuffer> decode(Decoder&);
+    template<class Decoder> static std::optional<Ref<PixelBuffer>> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
+    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
 
     WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
+
+    PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
+    PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
 
     PixelBufferFormat m_format;
     IntSize m_size;
@@ -97,7 +92,7 @@ template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
     encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
 }
 
-template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
+template<class Decoder> std::optional<Ref<PixelBuffer>> PixelBuffer::decode(Decoder& decoder)
 {
     std::optional<PixelBufferFormat> format;
     decoder >> format;
@@ -128,7 +123,7 @@ template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& 
     if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
         return std::nullopt;
 
-    return result;
+    return result.releaseNonNull();
 }
 
 } // namespace WebCore

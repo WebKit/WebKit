@@ -386,9 +386,8 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
                 IntSize blockSize = { paintSize.width(), endY - startY };
 
                 if (!job) {
-                    // FIXME: No need to create a PixelBuffer if it is RefCounted class.
-                    params.ioBuffer = PixelBuffer(ioBuffer.format(), ioBuffer.size(), { ioBuffer.data() });
-                    params.tempBuffer = PixelBuffer(tempBuffer.format(), tempBuffer.size(), { tempBuffer.data() });
+                    params.ioBuffer = &ioBuffer;
+                    params.tempBuffer = &tempBuffer;
                 } else {
                     params.ioBuffer = ioBuffer.createScratchPixelBuffer(blockSize);
                     params.tempBuffer = tempBuffer.createScratchPixelBuffer(blockSize);

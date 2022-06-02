@@ -46,7 +46,6 @@
 #include <WebCore/LayoutSize.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
-#include <WebCore/NativeImage.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>

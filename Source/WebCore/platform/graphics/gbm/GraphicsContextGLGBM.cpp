@@ -149,7 +149,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 {
     return readRenderingResults();
 }

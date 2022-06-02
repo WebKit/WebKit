@@ -167,13 +167,13 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     }
 }
 
-static std::optional<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace)
 {
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
     auto convertedImageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
     
     if (!convertedImageBuffer)
-        return std::nullopt;
+        return nullptr;
 
     // Color space conversion happens internally when drawing from one image buffer to another
     convertedImageBuffer->context().drawImageBuffer(imageBuffer, sourceRect);
@@ -181,7 +181,7 @@ static std::optional<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuff
     return convertedImageBuffer->getPixelBuffer(format, sourceRect);
 }
 
-static std::optional<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace)
 {
     auto sourceRect = IntRect { { } , sourcePixelBuffer.size() };
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
@@ -189,7 +189,7 @@ static std::optional<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePix
     auto& sourceColorSpace = sourcePixelBuffer.format().colorSpace;
     auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, sourceColorSpace, PixelFormat::BGRA8);
     if (!imageBuffer)
-        return std::nullopt;
+        return nullptr;
 
     imageBuffer->putPixelBuffer(sourcePixelBuffer, sourceRect);
     return getConvertedPixelBuffer(*imageBuffer, alphaFormat, sourceRect, colorSpace);
@@ -209,7 +209,7 @@ bool FilterImage::requiresPixelBufferColorSpaceConversion(std::optional<Destinat
 #endif
 }
 
-std::optional<PixelBuffer>& FilterImage::pixelBufferSlot(AlphaPremultiplication alphaFormat)
+RefPtr<PixelBuffer>& FilterImage::pixelBufferSlot(AlphaPremultiplication alphaFormat)
 {
     return alphaFormat == AlphaPremultiplication::Unpremultiplied ? m_unpremultipliedPixelBuffer : m_premultipliedPixelBuffer;
 }
@@ -218,7 +218,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
 {
     auto& pixelBuffer = pixelBufferSlot(alphaFormat);
     if (pixelBuffer)
-        return &pixelBuffer.value();
+        return pixelBuffer.get();
 
     PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, m_colorSpace };
 
@@ -226,7 +226,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
         pixelBuffer = m_imageBuffer->getPixelBuffer(format, { { }, m_absoluteImageRect.size() });
         if (!pixelBuffer)
             return nullptr;
-        return &pixelBuffer.value();
+        return pixelBuffer.get();
     }
 
     IntSize logicalSize(m_absoluteImageRect.size());
@@ -244,10 +244,10 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
             copyImageBytes(*sourcePixelBuffer, *pixelBuffer);
     }
 
-    return &pixelBuffer.value();
+    return pixelBuffer.get();
 }
 
-std::optional<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaFormat, const IntRect& sourceRect, std::optional<DestinationColorSpace> colorSpace)
+RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaFormat, const IntRect& sourceRect, std::optional<DestinationColorSpace> colorSpace)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(sourceRect.size()));
 
@@ -255,7 +255,7 @@ std::optional<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication al
 
     auto pixelBuffer = PixelBuffer::tryCreate(format, sourceRect.size());
     if (!pixelBuffer)
-        return std::nullopt;
+        return nullptr;
 
     copyPixelBuffer(*pixelBuffer, sourceRect);
     return pixelBuffer;
@@ -266,7 +266,7 @@ void FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const Int
     auto alphaFormat = destinationPixelBuffer.format().alphaFormat;
     auto& colorSpace = destinationPixelBuffer.format().colorSpace;
 
-    auto* sourcePixelBuffer = pixelBufferSlot(alphaFormat) ? &pixelBufferSlot(alphaFormat).value() : nullptr;
+    auto* sourcePixelBuffer = pixelBufferSlot(alphaFormat) ? pixelBufferSlot(alphaFormat).get() : nullptr;
 
     if (!sourcePixelBuffer) {
         if (requiresPixelBufferColorSpaceConversion(colorSpace)) {
@@ -357,8 +357,8 @@ void FilterImage::transformToColorSpace(const DestinationColorSpace& colorSpace)
         imageBuffer->transformToColorSpace(colorSpace);
 
     m_colorSpace = colorSpace;
-    m_unpremultipliedPixelBuffer = std::nullopt;
-    m_premultipliedPixelBuffer = std::nullopt;
+    m_unpremultipliedPixelBuffer = nullptr;
+    m_premultipliedPixelBuffer = nullptr;
 #endif
 }
 

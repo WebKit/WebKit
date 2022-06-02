@@ -800,9 +800,9 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
         return nullptr;
 
 #if PLATFORM(COCOA)
-    return VideoFrameCV::createFromPixelBuffer(WTFMove(*pixelBuffer));
+    return VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #elif USE(GSTREAMER)
-    return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
+    return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #endif
 #else
     return nullptr;

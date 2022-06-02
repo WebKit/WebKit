@@ -396,7 +396,7 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer();
 #if ENABLE(MEDIA_STREAM)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
 #endif

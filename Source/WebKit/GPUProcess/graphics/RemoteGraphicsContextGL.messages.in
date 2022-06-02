@@ -294,7 +294,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetTranslatedShaderSourceANGLE(uint32_t arg0) -> (String returnValue) Synchronous
     void DrawBuffersEXT(IPC::ArrayReference<uint32_t> bufs)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
-    void PaintRenderingResultsToPixelBuffer() -> (std::optional<WebCore::PixelBuffer> returnValue) Synchronous
+    void PaintRenderingResultsToPixelBuffer() -> (std::optional<IPC::PixelBufferReference> returnValue) Synchronous
 }
 
 #endif

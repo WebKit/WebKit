@@ -64,12 +64,12 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
-        return std::nullopt;
+        return nullptr;
 
     GLint packAlignment = 4;
     bool mustRestorePackAlignment = false;

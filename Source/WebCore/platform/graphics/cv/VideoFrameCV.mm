@@ -50,13 +50,13 @@ Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirror
     return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTFMove(pixelBuffer)));
 }
 
-RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(PixelBuffer&& pixelBuffer)
+RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer)
 {
-    auto size = pixelBuffer.size();
+    auto size = pixelBuffer->size();
     auto width = size.width();
     auto height = size.height();
 
-    auto data = pixelBuffer.takeData();
+    auto data = pixelBuffer->takeData();
     auto dataBaseAddress = data->data();
     auto leakedData = &data.leakRef();
     

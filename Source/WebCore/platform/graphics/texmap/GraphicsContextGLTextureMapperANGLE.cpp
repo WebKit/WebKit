@@ -96,7 +96,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 {
     return readRenderingResults();
 }
@@ -150,7 +150,7 @@ RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::paintCompositedResultsTo
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())
-        return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #endif
     return nullptr;
 }

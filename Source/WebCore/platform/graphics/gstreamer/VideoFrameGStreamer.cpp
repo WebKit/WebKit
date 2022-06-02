@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(PixelBuffer&& pixelBuffer, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
 {
     ensureGStreamerInitialized();
 
-    auto size = pixelBuffer.size();
+    auto size = pixelBuffer->size();
 
-    auto data = pixelBuffer.takeData();
+    auto data = pixelBuffer->takeData();
     auto sizeInBytes = data->byteLength();
     auto dataBaseAddress = data->data();
     auto leakedData = &data.leakRef();

@@ -65,7 +65,7 @@ public:
     WEBCORE_EXPORT ImageBuffer* imageBuffer();
     PixelBuffer* pixelBuffer(AlphaPremultiplication);
 
-    std::optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
+    RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
     void copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
 
     void correctPremultipliedPixelBuffer();
@@ -80,7 +80,7 @@ private:
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
 
-    std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
+    RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
     ImageBuffer* imageBufferFromPixelBuffer();
 
@@ -100,8 +100,8 @@ private:
     DestinationColorSpace m_colorSpace;
 
     RefPtr<ImageBuffer> m_imageBuffer;
-    std::optional<PixelBuffer> m_unpremultipliedPixelBuffer;
-    std::optional<PixelBuffer> m_premultipliedPixelBuffer;
+    RefPtr<PixelBuffer> m_unpremultipliedPixelBuffer;
+    RefPtr<PixelBuffer> m_premultipliedPixelBuffer;
 
 #if USE(CORE_IMAGE)
     RetainPtr<CIImage> m_ciImage;
