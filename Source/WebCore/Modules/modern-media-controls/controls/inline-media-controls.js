@@ -281,17 +281,18 @@ class InlineMediaControls extends MediaControls
 
     _rightContainerButtons()
     {
-        if (this._shouldUseAudioLayout)
-            return [this.muteButton, this.airplayButton, this.tracksButton, this.overflowButton];
-
-        if (this._shouldUseSingleBarLayout)
-            return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton, this.overflowButton];
-
         const buttons = [];
-        if (this.preferredMuteButtonStyle === Button.Styles.Bar)
-            buttons.push(this.muteButton);
-        buttons.push(this.airplayButton, this.tracksButton, this.overflowButton);
-        return buttons;
+        if (this._shouldUseAudioLayout)
+            buttons.push(this.muteButton, this.airplayButton, this.tracksButton);
+        else if (this._shouldUseSingleBarLayout)
+            buttons.push(this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton);
+        else {
+            if (this.preferredMuteButtonStyle === Button.Styles.Bar)
+                buttons.push(this.muteButton);
+            buttons.push(this.airplayButton, this.tracksButton);
+        }
+        buttons.push(this.overflowButton);
+        return buttons.filter(button => button !== null);
     }
 
     _droppableButtons()
@@ -305,7 +306,7 @@ class InlineMediaControls extends MediaControls
         if (this._shouldUseSingleBarLayout)
             buttons.add(this.fullscreenButton);
         buttons.add(this.overflowButton);
-        return buttons;
+        return [...buttons].filter(button => button !== null);
     }
 
     _collapsableButtons()

@@ -60,6 +60,16 @@ class IOSLayoutTraits extends LayoutTraits
         return false;
     }
 
+    supportsAirPlay()
+    {
+        return true;
+    }
+
+    supportsPiP()
+    {
+        return true;
+    }
+
     controlsDependOnPageScaleFactor()
     {
         return true;

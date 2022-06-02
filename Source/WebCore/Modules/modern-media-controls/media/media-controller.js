@@ -213,7 +213,10 @@ class MediaController
         if (overridenSupportingObjectClasses)
             return overridenSupportingObjectClasses;
 
-        let classes = [AirplaySupport, AudioSupport, BrightnessSupport, CloseSupport, ControlsVisibilitySupport, FullscreenSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport]
+        let classes = [AudioSupport, BrightnessSupport, CloseSupport, ControlsVisibilitySupport, FullscreenSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport];
+
+        if (this.layoutTraits.supportsAirPlay())
+            classes.push(AirplaySupport);
 
         if (this.controls.usesSingleMuteAndVolumeButton)
             classes.push(MuteAndVolumeSupport);

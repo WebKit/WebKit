@@ -966,6 +966,28 @@ webkit.org/b/235885 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+#////////////////////////////////////////////////////////////////////////////////////////
+# Media-controls-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+media/video-controls-no-scripting.html [ Failure ]
+media/video-mouse-focus.html [ Failure ]
+media/video-playing-and-pause.html [ Failure ]
+
+media/modern-media-controls/scrubber/scrubber-has-correct-ax-label.html [ Timeout ]
+media/modern-media-controls/volume-support/volume-support-click.html [ Timeout ]
+media/modern-media-controls/audio/audio-controls-styles.html [ Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Failure ]
+media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html [ Failure ]
+media/modern-media-controls/time-label/time-label.html [ Failure ]
+media/modern-media-controls/volume-support/volume-support-drag.html [ Failure ]
+media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
+http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Media-controls-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # HiDPI-related bugs
@@ -1703,6 +1725,14 @@ webkit.org/b/205112 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-watch-availability-gc.html [ Skip ]
+webkit.org/b/205112 media/modern-media-controls/airplay-button [ Skip ]
+webkit.org/b/205112 media/modern-media-controls/airplay-placard [ Skip ]
+webkit.org/b/205112 media/modern-media-controls/airplay-support [ Skip ]
+webkit.org/b/205112 media/modern-media-controls/placard-support/placard-support-airplay.html [ Skip ]
+webkit.org/b/158923 media/airplay-autoplay.html [ Skip ]
+webkit.org/b/158923 media/airplay-allows-buffering.html [ Skip ]
+webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-no-controls.html [ Skip ]
+webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
 
 # No support for descriptive audio tracks in HLS file
 http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
@@ -1873,9 +1903,20 @@ http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]
 
-# Modern-media-controls support
-webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
-webkit.org/b/182502 media/modern-media-controls [ Skip ]
+# Modern-media-controls support expected to pass, excepted for Apple-specific tests.
+media/modern-media-controls [ Pass ]
+http/tests/media/modern-media-controls/macos-fullscreen-media-controls [ Skip ]
+media/modern-media-controls/ios-inline-media-controls [ Skip ]
+media/modern-media-controls/macos-fullscreen-media-controls [ Skip ]
+media/modern-media-controls/macos-inline-media-controls [ Skip ]
+media/modern-media-controls/media-controller/ios [ Skip ]
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
+media/modern-media-controls/placard-support/ipad/ [ Skip ]
+media/modern-media-controls/scrubber-support/ipad [ Skip ]
+media/modern-media-controls/watchos-media-controls [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
@@ -1896,16 +1937,23 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-b
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
-# PiP is not supported yet
+# PiP / presentation-mode is not supported yet
+webkit.org/b/202756 media/airplay-wirelessvideoplaybackdisabled.html [ Skip ]
+webkit.org/b/202756 http/tests/media/modern-media-controls/pip-support [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/pip-button [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/pip-placard [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/pip-support [ Skip ]
+webkit.org/b/202756 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 webkit.org/b/202756 media/picture-in-picture/ [ Skip ]
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Skip ]
 # Also crashing with others in webkit.org/b/198830
 webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Skip ]
-
-# Airplay is not supported in the GStreamer ports.
-webkit.org/b/158923 media/airplay-autoplay.html [ Skip ]
-webkit.org/b/158923 media/airplay-allows-buffering.html [ Skip ]
 
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
@@ -2202,6 +2250,39 @@ webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [
 webkit.org/b/168050 fast/visual-viewport/zoomed-rects.html [ Skip ]
 webkit.org/b/168050 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
 webkit.org/b/168050 fast/zooming/uiscript-zooming.html [ Skip ]
+
+# Skip tests requiring UIScriptController::singleTapAtPoint.
+media/modern-media-controls/button/button-active-state.html [ Skip ]
+media/modern-media-controls/button/button.html [ Skip ]
+media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
+media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
+media/modern-media-controls/css/pointer-events-none.html [ Skip ]
+media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html [ Skip ]
+media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Skip ]
+media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Skip ]
+media/modern-media-controls/overflow-support/button-state.html [ Skip ]
+media/modern-media-controls/overflow-support/chapters.html [ Skip ]
+media/modern-media-controls/overflow-support/playback-speed.html [ Skip ]
+media/modern-media-controls/playback-support/playback-support-button-click.html [ Skip ]
+media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
+media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Skip ]
+media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Skip ]
+media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
+media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
+media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
+media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
+media/modern-media-controls/tracks-support/audio-multiple-tracks.html [ Skip ]
+media/modern-media-controls/tracks-support/audio-single-track.html [ Skip ]
+media/modern-media-controls/tracks-support/auto-text-track.html [ Skip ]
+media/modern-media-controls/tracks-support/click-track-in-contextmenu.html [ Skip ]
+media/modern-media-controls/tracks-support/hidden-tracks.html [ Skip ]
+media/modern-media-controls/tracks-support/off-text-track.html [ Skip ]
+media/modern-media-controls/tracks-support/show-contextmenu-then-double-click-on-tracks-button.html [ Skip ]
+media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages.html [ Skip ]
+media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Skip ]
+media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Skip ]
 
 webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
