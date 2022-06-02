@@ -1743,7 +1743,7 @@ void NetworkProcessProxy::clearBundleIdentifier(CompletionHandler<void()>&& comp
     sendWithAsyncReply(Messages::NetworkProcess::ClearBundleIdentifier(), WTFMove(completionHandler));
 }
 
-#if USE(SOUP)
+#if USE(SOUP) || USE(CURL)
 void NetworkProcessProxy::didExceedMemoryLimit()
 {
     AuxiliaryProcessProxy::terminate();

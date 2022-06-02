@@ -27,6 +27,7 @@
 #include "NetworkProcess.h"
 
 #include "NetworkProcessCreationParameters.h"
+#include "NetworkProcessProxyMessages.h"
 #include <WebCore/CurlContext.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
@@ -35,8 +36,21 @@ namespace WebKit {
 
 using namespace WebCore;
 
-void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters&)
+void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
+#if ENABLE(PERIODIC_MEMORY_MONITOR)
+    // The periodic memory monitor is disabled by default in the network process. Enable
+    // it only if MemoryPressureHandler is not suppressed and there is a custom configuration
+    // for it.
+    if (!parameters.shouldSuppressMemoryPressureHandler && parameters.memoryPressureHandlerConfiguration) {
+        auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+        memoryPressureHandler.setConfiguration(*parameters.memoryPressureHandlerConfiguration);
+        memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
+        memoryPressureHandler.setMemoryKillCallback([this] () {
+            parentProcessConnection()->send(Messages::NetworkProcessProxy::DidExceedMemoryLimit(), 0);
+        });
+    }
+#endif
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
