@@ -416,6 +416,8 @@ localizedStrings["Copy Rule"] = "Copy Rule";
 localizedStrings["Copy Selected"] = "Copy Selected";
 localizedStrings["Copy Table"] = "Copy Table";
 localizedStrings["Copy as cURL"] = "Copy as cURL";
+/* Copy the URL, method, headers, etc. of the given network request in the format of a JS fetch expression. */
+localizedStrings["Copy as fetch"] = "Copy as fetch";
 localizedStrings["Could not capture screenshot"] = "Could not capture screenshot";
 localizedStrings["Could not fetch properties. Object may no longer exist."] = "Could not fetch properties. Object may no longer exist.";
 localizedStrings["Count"] = "Count";

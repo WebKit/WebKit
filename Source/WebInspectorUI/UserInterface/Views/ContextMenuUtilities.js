@@ -175,6 +175,10 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     if (sourceCode instanceof WI.Resource && !sourceCode.localResourceOverride) {
         if (sourceCode.urlComponents.scheme !== "data") {
+            contextMenu.appendItem(WI.UIString("Copy as fetch", "Copy the URL, method, headers, etc. of the given network request in the format of a JS fetch expression."), () => {
+                InspectorFrontendHost.copyText(sourceCode.generateFetchCode());
+            });
+
             contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
                 InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());
             });

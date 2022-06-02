@@ -1138,6 +1138,73 @@ WI.Resource = class Resource extends WI.SourceCode
         this.dispatchEventToListeners(WI.Resource.Event.RequestDataDidChange);
     }
 
+    generateFetchCode()
+    {
+        let options = {};
+
+        if (this.requestData)
+            options.body = this.requestData;
+
+        options.cache = "default";
+        options.credentials = (this.requestCookies.length || this._requestHeaders.valueForCaseInsensitiveKey("Authorization")) ? "include" : "omit";
+
+        // https://fetch.spec.whatwg.org/#forbidden-header-name
+        const forbiddenHeaders = new Set([
+            "accept-charset",
+            "accept-encoding",
+            "access-control-request-headers",
+            "access-control-request-method",
+            "connection",
+            "content-length",
+            "cookie",
+            "cookie2",
+            "date",
+            "dnt",
+            "expect",
+            "host",
+            "keep-alive",
+            "origin",
+            "referer",
+            "te",
+            "trailer",
+            "transfer-encoding",
+            "upgrade",
+            "via",
+        ]);
+        let headers = Object.entries(this.requestHeaders)
+            .filter((header) => {
+                let key = header[0].toLowerCase();
+                if (forbiddenHeaders.has(key))
+                    return false;
+                if (key.startsWith("proxy-") || key.startsWith("sec-"))
+                    return false;
+                return true;
+            })
+            .sort((a, b) => a[0].extendedLocaleCompare(b[0]))
+            .reduce((accumulator, current) => {
+                accumulator[current[0]] = current[1];
+                return accumulator;
+            }, {});
+        if (!isEmptyObject(headers))
+            options.headers = headers;
+
+        // FIXME: <https://webkit.org/b/241217> Web Inspector: include `integrity` in "Copy as fetch"
+
+        if (this.requestMethod)
+            options.method = this.requestMethod;
+
+        options.mode = "cors";
+        options.redirect = "follow";
+
+        let referrer = this.requestHeaders.valueForCaseInsensitiveKey("Referer");
+        if (referrer)
+            options.referrer = referrer;
+
+        // FIXME: <https://webkit.org/b/241218> Web Inspector: include `referrerPolicy` in "Copy as fetch"
+
+        return `fetch(${JSON.stringify(this.url)}, ${JSON.stringify(options, null, WI.indentString())})`;
+    }
+
     generateCURLCommand()
     {
         function escapeStringPosix(str) {
