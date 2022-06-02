@@ -505,3 +505,9 @@ http/tests/download/literal-utf-8.html [ Failure ]
 fast/text/embed-at-end-of-pre-wrap-line.html [ Failure ]
 fast/text/whitespace/pre-wrap-line-test.html [ Failure ]
 fast/text/whitespace/pre-wrap-spaces-after-newline.html [ Failure ]
+
+webkit.org/b/240820 editing/pasteboard/files-during-page-drags.html [ Skip ] # Crash Pass
+
+animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
+
+http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout
