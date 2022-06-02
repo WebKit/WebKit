@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class FELighting;
+struct FELightingPaintingDataForNeon;
 
 class FELightingSoftwareApplier final : public FilterEffectConcreteApplier<FELighting> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -132,8 +133,23 @@ private:
 
     static void applyPlatformGenericPaint(const LightingData&, const LightSource::PaintingData&, int startY, int endY);
     static void applyPlatformGenericWorker(ApplyParameters*);
+
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
+    static int getPowerCoefficients(float exponent);
+    static void platformApplyNeonWorker(FELightingPaintingDataForNeon*);
+    inline static void applyPlatformNeon(const LightingData&, const LightSource::PaintingData&);
+
+    inline static void applyPlatformGeneric(const LightingData& data, const LightSource::PaintingData& paintingData)
+    {
+        applyPlatformNeon(data, paintingData);
+    }
+#else
     static void applyPlatformGeneric(const LightingData&, const LightSource::PaintingData&);
+#endif
+
     static void applyPlatform(const LightingData&);
 };
 
 } // namespace WebCore
+
+#include "FELightingNEON.h"

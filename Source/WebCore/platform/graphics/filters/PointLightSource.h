@@ -26,6 +26,10 @@
 #include "LightSource.h"
 #include <wtf/Ref.h>
 
+namespace WTF {
+class TextStream;
+} // namespace WTF
+
 namespace WebCore {
 
 class PointLightSource : public LightSource {

@@ -49,7 +49,7 @@ short* feLightingConstantsForNeon()
     return s_FELightingConstantsForNeon;
 }
 
-void FELighting::platformApplyNeonWorker(FELightingPaintingDataForNeon* parameters)
+void FELightingSoftwareApplier::platformApplyNeonWorker(FELightingPaintingDataForNeon* parameters)
 {
     neonDrawLighting(parameters);
 }
@@ -464,7 +464,7 @@ TOSTRING(neonDrawLighting) ":" NL
     "b .lightStrengthCalculated" NL
 ); // NOLINT
 
-int FELighting::getPowerCoefficients(float exponent)
+int FELightingSoftwareApplier::getPowerCoefficients(float exponent)
 {
     // Calling a powf function from the assembly code would require to save
     // and reload a lot of NEON registers. Since the base is in range [0..1]

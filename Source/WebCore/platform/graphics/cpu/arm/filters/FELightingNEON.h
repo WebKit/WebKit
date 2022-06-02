@@ -24,14 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FELightingNEON_h
-#define FELightingNEON_h
+#pragma once
 
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
 
-#include "FELighting.h"
+#include "FELightingSoftwareApplier.h"
+#include "ImageBuffer.h"
 #include "PointLightSource.h"
 #include "SpotLightSource.h"
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/ParallelJobs.h>
 
 namespace WebCore {
@@ -93,14 +94,14 @@ extern "C" {
 void neonDrawLighting(FELightingPaintingDataForNeon*);
 }
 
-inline void FELighting::platformApplyNeon(const LightingData& data, const LightSource::PaintingData& paintingData)
+inline void FELightingSoftwareApplier::applyPlatformNeon(const FELightingSoftwareApplier::LightingData& data, const LightSource::PaintingData& paintingData)
 {
-    alignas(16) FELightingFloatArgumentsForNeon floatArguments;
-    FELightingPaintingDataForNeon neonData = {
-        data.pixels->data(),
+    WebCore::FELightingFloatArgumentsForNeon alignas(16) floatArguments;
+    WebCore::FELightingPaintingDataForNeon neonData = {
+        data.pixels->bytes(),
         1,
-        data.widthDecreasedByOne - 1,
-        data.heightDecreasedByOne - 1,
+        data.width - 2,
+        data.height - 2,
         0,
         0,
         0,
@@ -111,23 +112,23 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
     // Set light source arguments.
     floatArguments.constOne = 1;
 
-    auto color = m_lightingColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto color = data.lightingColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
     floatArguments.colorRed = color.red;
     floatArguments.colorGreen = color.green;
     floatArguments.colorBlue = color.blue;
     floatArguments.padding4 = 0;
 
-    if (m_lightSource->type() == LS_POINT) {
+    if (data.lightSource->type() == LS_POINT) {
         neonData.flags |= FLAG_POINT_LIGHT;
-        PointLightSource& pointLightSource = static_cast<PointLightSource&>(m_lightSource.get());
+        const auto& pointLightSource = *static_cast<const PointLightSource*>(data.lightSource);
         floatArguments.lightX = pointLightSource.position().x();
         floatArguments.lightY = pointLightSource.position().y();
         floatArguments.lightZ = pointLightSource.position().z();
         floatArguments.padding2 = 0;
-    } else if (m_lightSource->type() == LS_SPOT) {
+    } else if (data.lightSource->type() == LS_SPOT) {
         neonData.flags |= FLAG_SPOT_LIGHT;
-        SpotLightSource& spotLightSource = static_cast<SpotLightSource&>(m_lightSource.get());
+        const auto& spotLightSource = *static_cast<const SpotLightSource*>(data.lightSource);
         floatArguments.lightX = spotLightSource.position().x();
         floatArguments.lightY = spotLightSource.position().y();
         floatArguments.lightZ = spotLightSource.position().z();
@@ -145,7 +146,7 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
         if (spotLightSource.specularExponent() == 1)
             neonData.flags |= FLAG_CONE_EXPONENT_IS_1;
     } else {
-        ASSERT(m_lightSource->type() == LS_DISTANT);
+        ASSERT(data.lightSource->type() == LS_DISTANT);
         floatArguments.lightX = paintingData.initialLightingData.lightVector.x();
         floatArguments.lightY = paintingData.initialLightingData.lightVector.y();
         floatArguments.lightZ = paintingData.initialLightingData.lightVector.z();
@@ -155,38 +156,39 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
     // Set lighting arguments.
     floatArguments.surfaceScale = data.surfaceScale;
     floatArguments.minusSurfaceScaleDividedByFour = -data.surfaceScale / 4;
-    if (m_lightingType == FELighting::DiffuseLighting)
-        floatArguments.diffuseConstant = m_diffuseConstant;
+    if (data.filterType == FilterEffect::Type::FEDiffuseLighting)
+        floatArguments.diffuseConstant = data.diffuseConstant;
     else {
         neonData.flags |= FLAG_SPECULAR_LIGHT;
-        floatArguments.diffuseConstant = m_specularConstant;
-        neonData.specularExponent = getPowerCoefficients(m_specularExponent);
-        if (m_specularExponent == 1)
+        floatArguments.diffuseConstant = data.specularConstant;
+        neonData.specularExponent = getPowerCoefficients(data.specularExponent);
+        if (data.specularExponent == 1)
             neonData.flags |= FLAG_SPECULAR_EXPONENT_IS_1;
     }
     if (floatArguments.diffuseConstant == 1)
         neonData.flags |= FLAG_DIFFUSE_CONST_IS_1;
 
-    int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
+    static constexpr int minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+    int optimalThreadNumber = ((data.width - 2) * (data.height - 2)) / minimalRectDimension;
     if (optimalThreadNumber > 1) {
         // Initialize parallel jobs
-        ParallelJobs<FELightingPaintingDataForNeon> parallelJobs(&WebCore::FELighting::platformApplyNeonWorker, optimalThreadNumber);
+        ParallelJobs<FELightingPaintingDataForNeon> parallelJobs(&FELightingSoftwareApplier::platformApplyNeonWorker, optimalThreadNumber);
 
         // Fill the parameter array
         int job = parallelJobs.numberOfJobs();
         if (job > 1) {
             int yStart = 1;
-            int yStep = (data.heightDecreasedByOne - 1) / job;
+            int yStep = (data.height - 2) / job;
             for (--job; job >= 0; --job) {
                 FELightingPaintingDataForNeon& params = parallelJobs.parameter(job);
                 params = neonData;
                 params.yStart = yStart;
-                params.pixels += (yStart - 1) * (data.widthDecreasedByOne + 1) * 4;
+                params.pixels += (yStart - 1) * data.width * 4;
                 if (job > 0) {
                     params.absoluteHeight = yStep;
                     yStart += yStep;
                 } else
-                    params.absoluteHeight = data.heightDecreasedByOne - yStart;
+                    params.absoluteHeight = (data.height - 1) - yStart;
             }
             parallelJobs.execute();
             return;
@@ -199,5 +201,3 @@ inline void FELighting::platformApplyNeon(const LightingData& data, const LightS
 } // namespace WebCore
 
 #endif // CPU(ARM_NEON) && COMPILER(GCC_COMPATIBLE)
-
-#endif // FELightingNEON_h
