@@ -59,7 +59,7 @@ TEST_F(WTF_URL, URLConstructorConstChar)
     EXPECT_FALSE(kurl.isNull());
     EXPECT_TRUE(kurl.isValid());
 
-    EXPECT_EQ(kurl.protocol() == "http", true);
+    EXPECT_TRUE(kurl.protocol() == "http"_s);
     EXPECT_EQ(String("www.example.com"_s), kurl.host().toString());
     EXPECT_TRUE(!!kurl.port());
     EXPECT_EQ(8080, kurl.port().value());

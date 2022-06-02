@@ -130,19 +130,19 @@ static inline void processOriginItem(Document& document, FeaturePolicy::AllowRul
 
     item = item.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
     // FIXME: Support 'src'.
-    if (item == "'src'")
+    if (item == "'src'"_s)
         return;
 
-    if (item == "*") {
+    if (item == "*"_s) {
         rule.type = FeaturePolicy::AllowRule::Type::All;
         return;
     }
 
-    if (item == "'self'") {
+    if (item == "'self'"_s) {
         rule.allowedList.add(document.securityOrigin().data());
         return;
     }
-    if (item == "'none'") {
+    if (item == "'none'"_s) {
         rule.type = FeaturePolicy::AllowRule::Type::None;
         return;
     }

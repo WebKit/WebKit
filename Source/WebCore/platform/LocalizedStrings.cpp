@@ -657,47 +657,47 @@ String AXWeekFieldText()
 
 String AXARIAContentGroupText(StringView ariaType)
 {
-    if (ariaType == "ARIAApplicationAlert")
+    if (ariaType == "ARIAApplicationAlert"_s)
         return WEB_UI_STRING("alert", "An ARIA accessibility group that acts as an alert.");
-    if (ariaType == "ARIAApplicationAlertDialog")
+    if (ariaType == "ARIAApplicationAlertDialog"_s)
         return WEB_UI_STRING("web alert dialog", "An ARIA accessibility group that acts as an alert dialog.");
-    if (ariaType == "ARIAApplicationDialog")
+    if (ariaType == "ARIAApplicationDialog"_s)
         return WEB_UI_STRING("web dialog", "An ARIA accessibility group that acts as an dialog.");
-    if (ariaType == "ARIAApplicationLog")
+    if (ariaType == "ARIAApplicationLog"_s)
         return WEB_UI_STRING("log", "An ARIA accessibility group that acts as a console log.");
-    if (ariaType == "ARIAApplicationMarquee")
+    if (ariaType == "ARIAApplicationMarquee"_s)
         return WEB_UI_STRING("marquee", "An ARIA accessibility group that acts as a marquee.");
-    if (ariaType == "ARIAApplicationStatus")
+    if (ariaType == "ARIAApplicationStatus"_s)
         return WEB_UI_STRING("application status", "An ARIA accessibility group that acts as a status update.");
-    if (ariaType == "ARIAApplicationTimer")
+    if (ariaType == "ARIAApplicationTimer"_s)
         return WEB_UI_STRING("timer", "An ARIA accessibility group that acts as an updating timer.");
-    if (ariaType == "ARIADocument")
+    if (ariaType == "ARIADocument"_s)
         return WEB_UI_STRING("document", "An ARIA accessibility group that acts as a document.");
-    if (ariaType == "ARIADocumentArticle")
+    if (ariaType == "ARIADocumentArticle"_s)
         return WEB_UI_STRING("article", "An ARIA accessibility group that acts as an article.");
-    if (ariaType == "ARIADocumentNote")
+    if (ariaType == "ARIADocumentNote"_s)
         return WEB_UI_STRING("note", "An ARIA accessibility group that acts as a note in a document.");
-    if (ariaType == "ARIAWebApplication")
+    if (ariaType == "ARIAWebApplication"_s)
         return WEB_UI_STRING("web application", "An ARIA accessibility group that acts as an application.");
-    if (ariaType == "ARIALandmarkBanner")
+    if (ariaType == "ARIALandmarkBanner"_s)
         return WEB_UI_STRING("banner", "An ARIA accessibility group that acts as a banner.");
-    if (ariaType == "ARIALandmarkComplementary")
+    if (ariaType == "ARIALandmarkComplementary"_s)
         return WEB_UI_STRING("complementary", "An ARIA accessibility group that acts as a region of complementary information.");
-    if (ariaType == "ARIALandmarkContentInfo")
+    if (ariaType == "ARIALandmarkContentInfo"_s)
         return WEB_UI_STRING("content information", "An ARIA accessibility group that contains content.");
-    if (ariaType == "ARIALandmarkMain")
+    if (ariaType == "ARIALandmarkMain"_s)
         return WEB_UI_STRING("main", "An ARIA accessibility group that is the main portion of the website.");
-    if (ariaType == "ARIALandmarkNavigation")
+    if (ariaType == "ARIALandmarkNavigation"_s)
         return WEB_UI_STRING("navigation", "An ARIA accessibility group that contains the main navigation elements of a website.");
-    if (ariaType == "ARIALandmarkRegion")
+    if (ariaType == "ARIALandmarkRegion"_s)
         return WEB_UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");
-    if (ariaType == "ARIALandmarkSearch")
+    if (ariaType == "ARIALandmarkSearch"_s)
         return WEB_UI_STRING("search", "An ARIA accessibility group that contains a search feature of a website.");
-    if (ariaType == "ARIAUserInterfaceTooltip")
+    if (ariaType == "ARIAUserInterfaceTooltip"_s)
         return WEB_UI_STRING("tooltip", "An ARIA accessibility group that acts as a tooltip.");
-    if (ariaType == "ARIATabPanel")
+    if (ariaType == "ARIATabPanel"_s)
         return WEB_UI_STRING("tab panel", "An ARIA accessibility group that contains the content of a tab.");
-    if (ariaType == "ARIADocumentMath")
+    if (ariaType == "ARIADocumentMath"_s)
         return WEB_UI_STRING("math", "An ARIA accessibility group that contains mathematical symbols.");
     return String();
 }

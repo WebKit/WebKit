@@ -67,7 +67,7 @@ bool ApplePayAMSUIPaymentHandler::handlesIdentifier(const PaymentRequest::Method
         return false;
 
     auto& url = std::get<URL>(identifier);
-    return url.host() == "apple.com" && url.path() == "/ams-ui";
+    return url.host() == "apple.com"_s && url.path() == "/ams-ui"_s;
 }
 
 bool ApplePayAMSUIPaymentHandler::hasActiveSession(Document& document)

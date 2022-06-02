@@ -79,13 +79,13 @@ namespace WebCore {
 
 static CDMInstanceSession::SessionLoadFailure sessionLoadFailureFromThunder(const StringView& loadStatus)
 {
-    if (loadStatus == "None")
+    if (loadStatus == "None"_s)
         return CDMInstanceSession::SessionLoadFailure::None;
-    if (loadStatus == "SessionNotFound")
+    if (loadStatus == "SessionNotFound"_s)
         return CDMInstanceSession::SessionLoadFailure::NoSessionData;
-    if (loadStatus == "MismatchedSessionType")
+    if (loadStatus == "MismatchedSessionType"_s)
         return CDMInstanceSession::SessionLoadFailure::MismatchedSessionType;
-    if (loadStatus == "QuotaExceeded")
+    if (loadStatus == "QuotaExceeded"_s)
         return CDMInstanceSession::SessionLoadFailure::QuotaExceeded;
     return CDMInstanceSession::SessionLoadFailure::Other;
 }

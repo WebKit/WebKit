@@ -319,18 +319,18 @@ TEST(WTF, StringViewEqualBasic)
 {
     String referenceHolder;
     StringView a = stringViewFromUTF8(referenceHolder, "Hello World!");
-    EXPECT_TRUE(a == "Hello World!");
-    EXPECT_FALSE(a == "Hello World");
-    EXPECT_FALSE(a == "Hello World!!");
+    EXPECT_TRUE(a == "Hello World!"_s);
+    EXPECT_FALSE(a == "Hello World"_s);
+    EXPECT_FALSE(a == "Hello World!!"_s);
 
     auto test = "Hell\0";
     a = StringView { (const LChar*)test, 5 };
-    EXPECT_FALSE(a == "Hell\0");
-    EXPECT_FALSE(a == "Hell");
+    EXPECT_FALSE(a == "Hell\0"_s);
+    EXPECT_FALSE(a == "Hell"_s);
 
     StringView test3 = "Hello"_s;
-    EXPECT_TRUE(test3 == "Hello\0");
-    EXPECT_TRUE(test3 == "Hello");
+    EXPECT_TRUE(test3 == "Hello\0"_s);
+    EXPECT_TRUE(test3 == "Hello"_s);
 }
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)

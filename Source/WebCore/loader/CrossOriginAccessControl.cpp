@@ -316,7 +316,7 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
         if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(response.url()))
             return true;
 #endif
-        if (origin.protocol() == "http" && response.url().protocol() == "https")
+        if (origin.protocol() == "http"_s && response.url().protocol() == "https"_s)
             return true;
     }
 

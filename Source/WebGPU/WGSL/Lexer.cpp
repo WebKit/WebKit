@@ -195,47 +195,47 @@ Token Lexer<T>::lex()
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
             StringView view { startOfToken, currentTokenLength() };
             // FIXME: I don't think that true/false/f32/u32/i32/bool need to be their own tokens, they could just be regular identifiers.
-            if (view == "true")
+            if (view == "true"_s)
                 return makeToken(TokenType::LiteralTrue);
-            if (view == "false")
+            if (view == "false"_s)
                 return makeToken(TokenType::LiteralFalse);
-            if (view == "bool")
+            if (view == "bool"_s)
                 return makeToken(TokenType::KeywordBool);
-            if (view == "i32")
+            if (view == "i32"_s)
                 return makeToken(TokenType::KeywordI32);
-            if (view == "u32")
+            if (view == "u32"_s)
                 return makeToken(TokenType::KeywordU32);
-            if (view == "f32")
+            if (view == "f32"_s)
                 return makeToken(TokenType::KeywordF32);
-            if (view == "fn")
+            if (view == "fn"_s)
                 return makeToken(TokenType::KeywordFn);
-            if (view == "function")
+            if (view == "function"_s)
                 return makeToken(TokenType::KeywordFunction);
-            if (view == "private")
+            if (view == "private"_s)
                 return makeToken(TokenType::KeywordPrivate);
-            if (view == "read")
+            if (view == "read"_s)
                 return makeToken(TokenType::KeywordRead);
-            if (view == "read_write")
+            if (view == "read_write"_s)
                 return makeToken(TokenType::KeywordReadWrite);
-            if (view == "return")
+            if (view == "return"_s)
                 return makeToken(TokenType::KeywordReturn);
-            if (view == "storage")
+            if (view == "storage"_s)
                 return makeToken(TokenType::KeywordStorage);
-            if (view == "struct")
+            if (view == "struct"_s)
                 return makeToken(TokenType::KeywordStruct);
-            if (view == "uniform")
+            if (view == "uniform"_s)
                 return makeToken(TokenType::KeywordUniform);
-            if (view == "var")
+            if (view == "var"_s)
                 return makeToken(TokenType::KeywordVar);
-            if (view == "workgroup")
+            if (view == "workgroup"_s)
                 return makeToken(TokenType::KeywordWorkgroup);
-            if (view == "write")
+            if (view == "write"_s)
                 return makeToken(TokenType::KeywordWrite);
-            if (view == "asm" || view == "bf16" || view == "const" || view == "do" || view == "enum"
-                || view == "f16" || view == "f64" || view == "handle" || view == "i8" || view == "i16"
-                || view == "i64" || view == "mat" || view == "premerge" || view == "regardless"
-                || view == "typedef" || view == "u8" || view == "u16" || view == "u64" || view == "unless"
-                || view == "using" || view == "vec" || view == "void" || view == "while")
+            if (view == "asm"_s || view == "bf16"_s || view == "const"_s || view == "do"_s || view == "enum"_s
+                || view == "f16"_s || view == "f64"_s || view == "handle"_s || view == "i8"_s || view == "i16"_s
+                || view == "i64"_s || view == "mat"_s || view == "premerge"_s || view == "regardless"_s
+                || view == "typedef"_s || view == "u8"_s || view == "u16"_s || view == "u64"_s || view == "unless"_s
+                || view == "using"_s || view == "vec"_s || view == "void"_s || view == "while"_s)
                 return makeToken(TokenType::ReservedWord);
             return makeIdentifierToken(view);
         }

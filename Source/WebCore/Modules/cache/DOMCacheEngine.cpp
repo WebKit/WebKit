@@ -98,7 +98,7 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
         if (isVarying)
             return;
         auto nameView = stripLeadingAndTrailingHTTPSpaces(view);
-        if (nameView == "*") {
+        if (nameView == "*"_s) {
             isVarying = true;
             return;
         }
