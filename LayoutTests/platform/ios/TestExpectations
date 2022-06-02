@@ -3629,15 +3629,6 @@ webkit.org/b/240579 http/wpt/push-api/pushEvent.any.serviceworker.html [ Skip ]
 webkit.org/b/240579 http/wpt/push-api/pushManager.any.html [ Skip ]
 webkit.org/b/240579 http/wpt/push-api/pushManager.any.serviceworker.html [ Skip ]
 
-webkit.org/b/240654 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/forms/ios/focus-ring-size.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
-webkit.org/b/240654 fast/inline/hidpi-outline-auto-with-one-focusring-rect.html [ ImageOnlyFailure ]
 
 webkit.org/b/240659 fast/text/isolate-ignore.html [ Crash ]
 
