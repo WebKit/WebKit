@@ -43,6 +43,8 @@
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/Color.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/text/Base64.h>
 
 @interface WKRemoteWebInspectorUIProxyObjCAdapter : NSObject <NSWindowDelegate, WKInspectorViewControllerDelegate> {
@@ -239,6 +241,19 @@ void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandl
         completionHandler(String::adopt(WTFMove(*contents)));
     else
         completionHandler(nullString());
+}
+
+void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    auto sampler = adoptNS([[NSColorSampler alloc] init]);
+    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
+        if (!selectedColor) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(Color::createAndPreserveColorSpace(selectedColor.CGColor));
+    }).get()];
 }
 
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)

@@ -167,6 +167,11 @@ void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<vo
     completionHandler(nullString());
 }
 
+void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&)
 {
 }

@@ -44,6 +44,11 @@ bool WebInspectorUI::canLoad()
     return false;
 }
 
+bool WebInspectorUI::canPickColorFromScreen()
+{
+    return false;
+}
+
 String WebInspectorUI::localizedStringsURL() const
 {
     return "inspector-resource:///localizedStrings.js"_s;

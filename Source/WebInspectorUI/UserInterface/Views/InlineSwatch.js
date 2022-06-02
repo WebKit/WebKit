@@ -192,10 +192,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         switch (this._type) {
         case WI.InlineSwatch.Type.Color:
+            let title = WI.UIString("Click to select a color.");
             if (this._allowChangingColorFormats())
-                this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
-            else
-                this._swatchElement.title = WI.UIString("Click to select a color");
+                title += "\n" + WI.UIString("Shift-click to switch color formats.");
+            if (InspectorFrontendHost.canPickColorFromScreen())
+                title += "\n" + WI.UIString("Option-click to pick color from screen.");
+
+            this._swatchElement.title = title;
             // fallthrough
 
         case WI.InlineSwatch.Type.Gradient:
@@ -251,6 +254,23 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             }
         }
 
+        if (event.altKey && value) {
+            if (this._type === WI.InlineSwatch.Type.Color) {
+                WI.ColorPicker.pickColorFromScreen({
+                    suggestedFormat: value.format,
+                    suggestedGamut: value.gamut,
+                    forceSuggestedFormatAndGamut: this._preventChangingColorFormats,
+                }).then((pickedColor) => {
+                    if (!pickedColor)
+                        return;
+
+                    this._value = pickedColor;
+                    this._updateSwatch();
+                });
+                return;
+            }
+        }
+
         if (this._valueEditor)
             return;
 
@@ -276,7 +296,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Color:
-            this._valueEditor = new WI.ColorPicker;
+            this._valueEditor = new WI.ColorPicker({preventChangingColorFormats: this._preventChangingColorFormats});
             this._valueEditor.addEventListener(WI.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
             break;
 

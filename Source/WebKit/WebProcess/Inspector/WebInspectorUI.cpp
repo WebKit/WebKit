@@ -316,6 +316,11 @@ void WebInspectorUI::load(const WTF::String& path, CompletionHandler<void(const 
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTFMove(completionHandler), m_inspectedPageIdentifier);
 }
 
+void WebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebInspectorUIProxy::PickColorFromScreen(), WTFMove(completionHandler), m_inspectedPageIdentifier);
+}
+
 void WebInspectorUI::inspectedURLChanged(const String& urlString)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::InspectedURLChanged(urlString), m_inspectedPageIdentifier);
@@ -485,6 +490,12 @@ bool WebInspectorUI::canSave()
 }
 
 bool WebInspectorUI::canLoad()
+{
+    notImplemented();
+    return false;
+}
+
+bool WebInspectorUI::canPickColorFromScreen()
 {
     notImplemented();
     return false;

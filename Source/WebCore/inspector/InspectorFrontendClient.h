@@ -32,6 +32,7 @@
 #pragma once
 
 #include "CertificateInfo.h"
+#include "Color.h"
 #include "DiagnosticLoggingClient.h"
 #include "FrameIdentifier.h"
 #include "InspectorDebuggableType.h"
@@ -112,6 +113,9 @@ public:
     virtual void append(const String& url, const String& content) = 0;
     virtual bool canLoad() = 0;
     virtual void load(const String& path, CompletionHandler<void(const String&)>&&) = 0;
+
+    virtual bool canPickColorFromScreen() = 0;
+    virtual void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) = 0;
 
     virtual void inspectedURLChanged(const String&) = 0;
     virtual void showCertificate(const CertificateInfo&) = 0;

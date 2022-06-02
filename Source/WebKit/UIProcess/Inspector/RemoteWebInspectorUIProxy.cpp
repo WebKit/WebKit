@@ -159,6 +159,11 @@ void RemoteWebInspectorUIProxy::load(const String& path, CompletionHandler<void(
     platformLoad(path, WTFMove(completionHandler));
 }
 
+void RemoteWebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    platformPickColorFromScreen(WTFMove(completionHandler));
+}
+
 void RemoteWebInspectorUIProxy::setSheetRect(const FloatRect& rect)
 {
     platformSetSheetRect(rect);
@@ -244,6 +249,7 @@ void RemoteWebInspectorUIProxy::platformBringToFront() { }
 void RemoteWebInspectorUIProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
+void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }

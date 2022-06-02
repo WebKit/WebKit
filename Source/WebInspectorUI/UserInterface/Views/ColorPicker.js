@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,11 @@
 
 WI.ColorPicker = class ColorPicker extends WI.Object
 {
-    constructor()
+    constructor({preventChangingColorFormats} = {})
     {
         super();
+
+        this._preventChangingColorFormats = !!preventChangingColorFormats;
 
         this._colorSquare = new WI.ColorSquare(this, 200);
 
@@ -56,7 +58,31 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         wrapper.appendChild(this._hueSlider.element);
         wrapper.appendChild(this._opacitySlider.element);
 
-        this._element.appendChild(this._colorInputsContainerElement);
+        let colorInputsWrapperElement = this._element.appendChild(document.createElement("div"));
+        colorInputsWrapperElement.classList.add("color-inputs-wrapper");
+        colorInputsWrapperElement.appendChild(this._colorInputsContainerElement);
+
+        if (InspectorFrontendHost.canPickColorFromScreen()) {
+            let pickColorElement = WI.ImageUtilities.useSVGSymbol("Images/Pipette.svg", "pick-color-from-screen", WI.UIString("Pick color from screen", "Color picker view tooltip for picking a color from the screen."));
+            pickColorElement.role = "button";
+            pickColorElement.addEventListener("click", async (event) => {
+                pickColorElement.classList.add("active");
+                let pickedColor = await WI.ColorPicker.pickColorFromScreen({
+                    suggestedFormat: this.color.format,
+                    suggestedGamut: this.color.gamut,
+                    forceSuggestedFormatAndGamut: this._preventChangingColorFormats,
+                });
+                pickColorElement.classList.remove("active");
+
+                if (!pickedColor)
+                    return;
+
+                this.color = pickedColor;
+                this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+            });
+
+            colorInputsWrapperElement.appendChild(pickColorElement);
+        }
 
         this._opacity = 0;
         this._opacityPattern = "url(Images/Checkers.svg)";
@@ -66,6 +92,33 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._dontUpdateColor = false;
 
         this._enableColorComponentInputs = true;
+    }
+
+    // Static
+
+    static async pickColorFromScreen({suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut} = {})
+    {
+        console.assert(InspectorFrontendHost.canPickColorFromScreen());
+
+        // There is a brief moment where the frontend page remains interactable before the backend actually begins the
+        // modal color picking mode. In order to avoid accidentally hovering an element and showing its highlight on the
+        // page and not being able to hide the highlight while selecting a color, make the document inert so that even
+        // immediate mouse movement doesn't accidentaly cause any highlighting to occur.
+        document.body.inert = true;
+
+        let pickedColorCSSString = null;
+        try {
+            pickedColorCSSString = await InspectorFrontendHost.pickColorFromScreen();
+        } catch (e) {
+            WI.reportInternalError(error);
+        }
+
+        document.body.inert = false;
+
+        if (!pickedColorCSSString)
+            return null;
+
+        return WI.Color.fromStringBestMatchingSuggestedFormatAndGamut(pickedColorCSSString, {suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut});
     }
 
     // Public

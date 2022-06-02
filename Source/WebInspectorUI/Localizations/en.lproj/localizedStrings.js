@@ -333,8 +333,7 @@ localizedStrings["Click to create a Local Override from this content"] = "Click 
 localizedStrings["Click to import a file and create a Local Override\nShift-click to create a Local Override from this content"] = "Click to import a file and create a Local Override\nShift-click to create a Local Override from this content";
 /* Title of text button that resets the gesture controls in the image resource content view. */
 localizedStrings["Click to reset @ Image Resource Content View Gesture Controls"] = "Click to reset";
-localizedStrings["Click to select a color"] = "Click to select a color";
-localizedStrings["Click to select a color\nShift-click to switch color formats"] = "Click to select a color\nShift-click to switch color formats";
+localizedStrings["Click to select a color."] = "Click to select a color.";
 localizedStrings["Click to show %d error in the Console"] = "Click to show %d error in the Console";
 localizedStrings["Click to show %d errors in the Console"] = "Click to show %d errors in the Console";
 localizedStrings["Click to show %d warning in the Console"] = "Click to show %d warning in the Console";
@@ -1071,6 +1070,7 @@ localizedStrings["Open"] = "Open";
 localizedStrings["Open closed tabs\u2026"] = "Open closed tabs\u2026";
 /* Context menu item for opening the target item in a new window. */
 localizedStrings["Open in New Window @ Context Menu Item"] = "Open in New Window";
+localizedStrings["Option-click to pick color from screen."] = "Option-click to pick color from screen.";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
 /* Tooltip with instructions on how to show all hidden CSS variables */
 localizedStrings["Option-click to show unused CSS variables from all rules @ Styles Sidebar Panel Tooltip"] = "Option-click to show unused CSS variables from all rules";
@@ -1131,6 +1131,8 @@ localizedStrings["Percentage (of audits)"] = "%s%%";
 localizedStrings["Periods of high CPU utilization will rapidly drain battery. Strive to keep idle pages under %s average CPU utilization."] = "Periods of high CPU utilization will rapidly drain battery. Strive to keep idle pages under %s average CPU utilization.";
 /* Property value for `font-variant-capitals: petite-caps`. */
 localizedStrings["Petite Capitals @ Font Details Sidebar Property Value"] = "Petite Capitals";
+/* Color picker view tooltip for picking a color from the screen. */
+localizedStrings["Pick color from screen"] = "Pick color from screen";
 localizedStrings["Ping"] = "Ping";
 localizedStrings["Ping Frame"] = "Ping Frame";
 localizedStrings["Pings"] = "Pings";
@@ -1374,6 +1376,7 @@ localizedStrings["Shader Programs"] = "Shader Programs";
 localizedStrings["Shadow Content"] = "Shadow Content";
 localizedStrings["Shadow Content (%s)"] = "Shadow Content (%s)";
 localizedStrings["Shared Focus"] = "Shared Focus";
+localizedStrings["Shift-click to switch color formats."] = "Shift-click to switch color formats.";
 localizedStrings["Shortest property path to %s"] = "Shortest property path to %s";
 localizedStrings["Show %d More"] = "Show %d More";
 /* Text label for button to reveal one unused CSS variable */
@@ -1805,7 +1808,7 @@ localizedStrings["default prevented"] = "default prevented";
 /* Shown in the 'Type' column of the Network Table for document resources. */
 localizedStrings["document @ Network Tab Resource Type Column Value"] = "document";
 localizedStrings["ensuring that common debugging functions are available on every page via the Console"] = "ensuring that common debugging functions are available on every page via the Console";
-/* Shown in the 'Type' column of the Network Table for EventSource resources. */
+/* Shown in the 'Type' column of the Network Table for resources loaded via the EventSource API. */
 localizedStrings["eventsource @ Network Tab Resource Type Column Value"] = "eventsource";
 /* Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method. */
 localizedStrings["fetch @ Network Tab Resource Type Column Value"] = "fetch";
