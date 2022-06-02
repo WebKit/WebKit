@@ -342,6 +342,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     : m_assertionType(assertionType)
     , m_pid(pid)
     , m_reason(reason)
+    , m_acquireTimer(*this, &ProcessAssertion::acquireTimerFired)
 {
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     ASSERT(runningBoardAssertionName);
@@ -387,9 +388,14 @@ double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
+
+    static Seconds acquireTimerMaxDuration = 2_s;
+    m_acquireTimer.startOneShot(acquireTimerMaxDuration);
+
     assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+            protectedThis->m_acquireTimer.stop();
             if (completionHandler)
                 completionHandler();
         });
@@ -411,6 +417,11 @@ void ProcessAssertion::acquireSync()
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 }
 
+NO_RETURN_DUE_TO_CRASH void ProcessAssertion::acquireTimerFired()
+{
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Acquiring a process assertion took too long");
+}
+
 ProcessAssertion::~ProcessAssertion()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
@@ -429,6 +440,7 @@ void ProcessAssertion::processAssertionWillBeInvalidated()
     ASSERT(RunLoop::isMain());
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWillBeInvalidated() PID=%d", this, m_pid);
 
+    m_acquireTimer.stop();
     if (m_prepareForInvalidationHandler)
         m_prepareForInvalidationHandler();
 }
