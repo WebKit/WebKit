@@ -43,7 +43,7 @@ bool passesTimingAllowOriginCheck(const ResourceResponse& response, const Securi
     const auto& securityOrigin = initiatorSecurityOrigin.toString();
     for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
         auto origin = stripLeadingAndTrailingHTTPSpaces(originWithSpace);
-        if (origin == "*" || origin == securityOrigin)
+        if (origin == "*"_s || origin == securityOrigin)
             return true;
     }
 

@@ -124,7 +124,7 @@ static void createDirectories(StringView testName)
     [defaultFileManager createDirectoryAtURL:directUnusedDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directUnusedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-    if (testName == "none")
+    if (testName == "none"_s)
         return;
     
     NSString *existingDatbaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { existingDatabaseName });
@@ -138,15 +138,15 @@ static void createDirectories(StringView testName)
     NSURL *newVersionOtherOriginDatabaseDirectoryURL = [[newVersionDirectoryURL URLByAppendingPathComponent:@"https_webkit.org_0"] URLByAppendingPathComponent:existingDatbaseHash];
     [defaultFileManager createSymbolicLinkAtURL:oldVersionDirectoryURL withDestinationURL:idbRootURL error:nil];
 
-    if (testName == "v0")
+    if (testName == "v0"_s)
         return;
-    if (testName == "v1") {
+    if (testName == "v1"_s) {
         [defaultFileManager removeItemAtURL:directExistingDatabaseDirectoryURL error:nil];
         [defaultFileManager createDirectoryAtURL:newVersionExistingDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
         [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[newVersionExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
         return;
     }
-    if (testName == "API") {
+    if (testName == "API"_s) {
         [defaultFileManager createDirectoryAtURL:directOtherOriginDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
         [defaultFileManager createDirectoryAtURL:newVersionOtherOriginDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
         [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directOtherOriginDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];

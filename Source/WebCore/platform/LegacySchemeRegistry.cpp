@@ -513,7 +513,7 @@ bool LegacySchemeRegistry::isUserExtensionScheme(StringView scheme)
 {
     // FIXME: Remove this once Safari has adopted WKWebViewConfiguration._corsDisablingPatterns
 #if PLATFORM(MAC)
-    if (scheme == "safari-extension")
+    if (scheme == "safari-extension"_s)
         return true;
 #else
     UNUSED_PARAM(scheme);

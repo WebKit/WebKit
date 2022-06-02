@@ -250,33 +250,33 @@ MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView stri
 {
     // Named space values are case-sensitive.
     int namedSpaceValue;
-    if (string == "veryverythinmathspace")
+    if (string == "veryverythinmathspace"_s)
         namedSpaceValue = 1;
-    else if (string == "verythinmathspace")
+    else if (string == "verythinmathspace"_s)
         namedSpaceValue = 2;
-    else if (string == "thinmathspace")
+    else if (string == "thinmathspace"_s)
         namedSpaceValue = 3;
-    else if (string == "mediummathspace")
+    else if (string == "mediummathspace"_s)
         namedSpaceValue = 4;
-    else if (string == "thickmathspace")
+    else if (string == "thickmathspace"_s)
         namedSpaceValue = 5;
-    else if (string == "verythickmathspace")
+    else if (string == "verythickmathspace"_s)
         namedSpaceValue = 6;
-    else if (string == "veryverythickmathspace")
+    else if (string == "veryverythickmathspace"_s)
         namedSpaceValue = 7;
-    else if (string == "negativeveryverythinmathspace")
+    else if (string == "negativeveryverythinmathspace"_s)
         namedSpaceValue = -1;
-    else if (string == "negativeverythinmathspace")
+    else if (string == "negativeverythinmathspace"_s)
         namedSpaceValue = -2;
-    else if (string == "negativethinmathspace")
+    else if (string == "negativethinmathspace"_s)
         namedSpaceValue = -3;
-    else if (string == "negativemediummathspace")
+    else if (string == "negativemediummathspace"_s)
         namedSpaceValue = -4;
-    else if (string == "negativethickmathspace")
+    else if (string == "negativethickmathspace"_s)
         namedSpaceValue = -5;
-    else if (string == "negativeverythickmathspace")
+    else if (string == "negativeverythickmathspace"_s)
         namedSpaceValue = -6;
-    else if (string == "negativeveryverythickmathspace")
+    else if (string == "negativeveryverythickmathspace"_s)
         namedSpaceValue = -7;
     else
         return Length();

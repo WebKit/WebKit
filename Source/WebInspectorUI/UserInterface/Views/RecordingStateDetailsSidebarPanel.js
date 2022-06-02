@@ -156,8 +156,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
                     }
                 } else if (name === "fillStyle" || name === "strokeStyle" || name === "shadowColor") {
                     let color = WI.Color.fromString(value);
-                    const readOnly = true;
-                    let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
+                    let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, {readOnly: true});
                     value = document.createElement("span");
                     value.append(swatch.element, color.toString());
                 }

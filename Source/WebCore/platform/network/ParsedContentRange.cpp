@@ -99,7 +99,7 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
     lastBytePosition = *optionalLastBytePosition;
 
     auto instanceString = headerValue.substring(instanceLengthSeparatorToken + 1);
-    if (instanceString == "*")
+    if (instanceString == "*"_s)
         instanceLength = ParsedContentRange::unknownLength;
     else {
         if (!instanceString.isAllSpecialCharacters<isASCIIDigit>())

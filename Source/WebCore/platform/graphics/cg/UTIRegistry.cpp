@@ -111,7 +111,7 @@ bool isSupportedImageType(const String& imageType)
 
 bool isGIFImageType(StringView imageType)
 {
-    return imageType == "com.compuserve.gif";
+    return imageType == "com.compuserve.gif"_s;
 }
 
 }

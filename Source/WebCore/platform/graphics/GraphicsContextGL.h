@@ -1443,7 +1443,7 @@ public:
     // display buffer abstractions that the caller should hold separate to
     // the context.
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
+    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM)
     virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
@@ -1510,7 +1510,7 @@ public:
     // Returns true upon success.
     static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
-    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
+    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&, const IntSize& canvasSize, GraphicsContext&);
 protected:
     WEBCORE_EXPORT void forceContextLost();
     WEBCORE_EXPORT void dispatchContextChangedNotification();

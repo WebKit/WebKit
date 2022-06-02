@@ -189,12 +189,12 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
     return EGL_ReleaseThread();
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
-        return std::nullopt;
+        return nullptr;
     ScopedPixelStorageMode packAlignment(GL_PACK_ALIGNMENT);
     if (packAlignment > 4)
         packAlignment.pixelStore(4);
@@ -575,7 +575,7 @@ void GraphicsContextGLANGLE::prepareTexture()
 #endif
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readRenderingResults()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResults()
 {
     ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO);
     if (contextAttributes().antialias) {
@@ -2975,7 +2975,7 @@ void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuf
     auto pixelBuffer = readRenderingResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
@@ -2987,14 +2987,14 @@ void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBu
     auto pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return std::nullopt;
+        return nullptr;
     auto results = readRenderingResultsForPainting();
     if (results && !results->size().isEmpty()) {
         ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
@@ -3013,21 +3013,21 @@ std::optional<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelB
     return results;
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return std::nullopt;
+        return nullptr;
     if (getInternalFramebufferSize().isEmpty())
-        return std::nullopt;
+        return nullptr;
     return readRenderingResults();
 }
 
-std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResultsForPainting()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return std::nullopt;
+        return nullptr;
     if (getInternalFramebufferSize().isEmpty())
-        return std::nullopt;
+        return nullptr;
     return readCompositedResults();
 }
 

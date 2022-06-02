@@ -121,7 +121,7 @@ RefPtr<VideoFrame> GraphicsContextGLTextureMapper::paintCompositedResultsToVideo
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())
-        return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #endif
     return nullptr;
 }

@@ -861,19 +861,19 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
     StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
     auto track = [&]() -> UniqueRef<TrackData> {
 #if ENABLE(VP9)
-        if (codecString == "V_VP9" && isVP9DecoderAvailable())
+        if (codecString == "V_VP9"_s && isVP9DecoderAvailable())
             return VideoTrackData::create(CodecType::VP9, trackEntry, *this);
-        if (codecString == "V_VP8" && isVP8DecoderAvailable())
+        if (codecString == "V_VP8"_s && isVP8DecoderAvailable())
             return VideoTrackData::create(CodecType::VP8, trackEntry, *this);
 #endif
 
 #if ENABLE(VORBIS)
-        if (codecString == "A_VORBIS" && isVorbisDecoderAvailable())
+        if (codecString == "A_VORBIS"_s && isVorbisDecoderAvailable())
             return AudioTrackData::create(CodecType::Vorbis, trackEntry, *this);
 #endif
 
 #if ENABLE(OPUS)
-        if (codecString == "A_OPUS" && isOpusDecoderAvailable())
+        if (codecString == "A_OPUS"_s && isOpusDecoderAvailable())
             return AudioTrackData::create(CodecType::Opus, trackEntry, *this);
 #endif
         return TrackData::create(CodecType::Unsupported, trackEntry, *this);
@@ -1255,12 +1255,12 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
 
 bool WebMParser::isSupportedVideoCodec(StringView name)
 {
-    return name == "V_VP8" || name == "V_VP9";
+    return name == "V_VP8"_s || name == "V_VP9"_s;
 }
 
 bool WebMParser::isSupportedAudioCodec(StringView name)
 {
-    return name == "A_VORBIS" || name == "A_OPUS";
+    return name == "A_VORBIS"_s || name == "A_OPUS"_s;
 }
 
 SourceBufferParserWebM::SourceBufferParserWebM()
@@ -1327,7 +1327,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VP9)
 
 #if ENABLE(VORBIS)
-        if (codec == "vorbis") {
+        if (codec == "vorbis"_s) {
             if (!isVorbisDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -1336,7 +1336,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VORBIS)
 
 #if ENABLE(OPUS)
-        if (codec == "opus") {
+        if (codec == "opus"_s) {
             if (!isOpusDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 

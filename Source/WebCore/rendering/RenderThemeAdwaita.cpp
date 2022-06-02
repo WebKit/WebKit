@@ -46,6 +46,8 @@
 #include <gtk/gtk.h>
 #endif
 
+#include <wtf/text/Base64.h>
+
 namespace WebCore {
 
 static const double disabledOpacity = 0.5; // Keep in sync with disabledOpacity in ThemeAdwaita.
@@ -201,16 +203,45 @@ String RenderThemeAdwaita::extraDefaultStyleSheet()
 }
 
 #if ENABLE(VIDEO)
-String RenderThemeAdwaita::extraMediaControlsStyleSheet()
-{
-    return StringImpl::createWithoutCopying(mediaControlsAdwaitaUserAgentStyleSheet, sizeof(mediaControlsAdwaitaUserAgentStyleSheet));
-}
 
 Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
 {
-    return { StringImpl::createWithoutCopying(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript)) };
-}
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+    return { StringImpl::createWithoutCopying(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript)) };
+#else
+    return { };
 #endif
+}
+
+String RenderThemeAdwaita::mediaControlsStyleSheet()
+{
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+    if (m_mediaControlsStyleSheet.isEmpty())
+        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
+    return m_mediaControlsStyleSheet;
+#else
+    return emptyString();
+#endif
+}
+
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+
+String RenderThemeAdwaita::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
+{
+    auto path = makeString("/org/webkit/media-controls/", iconName, '.', iconType);
+    auto data = adoptGRef(g_resources_lookup_data(path.latin1().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    if (!data)
+        return emptyString();
+    return base64EncodeToString(g_bytes_get_data(data.get(), nullptr), g_bytes_get_size(data.get()));
+}
+
+String RenderThemeAdwaita::mediaControlsFormattedStringForDuration(double durationInSeconds)
+{
+    // FIXME: Format this somehow, maybe through GDateTime?
+    return makeString(durationInSeconds);
+}
+#endif // ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 
 Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {

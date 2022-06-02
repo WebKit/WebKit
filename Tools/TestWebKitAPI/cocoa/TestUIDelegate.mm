@@ -57,6 +57,12 @@
     else
         completionHandler(menu);
 }
+
+- (void)_focusWebView:(WKWebView *)webView
+{
+    if (_focusWebView)
+        _focusWebView(webView);
+}
 #endif // PLATFORM(MAC)
 
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url

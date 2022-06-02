@@ -229,8 +229,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 return null;
         }
 
-        const readOnly = true;
-        return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
+        return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, {readOnly: true});
     }
 
     static _getClassNames(recordingAction)

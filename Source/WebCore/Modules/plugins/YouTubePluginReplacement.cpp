@@ -104,8 +104,8 @@ void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 static URL createYouTubeURL(StringView videoID, StringView timeID)
 {
     ASSERT(!videoID.isEmpty());
-    ASSERT(videoID != "/");
-    return URL(URL(), makeString("youtube:", videoID, timeID.isEmpty() ? "" : "t=", timeID));
+    ASSERT(videoID != "/"_s);
+    return URL(URL(), makeString("youtube:"_s, videoID, timeID.isEmpty() ? ""_s : "t="_s, timeID));
 }
 
 static HashMap<String, String> queryKeysAndValues(StringView queryString)
@@ -204,7 +204,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
     // Short URL of the form: http://youtu.be/v1d301D
     if (isYouTubeShortenedURL) {
         auto videoID = url.lastPathComponent();
-        if (videoID.isEmpty() || videoID == "/")
+        if (videoID.isEmpty() || videoID == "/"_s)
             return URL();
         return createYouTubeURL(videoID, { });
     }

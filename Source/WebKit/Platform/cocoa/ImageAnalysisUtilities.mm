@@ -145,6 +145,11 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 #include <WebKitAdditions/ImageAnalysisUtilitiesAdditions.mm>
 #else
 
+bool canStartImageAnalysis(NSString *)
+{
+    return true;
+}
+
 bool textRecognitionEnhancementsSystemFeatureEnabled()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

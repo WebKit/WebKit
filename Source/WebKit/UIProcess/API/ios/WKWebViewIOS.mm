@@ -2865,7 +2865,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_setMinimumUnobscuredSizeOverride:(CGSize)size
 {
-    ASSERT(size.width <= self.bounds.size.width && size.height <= self.bounds.size.height);
+    ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
     _minimumUnobscuredSizeOverride = size;
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
@@ -2881,7 +2881,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_setMaximumUnobscuredSizeOverride:(CGSize)size
 {
-    ASSERT(size.width <= self.bounds.size.width && size.height <= self.bounds.size.height);
+    ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
     _maximumUnobscuredSizeOverride = size;
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {

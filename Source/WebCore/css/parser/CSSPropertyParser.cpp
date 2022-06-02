@@ -3504,7 +3504,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(StringView gridRowNames)
             continue;
         }
         if (character == '.') {
-            if (areaName == ".")
+            if (areaName == "."_s)
                 continue;
             if (!areaName.isEmpty()) {
                 columnNames.append(areaName.toString());
@@ -3513,7 +3513,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(StringView gridRowNames)
         } else {
             if (!isNameCodePoint(character))
                 return Vector<String>();
-            if (areaName == ".") {
+            if (areaName == "."_s) {
                 columnNames.append(areaName.toString());
                 areaName.clear();
             }

@@ -2112,3 +2112,11 @@ webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Failure ]
 webgl/multiple-context-losses.html [ Failure ]
 
 fast/css/tab-size.html [ ImageOnlyFailure ]
+
+fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-thicknes-overline-grow-direction.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
+fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]

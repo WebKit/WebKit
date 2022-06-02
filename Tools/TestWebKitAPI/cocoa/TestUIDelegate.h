@@ -33,6 +33,7 @@
 @property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
 #endif
 @property (nonatomic, copy) void (^saveDataToFile)(WKWebView *, NSData *, NSString *, NSString *, NSURL *);
+@property (nonatomic, copy) void (^focusWebView)(WKWebView *);
 
 - (NSString *)waitForAlert;
 

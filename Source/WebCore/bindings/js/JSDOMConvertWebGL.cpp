@@ -161,77 +161,46 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
 
 JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtension& extension)
 {
+#define TO_JS(EXT) \
+    case WebGLExtension::EXT ## Name: \
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXT&>(extension));
+
     switch (extension.getName()) {
-    case WebGLExtension::WebGLLoseContextName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLLoseContext&>(extension));
-    case WebGLExtension::EXTShaderTextureLODName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTShaderTextureLOD&>(extension));
-    case WebGLExtension::EXTTextureCompressionBPTCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureCompressionBPTC&>(extension));
-    case WebGLExtension::EXTTextureCompressionRGTCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureCompressionRGTC&>(extension));
-    case WebGLExtension::EXTTextureFilterAnisotropicName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureFilterAnisotropic&>(extension));
-    case WebGLExtension::EXTTextureNorm16Name:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureNorm16&>(extension));
-    case WebGLExtension::EXTsRGBName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTsRGB&>(extension));
-    case WebGLExtension::EXTFragDepthName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTFragDepth&>(extension));
-    case WebGLExtension::EXTBlendMinMaxName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTBlendMinMax&>(extension));
-    case WebGLExtension::KHRParallelShaderCompileName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<KHRParallelShaderCompile&>(extension));
-    case WebGLExtension::OESStandardDerivativesName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESStandardDerivatives&>(extension));
-    case WebGLExtension::OESTextureFloatName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureFloat&>(extension));
-    case WebGLExtension::OESTextureFloatLinearName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureFloatLinear&>(extension));
-    case WebGLExtension::OESTextureHalfFloatName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureHalfFloat&>(extension));
-    case WebGLExtension::OESTextureHalfFloatLinearName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureHalfFloatLinear&>(extension));
-    case WebGLExtension::OESVertexArrayObjectName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESVertexArrayObject&>(extension));
-    case WebGLExtension::OESElementIndexUintName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESElementIndexUint&>(extension));
-    case WebGLExtension::OESFBORenderMipmapName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESFBORenderMipmap&>(extension));
-    case WebGLExtension::WebGLDebugRendererInfoName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugRendererInfo&>(extension));
-    case WebGLExtension::WebGLDebugShadersName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugShaders&>(extension));
-    case WebGLExtension::WebGLCompressedTextureATCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureATC&>(extension));
-    case WebGLExtension::WebGLCompressedTextureETCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureETC&>(extension));
-    case WebGLExtension::WebGLCompressedTextureETC1Name:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureETC1&>(extension));
-    case WebGLExtension::WebGLCompressedTexturePVRTCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTexturePVRTC&>(extension));
-    case WebGLExtension::WebGLCompressedTextureS3TCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureS3TC&>(extension));
-    case WebGLExtension::WebGLCompressedTextureS3TCsRGBName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureS3TCsRGB&>(extension));
-    case WebGLExtension::WebGLCompressedTextureASTCName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureASTC&>(extension));
-    case WebGLExtension::WebGLDepthTextureName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDepthTexture&>(extension));
-    case WebGLExtension::WebGLDrawBuffersName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDrawBuffers&>(extension));
-    case WebGLExtension::ANGLEInstancedArraysName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<ANGLEInstancedArrays&>(extension));
-    case WebGLExtension::EXTColorBufferHalfFloatName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTColorBufferHalfFloat&>(extension));
-    case WebGLExtension::EXTFloatBlendName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTFloatBlend&>(extension));
-    case WebGLExtension::WebGLColorBufferFloatName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLColorBufferFloat&>(extension));
-    case WebGLExtension::EXTColorBufferFloatName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTColorBufferFloat&>(extension));
-    case WebGLExtension::WebGLMultiDrawName:
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLMultiDraw&>(extension));
+        TO_JS(ANGLEInstancedArrays)
+        TO_JS(EXTBlendMinMax)
+        TO_JS(EXTColorBufferFloat)
+        TO_JS(EXTColorBufferHalfFloat)
+        TO_JS(EXTFloatBlend)
+        TO_JS(EXTFragDepth)
+        TO_JS(EXTShaderTextureLOD)
+        TO_JS(EXTTextureCompressionBPTC)
+        TO_JS(EXTTextureCompressionRGTC)
+        TO_JS(EXTTextureFilterAnisotropic)
+        TO_JS(EXTTextureNorm16)
+        TO_JS(EXTsRGB)
+        TO_JS(KHRParallelShaderCompile)
+        TO_JS(OESElementIndexUint)
+        TO_JS(OESFBORenderMipmap)
+        TO_JS(OESStandardDerivatives)
+        TO_JS(OESTextureFloat)
+        TO_JS(OESTextureFloatLinear)
+        TO_JS(OESTextureHalfFloat)
+        TO_JS(OESTextureHalfFloatLinear)
+        TO_JS(OESVertexArrayObject)
+        TO_JS(WebGLColorBufferFloat)
+        TO_JS(WebGLCompressedTextureASTC)
+        TO_JS(WebGLCompressedTextureATC)
+        TO_JS(WebGLCompressedTextureETC)
+        TO_JS(WebGLCompressedTextureETC1)
+        TO_JS(WebGLCompressedTexturePVRTC)
+        TO_JS(WebGLCompressedTextureS3TC)
+        TO_JS(WebGLCompressedTextureS3TCsRGB)
+        TO_JS(WebGLDebugRendererInfo)
+        TO_JS(WebGLDebugShaders)
+        TO_JS(WebGLDepthTexture)
+        TO_JS(WebGLDrawBuffers)
+        TO_JS(WebGLLoseContext)
+        TO_JS(WebGLMultiDraw)
     }
     ASSERT_NOT_REACHED();
     return jsNull();

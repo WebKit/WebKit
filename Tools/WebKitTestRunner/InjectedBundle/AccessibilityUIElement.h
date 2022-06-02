@@ -133,6 +133,8 @@ public:
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValue(NSString *) const;
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback);
+    NSArray *actionNames() const;
+    void performAction(NSString *) const;
 #else
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback) { }
 #endif

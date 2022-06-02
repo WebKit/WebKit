@@ -232,7 +232,7 @@ private:
         while (shouldAdvanceIteratorPastCurrentNode()) {
             auto iteratorText = m_iterator.text();
             if (m_iterator.range().collapsed()) {
-                if (iteratorText == "\n") {
+                if (iteratorText == "\n"_s) {
                     appendToText(text, stringBuilder);
                     text.append({ });
                 }

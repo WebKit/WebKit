@@ -328,11 +328,11 @@ public:
     bool moveErrorsToSyntheticErrorList() final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
 
-    std::optional<PixelBuffer> readRenderingResultsForPainting();
-    std::optional<PixelBuffer> readCompositedResultsForPainting();
+    RefPtr<PixelBuffer> readRenderingResultsForPainting();
+    RefPtr<PixelBuffer> readCompositedResultsForPainting();
 
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
@@ -361,9 +361,9 @@ protected:
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
 
-    std::optional<PixelBuffer> readRenderingResults();
-    std::optional<PixelBuffer> readCompositedResults();
-    std::optional<PixelBuffer> readPixelsForPaintResults();
+    RefPtr<PixelBuffer> readRenderingResults();
+    RefPtr<PixelBuffer> readCompositedResults();
+    RefPtr<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
     virtual void prepareTexture();

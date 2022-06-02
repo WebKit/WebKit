@@ -56,45 +56,50 @@ CheckedUint32 PixelBuffer::computeBufferSize(const PixelBufferFormat& format, co
     return size.area<RecordOverflow>() * bytesPerPixel;
 }
 
-std::optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
+RefPtr<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
     ASSERT(computeBufferSize(format, size) == dataByteLength);
 
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
     if (!pixelArray)
-        return std::nullopt;
-    return { { format, size, pixelArray.releaseNonNull() } };
+        return nullptr;
+    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
 }
 
-std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
+RefPtr<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
-        return std::nullopt;
+        return nullptr;
     if (bufferSize > std::numeric_limits<int32_t>::max())
-        return std::nullopt;
+        return nullptr;
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
     if (!pixelArray)
-        return std::nullopt;
-    return { { format, size, pixelArray.releaseNonNull() } };
+        return nullptr;
+    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
 }
 
-std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
+RefPtr<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
-        return std::nullopt;
+        return nullptr;
     if (bufferSize != arrayBuffer->byteLength())
-        return std::nullopt;
+        return nullptr;
     auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize);
     if (!pixelArray)
-        return std::nullopt;
-    return { { format, size, pixelArray.releaseNonNull() } };
+        return nullptr;
+    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
+}
+
+Ref<PixelBuffer> PixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
+{
+    return adoptRef(*new PixelBuffer(format, size, { data }));
 }
 
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
@@ -114,11 +119,6 @@ PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, J
 }
 
 PixelBuffer::~PixelBuffer() = default;
-
-PixelBuffer PixelBuffer::deepClone() const
-{
-    return { m_format, m_size, Uint8ClampedArray::create(m_data->data(), m_data->length()) };
-}
 
 uint8_t* PixelBuffer::bytes() const
 {
@@ -161,7 +161,7 @@ void PixelBuffer::set(size_t index, double value)
     bytes()[index] = JSC::Uint8ClampedAdaptor::toNativeFromDouble(value);
 }
 
-std::optional<PixelBuffer> PixelBuffer::createScratchPixelBuffer(const IntSize& size) const
+RefPtr<PixelBuffer> PixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
     return PixelBuffer::tryCreate(m_format, size);
 }
@@ -172,4 +172,3 @@ TextStream& operator<<(TextStream& ts, const PixelBuffer& pixelBuffer)
 }
 
 } // namespace WebCore
-

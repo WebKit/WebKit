@@ -168,6 +168,9 @@ webkit.org/b/210528 media/video-supports-fullscreen.html [ Pass ]
 webkit.org/b/132262 [ Release ] http/tests/media/video-redirect.html [ Timeout Pass ]
 webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
 
+# Media controls
+accessibility/gtk/media-controls-panel-title.html [ Failure ]
+
 # MESA-related segfault
 webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-segment-break-001.html [ ImageOnlyFailure Crash ]

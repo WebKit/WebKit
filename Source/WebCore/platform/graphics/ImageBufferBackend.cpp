@@ -89,7 +89,7 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-std::optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data) const
+RefPtr<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data) const
 {
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
 
@@ -97,7 +97,7 @@ std::optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferF
 
     auto pixelBuffer = PixelBuffer::tryCreate(destinationFormat, sourceRectScaled.size());
     if (!pixelBuffer)
-        return std::nullopt;
+        return nullptr;
 
     auto sourceRectClipped = intersection(backendRect(), sourceRectScaled);
     IntRect destinationRect { IntPoint::zero(), sourceRectClipped.size() };

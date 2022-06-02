@@ -1000,15 +1000,15 @@ void InspectorCSSAgent::nodeLayoutContextTypeChanged(Node& node, RenderObject* n
     if (!nodeId)
         return;
 
-    m_nodesWithPendingLayoutContextTypeChanges.set(nodeId, layoutContextTypeForRenderer(newRenderer));
+    m_nodesWithPendingLayoutContextTypeChanges.set(nodeId, newRenderer);
     if (!m_layoutContextTypeChangedTimer.isActive())
         m_layoutContextTypeChangedTimer.startOneShot(0_s);
 }
 
 void InspectorCSSAgent::layoutContextTypeChangedTimerFired()
 {
-    for (auto&& [nodeId, layoutContextType] : std::exchange(m_nodesWithPendingLayoutContextTypeChanges, { }))
-        m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, WTFMove(layoutContextType));
+    for (auto&& [nodeId, renderer] : std::exchange(m_nodesWithPendingLayoutContextTypeChanges, { }))
+        m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, layoutContextTypeForRenderer(renderer.get()));
 }
 
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)

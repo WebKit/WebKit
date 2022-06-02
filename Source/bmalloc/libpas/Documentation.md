@@ -30,18 +30,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Introduction
 
-This document describes how libpas works as of a361efa96ca4b2ff6bdfc28bc7eb1a678cde75be, so a bit ahead of
-where WebKit was as of r289146. Libpas is a fast and memory-efficient memory allocation toolkit capable of
-supporting many heaps at once, engineered with the hopes that someday it'll be used for comprehensive isoheaping
-of all malloc/new callsites in C/C++ programs.
+This document describes how libpas works as of [247029@main](https://commits.webkit.org/247029@main), so a bit ahead of
+where WebKit was as of [246842@main](https://commits.webkit.org/246842@main). Libpas is a fast and memory-efficient
+memory allocation toolkit capable of supporting many heaps at once, engineered with the hopes that someday it'll be used
+for comprehensive isoheaping of all malloc/new callsites in C/C++ programs.
 
-Since WebKit r213753, we've been steadily enabling libpas as a replacement for WebKit's bmalloc and
-MetaAllocator. This has so far added up to a ~2% Speedometer2 speed-up and a ~8% memory improvement (on multiple
-memory benchmarks). Half of the speed-up comes from replacing the MetaAllocator, which was JavaScriptCore's old
-way of managing executable memory. Now, JSC uses libpas's jit_heap to manage executable memory. The other half
-of the speed-up comes from replacing everything that bmalloc provided -- the fastMalloc API, the Gigacage API,
-and the IsoHeap<> API. All of the memory improvement comes from replacing bmalloc (the MetaAllocator was already
-fairly memory-efficient).
+Since WebKit [186504@main](https://commits.webkit.org/186504@main), we've been steadily enabling libpas as a
+replacement for WebKit's bmalloc and MetaAllocator. This has so far added up to a ~2% Speedometer2 speed-up and
+a ~8% memory improvement (on multiple memory benchmarks). Half of the speed-up comes from replacing the MetaAllocator,
+which was JavaScriptCore's old way of managing executable memory. Now, JSC uses libpas's jit_heap to manage executable
+memory. The other half of the speed-up comes from replacing everything that bmalloc provided -- the fastMalloc API, the
+Gigacage API, and the IsoHeap<> API. All of the memory improvement comes from replacing bmalloc (the MetaAllocator was
+already fairly memory-efficient).
 
 This document is structured as follows. First I describe the goals of libpas; these are the things that a
 malloc-like API created out of libpas should be able to expose as fast and memory-efficient functions. Then I
@@ -427,7 +427,7 @@ used in single-heap applications, these overheads don't matter -- they end up be
 daemons). But when used for many heaps, these overheads are substantial. Given thousands or tens of thousands
 of heaps, TLCs account for as much as 1% of memory. So, TLCs support partial decommit. Those pages that only
 have allocators that are inactive get decommitted. Note that TLC decommit has landed in the libpas.git repo
-as of a361efa96ca4b2ff6bdfc28bc7eb1a678cde75be, but hasn't yet been merged into WebKit.
+as of [247029@main](https://commits.webkit.org/247029@main), but hasn't yet been merged into WebKit.
 
 The TLC deallocation log flush algorithm is designed to achieve two performance optimizations:
 

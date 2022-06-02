@@ -164,7 +164,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     std::optional<VideoFrameTimeMetadata> metadata;
     metadata->captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
-    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer), presentationTime, size(), frameRate(), videoFrameRotation(), false, WTFMove(metadata));
+    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), presentationTime, size(), frameRate(), videoFrameRotation(), false, WTFMove(metadata));
     dispatchVideoFrameToObservers(videoFrame.get(), { });
 }
 

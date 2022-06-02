@@ -71,8 +71,7 @@ static void keepNetworkProcessActive()
     }];
 }
 
-// FIXME: Re-enable this test once webkit.org/b/240886 is resolved.
-TEST(IndexedDB, DISABLED_IndexedDBSuspendImminently)
+TEST(IndexedDB, IndexedDBSuspendImminently)
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -83,21 +82,15 @@ TEST(IndexedDB, DISABLED_IndexedDBSuspendImminently)
     auto handler = adoptNS([[IndexedDBSuspendImminentlyMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBSuspendImminently" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    idbActivitiesStarted = false;
     [webView loadRequest:request];
-
-    keepNetworkProcessActive();
-
     runUntilMessageReceived(@"Continue");
 
     [configuration.get().websiteDataStore _sendNetworkProcessWillSuspendImminently];
-    [configuration.get().websiteDataStore _sendNetworkProcessDidResume];
-
     runUntilMessageReceived(@"Expected Abort For Suspension");
+
+    [configuration.get().websiteDataStore _sendNetworkProcessDidResume];
     runUntilMessageReceived(@"Expected Success After Resume");
 }
 

@@ -43,8 +43,8 @@ private:
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 
     struct ApplyParameters {
-        std::optional<PixelBuffer> ioBuffer;
-        std::optional<PixelBuffer> tempBuffer;
+        RefPtr<PixelBuffer> ioBuffer;
+        RefPtr<PixelBuffer> tempBuffer;
         int width;
         int height;
         unsigned kernelSizeX;

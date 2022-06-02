@@ -211,21 +211,21 @@ static std::optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit
 {
     StringView singular = singularUnit(unit);
 
-    if (singular == "second")
+    if (singular == "second"_s)
         return UDAT_REL_UNIT_SECOND;
-    if (singular == "minute")
+    if (singular == "minute"_s)
         return UDAT_REL_UNIT_MINUTE;
-    if (singular == "hour")
+    if (singular == "hour"_s)
         return UDAT_REL_UNIT_HOUR;
-    if (singular == "day")
+    if (singular == "day"_s)
         return UDAT_REL_UNIT_DAY;
-    if (singular == "week")
+    if (singular == "week"_s)
         return UDAT_REL_UNIT_WEEK;
-    if (singular == "month")
+    if (singular == "month"_s)
         return UDAT_REL_UNIT_MONTH;
-    if (singular == "quarter")
+    if (singular == "quarter"_s)
         return UDAT_REL_UNIT_QUARTER;
-    if (singular == "year")
+    if (singular == "year"_s)
         return UDAT_REL_UNIT_YEAR;
 
     return std::nullopt;

@@ -43,7 +43,7 @@ public:
         return adoptRef(*new VideoFrameGStreamer(sample, presentationTime, videoRotation));
     }
 
-    static Ref<VideoFrameGStreamer> createFromPixelBuffer(PixelBuffer&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
+    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
 
     GstSample* sample() const { return m_sample.get(); }
     RefPtr<JSC::Uint8ClampedArray> computeRGBAImageData() const;

@@ -478,7 +478,7 @@ static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
         [](WebKitURISchemeRequest* request, gpointer) {
             URL url = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
             GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
-            char* html = g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", url.host() == "host5" ? "Title5" : "Title6");
+            char* html = g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", url.host() == "host5"_s ? "Title5" : "Title6");
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), html, strlen(html), g_free);
             webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(html), "text/html");
         }, nullptr, nullptr);

@@ -347,7 +347,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 {
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     return readRenderingResults();
 }
@@ -416,7 +416,7 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFlush();
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
 {
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {
@@ -3114,7 +3114,7 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBu
     auto pixelBuffer = readRenderingResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
@@ -3126,14 +3126,14 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageB
     auto pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return std::nullopt;
+        return nullptr;
     auto results = readRenderingResultsForPainting();
     if (results && !results->size().isEmpty()) {
         ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
@@ -3152,21 +3152,21 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixel
     return results;
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return std::nullopt;
+        return nullptr;
     if (getInternalFramebufferSize().isEmpty())
-        return std::nullopt;
+        return nullptr;
     return readRenderingResults();
 }
 
-std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return std::nullopt;
+        return nullptr;
     if (getInternalFramebufferSize().isEmpty())
-        return std::nullopt;
+        return nullptr;
     return readCompositedResults();
 }
 

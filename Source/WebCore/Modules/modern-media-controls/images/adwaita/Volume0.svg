@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="16px"
+   viewBox="0 0 16 16"
+   width="16px"
+   version="1.1"
+   id="svg4"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <path
+     d="M 7,1.007812 C 6.703125,1.003906 6.421875,1.132812 6.230469,1.359375 L 3,5 H 2 C 0.90625,5 0,5.84375 0,7 v 2 c 0,1.089844 0.910156,2 2,2 h 1 l 3.230469,3.640625 C 6.441406,14.894531 6.722656,15.003906 7,15 Z"
+     fill="#2e3436"
+     id="path2" />
+</svg>

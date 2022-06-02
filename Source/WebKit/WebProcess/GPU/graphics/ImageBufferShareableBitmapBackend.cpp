@@ -158,7 +158,7 @@ RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, Pre
     return m_bitmap->createImage();
 }
 
-std::optional<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
+RefPtr<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data());
 }

@@ -98,6 +98,16 @@ class LayoutTraits
         return GestureRecognizer.SupportsTouches;
     }
 
+    supportsAirPlay()
+    {
+        throw "Derived class must implement this function.";
+    }
+
+    supportsPiP()
+    {
+        throw "Derived class must implement this function.";
+    }
+
     additionalControlScaleFactor()
     {
         return 1;
