@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg width='16' height='16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg'>
+<defs id='defs59' />
+<g color='%23000' fill='%23FFFFFF' id='g53' transform='matrix(-1,0,0,1,15.998034,0)'>
+<path
+   d='M 1.984,8.986 A 1,1 0 0 0 1,10 v 4 a 1,1 0 0 0 1,1 H 6 A 1,1 0 1 0 6,13 H 3 V 10 A 1,1 0 0 0 1.984,8.986 Z'
+   style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none'
+   font-weight='400'
+   font-family='sans-serif'
+   white-space='normal'
+   overflow='visible'
+   id='path39' />
+<path
+   d='M 6.48,8.49 A 1,1 0 0 0 5.793,8.793 l -4.5,4.5 a 1,1 0 1 0 1.414,1.414 l 4.5,-4.5 A 1,1 0 0 0 6.48,8.49 Z'
+   style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none'
+   font-weight='400'
+   font-family='sans-serif'
+   white-space='normal'
+   overflow='visible'
+   id='path41' />
+<path
+   d='m 1,14 h 1 v 1 H 1 Z'
+   style='marker:none'
+   overflow='visible'
+   id='path43' />
+<path
+   d='m 10,1 a 1,1 0 1 0 0,2 h 3 v 3 a 1,1 0 1 0 2,0 V 2 A 1,1 0 0 0 14,1 Z'
+   style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none'
+   font-weight='400'
+   font-family='sans-serif'
+   white-space='normal'
+   overflow='visible'
+   id='path45' />
+<path
+   d='m 14,1 h 1 v 1 h -1 z'
+   style='marker:none'
+   overflow='visible'
+   id='path47' />
+<path
+   d='m 13.984,0.99 a 1,1 0 0 0 -0.69,0.301 l -4.5,4.469 a 1.0002056,1.0002056 0 1 0 1.411,1.418 l 4.5,-4.469 A 1,1 0 0 0 13.985,0.99 Z'
+   style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none'
+   font-weight='400'
+   font-family='sans-serif'
+   white-space='normal'
+   overflow='visible'
+   id='path49' />
+<path
+   d='m 1,9 h 1 v 1 H 1 Z m 5,5 h 1 v 1 H 6 Z m 8,-8 h 1 V 7 H 14 Z M 9,1 h 1 V 2 H 9 Z'
+   style='marker:none'
+   overflow='visible'
+   id='path51'/>
+</g></svg>

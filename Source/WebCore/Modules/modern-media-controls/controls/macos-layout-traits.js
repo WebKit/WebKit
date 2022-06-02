@@ -81,7 +81,17 @@ class MacOSLayoutTraits extends LayoutTraits
     {
         return false;
     }
-    
+
+    supportsAirPlay()
+    {
+        return true;
+    }
+
+    supportsPiP()
+    {
+        return true;
+    }
+
     toString()
     {
         const mode = this.isFullscreen ? "Fullscreen" : "Inline";

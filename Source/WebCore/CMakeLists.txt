@@ -2091,6 +2091,121 @@ if (ENABLE_WEBXR)
     )
 endif ()
 
+set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/activity-indicator.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/airplay-button.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/background-tint.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/button.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/buttons-container.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/controls-bar.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/inline-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-inline-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/media-document.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/placard.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/slider.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/status-label.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/text-tracks.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/time-label.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-activity-indicator.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.css"
+)
+
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    DEPENDS ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS}
+    COMMAND cat ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    VERBATIM)
+
+set(MODERN_MEDIA_CONTROLS_SCRIPTS
+    "${WEBCORE_DIR}/Modules/modern-media-controls/main.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/gesture-recognizers/tap.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/gesture-recognizers/pinch.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/scheduler.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/layout-node.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/layout-item.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/icon-service.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/background-tint.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/time-control.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/time-label.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/slider.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/play-pause-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/skip-back-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/skip-forward-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/mute-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/airplay-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/pip-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/tracks-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/fullscreen-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/seek-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/rewind-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/forward-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/overflow-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/range-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/brightness-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/volume-button.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/buttons-container.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/status-label.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/controls-bar.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/auto-hide-controller.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/background-click-delegate-notifier.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/inline-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/ios-inline-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/ios-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-inline-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/placard.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/airplay-placard.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/invalid-placard.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/pip-placard.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-activity-indicator.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/media-controller-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/airplay-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/audio-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/brightness-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/close-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/controls-visibility-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/fullscreen-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/mute-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/overflow-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/pip-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/placard-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/playback-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/scrubbing-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/seek-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/seek-backward-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/seek-forward-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/skip-back-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/skip-forward-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/start-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/status-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/time-control-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/tracks-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/volume-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/media-document-controller.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/watchos-media-controls-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/media-controller.js"
+)
+
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+    DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
+    COMMAND cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+    VERBATIM)
+
 # Modules that the bindings generator scripts may use
 set(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm

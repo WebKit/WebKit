@@ -23,101 +23,80 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class LayoutTraits
+class AdwaitaLayoutTraits extends LayoutTraits
 {
-
-    constructor(mode)
-    {
-        this.mode = mode
-    }
-
-    get isFullscreen()
-    {
-        return this.mode == LayoutTraits.Mode.Fullscreen;
-    }
-
     mediaControlsClass()
     {
-        throw "Derived class must implement this function.";
+        if (this.isFullscreen)
+            return AdwaitaFullscreenMediaControls;
+        return AdwaitaInlineMediaControls;
     }
 
     overridenSupportingObjectClasses()
     {
-        throw "Derived class must implement this function.";
+        return null;
     }
 
     resourceDirectory()
     {
-        throw "Derived class must implement this function.";
+        return "adwaita";
     }
 
     controlsAlwaysAvailable()
     {
-        throw "Derived class must implement this function.";
+        return this.isFullscreen;
     }
 
     controlsNeverAvailable()
     {
-        throw "Derived class must implement this function.";
+        return false;
     }
 
     supportsIconWithFullscreenVariant()
     {
-        throw "Derived class must implement this function.";
+        return this.isFullscreen;
     }
 
     supportsDurationTimeLabel()
     {
-        throw "Derived class must implement this function.";
-    }
-
-    skipDuration()
-    {
-        throw "Derived class must implement this function.";
+        return true;
     }
 
     controlsDependOnPageScaleFactor()
     {
-        throw "Derived class must implement this function.";
+        return false;
+    }
+
+    skipDuration()
+    {
+        return 15;
     }
 
     promoteSubMenusWhenShowingMediaControlsContextMenu()
     {
-        throw "Derived class must implement this function.";
-    }
-
-    overflowButtonHasCircle()
-    {
-        return false;
+        return true;
     }
 
     supportsTouches()
     {
-        // Can be overridden by subclasses.
-
-        return GestureRecognizer.SupportsTouches;
+        return false;
     }
 
     supportsAirPlay()
     {
-        throw "Derived class must implement this function.";
+        return false;
     }
 
     supportsPiP()
     {
-        throw "Derived class must implement this function.";
+        return false;
     }
 
-    additionalControlScaleFactor()
+    toString()
     {
-        return 1;
+        const mode = this.isFullscreen ? "Fullscreen" : "Inline";
+        return `[AdwaitaLayoutTraits ${mode}]`;
     }
 }
 
-LayoutTraits.Mode = {
-    Inline     : 0,
-    Fullscreen : 1
-};
-
-// LayoutTraits subclasses should "register" themselves by adding themselves to this map.
-window.layoutTraitsClasses = { };
+window.layoutTraitsClasses["AdwaitaLayoutTraits"] = AdwaitaLayoutTraits;

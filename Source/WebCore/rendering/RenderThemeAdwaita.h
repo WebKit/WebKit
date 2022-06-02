@@ -38,9 +38,16 @@ public:
 private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
-    String extraMediaControlsStyleSheet() final;
     Vector<String, 2> mediaControlsScripts() final;
+    String mediaControlsStyleSheet() final;
 #endif
+
+#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
+    String mediaControlsFormattedStringForDuration(double) final;
+
+    String m_mediaControlsStyleSheet;
+#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
 
     bool supportsHover(const RenderStyle&) const final { return true; }
     bool supportsFocusRing(const RenderStyle&) const final;

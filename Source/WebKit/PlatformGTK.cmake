@@ -4,6 +4,10 @@ if (ENABLE_PDFJS)
     include(PdfJSGResources.cmake)
 endif ()
 
+if (ENABLE_MODERN_MEDIA_CONTROLS)
+    include(ModernMediaControlsGResources.cmake)
+endif ()
+
 set(WebKit_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
 set(WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
@@ -79,6 +83,14 @@ if (ENABLE_PDFJS)
     )
 
     WEBKIT_BUILD_PDFJS_GRESOURCES(${WebKit2Gtk_DERIVED_SOURCES_DIR})
+endif ()
+
+if (ENABLE_MODERN_MEDIA_CONTROLS)
+    list(APPEND WebKit_DERIVED_SOURCES
+        ${WebKit2Gtk_DERIVED_SOURCES_DIR}/ModernMediaControlsGResourceBundle.c
+    )
+
+    WEBKIT_BUILD_MODERN_MEDIA_CONTROLS_GRESOURCES(${WebKit2Gtk_DERIVED_SOURCES_DIR})
 endif ()
 
 set(WebKit_DirectoryInputStream_DATA
