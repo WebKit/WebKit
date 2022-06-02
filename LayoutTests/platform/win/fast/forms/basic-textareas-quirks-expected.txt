@@ -1,295 +1,235 @@
-layer at (0,0) size 785x1085
+layer at (0,0) size 785x1053
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1085
-  RenderBlock {HTML} at (0,0) size 785x1085
+layer at (0,0) size 785x1053
+  RenderBlock {HTML} at (0,0) size 785x1053
     RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock (floating) {DIV} at (0,0) size 352x879 [border: (1px solid #FF0000)]
+      RenderBlock (floating) {DIV} at (0,0) size 352x839 [border: (1px solid #FF0000)]
         RenderBlock (anonymous) at (1,1) size 350x14
           RenderText {#text} at (0,-2) size 181x17
             text run at (0,-2) width 181: "Plain textarea with little content"
-        RenderBlock {DIV} at (1,15) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 13: " B"
-        RenderBlock (anonymous) at (1,58) size 350x14
-          RenderText {#text} at (0,-2) size 77x17
-            text run at (0,-2) width 77: "Plain textarea"
-        RenderBlock {DIV} at (1,72) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 13: " B"
-        RenderBlock (anonymous) at (1,115) size 350x14
-          RenderText {#text} at (0,-2) size 97x17
-            text run at (0,-2) width 97: "Disabled textarea"
-        RenderBlock {DIV} at (1,129) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 13: " B"
-        RenderBlock (anonymous) at (1,172) size 350x14
-          RenderText {#text} at (0,-2) size 123x17
-            text run at (0,-2) width 123: "style=\"padding:10px\""
-        RenderBlock {DIV} at (1,186) size 352x61 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,44) size 14x17
-            text run at (1,44) width 14: "A "
-          RenderText {#text} at (216,44) size 13x17
-            text run at (216,44) width 13: " B"
-        RenderBlock (anonymous) at (1,247) size 350x14
-          RenderText {#text} at (0,-2) size 116x17
-            text run at (0,-2) width 116: "style=\"padding:0px\""
-        RenderBlock {DIV} at (1,261) size 352x41 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,24) size 14x17
-            text run at (1,24) width 14: "A "
-          RenderText {#text} at (196,24) size 13x17
-            text run at (196,24) width 13: " B"
-        RenderBlock (anonymous) at (1,302) size 350x14
-          RenderText {#text} at (0,-2) size 118x17
-            text run at (0,-2) width 118: "style=\"margin:10px\""
-        RenderBlock {DIV} at (1,316) size 352x59 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,42) size 14x17
-            text run at (1,42) width 14: "A "
-          RenderText {#text} at (214,42) size 13x17
-            text run at (214,42) width 13: " B"
-        RenderBlock (anonymous) at (1,375) size 350x14
-          RenderText {#text} at (0,-2) size 111x17
-            text run at (0,-2) width 111: "style=\"margin:0px\""
-        RenderBlock {DIV} at (1,389) size 352x39 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,15) size 352x39 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,22) size 14x17
             text run at (1,22) width 14: "A "
           RenderText {#text} at (194,22) size 13x17
             text run at (194,22) width 13: " B"
-        RenderBlock (anonymous) at (1,428) size 350x14
+        RenderBlock (anonymous) at (1,54) size 350x14
+          RenderText {#text} at (0,-2) size 77x17
+            text run at (0,-2) width 77: "Plain textarea"
+        RenderBlock {DIV} at (1,68) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 13: " B"
+        RenderBlock (anonymous) at (1,107) size 350x14
+          RenderText {#text} at (0,-2) size 97x17
+            text run at (0,-2) width 97: "Disabled textarea"
+        RenderBlock {DIV} at (1,121) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 13: " B"
+        RenderBlock (anonymous) at (1,160) size 350x14
+          RenderText {#text} at (0,-2) size 123x17
+            text run at (0,-2) width 123: "style=\"padding:10px\""
+        RenderBlock {DIV} at (1,174) size 352x57 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,40) size 14x17
+            text run at (1,40) width 14: "A "
+          RenderText {#text} at (212,40) size 13x17
+            text run at (212,40) width 13: " B"
+        RenderBlock (anonymous) at (1,231) size 350x14
+          RenderText {#text} at (0,-2) size 116x17
+            text run at (0,-2) width 116: "style=\"padding:0px\""
+        RenderBlock {DIV} at (1,245) size 352x37 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,20) size 14x17
+            text run at (1,20) width 14: "A "
+          RenderText {#text} at (192,20) size 13x17
+            text run at (192,20) width 13: " B"
+        RenderBlock (anonymous) at (1,282) size 350x14
+          RenderText {#text} at (0,-2) size 118x17
+            text run at (0,-2) width 118: "style=\"margin:10px\""
+        RenderBlock {DIV} at (1,296) size 352x59 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,42) size 14x17
+            text run at (1,42) width 14: "A "
+          RenderText {#text} at (214,42) size 13x17
+            text run at (214,42) width 13: " B"
+        RenderBlock (anonymous) at (1,355) size 350x14
+          RenderText {#text} at (0,-2) size 111x17
+            text run at (0,-2) width 111: "style=\"margin:0px\""
+        RenderBlock {DIV} at (1,369) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 13: " B"
+        RenderBlock (anonymous) at (1,408) size 350x14
           RenderText {#text} at (0,-2) size 37x17
             text run at (0,-2) width 37: "cols=3"
-        RenderBlock {DIV} at (1,442) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (62,26) size 13x17
-            text run at (62,26) width 13: " B"
-        RenderBlock (anonymous) at (1,485) size 350x14
+        RenderBlock {DIV} at (1,422) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (58,22) size 13x17
+            text run at (58,22) width 13: " B"
+        RenderBlock (anonymous) at (1,461) size 350x14
           RenderText {#text} at (0,-2) size 42x17
             text run at (0,-2) width 42: "rows=3"
-        RenderBlock {DIV} at (1,499) size 352x58 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,41) size 14x17
-            text run at (1,41) width 14: "A "
-          RenderText {#text} at (198,41) size 13x17
-            text run at (198,41) width 13: " B"
-        RenderBlock (anonymous) at (1,557) size 350x14
+        RenderBlock {DIV} at (1,475) size 352x54 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,37) size 14x17
+            text run at (1,37) width 14: "A "
+          RenderText {#text} at (194,37) size 13x17
+            text run at (194,37) width 13: " B"
+        RenderBlock (anonymous) at (1,529) size 350x14
           RenderText {#text} at (0,-2) size 44x17
             text run at (0,-2) width 44: "cols=10"
-        RenderBlock {DIV} at (1,571) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (118,26) size 13x17
-            text run at (118,26) width 13: " B"
-        RenderBlock (anonymous) at (1,614) size 350x14
+        RenderBlock {DIV} at (1,543) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (114,22) size 13x17
+            text run at (114,22) width 13: " B"
+        RenderBlock (anonymous) at (1,582) size 350x14
           RenderText {#text} at (0,-2) size 49x17
             text run at (0,-2) width 49: "rows=10"
-        RenderBlock {DIV} at (1,628) size 352x163 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,146) size 14x17
-            text run at (1,146) width 14: "A "
-          RenderText {#text} at (198,146) size 13x17
-            text run at (198,146) width 13: " B"
-        RenderBlock (anonymous) at (1,791) size 350x14
+        RenderBlock {DIV} at (1,596) size 352x159 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,142) size 14x17
+            text run at (1,142) width 14: "A "
+          RenderText {#text} at (194,142) size 13x17
+            text run at (194,142) width 13: " B"
+        RenderBlock (anonymous) at (1,755) size 350x14
           RenderText {#text} at (0,-2) size 83x17
             text run at (0,-2) width 83: "cols=5 rows=4"
-        RenderBlock {DIV} at (1,805) size 352x73 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,56) size 14x17
-            text run at (1,56) width 14: "A "
-          RenderText {#text} at (78,56) size 13x17
-            text run at (78,56) width 13: " B"
-      RenderBlock (floating) {DIV} at (352,0) size 352x1077 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,769) size 352x69 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,52) size 14x17
+            text run at (1,52) width 14: "A "
+          RenderText {#text} at (74,52) size 13x17
+            text run at (74,52) width 13: " B"
+      RenderBlock (floating) {DIV} at (352,0) size 352x1045 [border: (1px solid #FF0000)]
         RenderBlock (anonymous) at (1,1) size 350x14
           RenderText {#text} at (0,-2) size 110x17
             text run at (0,-2) width 110: "style=\"width:60px\""
-        RenderBlock {DIV} at (1,15) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (75,26) size 13x17
-            text run at (75,26) width 13: " B"
-        RenderBlock (anonymous) at (1,58) size 350x14
+        RenderBlock {DIV} at (1,15) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (75,22) size 13x17
+            text run at (75,22) width 13: " B"
+        RenderBlock (anonymous) at (1,54) size 350x14
           RenderText {#text} at (0,-2) size 191x17
             text run at (0,-2) width 191: "style=\"width:60px;padding:20px\""
-        RenderBlock {DIV} at (1,72) size 352x81 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,64) size 14x17
-            text run at (1,64) width 14: "A "
-          RenderText {#text} at (75,64) size 13x17
-            text run at (75,64) width 13: " B"
-        RenderBlock (anonymous) at (1,153) size 350x14
+        RenderBlock {DIV} at (1,68) size 352x77 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,60) size 14x17
+            text run at (1,60) width 14: "A "
+          RenderText {#text} at (75,60) size 13x17
+            text run at (75,60) width 13: " B"
+        RenderBlock (anonymous) at (1,145) size 350x14
           RenderText {#text} at (0,-2) size 170x17
             text run at (0,-2) width 170: "style=\"width:60px;padding:0\""
-        RenderBlock {DIV} at (1,167) size 352x41 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,24) size 14x17
-            text run at (1,24) width 14: "A "
-          RenderText {#text} at (75,24) size 13x17
-            text run at (75,24) width 13: " B"
-        RenderBlock (anonymous) at (1,208) size 350x14
+        RenderBlock {DIV} at (1,159) size 352x37 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,20) size 14x17
+            text run at (1,20) width 14: "A "
+          RenderText {#text} at (75,20) size 13x17
+            text run at (75,20) width 13: " B"
+        RenderBlock (anonymous) at (1,196) size 350x14
           RenderText {#text} at (0,-2) size 113x17
             text run at (0,-2) width 113: "style=\"height:60px\""
-        RenderBlock {DIV} at (1,222) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,210) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
-          RenderText {#text} at (198,48) size 13x17
-            text run at (198,48) width 13: " B"
-        RenderBlock (anonymous) at (1,287) size 350x14
+          RenderText {#text} at (194,48) size 13x17
+            text run at (194,48) width 13: " B"
+        RenderBlock (anonymous) at (1,275) size 350x14
           RenderText {#text} at (0,-2) size 181x17
             text run at (0,-2) width 181: "style=\"width:60px;height:60px\""
-        RenderBlock {DIV} at (1,301) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,289) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,366) size 350x14
+        RenderBlock (anonymous) at (1,354) size 350x14
           RenderText {#text} at (0,-2) size 139x17
             text run at (0,-2) width 139: "style=\"overflow:hidden\""
-        RenderBlock {DIV} at (1,380) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 13: " B"
-        RenderBlock (anonymous) at (1,423) size 350x14
+        RenderBlock {DIV} at (1,368) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 13: " B"
+        RenderBlock (anonymous) at (1,407) size 350x14
           RenderText {#text} at (0,-2) size 132x17
             text run at (0,-2) width 132: "style=\"overflow:scroll\""
-        RenderBlock {DIV} at (1,437) size 352x58 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,41) size 14x17
-            text run at (1,41) width 14: "A "
-          RenderText {#text} at (198,41) size 13x17
-            text run at (198,41) width 13: " B"
-        RenderBlock (anonymous) at (1,495) size 350x14
+        RenderBlock {DIV} at (1,421) size 352x54 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,37) size 14x17
+            text run at (1,37) width 14: "A "
+          RenderText {#text} at (194,37) size 13x17
+            text run at (194,37) width 13: " B"
+        RenderBlock (anonymous) at (1,475) size 350x14
           RenderText {#text} at (0,-2) size 278x17
             text run at (0,-2) width 278: "style=\"overflow:hidden;width:60px;height:60px\""
-        RenderBlock {DIV} at (1,509) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,489) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,574) size 350x14
+        RenderBlock (anonymous) at (1,554) size 350x14
           RenderText {#text} at (0,-2) size 271x17
             text run at (0,-2) width 271: "style=\"overflow:scroll;width:60px;height:60px\""
-        RenderBlock {DIV} at (1,588) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,568) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,653) size 350x14
+        RenderBlock (anonymous) at (1,633) size 350x14
           RenderText {#text} at (0,-2) size 222x17
             text run at (0,-2) width 222: "cols=5 style=\"width:60px;height:60px\""
-        RenderBlock {DIV} at (1,667) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,647) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,732) size 350x14
+        RenderBlock (anonymous) at (1,712) size 350x14
           RenderText {#text} at (0,-2) size 227x17
             text run at (0,-2) width 227: "rows=4 style=\"width:60px;height:60px\""
-        RenderBlock {DIV} at (1,746) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,726) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,811) size 350x14
+        RenderBlock (anonymous) at (1,791) size 350x14
           RenderText {#text} at (0,-2) size 268x17
             text run at (0,-2) width 268: "cols=5 rows=4 style=\"width:60px;height:60px\""
-        RenderBlock {DIV} at (1,825) size 352x65 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,805) size 352x65 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,48) size 14x17
             text run at (1,48) width 14: "A "
           RenderText {#text} at (75,48) size 13x17
             text run at (75,48) width 13: " B"
-        RenderBlock (anonymous) at (1,890) size 350x14
+        RenderBlock (anonymous) at (1,870) size 350x14
           RenderText {#text} at (0,-2) size 65x17
             text run at (0,-2) width 65: "wrap=\"off\""
-        RenderBlock {DIV} at (1,904) size 352x58 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,41) size 14x17
-            text run at (1,41) width 14: "A "
-          RenderText {#text} at (198,41) size 13x17
-            text run at (198,41) width 4: " "
-            text run at (202,41) width 9: "B"
-        RenderBlock (anonymous) at (1,962) size 350x14
+        RenderBlock {DIV} at (1,884) size 352x54 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,37) size 14x17
+            text run at (1,37) width 14: "A "
+          RenderText {#text} at (194,37) size 13x17
+            text run at (194,37) width 4: " "
+            text run at (198,37) width 9: "B"
+        RenderBlock (anonymous) at (1,938) size 350x14
           RenderText {#text} at (0,-2) size 73x17
             text run at (0,-2) width 73: "wrap=\"hard\""
-        RenderBlock {DIV} at (1,976) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 4: " "
-            text run at (202,26) width 9: "B"
-        RenderBlock (anonymous) at (1,1019) size 350x14
+        RenderBlock {DIV} at (1,952) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 4: " "
+            text run at (198,22) width 9: "B"
+        RenderBlock (anonymous) at (1,991) size 350x14
           RenderText {#text} at (0,-2) size 69x17
             text run at (0,-2) width 69: "wrap=\"soft\""
-        RenderBlock {DIV} at (1,1033) size 352x43 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,26) size 14x17
-            text run at (1,26) width 14: "A "
-          RenderText {#text} at (198,26) size 13x17
-            text run at (198,26) width 4: " "
-            text run at (202,26) width 9: "B"
-layer at (26,26) size 179x34 clip at (27,27) size 177x32
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock {DIV} at (1,1005) size 352x39 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,22) size 14x17
+            text run at (1,22) width 14: "A "
+          RenderText {#text} at (194,22) size 13x17
+            text run at (194,22) width 4: " "
+            text run at (198,22) width 9: "B"
+layer at (24,24) size 179x34 clip at (25,25) size 177x32
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x15
       RenderText {#text} at (0,0) size 136x15
         text run at (0,0) width 136: "Lorem ipsum dolor"
-layer at (26,83) size 179x34 clip at (27,84) size 162x32 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 160x75
-      RenderText {#text} at (0,0) size 160x75
-        text run at (0,0) width 136: "Lorem ipsum dolor"
-        text run at (136,0) width 8: " "
-        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
-        text run at (0,30) width 48: "UVWXYZ"
-        text run at (48,30) width 8: " "
-        text run at (0,45) width 160: "abcdefghijklmnopqrst"
-        text run at (0,60) width 16: "uv"
-        text run at (16,60) width 8: " "
-layer at (26,140) size 179x34 clip at (27,141) size 162x32 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#EBEBE4] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 160x75 [color=#545454]
-      RenderText {#text} at (0,0) size 160x75
-        text run at (0,0) width 136: "Lorem ipsum dolor"
-        text run at (136,0) width 8: " "
-        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
-        text run at (0,30) width 48: "UVWXYZ"
-        text run at (48,30) width 8: " "
-        text run at (0,45) width 160: "abcdefghijklmnopqrst"
-        text run at (0,60) width 16: "uv"
-        text run at (16,60) width 8: " "
-layer at (26,197) size 197x52 clip at (27,198) size 180x50 scrollHeight 95
-  RenderTextControl {TEXTAREA} at (17,3) size 197x52 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (11,11) size 160x75
-      RenderText {#text} at (0,0) size 160x75
-        text run at (0,0) width 136: "Lorem ipsum dolor"
-        text run at (136,0) width 8: " "
-        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
-        text run at (0,30) width 48: "UVWXYZ"
-        text run at (48,30) width 8: " "
-        text run at (0,45) width 160: "abcdefghijklmnopqrst"
-        text run at (0,60) width 16: "uv"
-        text run at (16,60) width 8: " "
-layer at (26,272) size 177x32 clip at (27,273) size 160x30 scrollHeight 75
-  RenderTextControl {TEXTAREA} at (17,3) size 177x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (1,1) size 160x75
-      RenderText {#text} at (0,0) size 160x75
-        text run at (0,0) width 136: "Lorem ipsum dolor"
-        text run at (136,0) width 8: " "
-        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
-        text run at (0,30) width 48: "UVWXYZ"
-        text run at (48,30) width 8: " "
-        text run at (0,45) width 160: "abcdefghijklmnopqrst"
-        text run at (0,60) width 16: "uv"
-        text run at (16,60) width 8: " "
-layer at (34,335) size 179x34 clip at (35,336) size 162x32 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (25,11) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 160x75
-      RenderText {#text} at (0,0) size 160x75
-        text run at (0,0) width 136: "Lorem ipsum dolor"
-        text run at (136,0) width 8: " "
-        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
-        text run at (0,30) width 48: "UVWXYZ"
-        text run at (48,30) width 8: " "
-        text run at (0,45) width 160: "abcdefghijklmnopqrst"
-        text run at (0,60) width 16: "uv"
-        text run at (16,60) width 8: " "
-layer at (24,398) size 179x34 clip at (25,399) size 162x32 scrollHeight 77
+layer at (24,77) size 179x34 clip at (25,78) size 162x32 scrollHeight 77
   RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x75
       RenderText {#text} at (0,0) size 160x75
@@ -301,8 +241,68 @@ layer at (24,398) size 179x34 clip at (25,399) size 162x32 scrollHeight 77
         text run at (0,45) width 160: "abcdefghijklmnopqrst"
         text run at (0,60) width 16: "uv"
         text run at (16,60) width 8: " "
-layer at (26,453) size 43x34 clip at (27,454) size 26x32 scrollHeight 347
-  RenderTextControl {TEXTAREA} at (17,3) size 43x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (24,130) size 179x34 clip at (25,131) size 162x32 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#EBEBE4] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 160x75 [color=#545454]
+      RenderText {#text} at (0,0) size 160x75
+        text run at (0,0) width 136: "Lorem ipsum dolor"
+        text run at (136,0) width 8: " "
+        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
+        text run at (0,30) width 48: "UVWXYZ"
+        text run at (48,30) width 8: " "
+        text run at (0,45) width 160: "abcdefghijklmnopqrst"
+        text run at (0,60) width 16: "uv"
+        text run at (16,60) width 8: " "
+layer at (24,183) size 197x52 clip at (25,184) size 180x50 scrollHeight 95
+  RenderTextControl {TEXTAREA} at (15,1) size 197x52 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (11,11) size 160x75
+      RenderText {#text} at (0,0) size 160x75
+        text run at (0,0) width 136: "Lorem ipsum dolor"
+        text run at (136,0) width 8: " "
+        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
+        text run at (0,30) width 48: "UVWXYZ"
+        text run at (48,30) width 8: " "
+        text run at (0,45) width 160: "abcdefghijklmnopqrst"
+        text run at (0,60) width 16: "uv"
+        text run at (16,60) width 8: " "
+layer at (24,254) size 177x32 clip at (25,255) size 160x30 scrollHeight 75
+  RenderTextControl {TEXTAREA} at (15,1) size 177x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 160x75
+      RenderText {#text} at (0,0) size 160x75
+        text run at (0,0) width 136: "Lorem ipsum dolor"
+        text run at (136,0) width 8: " "
+        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
+        text run at (0,30) width 48: "UVWXYZ"
+        text run at (48,30) width 8: " "
+        text run at (0,45) width 160: "abcdefghijklmnopqrst"
+        text run at (0,60) width 16: "uv"
+        text run at (16,60) width 8: " "
+layer at (34,315) size 179x34 clip at (35,316) size 162x32 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (25,11) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 160x75
+      RenderText {#text} at (0,0) size 160x75
+        text run at (0,0) width 136: "Lorem ipsum dolor"
+        text run at (136,0) width 8: " "
+        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
+        text run at (0,30) width 48: "UVWXYZ"
+        text run at (48,30) width 8: " "
+        text run at (0,45) width 160: "abcdefghijklmnopqrst"
+        text run at (0,60) width 16: "uv"
+        text run at (16,60) width 8: " "
+layer at (24,378) size 179x34 clip at (25,379) size 162x32 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 160x75
+      RenderText {#text} at (0,0) size 160x75
+        text run at (0,0) width 136: "Lorem ipsum dolor"
+        text run at (136,0) width 8: " "
+        text run at (0,15) width 160: "ABCDEFGHIJKLMNOPQRST"
+        text run at (0,30) width 48: "UVWXYZ"
+        text run at (48,30) width 8: " "
+        text run at (0,45) width 160: "abcdefghijklmnopqrst"
+        text run at (0,60) width 16: "uv"
+        text run at (16,60) width 8: " "
+layer at (24,431) size 43x34 clip at (25,432) size 26x32 scrollHeight 347
+  RenderTextControl {TEXTAREA} at (15,1) size 43x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 24x345
       RenderText {#text} at (0,0) size 24x345
         text run at (0,0) width 24: "Lor"
@@ -333,8 +333,8 @@ layer at (26,453) size 43x34 clip at (27,454) size 26x32 scrollHeight 347
         text run at (0,315) width 24: "stu"
         text run at (0,330) width 8: "v"
         text run at (8,330) width 8: " "
-layer at (26,510) size 179x49 clip at (27,511) size 162x47 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,3) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (24,484) size 179x49 clip at (25,485) size 162x47 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x75
       RenderText {#text} at (0,0) size 160x75
         text run at (0,0) width 136: "Lorem ipsum dolor"
@@ -345,8 +345,8 @@ layer at (26,510) size 179x49 clip at (27,511) size 162x47 scrollHeight 77
         text run at (0,45) width 160: "abcdefghijklmnopqrst"
         text run at (0,60) width 16: "uv"
         text run at (16,60) width 8: " "
-layer at (26,582) size 99x34 clip at (27,583) size 82x32 scrollHeight 137
-  RenderTextControl {TEXTAREA} at (17,3) size 99x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (24,552) size 99x34 clip at (25,553) size 82x32 scrollHeight 137
+  RenderTextControl {TEXTAREA} at (15,1) size 99x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 80x135
       RenderText {#text} at (0,0) size 80x135
         text run at (0,0) width 40: "Lorem"
@@ -363,8 +363,8 @@ layer at (26,582) size 99x34 clip at (27,583) size 82x32 scrollHeight 137
         text run at (0,105) width 80: "klmnopqrst"
         text run at (0,120) width 16: "uv"
         text run at (16,120) width 8: " "
-layer at (26,639) size 179x154 clip at (27,640) size 177x152
-  RenderTextControl {TEXTAREA} at (17,3) size 179x154 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (24,605) size 179x154 clip at (25,606) size 177x152
+  RenderTextControl {TEXTAREA} at (15,1) size 179x154 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x75
       RenderText {#text} at (0,0) size 168x75
         text run at (0,0) width 136: "Lorem ipsum dolor"
@@ -375,8 +375,8 @@ layer at (26,639) size 179x154 clip at (27,640) size 177x152
         text run at (0,45) width 168: "abcdefghijklmnopqrstu"
         text run at (0,60) width 8: "v"
         text run at (8,60) width 8: " "
-layer at (26,816) size 59x64 clip at (27,817) size 42x62 scrollHeight 212
-  RenderTextControl {TEXTAREA} at (17,3) size 59x64 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (24,778) size 59x64 clip at (25,779) size 42x62 scrollHeight 212
+  RenderTextControl {TEXTAREA} at (15,1) size 59x64 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 40x210
       RenderText {#text} at (0,0) size 40x210
         text run at (0,0) width 40: "Lorem"
@@ -398,8 +398,8 @@ layer at (26,816) size 59x64 clip at (27,817) size 42x62 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (376,26) size 60x34 clip at (377,27) size 43x32 scrollHeight 212
-  RenderTextControl {TEXTAREA} at (15,3) size 60x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,24) size 60x34 clip at (377,25) size 43x32 scrollHeight 212
+  RenderTextControl {TEXTAREA} at (15,1) size 60x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
         text run at (0,0) width 40: "Lorem"
@@ -421,8 +421,8 @@ layer at (376,26) size 60x34 clip at (377,27) size 43x32 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (376,83) size 60x72 clip at (377,84) size 43x70 scrollHeight 1060
-  RenderTextControl {TEXTAREA} at (15,3) size 60x72 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,77) size 60x72 clip at (377,78) size 43x70 scrollHeight 1060
+  RenderTextControl {TEXTAREA} at (15,1) size 60x72 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (21,21) size 3x1020
       RenderText {#text} at (0,0) size 8x1020
         text run at (0,0) width 8: "L"
@@ -493,8 +493,8 @@ layer at (376,83) size 60x72 clip at (377,84) size 43x70 scrollHeight 1060
         text run at (0,975) width 8: "u"
         text run at (0,990) width 8: "v"
         text run at (0,1005) width 3: " "
-layer at (376,178) size 60x32 clip at (377,179) size 43x30 scrollHeight 210
-  RenderTextControl {TEXTAREA} at (15,3) size 60x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,168) size 60x32 clip at (377,169) size 43x30 scrollHeight 210
+  RenderTextControl {TEXTAREA} at (15,1) size 60x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (1,1) size 43x210
       RenderText {#text} at (0,0) size 43x210
         text run at (0,0) width 40: "Lorem"
@@ -516,8 +516,8 @@ layer at (376,178) size 60x32 clip at (377,179) size 43x30 scrollHeight 210
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (378,231) size 179x60 clip at (379,232) size 162x58 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,1) size 179x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,219) size 179x60 clip at (377,220) size 162x58 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x75
       RenderText {#text} at (0,0) size 160x75
         text run at (0,0) width 136: "Lorem ipsum dolor"
@@ -528,7 +528,7 @@ layer at (378,231) size 179x60 clip at (379,232) size 162x58 scrollHeight 77
         text run at (0,45) width 160: "abcdefghijklmnopqrst"
         text run at (0,60) width 16: "uv"
         text run at (16,60) width 8: " "
-layer at (376,310) size 60x60 clip at (377,311) size 43x58 scrollHeight 212
+layer at (376,298) size 60x60 clip at (377,299) size 43x58 scrollHeight 212
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
@@ -551,8 +551,8 @@ layer at (376,310) size 60x60 clip at (377,311) size 43x58 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (378,391) size 179x34 clip at (379,392) size 177x32 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,377) size 179x34 clip at (377,378) size 177x32 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x75
       RenderText {#text} at (0,0) size 168x75
         text run at (0,0) width 136: "Lorem ipsum dolor"
@@ -563,8 +563,8 @@ layer at (378,391) size 179x34 clip at (379,392) size 177x32 scrollHeight 77
         text run at (0,45) width 168: "abcdefghijklmnopqrstu"
         text run at (0,60) width 8: "v"
         text run at (8,60) width 8: " "
-layer at (378,448) size 179x49 clip at (379,449) size 162x32 scrollHeight 77
-  RenderTextControl {TEXTAREA} at (17,3) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,430) size 179x49 clip at (377,431) size 162x32 scrollHeight 77
+  RenderTextControl {TEXTAREA} at (15,1) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x75
       RenderText {#text} at (0,0) size 160x75
         text run at (0,0) width 136: "Lorem ipsum dolor"
@@ -575,7 +575,7 @@ layer at (378,448) size 179x49 clip at (379,449) size 162x32 scrollHeight 77
         text run at (0,45) width 160: "abcdefghijklmnopqrst"
         text run at (0,60) width 16: "uv"
         text run at (16,60) width 8: " "
-layer at (376,518) size 60x60 clip at (377,519) size 58x58 scrollHeight 167
+layer at (376,498) size 60x60 clip at (377,499) size 58x58 scrollHeight 167
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 56x165
       RenderText {#text} at (0,0) size 56x165
@@ -595,7 +595,7 @@ layer at (376,518) size 60x60 clip at (377,519) size 58x58 scrollHeight 167
         text run at (0,135) width 56: "opqrstu"
         text run at (0,150) width 8: "v"
         text run at (8,150) width 8: " "
-layer at (376,597) size 60x60 clip at (377,598) size 43x43 scrollHeight 212
+layer at (376,577) size 60x60 clip at (377,578) size 43x43 scrollHeight 212
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
@@ -618,7 +618,7 @@ layer at (376,597) size 60x60 clip at (377,598) size 43x43 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (376,676) size 60x60 clip at (377,677) size 43x58 scrollHeight 212
+layer at (376,656) size 60x60 clip at (377,657) size 43x58 scrollHeight 212
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
@@ -641,7 +641,7 @@ layer at (376,676) size 60x60 clip at (377,677) size 43x58 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (376,755) size 60x60 clip at (377,756) size 43x58 scrollHeight 212
+layer at (376,735) size 60x60 clip at (377,736) size 43x58 scrollHeight 212
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
@@ -664,7 +664,7 @@ layer at (376,755) size 60x60 clip at (377,756) size 43x58 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (376,834) size 60x60 clip at (377,835) size 43x58 scrollHeight 212
+layer at (376,814) size 60x60 clip at (377,815) size 43x58 scrollHeight 212
   RenderTextControl {TEXTAREA} at (15,1) size 60x60 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 41x210
       RenderText {#text} at (0,0) size 41x210
@@ -687,8 +687,8 @@ layer at (376,834) size 60x60 clip at (377,835) size 43x58 scrollHeight 212
         text run at (0,180) width 40: "pqrst"
         text run at (0,195) width 16: "uv"
         text run at (16,195) width 8: " "
-layer at (378,915) size 179x49 clip at (379,916) size 162x32 scrollWidth 290 scrollHeight 242
-  RenderTextControl {TEXTAREA} at (17,3) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,893) size 179x49 clip at (377,894) size 162x32 scrollWidth 290 scrollHeight 242
+  RenderTextControl {TEXTAREA} at (15,1) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x240
       RenderText {#text} at (0,0) size 288x225
         text run at (0,0) width 8: " "
@@ -722,8 +722,8 @@ layer at (378,915) size 179x49 clip at (379,916) size 162x32 scrollWidth 290 scr
         text run at (0,210) width 288: "This is a text area with wrap=\"soft\""
         text run at (288,210) width 0: " "
       RenderBR {BR} at (0,225) size 0x15
-layer at (378,987) size 179x34 clip at (379,988) size 162x32 scrollHeight 452
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,961) size 179x34 clip at (377,962) size 162x32 scrollHeight 452
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x450
       RenderText {#text} at (0,0) size 160x435
         text run at (0,0) width 8: " "
@@ -785,8 +785,8 @@ layer at (378,987) size 179x34 clip at (379,988) size 162x32 scrollHeight 452
         text run at (0,420) width 128: "with wrap=\"soft\""
         text run at (128,420) width 0: " "
       RenderBR {BR} at (0,435) size 0x15
-layer at (378,1044) size 179x34 clip at (379,1045) size 162x32 scrollHeight 452
-  RenderTextControl {TEXTAREA} at (17,3) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,1014) size 179x34 clip at (377,1015) size 162x32 scrollHeight 452
+  RenderTextControl {TEXTAREA} at (15,1) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x450
       RenderText {#text} at (0,0) size 160x435
         text run at (0,0) width 8: " "

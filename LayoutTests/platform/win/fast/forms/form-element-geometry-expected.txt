@@ -1,8 +1,8 @@
-layer at (0,0) size 785x665
+layer at (0,0) size 785x642
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x665
-  RenderBlock {HTML} at (0,0) size 785x665
-    RenderBody {BODY} at (8,8) size 769x649
+layer at (0,0) size 785x642
+  RenderBlock {HTML} at (0,0) size 785x642
+    RenderBody {BODY} at (8,8) size 769x626
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 422x37
           text run at (0,0) width 422: "Form Element Geometry Tests"

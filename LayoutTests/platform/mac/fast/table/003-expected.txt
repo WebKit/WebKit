@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 text run at (1,37) width 56: "nowrap. "
                 text run at (56,37) width 7: "I"
                 text run at (1,55) width 88: "really should."
-      RenderTable {TABLE} at (0,349) size 106x78
+      RenderTable {TABLE} at (0,345) size 106x78
         RenderTableSection {TBODY} at (0,0) size 106x78
           RenderTableRow {TR} at (0,2) size 106x74
             RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
                   text run at (0,36) width 56: "nowrap. "
                   text run at (55,36) width 7: "I"
                   text run at (0,54) width 88: "really should."
-      RenderTable {TABLE} at (0,427) size 373x24
+      RenderTable {TABLE} at (0,423) size 373x24
         RenderTableSection {TBODY} at (0,0) size 373x24
           RenderTableRow {TR} at (0,2) size 373x20
             RenderTableCell {TD} at (2,2) size 369x20 [r=0 c=0 rs=1 cs=1]
@@ -65,7 +65,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 147: "I should have nowrap. "
                 text run at (147,1) width 101: "I really should. "
                 text run at (247,1) width 121: "Definitely. Should."
-      RenderTable {TABLE} at (0,451) size 373x24
+      RenderTable {TABLE} at (0,447) size 373x24
         RenderTableSection {TBODY} at (0,0) size 373x24
           RenderTableRow {TR} at (0,2) size 373x20
             RenderTableCell {TD} at (2,2) size 369x20 [r=0 c=0 rs=1 cs=1]

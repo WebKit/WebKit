@@ -1,21 +1,21 @@
-layer at (0,0) size 785x1392
+layer at (0,0) size 785x1384
   RenderView at (0,0) size 785x600
-layer at (8,8) size 769x1384
-  RenderBlock {HTML} at (8,8) size 769x1384 [bgcolor=#008000] [border: (16px solid #00FF00)]
-    RenderTable at (16,16) size 737x1352
-      RenderTableSection (anonymous) at (0,0) size 737x1352
-        RenderTableRow (anonymous) at (0,0) size 737x1352
-          RenderTableCell {HEAD} at (0,0) size 209x508 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
-            RenderBlock {META} at (21,37) size 167x2 [border: (1px dotted #FFFFFF)]
-            RenderBlock {META} at (21,55) size 167x2 [border: (1px dotted #FFFFFF)]
-            RenderBlock {META} at (21,73) size 167x2 [border: (1px dotted #FFFFFF)]
-            RenderBlock {META} at (21,91) size 167x2 [border: (1px dotted #FFFFFF)]
-            RenderBlock {TITLE} at (21,109) size 167x56 [border: (1px dotted #FFFFFF)]
+layer at (8,8) size 769x1376
+  RenderBlock {HTML} at (8,8) size 769x1376 [bgcolor=#008000] [border: (16px solid #00FF00)]
+    RenderTable at (16,16) size 737x1344
+      RenderTableSection (anonymous) at (0,0) size 737x1344
+        RenderTableRow (anonymous) at (0,0) size 737x1344
+          RenderTableCell {HEAD} at (0,0) size 213x508 [color=#FFFFFF] [bgcolor=#FF0000] [border: (5px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
+            RenderBlock {META} at (21,37) size 171x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,55) size 171x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,73) size 171x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {META} at (21,91) size 171x2 [border: (1px dotted #FFFFFF)]
+            RenderBlock {TITLE} at (21,109) size 171x56 [border: (1px dotted #FFFFFF)]
               RenderText {#text} at (1,1) size 141x54
                 text run at (1,1) width 137: "Evil Tests: Rendering"
                 text run at (1,19) width 141: "BODY and HEAD as"
                 text run at (1,37) width 139: "children of HTML - 2"
-            RenderBlock {STYLE} at (21,181) size 167x290 [border: (1px dotted #FFFFFF)]
+            RenderBlock {STYLE} at (21,181) size 171x290 [border: (1px dotted #FFFFFF)]
               RenderText {#text} at (1,1) size 163x288
                 text run at (1,1) width 81: "/* Layout */ "
                 text run at (82,1) width 58: "HTML {"
@@ -40,27 +40,27 @@ layer at (8,8) size 769x1384
                 text run at (1,235) width 162: "white; background: red; }"
                 text run at (1,253) width 150: "BODY { color: yellow;"
                 text run at (1,271) width 121: "background: teal; }"
-          RenderTableCell {BODY} at (209,41) size 528x1311 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
-            RenderBlock {H1} at (21,53) size 486x76 [border: (1px dotted #FFFF00)]
+          RenderTableCell {BODY} at (213,41) size 524x1303 [color=#FFFF00] [bgcolor=#008080] [border: (5px solid #FFFF00)] [r=0 c=1 rs=1 cs=1]
+            RenderBlock {H1} at (21,53) size 482x76 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 152x37
                 text run at (1,1) width 152: "Rendering "
               RenderInline {CODE} at (0,0) size 64x30
-                RenderText {#text} at (153,6) size 64x30
-                  text run at (153,6) width 64: "BODY"
+                RenderText {#text} at (153,8) size 64x30
+                  text run at (153,8) width 64: "BODY"
               RenderText {#text} at (217,1) size 68x37
                 text run at (217,1) width 68: " and "
               RenderInline {CODE} at (0,0) size 64x30
-                RenderText {#text} at (285,6) size 64x30
-                  text run at (285,6) width 64: "HEAD"
+                RenderText {#text} at (285,8) size 64x30
+                  text run at (285,8) width 64: "HEAD"
               RenderText {#text} at (349,1) size 384x74
                 text run at (349,1) width 36: " as"
                 text run at (1,38) width 157: "children of "
               RenderInline {CODE} at (0,0) size 64x30
-                RenderText {#text} at (158,43) size 64x30
-                  text run at (158,43) width 64: "HTML"
+                RenderText {#text} at (158,45) size 64x30
+                  text run at (158,45) width 64: "HTML"
               RenderText {#text} at (222,38) size 43x37
                 text run at (222,38) width 43: " - 2"
-            RenderBlock {P} at (21,161) size 486x38 [border: (1px dotted #FFFF00)]
+            RenderBlock {P} at (21,161) size 482x38 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 383x18
                 text run at (1,1) width 383: "If you have any comments to make regarding this test, e-mail"
               RenderInline {A} at (0,0) size 182x18 [color=#0000EE]

@@ -45,7 +45,7 @@ layer at (32,47) size 140x13
       text run at (48,0) width 43 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (90,0) width 14: "he"
       text run at (103,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (32,70) size 210x13
+layer at (30,64) size 210x13
   RenderBlock {DIV} at (0,0) size 210x13
     RenderText {#text} at (77,0) size 133x13
       text run at (77,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
@@ -53,6 +53,6 @@ layer at (32,70) size 210x13
       text run at (118,0) width 43 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (160,0) width 14: "he"
       text run at (173,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (32,93) size 140x13
+layer at (30,83) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of child 3 {P} of body

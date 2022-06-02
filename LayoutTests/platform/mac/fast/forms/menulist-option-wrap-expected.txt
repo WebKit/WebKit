@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (360,0) width 273: "Native popup with size=\"1\" wraps options"
         RenderText {#text} at (632,0) size 5x18
           text run at (632,0) width 5: "."
-      RenderBlock {P} at (0,34) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "With "
         RenderInline {TT} at (0,0) size 63x15
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 173x13
               text run at (0,0) width 173: "Very long option that does not fit"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,69) size 784x19
+      RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 56x18
           text run at (0,0) width 56: "Without "
         RenderInline {TT} at (0,0) size 33x15

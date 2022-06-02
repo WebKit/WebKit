@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,3) size 784x581 [bgcolor=#FFFFFF]
-      RenderBlock {CENTER} at (0,0) size 784x278
+      RenderBlock {CENTER} at (0,0) size 784x270
         RenderTable {TABLE} at (0,0) size 784x20
           RenderTableSection {TBODY} at (0,0) size 784x20
             RenderTableRow {TR} at (0,0) size 784x16
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,20) size 784x40
           RenderBR {BR} at (392,0) size 0x19
           RenderBR {BR} at (392,20) size 0x19
-        RenderBlock {DIV} at (0,60) size 784x113 [border: (2px solid #AAAAFF)]
+        RenderBlock {DIV} at (0,60) size 784x105 [border: (2px solid #AAAAFF)]
           RenderTable {TABLE} at (215,2) size 354x24
             RenderTableSection {TBODY} at (0,0) size 354x24
               RenderTableRow {TR} at (0,0) size 354x24
@@ -110,7 +110,7 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 65x12 [color=#0000CC]
                       RenderText {#text} at (5,26) size 65x12
                         text run at (5,26) width 65: "Language Tools"
-          RenderBlock (anonymous) at (2,75) size 780x36
+          RenderBlock (anonymous) at (2,67) size 780x36
             RenderBR {BR} at (390,0) size 0x19
             RenderInline {FONT} at (0,0) size 146x15
               RenderInline {FONT} at (0,0) size 30x15 [color=#FF0000]
@@ -124,7 +124,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (459,20) size 4x15
                 text run at (459,20) width 4: "."
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,173) size 784x76
+        RenderBlock (anonymous) at (0,165) size 784x76
           RenderBR {BR} at (392,0) size 0x19
           RenderBR {BR} at (392,20) size 0x19
           RenderBR {BR} at (392,40) size 0x19

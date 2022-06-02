@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1207
+layer at (0,0) size 785x1199
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1207
-  RenderBlock {HTML} at (0,0) size 785x1208
-    RenderBody {BODY} at (8,8) size 769x1184
+layer at (0,0) size 785x1199
+  RenderBlock {HTML} at (0,0) size 785x1200
+    RenderBody {BODY} at (8,8) size 769x1176
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 277x18
           text run at (0,0) width 277: "line-height settings not reflected in textarea"
@@ -30,28 +30,28 @@ layer at (0,0) size 785x1207
         RenderText {#text} at (1,19) size 400x69
           text run at (1,19) width 400: "Demo text here that wraps a bit and should demonstrate the"
           text run at (1,72) width 154: "goodness of line-height"
-      RenderBlock (anonymous) at (0,767) size 769x417
+      RenderBlock (anonymous) at (0,767) size 769x409
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
         RenderText {#text} at (0,36) size 125x18
           text run at (0,36) width 125: "Un-Styled Textarea"
         RenderBR {BR} at (124,36) size 1x18
-        RenderText {#text} at (165,76) size 4x18
-          text run at (165,76) width 4: " "
+        RenderText {#text} at (161,72) size 4x18
+          text run at (161,72) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,94) size 0x18
-        RenderText {#text} at (0,112) size 216x18
-          text run at (0,112) width 216: "Totally Blank Un-Styled Textarea"
-        RenderBR {BR} at (215,112) size 1x18
-        RenderText {#text} at (165,152) size 4x18
-          text run at (165,152) width 4: " "
+        RenderBR {BR} at (0,90) size 0x18
+        RenderText {#text} at (0,108) size 216x18
+          text run at (0,108) width 216: "Totally Blank Un-Styled Textarea"
+        RenderBR {BR} at (215,108) size 1x18
+        RenderText {#text} at (161,144) size 4x18
+          text run at (161,144) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,170) size 0x18
-        RenderText {#text} at (0,188) size 212x18
-          text run at (0,188) width 212: "Totally Blank STYLED Textarea"
-        RenderBR {BR} at (211,188) size 1x18
+        RenderBR {BR} at (0,162) size 0x18
+        RenderText {#text} at (0,180) size 212x18
+          text run at (0,180) width 212: "Totally Blank STYLED Textarea"
+        RenderBR {BR} at (211,180) size 1x18
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1199) size 769x0
+      RenderBlock {P} at (0,1191) size 769x0
 layer at (8,60) size 406x206 clip at (9,61) size 404x204
   RenderTextControl {TEXTAREA} at (0,18) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (3,3) size 400x106
@@ -59,8 +59,8 @@ layer at (8,60) size 406x206 clip at (9,61) size 404x204
         text run at (0,18) width 400: "Demo text here that wraps a bit and should demonstrate the"
         text run at (399,18) width 1: " "
         text run at (0,71) width 154: "goodness of line-height"
-layer at (10,831) size 161x32 clip at (11,832) size 144x30 scrollHeight 56
-  RenderTextControl {TEXTAREA} at (2,56) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,829) size 161x32 clip at (9,830) size 144x30 scrollHeight 56
+  RenderTextControl {TEXTAREA} at (0,54) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x52
       RenderText {#text} at (0,0) size 140x52
         text run at (0,0) width 139: "Demo text here that wraps"
@@ -70,9 +70,9 @@ layer at (10,831) size 161x32 clip at (11,832) size 144x30 scrollHeight 56
         text run at (0,26) width 87: "demonstrate the"
         text run at (86,26) width 4: " "
         text run at (0,39) width 125: "goodness of line-height"
-layer at (10,907) size 161x32 clip at (11,908) size 159x30
-  RenderTextControl {TEXTAREA} at (2,132) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,901) size 161x32 clip at (9,902) size 159x30
+  RenderTextControl {TEXTAREA} at (0,126) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13
-layer at (8,981) size 406x206 clip at (9,982) size 404x204
-  RenderTextControl {TEXTAREA} at (0,206) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+layer at (8,973) size 406x206 clip at (9,974) size 404x204
+  RenderTextControl {TEXTAREA} at (0,198) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (3,3) size 400x53

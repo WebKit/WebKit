@@ -6,7 +6,7 @@
 
 <script>
 var copy = document.getElementById("copy");
-doubleClick(copy.offsetLeft, copy.offsetTop);
+doubleClick(copy.offsetLeft - 2, copy.offsetTop - 2);
 document.execCommand("Copy");
 
 var paste = document.getElementById("paste");

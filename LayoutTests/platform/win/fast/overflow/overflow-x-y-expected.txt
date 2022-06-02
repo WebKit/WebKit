@@ -6,9 +6,9 @@ layer at (0,0) size 785x600
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 312x18
           text run at (0,0) width 312: "The body should always have a vertical scrollbar."
-      RenderBlock (anonymous) at (0,218) size 769x57
-        RenderText {#text} at (183,39) size 4x18
-          text run at (183,39) width 4: " "
+      RenderBlock (anonymous) at (0,218) size 769x53
+        RenderText {#text} at (179,35) size 4x18
+          text run at (179,35) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 300x100 clip at (8,26) size 285x100 scrollHeight 324
   RenderBlock {DIV} at (0,18) size 300x100
@@ -72,13 +72,13 @@ layer at (8,126) size 300x100 clip at (8,126) size 300x85 scrollWidth 1184
       text run at (0,0) width 486: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (486,0) width 324: "X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (810,0) width 374: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll"
-layer at (10,243) size 179x34 clip at (11,244) size 162x32
-  RenderTextControl {TEXTAREA} at (2,17) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,241) size 179x34 clip at (9,242) size 162x32
+  RenderTextControl {TEXTAREA} at (0,15) size 179x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 160x15
       RenderText {#text} at (0,0) size 136x15
         text run at (0,0) width 136: "Textarea y-scroll"
-layer at (197,228) size 179x49 clip at (198,229) size 177x32
-  RenderTextControl {TEXTAREA} at (189,2) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (191,226) size 179x49 clip at (192,227) size 177x32
+  RenderTextControl {TEXTAREA} at (183,0) size 179x49 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x15
       RenderText {#text} at (0,0) size 136x15
         text run at (0,0) width 136: "Textarea x-scroll"

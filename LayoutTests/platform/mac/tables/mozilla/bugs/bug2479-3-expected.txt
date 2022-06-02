@@ -1,8 +1,8 @@
-layer at (0,0) size 785x685
+layer at (0,0) size 785x678
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x685
-  RenderBlock {HTML} at (0,0) size 785x685
-    RenderBody {BODY} at (8,21) size 769x648
+layer at (0,0) size 785x678
+  RenderBlock {HTML} at (0,0) size 785x678
+    RenderBody {BODY} at (8,21) size 769x641
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 311x37
           text run at (0,0) width 311: "Generic Table Tests - 1"
@@ -91,7 +91,7 @@ layer at (0,0) size 785x685
             text run at (63,0) width 73: "Table Tests"
         RenderText {#text} at (135,0) size 5x18
           text run at (135,0) width 5: "."
-      RenderBlock {P} at (0,561) size 769x19
+      RenderBlock {P} at (0,554) size 769x19
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "Up to the "
         RenderInline {A} at (0,0) size 99x18 [color=#0000EE]
@@ -99,7 +99,7 @@ layer at (0,0) size 785x685
             text run at (63,0) width 99: "Evil Tests Page"
         RenderText {#text} at (161,0) size 5x18
           text run at (161,0) width 5: "."
-      RenderBlock {P} at (0,595) size 769x19
+      RenderBlock {P} at (0,588) size 769x19
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This page is maintained by "
         RenderInline {A} at (0,0) size 79x18 [color=#0000EE]

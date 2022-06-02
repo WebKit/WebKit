@@ -1,11 +1,11 @@
-layer at (0,0) size 800x1753
+layer at (0,0) size 800x1739
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1753
-  RenderBlock {HTML} at (0,0) size 800x1753
-    RenderBody {BODY} at (8,20) size 784x1713 [bgcolor=#A6A972]
-      RenderBlock {DIV} at (91,0) size 602x1713 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
+layer at (0,0) size 800x1739
+  RenderBlock {HTML} at (0,0) size 800x1739
+    RenderBody {BODY} at (8,20) size 784x1699 [bgcolor=#A6A972]
+      RenderBlock {DIV} at (91,0) size 602x1699 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
         RenderBlock {DIV} at (1,31) size 600x70
-        RenderBlock {DIV} at (1,114) size 600x1527
+        RenderBlock {DIV} at (1,114) size 600x1513
           RenderBlock {P} at (20,0) size 560x80 [color=#333333]
             RenderText {#text} at (0,2) size 523x36
               text run at (0,2) width 523: "We are trying to understand how UVic students perform Shakespeare related research for"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x1753
           RenderBlock {P} at (20,93) size 560x21 [color=#333333]
             RenderText {#text} at (0,2) size 463x16
               text run at (0,2) width 463: "Please take the time to carefully review and complete the following questions."
-          RenderBlock {FORM} at (20,138) size 560x1356
+          RenderBlock {FORM} at (20,138) size 560x1342
             RenderBlock {H2} at (0,0) size 560x17 [color=#333333]
               RenderText {#text} at (0,0) size 202x17
                 text run at (0,0) width 202: "PERSONAL INFORMATION"

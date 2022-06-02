@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x262
-  RenderBlock {HTML} at (0,0) size 800x262
-    RenderBody {BODY} at (8,16) size 784x238
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,16) size 784x214
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 322x18
           text run at (0,0) width 299: "This is a test of generated content in <button> "

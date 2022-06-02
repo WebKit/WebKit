@@ -38,8 +38,8 @@ function mouseeventverify2(event, x, y, offsetX, offsetY, target, type)
     shouldBe("event target", event.target, target);
     shouldBe("event.pageX", event.pageX, x);
     shouldBe("event.pageY", event.pageY, y);
-    shouldBe("event.offsetX", event.offsetX, offsetX);
-    shouldBe("event.offsetY", event.offsetY, offsetY);
+    shouldBe("event.offsetX", event.offsetX, offsetX + 2);
+    shouldBe("event.offsetY", event.offsetY, offsetY + 2);
     shouldBe("event.x", event.x, x);
     shouldBe("event.y", event.y, y);
 }

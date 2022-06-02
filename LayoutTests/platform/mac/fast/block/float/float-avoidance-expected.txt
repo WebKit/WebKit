@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2386
+layer at (0,0) size 785x2342
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2386
-  RenderBlock {HTML} at (0,0) size 785x2386
-    RenderBody {BODY} at (8,8) size 769x2370
+layer at (0,0) size 785x2342
+  RenderBlock {HTML} at (0,0) size 785x2342
+    RenderBody {BODY} at (8,8) size 769x2326
       RenderBlock (anonymous) at (0,0) size 769x36
         RenderText {#text} at (0,0) size 753x36
           text run at (0,0) width 546: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
@@ -311,13 +311,13 @@ layer at (118,1356) size 100x108
       text run at (0,54) width 92: "enough text to"
       text run at (0,72) width 100: "have to wrap to"
       text run at (0,90) width 92: "multiple lines."
-layer at (18,1560) size 200x54
-  RenderBlock (floating) {DIV} at (10,50) size 200x54
+layer at (18,1528) size 200x54
+  RenderBlock (floating) {DIV} at (10,46) size 200x54
     RenderText {#text} at (0,0) size 175x54
       text run at (0,0) width 173: "This is an overflow section"
       text run at (0,18) width 175: "with enough text to have to"
       text run at (0,36) width 144: "wrap to multiple lines."
-layer at (118,1670) size 100x108
+layer at (118,1638) size 100x108
   RenderBlock {DIV} at (110,28) size 100x108
     RenderText {#text} at (0,0) size 100x108
       text run at (0,0) width 63: "This is an"
@@ -326,7 +326,7 @@ layer at (118,1670) size 100x108
       text run at (0,54) width 92: "enough text to"
       text run at (0,72) width 100: "have to wrap to"
       text run at (0,90) width 92: "multiple lines."
-layer at (118,1870) size 100x108
+layer at (118,1838) size 100x108
   RenderBlock {DIV} at (110,28) size 100x108
     RenderText {#text} at (0,0) size 100x108
       text run at (0,0) width 63: "This is an"

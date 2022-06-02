@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderFrameSet {FRAMESET} at (0,0) size 800x600
       RenderFrame {FRAME} at (0,0) size 800x534
-        layer at (0,0) size 785x1554
+        layer at (0,0) size 785x1538
           RenderView at (0,0) size 785x534
-        layer at (0,0) size 785x1554
-          RenderBlock {HTML} at (0,0) size 785x1554
-            RenderBody {BODY} at (8,8) size 769x1514
+        layer at (0,0) size 785x1538
+          RenderBlock {HTML} at (0,0) size 785x1538
+            RenderBody {BODY} at (8,8) size 769x1498
               RenderBlock (anonymous) at (0,0) size 769x259
                 RenderText {#text} at (0,0) size 751x185
                   text run at (0,0) width 679: "This is test page that we navigate to as part of testing"

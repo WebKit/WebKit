@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x145
-  RenderBlock {HTML} at (0,0) size 800x145
-    RenderBody {BODY} at (8,13) size 784x124
+layer at (0,0) size 800x141
+  RenderBlock {HTML} at (0,0) size 800x141
+    RenderBody {BODY} at (8,13) size 784x120
       RenderBlock {PRE} at (0,0) size 784x42
         RenderText {#text} at (0,0) size 164x42
           text run at (0,0) width 118: "table width=50%"

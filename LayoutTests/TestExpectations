@@ -4791,11 +4791,6 @@ webkit.org/b/217529 imported/w3c/web-platform-tests/css/css-flexbox/canvas-conta
 # Multicolumn does not paint the horizontal overflow area of a relative child.
 webkit.org/b/41796 imported/w3c/web-platform-tests/css/css-contain/contain-size-monolithic-002.html [ ImageOnlyFailure ]
 
-# Buttons with auto width and height has extra, intrinsic margins (see addIntrinsicMargins in StyleAdjuster).
-# webkit.org/b/238587 may address this.
-imported/w3c/web-platform-tests/css/css-contain/contain-size-button-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-size-button-002.html [ ImageOnlyFailure ]
-
 # Scrollbar displays are different.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]

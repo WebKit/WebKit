@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2589
+layer at (0,0) size 785x2582
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2589
-  RenderBlock {HTML} at (0,0) size 785x2590
-    RenderBody {BODY} at (8,21) size 769x2553 [bgcolor=#FFFFFF]
+layer at (0,0) size 785x2582
+  RenderBlock {HTML} at (0,0) size 785x2583
+    RenderBody {BODY} at (8,21) size 769x2546 [bgcolor=#FFFFFF]
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 361x37
           text run at (0,0) width 361: "Table Inheritance Tests - 1"
@@ -209,7 +209,7 @@ layer at (0,0) size 785x2589
             text run at (63,0) width 73: "Table Tests"
         RenderText {#text} at (135,0) size 5x18
           text run at (135,0) width 5: "."
-      RenderBlock {P} at (0,2431) size 769x19
+      RenderBlock {P} at (0,2424) size 769x19
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "Up to the "
         RenderInline {A} at (0,0) size 99x18 [color=#0000EE]
@@ -217,13 +217,13 @@ layer at (0,0) size 785x2589
             text run at (63,0) width 99: "Evil Tests Page"
         RenderText {#text} at (161,0) size 5x18
           text run at (161,0) width 5: "."
-      RenderBlock {P} at (0,2465) size 769x19
+      RenderBlock {P} at (0,2458) size 769x19
         RenderText {#text} at (0,0) size 63x18
           text run at (0,0) width 63: "Bugzilla: "
         RenderInline {A} at (0,0) size 64x18 [color=#0000EE]
           RenderText {#text} at (62,0) size 64x18
             text run at (62,0) width 64: "Bug 1044"
-      RenderBlock {P} at (0,2499) size 769x19
+      RenderBlock {P} at (0,2492) size 769x19
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This page is maintained by "
         RenderInline {A} at (0,0) size 79x18 [color=#0000EE]

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x433
-  RenderBlock {HTML} at (0,0) size 800x433
-    RenderBody {BODY} at (8,16) size 784x401
+layer at (0,0) size 800x405
+  RenderBlock {HTML} at (0,0) size 800x405
+    RenderBody {BODY} at (8,16) size 784x373
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x18
           text run at (0,0) width 172: "This is a regression test for "

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x646
+layer at (0,0) size 800x640
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x646
-  RenderBlock {HTML} at (0,0) size 800x646
-    RenderBody {BODY} at (8,8) size 784x630 [bgcolor=#FFFFFF]
+layer at (0,0) size 800x640
+  RenderBlock {HTML} at (0,0) size 800x640
+    RenderBody {BODY} at (8,8) size 784x624 [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 308x56 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -25,19 +25,19 @@ layer at (0,0) size 800x646
         RenderTableSection {TBODY} at (1,1) size 298x54
           RenderTableRow {TR} at (0,2) size 298x24
           RenderTableRow {TR} at (0,28) size 298x24
-      RenderTable {TABLE} at (0,224) size 300x60 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x58
-          RenderTableRow {TR} at (0,2) size 298x28
-          RenderTableRow {TR} at (0,32) size 298x24
-      RenderTable {TABLE} at (0,284) size 300x60 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x58
-          RenderTableRow {TR} at (0,2) size 298x28
-          RenderTableRow {TR} at (0,32) size 298x24
-      RenderTable {TABLE} at (0,344) size 300x98 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,224) size 300x57 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x55
+          RenderTableRow {TR} at (0,2) size 298x25
+          RenderTableRow {TR} at (0,29) size 298x24
+      RenderTable {TABLE} at (0,281) size 300x57 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x55
+          RenderTableRow {TR} at (0,2) size 298x25
+          RenderTableRow {TR} at (0,29) size 298x24
+      RenderTable {TABLE} at (0,338) size 300x98 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x96
           RenderTableRow {TR} at (0,2) size 298x48
           RenderTableRow {TR} at (0,52) size 298x42
-      RenderTable {TABLE} at (0,536) size 300x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,530) size 300x94 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x92
           RenderTableRow {TR} at (0,2) size 298x62
           RenderTableRow {TR} at (0,66) size 298x24

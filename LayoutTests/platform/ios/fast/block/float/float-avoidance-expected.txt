@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2570
+layer at (0,0) size 800x2526
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2570
-  RenderBlock {HTML} at (0,0) size 800x2570
-    RenderBody {BODY} at (8,8) size 784x2554
+layer at (0,0) size 800x2526
+  RenderBlock {HTML} at (0,0) size 800x2526
+    RenderBody {BODY} at (8,8) size 784x2510
       RenderBlock (anonymous) at (0,0) size 784x40
         RenderText {#text} at (0,0) size 782x39
           text run at (0,0) width 547: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
@@ -302,7 +302,7 @@ layer at (0,0) size 800x2570
         RenderBlock {HR} at (110,38) size 100x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (10,48) size 200x20
           RenderBR {BR} at (100,0) size 0x19
-layer at (118,1448) size 100x120
+layer at (118,1420) size 100x120
   RenderBlock (floating) {DIV} at (110,30) size 100x120
     RenderText {#text} at (0,0) size 100x119
       text run at (0,0) width 63: "This is an"
@@ -311,13 +311,13 @@ layer at (118,1448) size 100x120
       text run at (0,60) width 92: "enough text to"
       text run at (0,80) width 100: "have to wrap to"
       text run at (0,100) width 92: "multiple lines."
-layer at (18,1672) size 200x60
-  RenderBlock (floating) {DIV} at (10,54) size 200x60
+layer at (18,1640) size 200x60
+  RenderBlock (floating) {DIV} at (10,50) size 200x60
     RenderText {#text} at (0,0) size 175x59
       text run at (0,0) width 174: "This is an overflow section"
       text run at (0,20) width 175: "with enough text to have to"
       text run at (0,40) width 144: "wrap to multiple lines."
-layer at (118,1792) size 100x120
+layer at (118,1760) size 100x120
   RenderBlock {DIV} at (110,30) size 100x120
     RenderText {#text} at (0,0) size 100x119
       text run at (0,0) width 63: "This is an"
@@ -326,7 +326,7 @@ layer at (118,1792) size 100x120
       text run at (0,60) width 92: "enough text to"
       text run at (0,80) width 100: "have to wrap to"
       text run at (0,100) width 92: "multiple lines."
-layer at (118,2012) size 100x120
+layer at (118,1980) size 100x120
   RenderBlock {DIV} at (110,30) size 100x120
     RenderText {#text} at (0,0) size 100x119
       text run at (0,0) width 63: "This is an"

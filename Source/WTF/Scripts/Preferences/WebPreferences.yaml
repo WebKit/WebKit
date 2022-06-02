@@ -56,6 +56,17 @@ AcceleratedCompositingForFixedPositionEnabled:
       PLATFORM(IOS_FAMILY): true
       default: false
 
+AddMarginsToFormControlElement:
+  type: bool
+  condition: ENABLE(ADD_MARGINS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AggressiveTileRetentionEnabled:
   type: bool
   defaultValue:
