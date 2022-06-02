@@ -168,8 +168,9 @@ void PluginView::Stream::cancel()
     ASSERT(m_loader);
 
     m_streamWasCancelled = true;
-    m_loader->cancel(m_loader->cancelledError());
-    m_loader = nullptr;
+
+    auto loader = std::exchange(m_loader, nullptr);
+    loader->cancel(loader->cancelledError());
 }
 
 void PluginView::Stream::continueLoad()
