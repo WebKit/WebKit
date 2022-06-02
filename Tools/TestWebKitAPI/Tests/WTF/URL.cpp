@@ -151,9 +151,9 @@ TEST_F(WTF_URL, URLSetQuery)
     URL urlWithFragmentIdentifier2 = createURL("http://www.webkit.org/?#newFragment"_s);
     URL urlWithFragmentIdentifier3 = createURL("http://www.webkit.org/?test1#newFragment"_s);
 
-    urlWithFragmentIdentifier1.setQuery("test\xc3\xa5"_s);
-    urlWithFragmentIdentifier2.setQuery("test\xc3\xa5"_s);
-    urlWithFragmentIdentifier3.setQuery("test\xc3\xa5"_s);
+    urlWithFragmentIdentifier1.setQuery(StringView::fromLatin1("test\xc3\xa5"));
+    urlWithFragmentIdentifier2.setQuery(StringView::fromLatin1("test\xc3\xa5"));
+    urlWithFragmentIdentifier3.setQuery(StringView::fromLatin1("test\xc3\xa5"));
 
     EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier1.string());
     EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier2.string());
@@ -167,9 +167,9 @@ TEST_F(WTF_URL, URLSetFragmentIdentifier)
     URL url2 = createURL("http://www.webkit.org/#test2"_s);
     URL url3 = createURL("http://www.webkit.org/#"_s);
 
-    url1.setFragmentIdentifier("newFragment\xc3\xa5"_s);
-    url2.setFragmentIdentifier("newFragment\xc3\xa5"_s);
-    url3.setFragmentIdentifier("newFragment\xc3\xa5"_s);
+    url1.setFragmentIdentifier(StringView::fromLatin1("newFragment\xc3\xa5"));
+    url2.setFragmentIdentifier(StringView::fromLatin1("newFragment\xc3\xa5"));
+    url3.setFragmentIdentifier(StringView::fromLatin1("newFragment\xc3\xa5"));
 
     EXPECT_EQ(url.string(), url1.string());
     EXPECT_EQ(url.string(), url2.string());
