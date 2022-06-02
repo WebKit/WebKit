@@ -196,7 +196,7 @@
         XCTAssertEqual(result.m_literalValue, literalValue);
     };
 
-    // [[stage(vertex)]]
+    // @stage(vertex)
     checkNextToken(WGSL::TokenType::Attribute);
     checkNextTokenIsIdentifier("stage");
     checkNextToken(WGSL::TokenType::ParenLeft);
