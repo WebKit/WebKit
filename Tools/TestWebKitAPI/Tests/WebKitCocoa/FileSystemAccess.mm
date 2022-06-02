@@ -231,7 +231,7 @@ TEST(FileSystemAccess, DeleteDataDuringWrite)
     EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
 
     done = false;
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
+    auto types = [NSSet setWithObject:WKWebsiteDataTypeFileSystem];
     [[configuration websiteDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
         [[configuration websiteDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
             EXPECT_EQ(records.count, 0u);
@@ -331,7 +331,7 @@ TEST(FileSystemAccess, FetchAndRemoveData)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
+    auto types = [NSSet setWithObject:WKWebsiteDataTypeFileSystem];
 
     // Remove existing data.
     done = false;
@@ -392,7 +392,7 @@ TEST(FileSystemAccess, RemoveDataByModificationTime)
     EXPECT_WK_STREQ(@"file is opened", [lastScriptMessage body]);
 
     auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
+    auto types = [NSSet setWithObject:WKWebsiteDataTypeFileSystem];
     done = false;
     __block NSUInteger recordsCount;
     [websiteDataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
@@ -465,7 +465,7 @@ TEST(FileSystemAccess, FetchDataForThirdParty)
     preferences._storageAPIEnabled = YES;
 
     auto websiteDataStore = [configuration websiteDataStore];
-    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
+    auto types = [NSSet setWithObject:WKWebsiteDataTypeFileSystem];
     done = false;
     [websiteDataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
         done = true;
