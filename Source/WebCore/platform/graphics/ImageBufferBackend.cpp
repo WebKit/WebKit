@@ -89,13 +89,13 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-RefPtr<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data) const
+RefPtr<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data, const ImageBufferAllocator& allocator) const
 {
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
 
     auto sourceRectScaled = toBackendCoordinates(sourceRect);
 
-    auto pixelBuffer = PixelBuffer::tryCreate(destinationFormat, sourceRectScaled.size());
+    auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!pixelBuffer)
         return nullptr;
 

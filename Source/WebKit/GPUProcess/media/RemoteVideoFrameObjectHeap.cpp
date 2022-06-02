@@ -43,6 +43,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 static WorkQueue& remoteVideoFrameObjectHeapQueue()
 {
     static NeverDestroyed queue = WorkQueue::create("org.webkit.RemoteVideoFrameObjectHeap", WorkQueue::QOS::UserInteractive);

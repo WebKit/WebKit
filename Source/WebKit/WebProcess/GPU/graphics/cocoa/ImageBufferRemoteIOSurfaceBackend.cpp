@@ -130,7 +130,7 @@ Vector<uint8_t> ImageBufferRemoteIOSurfaceBackend::toData(const String&, std::op
     return { };
 }
 
-RefPtr<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
+RefPtr<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&, const ImageBufferAllocator&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

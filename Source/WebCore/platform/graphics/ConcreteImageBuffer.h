@@ -156,7 +156,7 @@ protected:
             return nullptr;
 
         const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
-        
+
         FilterResults results;
         auto result = filter.apply(this, { { }, logicalSize() }, results);
         if (!result)
@@ -266,11 +266,11 @@ protected:
         return { };
     }
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const override
+    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
-            return backend->getPixelBuffer(outputFormat, srcRect);
+            return backend->getPixelBuffer(outputFormat, srcRect, allocator);
         }
         return nullptr;
     }

@@ -134,7 +134,7 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     if (!applier)
         return nullptr;
 
-    auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace);
+    auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace, results.allocator());
     if (!result)
         return nullptr;
 

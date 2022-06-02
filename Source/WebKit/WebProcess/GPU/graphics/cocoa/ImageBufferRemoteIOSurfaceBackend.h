@@ -63,7 +63,7 @@ private:
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const final;
     String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution) const final;
     Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const final;
-    RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const final;
+    RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) const final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
     bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }

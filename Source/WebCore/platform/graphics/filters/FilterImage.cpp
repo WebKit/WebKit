@@ -38,18 +38,18 @@
 
 namespace WebCore {
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferAllocator& allocator)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
-    return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, renderingMode, colorSpace));
+    return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, renderingMode, colorSpace, allocator));
 }
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
 {
-    return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer)));
+    return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer), allocator));
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferAllocator& allocator)
     : m_primitiveSubregion(primitiveSubregion)
     , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
@@ -57,16 +57,18 @@ FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& i
     , m_isValidPremultiplied(isValidPremultiplied)
     , m_renderingMode(renderingMode)
     , m_colorSpace(colorSpace)
+    , m_allocator(allocator)
 {
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
     : m_primitiveSubregion(primitiveSubregion)
     , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
     , m_renderingMode(imageBuffer->renderingMode())
     , m_colorSpace(imageBuffer->colorSpace())
     , m_imageBuffer(WTFMove(imageBuffer))
+    , m_allocator(allocator)
 {
 }
 
@@ -99,7 +101,7 @@ ImageBuffer* FilterImage::imageBufferFromPixelBuffer()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create(m_absoluteImageRect.size(), RenderingPurpose::Unspecified, 1, m_colorSpace, PixelFormat::BGRA8, bufferOptionsForRendingMode(m_renderingMode));
+    m_imageBuffer = m_allocator.createImageBuffer(m_absoluteImageRect.size(), m_colorSpace, m_renderingMode);
     if (!m_imageBuffer)
         return nullptr;
 
@@ -167,10 +169,10 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     }
 }
 
-static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
-    auto convertedImageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    auto convertedImageBuffer = allocator.createImageBuffer(clampedSize, colorSpace, RenderingMode::Unaccelerated);
     
     if (!convertedImageBuffer)
         return nullptr;
@@ -178,21 +180,21 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, Alp
     // Color space conversion happens internally when drawing from one image buffer to another
     convertedImageBuffer->context().drawImageBuffer(imageBuffer, sourceRect);
     PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, colorSpace };
-    return convertedImageBuffer->getPixelBuffer(format, sourceRect);
+    return convertedImageBuffer->getPixelBuffer(format, sourceRect, allocator);
 }
 
-static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto sourceRect = IntRect { { } , sourcePixelBuffer.size() };
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
 
     auto& sourceColorSpace = sourcePixelBuffer.format().colorSpace;
-    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, sourceColorSpace, PixelFormat::BGRA8);
+    auto imageBuffer = allocator.createImageBuffer(clampedSize, sourceColorSpace, RenderingMode::Unaccelerated);
     if (!imageBuffer)
         return nullptr;
 
     imageBuffer->putPixelBuffer(sourcePixelBuffer, sourceRect);
-    return getConvertedPixelBuffer(*imageBuffer, alphaFormat, sourceRect, colorSpace);
+    return getConvertedPixelBuffer(*imageBuffer, alphaFormat, sourceRect, colorSpace, allocator);
 }
 
 bool FilterImage::requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace> colorSpace) const
@@ -223,7 +225,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
     PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, m_colorSpace };
 
     if (m_imageBuffer) {
-        pixelBuffer = m_imageBuffer->getPixelBuffer(format, { { }, m_absoluteImageRect.size() });
+        pixelBuffer = m_imageBuffer->getPixelBuffer(format, { { }, m_absoluteImageRect.size() }, m_allocator);
         if (!pixelBuffer)
             return nullptr;
         return pixelBuffer.get();
@@ -232,7 +234,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
     IntSize logicalSize(m_absoluteImageRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(logicalSize));
 
-    pixelBuffer = PixelBuffer::tryCreate(format, logicalSize);
+    pixelBuffer = m_allocator.createPixelBuffer(format, logicalSize);
     if (!pixelBuffer)
         return nullptr;
 
@@ -253,7 +255,7 @@ RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaForm
 
     PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, colorSpace? *colorSpace : m_colorSpace };
 
-    auto pixelBuffer = PixelBuffer::tryCreate(format, sourceRect.size());
+    auto pixelBuffer = m_allocator.createPixelBuffer(format, sourceRect.size());
     if (!pixelBuffer)
         return nullptr;
 
@@ -273,7 +275,7 @@ void FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const Int
             // We prefer a conversion from the image buffer.
             if (m_imageBuffer) {
                 IntRect rect { { }, m_absoluteImageRect.size() };
-                if (auto convertedPixelBuffer = getConvertedPixelBuffer(*m_imageBuffer, alphaFormat, rect, colorSpace))
+                if (auto convertedPixelBuffer = getConvertedPixelBuffer(*m_imageBuffer, alphaFormat, rect, colorSpace, m_allocator))
                     copyImageBytes(*convertedPixelBuffer, destinationPixelBuffer, sourceRect);
                 return;
             }
@@ -286,7 +288,7 @@ void FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const Int
         return;
 
     if (requiresPixelBufferColorSpaceConversion(colorSpace)) {
-        if (auto convertedPixelBuffer = getConvertedPixelBuffer(*sourcePixelBuffer, alphaFormat, colorSpace))
+        if (auto convertedPixelBuffer = getConvertedPixelBuffer(*sourcePixelBuffer, alphaFormat, colorSpace, m_allocator))
             copyImageBytes(*convertedPixelBuffer, destinationPixelBuffer, sourceRect);
         return;
     }
