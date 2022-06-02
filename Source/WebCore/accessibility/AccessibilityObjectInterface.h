@@ -798,6 +798,7 @@ enum class AXRelationType : uint8_t {
     OwnedBy,
     OwnerFor,
 };
+using AXRelations = HashMap<AXRelationType, Vector<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
 
 // Use this struct to store the isIgnored data that depends on the parents, so that in addChildren()
 // we avoid going up the parent chain for each element while traversing the tree with useful information already.
@@ -1073,21 +1074,22 @@ public:
     virtual bool isActiveDescendantOfFocusedContainer() const = 0;
 
     // Retrieval of related objects.
-    virtual AccessibilityChildrenVector activeDescendantOfObjects() const = 0;
-    virtual AccessibilityChildrenVector controlledObjects() const = 0;
-    virtual AccessibilityChildrenVector controllers() const = 0;
-    virtual AccessibilityChildrenVector describedByObjects() const = 0;
-    virtual AccessibilityChildrenVector descriptionForObjects() const = 0;
-    virtual AccessibilityChildrenVector detailedByObjects() const = 0;
-    virtual AccessibilityChildrenVector detailsForObjects() const = 0;
-    virtual AccessibilityChildrenVector errorMessageObjects() const = 0;
-    virtual AccessibilityChildrenVector errorMessageForObjects() const = 0;
-    virtual AccessibilityChildrenVector flowToObjects() const = 0;
-    virtual AccessibilityChildrenVector flowFromObjects() const = 0;
-    virtual AccessibilityChildrenVector labelledByObjects() const = 0;
-    virtual AccessibilityChildrenVector labelForObjects() const = 0;
-    virtual AccessibilityChildrenVector ownedObjects() const = 0;
-    virtual AccessibilityChildrenVector owners() const = 0;
+    AccessibilityChildrenVector activeDescendantOfObjects() const { return relatedObjects(AXRelationType::ActiveDescendantOf); }
+    AccessibilityChildrenVector controlledObjects() const { return relatedObjects(AXRelationType::ControllerFor); }
+    AccessibilityChildrenVector controllers() const { return relatedObjects(AXRelationType::ControlledBy); }
+    AccessibilityChildrenVector describedByObjects() const { return relatedObjects(AXRelationType::DescribedBy); }
+    AccessibilityChildrenVector descriptionForObjects() const { return relatedObjects(AXRelationType::DescriptionFor); }
+    AccessibilityChildrenVector detailedByObjects() const { return relatedObjects(AXRelationType::Details); }
+    AccessibilityChildrenVector detailsForObjects() const { return relatedObjects(AXRelationType::DetailsFor); }
+    AccessibilityChildrenVector errorMessageObjects() const { return relatedObjects(AXRelationType::ErrorMessage); }
+    AccessibilityChildrenVector errorMessageForObjects() const { return relatedObjects(AXRelationType::ErrorMessageFor); }
+    AccessibilityChildrenVector flowToObjects() const { return relatedObjects(AXRelationType::FlowsTo); }
+    AccessibilityChildrenVector flowFromObjects() const { return relatedObjects(AXRelationType::FlowsFrom); }
+    AccessibilityChildrenVector labelledByObjects() const { return relatedObjects(AXRelationType::LabelledBy); }
+    AccessibilityChildrenVector labelForObjects() const { return relatedObjects(AXRelationType::LabelFor); }
+    AccessibilityChildrenVector ownedObjects() const { return relatedObjects(AXRelationType::OwnerFor); }
+    AccessibilityChildrenVector owners() const { return relatedObjects(AXRelationType::OwnedBy); }
+    virtual AccessibilityChildrenVector relatedObjects(AXRelationType) const = 0;
 
     virtual bool hasPopup() const = 0;
     virtual String popupValue() const = 0;

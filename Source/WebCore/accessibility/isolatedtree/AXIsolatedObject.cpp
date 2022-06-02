@@ -328,13 +328,6 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
 
     setObjectVectorProperty(AXPropertyName::LinkedObjects, object.linkedObjects());
 
-    // Relations.
-    setObjectVectorProperty(AXPropertyName::ControlledObjects, object.controlledObjects());
-    setObjectVectorProperty(AXPropertyName::DetailedByObjects, object.detailedByObjects());
-    setObjectVectorProperty(AXPropertyName::ErrorMessageObjects, object.errorMessageObjects());
-    setObjectVectorProperty(AXPropertyName::FlowToObjects, object.flowToObjects());
-    setObjectVectorProperty(AXPropertyName::OwnedObjects, object.ownedObjects());
-
     // Spin button support.
     setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
     setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
@@ -1865,66 +1858,6 @@ AXCoreObject* AXIsolatedObject::selectedListItem()
     return nullptr;
 }
 
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::activeDescendantOfObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::controllers() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::describedByObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::descriptionForObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::detailsForObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::errorMessageForObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::flowFromObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::labelledByObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::labelForObjects() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::owners() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 bool AXIsolatedObject::hasDatalist() const
 {
     ASSERT_NOT_REACHED();
@@ -2181,6 +2114,13 @@ bool AXIsolatedObject::shouldFocusActiveDescendant() const
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRelationType relationType) const
+{
+    if (auto relatedObjectIDs = tree()->relatedObjectIDsFor(*this, relationType))
+        return tree()->objectsForIDs(*relatedObjectIDs);
+    return { };
 }
 
 AXCoreObject* AXIsolatedObject::activeDescendant() const

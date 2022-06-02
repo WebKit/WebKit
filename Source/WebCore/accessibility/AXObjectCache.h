@@ -380,7 +380,7 @@ public:
     AXTreeData treeData();
 
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
-    std::optional<Vector<AXID>> relatedObjectsFor(const AXCoreObject&, AXRelationType);
+    std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
@@ -500,7 +500,8 @@ private:
     void addRelation(Element*, Element*, AXRelationType);
     void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddingSymmetricRelation = AddingSymmetricRelation::No);
     void updateRelationsIfNeeded();
-    void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
+    void relationsNeedUpdate(bool);
+    HashMap<AXID, AXRelations> relations();
 
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
@@ -558,8 +559,7 @@ private:
     double m_loadingProgress { 0 };
 
     // Relationships between objects.
-    using Relations = HashMap<AXRelationType, Vector<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
-    HashMap<AXID, Relations> m_relations;
+    HashMap<AXID, AXRelations> m_relations;
     bool m_relationsNeedUpdate { true };
 
 #if USE(ATSPI)

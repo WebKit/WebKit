@@ -3771,7 +3771,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     auto relationsIterator = m_relations.find(origin->objectID());
     if (relationsIterator == m_relations.end()) {
         // No relations for this object, add the first one.
-        m_relations.add(origin->objectID(), Relations { { static_cast<uint8_t>(relationType), { target->objectID() } } });
+        m_relations.add(origin->objectID(), AXRelations { { static_cast<uint8_t>(relationType), { target->objectID() } } });
     } else if (auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType)); targetsIterator == relationsIterator->value.end()) {
         // No relation of this type for this object, add the first one.
         relationsIterator->value.add(static_cast<uint8_t>(relationType), Vector<AXID> { target->objectID() });
@@ -3842,7 +3842,25 @@ void AXObjectCache::updateRelationsIfNeeded()
     }
 }
 
-std::optional<Vector<AXID>> AXObjectCache::relatedObjectsFor(const AXCoreObject& object, AXRelationType relationType)
+void AXObjectCache::relationsNeedUpdate(bool needUpdate)
+{
+    m_relationsNeedUpdate = needUpdate;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (m_relationsNeedUpdate && m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+            tree->relationsNeedUpdate(true);
+    }
+#endif
+}
+
+HashMap<AXID, AXRelations> AXObjectCache::relations()
+{
+    updateRelationsIfNeeded();
+    return m_relations;
+}
+
+std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)
 {
     updateRelationsIfNeeded();
     auto relationsIterator = m_relations.find(object.objectID());

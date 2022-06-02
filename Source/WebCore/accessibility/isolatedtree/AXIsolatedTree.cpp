@@ -617,6 +617,29 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AXCoreObject* axPar
     }
 }
 
+std::optional<Vector<AXID>> AXIsolatedTree::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)
+{
+    ASSERT(!isMainThread());
+
+    if (m_relationsNeedUpdate) {
+        m_relations = Accessibility::retrieveValueFromMainThread<HashMap<AXID, AXRelations>>([this] () -> HashMap<AXID, AXRelations> {
+            if (auto* cache = axObjectCache())
+                return cache->relations();
+            return { };
+        });
+        m_relationsNeedUpdate = false;
+    }
+
+    auto relationsIterator = m_relations.find(object.objectID());
+    if (relationsIterator == m_relations.end())
+        return std::nullopt;
+
+    auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
+    if (targetsIterator == relationsIterator->value.end())
+        return std::nullopt;
+    return targetsIterator->value;
+}
+
 void AXIsolatedTree::applyPendingChanges()
 {
     AXTRACE("AXIsolatedTree::applyPendingChanges"_s);

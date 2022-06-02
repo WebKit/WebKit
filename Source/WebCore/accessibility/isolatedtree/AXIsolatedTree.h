@@ -92,13 +92,11 @@ enum class AXPropertyName : uint16_t {
     ColumnIndexRange,
     ComputedRoleString,
     Contents,
-    ControlledObjects,
     CurrentState,
     CurrentValue,
     DatetimeAttributeValue,
     DecrementButton,
     Description,
-    DetailedByObjects,
     DisclosedByRow,
     DisclosedRows,
     DocumentEncoding,
@@ -107,10 +105,8 @@ enum class AXPropertyName : uint16_t {
     DropEffects,
     EditableAncestor,
     EmbeddedImageDescription,
-    ErrorMessageObjects,
     ExpandedTextValue,
     FileUploadButtonReturnsValueInTitle,
-    FlowToObjects,
     FocusableAncestor,
     HasARIAValueNow,
     HasApplePDFAnnotationAttribute,
@@ -250,7 +246,6 @@ enum class AXPropertyName : uint16_t {
     MaxValueForRange,
     MinValueForRange,
     NameAttribute,
-    OwnedObjects,
     Orientation,
     OuterHTML,
     Path,
@@ -371,6 +366,10 @@ public:
     void setRootNode(AXIsolatedObject*) WTF_REQUIRES_LOCK(m_changeLogLock);
     void setFocusedNodeID(AXID);
 
+    // Relationships between objects.
+    std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
+    void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
+
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     // During layout tests, it is called on the main thread.
     void applyPendingChanges();
@@ -427,6 +426,14 @@ private:
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
+
+    // Relationships between objects.
+    // Accessed only on the AX thread.
+    HashMap<AXID, AXRelations> m_relations;
+    // Set to true by the AXObjectCache on the main thread.
+    // Set to false on the AX thread by relatedObjectIDsFor.
+    std::atomic<bool> m_relationsNeedUpdate { true };
+
     Lock m_changeLogLock;
 };
 
