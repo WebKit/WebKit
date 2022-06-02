@@ -50,7 +50,7 @@ std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
-    if (codecName != "avc1")
+    if (codecName != "avc1"_s)
         return std::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -132,9 +132,9 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
-    if (codecName == "hvc1")
+    if (codecName == "hvc1"_s)
         parameters.codec = HEVCParameters::Codec::Hvc1;
-    else if (codecName == "hev1")
+    else if (codecName == "hev1"_s)
         parameters.codec = HEVCParameters::Codec::Hev1;
     else
         return std::nullopt;

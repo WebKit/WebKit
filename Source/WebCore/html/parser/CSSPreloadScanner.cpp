@@ -217,7 +217,7 @@ static bool hasValidImportConditions(StringView conditions)
     if (end != notFound)
         return end == conditions.length() - 1 && conditions.startsWith("layer("_s);
 
-    return conditions == "layer";
+    return conditions == "layer"_s;
 }
 
 void CSSPreloadScanner::emitRule()

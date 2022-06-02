@@ -424,7 +424,7 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         repeats = *parsedRepeat;
         nameString = "repeat"_s;
         type = Condition::EventBase;
-    } else if (nameView == "begin" || nameView == "end") {
+    } else if (nameView == "begin"_s || nameView == "end"_s) {
         if (baseID.isEmpty())
             return false;
         type = Condition::Syncbase;

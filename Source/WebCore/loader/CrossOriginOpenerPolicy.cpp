@@ -140,13 +140,13 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
         if (!coopParsingResult)
             return;
 
-        if (coopParsingResult->first == "same-origin") {
+        if (coopParsingResult->first == "same-origin"_s) {
             auto& coep = ensureCOEP();
             if (coep.value == CrossOriginEmbedderPolicyValue::RequireCORP || (headerName == HTTPHeaderName::CrossOriginOpenerPolicyReportOnly && coep.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP))
                 value = CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
             else
                 value = CrossOriginOpenerPolicyValue::SameOrigin;
-        } else if (coopParsingResult->first == "same-origin-allow-popups")
+        } else if (coopParsingResult->first == "same-origin-allow-popups"_s)
             value = CrossOriginOpenerPolicyValue::SameOriginAllowPopups;
 
         reportingEndpoint = coopParsingResult->second.get<HashTranslatorASCIILiteral>("report-to"_s);

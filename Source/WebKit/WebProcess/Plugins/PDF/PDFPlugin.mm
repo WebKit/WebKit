@@ -2334,11 +2334,11 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     
 bool PDFPlugin::handleEditingCommand(StringView commandName)
 {
-    if (commandName == "copy")
+    if (commandName == "copy"_s)
         [m_pdfLayerController copySelection];
-    else if (commandName == "selectAll")
+    else if (commandName == "selectAll"_s)
         [m_pdfLayerController selectAll];
-    else if (commandName == "takeFindStringFromSelection") {
+    else if (commandName == "takeFindStringFromSelection"_s) {
         NSString *string = [m_pdfLayerController currentSelection].string;
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (string.length)
@@ -2351,10 +2351,10 @@ bool PDFPlugin::handleEditingCommand(StringView commandName)
 
 bool PDFPlugin::isEditingCommandEnabled(StringView commandName)
 {
-    if (commandName == "copy" || commandName == "takeFindStringFromSelection")
+    if (commandName == "copy"_s || commandName == "takeFindStringFromSelection"_s)
         return [m_pdfLayerController currentSelection];
 
-    if (commandName == "selectAll")
+    if (commandName == "selectAll"_s)
         return true;
 
     return false;

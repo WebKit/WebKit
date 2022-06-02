@@ -258,40 +258,40 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
 
     CONSUME_TYPE(Attribute);
     CONSUME_TYPE_NAMED(ident, Identifier);
-    if (ident.m_ident == "group") {
+    if (ident.m_ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(GroupAttribute, id.m_literalValue);
     }
-    if (ident.m_ident == "binding") {
+    if (ident.m_ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BindingAttribute, id.m_literalValue);
     }
-    if (ident.m_ident == "stage") {
+    if (ident.m_ident == "stage"_s) {
         CONSUME_TYPE(ParenLeft);
         CONSUME_TYPE_NAMED(stage, Identifier);
         CONSUME_TYPE(ParenRight);
-        if (stage.m_ident == "compute")
+        if (stage.m_ident == "compute"_s)
             RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
-        if (stage.m_ident == "vertex")
+        if (stage.m_ident == "vertex"_s)
             RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
-        if (stage.m_ident == "fragment")
+        if (stage.m_ident == "fragment"_s)
             RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
         FAIL("Invalid stage attribute, the only options are 'compute', 'vertex', 'fragment'."_s);
     }
-    if (ident.m_ident == "location") {
+    if (ident.m_ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(LocationAttribute, id.m_literalValue);
     }
-    if (ident.m_ident == "builtin") {
+    if (ident.m_ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         CONSUME_TYPE_NAMED(name, Identifier);
         CONSUME_TYPE(ParenRight);
@@ -665,10 +665,10 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     }
     case TokenType::Identifier: {
         CONSUME_TYPE_NAMED(ident, Identifier);
-        if (ident.m_ident == "true") {
+        if (ident.m_ident == "true"_s) {
             RETURN_NODE_REF(BoolLiteral, true);
         }
-        if (ident.m_ident == "false") {
+        if (ident.m_ident == "false"_s) {
             RETURN_NODE_REF(BoolLiteral, false);
         }
         if (current().m_type == TokenType::LT || current().m_type == TokenType::ParenLeft) {

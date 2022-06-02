@@ -169,7 +169,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
 {
     unsigned languageSubtagsStartIndex = position;
     unsigned languageSubtagsEndIndex = languageLength;
-    bool isAsteriskRange = range == "*";
+    bool isAsteriskRange = range == "*"_s;
     do {
         if (languageSubtagsStartIndex > 0)
             languageSubtagsStartIndex += 1;

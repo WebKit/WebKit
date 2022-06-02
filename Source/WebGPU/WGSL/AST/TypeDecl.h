@@ -94,29 +94,29 @@ public:
 
     static std::optional<Base> stringViewToKind(StringView& view)
     {
-        if (view == "vec2")
+        if (view == "vec2"_s)
             return Base::Vec2;
-        if (view == "vec3")
+        if (view == "vec3"_s)
             return Base::Vec3;
-        if (view == "vec4")
+        if (view == "vec4"_s)
             return Base::Vec4;
-        if (view == "mat2x2")
+        if (view == "mat2x2"_s)
             return Base::Mat2x2;
-        if (view == "mat2x3")
+        if (view == "mat2x3"_s)
             return Base::Mat2x3;
-        if (view == "mat2x4")
+        if (view == "mat2x4"_s)
             return Base::Mat2x4;
-        if (view == "mat3x2")
+        if (view == "mat3x2"_s)
             return Base::Mat3x2;
-        if (view == "mat3x3")
+        if (view == "mat3x3"_s)
             return Base::Mat3x3;
-        if (view == "mat3x4")
+        if (view == "mat3x4"_s)
             return Base::Mat3x4;
-        if (view == "mat4x2")
+        if (view == "mat4x2"_s)
             return Base::Mat4x2;
-        if (view == "mat4x3")
+        if (view == "mat4x3"_s)
             return Base::Mat4x3;
-        if (view == "mat4x4")
+        if (view == "mat4x4"_s)
             return Base::Mat4x4;
         return std::nullopt;
     }

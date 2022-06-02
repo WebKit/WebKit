@@ -127,7 +127,7 @@ bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdent
         return false;
 
     auto& url = std::get<URL>(identifier);
-    return url.host() == "apple.com" && url.path() == "/apple-pay";
+    return url.host() == "apple.com"_s && url.path() == "/apple-pay"_s;
 }
 
 bool ApplePayPaymentHandler::hasActiveSession(Document& document)

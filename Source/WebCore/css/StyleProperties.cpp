@@ -64,7 +64,7 @@ static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 
 static bool isCSSWideValueKeyword(StringView value)
 {
-    return value == "initial" || value == "inherit" || value == "unset" || value == "revert";
+    return value == "initial"_s || value == "inherit"_s || value == "unset"_s || value == "revert"_s;
 }
 
 static bool isNoneValue(const RefPtr<CSSValue>& value)

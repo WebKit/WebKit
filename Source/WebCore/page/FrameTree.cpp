@@ -483,7 +483,7 @@ bool isParentTargetFrameName(StringView name)
 bool isSelfTargetFrameName(StringView name)
 {
     // FIXME: Some day we should remove _current, which is not part of the HTML specification.
-    return name.isEmpty() || equalIgnoringASCIICase(name, "_self"_s) || name == "_current";
+    return name.isEmpty() || equalIgnoringASCIICase(name, "_self"_s) || name == "_current"_s;
 }
 
 bool isTopTargetFrameName(StringView name)
