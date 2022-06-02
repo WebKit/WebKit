@@ -28,7 +28,7 @@ WARN: Audit Warning: "validWithInvalidOptionals test name" is too new to run in 
 {
   "type": "test-case",
   "name": "validWithInvalidOptionals test name",
-  "supports": 4,
+  "supports": "<version + 1>",
   "test": "validWithInvalidOptionals test function"
 }
 
@@ -37,7 +37,7 @@ WARN: Audit Warning: "validWithInvalidOptionals test name" is too new to run in 
   "type": "test-case",
   "name": "validWithValidOptionals test name",
   "description": "validWithValidOptionals test description",
-  "supports": 2,
+  "supports": "<version + -1>",
   "setup": "validWithValidOptionals test setup",
   "test": "validWithValidOptionals test function"
 }

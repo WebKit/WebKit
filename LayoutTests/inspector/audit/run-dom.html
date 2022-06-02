@@ -8,26 +8,41 @@ function test()
 {
     let suite = InspectorTest.Audit.createSuite("Audit.run.DOM");
 
-    function evaluateStringForTest(func, target, args) {
-        return `WebInspectorAudit.DOM.${func}(document.querySelector("#${target}")${args ? ", " + JSON.stringify(args) : ""})`;
+    function evaluateStringForTest(func, args, prefix = "") {
+        switch (func) {
+        case "hasEventListeners":
+            return `${prefix}WebInspectorAudit.DOM.${func}(${args.join(", ")})`;
+
+        case "simulateUserInteraction":
+            return `(() => { let result = undefined; ${prefix}WebInspectorAudit.DOM.${func}(${args.join(", ")}); return result; })()`;
+        }
+
+        return "'FAIL'";
     }
 
     const tests = [
-        { func: "hasEventListeners", target: "noListeners" },
-        { func: "hasEventListeners", target: "noListeners", args: ["FakeEvent"] },
-        { func: "hasEventListeners", target: "attributeListener" },
-        { func: "hasEventListeners", target: "attributeListener", args: ["FakeEvent"] },
-        { func: "hasEventListeners", target: "javascriptListener" },
-        { func: "hasEventListeners", target: "javascriptListener", args: ["FakeEvent"] },
-        { func: "hasEventListeners", target: "builtinListener" },
-        { func: "hasEventListeners", target: "builtinListener", args: ["FakeEvent"] },
+        { func: "hasEventListeners", name: "None.General", args: [`document.querySelector("#noListeners")`] },
+        { func: "hasEventListeners", name: "None.click", args: [`document.querySelector("#noListeners")`, `"click"`] },
+        { func: "hasEventListeners", name: "None.FakeEvent", args: [`document.querySelector("#noListeners")`, `"FakeEvent"`] },
+        { func: "hasEventListeners", name: "Attribute.General", args: [`document.querySelector("#attributeListener")`] },
+        { func: "hasEventListeners", name: "Attribute.click", args: [`document.querySelector("#attributeListener")`, `"click"`] },
+        { func: "hasEventListeners", name: "Attribute.FakeEvent", args: [`document.querySelector("#attributeListener")`, `"FakeEvent"`] },
+        { func: "hasEventListeners", name: "JavaScript.General", args: [`document.querySelector("#javascriptListener")`] },
+        { func: "hasEventListeners", name: "JavaScript.click", args: [`document.querySelector("#javascriptListener")`, `"click"`] },
+        { func: "hasEventListeners", name: "JavaScript.FakeEvent", args: [`document.querySelector("#javascriptListener")`, `"FakeEvent"`] },
+        { func: "hasEventListeners", name: "Builtin.General", args: [`document.querySelector("#builtinListener")`] },
+        { func: "hasEventListeners", name: "Builtin.play", args: [`document.querySelector("#builtinListener")`, `"play"`] },
+        { func: "hasEventListeners", name: "Builtin.FakeEvent", args: [`document.querySelector("#builtinListener")`, `"FakeEvent"`] },
+
+        { func: "simulateUserInteraction", name: "UserGesture", args: [`() => { result = internals.isProcessingUserGesture(); }`] },
+        { func: "simulateUserInteraction", name: "TransientActivation", args: [`() => { result = internals.hasTransientActivation(); }`] },
     ];
 
-    for (let {func, target, args} of tests) {
+    for (let {func, name, args} of tests) {
         suite.addTestCase({
-            name: "Audit.run.DOM." + func + "." + target + (args ? ".WithArgs" : ""),
+            name: "Audit.run.DOM." + func + (name ? "." + name : ""),
             async test() {
-                let functionString = evaluateStringForTest(func, target, args);
+                let functionString = evaluateStringForTest(func, args);
 
                  await InspectorTest.Audit.setupAudit();
 
@@ -58,10 +73,10 @@ function test()
             InspectorTest.assert(!wasThrown, "Should not throw an exception.");
             await InspectorTest.Audit.teardownAudit();
 
-            for (let {func, target, args} of functions.values()) {
+            for (let {func, args} of functions.values()) {
                 InspectorTest.log(`Testing copied ${func}...`);
                 await InspectorTest.expectException(async function() {
-                    await InspectorTest.evaluateInPage("window.Copied" + evaluateStringForTest(func, target, args));
+                    await InspectorTest.evaluateInPage(evaluateStringForTest(func, args, "window.Copied"));
                 });
             }
         },
