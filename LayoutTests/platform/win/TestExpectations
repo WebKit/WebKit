@@ -3693,7 +3693,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [
 editing/caret/emoji.html [ Failure ]
 editing/deleting/skip-virama-001.html [ Failure ]
 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
+fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure Timeout ]
 fast/block/positioning/016.html [ Failure ]
 fast/block/positioning/025.html [ Failure ]
 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
