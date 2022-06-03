@@ -311,7 +311,7 @@
                     {
                       "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "triggers": ["ios-simulator-15-release-gpuprocess-arm64-tests-wk2", "ios-simulator-15-release-gpuprocess-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
+                      "triggers": ["ios-simulator-15-release-arm64-tests-wk2", "ios-simulator-15-release-gpuprocess-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
                       "workernames": ["bot614", "bot641", "bot682", "bot685", "bot303", "bot305", "bot306"]
                     },
                     {
@@ -321,9 +321,9 @@
                       "workernames": ["bot694", "bot695", "bot307", "bot308"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "name": "Apple-iOS-15-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--accelerated-drawing"],
+                      "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot210"]
                     },
                     {
@@ -733,8 +733,8 @@
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
-                      "builderNames": ["Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ios-simulator-15-release-arm64-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-arm64-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-tests-wk2",
                       "builderNames": ["Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests"]

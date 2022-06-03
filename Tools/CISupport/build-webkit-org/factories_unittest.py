@@ -736,7 +736,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests': [
+        'Apple-iOS-15-Simulator-Release-arm64-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

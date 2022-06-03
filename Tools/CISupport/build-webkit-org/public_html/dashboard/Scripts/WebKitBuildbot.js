@@ -61,6 +61,7 @@ WebKitBuildbot = function()
         }},
         "Apple-iOS-15-Release-Build": {platform: Dashboard.Platform.iOS15Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-15-Simulator-Release-Build": {platform: Dashboard.Platform.iOS15Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-iOS-15-Simulator-Release-arm64-WK2-Tests": {platform: Dashboard.Platform.iOS15Simulator, heading:"iOS Release (arm64)", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-15-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS15Simulator, heading:"iOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-15-Simulator-Debug-Build": {platform: Dashboard.Platform.iOS15Simulator, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-15-Simulator-Debug-WK2-Tests": {platform: Dashboard.Platform.iOS15Simulator, debug: true, heading:"iOS Debug", tester: true, testCategory: Buildbot.TestCategory.WebKit2},
