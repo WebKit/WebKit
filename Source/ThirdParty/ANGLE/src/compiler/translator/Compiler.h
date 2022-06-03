@@ -112,7 +112,6 @@ class TCompiler : public TShHandleBase
     TInfoSink &getInfoSink() { return mInfoSink; }
 
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
-    bool isEarlyFragmentTestsOptimized() const { return mEarlyFragmentTestsOptimized; }
     bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
     SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
@@ -320,7 +319,6 @@ class TCompiler : public TShHandleBase
 
     // fragment shader early fragment tests
     bool mEarlyFragmentTestsSpecified;
-    bool mEarlyFragmentTestsOptimized;
 
     // Whether per-sample shading is enabled by the shader.  In OpenGL, this keyword should
     // implicitly trigger per-sample shading without the API enabling it.

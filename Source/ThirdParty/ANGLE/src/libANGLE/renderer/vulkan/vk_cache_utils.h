@@ -392,11 +392,11 @@ struct PackedInputAssemblyAndMiscState final
 {
     uint32_t topology : 4;
     uint32_t patchVertices : 6;
-    uint32_t surfaceRotation : 3;
+    uint32_t surfaceRotation : 1;
     uint32_t viewportNegativeOneToOne : 1;
     uint32_t depthBoundsTest : 1;
-    // 9-bit normalized instead of float to align the struct.
-    uint32_t minSampleShading : 9;
+    // 11-bit normalized instead of float to align the struct.
+    uint32_t minSampleShading : 11;
     uint32_t blendEnableMask : 8;
 };
 
@@ -455,12 +455,6 @@ struct PackedColorBlendStateInfo final
 
 constexpr size_t kPackedColorBlendStateSize = sizeof(PackedColorBlendStateInfo);
 static_assert(kPackedColorBlendStateSize == 36, "Size check failed");
-
-struct PackedExtent final
-{
-    uint16_t width;
-    uint16_t height;
-};
 
 struct PackedDither final
 {
@@ -531,7 +525,7 @@ static_assert(kPackedDynamicStateSize == 40, "Size check failed");
 constexpr size_t kGraphicsPipelineDescSumOfSizes =
     kVertexInputAttributesSize + kRenderPassDescSize +
     kPackedInputAssemblyAndRasterizationStateSize + kPackedColorBlendStateSize +
-    sizeof(PackedExtent) + sizeof(PackedDither) + kPackedDynamicStateSize;
+    sizeof(PackedDither) + kPackedDynamicStateSize;
 
 // Number of dirty bits in the dirty bit set.
 constexpr size_t kGraphicsPipelineDirtyBitBytes = 4;
@@ -704,16 +698,10 @@ class GraphicsPipelineDesc final
 
     void updateSurfaceRotation(GraphicsPipelineTransitionBits *transition,
                                const SurfaceRotation surfaceRotation);
-    SurfaceRotation getSurfaceRotation() const
+    bool getSurfaceRotation() const
     {
-        return static_cast<SurfaceRotation>(
-            mInputAssemblyAndRasterizationStateInfo.misc.surfaceRotation);
+        return mInputAssemblyAndRasterizationStateInfo.misc.surfaceRotation;
     }
-
-    void updateDrawableSize(GraphicsPipelineTransitionBits *transition,
-                            uint32_t width,
-                            uint32_t height);
-    const PackedExtent &getDrawableSize() const { return mDrawableSize; }
 
     void updateEmulatedDitherControl(GraphicsPipelineTransitionBits *transition, uint16_t value);
     uint32_t getEmulatedDitherControl() const { return mDither.emulatedDitherControl; }
@@ -731,7 +719,6 @@ class GraphicsPipelineDesc final
     RenderPassDesc mRenderPassDesc;
     PackedInputAssemblyAndRasterizationStateInfo mInputAssemblyAndRasterizationStateInfo;
     PackedColorBlendStateInfo mColorBlendStateInfo;
-    PackedExtent mDrawableSize;
     PackedDither mDither;
     PackedDynamicState mDynamicState;
 };
@@ -1195,7 +1182,6 @@ class DescriptorSetDesc
 
     bool operator==(const DescriptorSetDesc &other) const
     {
-        ASSERT(mWriteDescriptors == other.mWriteDescriptors);
         return (mDescriptorInfos == other.mDescriptorInfos);
     }
 

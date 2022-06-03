@@ -337,8 +337,7 @@ void Shader::compile(const Context *context)
     mState.mTessGenVertexOrder        = 0;
     mState.mTessGenPointMode          = 0;
     mState.mAdvancedBlendEquations.reset();
-    mState.mEarlyFragmentTestsOptimization = false;
-    mState.mEnablesPerSampleShading        = false;
+    mState.mEnablesPerSampleShading = false;
     mState.mSpecConstUsageBits.reset();
 
     mState.mCompileStatus = CompileStatus::COMPILE_REQUESTED;
@@ -536,8 +535,6 @@ void Shader::resolveCompile()
             std::sort(mState.mInputVaryings.begin(), mState.mInputVaryings.end(), CompareShaderVar);
             mState.mActiveOutputVariables =
                 GetActiveShaderVariables(sh::GetOutputVariables(compilerHandle));
-            mState.mEarlyFragmentTestsOptimization =
-                sh::HasEarlyFragmentTestsOptimization(compilerHandle);
             mState.mEnablesPerSampleShading = sh::EnablesPerSampleShading(compilerHandle);
             mState.mAdvancedBlendEquations =
                 BlendEquationBitSet(sh::GetAdvancedBlendEquations(compilerHandle));

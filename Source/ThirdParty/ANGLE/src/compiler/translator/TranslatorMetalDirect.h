@@ -183,9 +183,6 @@ class TranslatorMetalDirect : public TCompiler
                                                        DriverUniformMetal &driverUniforms);
     ANGLE_NO_DISCARD bool insertRasterizationDiscardLogic(TIntermBlock &root);
 
-    ANGLE_NO_DISCARD TIntermSwizzle *getDriverUniformNegFlipYRef(
-        DriverUniform &driverUniforms) const;
-
     TranslatorMetalReflection translatorMetalReflection = {};
 };
 

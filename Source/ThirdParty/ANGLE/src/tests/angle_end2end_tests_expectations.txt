@@ -107,6 +107,7 @@
 6977 NVIDIA GLES : MipmapTestES31.GenerateMipmapWithDraw/* = SKIP
 6977 LINUX NVIDIA OpenGL : MipmapTestES31.GenerateLowerMipsWithDraw/* = SKIP
 7301 LINUX NVIDIA OpenGL : CopyTexImageTest.RGBAToRGB/ES2_OpenGL_EmulateCopyTexImage2DFromRenderbuffers/* = SKIP
+7371 LINUX NVIDIA OpenGL : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
 
 // Nvidia Vulkan
 7236 NVIDIA VULKAN : GLSLTest_ES31.TessellationControlShaderMatrixCopyBug/* = SKIP
@@ -452,6 +453,8 @@
 
 7207 PIXEL4ORXL VULKAN : VulkanPerformanceCounterTest.InRenderpassFlushShouldNotBreakRenderpass/* = SKIP
 
+7372 PIXEL4ORXL VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
+
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
 6167 NEXUS5X GLES : DepthStencilTestES3.StencilTestStateThenFramebufferClearThenStencilAttached/* = SKIP
@@ -532,6 +535,7 @@
 // Direct MSL compilation bug.
 6540 METAL : GLSLTest_ES3.ComplexCrossExpression/* = SKIP
 7145 METAL : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
+7309 METAL : StateChangeTestES3.PrimitiveMode/* = SKIP
 
 // Bots missing drivers with VK_EXT_provoking_vertex
 6526 WIN INTEL VULKAN : ProgramBinaryES3Test.SaveAndLoadDetachedShaders/* = SKIP
@@ -614,3 +618,6 @@
 // // Cannot create 2D (array) view of 3D texture.  These fail with validation errors, and cause a crash in syncval.
 3886 VULKAN : ComputeShaderTest.BindImageTexture3D/* = SKIP
 3886 D3D11 : ComputeShaderTest.BindImageTexture3D/* = SKIP
+
+// Produces VVL errors
+7357 VULKAN : FramebufferTest_ES3.FramebufferConditionalFeedbackLoop/* = SKIP

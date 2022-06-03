@@ -1495,6 +1495,21 @@ void CommandBufferHelperCommon::addCommandDiagnosticsCommon(std::ostringstream *
     *out << "\\l";
 }
 
+void CommandBufferHelperCommon::retainResource(Resource *resource)
+{
+    resource->retain(&mResourceUseList);
+}
+
+void CommandBufferHelperCommon::retainReadOnlyResource(ReadWriteResource *readWriteResource)
+{
+    readWriteResource->retainReadOnly(&mResourceUseList);
+}
+
+void CommandBufferHelperCommon::retainReadWriteResource(ReadWriteResource *readWriteResource)
+{
+    readWriteResource->retainReadWrite(&mResourceUseList);
+}
+
 // OutsideRenderPassCommandBufferHelper implementation.
 OutsideRenderPassCommandBufferHelper::OutsideRenderPassCommandBufferHelper() {}
 
@@ -3193,7 +3208,7 @@ void DescriptorPoolHelper::release(ContextVk *contextVk, VulkanCacheType cacheTy
 
 angle::Result DescriptorPoolHelper::allocateDescriptorSets(
     Context *context,
-    ResourceUseList *resourceUseList,
+    CommandBufferHelperCommon *commandBufferHelper,
     const DescriptorSetLayout &descriptorSetLayout,
     uint32_t descriptorSetCount,
     VkDescriptorSet *descriptorSetsOut)
@@ -3211,20 +3226,20 @@ angle::Result DescriptorPoolHelper::allocateDescriptorSets(
                                                                  descriptorSetsOut));
 
     // The pool is still in use every time a new descriptor set is allocated from it.
-    retain(resourceUseList);
+    commandBufferHelper->retainResource(this);
 
     return angle::Result::Continue;
 }
 
 angle::Result DescriptorPoolHelper::allocateAndCacheDescriptorSet(
     Context *context,
-    ResourceUseList *resourceUseList,
+    CommandBufferHelperCommon *commandBufferHelper,
     const DescriptorSetDesc &desc,
     const DescriptorSetLayout &descriptorSetLayout,
     VkDescriptorSet *descriptorSetOut)
 {
-    ANGLE_TRY(
-        allocateDescriptorSets(context, resourceUseList, descriptorSetLayout, 1, descriptorSetOut));
+    ANGLE_TRY(allocateDescriptorSets(context, commandBufferHelper, descriptorSetLayout, 1,
+                                     descriptorSetOut));
     mDescriptorSetCache.insertDescriptorSet(desc, *descriptorSetOut);
     return angle::Result::Continue;
 }
@@ -3313,7 +3328,7 @@ void DynamicDescriptorPool::release(ContextVk *contextVk, VulkanCacheType cacheT
 
 angle::Result DynamicDescriptorPool::allocateDescriptorSets(
     Context *context,
-    ResourceUseList *resourceUseList,
+    CommandBufferHelperCommon *commandBufferHelper,
     const DescriptorSetLayout &descriptorSetLayout,
     uint32_t descriptorSetCount,
     RefCountedDescriptorPoolBinding *bindingOut,
@@ -3334,13 +3349,13 @@ angle::Result DynamicDescriptorPool::allocateDescriptorSets(
 
     ++context->getPerfCounters().descriptorSetAllocations;
 
-    return bindingOut->get().allocateDescriptorSets(context, resourceUseList, descriptorSetLayout,
-                                                    descriptorSetCount, descriptorSetsOut);
+    return bindingOut->get().allocateDescriptorSets(
+        context, commandBufferHelper, descriptorSetLayout, descriptorSetCount, descriptorSetsOut);
 }
 
 angle::Result DynamicDescriptorPool::getOrAllocateDescriptorSet(
     Context *context,
-    ResourceUseList *resourceUseList,
+    CommandBufferHelperCommon *commandBufferHelper,
     const DescriptorSetDesc &desc,
     const DescriptorSetLayout &descriptorSetLayout,
     RefCountedDescriptorPoolBinding *bindingOut,
@@ -3376,7 +3391,7 @@ angle::Result DynamicDescriptorPool::getOrAllocateDescriptorSet(
 
     bindingOut->set(mDescriptorPools[mCurrentPoolIndex]);
     ANGLE_TRY(mDescriptorPools[mCurrentPoolIndex]->get().allocateAndCacheDescriptorSet(
-        context, resourceUseList, desc, descriptorSetLayout, descriptorSetOut));
+        context, commandBufferHelper, desc, descriptorSetLayout, descriptorSetOut));
     *cacheResultOut = DescriptorCacheResult::NewAllocation;
     ++context->getPerfCounters().descriptorSetAllocations;
     return angle::Result::Continue;
@@ -3783,7 +3798,7 @@ void QueryHelper::endRenderPassQuery(ContextVk *contextVk)
     if (mStatus == QueryStatus::Active)
     {
         endQueryImpl(contextVk, &contextVk->getStartedRenderPassCommands().getCommandBuffer());
-        retain(&contextVk->getStartedRenderPassCommands().getResourceUseList());
+        contextVk->getStartedRenderPassCommands().retainResource(this);
     }
 }
 
@@ -9910,12 +9925,6 @@ void ShaderProgramHelper::setSpecializationConstant(sh::vk::SpecializationConsta
             break;
         case sh::vk::SpecializationConstantId::SurfaceRotation:
             mSpecializationConstants.surfaceRotation = value;
-            break;
-        case sh::vk::SpecializationConstantId::DrawableWidth:
-            mSpecializationConstants.drawableWidth = static_cast<float>(value);
-            break;
-        case sh::vk::SpecializationConstantId::DrawableHeight:
-            mSpecializationConstants.drawableHeight = static_cast<float>(value);
             break;
         case sh::vk::SpecializationConstantId::Dither:
             mSpecializationConstants.dither = value;

@@ -120,6 +120,9 @@ class ValidateAST : public TIntermTraverser
     // For validateMultiDeclarations:
     bool mMultiDeclarationsFailed = false;
 
+    // For validateNoSwizzleOfSwizzle:
+    bool mNoSwizzleOfSwizzleFailed = false;
+
     // For validateNoStatementsAfterBranch:
     bool mIsBranchVisitedInBlock        = false;
     bool mNoStatementsAfterBranchFailed = false;
@@ -698,6 +701,17 @@ void ValidateAST::visitConstantUnion(TIntermConstantUnion *node)
 bool ValidateAST::visitSwizzle(Visit visit, TIntermSwizzle *node)
 {
     visitNode(visit, node);
+
+    if (mOptions.validateNoSwizzleOfSwizzle)
+    {
+        if (node->getOperand()->getAsSwizzleNode() != nullptr)
+        {
+            mDiagnostics->error(node->getLine(), "Found swizzle applied to swizzle",
+                                "<validateNoSwizzleOfSwizzle>");
+            mNoSwizzleOfSwizzleFailed = true;
+        }
+    }
+
     return true;
 }
 
@@ -1089,7 +1103,8 @@ bool ValidateAST::validateInternal()
     return !mSingleParentFailed && !mVariableReferencesFailed && !mBuiltInOpsFailed &&
            !mFunctionCallFailed && !mNoRawFunctionCallsFailed && !mNullNodesFailed &&
            !mQualifiersFailed && !mPrecisionFailed && !mStructUsageFailed &&
-           !mExpressionTypesFailed && !mMultiDeclarationsFailed && !mNoStatementsAfterBranchFailed;
+           !mExpressionTypesFailed && !mMultiDeclarationsFailed && !mNoSwizzleOfSwizzleFailed &&
+           !mNoStatementsAfterBranchFailed;
 }
 
 }  // anonymous namespace

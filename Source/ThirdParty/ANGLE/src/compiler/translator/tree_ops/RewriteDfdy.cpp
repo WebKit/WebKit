@@ -25,209 +25,117 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool Apply(TCompiler *compiler,
-                                       ShCompileOptions compileOptions,
-                                       TIntermNode *root,
-                                       const TSymbolTable &symbolTable,
-                                       SpecConst *specConst,
-                                       const DriverUniform *driverUniforms);
+    Traverser(TSymbolTable *symbolTable, SpecConst *specConst, const DriverUniform *driverUniforms);
 
   private:
-    Traverser(TSymbolTable *symbolTable,
-              ShCompileOptions compileOptions,
-              SpecConst *specConst,
-              const DriverUniform *driverUniforms);
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
 
-    bool visitAggregateWithRotation(Visit visit, TIntermAggregate *node);
-    bool visitAggregateWithoutRotation(Visit visit, TIntermAggregate *node);
-
-    SpecConst *mRotationSpecConst        = nullptr;
+    SpecConst *mSpecConst                = nullptr;
     const DriverUniform *mDriverUniforms = nullptr;
-    bool mUsePreRotation                 = false;
 };
 
 Traverser::Traverser(TSymbolTable *symbolTable,
-                     ShCompileOptions compileOptions,
                      SpecConst *specConst,
                      const DriverUniform *driverUniforms)
     : TIntermTraverser(true, false, false, symbolTable),
-      mRotationSpecConst(specConst),
-      mDriverUniforms(driverUniforms),
-      mUsePreRotation((compileOptions & SH_ADD_PRE_ROTATION) != 0)
+      mSpecConst(specConst),
+      mDriverUniforms(driverUniforms)
 {}
-
-// static
-bool Traverser::Apply(TCompiler *compiler,
-                      ShCompileOptions compileOptions,
-                      TIntermNode *root,
-                      const TSymbolTable &symbolTable,
-                      SpecConst *specConst,
-                      const DriverUniform *driverUniforms)
-{
-    TSymbolTable *pSymbolTable = const_cast<TSymbolTable *>(&symbolTable);
-    Traverser traverser(pSymbolTable, compileOptions, specConst, driverUniforms);
-    root->traverse(&traverser);
-    return traverser.updateTree(compiler, root);
-}
 
 bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
 {
-    if (mUsePreRotation)
-    {
-        return visitAggregateWithRotation(visit, node);
-    }
-    return visitAggregateWithoutRotation(visit, node);
-}
-
-bool Traverser::visitAggregateWithRotation(Visit visit, TIntermAggregate *node)
-{
     // Decide if the node represents a call to dFdx() or dFdy()
-    if ((node->getOp() != EOpDFdx) && (node->getOp() != EOpDFdy))
+    if (node->getOp() != EOpDFdx && node->getOp() != EOpDFdy)
     {
         return true;
     }
 
-    // Prior to supporting Android pre-rotation, dFdy() needed to be multiplied by mFlipXY.y:
-    //
-    //   correctedDfdy(operand) = dFdy(operand) * mFlipXY.y
-    //
-    // For Android pre-rotation, both dFdx() and dFdy() need to be "rotated" and multiplied by
-    // mFlipXY.  "Rotation" means to swap them for 90 and 270 degrees, or to not swap them for 0
-    // and 180 degrees.  This rotation is accomplished with mFragRotation, which is a 2x2 matrix
-    // used for fragment shader rotation.  The 1st half (a vec2 that is either (1,0) or (0,1)) is
-    // used for rewriting dFdx() and the 2nd half (either (0,1) or (1,0)) is used for rewriting
-    // dFdy().  Otherwise, the formula for the rewrite is the same:
-    //
-    //     result = ((dFdx(operand) * (mFragRotation[half] * mFlipXY).x) +
-    //               (dFdy(operand) * (mFragRotation[half] * mFlipXY).y))
-    //
-    // For dFdx(), half is 0 (the 1st half).  For dFdy(), half is 1 (the 2nd half).  Depending on
-    // the rotation, mFragRotation[half] will cause either dFdx(operand) or dFdy(operand) to be
-    // zeroed-out.  That effectively means that the above code results in the following for 0 and
-    // 180 degrees:
-    //
-    //   correctedDfdx(operand) = dFdx(operand) * mFlipXY.x
-    //   correctedDfdy(operand) = dFdy(operand) * mFlipXY.y
-    //
-    // and the following for 90 and 270 degrees:
-    //
-    //   correctedDfdx(operand) = dFdy(operand) * mFlipXY.y
-    //   correctedDfdy(operand) = dFdx(operand) * mFlipXY.x
+    const bool isDFdx = node->getOp() == EOpDFdx;
 
-    TIntermTyped *multiplierX;
-    TIntermTyped *multiplierY;
-    if (node->getOp() == EOpDFdx)
-    {
-        multiplierX = mRotationSpecConst->getMultiplierXForDFdx();
-        multiplierY = mRotationSpecConst->getMultiplierYForDFdx();
-    }
-    else
-    {
-        multiplierX = mRotationSpecConst->getMultiplierXForDFdy();
-        multiplierY = mRotationSpecConst->getMultiplierYForDFdy();
-    }
-
-    if (!multiplierX)
-    {
-        ASSERT(!multiplierY);
-        TIntermTyped *flipXY       = mDriverUniforms->getFlipXYRef();
-        TIntermTyped *fragRotation = mDriverUniforms->getFragRotationMatrixRef();
-
-        // Get a vec2 with the correct half of ANGLEUniforms.fragRotation
-        TIntermBinary *halfRotationMat = nullptr;
-        if (node->getOp() == EOpDFdx)
-        {
-            halfRotationMat = new TIntermBinary(EOpIndexDirect, fragRotation, CreateIndexNode(0));
-        }
-        else
-        {
-            halfRotationMat = new TIntermBinary(EOpIndexDirect, fragRotation, CreateIndexNode(1));
-        }
-
-        // Multiply halfRotationMat by ANGLEUniforms.flipXY and store in a temporary variable
-        TIntermBinary *rotatedFlipXY = new TIntermBinary(EOpMul, flipXY, halfRotationMat);
-        const TType *vec2Type        = &rotatedFlipXY->getType();
-        TIntermSymbol *tmpRotFlipXY = new TIntermSymbol(CreateTempVariable(mSymbolTable, vec2Type));
-        TIntermSequence tmpDecl;
-        tmpDecl.push_back(CreateTempInitDeclarationNode(&tmpRotFlipXY->variable(), rotatedFlipXY));
-        insertStatementsInParentBlock(tmpDecl);
-
-        // Get the .x and .y swizzles to use as multipliers
-        TVector<int> swizzleOffsetX = {0};
-        TVector<int> swizzleOffsetY = {1};
-        multiplierX                 = new TIntermSwizzle(tmpRotFlipXY, swizzleOffsetX);
-        multiplierY                 = new TIntermSwizzle(tmpRotFlipXY->deepCopy(), swizzleOffsetY);
-    }
+    // Two transformations are done on dFdx and dFdy:
+    //
+    // - If pre-rotation is applied, dFdx and dFdy may need to swap their axis based on the degree
+    //   of rotation.  dFdx becomes dFdy if rotation is 90 or 270 degrees.  Similarly, dFdy becomes
+    //   dFdx.
+    // - The result is potentially negated.  This could be due to viewport y-flip or pre-rotation.
+    //
+    // Accordingly, there are two variables controlling the above transformations:
+    //
+    // - Rotation: A vec2 that is either (0, 1) or (1, 0).  dFdx and dFdy are replaced with:
+    //
+    //       dFdx * Rotation.x + dFdy * Rotation.y
+    //
+    // - Scale: A vec2 with -1 or 1 for either x or y components.  The previous result is multiplied
+    //   by this.
+    //
+    // Together, the above operations account for the combinations of 4 possible rotations and
+    // y-flip.
 
     // Get the results of dFdx(operand) and dFdy(operand), and multiply them by the swizzles
     TIntermTyped *operand = node->getChildNode(0)->getAsTyped();
 
-    TIntermTyped *dFdx =
-        CreateBuiltInUnaryFunctionCallNode("dFdx", operand->deepCopy(), *mSymbolTable, 300);
+    TIntermTyped *dFdx = CreateBuiltInUnaryFunctionCallNode("dFdx", operand, *mSymbolTable, 300);
     TIntermTyped *dFdy =
         CreateBuiltInUnaryFunctionCallNode("dFdy", operand->deepCopy(), *mSymbolTable, 300);
 
-    size_t objectSize                 = node->getType().getObjectSize();
-    TOperator multiplyOp              = (objectSize == 1) ? EOpMul : EOpVectorTimesScalar;
-    TIntermBinary *rotatedFlippedDfdx = new TIntermBinary(multiplyOp, dFdx, multiplierX);
-    TIntermBinary *rotatedFlippedDfdy = new TIntermBinary(multiplyOp, dFdy, multiplierY);
+    // Get rotation multiplier
+    TIntermTyped *swapXY = mSpecConst->getSwapXY();
+    if (swapXY == nullptr)
+    {
+        swapXY = mDriverUniforms->getSwapXY();
+    }
 
-    // Sum them together into the result:
-    TIntermBinary *correctedResult =
+    TIntermTyped *swapXMultiplier = MakeSwapXMultiplier(swapXY);
+    TIntermTyped *swapYMultiplier = MakeSwapYMultiplier(swapXY->deepCopy());
+
+    // Get flip multiplier
+    TIntermTyped *flipXY = mDriverUniforms->getFlipXY(mSymbolTable, DriverUniformFlip::Fragment);
+
+    // Multiply the flip and rotation multipliers
+    TIntermTyped *xMultiplier =
+        new TIntermBinary(EOpMul, isDFdx ? swapXMultiplier : swapYMultiplier,
+                          (new TIntermSwizzle(flipXY->deepCopy(), {0}))->fold(nullptr));
+    TIntermTyped *yMultiplier =
+        new TIntermBinary(EOpMul, isDFdx ? swapYMultiplier : swapXMultiplier,
+                          (new TIntermSwizzle(flipXY->deepCopy(), {1}))->fold(nullptr));
+
+    const TOperator mulOp            = dFdx->getType().isVector() ? EOpVectorTimesScalar : EOpMul;
+    TIntermTyped *rotatedFlippedDfdx = new TIntermBinary(mulOp, dFdx, xMultiplier);
+    TIntermTyped *rotatedFlippedDfdy = new TIntermBinary(mulOp, dFdy, yMultiplier);
+
+    // Sum them together into the result
+    TIntermBinary *rotatedFlippedResult =
         new TIntermBinary(EOpAdd, rotatedFlippedDfdx, rotatedFlippedDfdy);
 
     // Replace the old dFdx() or dFdy() node with the new node that contains the corrected value
-    queueReplacement(correctedResult, OriginalNode::IS_DROPPED);
-
-    return true;
-}
-
-bool Traverser::visitAggregateWithoutRotation(Visit visit, TIntermAggregate *node)
-{
-    // Decide if the node represents a call to dFdy()
-    if (node->getOp() != EOpDFdy)
-    {
-        return true;
-    }
-
-    // Copy the dFdy node so we can replace it with the corrected value
-    TIntermAggregate *newDfdy = node->deepCopy()->getAsAggregate();
-
-    size_t objectSize    = node->getType().getObjectSize();
-    TOperator multiplyOp = (objectSize == 1) ? EOpMul : EOpVectorTimesScalar;
-
-    TIntermTyped *flipY = mRotationSpecConst->getFlipY();
-    if (!flipY)
-    {
-        TIntermTyped *flipXY = mDriverUniforms->getFlipXYRef();
-        flipY                = new TIntermBinary(EOpIndexDirect, flipXY, CreateIndexNode(1));
-    }
-
-    // Correct dFdy()'s value:
-    // (dFdy() * mFlipXY.y)
-    TIntermBinary *correctedDfdy = new TIntermBinary(multiplyOp, newDfdy, flipY);
-
-    // Replace the old dFdy node with the new node that contains the corrected value
-    queueReplacement(correctedDfdy, OriginalNode::IS_DROPPED);
+    //
+    // Note the following bugs (anglebug.com/7346):
+    //
+    // - Side effects of operand are duplicated with the above
+    // - If the direct child of this node is itself dFdx/y, its queueReplacement will not be
+    //   effective as the parent is also replaced.
+    queueReplacement(rotatedFlippedResult, OriginalNode::IS_DROPPED);
 
     return true;
 }
 }  // anonymous namespace
 
 bool RewriteDfdy(TCompiler *compiler,
-                 ShCompileOptions compileOptions,
-                 TIntermNode *root,
-                 const TSymbolTable &symbolTable,
+                 TIntermBlock *root,
+                 TSymbolTable *symbolTable,
                  int shaderVersion,
                  SpecConst *specConst,
                  const DriverUniform *driverUniforms)
 {
-    // dFdy is only valid in GLSL 3.0 and later.
+    // dFdx/dFdy is only valid in GLSL 3.0 and later.
     if (shaderVersion < 300)
+    {
         return true;
+    }
 
-    return Traverser::Apply(compiler, compileOptions, root, symbolTable, specConst, driverUniforms);
+    Traverser traverser(symbolTable, specConst, driverUniforms);
+    root->traverse(&traverser);
+    return traverser.updateTree(compiler, root);
 }
 
 }  // namespace sh

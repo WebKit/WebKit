@@ -514,9 +514,7 @@ bool InternalFormat::isRequiredRenderbufferFormat(const Version &version) const
             return true;
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return false;
-#endif
     }
 }
 
@@ -538,7 +536,7 @@ Format::Format(GLenum internalFormat, GLenum type)
     : info(&GetInternalFormatInfo(internalFormat, type))
 {}
 
-Format::Format(const Format &other) = default;
+Format::Format(const Format &other)            = default;
 Format &Format::operator=(const Format &other) = default;
 
 bool Format::valid() const
@@ -1936,9 +1934,7 @@ AttributeType GetAttributeType(GLenum enumValue)
             return ATTRIBUTE_MAT4x3;
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return ATTRIBUTE_FLOAT;
-#endif
     }
 }
 
@@ -1978,9 +1974,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R8G8B8A8_SSCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::UnsignedByte:
             switch (components)
@@ -2011,9 +2005,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R8G8B8A8_USCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::Short:
             switch (components)
@@ -2044,9 +2036,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_SSCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::UnsignedShort:
             switch (components)
@@ -2077,9 +2067,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_USCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::Int:
             switch (components)
@@ -2110,9 +2098,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_SSCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::UnsignedInt:
             switch (components)
@@ -2143,9 +2129,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_USCALED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::Float:
             switch (components)
@@ -2160,9 +2144,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_FLOAT;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::HalfFloat:
         case VertexAttribType::HalfFloatOES:
@@ -2178,9 +2160,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_FLOAT;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::Fixed:
             switch (components)
@@ -2195,9 +2175,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_FIXED;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::Int2101010:
             if (pureInteger)
@@ -2228,9 +2206,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::A2R10G10B10_SSCALED_VERTEX;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         case VertexAttribType::UnsignedInt1010102:
             switch (components)
@@ -2250,15 +2226,11 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::A2R10G10B10_USCALED_VERTEX;
                 default:
                     UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
-#endif
             }
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return angle::FormatID::NONE;
-#endif
     }
 }
 
@@ -2929,9 +2901,7 @@ size_t GetVertexFormatSize(angle::FormatID vertexFormatID)
         case angle::FormatID::NONE:
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return 0;
-#endif
     }
 }
 
@@ -3105,10 +3075,8 @@ angle::FormatID ConvertFormatSignedness(const angle::Format &format)
             return angle::FormatID::R10G10B10A2_SNORM;
         default:
             UNREACHABLE();
+            return angle::FormatID::NONE;
     }
-#if !UNREACHABLE_IS_NORETURN
-    return angle::FormatID::NONE;
-#endif
 }
 
 bool ValidES3InternalFormat(GLenum internalFormat)

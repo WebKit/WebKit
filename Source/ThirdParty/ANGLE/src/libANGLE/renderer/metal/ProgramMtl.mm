@@ -1257,7 +1257,7 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
         {
             continue;
         }
-        if(mAuxBufferPool)
+        if (mAuxBufferPool)
         {
             mAuxBufferPool->releaseInFlightBuffers(context);
         }
@@ -1270,23 +1270,22 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
                                  uniformBlock.uniformData.size(),
                                  mtl::kDefaultUniformsBindingIndex);
         }
-        else if(needsCommitUniform)
+        else if (needsCommitUniform)
         {
             ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
             mtl::BufferRef mtlBufferOut;
-            size_t  offsetOut;
-            uint8_t * ptrOut;
-            //Allocate a new Uniform buffer
-            ANGLE_TRY(getBufferPool(context)->allocate(context,
-                uniformBlock.uniformData.size(), &ptrOut, &mtlBufferOut, &offsetOut));
-            //Copy the uniform result
+            size_t offsetOut;
+            uint8_t *ptrOut;
+            // Allocate a new Uniform buffer
+            ANGLE_TRY(getBufferPool(context)->allocate(context, uniformBlock.uniformData.size(),
+                                                       &ptrOut, &mtlBufferOut, &offsetOut));
+            // Copy the uniform result
             memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
-            //Commit
+            // Commit
             ANGLE_TRY(getBufferPool(context)->commit(context));
-            //Set buffer
-            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut, mtl::kDefaultUniformsBindingIndex);
-
-
+            // Set buffer
+            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut,
+                                  mtl::kDefaultUniformsBindingIndex);
         }
 
         mDefaultUniformBlocksDirty.reset(shaderType);

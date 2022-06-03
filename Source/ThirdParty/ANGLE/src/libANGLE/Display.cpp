@@ -303,9 +303,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
     {
         case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             break;
-#endif
 
         case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
@@ -315,9 +313,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #else
             // A D3D display was requested on a platform that doesn't support it
             UNREACHABLE();
-#    if !UNREACHABLE_IS_NORETURN
             break;
-#    endif
 #endif
 
         case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
@@ -365,9 +361,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #else
             // No display available
             UNREACHABLE();
-#    if !UNREACHABLE_IS_NORETURN
             break;
-#    endif
 
 #endif  // defined(ANGLE_ENABLE_OPENGL)
 
@@ -496,9 +490,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #else
             // No display available
             UNREACHABLE();
-#    if !UNREACHABLE_IS_NORETURN
             break;
-#    endif
 #endif  // defined(ANGLE_ENABLE_VULKAN)
 
         case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
@@ -511,9 +503,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #endif
             // No display available
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             break;
-#endif
 
         case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
 #if defined(ANGLE_ENABLE_NULL)
@@ -522,16 +512,12 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #else
             // No display available
             UNREACHABLE();
-#    if !UNREACHABLE_IS_NORETURN
             break;
-#    endif
 #endif  // defined(ANGLE_ENABLE_NULL)
 
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             break;
-#endif
     }
 
     return impl;

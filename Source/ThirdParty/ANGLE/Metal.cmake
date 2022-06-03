@@ -70,8 +70,6 @@ set(_metal_backend_sources
     "src/libANGLE/renderer/metal/mtl_format_utils.mm"
     "src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
     "src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm"
-    "src/libANGLE/renderer/metal/mtl_glslang_utils.h"
-    "src/libANGLE/renderer/metal/mtl_glslang_utils.mm"
     "src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
     "src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm"
     "src/libANGLE/renderer/metal/mtl_render_utils.h"

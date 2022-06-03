@@ -873,11 +873,6 @@ class State : angle::NonCopyable
         return mNoSimultaneousConstantColorAndAlphaBlendFunc;
     }
 
-    bool canEnableEarlyFragmentTestsOptimization() const
-    {
-        return !isSampleAlphaToCoverageEnabled();
-    }
-
     const BufferVector &getOffsetBindingPointerUniformBuffers() const { return mUniformBuffers; }
 
     const BufferVector &getOffsetBindingPointerAtomicCounterBuffers() const

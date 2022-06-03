@@ -363,11 +363,6 @@ class RendererVk : angle::NonCopyable
     }
 
     angle::Result getPipelineCache(vk::PipelineCache **pipelineCache);
-    void onNewGraphicsPipeline()
-    {
-        std::unique_lock<std::mutex> lock(mPipelineCacheMutex);
-        mPipelineCacheDirty = true;
-    }
 
     void onNewValidationMessage(const std::string &message);
     std::string getAndClearLastValidationMessage(uint32_t *countSinceLastClear);
@@ -752,7 +747,7 @@ class RendererVk : angle::NonCopyable
     std::mutex mPipelineCacheMutex;
     vk::PipelineCache mPipelineCache;
     uint32_t mPipelineCacheVkUpdateTimeout;
-    bool mPipelineCacheDirty;
+    size_t mPipelineCacheSizeAtLastSync;
     bool mPipelineCacheInitialized;
 
     // Latest validation data for debug overlay.

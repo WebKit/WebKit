@@ -197,3 +197,7 @@
 7291 : BlitFramebufferTest.Blit3D/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE
+
+7357 : FramebufferTest_ES3.FramebufferConditionalFeedbackLoop/* = SKIP_FOR_CAPTURE
+
+7373 : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP_FOR_CAPTURE

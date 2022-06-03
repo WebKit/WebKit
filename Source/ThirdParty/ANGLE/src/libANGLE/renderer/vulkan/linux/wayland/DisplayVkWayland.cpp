@@ -106,12 +106,22 @@ std::vector<EGLint> GetDrmFormats(const RendererVk *rendererVk)
 }
 
 DisplayVkWayland::DisplayVkWayland(const egl::DisplayState &state)
-    : DisplayVkLinux(state), mWaylandDisplay(nullptr)
+    : DisplayVkLinux(state), mOwnDisplay(false), mWaylandDisplay(nullptr)
 {}
 
 egl::Error DisplayVkWayland::initialize(egl::Display *display)
 {
-    mWaylandDisplay = reinterpret_cast<wl_display *>(display->getNativeDisplayId());
+    EGLNativeDisplayType nativeDisplay = display->getNativeDisplayId();
+    if (nativeDisplay == EGL_DEFAULT_DISPLAY)
+    {
+        mOwnDisplay     = true;
+        mWaylandDisplay = wl_display_connect(nullptr);
+    }
+    else
+    {
+        mWaylandDisplay = reinterpret_cast<wl_display *>(nativeDisplay);
+    }
+
     if (!mWaylandDisplay)
     {
         ERR() << "Failed to retrieve wayland display";
@@ -131,6 +141,11 @@ egl::Error DisplayVkWayland::initialize(egl::Display *display)
 
 void DisplayVkWayland::terminate()
 {
+    if (mOwnDisplay)
+    {
+        wl_display_disconnect(mWaylandDisplay);
+        mOwnDisplay = false;
+    }
     mWaylandDisplay = nullptr;
     DisplayVk::terminate();
 }

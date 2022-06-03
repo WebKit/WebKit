@@ -927,8 +927,6 @@ void SerializeShaderState(JsonSerializer *json, const gl::ShaderState &shaderSta
     SerializeShaderVariablesVector(json, shaderState.getAllAttributes());
     SerializeShaderVariablesVector(json, shaderState.getActiveAttributes());
     SerializeShaderVariablesVector(json, shaderState.getActiveOutputVariables());
-    json->addScalar("EarlyFragmentTestsOptimization",
-                    shaderState.getEarlyFragmentTestsOptimization());
     json->addScalar("NumViews", shaderState.getNumViews());
     json->addScalar("SpecConstUsageBits", shaderState.getSpecConstUsageBits().bits());
     if (shaderState.getGeometryShaderInputPrimitiveType().valid())

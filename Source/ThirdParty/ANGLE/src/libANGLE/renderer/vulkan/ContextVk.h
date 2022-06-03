@@ -1157,7 +1157,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result handleDirtyComputeUniforms();
 
     // Common parts of the common dirty bit handlers.
-    angle::Result handleDirtyUniformsImpl(vk::ResourceUseList *resourceUseList);
+    angle::Result handleDirtyUniformsImpl(vk::CommandBufferHelperCommon *commandBufferHelper);
     angle::Result handleDirtyMemoryBarrierImpl(DirtyBits::Iterator *dirtyBitsIterator,
                                                DirtyBits dirtyBitMask);
     template <typename CommandBufferT>
@@ -1182,10 +1182,11 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                          DriverUniformsDescriptorSet *driverUniforms,
                                          uint8_t **ptrOut,
                                          bool *newBufferOut);
-    angle::Result updateDriverUniformsDescriptorSet(vk::ResourceUseList *resourceUseList,
-                                                    bool newBuffer,
-                                                    size_t driverUniformsSize,
-                                                    PipelineType pipelineType);
+    angle::Result updateDriverUniformsDescriptorSet(
+        vk::CommandBufferHelperCommon *commandBufferHelper,
+        bool newBuffer,
+        size_t driverUniformsSize,
+        PipelineType pipelineType);
 
     void writeAtomicCounterBufferDriverUniformOffsets(uint32_t *offsetsOut, size_t offsetsSize);
 

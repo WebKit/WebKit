@@ -2698,6 +2698,141 @@ TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSample)
     eglDestroyImageKHR(window->getDisplay(), image);
 }
 
+// Test interaction between GL_ANGLE_yuv_internal_format and EXT_yuv_target when a program has
+// both __samplerExternal2DY2YEXT and samplerExternalOES samplers.
+TEST_P(ImageTestES3, ProgramWithBothExternalY2YAndExternalOESSampler)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
+
+    GLubyte yuvColor[6]         = {40, 40, 40, 40, 240, 109};
+    GLubyte expectedRgbColor[4] = {0, 0, 255, 255};
+    constexpr size_t kWidth     = 2;
+    constexpr size_t kHeight    = 2;
+
+    // Create 2 plane YUV texture source
+    GLTexture yuvTexture0;
+    glBindTexture(GL_TEXTURE_2D, yuvTexture0);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                    GL_UNSIGNED_BYTE, yuvColor);
+    ASSERT_GL_NO_ERROR();
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create 2 plane YUV texture source
+    GLTexture yuvTexture1;
+    glBindTexture(GL_TEXTURE_2D, yuvTexture1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                    GL_UNSIGNED_BYTE, yuvColor);
+    ASSERT_GL_NO_ERROR();
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Images
+    EGLWindow *window = getEGLWindow();
+    EGLImageKHR image0 =
+        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                          reinterpretHelper<EGLClientBuffer>(yuvTexture0.get()), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    EGLImageKHR image1 =
+        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                          reinterpretHelper<EGLClientBuffer>(yuvTexture1.get()), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create texture targets for EGLImages
+    GLTexture target0;
+    createEGLImageTargetTextureExternal(image0, target0);
+
+    GLTexture target1;
+    createEGLImageTargetTextureExternal(image1, target1);
+
+    // Create program with 2 samplers
+    const char *vertexShaderSource   = R"(#version 300 es
+out vec2 texcoord;
+in vec4 position;
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
+    const char *fragmentShaderSource = R"(#version 300 es
+#extension GL_EXT_YUV_target : require
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp float;
+uniform __samplerExternal2DY2YEXT tex0;
+uniform samplerExternalOES tex1;
+uniform uint samplerSelector;
+in vec2 texcoord;
+out vec4 fragColor;
+
+void main()
+{
+    vec4 color0 = texture(tex0, texcoord);
+    vec4 color1 = texture(tex1, texcoord);
+    if (samplerSelector == 0u)
+    {
+        fragColor = color0;
+    }
+    else if (samplerSelector == 1u)
+    {
+        fragColor = color1;
+    }
+    else
+    {
+        fragColor = vec4(1.0);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(twoSamplersProgram, vertexShaderSource, fragmentShaderSource);
+    glUseProgram(twoSamplersProgram);
+    GLint tex0Location = glGetUniformLocation(twoSamplersProgram, "tex0");
+    ASSERT_NE(-1, tex0Location);
+    GLint tex1Location = glGetUniformLocation(twoSamplersProgram, "tex1");
+    ASSERT_NE(-1, tex1Location);
+    GLint samplerSelectorLocation = glGetUniformLocation(twoSamplersProgram, "samplerSelector");
+    ASSERT_NE(-1, samplerSelectorLocation);
+
+    // Bind texture target to GL_TEXTURE_EXTERNAL_OES
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, target0);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind texture target to GL_TEXTURE_EXTERNAL_OES
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, target1);
+    ASSERT_GL_NO_ERROR();
+
+    // Set sampler uniform values
+    glUniform1i(tex0Location, 0);
+    glUniform1i(tex1Location, 1);
+
+    // Set sampler selector uniform value and draw
+    glUniform1ui(samplerSelectorLocation, 0);
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, yuvColor[3], yuvColor[4], yuvColor[5], 255, 1);
+
+    // Switch sampler selector uniform value and draw
+    glUniform1ui(samplerSelectorLocation, 1);
+    drawQuad(twoSamplersProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
+                      expectedRgbColor[3], 1);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image0);
+    eglDestroyImageKHR(window->getDisplay(), image1);
+}
+
 // Test sampling from a YUV AHB with a regular external sampler and pre-initialized data
 TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
 {

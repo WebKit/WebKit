@@ -382,9 +382,8 @@ GLenum GLVariableType(const TType &type)
             return GL_SAMPLER_VIDEO_IMAGE_WEBGL;
         default:
             UNREACHABLE();
+            return GL_NONE;
     }
-
-    return GL_NONE;
 }
 
 GLenum GLVariablePrecision(const TType &type)
@@ -592,9 +591,7 @@ InterpolationType GetInterpolationType(TQualifier qualifier)
             return INTERPOLATION_SAMPLE;
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return INTERPOLATION_SMOOTH;
-#endif
     }
 }
 
@@ -672,9 +669,7 @@ TType GetShaderVariableBasicType(const sh::ShaderVariable &var)
             return TType(EbtUInt, 4);
         default:
             UNREACHABLE();
-#if !UNREACHABLE_IS_NORETURN
             return TType();
-#endif
     }
 }
 

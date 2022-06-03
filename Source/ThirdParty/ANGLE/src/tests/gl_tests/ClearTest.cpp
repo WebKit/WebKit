@@ -2860,15 +2860,100 @@ TEST_P(ClearTestES3, ClearStencilZeroFirstByteMask)
     glClear(GL_STENCIL_BUFFER_BIT);
 }
 
+// Test that mid render pass clear after draw sets the render pass size correctly.
+TEST_P(ClearTestES3, ScissoredDrawThenFullClear)
+{
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Use viewport to imply scissor on the draw call
+    glViewport(w / 4, h / 4, w / 2, h / 2);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Blue());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // Mid-render-pass clear without scissor or viewport change, which covers the whole framebuffer.
+    glClearColor(1, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::yellow);
+}
+
+// Test that mid render pass clear after masked clear sets the render pass size correctly.
+TEST_P(ClearTestES3, MaskedScissoredClearThenFullClear)
+{
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Use viewport to imply a small scissor on (non-existing) draw calls.  This is important to
+    // make sure render area that's derived from scissor+viewport for draw calls doesn't
+    // accidentally fix render area derived from scissor for clear calls.
+    glViewport(w / 2, h / 2, 1, 1);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(w / 4, h / 4, w / 2, h / 2);
+    glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_FALSE);
+    glClearColor(0.13, 0.38, 0.87, 0.65);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Mid-render-pass clear without scissor, which covers the whole framebuffer.
+    glDisable(GL_SCISSOR_TEST);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glClearColor(1, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::yellow);
+}
+
+// Test that mid render pass masked clear after masked clear sets the render pass size correctly.
+TEST_P(ClearTestES3, MaskedScissoredClearThenFullMaskedClear)
+{
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Make sure the framebuffer is initialized.
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    // Use viewport to imply a small scissor on (non-existing) draw calls  This is important to
+    // make sure render area that's derived from scissor+viewport for draw calls doesn't
+    // accidentally fix render area derived from scissor for clear calls.
+    glViewport(w / 2, h / 2, 1, 1);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(w / 4, h / 4, w / 2, h / 2);
+    glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_FALSE);
+    glClearColor(1, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Mid-render-pass clear without scissor, which covers the whole framebuffer.
+    glDisable(GL_SCISSOR_TEST);
+    glColorMask(GL_FALSE, GL_TRUE, GL_FALSE, GL_TRUE);
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 4, h, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(w / 4, 0, w / 2, h / 4, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(w / 4, 3 * h / 4, w / 2, h / 4, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(3 * w / 4, 0, w / 4, h, GLColor::green);
+
+    EXPECT_PIXEL_RECT_EQ(w / 4, h / 4, w / 2, h / 2, GLColor::yellow);
+}
+
 #ifdef Bool
 // X11 craziness.
 #    undef Bool
 #endif
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ClearTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    ClearTest,
+    ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(ClearTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    ClearTestES3,
+    ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
 
 ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  MaskedScissoredClearVariationsTestPrint,

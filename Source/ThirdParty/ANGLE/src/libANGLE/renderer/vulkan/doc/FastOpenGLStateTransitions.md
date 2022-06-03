@@ -12,13 +12,13 @@ levels of caching when transitioning states in the Vulkan back-end.
 
 The outermost level is the driver's [VkPipelineCache][VkPipelineCache]. The driver
 cache reduces pipeline recompilation time significantly. But even cached
-pipeline recompilations are orders of manitude slower than OpenGL state changes.
+pipeline recompilations are orders of magnitude slower than OpenGL state changes.
 
 ## L2 Cache
 
 The second level cache is an ANGLE-owned hash map from OpenGL state vectors to compiled pipelines.
 See [GraphicsPipelineCache][GraphicsPipelineCache] in [vk_cache_utils.h](../vk_cache_utils.h). ANGLE's
-[GraphicsPipelineDesc][GraphicsPipelineDesc] class is a tightly packed 256-byte description of the
+[GraphicsPipelineDesc][GraphicsPipelineDesc] class is a tightly packed description of the
 current OpenGL rendering state. We also use a [xxHash](https://github.com/Cyan4973/xxHash) for the
 fastest possible hash computation. The hash map speeds up state changes considerably. But it is
 still significantly slower than OpenGL implementations.
@@ -31,7 +31,7 @@ neighbouring VkPipeline objects. When the application changes state the state ch
 recorded into a compact bit mask that covers the GraphicsPipelineDesc state vector. Then on the next
 draw call we scan the transition bit mask and compare the GraphicsPipelineDesc of the current state
 vector and the state vector of the cached transition. With the hash map we compute a hash over the
-entire state vector and then do a 256-byte `memcmp` to guard against hash collisions. With the
+entire state vector and then do a `memcmp` to guard against hash collisions. With the
 transition table we will only compare as many bytes as were changed in the transition bit mask. By
 skipping the expensive hashing and `memcmp` we can get as good or faster performance than native
 OpenGL drivers.

@@ -588,11 +588,11 @@ void RendererVk::ensureCapsInitialized() const
     mNativeCaps.maxViewportHeight    = LimitToInt(limitsVk.maxViewportDimensions[1]);
     mNativeCaps.maxSampleMaskWords   = LimitToInt(limitsVk.maxSampleMaskWords);
     mNativeCaps.maxColorTextureSamples =
-        limitsVk.sampledImageColorSampleCounts & vk_gl::kSupportedSampleCounts;
+        vk_gl::GetMaxSampleCount(limitsVk.sampledImageColorSampleCounts);
     mNativeCaps.maxDepthTextureSamples =
-        limitsVk.sampledImageDepthSampleCounts & vk_gl::kSupportedSampleCounts;
+        vk_gl::GetMaxSampleCount(limitsVk.sampledImageDepthSampleCounts);
     mNativeCaps.maxIntegerSamples =
-        limitsVk.sampledImageIntegerSampleCounts & vk_gl::kSupportedSampleCounts;
+        vk_gl::GetMaxSampleCount(limitsVk.sampledImageIntegerSampleCounts);
 
     mNativeCaps.maxVertexAttributes     = LimitToInt(limitsVk.maxVertexInputAttributes);
     mNativeCaps.maxVertexAttribBindings = LimitToInt(limitsVk.maxVertexInputBindings);
@@ -871,8 +871,12 @@ void RendererVk::ensureCapsInitialized() const
         reservedVaryingComponentCount += kReservedVaryingComponentsForGLLineRasterization;
     }
     if (getFeatures().supportsTransformFeedbackExtension.enabled &&
-        !getFeatures().supportsDepthClipControl.enabled &&
-        !getFeatures().enablePreRotateSurfaces.enabled)
+        (!getFeatures().supportsDepthClipControl.enabled ||
+         getFeatures().enablePreRotateSurfaces.enabled ||
+         getFeatures().emulatedPrerotation90.enabled ||
+         getFeatures().emulatedPrerotation180.enabled ||
+         getFeatures().emulatedPrerotation270.enabled ||
+         !getFeatures().supportsNegativeViewport.enabled))
     {
         reservedVaryingComponentCount += kReservedVaryingComponentsForTransformFeedbackExtension;
     }
@@ -1072,8 +1076,7 @@ void RendererVk::ensureCapsInitialized() const
         limitsVk.maxClipDistances >= kMaxClipDistancePerSpec)
     {
         mNativeExtensions.clipDistanceAPPLE = true;
-        mNativeCaps.maxClipDistances =
-            std::min<GLuint>(limitsVk.maxClipDistances, gl::IMPLEMENTATION_MAX_CLIP_DISTANCES);
+        mNativeCaps.maxClipDistances        = limitsVk.maxClipDistances;
 
         if (mPhysicalDeviceFeatures.shaderCullDistance &&
             limitsVk.maxCullDistances >= kMaxCullDistancePerSpec &&

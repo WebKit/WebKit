@@ -1626,10 +1626,10 @@ void main()
 
     constexpr GLuint kMaxIntAsGLuint = static_cast<GLuint>(std::numeric_limits<GLint>::max());
     constexpr GLuint kIndexData[]    = {
-        kMaxIntAsGLuint,
-        kMaxIntAsGLuint + 1,
-        kMaxIntAsGLuint + 2,
-        kMaxIntAsGLuint + 3,
+           kMaxIntAsGLuint,
+           kMaxIntAsGLuint + 1,
+           kMaxIntAsGLuint + 2,
+           kMaxIntAsGLuint + 3,
     };
 
     GLBuffer indexBuffer;
@@ -3695,8 +3695,8 @@ TEST_P(WebGLCompatibilityTest, R16FTextures)
 
     constexpr float readPixelsData[] = {-5000.0f, 0.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
-        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3755,8 +3755,8 @@ TEST_P(WebGLCompatibilityTest, RG16FTextures)
 
     constexpr float readPixelsData[] = {7108.0f, -10.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
-        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3817,8 +3817,8 @@ TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 
     constexpr float readPixelsData[] = {7000.0f, 100.0f, 33.0f, 1.0f};
     const GLushort textureData[]     = {
-        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3879,8 +3879,8 @@ TEST_P(WebGLCompatibilityTest, RGBA16FTextures)
 
     constexpr float readPixelsData[] = {7000.0f, 100.0f, 33.0f, -1.0f};
     const GLushort textureData[]     = {
-        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -5676,6 +5676,52 @@ TEST_P(WebGL2CompatibilityTest, ReadPixelsRgbx8AngleUnsignedByte)
     ASSERT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, pixel);
+}
+
+// Test that masked-out draw attachments do not require fragment outputs.
+TEST_P(WebGL2CompatibilityTest, DrawWithMaskedOutAttachments)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
+
+    GLFramebuffer fbo;
+    GLRenderbuffer rbo[2];
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo[0]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[0]);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo[1]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, rbo[1]);
+
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = vec4(1.0, 1.0, 1.0, 1.0);
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLenum bufs[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, bufs);
+
+    // Error: no fragment output for attachment1
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // No error: attachment1 is masked-out
+    glColorMaskiOES(1, false, false, false, false);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

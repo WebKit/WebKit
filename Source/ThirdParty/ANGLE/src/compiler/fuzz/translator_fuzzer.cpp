@@ -52,11 +52,11 @@ constexpr ShCompileOptions kGLSLMacOnlyOptions =
     SH_REWRITE_DO_WHILE_LOOPS | SH_UNFOLD_SHORT_CIRCUIT | SH_REWRITE_ROW_MAJOR_MATRICES;
 #endif
 
-// Options supported by Vulkan GLSL only
-constexpr ShCompileOptions kVulkanGLSLOnlyOptions =
-    SH_ADD_PRE_ROTATION | SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING |
-    SH_ADD_BRESENHAM_LINE_RASTER_EMULATION | SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION |
-    SH_USE_SPECIALIZATION_CONSTANT | SH_ADD_VULKAN_XFB_EMULATION_SUPPORT_CODE;
+// Options supported by Vulkan SPIR-V output only
+constexpr ShCompileOptions kVulkanOnlyOptions =
+    SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING | SH_ADD_BRESENHAM_LINE_RASTER_EMULATION |
+    SH_USE_SPECIALIZATION_CONSTANT | SH_ADD_VULKAN_XFB_EMULATION_SUPPORT_CODE |
+    SH_ROUND_OUTPUT_AFTER_DITHERING | SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION;
 
 // Options supported by HLSL output only
 constexpr ShCompileOptions kHLSLOnlyOptions = SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS |
@@ -140,7 +140,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     }
     else if (IsOutputVulkan(shaderOutput))
     {
-        supportedOptions |= kVulkanGLSLOnlyOptions;
+        supportedOptions |= kVulkanOnlyOptions;
     }
     else if (IsOutputHLSL(shaderOutput))
     {

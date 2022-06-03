@@ -791,7 +791,7 @@ ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 struct SpecializationConstants final
 {
     VkBool32 lineRasterEmulation;
-    uint32_t surfaceRotation;
+    VkBool32 surfaceRotation;
     float drawableWidth;
     float drawableHeight;
     uint32_t dither;
@@ -1287,11 +1287,6 @@ constexpr bool IsDynamicDescriptor(VkDescriptorType descriptorType)
             return false;
     }
 }
-
-angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
-                                      uint64_t handle,
-                                      const std::string &label);
-
 }  // namespace vk
 
 #if !defined(ANGLE_SHARED_LIBVULKAN)

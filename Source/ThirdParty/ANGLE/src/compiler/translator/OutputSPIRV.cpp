@@ -779,7 +779,7 @@ void OutputSPIRVTraverser::accessChainPushSwizzle(NodeData *data,
     // Record the swizzle as multi-component swizzles require special handling.  When loading
     // through the access chain, the swizzle is applied after loading the vector first (see
     // |accessChainLoad()|).  When storing through the access chain, the whole vector is loaded,
-    // swizzled components overwritten and the whoel vector written back (see |accessChainStore()|).
+    // swizzled components overwritten and the whole vector written back (see |accessChainStore()|).
     ASSERT(accessChain.swizzles.empty());
 
     if (swizzle.size() == 1)

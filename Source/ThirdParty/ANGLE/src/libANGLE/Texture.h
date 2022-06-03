@@ -269,7 +269,6 @@ class Texture final : public RefCountObject<TextureID>,
     void onDestroy(const Context *context) override;
 
     void setLabel(const Context *context, const std::string &label) override;
-
     const std::string &getLabel() const override;
 
     TextureType getType() const { return mState.mType; }

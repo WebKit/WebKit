@@ -1108,16 +1108,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    mEarlyFragmentTestsOptimized = false;
-    if ((compileOptions & SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION) != 0)
-    {
-        if (mShaderVersion <= 300 && mShaderType == GL_FRAGMENT_SHADER &&
-            !isEarlyFragmentTestsSpecified())
-        {
-            mEarlyFragmentTestsOptimized = CheckEarlyFragmentTestsFeasible(this, root);
-        }
-    }
-
     return true;
 }
 

@@ -88,11 +88,7 @@ angle::Result CheckError(const gl::Context *context,
     (ClearErrors(context, __FILE__, __FUNCTION__, __LINE__), (call)); \
     ANGLE_TRY(CheckError(context, #call, __FILE__, __FUNCTION__, __LINE__))
 
-#if defined(ANGLE_ENABLE_ASSERTS)
-#    define ANGLE_GL_TRY(context, call) ANGLE_GL_TRY_ALWAYS_CHECK(context, call)
-#else
-#    define ANGLE_GL_TRY(context, call) call
-#endif
+#define ANGLE_GL_TRY(context, call) ANGLE_GL_TRY_ALWAYS_CHECK(context, call)
 
 namespace nativegl_gl
 {
