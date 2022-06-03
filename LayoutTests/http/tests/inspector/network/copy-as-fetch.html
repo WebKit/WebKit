@@ -81,8 +81,13 @@ function test()
                 ]);
 
                 let resource = resourceWasAddedEvent.data.resource;
+
                 let fetchCode = resource.generateFetchCode();
+
+                // Strip inconsistent headers.
+                fetchCode = fetchCode.replace(/\s+"Accept-Language": ".+?",\n/, "\n");
                 fetchCode = fetchCode.replace(/("User-Agent": )(".+?")(,?\n)/, "$1<filtered>$3");
+
                 InspectorTest.log(fetchCode);
             },
         });
