@@ -1,3 +1,20 @@
+2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Managed pasteboard should function for all managed domains
+        https://bugs.webkit.org/show_bug.cgi?id=239319
+        rdar://80059355
+
+        Reviewed by Kate Cheney.
+
+        Add a new API test to verify that we fall back to consulting `-[MCProfileConnection isURLManaged:]` when
+        determining the data owner for copy and paste, unless a data owner is already explicitly set on a view in the
+        responder chain (specifically, the WKWebView).
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (+[TestUIPasteboard _performAsDataOwner:block:]):
+        (-[TestMCProfileConnection isURLManaged:]):
+        (TestWebKitAPI::TEST):
+
 2022-04-22  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues
