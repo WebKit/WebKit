@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/PixelBuffer.h>
+#include <WebCore/ByteArrayPixelBuffer.h>
 
 namespace IPC {
 
@@ -48,13 +48,19 @@ private:
 template<class Encoder>
 void PixelBufferReference::encode(Encoder& encoder) const
 {
-    m_pixelBuffer->encode(encoder);
+    if (!is<WebCore::ByteArrayPixelBuffer>(m_pixelBuffer)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    downcast<WebCore::ByteArrayPixelBuffer>(m_pixelBuffer.get()).encode(encoder);
 }
 
 template<class Decoder>
 std::optional<PixelBufferReference> PixelBufferReference::decode(Decoder& decoder)
 {
-    return WebCore::PixelBuffer::decode(decoder);
+    if (auto pixelBuffer = WebCore::ByteArrayPixelBuffer::decode(decoder))
+        return { { WTFMove(*pixelBuffer) } };
+    return std::nullopt;
 }
 
 } // namespace IPC

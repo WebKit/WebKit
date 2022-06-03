@@ -212,8 +212,8 @@ void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdent
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(qualifiedImageBuffer)) {
         auto pixelBuffer = imageBuffer->getPixelBuffer(destinationFormat, srcRect);
         if (pixelBuffer) {
-            MESSAGE_CHECK(pixelBuffer->data().byteLength() <= m_getPixelBufferSharedMemory->size(), "Shmem for return of getPixelBuffer is too small");
-            memcpy(m_getPixelBufferSharedMemory->data(), pixelBuffer->data().data(), pixelBuffer->data().byteLength());
+            MESSAGE_CHECK(pixelBuffer->sizeInBytes() <= m_getPixelBufferSharedMemory->size(), "Shmem for return of getPixelBuffer is too small");
+            memcpy(m_getPixelBufferSharedMemory->data(), pixelBuffer->bytes(), pixelBuffer->sizeInBytes());
         } else
             memset(m_getPixelBufferSharedMemory->data(), 0, m_getPixelBufferSharedMemory->size());
     }

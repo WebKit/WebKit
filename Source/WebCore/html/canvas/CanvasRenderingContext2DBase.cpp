@@ -2188,7 +2188,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
     auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
-    if (!pixelBuffer) {
+    if (!is<ByteArrayPixelBuffer>(pixelBuffer)) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
         return Exception { InvalidStateError };
@@ -2196,7 +2196,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(pixelBuffer.releaseNonNull()) } };
+    return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)

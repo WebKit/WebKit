@@ -31,12 +31,12 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
+#include "ByteArrayPixelBuffer.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "PixelBuffer.h"
 #include "RuntimeApplicationChecks.h"
 #include <algorithm>
 #include <cstring>
@@ -192,7 +192,7 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
-    auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
+    auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;
     ScopedPixelStorageMode packAlignment(GL_PACK_ALIGNMENT);
@@ -203,14 +203,14 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     ScopedPixelStorageMode packSkipPixels(GL_PACK_SKIP_PIXELS, 0, m_isForWebGL2);
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
 
-    GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->data().byteLength(), nullptr, nullptr, nullptr, pixelBuffer->data().data());
+    GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->sizeInBytes(), nullptr, nullptr, nullptr, pixelBuffer->bytes());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE GL_ReadPixels will in some
     // cases expose the non-255 values.
     // https://bugs.webkit.org/show_bug.cgi?id=215804
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!contextAttributes().alpha)
-        wipeAlphaChannelFromPixels(pixelBuffer->size().width(), pixelBuffer->size().height(), pixelBuffer->data().data());
+        wipeAlphaChannelFromPixels(pixelBuffer->size().width(), pixelBuffer->size().height(), pixelBuffer->bytes());
 #endif
     return pixelBuffer;
 }
@@ -3001,7 +3001,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer()
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();
         const size_t rowStride = size.width() * 4;
-        uint8_t* top = results->data().data();
+        uint8_t* top = results->bytes();
         uint8_t* bottom = top + (size.height() - 1) * rowStride;
         std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
         for (; top < bottom; top += rowStride, bottom -= rowStride) {

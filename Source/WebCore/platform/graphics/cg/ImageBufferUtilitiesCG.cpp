@@ -139,8 +139,8 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
 
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
     
-    auto data = source.data().data();
-    auto dataSize = source.data().byteLength();
+    auto data = source.bytes();
+    auto dataSize = source.sizeInBytes();
 
     Vector<uint8_t> premultipliedData;
 

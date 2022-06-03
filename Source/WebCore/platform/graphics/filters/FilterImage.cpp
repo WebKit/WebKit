@@ -122,17 +122,14 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     auto destinationSize = destinationPixelBuffer.size();
     unsigned rowBytes = destinationSize.width() * 4;
 
-    ConstPixelBufferConversionView source { sourcePixelBuffer.format(), rowBytes, sourcePixelBuffer.data().data() };
-    PixelBufferConversionView destination { destinationPixelBuffer.format(), rowBytes, destinationPixelBuffer.data().data() };
+    ConstPixelBufferConversionView source { sourcePixelBuffer.format(), rowBytes, sourcePixelBuffer.bytes() };
+    PixelBufferConversionView destination { destinationPixelBuffer.format(), rowBytes, destinationPixelBuffer.bytes() };
 
     convertImagePixels(source, destination, destinationSize);
 }
 
 static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect)
 {
-    auto& source = sourcePixelBuffer.data();
-    auto& destination = destinationPixelBuffer.data();
-
     auto sourcePixelBufferRect = IntRect { { }, sourcePixelBuffer.size() };
     auto destinationPixelBufferRect = IntRect { { }, destinationPixelBuffer.size() };
 
@@ -150,7 +147,7 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
 
     // Initialize the destination to transparent black, if not entirely covered by the source.
     if (destinationRect.size() != destinationPixelBufferRect.size())
-        destination.zeroFill();
+        destinationPixelBuffer.zeroFill();
 
     // Early return if the rect does not intersect with the source.
     if (destinationRect.isEmpty())
@@ -159,8 +156,8 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     int size = sourceRectClipped.width() * 4;
     int destinationBytesPerRow = destinationPixelBufferRect.width() * 4;
     int sourceBytesPerRow = sourcePixelBufferRect.width() * 4;
-    uint8_t* destinationPixel = destination.data() + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
-    const uint8_t* sourcePixel = source.data() + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4;
+    uint8_t* destinationPixel = destinationPixelBuffer.bytes() + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
+    const uint8_t* sourcePixel = sourcePixelBuffer.bytes() + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4;
 
     for (int y = 0; y < sourceRectClipped.height(); ++y) {
         memcpy(destinationPixel, sourcePixel, size);

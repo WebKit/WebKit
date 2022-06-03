@@ -3140,7 +3140,7 @@ RefPtr<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer(
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();
         const size_t rowStride = size.width() * 4;
-        uint8_t* top = results->data().data();
+        uint8_t* top = results->bytes();
         uint8_t* bottom = top + (size.height() - 1) * rowStride;
         std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
         for (; top < bottom; top += rowStride, bottom -= rowStride) {

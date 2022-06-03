@@ -763,13 +763,20 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context)) {
-        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-            ResourceLoadObserver::shared().logCanvasRead(document());
-        return ImageData::create(downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer());
-    }
-#endif
+    if (!is<WebGLRenderingContextBase>(m_context))
+        return nullptr;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logCanvasRead(document());
+
+    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer();
+    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
+        return nullptr;
+
+    return ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
+#else
     return nullptr;
+#endif
 }
 
 #if ENABLE(MEDIA_STREAM)

@@ -27,7 +27,6 @@
 
 #include "IntSize.h"
 #include "PixelBufferFormat.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -41,89 +40,34 @@ class PixelBuffer : public RefCounted<PixelBuffer> {
 public:
     WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
-    WEBCORE_EXPORT static Ref<PixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
-
-    WEBCORE_EXPORT ~PixelBuffer();
+    WEBCORE_EXPORT virtual ~PixelBuffer();
 
     const PixelBufferFormat& format() const { return m_format; }
     const IntSize& size() const { return m_size; }
-    JSC::Uint8ClampedArray& data() const { return m_data.get(); }
 
-    Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
+    uint8_t* bytes() const { return m_bytes; }
+    size_t sizeInBytes() const { return m_sizeInBytes; }
 
-    uint8_t* bytes() const;
-    size_t sizeInBytes() const;
+    virtual bool isByteArrayPixelBuffer() const { return false; }
+    virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset);
     bool zeroRange(size_t byteOffset, size_t rangeByteLength);
     void zeroFill() { zeroRange(0, sizeInBytes()); }
 
-    uint8_t item(size_t index) const;
+    WEBCORE_EXPORT uint8_t item(size_t index) const;
     void set(size_t index, double value);
 
-    RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<PixelBuffer>> decode(Decoder&);
-
-private:
-    WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
-
+protected:
+    WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, uint8_t* bytes, size_t sizeInBytes);
+    
     WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
-
-    PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
-    PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
 
     PixelBufferFormat m_format;
     IntSize m_size;
-    Ref<JSC::Uint8ClampedArray> m_data;
+
+    uint8_t* m_bytes { nullptr };
+    size_t m_sizeInBytes { 0 };
 };
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PixelBuffer&);
-
-template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
-{
-    ASSERT(m_data->byteLength() == (m_size.area() * 4));
-
-    encoder << m_format;
-    encoder << m_size;
-    encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
-}
-
-template<class Decoder> std::optional<Ref<PixelBuffer>> PixelBuffer::decode(Decoder& decoder)
-{
-    std::optional<PixelBufferFormat> format;
-    decoder >> format;
-    if (!format)
-        return std::nullopt;
-
-    // FIXME: Support non-8 bit formats.
-    if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
-        return std::nullopt;
-
-    std::optional<IntSize> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-
-    auto computedBufferSize = PixelBuffer::computeBufferSize(*format, *size);
-    if (computedBufferSize.hasOverflowed())
-        return std::nullopt;
-
-    auto bufferSize = computedBufferSize;
-    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
-        return std::nullopt;
-
-    auto result = PixelBuffer::tryCreateForDecoding(WTFMove(*format), *size, bufferSize);
-    if (!result)
-        return std::nullopt;
-
-    if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
-        return std::nullopt;
-
-    return result.releaseNonNull();
-}
 
 } // namespace WebCore

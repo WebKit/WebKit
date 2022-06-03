@@ -31,11 +31,11 @@
 
 #if ENABLE(WEBGL) && USE(OPENGL_ES)
 
+#include "ByteArrayPixelBuffer.h"
 #include "ExtensionsGLOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PixelBuffer.h"
 
 #include <ANGLE/ShaderLang.h>
 
@@ -67,7 +67,7 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
 RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
-    auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
+    auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;
 
@@ -79,7 +79,7 @@ RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
         mustRestorePackAlignment = true;
     }
 
-    ::glReadPixels(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->data().data());
+    ::glReadPixels(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes());
 
     if (mustRestorePackAlignment)
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
