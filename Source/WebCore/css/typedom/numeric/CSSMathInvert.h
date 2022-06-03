@@ -42,6 +42,7 @@ private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Invert; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathInvert; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    std::optional<SumValue> toSumValue() const final;
 
     CSSMathInvert(CSSNumberish&&);
     Ref<CSSNumericValue> m_value;

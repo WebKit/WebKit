@@ -66,6 +66,17 @@ void CSSMathNegate::serialize(StringBuilder& builder, OptionSet<SerializationArg
         builder.append(')');
 }
 
+auto CSSMathNegate::toSumValue() const -> std::optional<SumValue>
+{
+    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
+    auto values = m_value->toSumValue();
+    if (!values)
+        return std::nullopt;
+    for (auto& value : *values)
+        value.value = value.value * -1;
+    return values;
+}
+
 } // namespace WebCore
 
 #endif

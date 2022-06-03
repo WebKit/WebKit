@@ -45,6 +45,7 @@ private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Negate; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathNegate; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    std::optional<SumValue> toSumValue() const final;
 
     CSSMathNegate(CSSNumberish&&);
     Ref<CSSNumericValue> m_value;

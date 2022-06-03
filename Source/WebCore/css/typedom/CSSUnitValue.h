@@ -50,9 +50,13 @@ public:
     ASCIILiteral unitSerialization() const;
     CSSUnitType unitEnum() const { return m_unit; }
 
+    RefPtr<CSSUnitValue> convertTo(CSSUnitType) const;
+    static CSSUnitType parseUnit(const String& unit);
+
 private:
     CSSUnitValue(double, CSSUnitType);
 
+    std::optional<SumValue> toSumValue() const final;
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnitValue; }
 
     double m_value;

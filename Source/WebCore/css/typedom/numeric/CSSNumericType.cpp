@@ -26,10 +26,47 @@
 #include "config.h"
 #include "CSSNumericType.h"
 #include "CSSNumericValue.h"
+#include "CSSUnits.h"
 
 #if ENABLE(CSS_TYPED_OM)
 
 namespace WebCore {
+
+std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int exponent)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-create-a-type
+    CSSNumericType type;
+    switch (unitCategory(unit)) {
+    case CSSUnitCategory::Number:
+        return { WTFMove(type) };
+    case CSSUnitCategory::Percent:
+        type.percent = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Length:
+        type.length = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Angle:
+        type.angle = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Time:
+        type.time = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Frequency:
+        type.frequency = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Resolution:
+        type.resolution = exponent;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Other:
+        if (unit == CSSUnitType::CSS_FR) {
+            type.flex = exponent;
+            return { WTFMove(type) };
+        }
+        break;
+    }
+    
+    return std::nullopt;
+}
 
 std::optional<CSSNumericType> CSSNumericType::addTypes(CSSNumericType a, CSSNumericType b)
 {
@@ -64,7 +101,7 @@ template<typename Argument> std::optional<CSSNumericType> typeFromVector(const V
     if (values.isEmpty())
         return std::nullopt;
     std::optional<CSSNumericType> type = values[0]->type();
-    for (size_t i = 1; i < values.size(); i++) {
+    for (size_t i = 1; i < values.size(); ++i) {
         type = function(*type, values[i]->type());
         if (!type)
             return std::nullopt;
