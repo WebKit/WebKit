@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
-
 #include "WebGLExtension.h"
 
 namespace WebCore {
@@ -37,10 +35,9 @@ public:
     explicit WebGLCompressedTexturePVRTC(WebGLRenderingContextBase&);
     virtual ~WebGLCompressedTexturePVRTC();
 
-    static bool supported(GraphicsContextGL&);
     ExtensionName getName() const override;
+
+    static bool supported(GraphicsContextGL&);
 };
 
 } // namespace WebCore
-
-#endif

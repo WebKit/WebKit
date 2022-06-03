@@ -29,15 +29,13 @@
 
 namespace WebCore {
 
-class WebGLRenderingContextBase;
-
 class ANGLEInstancedArrays final : public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(ANGLEInstancedArrays);
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
     virtual ~ANGLEInstancedArrays();
 
-    ExtensionName getName() const final;
+    ExtensionName getName() const override;
 
     static bool supported(GraphicsContextGL&);
 

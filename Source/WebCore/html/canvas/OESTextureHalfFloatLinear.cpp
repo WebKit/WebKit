@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 #include "OESTextureHalfFloatLinear.h"
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,6 +44,11 @@ OESTextureHalfFloatLinear::~OESTextureHalfFloatLinear() = default;
 WebGLExtension::ExtensionName OESTextureHalfFloatLinear::getName() const
 {
     return OESTextureHalfFloatLinearName;
+}
+
+bool OESTextureHalfFloatLinear::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_OES_texture_half_float_linear"_s);
 }
 
 } // namespace WebCore

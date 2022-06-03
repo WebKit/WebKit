@@ -166,7 +166,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", enableSupportedExtension("GL_EXT_frag_depth"_s));
     if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod"_s)) {
         if (!m_extShaderTextureLOD) {
-            if (!(m_context->supportsExtension("GL_EXT_shader_texture_lod"_s) || m_context->supportsExtension("GL_ARB_shader_texture_lod"_s)))
+            if (!EXTShaderTextureLOD::supported(*m_context))
                 m_extShaderTextureLOD = nullptr;
             else {
                 m_context->ensureExtensionEnabled("GL_EXT_shader_texture_lod"_s);
@@ -199,7 +199,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TCsRGB, m_webglCompressedTextureS3TCsRGB, "WEBGL_compressed_texture_s3tc_srgb", WebGLCompressedTextureS3TCsRGB::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info", true);
-    ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->supportsExtension("GL_ANGLE_translated_shader_source"_s));
+    ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", WebGLDebugShaders::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context));
     if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers"_s)) {
         if (!m_webglDrawBuffers) {
@@ -233,24 +233,24 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append(nameLiteral ## _s);
 
     APPEND_IF_SUPPORTED("ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_blend_minmax", m_context->supportsExtension("GL_EXT_blend_minmax"_s))
+    APPEND_IF_SUPPORTED("EXT_blend_minmax", EXTBlendMinMax::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_float_blend", EXTFloatBlend::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_frag_depth", m_context->supportsExtension("GL_EXT_frag_depth"_s))
-    APPEND_IF_SUPPORTED("EXT_shader_texture_lod", m_context->supportsExtension("GL_EXT_shader_texture_lod"_s) || m_context->supportsExtension("GL_ARB_shader_texture_lod"_s))
+    APPEND_IF_SUPPORTED("EXT_frag_depth", EXTFragDepth::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_shader_texture_lod", EXTShaderTextureLOD::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_texture_filter_anisotropic", m_context->supportsExtension("GL_EXT_texture_filter_anisotropic"_s))
-    APPEND_IF_SUPPORTED("EXT_sRGB", m_context->supportsExtension("GL_EXT_sRGB"_s))
+    APPEND_IF_SUPPORTED("EXT_texture_filter_anisotropic", EXTTextureFilterAnisotropic::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_sRGB", EXTsRGB::supported(*m_context))
     APPEND_IF_SUPPORTED("KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context))
-    APPEND_IF_SUPPORTED("OES_element_index_uint", m_context->supportsExtension("GL_OES_element_index_uint"_s))
-    APPEND_IF_SUPPORTED("OES_fbo_render_mipmap", m_context->supportsExtension("GL_OES_fbo_render_mipmap"_s))
-    APPEND_IF_SUPPORTED("OES_standard_derivatives", m_context->supportsExtension("GL_OES_standard_derivatives"_s))
-    APPEND_IF_SUPPORTED("OES_texture_float", m_context->supportsExtension("GL_OES_texture_float"_s))
-    APPEND_IF_SUPPORTED("OES_texture_float_linear", m_context->supportsExtension("GL_OES_texture_float_linear"_s))
-    APPEND_IF_SUPPORTED("OES_texture_half_float", m_context->supportsExtension("GL_OES_texture_half_float"_s))
-    APPEND_IF_SUPPORTED("OES_texture_half_float_linear", m_context->supportsExtension("GL_OES_texture_half_float_linear"_s))
-    APPEND_IF_SUPPORTED("OES_vertex_array_object", m_context->supportsExtension("GL_OES_vertex_array_object"_s))
+    APPEND_IF_SUPPORTED("OES_element_index_uint", OESElementIndexUint::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_fbo_render_mipmap", OESFBORenderMipmap::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_standard_derivatives", OESStandardDerivatives::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_texture_float", OESTextureFloat::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_texture_float_linear", OESTextureFloatLinear::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_texture_half_float", OESTextureHalfFloat::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_texture_half_float_linear", OESTextureHalfFloatLinear::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_vertex_array_object", OESVertexArrayObject::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_color_buffer_float", WebGLColorBufferFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*m_context))
@@ -261,7 +261,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_s3tc_srgb", WebGLCompressedTextureS3TCsRGB::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_debug_renderer_info", true)
-    APPEND_IF_SUPPORTED("WEBGL_debug_shaders", m_context->supportsExtension("GL_ANGLE_translated_shader_source"_s))
+    APPEND_IF_SUPPORTED("WEBGL_debug_shaders", WebGLDebugShaders::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_draw_buffers", supportsDrawBuffers())
     APPEND_IF_SUPPORTED("WEBGL_lose_context", true)

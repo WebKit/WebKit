@@ -36,6 +36,8 @@ public:
     virtual ~EXTTextureFilterAnisotropic();
 
     ExtensionName getName() const override;
+
+    static bool supported(GraphicsContextGL&);
 };
 
 } // namespace WebCore

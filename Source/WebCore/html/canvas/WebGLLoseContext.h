@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
-
 #include "WebGLExtension.h"
 
 namespace WebCore {
@@ -38,6 +36,7 @@ public:
     virtual ~WebGLLoseContext();
 
     ExtensionName getName() const override;
+
     void loseParentContext(WebGLRenderingContextBase::LostContextMode) override;
 
     void loseContext();
@@ -45,5 +44,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

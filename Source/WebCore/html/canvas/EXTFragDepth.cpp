@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 #include "EXTFragDepth.h"
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -44,7 +45,12 @@ WebGLExtension::ExtensionName EXTFragDepth::getName() const
 {
     return EXTFragDepthName;
 }
-    
+
+bool EXTFragDepth::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_EXT_frag_depth"_s);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 #include "EXTsRGB.h"
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -44,7 +45,12 @@ WebGLExtension::ExtensionName EXTsRGB::getName() const
 {
     return EXTsRGBName;
 }
-    
+
+bool EXTsRGB::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_EXT_sRGB"_s);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

@@ -24,11 +24,12 @@
  */
 
 #include "config.h"
-#include "OESVertexArrayObject.h"
 
 #if ENABLE(WEBGL)
+#include "OESVertexArrayObject.h"
 
 #include "WebGLRenderingContext.h"
+
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -42,9 +43,16 @@ OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase& context)
 {
 }
 
+OESVertexArrayObject::~OESVertexArrayObject() = default;
+
 WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
 {
     return OESVertexArrayObjectName;
+}
+
+bool OESVertexArrayObject::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_OES_vertex_array_object"_s);
 }
 
 RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
