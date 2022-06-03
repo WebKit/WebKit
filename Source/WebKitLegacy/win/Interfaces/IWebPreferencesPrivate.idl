@@ -211,8 +211,6 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
 {
     HRESULT dataTransferItemsEnabled([out, retval] BOOL*);
     HRESULT setDataTransferItemsEnabled([in] BOOL enabled);
-    HRESULT inspectorAdditionsEnabled([out, retval] BOOL*);
-    HRESULT setInspectorAdditionsEnabled([in] BOOL enabled);
     HRESULT visualViewportAPIEnabled([out, retval] BOOL*);
     HRESULT setVisualViewportAPIEnabled([in] BOOL enabled);
     HRESULT CSSOMViewScrollingAPIEnabled([out, retval] BOOL*);

@@ -3852,10 +3852,6 @@ svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 # FIXME: create bugs to track the following failures:
 accessibility/add-children-pseudo-element.html [ Failure ]
-fast/canvas/2d.currentPoint.html [ Failure ]
-fast/canvas/2d.getPath.modification.html [ Failure ]
-fast/canvas/2d.getPath.newobject.html [ Failure ]
-fast/canvas/2d.setPath.html [ Failure ]
 fast/forms/file/entries-api/drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder.html [ Failure ]

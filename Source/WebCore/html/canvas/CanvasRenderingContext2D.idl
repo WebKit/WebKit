@@ -72,10 +72,6 @@
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
     undefined clearShadow();
-
-    // Inspector-only.
-    [EnabledAtRuntime=InspectorAdditionsEnabled] undefined setPath(Path2D path);
-    [EnabledAtRuntime=InspectorAdditionsEnabled, NewObject] Path2D getPath();
 };
 
 CanvasRenderingContext2D includes CanvasState;

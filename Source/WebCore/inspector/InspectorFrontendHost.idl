@@ -82,8 +82,6 @@
     boolean canPickColorFromScreen();
     [NewObject] Promise<DOMString> pickColorFromScreen();
 
-    DOMString getPath(File file);
-
     readonly attribute DOMString port;
     readonly attribute DOMString platform;
     readonly attribute DOMString platformVersionName;
@@ -109,6 +107,15 @@
     [Conditional=INSPECTOR_EXTENSIONS] undefined didNavigateExtensionTab(DOMString extensionID, DOMString extensionTabID, DOMString newURL);
     [Conditional=INSPECTOR_EXTENSIONS] undefined inspectedPageDidNavigate(DOMString newURL);
     [Conditional=INSPECTOR_EXTENSIONS] any evaluateScriptInExtensionTab(HTMLIFrameElement extensionFrame, DOMString scriptSource);
+
+    // IDL extensions.
+
+    DOMString getPath(File file);
+
+    float getCurrentX(CanvasRenderingContext2D context);
+    float getCurrentY(CanvasRenderingContext2D context);
+    [NewObject] Path2D getPath(CanvasRenderingContext2D context);
+    undefined setPath(CanvasRenderingContext2D context, Path2D path);
 };
 
 dictionary ContextMenuItem {

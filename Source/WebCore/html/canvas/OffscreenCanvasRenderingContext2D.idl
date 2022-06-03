@@ -37,11 +37,6 @@
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
     undefined commit();
-
-    // Inspector-only.
-    // FIXME: OffscreenCanvas.
-    // [EnabledAtRuntime=InspectorAdditionsEnabled] undefined setPath(Path2D path);
-    // [EnabledAtRuntime=InspectorAdditionsEnabled, NewObject] Path2D getPath();
 };
 
 OffscreenCanvasRenderingContext2D includes CanvasState;

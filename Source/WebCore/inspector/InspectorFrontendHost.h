@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+class CanvasPath;
+class CanvasRenderingContext2D;
 class DOMWrapperWorld;
 class DeferredPromise;
 class Event;
@@ -45,6 +47,7 @@ class FrontendMenuProvider;
 class HTMLIFrameElement;
 class InspectorFrontendClient;
 class Page;
+class Path2D;
 
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost> {
 public:
@@ -119,8 +122,6 @@ public:
     bool canPickColorFromScreen();
     void pickColorFromScreen(Ref<DeferredPromise>&&);
 
-    String getPath(const File&);
-
     struct ContextMenuItem {
         String type;
         String label;
@@ -156,6 +157,15 @@ public:
     void inspectedPageDidNavigate(const String& url);
     ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, const String& scriptSource);
 #endif
+
+    // IDL extensions.
+
+    String getPath(const File&) const;
+
+    float getCurrentX(const CanvasRenderingContext2D&) const;
+    float getCurrentY(const CanvasRenderingContext2D&) const;
+    Ref<Path2D> getPath(const CanvasRenderingContext2D&) const;
+    void setPath(CanvasRenderingContext2D&, Path2D&) const;
 
 private:
 #if ENABLE(CONTEXT_MENUS)

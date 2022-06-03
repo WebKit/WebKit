@@ -495,10 +495,6 @@ WK_EXPORT void WKPreferencesSetMediaContentTypesRequiringHardwareSupport(WKPrefe
 WK_EXPORT WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetInspectorAdditionsEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetStorageAccessAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef);
 

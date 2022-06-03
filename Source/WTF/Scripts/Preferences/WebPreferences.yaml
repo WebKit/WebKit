@@ -935,17 +935,6 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
-InspectorAdditionsEnabled:
-  type: bool
-  humanReadableName: "Web Inspector Additions"
-  humanReadableDescription: "Enable additional page APIs used by the Web Inspector frontend page"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 InspectorAttachedHeight:
   type: uint32_t
   webcoreBinding: none

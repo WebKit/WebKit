@@ -50,7 +50,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this.element.classList.add("recording", this.representedObject.type);
 
         if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging()) {
+            if (isCanvas2D) {
                 this._pathContext = null;
 
                 this._showPathButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-path", WI.UIString("Show Path"), WI.UIString("Hide Path"), "Images/Path.svg", 16, 16);
@@ -83,7 +83,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             return [];
 
         let navigationItems = [this._exportButtonNavigationItem, new WI.DividerNavigationItem];
-        if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging())
+        if (isCanvas2D)
             navigationItems.push(this._showPathButtonNavigationItem);
 
         navigationItems.push(this._showGridButtonNavigationItem);
@@ -128,7 +128,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
         if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging())
+            if (isCanvas2D)
                 this._updateCanvasPath();
             this._updateImageGrid();
         }
@@ -235,7 +235,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let snapshotIndex = Math.floor(index / WI.RecordingContentView.SnapshotInterval);
         let snapshot = this._snapshots[snapshotIndex];
 
-        let showCanvasPath = WI.ImageUtilities.supportsCanvasPathDebugging() && WI.settings.showCanvasPath.value;
         let indexOfLastBeginPathAction = Infinity;
 
         let actions = this.representedObject.actions;
@@ -273,7 +272,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 actions[i].apply(snapshot.context);
             }
 
-            if (showCanvasPath && indexOfLastBeginPathAction <= to) {
+            if (WI.settings.showCanvasPath.value && indexOfLastBeginPathAction <= to) {
                 if (!this._pathContext) {
                     let pathCanvas = document.createElement("canvas");
                     pathCanvas.classList.add("path");
@@ -390,7 +389,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._previewContainer.removeChildren();
 
-        if (showCanvasPath) {
+        if (WI.settings.showCanvasPath.value) {
             indexOfLastBeginPathAction = this._index;
             while (indexOfLastBeginPathAction > snapshot.index && actions[indexOfLastBeginPathAction].name !== "beginPath")
                 --indexOfLastBeginPathAction;

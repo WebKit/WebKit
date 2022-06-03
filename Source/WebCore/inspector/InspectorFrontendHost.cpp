@@ -30,6 +30,7 @@
 #include "config.h"
 #include "InspectorFrontendHost.h"
 
+#include "CanvasRenderingContext2D.h"
 #include "CertificateInfo.h"
 #include "ColorConversion.h"
 #include "ColorSerialization.h"
@@ -61,6 +62,7 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
+#include "Path2D.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SystemSoundManager.h"
@@ -535,11 +537,6 @@ void InspectorFrontendHost::close(const String&)
 {
 }
 
-String InspectorFrontendHost::getPath(const File& file)
-{
-    return file.path();
-}
-
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     if (m_client)
@@ -818,5 +815,29 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
+String InspectorFrontendHost::getPath(const File& file) const
+{
+    return file.path();
+}
+
+float InspectorFrontendHost::getCurrentX(const CanvasRenderingContext2D& context) const
+{
+    return context.currentX();
+}
+
+float InspectorFrontendHost::getCurrentY(const CanvasRenderingContext2D& context) const
+{
+    return context.currentY();
+}
+
+Ref<Path2D> InspectorFrontendHost::getPath(const CanvasRenderingContext2D& context) const
+{
+    return context.getPath();
+}
+
+void InspectorFrontendHost::setPath(CanvasRenderingContext2D& context, Path2D& path) const
+{
+    context.setPath(path);
+}
 
 } // namespace WebCore

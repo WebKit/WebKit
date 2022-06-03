@@ -40,7 +40,4 @@ interface mixin CanvasPath {
     undefined roundRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h, (unrestricted double or DOMPointInit) radii);
     undefined arc(unrestricted double x, unrestricted double y, unrestricted double radius, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
     undefined ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
-
-    [EnabledAtRuntime=InspectorAdditionsEnabled] readonly attribute float currentX;
-    [EnabledAtRuntime=InspectorAdditionsEnabled] readonly attribute float currentY;
 };

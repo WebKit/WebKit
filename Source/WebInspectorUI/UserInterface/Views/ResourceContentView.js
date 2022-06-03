@@ -387,7 +387,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         WI.FileUtilities.import((files) => {
             console.assert(files.length === 1, files);
 
-            this.resource.mappedFilePath = InspectorFrontendHost.getPath(files[0]);
+            this.resource.mappedFilePath = files[0].getPath();
         });
     }
 

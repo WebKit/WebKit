@@ -145,7 +145,6 @@ const TestFeatures& TestOptions::defaults()
             { "DOMPasteAllowed", true },
             { "DeveloperExtrasEnabled", true },
             { "HiddenPageDOMTimerThrottlingEnabled", false },
-            { "InspectorAdditionsEnabled", false },
             { "IntersectionObserverEnabled", false },
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },

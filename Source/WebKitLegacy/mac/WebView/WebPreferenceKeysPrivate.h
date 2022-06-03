@@ -234,7 +234,6 @@
 #define WebKitEncryptedMediaAPIEnabledKey @"WebKitEncryptedMediaAPIEnabled"
 #define WebKitPictureInPictureAPIEnabledKey @"WebKitPictureInPictureAPIEnabled"
 #define WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey @"WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallback"
-#define WebKitInspectorAdditionsEnabledPreferenceKey @"WebKitInspectorAdditionsEnabled"
 #define WebKitMediaCapabilitiesEnabledPreferenceKey @"WebKitMediaCapabilitiesEnabled"
 #define WebKitCSSLogicalEnabledPreferenceKey @"WebKitCSSLogicalEnabled"
 #define WebKitLineHeightUnitsEnabledPreferenceKey @"WebKitLineHeightUnitsEnabled"
