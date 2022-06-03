@@ -396,10 +396,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (MacApplication::isAppleMail() || CocoaApplication::isWebkitTestRunner()) {
         if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
             parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
-        parameters.restrictImageAndVideoDecoders = true;
+        parameters.enableDecodingHEIC = true;
     }
 #else
-    parameters.restrictImageAndVideoDecoders = IOSApplication::isMobileMail() || IOSApplication::isMailCompositionService() || CocoaApplication::isWebkitTestRunner();
+    parameters.enableDecodingHEIC = true;
 #endif // PLATFORM(MAC)
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
 

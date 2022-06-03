@@ -76,7 +76,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
         CFDictionarySetValue(options.get(), kCGImageSourceUseHardwareAcceleration, kCFBooleanFalse);
 
 #if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
-    if (ImageDecoderCG::restrictedDecodingEnabled())
+    if (ImageDecoderCG::decodingHEICEnabled())
         CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
 #endif
 
@@ -268,7 +268,7 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-bool ImageDecoderCG::s_enableRestrictedDecoding = false;
+bool ImageDecoderCG::s_enableDecodingHEIC = false;
 bool ImageDecoderCG::s_hardwareAcceleratedDecodingDisabled = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
@@ -611,14 +611,14 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }
 
-void ImageDecoderCG::enableRestrictedDecoding()
+void ImageDecoderCG::enableDecodingHEIC()
 {
-    s_enableRestrictedDecoding = true;
+    s_enableDecodingHEIC = true;
 }
 
-bool ImageDecoderCG::restrictedDecodingEnabled()
+bool ImageDecoderCG::decodingHEICEnabled()
 {
-    return s_enableRestrictedDecoding;
+    return s_enableDecodingHEIC;
 }
 
 void ImageDecoderCG::disableHardwareAcceleratedDecoding()

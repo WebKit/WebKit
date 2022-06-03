@@ -163,7 +163,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << trustdExtensionHandle;
 #endif
-    encoder << restrictImageAndVideoDecoders;
+    encoder << enableDecodingHEIC;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -450,11 +450,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
 #endif
-    std::optional<bool> restrictImageAndVideoDecoders;
-    decoder >> restrictImageAndVideoDecoders;
-    if (!restrictImageAndVideoDecoders)
+    std::optional<bool> enableDecodingHEIC;
+    decoder >> enableDecodingHEIC;
+    if (!enableDecodingHEIC)
         return false;
-    parameters.restrictImageAndVideoDecoders = *restrictImageAndVideoDecoders;
+    parameters.enableDecodingHEIC = *enableDecodingHEIC;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -256,9 +256,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::consumePermanently(parameters.trustdExtensionHandle);
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
-    if (parameters.restrictImageAndVideoDecoders) {
-        ImageDecoderCG::enableRestrictedDecoding();
-        restrictImageAndVideoDecoders();
+    if (parameters.enableDecodingHEIC) {
+        ImageDecoderCG::enableDecodingHEIC();
+        enableDecodingHEIC();
     }
 #endif
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)

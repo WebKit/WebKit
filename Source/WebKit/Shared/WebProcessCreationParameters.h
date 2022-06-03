@@ -204,7 +204,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(MAC)
     SandboxExtension::Handle trustdExtensionHandle;
 #endif
-    bool restrictImageAndVideoDecoders { false };
+    bool enableDecodingHEIC { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
