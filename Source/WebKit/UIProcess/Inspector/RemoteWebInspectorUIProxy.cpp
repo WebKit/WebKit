@@ -144,9 +144,9 @@ void RemoteWebInspectorUIProxy::bringToFront()
     platformBringToFront();
 }
 
-void RemoteWebInspectorUIProxy::save(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void RemoteWebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    platformSave(suggestedURL, content, base64Encoded, forceSaveDialog);
+    platformSave(WTFMove(saveDatas), forceSaveAs);
 }
 
 void RemoteWebInspectorUIProxy::append(const String& suggestedURL, const String& content)
@@ -246,7 +246,7 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 
 void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
-void RemoteWebInspectorUIProxy::platformSave(const String&, const String&, bool, bool) { }
+void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
 void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }

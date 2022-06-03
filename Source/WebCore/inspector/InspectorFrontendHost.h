@@ -31,6 +31,7 @@
 #include "ContextMenu.h"
 #include "ContextMenuProvider.h"
 #include "ExceptionOr.h"
+#include "InspectorFrontendClient.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +46,6 @@ class Event;
 class File;
 class FrontendMenuProvider;
 class HTMLIFrameElement;
-class InspectorFrontendClient;
 class Page;
 class Path2D;
 
@@ -110,13 +110,20 @@ public:
 
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
+
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
-    bool canSave();
-    void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);
+
+    using SaveMode = InspectorFrontendClient::SaveMode;
+    using SaveData = InspectorFrontendClient::SaveData;
+    bool canSave(SaveMode);
+    void save(Vector<SaveData>&&, bool forceSaveAs);
+
     void append(const String& url, const String& content);
+
     bool canLoad();
     void load(const String& path, Ref<DeferredPromise>&&);
+
     void close(const String& url);
 
     bool canPickColorFromScreen();

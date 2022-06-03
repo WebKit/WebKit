@@ -51,7 +51,6 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
-#include "InspectorFrontendClient.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromiseDeferred.h"
@@ -458,17 +457,17 @@ void InspectorFrontendHost::revealFileExternally(const String& path)
         m_client->revealFileExternally(path);
 }
 
-bool InspectorFrontendHost::canSave()
+bool InspectorFrontendHost::canSave(SaveMode saveMode)
 {
     if (m_client)
-        return m_client->canSave();
+        return m_client->canSave(saveMode);
     return false;
 }
 
-void InspectorFrontendHost::save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs)
+void InspectorFrontendHost::save(Vector<SaveData>&& saveDatas, bool forceSaveAs)
 {
     if (m_client)
-        m_client->save(url, content, base64Encoded, forceSaveAs);
+        m_client->save(WTFMove(saveDatas), forceSaveAs);
 }
 
 void InspectorFrontendHost::append(const String& url, const String& content)

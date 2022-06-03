@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WebInspectorUI.h"
+#include "RemoteWebInspectorUI.h"
 
 #include <glib.h>
 #include <wtf/FileSystem.h>
@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
+bool RemoteWebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
 {
     switch (saveMode) {
     case InspectorFrontendClient::SaveMode::SingleFile:
@@ -48,17 +48,17 @@ bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
     return false;
 }
 
-bool WebInspectorUI::canLoad()
+bool RemoteWebInspectorUI::canLoad()
 {
     return false;
 }
 
-bool WebInspectorUI::canPickColorFromScreen()
+bool RemoteWebInspectorUI::canPickColorFromScreen()
 {
     return false;
 }
 
-String WebInspectorUI::localizedStringsURL() const
+String RemoteWebInspectorUI::localizedStringsURL() const
 {
     return "resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js"_s;
 }

@@ -705,16 +705,20 @@ void WebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 #endif
 }
 
-void WebInspectorUIProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
+void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
     if (!m_inspectedPage->preferences().developerExtrasEnabled())
         return;
 
-    ASSERT(!filename.isEmpty());
-    if (filename.isEmpty())
+    ASSERT(!saveDatas.isEmpty());
+    if (saveDatas.isEmpty())
         return;
 
-    platformSave(filename, content, base64Encoded, forceSaveAs);
+    ASSERT(!saveDatas[0].url.isEmpty());
+    if (saveDatas[0].url.isEmpty())
+        return;
+
+    platformSave(WTFMove(saveDatas), forceSaveAs);
 }
 
 void WebInspectorUIProxy::append(const String& filename, const String& content)
@@ -840,7 +844,7 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo&)
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
 {
     notImplemented();
 }

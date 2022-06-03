@@ -155,10 +155,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
             content: this._textEditor.string,
         };
 
-        if (this.resource instanceof WI.CSSStyleSheet) {
+        if (this.resource instanceof WI.CSSStyleSheet)
             saveData.suggestedName = "InspectorStyleSheet.css";
-            saveData.forceSaveAs = true;
-        } else {
+        else {
             saveData.url = this.resource.url;
 
             if (this.resource.urlComponents.path === "/") {

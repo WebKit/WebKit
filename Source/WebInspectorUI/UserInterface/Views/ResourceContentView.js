@@ -127,6 +127,11 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         return this._resource.finished;
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         let saveData = {

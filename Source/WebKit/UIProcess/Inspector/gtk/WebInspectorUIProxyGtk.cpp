@@ -517,9 +517,10 @@ static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* res
     page->send(Messages::WebInspectorUI::DidSave(String::fromUTF8(path.get())));
 }
 
-void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    UNUSED_PARAM(forceSaveDialog);
+    ASSERT(saveDatas.size() == 1);
+    UNUSED_PARAM(forceSaveAs);
 
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
@@ -536,7 +537,7 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
-    URL url { suggestedURL };
+    URL url { saveDatas[0].url };
     // Strip leading / character.
     gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
 
@@ -545,14 +546,14 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
 
     Vector<uint8_t> dataVector;
     CString dataString;
-    if (base64Encoded) {
-        auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
+    if (saveDatas[0].base64Encoded) {
+        auto decodedData = base64Decode(saveDatas[0].content, Base64DecodeOptions::ValidatePadding);
         if (!decodedData)
             return;
         decodedData->shrinkToFit();
         dataVector = WTFMove(*decodedData);
     } else
-        dataString = content.utf8();
+        dataString = saveDatas[0].content.utf8();
 
     const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();

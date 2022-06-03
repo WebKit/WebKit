@@ -1030,14 +1030,16 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
-        contextMenu.appendItem(WI.UIString("Save Image"), () => {
-            const forceSaveAs = true;
-            WI.FileUtilities.save({
-                content: parseDataURL(this._message.messageText).data,
-                base64Encoded: true,
-                suggestedName: image.getAttribute("filename"),
-            }, forceSaveAs);
-        });
+        if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
+            contextMenu.appendItem(WI.UIString("Save Image"), () => {
+                const forceSaveAs = true;
+                WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
+                    content: parseDataURL(this._message.messageText).data,
+                    base64Encoded: true,
+                    suggestedName: image.getAttribute("filename"),
+                }, forceSaveAs);
+            });
+        }
 
         contextMenu.appendSeparator();
     }

@@ -280,6 +280,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         return true;
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         return {
@@ -517,13 +522,15 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 InspectorFrontendHost.copyText(this._formatMessagesAsData(true));
             });
 
-            contextMenu.appendItem(WI.UIString("Save Selected"), () => {
-                const forceSaveAs = true;
-                WI.FileUtilities.save({
-                    content: this._formatMessagesAsData(true),
-                    suggestedName: WI.UIString("Console") + ".txt",
-                }, forceSaveAs);
-            });
+            if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
+                contextMenu.appendItem(WI.UIString("Save Selected"), () => {
+                    const forceSaveAs = true;
+                    WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
+                        content: this._formatMessagesAsData(true),
+                        suggestedName: WI.UIString("Console") + ".txt",
+                    }, forceSaveAs);
+                });
+            }
 
             contextMenu.appendSeparator();
         }

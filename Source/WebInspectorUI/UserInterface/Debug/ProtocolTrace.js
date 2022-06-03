@@ -37,6 +37,11 @@ WI.ProtocolTrace = class ProtocolTrace
         this._entries.push(entry);
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         let now = new Date();

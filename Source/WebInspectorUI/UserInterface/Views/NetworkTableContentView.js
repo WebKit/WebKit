@@ -120,6 +120,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._harExportNavigationItem = new WI.ButtonNavigationItem("har-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
         this._harExportNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._harExportNavigationItem.tooltip = WI.UIString("HAR Export (%s)").format(WI.saveKeyboardShortcut.displayName);
+        this._harExportNavigationItem.enabled = false;
         this._harExportNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, function(event) {
             this._exportHAR();
         }, this);
@@ -261,6 +262,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     get supportsSave()
     {
         return this._canExportHAR();
+    }
+
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
     }
 
     get saveData()
@@ -1376,6 +1382,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _canExportHAR()
     {
+        if (!WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile))
+            return false;
+
         if (!this._isShowingMainCollection())
             return false;
 
@@ -2404,11 +2413,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.HARBuilder.buildArchive(resources).then((har) => {
             let mainFrame = WI.networkManager.mainFrame;
             let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
-            WI.FileUtilities.save({
+
+            const forceSaveAs = true;
+            WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
                 content: JSON.stringify(har, null, 2),
                 suggestedName: archiveName + ".har",
-                forceSaveAs: true,
-            });
+            }, forceSaveAs);
         });
     }
 

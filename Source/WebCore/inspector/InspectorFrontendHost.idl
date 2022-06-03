@@ -70,13 +70,18 @@
 
     undefined copyText(DOMString text);
     undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
+
     undefined openURLExternally(DOMString url);
     undefined revealFileExternally(DOMString path);
-    boolean canSave();
-    undefined save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
+
+    boolean canSave(SaveMode saveMode);
+    undefined save(sequence<SaveData> saveDatas, boolean forceSaveAs);
+
     undefined append(DOMString url, DOMString content);
+
     boolean canLoad();
     [NewObject] Promise<DOMString> load(DOMString path);
+
     undefined close(DOMString url);
 
     boolean canPickColorFromScreen();
@@ -116,6 +121,19 @@
     float getCurrentY(CanvasRenderingContext2D context);
     [NewObject] Path2D getPath(CanvasRenderingContext2D context);
     undefined setPath(CanvasRenderingContext2D context, Path2D path);
+};
+
+// Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendClient::SaveMode`.
+enum SaveMode {
+    "single-file",
+    "file-variants"
+};
+
+dictionary SaveData {
+    DOMString displayType;
+    DOMString url;
+    DOMString content;
+    boolean base64Encoded;
 };
 
 dictionary ContextMenuItem {

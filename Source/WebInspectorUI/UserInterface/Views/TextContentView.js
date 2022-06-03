@@ -83,6 +83,11 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         return true;
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         return {

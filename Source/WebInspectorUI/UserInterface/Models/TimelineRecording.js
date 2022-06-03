@@ -440,8 +440,16 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         }
     }
 
+    get exportMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     canExport()
     {
+        if (!WI.FileUtilities.canSave(this.exportMode))
+            return false;
+
         if (this._capturing)
             return false;
 

@@ -155,6 +155,11 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
         return true;
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         let saveData = {
