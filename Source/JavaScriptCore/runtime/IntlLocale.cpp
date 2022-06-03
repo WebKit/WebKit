@@ -295,12 +295,12 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.setKeywordValue("collation"_s, collation);
     }
 
-    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
+    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11"_s, "h12"_s, "h23"_s, "h24"_s }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!hourCycle.isNull())
         localeID.setKeywordValue("hours"_s, hourCycle);
 
-    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
+    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!caseFirst.isNull())
         localeID.setKeywordValue("colcasefirst"_s, caseFirst);
