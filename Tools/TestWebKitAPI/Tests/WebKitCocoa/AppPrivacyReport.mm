@@ -44,10 +44,12 @@
 #if ENABLE(APP_PRIVACY_REPORT)
 TEST(AppPrivacyReport, DefaultRequestIsAppInitiated)
 {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::respondWithChallengeThenOK);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    NSString *url = @"https://webkit.org";
+    NSString *url = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
 
     __block bool isDone = false;
     // Don't set the attribution API on NSURLRequest to make sure the default is app initiated.
@@ -73,10 +75,11 @@ TEST(AppPrivacyReport, DefaultRequestIsAppInitiated)
 
 TEST(AppPrivacyReport, AppInitiatedRequest)
 {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::respondWithChallengeThenOK);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    NSString *url = @"https://webkit.org";
+    NSString *url = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
 
     __block bool isDone = false;
     NSMutableURLRequest *appInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
@@ -104,10 +107,12 @@ TEST(AppPrivacyReport, AppInitiatedRequest)
 
 TEST(AppPrivacyReport, NonAppInitiatedRequest)
 {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::respondWithChallengeThenOK);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    NSString *url = @"https://webkit.org";
+    NSString *url = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
 
     __block bool isDone = false;
     NSMutableURLRequest *nonAppInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
@@ -135,11 +140,13 @@ TEST(AppPrivacyReport, NonAppInitiatedRequest)
 
 TEST(AppPrivacyReport, AppInitiatedRequestWithNavigation)
 {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::respondWithChallengeThenOK);
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    NSString *appInitiatedURL = @"https://www.webkit.org";
-    NSString *nonAppInitiatedURL = @"https://www.apple.com";
+    NSString *appInitiatedURL = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
+    NSString *nonAppInitiatedURL = [NSString stringWithFormat:@"http://localhost:%d/", server.port()];
 
     NSMutableURLRequest *appInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:appInitiatedURL]];
     appInitiatedRequest.attribution = NSURLRequestAttributionDeveloper;
