@@ -854,8 +854,10 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ASSERT(decodedEntity.isEmpty());
             m_token.appendToAttributeValue('&');
         } else {
-            for (unsigned i = 0; i < decodedEntity.length(); ++i)
-                m_token.appendToAttributeValue(decodedEntity[i]);
+            if (decodedEntity.is8Bit())
+                m_token.appendToAttributeValue(decodedEntity.span<LChar>());
+            else
+                m_token.appendToAttributeValue(decodedEntity.span<UChar>());
         }
         // We're supposed to switch back to the attribute value state that
         // we were in when we were switched into this state. Rather than

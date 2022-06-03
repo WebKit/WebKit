@@ -106,6 +106,7 @@ public:
     void appendToAttributeName(UChar);
     void appendToAttributeValue(UChar);
     void appendToAttributeValue(unsigned index, StringView value);
+    template<typename CharacterType> void appendToAttributeValue(Span<const CharacterType>);
     void endAttribute();
 
     void setSelfClosing();
@@ -329,6 +330,14 @@ inline void HTMLToken::appendToAttributeValue(UChar character)
     ASSERT(m_type == StartTag || m_type == EndTag);
     ASSERT(m_currentAttribute);
     m_currentAttribute->value.append(character);
+}
+
+template<typename CharacterType>
+inline void HTMLToken::appendToAttributeValue(Span<const CharacterType> characters)
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    ASSERT(m_currentAttribute);
+    m_currentAttribute->value.append(characters);
 }
 
 inline void HTMLToken::appendToAttributeValue(unsigned i, StringView value)
