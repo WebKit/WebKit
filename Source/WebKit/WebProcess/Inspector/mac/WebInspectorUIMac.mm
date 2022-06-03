@@ -42,6 +42,11 @@ bool WebInspectorUI::canLoad()
     return true;
 }
 
+bool WebInspectorUI::canPickColorFromScreen()
+{
+    return true;
+}
+
 static String webInspectorUILocalizedStringsURL()
 {
     return [WKInspectorViewController URLForInspectorResource:@"localizedStrings.js"].absoluteString;

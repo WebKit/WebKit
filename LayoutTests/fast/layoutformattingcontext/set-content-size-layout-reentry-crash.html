@@ -1,0 +1,26 @@
+<style>
+  body {
+    -webkit-user-modify: read-only;
+    text-emphasis-style: '';
+  }
+  span {
+    top: 100vw;
+    content: '' url();
+  }
+</style>
+<script src="data:"></script>
+<script>
+  onload = () => {
+    document.body.append('aaaaaaa');
+    let span0 = document.createElement('span');
+    document.body.append(span0);
+    let div0 = document.createElement('div');
+    document.body.append(div0);
+    span0.append(document.createElement('table'));
+    getSelection().selectAllChildren(div0);
+    getSelection().modify('extend', 'left', 'paragraph');
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    console.log("PASS if this doesn't crash.");
+  };
+</script>

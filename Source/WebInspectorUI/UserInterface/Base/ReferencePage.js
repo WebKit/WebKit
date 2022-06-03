@@ -56,6 +56,12 @@ WI.ReferencePage = class ReferencePage {
         link.className = "reference-page-link";
         link.href = link.title = url;
         link.textContent = "?";
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            WI.openURL(link.href, {alwaysOpenExternally: true});
+        });
 
         return wrapper;
     }
@@ -94,6 +100,7 @@ WI.ReferencePage.TimelinesTab.LayoutAndRenderingTimeline = new WI.ReferencePage(
 WI.ReferencePage.TimelinesTab.MediaAndAnimationsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "media-animations-timeline"});
 WI.ReferencePage.TimelinesTab.MemoryTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "memory-timeline"});
 WI.ReferencePage.TimelinesTab.NetworkRequestsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "network-timeline"});
+WI.ReferencePage.TimelinesTab.ScreenshotsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "screenshots-timeline"});
 
 WI.ReferencePage.URLBreakpoints = new WI.ReferencePage("url-breakpoints");
 WI.ReferencePage.URLBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.URLBreakpoints, {topic: "configuration"});

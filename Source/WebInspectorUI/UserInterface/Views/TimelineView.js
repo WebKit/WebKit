@@ -297,8 +297,7 @@ WI.TimelineView = class TimelineView extends WI.ContentView
     {
         super.initialLayout();
 
-        if (this.constructor.ReferencePage)
-            this.element.appendChild(this.constructor.ReferencePage.createLinkElement());
+        this.element.appendChild(this.constructor.ReferencePage.createLinkElement());
     }
 
     filterDidChange()

@@ -741,6 +741,16 @@ void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const 
     platformLoad(path, WTFMove(completionHandler));
 }
 
+void WebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color> &)>&& completionHandler)
+{
+    if (!m_inspectedPage->preferences().developerExtrasEnabled()) {
+        completionHandler({ });
+        return;
+    }
+
+    platformPickColorFromScreen(WTFMove(completionHandler));
+}
+
 bool WebInspectorUIProxy::shouldOpenAttached()
 {
     return inspectorPagePreferences().inspectorStartsAttached() && canAttach();
@@ -844,6 +854,12 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
 {
     notImplemented();
     completionHandler(nullString());
+}
+
+void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler({ });
 }
 
 unsigned WebInspectorUIProxy::platformInspectedWindowHeight()

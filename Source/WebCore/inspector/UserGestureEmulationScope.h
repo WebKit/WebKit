@@ -30,8 +30,6 @@
 
 #pragma once
 
-#include "config.h"
-
 #include "UserGestureIndicator.h"
 
 namespace WebCore {

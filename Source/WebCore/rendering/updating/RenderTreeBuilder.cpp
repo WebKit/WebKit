@@ -953,12 +953,11 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
     if (!parent.renderTreeBeingDestroyed() && child.everHadLayout()) {
-        child.setNeedsLayoutAndPrefWidthsRecalc();
-        // We only repaint |child| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
         if (child.isBody())
             parent.view().repaintRootContents();
         else
             child.repaint();
+        child.setNeedsLayoutAndPrefWidthsRecalc();
     }
 
     // If we have a line box wrapper, delete it.

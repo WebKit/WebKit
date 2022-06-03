@@ -304,22 +304,6 @@ public:
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const override;
 
-    AccessibilityChildrenVector activeDescendantOfObjects() const override;
-    AccessibilityChildrenVector controlledObjects() const override;
-    AccessibilityChildrenVector controllers() const override;
-    AccessibilityChildrenVector describedByObjects() const override;
-    AccessibilityChildrenVector descriptionForObjects() const override;
-    AccessibilityChildrenVector detailedByObjects() const override;
-    AccessibilityChildrenVector detailsForObjects() const override;
-    AccessibilityChildrenVector errorMessageObjects() const override;
-    AccessibilityChildrenVector errorMessageForObjects() const override;
-    AccessibilityChildrenVector flowToObjects() const override;
-    AccessibilityChildrenVector flowFromObjects() const override;
-    AccessibilityChildrenVector labelledByObjects() const override;
-    AccessibilityChildrenVector labelForObjects() const override;
-    AccessibilityChildrenVector ownedObjects() const override;
-    AccessibilityChildrenVector owners() const override;
-
     bool hasPopup() const override { return false; }
     String popupValue() const override;
     bool hasDatalist() const override;
@@ -787,7 +771,7 @@ public:
     String documentEncoding() const override;
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
-    AccessibilityChildrenVector relatedObjects(AXRelationType) const;
+    AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 protected:
     AccessibilityObject() = default;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc.  All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
@@ -207,6 +207,75 @@ WI.Color = class Color
         }
 
         return null;
+    }
+
+    static fromStringBestMatchingSuggestedFormatAndGamut(colorString, {suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut} = {})
+    {
+        let newColor = WI.Color.fromString(colorString);
+
+        if (forceSuggestedFormatAndGamut) {
+            newColor.format = suggestedFormat;
+            newColor.gamut = suggestedGamut;
+            return newColor;
+        }
+
+        // Match the suggested gamut if we can do so losslessly.
+        if (suggestedGamut === WI.Color.Gamut.DisplayP3 && newColor.gamut !== WI.Color.Gamut.DisplayP3)
+            newColor.gamut = WI.Color.Gamut.DisplayP3;
+        else if (suggestedGamut !== WI.Color.Gamut.DisplayP3 && newColor.gamut === WI.Color.Gamut.DisplayP3 && !newColor.isOutsideSRGB())
+            newColor.gamut = WI.Color.Gamut.SRGB;
+
+        // Non-sRGB gamuts can only be expressed in the Color Function format.
+        if (newColor.gamut !== WI.Color.Gamut.SRGB)
+            return newColor;
+
+        // Match as closely as possible the suggested format, and progressively adjust the format (e.g. ShortHEX -> HEX
+        // -> HEXAlpha) if an exact match would be lossy.
+        switch (suggestedFormat) {
+        case WI.Color.Format.Original:
+            console.assert(false, "No color should have a format of 'Original'.");
+            break;
+
+        case WI.Color.Format.Keyword:
+            // Use the format of the color string as-provided.
+            break;
+
+        case WI.Color.Format.HEX:
+            newColor.format = newColor.simple ? WI.Color.Format.HEX : WI.Color.Format.HEXAlpha;
+            break;
+
+        case WI.Color.Format.ShortHEX:
+            if (newColor.canBeSerializedAsShortHEX())
+                newColor.format = newColor.simple ? WI.Color.Format.ShortHEX : WI.Color.Format.ShortHEXAlpha;
+            else
+                newColor.format = newColor.simple ? WI.Color.Format.HEX : WI.Color.Format.HEXAlpha;
+            break;
+
+        case WI.Color.Format.ShortHEXAlpha:
+            newColor.format = newColor.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEXAlpha : WI.Color.Format.HEXAlpha;
+            break;
+
+        case WI.Color.Format.RGB:
+            newColor.format = newColor.simple ? WI.Color.Format.RGB : WI.Color.Format.RGBA;
+            break;
+
+        case WI.Color.Format.HSL:
+            newColor.format = newColor.simple ? WI.Color.Format.HSL : WI.Color.Format.HSLA;
+            break;
+
+        case WI.Color.Format.HEXAlpha:
+        case WI.Color.Format.RGBA:
+        case WI.Color.Format.HSLA:
+        case WI.Color.Format.ColorFunction:
+            newColor.format = suggestedFormat;
+            break;
+
+        default:
+            console.assert(false, "Should not be reached.", suggestedFormat);
+            break;
+        }
+
+        return newColor;
     }
 
     static rgb2hsl(r, g, b)

@@ -3936,7 +3936,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::relatedObjects(AX
     if (!cache)
         return { };
 
-    auto relatedObjectIDs = cache->relatedObjectsFor(*this, relationType);
+    auto relatedObjectIDs = cache->relatedObjectIDsFor(*this, relationType);
     if (!relatedObjectIDs)
         return { };
     return cache->objectsForIDs(*relatedObjectIDs);
@@ -3951,81 +3951,6 @@ bool AccessibilityObject::isActiveDescendantOfFocusedContainer() const
     }
 
     return false;
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::activeDescendantOfObjects() const
-{
-    return relatedObjects(AXRelationType::ActiveDescendantOf);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::controlledObjects() const
-{
-    return relatedObjects(AXRelationType::ControllerFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::controllers() const
-{
-    return relatedObjects(AXRelationType::ControlledBy);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::describedByObjects() const
-{
-    return relatedObjects(AXRelationType::DescribedBy);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::descriptionForObjects() const
-{
-    return relatedObjects(AXRelationType::DescriptionFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::detailedByObjects() const
-{
-    return relatedObjects(AXRelationType::Details);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::detailsForObjects() const
-{
-    return relatedObjects(AXRelationType::DetailsFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::errorMessageObjects() const
-{
-    return relatedObjects(AXRelationType::ErrorMessage);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::errorMessageForObjects() const
-{
-    return relatedObjects(AXRelationType::ErrorMessageFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::flowToObjects() const
-{
-    return relatedObjects(AXRelationType::FlowsTo);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::flowFromObjects() const
-{
-    return relatedObjects(AXRelationType::FlowsFrom);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::labelledByObjects() const
-{
-    return relatedObjects(AXRelationType::LabelledBy);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::labelForObjects() const
-{
-    return relatedObjects(AXRelationType::LabelFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ownedObjects() const
-{
-    return relatedObjects(AXRelationType::OwnerFor);
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::owners() const
-{
-    return relatedObjects(AXRelationType::OwnedBy);
 }
 
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child)

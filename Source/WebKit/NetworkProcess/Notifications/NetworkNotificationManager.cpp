@@ -65,6 +65,11 @@ void NetworkNotificationManager::requestSystemNotificationPermission(const Strin
 
 void NetworkNotificationManager::deletePushAndNotificationRegistration(const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& completionHandler)
 {
+    if (!m_connection) {
+        completionHandler("No connection to push daemon"_s);
+        return;
+    }
+
     sendMessageWithReply<WebPushD::MessageType::DeletePushAndNotificationRegistration>(WTFMove(completionHandler), origin.toString());
 }
 

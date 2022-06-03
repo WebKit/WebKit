@@ -181,6 +181,9 @@ PASS table-layout: "auto" onto "fixed"
 PASS text-align (type: discrete) has testAccumulation function
 PASS text-align: "end" onto "start"
 PASS text-align: "start" onto "end"
+PASS text-align-last (type: discrete) has testAccumulation function
+PASS text-align-last: "end" onto "start"
+PASS text-align-last: "start" onto "end"
 PASS text-anchor (type: discrete) has testAccumulation function
 PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"

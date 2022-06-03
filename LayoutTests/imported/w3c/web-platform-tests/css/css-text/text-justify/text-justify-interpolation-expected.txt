@@ -16,17 +16,17 @@ PASS CSS Transitions with transition: all: property <text-justify> from [auto] t
 PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (-0.3) should be [auto]
 PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (0) should be [auto]
 PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (0.3) should be [auto]
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-word] at (0.5) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-word] at (0.6) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-word] at (1) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-word] at (1.5) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
+PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (0.5) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (0.6) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (1) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-word] at (1.5) should be [inter-word]
 PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (-0.3) should be [auto]
 PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (0) should be [auto]
 PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (0.3) should be [auto]
-FAIL Web Animations: property <text-justify> from [auto] to [inter-word] at (0.5) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-word] at (0.6) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-word] at (1) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-word] at (1.5) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
+PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (0.5) should be [inter-word]
+PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (0.6) should be [inter-word]
+PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (1) should be [inter-word]
+PASS Web Animations: property <text-justify> from [auto] to [inter-word] at (1.5) should be [inter-word]
 PASS CSS Transitions: property <text-justify> from [auto] to [inter-character] at (-0.3) should be [inter-character]
 PASS CSS Transitions: property <text-justify> from [auto] to [inter-character] at (0) should be [inter-character]
 PASS CSS Transitions: property <text-justify> from [auto] to [inter-character] at (0.3) should be [inter-character]
@@ -44,17 +44,17 @@ PASS CSS Transitions with transition: all: property <text-justify> from [auto] t
 PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (-0.3) should be [auto]
 PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (0) should be [auto]
 PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (0.3) should be [auto]
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-character] at (0.5) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-character] at (0.6) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-character] at (1) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [auto] to [inter-character] at (1.5) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
+PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (0.5) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (0.6) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (1) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [auto] to [inter-character] at (1.5) should be [inter-character]
 PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (-0.3) should be [auto]
 PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (0) should be [auto]
 PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (0.3) should be [auto]
-FAIL Web Animations: property <text-justify> from [auto] to [inter-character] at (0.5) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-character] at (0.6) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-character] at (1) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [auto] to [inter-character] at (1.5) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
+PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (0.5) should be [inter-character]
+PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (0.6) should be [inter-character]
+PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (1) should be [inter-character]
+PASS Web Animations: property <text-justify> from [auto] to [inter-character] at (1.5) should be [inter-character]
 PASS CSS Transitions: property <text-justify> from [inter-character] to [distribute] at (-0.3) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [inter-character] to [distribute] at (0) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [inter-character] to [distribute] at (0.3) should be [distribute]
@@ -69,20 +69,20 @@ PASS CSS Transitions with transition: all: property <text-justify> from [inter-c
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-character] to [distribute] at (0.6) should be [distribute]
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-character] to [distribute] at (1) should be [distribute]
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-character] to [distribute] at (1.5) should be [distribute]
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (-0.3) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.3) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.6) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (1) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-character] to [distribute] at (1.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (-0.3) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (0) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.3) should be [inter-character] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.6) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (1) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-character] to [distribute] at (1.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (-0.3) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.3) should be [inter-character]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.5) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (0.6) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (1) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-character] to [distribute] at (1.5) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (-0.3) should be [inter-character]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (0) should be [inter-character]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.3) should be [inter-character]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.5) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (0.6) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (1) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-character] to [distribute] at (1.5) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [inter-word] to [distribute] at (-0.3) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [inter-word] to [distribute] at (0) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [inter-word] to [distribute] at (0.3) should be [distribute]
@@ -97,20 +97,20 @@ PASS CSS Transitions with transition: all: property <text-justify> from [inter-w
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-word] to [distribute] at (0.6) should be [distribute]
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-word] to [distribute] at (1) should be [distribute]
 PASS CSS Transitions with transition: all: property <text-justify> from [inter-word] to [distribute] at (1.5) should be [distribute]
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (-0.3) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.3) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.6) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (1) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [inter-word] to [distribute] at (1.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (-0.3) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (0) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.3) should be [inter-word] assert_equals: expected "inter - word " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.6) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (1) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [inter-word] to [distribute] at (1.5) should be [distribute] assert_equals: expected "inter - character " but got "auto "
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (-0.3) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.3) should be [inter-word]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.5) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (0.6) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (1) should be [distribute]
+PASS CSS Animations: property <text-justify> from [inter-word] to [distribute] at (1.5) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (-0.3) should be [inter-word]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (0) should be [inter-word]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.3) should be [inter-word]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.5) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (0.6) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (1) should be [distribute]
+PASS Web Animations: property <text-justify> from [inter-word] to [distribute] at (1.5) should be [distribute]
 PASS CSS Transitions: property <text-justify> from [distribute] to [none] at (-0.3) should be [none]
 PASS CSS Transitions: property <text-justify> from [distribute] to [none] at (0) should be [none]
 PASS CSS Transitions: property <text-justify> from [distribute] to [none] at (0.3) should be [none]
@@ -125,18 +125,18 @@ PASS CSS Transitions with transition: all: property <text-justify> from [distrib
 PASS CSS Transitions with transition: all: property <text-justify> from [distribute] to [none] at (0.6) should be [none]
 PASS CSS Transitions with transition: all: property <text-justify> from [distribute] to [none] at (1) should be [none]
 PASS CSS Transitions with transition: all: property <text-justify> from [distribute] to [none] at (1.5) should be [none]
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (-0.3) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (0) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (0.3) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (1) should be [none] assert_equals: expected "none " but got "auto "
-FAIL CSS Animations: property <text-justify> from [distribute] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (-0.3) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (0) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (0.3) should be [distribute] assert_equals: expected "inter - character " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (1) should be [none] assert_equals: expected "none " but got "auto "
-FAIL Web Animations: property <text-justify> from [distribute] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "auto "
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (-0.3) should be [distribute]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (0) should be [distribute]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (0.3) should be [distribute]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (0.5) should be [none]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (0.6) should be [none]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (1) should be [none]
+PASS CSS Animations: property <text-justify> from [distribute] to [none] at (1.5) should be [none]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (-0.3) should be [distribute]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (0) should be [distribute]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (0.3) should be [distribute]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (0.5) should be [none]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (0.6) should be [none]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (1) should be [none]
+PASS Web Animations: property <text-justify> from [distribute] to [none] at (1.5) should be [none]
 

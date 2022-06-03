@@ -204,7 +204,7 @@ private:
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
     dispatch_once(&onceToken, ^{
-        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases ]]);
+        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem ]]);
     });
 
     return allWebsiteDataTypes.get().get();
@@ -277,8 +277,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             _WKWebsiteDataTypeCredentials,
             _WKWebsiteDataTypeAdClickAttributions,
             _WKWebsiteDataTypePrivateClickMeasurements,
-            _WKWebsiteDataTypeAlternativeServices,
-            _WKWebsiteDataTypeFileSystem
+            _WKWebsiteDataTypeAlternativeServices
 #if !TARGET_OS_IPHONE
             , _WKWebsiteDataTypePlugInData
 #endif

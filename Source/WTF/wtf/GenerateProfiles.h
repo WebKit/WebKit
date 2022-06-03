@@ -62,7 +62,7 @@ ALWAYS_INLINE void registerProfileGenerationCallback(const char* name)
         {
             // Maybe we could use %t instead here, but this folder is permitted through the sandbox because of ANGLE.
             FileSystem::PlatformFileHandle fileHandle;
-            auto filePath = FileSystem::openTemporaryFile(makeString(name, "-", getpid()), fileHandle, ".profraw");
+            auto filePath = FileSystem::openTemporaryFile(makeString(name, "-", getpid()), fileHandle, ".profraw"_s);
             profileFileBase.get() = String::fromUTF8(filePath.utf8().data());
             FileSystem::closeFile(fileHandle);
         }

@@ -28,16 +28,15 @@
 div#image-controls {
     display: inline-block;
     position: relative;
-    overflow: hidden;
     color: transparent;
     user-select: none;
     pointer-events: none;
 }
 
 button#image-controls-button {
-    position: absolute;
+    position: sticky;
     top: 0px;
-    right: 0px;
+    float: right;
 
     display: block;
 

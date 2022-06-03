@@ -1714,15 +1714,23 @@ void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect, Tr
 
     LayoutRect oldRect = layoutViewportRect();
     m_layoutViewportOverrideRect = rect;
+    LayoutRect newRect = layoutViewportRect();
 
     // Triggering layout on height changes is necessary to make bottom-fixed elements behave correctly.
-    if (oldRect.height() != layoutViewportRect().height())
+    if (oldRect.height() != newRect.height())
         layoutTriggering = TriggerLayoutOrNot::Yes;
 
     LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << valueOrDefault(m_layoutViewportOverrideRect) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
 
-    if (oldRect != layoutViewportRect() && layoutTriggering == TriggerLayoutOrNot::Yes)
-        setViewportConstrainedObjectsNeedLayout();
+    if (layoutTriggering == TriggerLayoutOrNot::Yes) {
+        if (oldRect != newRect)
+            setViewportConstrainedObjectsNeedLayout();
+
+        if (oldRect.size() != newRect.size()) {
+            if (auto* document = frame().document())
+                document->updateViewportUnitsOnResize();
+        }
+    }
 }
 
 void FrameView::setVisualViewportOverrideRect(std::optional<LayoutRect> rect)
@@ -2827,7 +2835,7 @@ void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
         // FIXME: Merge this logic with m_setNeedsLayoutWasDeferred and find a more appropriate
         // way of handling potential recursive layouts when the viewport is resized to accomodate
         // the content but the content always overflows the viewport. See webkit.org/b/165781.
-        if (layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
+        if (layoutContext().layoutPhase() != FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust || !useFixedLayout())
             document->updateViewportUnitsOnResize();
     }
 
@@ -2937,14 +2945,6 @@ void FrameView::layoutOrVisualViewportChanged()
 
         if (auto scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewVisualViewportChanged(*this);
-    }
-
-    auto layoutViewportSize = layoutViewportRect().size();
-    if (layoutViewportSize != m_lastLayoutViewportSize) {
-        if (auto* document = frame().document())
-            document->updateViewportUnitsOnResize();
-
-        m_lastLayoutViewportSize = layoutViewportSize;
     }
 }
 
@@ -5761,7 +5761,16 @@ FloatSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<Over
 
 FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
 {
-    return rectForFixedPositionLayout().size();
+    if (m_layoutViewportOverrideRect)
+        return m_layoutViewportOverrideRect->size();
+
+    if (useFixedLayout())
+        return fixedLayoutSize();
+
+    if (frame().settings().visualViewportEnabled())
+        return size();
+
+    return viewportConstrainedVisibleContentRect().size();
 }
 
 bool FrameView::shouldPlaceVerticalScrollbarOnLeft() const

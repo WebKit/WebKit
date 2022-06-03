@@ -23,19 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-view.screenshots {
+.timeline-view.screenshots > .content-view {
+    position: absolute;
+    inset: 0;
     text-align: center;
     white-space: nowrap; 
     overflow-x: auto;
     background-color: hsl(0, 0%, 90%);
 }
 
-.timeline-view.screenshots > .spacer {
+.timeline-view.screenshots > .content-view > .spacer {
     display: inline-block;
     height: 50%;
 }
 
-.timeline-view.screenshots > img {
+.timeline-view.screenshots > .content-view > img {
     max-width: calc(80% - (var(--margin) * 2));
     max-height: calc(100% - (var(--margin) * 2));
     margin: var(--margin);
@@ -46,16 +48,16 @@
     --shadow: 1px 2px 6px rgba(0, 0, 0, 0.58);
 }
 
-.timeline-view.screenshots > img + img {
+.timeline-view.screenshots > .content-view > img + img {
     margin-inline-start: 0;
 }
 
-.timeline-view.screenshots > img.selected {
+.timeline-view.screenshots > .content-view > img.selected {
     box-shadow: 0 0 0 2px var(--glyph-color-active), var(--shadow);
 }
 
 @media (prefers-color-scheme: dark) {
-    .timeline-view.screenshots {
+    .timeline-view.screenshots > .content-view {
         background-color: hsl(0, 0%, 14%);
     }
 }

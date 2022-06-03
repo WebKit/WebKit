@@ -36,6 +36,7 @@ extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 
 @interface NSSpellChecker ()
 
+- (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;
 - (void)_preflightChosenSpellServer;
 

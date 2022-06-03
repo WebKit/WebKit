@@ -164,21 +164,15 @@ private:
 static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must be the same size!");
 
 inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
-bool operator==(const AtomString&, const LChar*);
-inline bool operator==(const AtomString& a, const char* b) { return WTF::equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(a.impl(), b); }
 inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.data(), b.size()); }    
 inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
-inline bool operator==(const LChar* a, const AtomString& b) { return b == a; }
 inline bool operator==(const String& a, const AtomString& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const Vector<UChar>& a, const AtomString& b) { return b == a; }
 
 inline bool operator!=(const AtomString& a, const AtomString& b) { return a.impl() != b.impl(); }
-inline bool operator!=(const AtomString& a, const LChar* b) { return !(a == b); }
-inline bool operator!=(const AtomString& a, const char* b) { return !(a == b); }
 inline bool operator!=(const AtomString& a, const String& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const AtomString& a, const Vector<UChar>& b) { return !(a == b); }
-inline bool operator!=(const LChar* a, const AtomString& b) { return !(b == a); }
 inline bool operator!=(ASCIILiteral a, const AtomString& b) { return !(b == a); }
 inline bool operator!=(const String& a, const AtomString& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const Vector<UChar>& a, const AtomString& b) { return !(a == b); }

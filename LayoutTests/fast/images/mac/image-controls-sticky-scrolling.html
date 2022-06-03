@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+if (window.internals) {
+   internals.settings.setImageControlsEnabled(true);
+}
+</script>
+</head>
+<body>
+<img id="target" src="../resources/green-256x256.jpg" width="2000" height ="2000">
+<div id="log">
+<script>
+   function hasImageControls(elem)
+   {
+       if (window.internals)
+           return internals.hasImageControls(elem);
+       return false;
+   }
+
+   var elem = document.getElementById("target");
+   var ID = HTMLAttachmentElement.getAttachmentIdentifier(elem);
+
+   setInterval(() => {
+    if (hasImageControls(elem)) {
+        window.scrollTo(0, 500);
+        testRunner.notifyDone();
+    }
+   }, 200);
+</script>
+</body>
+</html>

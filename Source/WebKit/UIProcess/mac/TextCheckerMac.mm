@@ -38,11 +38,6 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringView.h>
 
-@interface NSSpellChecker (WebNSSpellCheckerDetails)
-- (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
-@end
-
-
 static NSString* const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static NSString* const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static NSString* const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";

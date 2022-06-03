@@ -1323,38 +1323,12 @@ webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure
 
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
-webkit.org/b/234118 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/blink/svg/filters/big-viewbox.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/blink/svg/filters/feColorMatrix-subregion.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/blink/svg/filters/feDropShadow-flood-opacity-1.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/blink/svg/filters/feOffset-nonuniform-scale.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/blink/svg/filters/filter-huge-clamping.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
-webkit.org/b/234118 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/morphology-mirrored.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/svg-sourcegraphic-currentcolor-dynamic-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/svg-sourcegraphic-invalidation-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-feblend-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fecomponenttransfer-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fecomposite-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-feconvolvematrix-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fediffuselighting-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fedisplacementmap-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fedropshadow-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-feflood-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fegaussianblur-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-femorphology-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-feoffset-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fespecularlighting-001.html [ ImageOnlyFailure ]
-webkit.org/b/234118 imported/w3c/web-platform-tests/css/filter-effects/tainting-fetile-001.html [ ImageOnlyFailure ]
-
 webkit.org/b/234709 svg/filters/feImage-element-primitive-subregion.svg [ ImageOnlyFailure ]
+
+webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
+webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
@@ -2584,10 +2558,14 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 
 # Non-sRGB color spaces are not currently supported by the glib ports.
+css3/color-filters/svg/color-filter-inline-svg.html [ ImageOnlyFailure ]
+css3/filters/reference-filter-color-space.html [ ImageOnlyFailure ]
 fast/canvas/canvas-color-space-display-p3.html [ Skip ]
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/ [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/ [ Skip ]
+svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
+svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageOnlyFailure ]
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 

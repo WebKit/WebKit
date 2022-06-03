@@ -31,6 +31,9 @@
 #include "InspectorFrontendHost.h"
 
 #include "CertificateInfo.h"
+#include "ColorConversion.h"
+#include "ColorSerialization.h"
+#include "ColorSpace.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
@@ -491,6 +494,40 @@ void InspectorFrontendHost::load(const String& path, Ref<DeferredPromise>&& prom
             promise->reject(NotFoundError);
         else
             promise->resolve<IDLDOMString>(content);
+    });
+}
+
+bool InspectorFrontendHost::canPickColorFromScreen()
+{
+    if (m_client)
+        return m_client->canPickColorFromScreen();
+    return false;
+}
+
+void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
+{
+    if (!m_client) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    m_client->pickColorFromScreen([promise = WTFMove(promise)](const std::optional<WebCore::Color>& color) {
+        if (!color) {
+            promise->resolve();
+            return;
+        }
+
+        String serializedColor;
+        // FIXME: <webkit.org/b/241198> Inspector frontend should support all color function gamuts.
+        if (color->colorSpace() != ColorSpace::SRGB || color->colorSpace() != ColorSpace::DisplayP3) {
+            // DisplayP3 is the least-lossy format the frontend currently supports. This conversion will only be lossy
+            // if the color space the system is providing colors in were to support a wider gamut than DisplayP3.
+            auto colorForFrontend = color->toColorTypeLossy<DisplayP3<float>>();
+            serializedColor = serializationForCSS(colorForFrontend);
+        } else
+            serializedColor = serializationForCSS(*color);
+
+        promise->resolve<IDLDOMString>(serializedColor);
     });
 }
 

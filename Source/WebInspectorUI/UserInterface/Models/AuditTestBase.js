@@ -394,7 +394,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 };
 
 // Keep this in sync with Inspector::Protocol::Audit::VERSION.
-WI.AuditTestBase.Version = 3;
+WI.AuditTestBase.Version = 4;
 
 WI.AuditTestBase.ObjectGroup = "audit";
 

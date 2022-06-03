@@ -70,7 +70,14 @@ PreconnectTask::~PreconnectTask() = default;
 
 void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
-    // HSTS redirection may happen here.
+    // HSTS "redirection" may happen here.
+#if ASSERT_ENABLED
+    auto url = redirectResponse.url();
+    ASSERT(url.protocol() == "http"_s);
+    url.setProtocol("https"_s);
+    ASSERT(redirectRequest.url() == url);
+#endif
+    m_networkLoad->continueWillSendRequest(WTFMove(redirectRequest));
 }
 
 void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)

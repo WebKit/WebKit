@@ -93,6 +93,7 @@ public:
     template<typename CharacterType> const CharacterType* characters() const;
     const LChar* characters8() const { return characters<LChar>(); }
     const UChar* characters16() const { return characters<UChar>(); }
+    template<typename CharacterType> Span<const CharacterType> span() const { return Span { characters<CharacterType>(), length() }; }
     
     unsigned capacity() const;
     WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);

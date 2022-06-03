@@ -386,10 +386,6 @@ SOFT_LINK_CLASS(AVKit, AVTouchBarScrubber)
 
 #if !PLATFORM(IOS_FAMILY)
 
-@interface NSSpellChecker (WebNSSpellCheckerDetails)
-- (void)_preflightChosenSpellServer;
-@end
-
 @interface NSView (WebNSViewDetails)
 - (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
 - (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;

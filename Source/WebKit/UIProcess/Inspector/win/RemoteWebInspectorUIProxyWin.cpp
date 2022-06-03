@@ -136,6 +136,7 @@ void RemoteWebInspectorUIProxy::platformBringToFront() { }
 void RemoteWebInspectorUIProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
+void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }

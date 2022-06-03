@@ -55,6 +55,15 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
 
     get showsFilterBar() { return false; }
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._scrollView = new WI.ContentView;
+
+        this.addSubview(this._scrollView);
+    }
+
     layout()
     {
         if (this.layoutReason === WI.View.LayoutReason.Resize)
@@ -65,12 +74,12 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         if (this.hidden)
             return;
 
-        this.element.removeChildren();
+        this._scrollView.element.removeChildren();
 
         let selectedElement = null;
 
         for (let record of this._visibleRecords()) {
-            this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+            this._scrollView.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
                 let imageElement = document.createElement("img");
 
                 imageElement.hidden = true;
@@ -96,11 +105,11 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
             selectedElement.scrollIntoView({inline: "center"});
         }
 
-        if (this.element.childNodes.length) {
-            let spacer = this.element.appendChild(document.createElement("div"));
+        if (this._scrollView.element.childNodes.length) {
+            let spacer = this._scrollView.element.appendChild(document.createElement("div"));
             spacer.className = "spacer";
         } else
-            this.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
+            this._scrollView.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
     }
 
     selectRecord(record)
@@ -151,3 +160,5 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         return visibleRecords;
     }
 };
+
+WI.ScreenshotsTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.ScreenshotsTimeline;

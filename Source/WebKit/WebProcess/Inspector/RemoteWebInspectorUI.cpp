@@ -238,6 +238,11 @@ void RemoteWebInspectorUI::load(const String& path, CompletionHandler<void(const
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::Load(path), WTFMove(completionHandler), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::PickColorFromScreen(), WTFMove(completionHandler), m_page.identifier());
+}
+
 void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
 {
     // Do nothing. The remote side can know if the main resource changed.

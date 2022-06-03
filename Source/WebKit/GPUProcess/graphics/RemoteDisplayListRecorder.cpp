@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageBufferShareableAllocator.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FilterResults.h>
@@ -235,7 +236,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
         feImage.setImageSource(WTFMove(*sourceImage));
     }
 
-    FilterResults results;
+    FilterResults results(makeUnique<ImageBufferShareableAllocator>());
     handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), results);
 }
 

@@ -116,6 +116,9 @@ public:
     void load(const String& path, Ref<DeferredPromise>&&);
     void close(const String& url);
 
+    bool canPickColorFromScreen();
+    void pickColorFromScreen(Ref<DeferredPromise>&&);
+
     String getPath(const File&);
 
     struct ContextMenuItem {

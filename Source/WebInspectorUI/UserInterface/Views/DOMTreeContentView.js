@@ -583,12 +583,13 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             // to see if the command key is down like it normally would. So we need to do that check
             // before calling WI.openURL.
             const options = {
-                alwaysOpenExternally: event ? event.metaKey : false,
+                alwaysOpenExternally: event?.metaKey ?? false,
+                frame: this._frame,
                 lineNumber: anchorElement.lineNumber,
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
             };
-            WI.openURL(anchorElement.href, this._frame, options);
+            WI.openURL(anchorElement.href, options);
         }
 
         // Start a timeout since this is a single click, if the timeout is canceled before it fires,

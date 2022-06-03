@@ -529,8 +529,13 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
     });
 }
 
-void Connection::terminate()
+void Connection::terminate(CompletionHandler<void()>&& completionHandler)
 {
+    nw_connection_set_state_changed_handler(m_connection.get(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_connection_state_t state, nw_error_t error) mutable {
+        ASSERT_UNUSED(error, !error);
+        if (state == nw_connection_state_cancelled && completionHandler)
+            completionHandler();
+    }).get());
     nw_connection_cancel(m_connection.get());
 }
 

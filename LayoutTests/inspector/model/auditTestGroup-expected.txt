@@ -43,12 +43,12 @@ WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in
 {
   "type": "test-group",
   "name": "validWithInvalidOptionals group name",
-  "supports": 4,
+  "supports": "<version + 1>",
   "tests": [
     {
       "type": "test-case",
       "name": "validWithInvalidOptionals test name",
-      "supports": 5,
+      "supports": "<version + 2>",
       "test": "validWithInvalidOptionals test function"
     }
   ]
@@ -59,14 +59,14 @@ WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in
   "type": "test-group",
   "name": "validWithValidOptionals group name",
   "description": "validWithValidOptionals group description",
-  "supports": 2,
+  "supports": "<version + -1>",
   "setup": "validWithValidOptionals group setup",
   "tests": [
     {
       "type": "test-case",
       "name": "validWithValidOptionals test name",
       "description": "validWithValidOptionals test description",
-      "supports": 1,
+      "supports": "<version + -2>",
       "setup": "validWithValidOptionals test setup",
       "test": "validWithValidOptionals test function"
     }
@@ -78,21 +78,21 @@ WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in
   "type": "test-group",
   "name": "validNested group name",
   "description": "validNested group description",
-  "supports": 2,
+  "supports": "<version + -1>",
   "setup": "validNested group setup",
   "tests": [
     {
       "type": "test-group",
       "name": "validNested nested group name",
       "description": "validNested nested group description",
-      "supports": 1,
+      "supports": "<version + -2>",
       "setup": "validNested nested group setup",
       "tests": [
         {
           "type": "test-case",
           "name": "validNested nested test name",
           "description": "validNested nested test description",
-          "supports": 0,
+          "supports": "<version + -3>",
           "setup": "validNested nested test setup",
           "test": "validNested nested test function"
         }
@@ -102,7 +102,7 @@ WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in
       "type": "test-case",
       "name": "validNested test name",
       "description": "validNested test description",
-      "supports": -1,
+      "supports": "<version + -4>",
       "setup": "validNested test setup",
       "test": "validNested test function"
     }

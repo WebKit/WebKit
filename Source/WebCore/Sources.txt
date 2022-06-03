@@ -1510,6 +1510,7 @@ inspector/InstrumentingAgents.cpp
 inspector/NetworkResourcesData.cpp
 inspector/PageDebugger.cpp
 inspector/TimelineRecordFactory.cpp
+inspector/UserGestureEmulationScope.cpp
 inspector/WebInjectedScriptHost.cpp
 inspector/WebInjectedScriptManager.cpp
 inspector/WorkerInspectorController.cpp
@@ -1540,7 +1541,6 @@ inspector/agents/page/PageDebuggerAgent.cpp
 inspector/agents/page/PageHeapAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
 inspector/agents/page/PageRuntimeAgent.cpp
-inspector/agents/page/UserGestureEmulationScope.cpp
 inspector/agents/worker/ServiceWorkerAgent.cpp
 inspector/agents/worker/WorkerAuditAgent.cpp
 inspector/agents/worker/WorkerConsoleAgent.cpp
@@ -2071,6 +2071,7 @@ platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
 platform/graphics/Image.cpp
 platform/graphics/ImageBuffer.cpp
+platform/graphics/ImageBufferAllocator.cpp
 platform/graphics/ImageBufferBackend.cpp
 platform/graphics/ImageBufferPipe.cpp
 platform/graphics/ImageDecoder.cpp
@@ -2148,6 +2149,7 @@ platform/graphics/filters/FilterFunction.cpp
 platform/graphics/filters/FilterImage.cpp
 platform/graphics/filters/FilterOperation.cpp
 platform/graphics/filters/FilterOperations.cpp
+platform/graphics/filters/FilterResults.cpp
 platform/graphics/filters/PointLightSource.cpp
 platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp

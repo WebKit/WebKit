@@ -141,6 +141,50 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
 
+TEST(HSTS, Preconnect)
+{
+    bool firstConnectionTerminated { false };
+    bool secondConnectionReceived { false };
+    HTTPServer server([&secondConnectionReceived, &firstConnectionTerminated, connectionCount = 0] (Connection connection) mutable {
+        if (!connectionCount++) {
+            connection.receiveHTTPRequest([connection, &firstConnectionTerminated] (Vector<char>) {
+                auto response =
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 3\r\n"
+                "Strict-Transport-Security: max-age=31536000\r\n"
+                "\r\n"
+                "hi!"_s;
+                connection.send(response, [connection, &firstConnectionTerminated] () mutable {
+                    connection.terminate([&firstConnectionTerminated] {
+                        firstConnectionTerminated = true;
+                    });
+                });
+            });
+            return;
+        }
+        secondConnectionReceived = true;
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [storeConfiguration setAllowsHSTSWithUntrustedRootCertificate:YES];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    TestWebKitAPI::Util::run(&firstConnectionTerminated);
+
+    [webView _preconnectToServer:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&secondConnectionReceived);
+}
+
 #endif // HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
 
 } // namespace TestWebKitAPI

@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "DebuggableInfoData.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/Color.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
@@ -145,6 +146,9 @@ public:
     void append(const WTF::String& url, const WTF::String& content) override;
     bool canLoad() override;
     void load(const WTF::String& path, WTF::CompletionHandler<void(const WTF::String&)>&&) override;
+
+    bool canPickColorFromScreen() override;
+    void pickColorFromScreen(WTF::CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
 
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;

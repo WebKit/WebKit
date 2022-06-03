@@ -27,6 +27,7 @@
 
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
+#include <WebCore/Color.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
@@ -109,6 +110,7 @@ public:
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const String& url, const String& content) override;
     void load(const String& path, CompletionHandler<void(const String&)>&&) override;
+    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
@@ -131,6 +133,7 @@ public:
 
     bool canSave() override { return true; }
     bool canLoad() override { return true; }
+    bool canPickColorFromScreen() override { return true; }
     bool isUnderTest() override { return false; }
     unsigned inspectionLevel() const override { return 1; }
     void requestSetDockSide(DockSide) override { }

@@ -44,16 +44,6 @@ static inline LChar convertASCIIAlphaToLower(UChar character)
     return toASCIILowerUnchecked(character);
 }
 
-static inline bool vectorEqualsString(const Vector<LChar, 32>& vector, const char* string)
-{
-    unsigned size = vector.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (!string[i] || vector[i] != string[i])
-            return false;
-    }
-    return !string[size];
-}
-
 inline bool HTMLTokenizer::inEndTagBufferingState() const
 {
     switch (m_state) {
@@ -89,6 +79,16 @@ inline void HTMLTokenizer::bufferCharacter(UChar character)
 {
     ASSERT(character != kEndOfFileMarker);
     m_token.appendToCharacter(character);
+}
+
+template<typename CharacterType>
+inline void HTMLTokenizer::bufferCharacters(Span<const CharacterType> characters)
+{
+#if ASSERT_ENABLED
+    for (auto character : characters)
+        ASSERT(character != kEndOfFileMarker);
+#endif
+    m_token.appendToCharacter(characters);
 }
 
 inline bool HTMLTokenizer::emitAndResumeInDataState(SegmentedString& source)
@@ -140,8 +140,10 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
         ASSERT(decodedEntity.isEmpty());
         bufferASCIICharacter('&');
     } else {
-        for (unsigned i = 0; i < decodedEntity.length(); ++i)
-            bufferCharacter(decodedEntity[i]);
+        if (decodedEntity.is8Bit())
+            bufferCharacters(decodedEntity.span<LChar>());
+        else
+            bufferCharacters(decodedEntity.span<UChar>());
     }
     return true;
 }
@@ -613,7 +615,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataDoubleEscapeStartState)
         if (isTokenizerWhitespace(character) || character == '/' || character == '>') {
             bufferASCIICharacter(character);
-            if (temporaryBufferIs("script"))
+            if (temporaryBufferIs("script"_s))
                 ADVANCE_TO(ScriptDataDoubleEscapedState);
             else
                 ADVANCE_TO(ScriptDataEscapedState);
@@ -693,7 +695,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(ScriptDataDoubleEscapeEndState)
         if (isTokenizerWhitespace(character) || character == '/' || character == '>') {
             bufferASCIICharacter(character);
-            if (temporaryBufferIs("script"))
+            if (temporaryBufferIs("script"_s))
                 ADVANCE_TO(ScriptDataEscapedState);
             else
                 ADVANCE_TO(ScriptDataDoubleEscapedState);
@@ -1428,9 +1430,11 @@ inline void HTMLTokenizer::appendToTemporaryBuffer(UChar character)
     m_temporaryBuffer.append(character);
 }
 
-inline bool HTMLTokenizer::temporaryBufferIs(const char* expectedString)
+inline bool HTMLTokenizer::temporaryBufferIs(ASCIILiteral expectedString)
 {
-    return vectorEqualsString(m_temporaryBuffer, expectedString);
+    if (m_temporaryBuffer.size() != expectedString.length())
+        return false;
+    return equal(m_temporaryBuffer.data(), expectedString.characters8(), m_temporaryBuffer.size());
 }
 
 inline void HTMLTokenizer::appendToPossibleEndTag(UChar character)

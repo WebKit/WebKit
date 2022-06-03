@@ -47,9 +47,11 @@
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/Color.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/text/Base64.h>
 
 static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
@@ -588,6 +590,19 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
         completionHandler(String::adopt(WTFMove(*contents)));
     else
         completionHandler(nullString());
+}
+
+void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    auto sampler = adoptNS([[NSColorSampler alloc] init]);
+    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
+        if (!selectedColor) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(Color::createAndPreserveColorSpace(selectedColor.CGColor));
+    }).get()];
 }
 
 void WebInspectorUIProxy::windowFrameDidChange()

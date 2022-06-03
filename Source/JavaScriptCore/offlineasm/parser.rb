@@ -267,6 +267,7 @@ class Parser
         # FIXME: CMake does not currently set BUILT_PRODUCTS_DIR.
         # https://bugs.webkit.org/show_bug.cgi?id=229340
         @buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
+        @headersFolderPath = ENV['WK_LIBRARY_HEADERS_FOLDER_PATH'];
         @options = options
         @sources = sources
     end
@@ -836,7 +837,7 @@ class Parser
                 if @options[:webkit_additions_path]
                     additionsDirectoryName = @options[:webkit_additions_path]
                 else
-                    additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                    additionsDirectoryName = "#{@buildProductsDirectory}#{@headersFolderPath}/WebKitAdditions/"
                 end
                 fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
                 if not File.exists?(fileName)
@@ -872,7 +873,7 @@ class Parser
                 if @options[:webkit_additions_path]
                     additionsDirectoryName = @options[:webkit_additions_path]
                 else
-                    additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                    additionsDirectoryName = "#{@buildProductsDirectory}#{@headersFolderPath}/WebKitAdditions/"
                 end
                 fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
                 if not File.exists?(fileName)

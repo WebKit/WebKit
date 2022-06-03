@@ -573,6 +573,12 @@ void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(con
     completionHandler(nullString());
 }
 
+void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler({ });
+}
+
 void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)
 {
     if (m_client)

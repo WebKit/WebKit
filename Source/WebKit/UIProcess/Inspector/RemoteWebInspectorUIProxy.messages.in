@@ -30,6 +30,7 @@ messages -> RemoteWebInspectorUIProxy {
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
     Append(String filename, String content)
     Load(String path) -> (String content)
+    PickColorFromScreen() -> (std::optional<WebCore::Color> color)
 
     SetForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
 

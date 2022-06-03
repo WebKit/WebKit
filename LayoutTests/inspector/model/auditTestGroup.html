@@ -12,7 +12,14 @@ function test()
             name,
             async test() {
                 let object = await WI.AuditTestGroup.fromPayload(payload);
-                InspectorTest.log(object ? JSON.stringify(object, null, 2) : object);
+
+                function replacer(key, value) {
+                    if (key === "supports")
+                        return `<version + ${value - WI.AuditTestBase.Version}>`;
+
+                    return value;
+                }
+                InspectorTest.log(object ? JSON.stringify(object, replacer, 2) : object);
             },
         });
     }

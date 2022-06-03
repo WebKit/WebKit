@@ -42,11 +42,12 @@ namespace WebCore {
 class Filter;
 class FloatRect;
 class ImageBuffer;
+class ImageBufferAllocator;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
 
     // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
@@ -77,8 +78,8 @@ public:
 #endif
 
 private:
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
 
     RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
@@ -106,6 +107,8 @@ private:
 #if USE(CORE_IMAGE)
     RetainPtr<CIImage> m_ciImage;
 #endif
+
+    ImageBufferAllocator& m_allocator;
 };
 
 } // namespace WebCore

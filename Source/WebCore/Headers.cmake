@@ -1530,6 +1530,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Image.h
     platform/graphics/ImageBackingStore.h
     platform/graphics/ImageBuffer.h
+    platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageObserver.h

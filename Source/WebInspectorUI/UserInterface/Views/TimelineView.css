@@ -48,5 +48,6 @@
 .timeline-view > .reference-page-link-container {
     position: absolute;
     bottom: 6px;
+    z-index: 1;
     inset-inline-end: 6px;
 }

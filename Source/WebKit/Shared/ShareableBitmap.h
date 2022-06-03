@@ -59,6 +59,8 @@ public:
 
         bool isNull() const { return m_handle.isNull(); }
 
+        SharedMemory::Handle& handle() { return m_handle; }
+
         // Take ownership of the memory for process memory accounting purposes.
         void takeOwnershipOfMemory(MemoryLedger) const;
 
@@ -97,6 +99,7 @@ public:
 
     void* data() const;
     size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration); }
+    size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration); }
 
     // Create a graphics context that can be used to paint into the backing store.
     std::unique_ptr<WebCore::GraphicsContext> createGraphicsContext();
@@ -138,8 +141,6 @@ private:
 #if USE(CAIRO)
     static void releaseSurfaceData(void* typelessBitmap);
 #endif
-
-    size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration); }
 
     WebCore::IntSize m_size;
     Configuration m_configuration;

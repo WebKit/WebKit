@@ -541,21 +541,7 @@ private:
     float stepValueForRange() const override;
     AXCoreObject* selectedListItem() override;
 
-    AccessibilityChildrenVector activeDescendantOfObjects() const override;
-    AccessibilityChildrenVector controlledObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ControlledObjects)); }
-    AccessibilityChildrenVector controllers() const override;
-    AccessibilityChildrenVector describedByObjects() const override;
-    AccessibilityChildrenVector descriptionForObjects() const override;
-    AccessibilityChildrenVector detailedByObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DetailedByObjects)); }
-    AccessibilityChildrenVector detailsForObjects() const override;
-    AccessibilityChildrenVector errorMessageObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ErrorMessageObjects)); }
-    AccessibilityChildrenVector errorMessageForObjects() const override;
-    AccessibilityChildrenVector flowToObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::FlowToObjects)); }
-    AccessibilityChildrenVector flowFromObjects() const override;
-    AccessibilityChildrenVector labelledByObjects() const override;
-    AccessibilityChildrenVector labelForObjects() const override;
-    AccessibilityChildrenVector ownedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::OwnedObjects)); }
-    AccessibilityChildrenVector owners() const override;
+    AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 
     bool hasDatalist() const override;
     bool supportsHasPopup() const override;

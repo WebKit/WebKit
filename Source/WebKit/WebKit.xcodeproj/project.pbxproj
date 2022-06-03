@@ -2753,8 +2753,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */,
 				DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+				DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5374,6 +5374,8 @@
 		7227800B2408BD7D007D376B /* PlatformRemoteImageBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformRemoteImageBufferProxy.h; sourceTree = "<group>"; };
 		722E1CDB2840B7E7005828BD /* PixelBufferReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelBufferReference.h; sourceTree = "<group>"; };
 		7246963A275B7E6700A9156A /* FilterReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterReference.h; sourceTree = "<group>"; };
+		724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableAllocator.h; sourceTree = "<group>"; };
+		724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableAllocator.cpp; sourceTree = "<group>"; };
 		726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCache.cpp; sourceTree = "<group>"; };
 		726D56DE253A64810002EF90 /* RemoteResourceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteResourceCache.h; sourceTree = "<group>"; };
 		727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableMappedIOSurfaceBackend.cpp; sourceTree = "<group>"; };
@@ -10424,6 +10426,8 @@
 			isa = PBXGroup;
 			children = (
 				1C98C01C27446926002CCB78 /* WebGPU */,
+				724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */,
+				724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */,
 				55AD09432408A0E600DE4D2F /* PlatformRemoteImageBuffer.h */,
 				1CC54AFD270F9654005BF8BE /* QualifiedRenderingResourceIdentifier.h */,
 				1CBF9012271018B5000C457D /* QualifiedResourceHeap.h */,
@@ -14433,7 +14437,6 @@
 				442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,
 				46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */,
-				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
 				0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */,
 				5CA9854A210BEB640057EB6B /* SafeBrowsingWarning.h in Headers */,
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
@@ -15088,6 +15091,7 @@
 				07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */,
 				1A4D664C18A3030E00D82E21 /* WKFrameInfo.h in Headers */,
 				2DF9EEE81A78245500B6CFBE /* WKFrameInfoInternal.h in Headers */,
+				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
 				1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */,
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
@@ -15835,7 +15839,7 @@
 				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
 				"$(SRCROOT)/Sources.txt",
 				"$(SRCROOT)/SourcesCocoa.txt",
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/generate-unified-source-bundles.rb",
+				"$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/wtf/Scripts/generate-unified-source-bundles.rb",
 			);
 			name = "Generate Unified Sources";
 			outputFileListPaths = (

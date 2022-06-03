@@ -79,6 +79,9 @@
     [NewObject] Promise<DOMString> load(DOMString path);
     undefined close(DOMString url);
 
+    boolean canPickColorFromScreen();
+    [NewObject] Promise<DOMString> pickColorFromScreen();
+
     DOMString getPath(File file);
 
     readonly attribute DOMString port;

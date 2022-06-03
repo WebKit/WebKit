@@ -28,6 +28,7 @@
 
 #include "FilterEffect.h"
 #include "FilterImage.h"
+#include "FilterResults.h"
 #include "ImageBuffer.h"
 
 namespace WebCore {
@@ -87,7 +88,7 @@ RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sou
 
     if (sourceImage) {
         auto absoluteSourceImageRect = enclosingIntRect(scaledByFilterScale(sourceImageRect));
-        input = FilterImage::create(m_filterRegion, sourceImageRect, absoluteSourceImageRect, Ref { *sourceImage });
+        input = FilterImage::create(m_filterRegion, sourceImageRect, absoluteSourceImageRect, Ref { *sourceImage }, results.allocator());
         if (!input)
             return nullptr;
     }

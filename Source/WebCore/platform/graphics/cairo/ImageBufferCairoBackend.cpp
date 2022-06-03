@@ -59,6 +59,7 @@ void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const Flo
 
 void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     if (m_parameters.colorSpace == newColorSpace)
         return;
 
@@ -92,6 +93,10 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
         }();
         platformTransformColorSpace(deviceRgbLUT);
     }
+#else
+    ASSERT(newColorSpace == DestinationColorSpace::SRGB());
+    ASSERT(m_parameters.colorSpace == DestinationColorSpace::SRGB());
+#endif
 }
 
 String ImageBufferCairoBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const
