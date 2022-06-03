@@ -99,12 +99,6 @@ using namespace WebCore;
 
 using namespace HTMLNames;
 
-#if !PLATFORM(IOS_FAMILY)
-@interface NSSpellChecker (WebNSSpellCheckerDetails)
-- (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
-@end
-#endif
-
 // FIXME: Seems likely we can get rid of this legacy code for watchOS and tvOS.
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 @interface NSAttributedString (WebNSAttributedStringDetails)
