@@ -5063,3 +5063,7 @@ fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html [ ImageO
 fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/241268 webanimations/accelerated-transform-animation-from-scale-zero-and-implicit-to-kefyrame.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/241281 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+webkit.org/b/241281 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ ImageOnlyFailure ]
+
