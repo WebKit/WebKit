@@ -15,6 +15,23 @@
         * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
         (TestWebKitAPI::TEST):
 
+2022-04-22  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues
+        https://bugs.webkit.org/show_bug.cgi?id=236832
+
+        Test the added functionality to be able to use assertIsCurrent(thread/workQueue).
+
+        Fix WTF_WorkQueue.DestroyDispatchedOnDispatchQueue test, it is now able to make the assertion correctly.
+        - The object is created somewhere that is not the tested WorkQueue
+        - The object is destroyed in the tested WorkQueue
+
+        * Scripts/generate-gpup-webgl:
+        * TestWebKitAPI/Tests/WTF/Threading.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-04-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r292274. rdar://problem/80544133
