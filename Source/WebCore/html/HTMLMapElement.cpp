@@ -95,13 +95,13 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomString&
             if (document().isHTMLDocument())
                 return;
         }
-        if (isConnected())
+        if (isInTreeScope())
             treeScope().removeImageMap(*this);
         String mapName = value;
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
         m_name = mapName;
-        if (isConnected())
+        if (isInTreeScope())
             treeScope().addImageMap(*this);
 
         return;
