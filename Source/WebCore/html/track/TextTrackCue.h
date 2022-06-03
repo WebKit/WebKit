@@ -126,7 +126,7 @@ public:
 protected:
     TextTrackCue(Document&, const MediaTime& start, const MediaTime& end);
 
-    Document& ownerDocument() { return m_document; }
+    Document* document() const;
 
     virtual bool cueContentsMatch(const TextTrackCue&) const;
     virtual void toJSON(JSON::Object&) const;
@@ -153,8 +153,6 @@ private:
     int m_processingCueChanges { 0 };
 
     TextTrack* m_track { nullptr };
-
-    Document& m_document;
 
     RefPtr<DocumentFragment> m_cueNode;
     RefPtr<TextTrackCueBox> m_displayTree;

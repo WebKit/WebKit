@@ -69,7 +69,7 @@ private:
     bool isOrderedBefore(const TextTrackCue*) const final;
     bool isPositionedAbove(const TextTrackCue*) const final;
 
-    Ref<VTTCueBox> createDisplayTree() final;
+    RefPtr<VTTCueBox> createDisplayTree() final;
 
     bool cueContentsMatch(const TextTrackCue&) const final;
 

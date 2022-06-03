@@ -171,9 +171,11 @@ TextTrackCueGeneric::TextTrackCueGeneric(Document& document, const MediaTime& st
 {
 }
 
-Ref<VTTCueBox> TextTrackCueGeneric::createDisplayTree()
+RefPtr<VTTCueBox> TextTrackCueGeneric::createDisplayTree()
 {
-    return TextTrackCueGenericBoxElement::create(ownerDocument(), *this);
+    if (auto* document = this->document())
+        return TextTrackCueGenericBoxElement::create(*document, *this);
+    return nullptr;
 }
 
 ExceptionOr<void> TextTrackCueGeneric::setLine(const LineAndPositionSetting& line)
@@ -205,7 +207,8 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
-    displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSUnitType::CSS_PX);
+    if (auto* displayTree = displayTreeInternal())
+        displayTree->setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSUnitType::CSS_PX);
 }
 
 bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& otherTextTrackCue) const

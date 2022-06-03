@@ -195,15 +195,15 @@ protected:
 
     bool cueContentsMatch(const TextTrackCue&) const override;
 
-    virtual Ref<VTTCueBox> createDisplayTree();
-    VTTCueBox& displayTreeInternal();
+    virtual RefPtr<VTTCueBox> createDisplayTree();
+    VTTCueBox* displayTreeInternal();
 
     void toJSON(JSON::Object&) const override;
 
 private:
     VTTCue(Document&, const WebVTTCueData&);
 
-    void initialize();
+    void initialize(Document&);
     void createWebVTTNodeTree();
 
     void parseSettings(const String&);
