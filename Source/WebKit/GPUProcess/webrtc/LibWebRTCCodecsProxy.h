@@ -31,7 +31,6 @@
 #include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
-#include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <wtf/ThreadAssertions.h>
 
@@ -88,10 +87,8 @@ private:
 
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
-    Ref<IPC::Connection> m_connection;
-    Ref<WorkQueue> m_queue;
-    const WebCore::ProcessIdentity m_resourceOwner;
 
+    Ref<WorkQueue> m_queue;
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(workQueue());
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
