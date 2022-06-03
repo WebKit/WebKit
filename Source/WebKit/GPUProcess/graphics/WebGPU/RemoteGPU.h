@@ -139,8 +139,8 @@ private:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
-    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
+    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_LOCK(workQueue());
+    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_LOCK(workQueue());
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
