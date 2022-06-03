@@ -5061,3 +5061,5 @@ fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-rem
 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure ]
+
+webkit.org/b/241268 webanimations/accelerated-transform-animation-from-scale-zero-and-implicit-to-kefyrame.html [ Pass ImageOnlyFailure ]
