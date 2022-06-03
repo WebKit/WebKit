@@ -43,7 +43,7 @@ using WebKit::ProcessAndUIAssertion;
 
 static WorkQueue& assertionsWorkQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> workQueue(WorkQueue::create("ProcessAssertion Queue"));
+    static NeverDestroyed<Ref<WorkQueue>> workQueue(WorkQueue::create("ProcessAssertion Queue", WorkQueue::QOS::UserInitiated));
     return workQueue.get();
 }
 
