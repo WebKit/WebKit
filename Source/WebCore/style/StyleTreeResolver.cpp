@@ -199,7 +199,7 @@ static DescendantsToResolve computeDescendantsToResolve(Change change, Validity 
 
 ElementUpdates TreeResolver::resolveElement(Element& element)
 {
-    if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
+    if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
         return { };
     }
