@@ -210,9 +210,9 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
         this._lastActiveEditor.revealNextSearchResult(changeFocus);
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._lastActiveEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._lastActiveEditor.revealPosition(position, options);
     }
 
     // Private

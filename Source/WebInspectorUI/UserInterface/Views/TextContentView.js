@@ -73,9 +73,9 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem, this._codeCoverageButtonNavigationItem];
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._textEditor.revealPosition(position, options);
     }
 
     get supportsSave()

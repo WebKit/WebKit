@@ -83,6 +83,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
                     let localResourceOverride = await sourceCode.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
                     WI.networkManager.addLocalResourceOverride(localResourceOverride);
                     WI.showLocalResourceOverride(localResourceOverride, {
+                        overriddenResource: sourceCode,
                         initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                     });
                 });
@@ -92,6 +93,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
                 let localResourceOverride = await sourceCode.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response);
                 WI.networkManager.addLocalResourceOverride(localResourceOverride);
                 WI.showLocalResourceOverride(localResourceOverride, {
+                    overriddenResource: sourceCode,
                     initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                 });
             });
@@ -109,6 +111,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
                 contextMenu.appendItem(WI.UIString("Reveal Local Override"), () => {
                     WI.showLocalResourceOverride(localResourceOverride, {
+                        overriddenResource: sourceCode,
                         initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                     });
                 });

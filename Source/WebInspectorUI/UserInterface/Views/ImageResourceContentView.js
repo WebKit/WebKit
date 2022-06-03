@@ -216,7 +216,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
             if (!this.resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride);
+                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this.resource});
         });
     }
 

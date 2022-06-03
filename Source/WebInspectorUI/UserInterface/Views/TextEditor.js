@@ -212,6 +212,19 @@ WI.TextEditor = class TextEditor extends WI.View
         this._codeMirror.setSelection(position.start, position.end);
     }
 
+    get scrollOffset()
+    {
+        let scrollInfo = this._codeMirror.getScrollInfo();
+        return new WI.Point(scrollInfo.left, scrollInfo.top);
+    }
+
+    set scrollOffset(scrollOffset)
+    {
+        console.assert(scrollOffset instanceof WI.Point, scrollOffset);
+
+        this._codeMirror.scrollTo(scrollOffset.x, scrollOffset.y);
+    }
+
     get mimeType()
     {
         return this._mimeType;
@@ -477,24 +490,23 @@ WI.TextEditor = class TextEditor extends WI.View
         return this._codeMirror.getDoc().markText(startPosition.toCodeMirror(), endPosition.toCodeMirror(), {className: styleClassName, inclusiveLeft: true, inclusiveRight: true});
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted, noHighlight)
+    revealPosition(position, options = {})
     {
-        console.assert(position === undefined || position instanceof WI.SourceCodePosition, "revealPosition called without a SourceCodePosition");
-        if (!(position instanceof WI.SourceCodePosition))
-            return;
+        console.assert(position instanceof WI.SourceCodePosition, position);
 
         if (!this.isAttached || this._initialStringNotSet || this._deferReveal) {
-            // If we can't get a line handle or are not visible then we wait to do the reveal.
-            this._positionToReveal = position;
-            this._textRangeToSelect = textRangeToSelect;
-            this._forceUnformatted = forceUnformatted;
+            this._pendingPositionToReveal = position;
+            this._pendingRevealPositionOptions = options;
             return;
         }
 
-        // Delete now that the reveal is happening.
-        delete this._positionToReveal;
-        delete this._textRangeToSelect;
-        delete this._forceUnformatted;
+        delete this._pendingPositionToReveal;
+        delete this._pendingRevealPositionOptions;
+
+        let {textRangeToSelect, scrollOffset, forceUnformatted} = options;
+
+        console.assert(!textRangeToSelect || textRangeToSelect instanceof WI.TextRange, textRangeToSelect);
+        console.assert(!scrollOffset || scrollOffset instanceof WI.Point, scrollOffset);
 
         // If we need to unformat, reveal the line after a wait.
         // Otherwise the line highlight doesn't work properly.
@@ -520,14 +532,21 @@ WI.TextEditor = class TextEditor extends WI.View
 
         function revealAndHighlightLine()
         {
-            // If the line is not visible, reveal it as the center line in the editor.
-            var position = this._codeMirrorPositionFromTextRange(textRangeToSelect);
-            if (!this._isPositionVisible(position.start))
-                this._scrollIntoViewCentered(position.start);
+            if (scrollOffset)
+                this._codeMirror.scrollTo(scrollOffset.x, scrollOffset.y);
+            else {
+                // If the line is not visible, reveal it as the center line in the editor.
+                let position = this._codeMirrorPositionFromTextRange(textRangeToSelect);
+                if (!this._isPositionVisible(position.start))
+                    this._scrollIntoViewCentered(position.start);
+            }
 
             this.selectedTextRange = textRangeToSelect;
 
-            if (noHighlight)
+            if (!this.readOnly)
+                this.focus();
+
+            if (textRangeToSelect)
                 return;
 
             // Avoid highlighting the execution line while debugging.
@@ -936,15 +955,15 @@ WI.TextEditor = class TextEditor extends WI.View
         let newExecutionLocation = null;
 
         if (pretty) {
-            if (this._positionToReveal) {
-                let newRevealPosition = this._formatterSourceMap.originalToFormatted(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                this._positionToReveal = new WI.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
+            if (this._pendingPositionToReveal) {
+                let newRevealPosition = this._formatterSourceMap.originalToFormatted(this._pendingPositionToReveal.lineNumber, this._pendingPositionToReveal.columnNumber);
+                this._pendingPositionToReveal = new WI.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
             }
 
-            if (this._textRangeToSelect) {
-                let mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                let mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                this._textRangeToSelect = new WI.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
+            if (this._pendingRevealPositionOptions?.textRangeToSelect) {
+                let mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._pendingRevealPositionOptions.textRangeToSelect.startLine, this._pendingRevealPositionOptions.textRangeToSelect.startColumn);
+                let mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._pendingRevealPositionOptions.textRangeToSelect.endLine, this._pendingRevealPositionOptions.textRangeToSelect.endColumn);
+                this._pendingRevealPositionOptions.textRangeToSelect = new WI.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
             }
 
             if (!isNaN(this._executionLineNumber)) {
@@ -957,15 +976,15 @@ WI.TextEditor = class TextEditor extends WI.View
             newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
             newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
         } else {
-            if (this._positionToReveal) {
-                let newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                this._positionToReveal = new WI.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
+            if (this._pendingPositionToReveal) {
+                let newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._pendingPositionToReveal.lineNumber, this._pendingPositionToReveal.columnNumber);
+                this._pendingPositionToReveal = new WI.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
             }
 
-            if (this._textRangeToSelect) {
-                let mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                let mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                this._textRangeToSelect = new WI.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
+            if (this._pendingRevealPositionOptions?.textRangeToSelect) {
+                let mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._pendingRevealPositionOptions.textRangeToSelect.startLine, this._pendingRevealPositionOptions.textRangeToSelect.startColumn);
+                let mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._pendingRevealPositionOptions.textRangeToSelect.endLine, this._pendingRevealPositionOptions.textRangeToSelect.endColumn);
+                this._pendingRevealPositionOptions.textRangeToSelect = new WI.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
             }
 
             if (!isNaN(this._executionLineNumber)) {
@@ -1071,15 +1090,13 @@ WI.TextEditor = class TextEditor extends WI.View
 
     _revealPendingPositionIfPossible()
     {
-        // Nothing to do if we don't have a pending position.
-        if (!this._positionToReveal)
+        if (!this._pendingPositionToReveal)
             return;
 
-        // Don't try to reveal unless we are visible.
         if (!this.isAttached)
             return;
 
-        this.revealPosition(this._positionToReveal, this._textRangeToSelect, this._forceUnformatted);
+        this.revealPosition(this._pendingPositionToReveal, this._pendingRevealPositionOptions);
     }
 
     _revealSearchResult(result, changeFocus, directionInCaseOfRevalidation)

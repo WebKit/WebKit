@@ -142,11 +142,8 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);
         WI.networkManager.addLocalResourceOverride(newLocalResourceOverride);
 
-        if (wasSelected) {
-            const cookie = null;
-            const options = {ignoreNetworkTab: true, ignoreSearchTab: true};
-            WI.showRepresentedObject(newLocalResourceOverride, cookie, options);
-        }
+        if (wasSelected)
+            WI.showLocalResourceOverride(newLocalResourceOverride, {overriddenResource: this._localResourceOverride});
     }
 
     // Private

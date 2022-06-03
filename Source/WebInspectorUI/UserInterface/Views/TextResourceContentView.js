@@ -109,9 +109,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         return objects;
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._textEditor.revealPosition(position, options);
     }
 
     closed()

@@ -1458,7 +1458,37 @@ WI.showRepresentedObject = function(representedObject, cookie, options = {})
 WI.showLocalResourceOverride = function(localResourceOverride, options = {})
 {
     console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
-    const cookie = null;
+
+    let cookie = {};
+
+    switch (localResourceOverride.type) {
+    case WI.LocalResourceOverride.InterceptType.Response:
+    case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
+        if (options.overriddenResource) {
+            const onlyExisting = true;
+            let contentView = WI.ContentView.contentViewForRepresentedObject(options.overriddenResource, onlyExisting);
+
+            let textEditor = null;
+            if (contentView instanceof WI.ResourceClusterContentView)
+                contentView = contentView.responseContentView;
+            if (contentView instanceof WI.TextResourceContentView)
+                textEditor = contentView.textEditor;
+
+            if (textEditor) {
+                let selectedTextRange = textEditor.selectedTextRange;
+                cookie.startLine = selectedTextRange.startLine;
+                cookie.startColumn = selectedTextRange.startColumn;
+                cookie.endLine = selectedTextRange.endLine;
+                cookie.endColumn = selectedTextRange.endColumn;
+
+                let scrollOffset = textEditor.scrollOffset;
+                cookie.scrollOffsetX = scrollOffset.x;
+                cookie.scrollOffsetY = scrollOffset.y;
+            }
+        }
+        break;
+    }
+
     WI.showRepresentedObject(localResourceOverride, cookie, {...options, ignoreNetworkTab: true, ignoreSearchTab: true});
 };
 

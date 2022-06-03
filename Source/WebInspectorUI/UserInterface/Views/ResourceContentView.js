@@ -326,7 +326,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         let initialContent = requestInitialContent ? await this.requestLocalResourceOverrideInitialContent() : {};
         let localResourceOverride = await this._resource.createLocalResourceOverride(type, initialContent);
         WI.networkManager.addLocalResourceOverride(localResourceOverride);
-        WI.showLocalResourceOverride(localResourceOverride);
+        WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this._resource});
     }
 
     _populateCreateLocalResourceOverrideContextMenu(contextMenu, event)
@@ -378,7 +378,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             });
 
             if (!this._resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride);
+                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this._resource});
         });
     }
 
