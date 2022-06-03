@@ -1010,17 +1010,14 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         parseError();
-        m_token.appendToComment('-');
-        m_token.appendToComment('-');
+        m_token.appendToComment("--"_s);
         m_token.appendToComment(character);
         ADVANCE_TO(CommentState);
     END_STATE()
 
     BEGIN_STATE(CommentEndBangState)
         if (character == '-') {
-            m_token.appendToComment('-');
-            m_token.appendToComment('-');
-            m_token.appendToComment('!');
+            m_token.appendToComment("--!"_s);
             ADVANCE_PAST_NON_NEWLINE_TO(CommentEndDashState);
         }
         if (character == '>')
@@ -1029,9 +1026,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
             return emitAndReconsumeInDataState();
         }
-        m_token.appendToComment('-');
-        m_token.appendToComment('-');
-        m_token.appendToComment('!');
+        m_token.appendToComment("--!"_s);
         m_token.appendToComment(character);
         ADVANCE_TO(CommentState);
     END_STATE()

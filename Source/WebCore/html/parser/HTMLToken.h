@@ -130,6 +130,8 @@ public:
     bool commentIsAll8BitData() const;
 
     void beginComment();
+    void appendToComment(char);
+    void appendToComment(ASCIILiteral);
     void appendToComment(UChar);
 
 private:
@@ -405,6 +407,19 @@ inline void HTMLToken::beginComment()
 {
     ASSERT(m_type == Uninitialized);
     m_type = Comment;
+}
+
+inline void HTMLToken::appendToComment(char character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Comment);
+    m_data.append(character);
+}
+
+inline void HTMLToken::appendToComment(ASCIILiteral literal)
+{
+    ASSERT(m_type == Comment);
+    m_data.append(literal.characters8(), literal.length());
 }
 
 inline void HTMLToken::appendToComment(UChar character)
