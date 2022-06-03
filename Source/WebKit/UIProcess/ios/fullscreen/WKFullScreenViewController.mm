@@ -33,7 +33,7 @@
 #import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKFullscreenStackView.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
@@ -491,7 +491,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_touchDetected:(id)sender
 {
     ASSERT(_valid);
-    if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded) {
+    if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded && !self._webView._shouldAvoidSecurityHeuristicScoreUpdates) {
         double score = _secheuristic.scoreOfNextTouch([_touchGestureRecognizer locationInView:self.view]);
         if (score > _secheuristic.requiredScore())
             [self _showPhishingAlert];

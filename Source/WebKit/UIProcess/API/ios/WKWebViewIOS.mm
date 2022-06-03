@@ -40,7 +40,7 @@
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListItemInternal.h"
-#import "WKContentView.h"
+#import "WKContentViewInteraction.h"
 #import "WKPasswordView.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
@@ -2740,6 +2740,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         [_contentView buildMenuForWebViewWithBuilder:builder];
 
     [super buildMenuWithBuilder:builder];
+}
+
+- (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
+{
+    return [_contentView _shouldAvoidSecurityHeuristicScoreUpdates];
 }
 
 #if HAVE(UIFINDINTERACTION)
