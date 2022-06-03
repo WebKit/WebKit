@@ -814,8 +814,6 @@ void KeyframeEffect::keyframesRuleDidChange()
 
 ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
-    Ref protectedDocument { document };
-
     // 1. If object is null, return an empty sequence of keyframes.
     if (!keyframesInput.get())
         return { };
