@@ -658,7 +658,7 @@ inline void AXObjectCache::textChanged(Node*) { }
 inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
-inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
+inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
 inline void AXObjectCache::remove(Node&) { }
