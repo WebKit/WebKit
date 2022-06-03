@@ -201,6 +201,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXDescribedByChanged:
         break;
+    case AXHasPopupChanged:
+        break;
     }
 }
 

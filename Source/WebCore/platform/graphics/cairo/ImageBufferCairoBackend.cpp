@@ -96,6 +96,7 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
 #else
     ASSERT(newColorSpace == DestinationColorSpace::SRGB());
     ASSERT(m_parameters.colorSpace == DestinationColorSpace::SRGB());
+    UNUSED_PARAM(newColorSpace);
 #endif
 }
 
