@@ -683,14 +683,14 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 
     ResolverScopes resolverScopes;
 
-    resolverScopes.add(*resolverIfExists(), Vector<CheckedPtr<Scope>> { this });
+    resolverScopes.add(*resolverIfExists(), Vector<WeakPtr<Scope>> { this });
 
     for (auto* shadowRoot : m_document.inDocumentShadowRoots()) {
         auto& scope = shadowRoot->styleScope();
         auto* resolver = scope.resolverIfExists();
         if (!resolver)
             continue;
-        resolverScopes.add(*resolver, Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
+        resolverScopes.add(*resolver, Vector<WeakPtr<Scope>> { }).iterator->value.append(&scope);
     }
     return resolverScopes;
 }
