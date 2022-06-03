@@ -21,7 +21,6 @@
 #include "TextureMapperLayer.h"
 
 #include "FloatQuad.h"
-#include "GraphicsLayerTextureMapper.h"
 #include "Region.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
@@ -505,15 +504,6 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
 
     paintUsingOverlapRegions(options);
 }
-
-#if !USE(COORDINATED_GRAPHICS)
-void TextureMapperLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
-{
-    removeAllChildren();
-    for (auto* child : newChildren)
-        addChild(&downcast<GraphicsLayerTextureMapper>(child)->layer());
-}
-#endif
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
 {

@@ -417,10 +417,10 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         return;
 
     if (m_changeMask & ChildrenChange) {
-        Vector<GraphicsLayer*> rawChildren;
+        Vector<TextureMapperLayer*> rawChildren;
         rawChildren.reserveInitialCapacity(children().size());
-        for (auto& layer : children())
-            rawChildren.uncheckedAppend(layer.ptr());
+        for (auto& child : children())
+            rawChildren.uncheckedAppend(&downcast<GraphicsLayerTextureMapper>(child.get()).layer());
         m_layer.setChildren(rawChildren);
     }
 
