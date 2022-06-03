@@ -436,7 +436,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     _mouseWasClicked(event)
     {
-        WI.handlePossibleLinkClick(event, this._resource.parentFrame);
+        WI.handlePossibleLinkClick(event, {frame: this._resource.parentFrame});
     }
 };
 

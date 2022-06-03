@@ -233,13 +233,12 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
         else if (options.sourceCode)
             WI.showSourceCode(options.sourceCode, options);
         else
-            WI.openURL(url, options.frame, options);
+            WI.openURL(url, options);
     }
 
     if (!url.startsWith("javascript:") && !url.startsWith("data:")) {
         contextMenu.appendItem(WI.UIString("Open in New Window", "Open in New Window @ Context Menu Item", "Context menu item for opening the target item in a new window."), () => {
-            const frame = null;
-            WI.openURL(url, frame, {alwaysOpenExternally: true});
+            WI.openURL(url, {alwaysOpenExternally: true});
         });
     }
 

@@ -1060,7 +1060,7 @@ WI.updateFindString = function(findString)
     return true;
 };
 
-WI.handlePossibleLinkClick = function(event, frame, options = {})
+WI.handlePossibleLinkClick = function(event, options = {})
 {
     let anchorElement = event.target.closest("a");
     if (!anchorElement || !anchorElement.href)
@@ -1075,7 +1075,7 @@ WI.handlePossibleLinkClick = function(event, frame, options = {})
     event.preventDefault();
     event.stopPropagation();
 
-    WI.openURL(anchorElement.href, frame, {
+    WI.openURL(anchorElement.href, {
         ...options,
         lineNumber: anchorElement.lineNumber,
         ignoreSearchTab: !WI.isShowingSearchTab(),
@@ -1084,19 +1084,17 @@ WI.handlePossibleLinkClick = function(event, frame, options = {})
     return true;
 };
 
-WI.openURL = function(url, frame, options = {})
+WI.openURL = function(url, {alwaysOpenExternally, frame, ...options} = {})
 {
     console.assert(url);
     if (!url)
         return;
 
-    console.assert(typeof options.lineNumber === "undefined" || typeof options.lineNumber === "number", "lineNumber should be a number.");
-
     // If alwaysOpenExternally is not defined, base it off the command/meta key for the current event.
-    if (options.alwaysOpenExternally === undefined || options.alwaysOpenExternally === null)
-        options.alwaysOpenExternally = window.event ? window.event.metaKey : false;
+    if (alwaysOpenExternally === undefined || alwaysOpenExternally === null)
+        alwaysOpenExternally = window.event?.metaKey ?? false;
 
-    if (options.alwaysOpenExternally) {
+    if (alwaysOpenExternally) {
         InspectorFrontendHost.openURLExternally(url);
         return;
     }
@@ -1119,6 +1117,8 @@ WI.openURL = function(url, frame, options = {})
         // Context menu selections may go through this code path; don't clobber the previously-set hint.
         if (!options.initiatorHint)
             options.initiatorHint = WI.TabBrowser.TabNavigationInitiator.LinkClick;
+
+        console.assert(typeof options.lineNumber === "undefined" || typeof options.lineNumber === "number");
         let positionToReveal = new WI.SourceCodePosition(options.lineNumber, 0);
         WI.showSourceCode(resource, {...options, positionToReveal});
         return;

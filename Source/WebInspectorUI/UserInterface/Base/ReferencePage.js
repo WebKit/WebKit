@@ -56,6 +56,12 @@ WI.ReferencePage = class ReferencePage {
         link.className = "reference-page-link";
         link.href = link.title = url;
         link.textContent = "?";
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            WI.openURL(link.href, {alwaysOpenExternally: true});
+        });
 
         return wrapper;
     }
