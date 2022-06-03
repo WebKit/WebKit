@@ -225,7 +225,12 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         auto& style = layoutBox.style();
         auto logicalWidthType = flexDirectionIsInlineAxis ? style.width().type() : style.height().type();
         auto logicalHeightType = flexDirectionIsInlineAxis ? style.height().type() : style.width().type();
-        logicalFlexItemList[index] = { flexItemList[index].marginRect, logicalWidthType, logicalHeightType, layoutBox };
+        logicalFlexItemList[index] = { flexItemList[index].marginRect
+            , logicalWidthType
+            , logicalHeightType
+            // FIXME: Convert to logical intrinsic width
+            , *formattingState.intrinsicWidthConstraintsForBox(layoutBox)
+            , layoutBox };
     }
     return logicalFlexItemList;
 }
@@ -285,7 +290,7 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
 {
     auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(flexConstraints);
-    auto flexLayout = FlexLayout { formattingState(), root().style() };
+    auto flexLayout = FlexLayout { root().style() };
     flexLayout.layout(flexConstraints, logicalFlexItems);
     setFlexItemsGeometry(logicalFlexItems, flexConstraints);
 }

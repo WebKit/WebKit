@@ -34,9 +34,8 @@
 namespace WebCore {
 namespace Layout {
 
-FlexLayout::FlexLayout(const FlexFormattingState& formattingState, const RenderStyle& flexBoxStyle)
-    : m_formattingState(formattingState)
-    , m_flexBoxStyle(flexBoxStyle)
+FlexLayout::FlexLayout(const RenderStyle& flexBoxStyle)
+    : m_flexBoxStyle(flexBoxStyle)
 {
 }
 
@@ -80,8 +79,6 @@ LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(LogicalFlexItems& 
 
 void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
 {
-    auto& formattingState = this->formattingState();
-
     auto totalShrink = 0.f;
     auto totalFlexibleSpace = LayoutUnit { };
     auto flexShrinkBase = 0.f;
@@ -103,7 +100,7 @@ void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flex
             auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.width();
             if (auto shrinkValue = style.flexShrink()) {
                 auto flexShrink = shrinkValue * baseSize;
-                shrinkingItems.append({ flexShrink, formattingState.intrinsicWidthConstraintsForBox(flexItem.layoutBox())->minimum, baseSize, flexItem, { } });
+                shrinkingItems.append({ flexShrink, flexItem.minimumContentWidth(), baseSize, flexItem, { } });
                 totalShrink += flexShrink;
                 totalFlexibleSpace += baseSize;
             } else
@@ -148,8 +145,6 @@ void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flex
 
 void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
 {
-    auto& formattingState = this->formattingState();
-
     auto totalFlexibleSpace = LayoutUnit { };
     auto totalGrowth = 0.f;
     auto flexGrowBase = 0.f;
@@ -170,7 +165,7 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
             auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.width();
             if (auto growValue = style.flexGrow()) {
                 auto flexGrow = growValue * baseSize;
-                stretchingItems.append({ flexGrow, formattingState.intrinsicWidthConstraintsForBox(flexItem.layoutBox())->minimum, baseSize, flexItem, { } });
+                stretchingItems.append({ flexGrow, flexItem.minimumContentWidth(), baseSize, flexItem, { } });
                 totalGrowth += flexGrow;
                 totalFlexibleSpace += baseSize;
             } else

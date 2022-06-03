@@ -38,11 +38,11 @@ namespace Layout {
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexLayout {
 public:
-    FlexLayout(const FlexFormattingState&, const RenderStyle& flexBoxStyle);
+    FlexLayout(const RenderStyle& flexBoxStyle);
 
     struct LogicalFlexItem {
     public:
-        LogicalFlexItem(const FlexRect&, LengthType widthType, LengthType heightType, const ContainerBox&);
+        LogicalFlexItem(const FlexRect&, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints, const ContainerBox&);
         LogicalFlexItem() = default;
 
         void setTop(LayoutUnit top) { m_marginRect.value.setTop(top); }
@@ -61,6 +61,8 @@ public:
 
         bool isHeightAuto() const { return m_marginRect.heightType == LengthType::Auto; }
 
+        LayoutUnit minimumContentWidth() const { return m_intrinsicWidthConstraints.minimum; }
+
         const RenderStyle& style() const { return m_layoutBox->style(); }
         const ContainerBox& layoutBox() const { return *m_layoutBox; }
 
@@ -71,6 +73,7 @@ public:
             LengthType heightType { LengthType::Auto };
         };
         MarginRect m_marginRect { };
+        IntrinsicWidthConstraints m_intrinsicWidthConstraints { };
         CheckedPtr<const ContainerBox> m_layoutBox;        
     };
     using LogicalFlexItems = Vector<LogicalFlexItem>;    
@@ -86,15 +89,14 @@ private:
     LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
     LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
 
-    const FlexFormattingState& formattingState() const { return m_formattingState; }
     const RenderStyle& flexBoxStyle() const { return m_flexBoxStyle; }
 
-    const FlexFormattingState& m_formattingState;
     const RenderStyle& m_flexBoxStyle;
 };
 
-inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, LengthType widthType, LengthType heightType, const ContainerBox& layoutBox)
+inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints intrinsicWidthConstraints, const ContainerBox& layoutBox)
     : m_marginRect({ marginRect, widthType, heightType })
+    , m_intrinsicWidthConstraints(intrinsicWidthConstraints)
     , m_layoutBox(layoutBox)
 {
 }
