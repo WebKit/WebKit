@@ -5291,3 +5291,6 @@ webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Imag
 
 # Image controls menu is mac only.
 fast/attachment/attachment-image-controls-basic.html [ Skip ]
+
+# This test requires a system font that has Bulgarian-specific shaping.
+fast/text/bulgarian-system-language-shaping.html [ ImageOnlyFailure ]
