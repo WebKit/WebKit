@@ -219,34 +219,34 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
     auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
     for (size_t index = 0; index < flexItemList.size(); ++index)
-        logicalFlexItemList[index] = { flexItemList[index].marginRect, flexItemList[index].layoutBox };
+        logicalFlexItemList[index] = { flexItemList[index].marginRect, *flexItemList[index].layoutBox };
     return logicalFlexItemList;
 }
 
 void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexItems& logicalFlexItemList, const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto logicalWidth = logicalFlexItemList.last().marginRect.right() - logicalFlexItemList.first().marginRect.left();
+    auto logicalWidth = logicalFlexItemList.last().right() - logicalFlexItemList.first().left();
     auto direction = root().style().flexDirection();
     for (auto& logicalFlexItem : logicalFlexItemList) {
-        auto& flexItemGeometry = formattingState.boxGeometry(*logicalFlexItem.layoutBox);
+        auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.layoutBox());
         auto borderBoxTopLeft = LayoutPoint { };
 
         switch (direction) {
         case FlexDirection::Row:
             borderBoxTopLeft = {
-                constraints.horizontal().logicalLeft + logicalFlexItem.marginRect.left() + flexItemGeometry.marginStart(),
-                constraints.logicalTop() + logicalFlexItem.marginRect.top()
+                constraints.horizontal().logicalLeft + logicalFlexItem.left() + flexItemGeometry.marginStart(),
+                constraints.logicalTop() + logicalFlexItem.top()
             };
             break;
         case FlexDirection::RowReverse:
             borderBoxTopLeft = {
-                constraints.horizontal().logicalRight() - logicalFlexItem.marginRect.right() + flexItemGeometry.marginStart(),
-                constraints.logicalTop() + logicalFlexItem.marginRect.top()
+                constraints.horizontal().logicalRight() - logicalFlexItem.right() + flexItemGeometry.marginStart(),
+                constraints.logicalTop() + logicalFlexItem.top()
             };
             break;
         case FlexDirection::Column: {
-            auto flippedTopLeft = logicalFlexItem.marginRect.topLeft().transposedPoint();
+            auto flippedTopLeft = logicalFlexItem.topLeft().transposedPoint();
             borderBoxTopLeft = {
                 constraints.horizontal().logicalLeft + flippedTopLeft.x(),
                 constraints.logicalTop() + flippedTopLeft.y() + flexItemGeometry.marginBefore()
@@ -255,8 +255,8 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
         case FlexDirection::ColumnReverse:
             borderBoxTopLeft = {
-                constraints.horizontal().logicalLeft + logicalFlexItem.marginRect.top(),
-                constraints.logicalTop() + logicalWidth - logicalFlexItem.marginRect.right() + flexItemGeometry.marginBefore()
+                constraints.horizontal().logicalLeft + logicalFlexItem.top(),
+                constraints.logicalTop() + logicalWidth - logicalFlexItem.right() + flexItemGeometry.marginBefore()
             };
             break;
         default:
@@ -265,11 +265,11 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
         flexItemGeometry.setLogicalTopLeft(borderBoxTopLeft);
         if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse) {
-            flexItemGeometry.setContentBoxWidth(logicalFlexItem.marginRect.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
-            flexItemGeometry.setContentBoxHeight(logicalFlexItem.marginRect.height() - flexItemGeometry.verticalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.width() - flexItemGeometry.horizontalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.height() - flexItemGeometry.verticalMarginBorderAndPadding());
         } else {
-            flexItemGeometry.setContentBoxWidth(logicalFlexItem.marginRect.height() - flexItemGeometry.horizontalMarginBorderAndPadding());
-            flexItemGeometry.setContentBoxHeight(logicalFlexItem.marginRect.width() - flexItemGeometry.verticalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxWidth(logicalFlexItem.height() - flexItemGeometry.horizontalMarginBorderAndPadding());
+            flexItemGeometry.setContentBoxHeight(logicalFlexItem.width() - flexItemGeometry.verticalMarginBorderAndPadding());
         }
     }
 }

@@ -41,8 +41,30 @@ public:
     FlexLayout(const FlexFormattingState&, const RenderStyle& flexBoxStyle);
 
     struct LogicalFlexItem {
-        FlexRect marginRect;
-        CheckedPtr<const ContainerBox> layoutBox;        
+    public:
+        LogicalFlexItem(const FlexRect&, const ContainerBox&);
+        LogicalFlexItem() = default;
+
+        void setTop(LayoutUnit top) { m_marginRect.setTop(top); }
+        void setLeft(LayoutUnit left) { m_marginRect.setLeft(left); }
+        void setWidth(LayoutUnit width) { m_marginRect.setWidth(width); }
+        void setHeight(LayoutUnit height) { m_marginRect.setHeight(height); }
+
+        FlexRect rect() const { return m_marginRect; }
+        LayoutPoint topLeft() const { return m_marginRect.topLeft(); }
+        LayoutUnit top() const { return m_marginRect.top(); }
+        LayoutUnit bottom() const { return m_marginRect.bottom(); }
+        LayoutUnit left() const { return m_marginRect.left(); }
+        LayoutUnit right() const { return m_marginRect.right(); }
+        LayoutUnit width() const { return m_marginRect.width(); }
+        LayoutUnit height() const { return m_marginRect.height(); }
+
+        const RenderStyle& style() const { return m_layoutBox->style(); }
+        const ContainerBox& layoutBox() const { return *m_layoutBox; }
+
+    private:
+        FlexRect m_marginRect;
+        CheckedPtr<const ContainerBox> m_layoutBox;        
     };
     using LogicalFlexItems = Vector<LogicalFlexItem>;    
     void layout(const ConstraintsForFlexContent&, LogicalFlexItems&);
@@ -63,6 +85,12 @@ private:
     const FlexFormattingState& m_formattingState;
     const RenderStyle& m_flexBoxStyle;
 };
+
+inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, const ContainerBox& layoutBox)
+    : m_marginRect(marginRect)
+    , m_layoutBox(layoutBox)
+{
+}
 
 }
 }
