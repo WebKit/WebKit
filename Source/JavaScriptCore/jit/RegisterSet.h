@@ -61,7 +61,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     static RegisterSet webAssemblyCalleeSaveRegisters(); // Registers saved and used by the WebAssembly JIT.
 #endif
-    static RegisterSet volatileRegistersForJSCall();
+    JS_EXPORT_PRIVATE static RegisterSet volatileRegistersForJSCall();
     static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     JS_EXPORT_PRIVATE static RegisterSet macroScratchRegisters();
     JS_EXPORT_PRIVATE static RegisterSet allGPRs();
