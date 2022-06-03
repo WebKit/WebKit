@@ -7889,6 +7889,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (intent == WebKit::PasteboardAccessIntent::Write)
         return coreDataOwnerType(self._dataOwnerForCopy);
 
+#if !PLATFORM(MACCATALYST)
+    if ([[PAL::getMCProfileConnectionClass() sharedConnection] isURLManaged:[_webView URL]])
+        return WebCore::DataOwnerType::Enterprise;
+#endif
+
     ASSERT_NOT_REACHED();
     return WebCore::DataOwnerType::Undefined;
 }
