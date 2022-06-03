@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
-#import "ProcessStateMonitor.h"
 #import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
 #import <UIKit/UIApplication.h>
@@ -74,7 +73,6 @@ static bool processHasActiveRunTimeLimitation()
     std::atomic<bool> _backgroundTaskWasInvalidated;
     WeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     dispatch_block_t _pendingTaskReleaseTask;
-    std::unique_ptr<WebKit::ProcessStateMonitor> m_processStateMonitor;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
@@ -94,20 +92,11 @@ static bool processHasActiveRunTimeLimitation()
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
         [self _cancelPendingReleaseTask];
         [self _updateBackgroundTask];
-
-        m_processStateMonitor = nullptr;
     }];
 
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
         if (![self _hasBackgroundTask])
             WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
-
-        if (!m_processStateMonitor) {
-            m_processStateMonitor = makeUnique<WebKit::ProcessStateMonitor>([](bool suspended) {
-                for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
-                    processPool->setProcessesShouldSuspend(suspended);
-            });
-        }
     }];
 
     return self;
@@ -253,11 +242,8 @@ static bool processHasActiveRunTimeLimitation()
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: endBackgroundTask", self);
-    if (processHasActiveRunTimeLimitation()) {
+    if (processHasActiveRunTimeLimitation())
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
-        if (m_processStateMonitor)
-            m_processStateMonitor->processWillBeSuspendedImmediately();
-    }
 
     [_backgroundTask removeObserver:self];
     [_backgroundTask invalidate];
