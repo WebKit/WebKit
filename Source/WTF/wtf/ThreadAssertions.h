@@ -41,11 +41,11 @@ namespace WTF {
 //     void doTask() { assertIsCurrent(m_ownerThread); doTaskImpl(); }
 //     template<typename> void doTaskCompileFailure() { doTaskImpl(); }
 // private:
-//     void doTaskImpl() WTF_REQUIRES_LOCK(m_ownerThread);
-//     int m_value WTF_GUARDED_BY_LOCK(m_ownerThread) { 0 };
+//     void doTaskImpl() WTF_REQUIRES_CAPABILITY(m_ownerThread);
+//     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
 //     NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
 // };
-class WTF_CAPABILITY_LOCK ThreadAssertion {
+class WTF_CAPABILITY("is current") ThreadAssertion {
 public:
     ThreadAssertion() = default;
     enum UninitializedTag { Uninitialized };
@@ -64,7 +64,7 @@ private:
     friend void assertIsCurrent(const ThreadAssertion&);
 };
 
-inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_ACQUIRED_LOCK(threadAssertion)
+inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_ACQUIRED_CAPABILITY(threadAssertion)
 {
     ASSERT_UNUSED(threadAssertion, Thread::current().uid() == threadAssertion.m_uid);
 }
@@ -74,8 +74,8 @@ inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_
 // a known named thread.
 // Example:
 // extern NamedAssertion& mainThread;
-// inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_LOCK(mainThread);
-// void myTask() WTF_REQUIRES_LOCK(mainThread) { printf("my task is running"); }
+// inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread);
+// void myTask() WTF_REQUIRES_CAPABILITY(mainThread) { printf("my task is running"); }
 // void runner() {
 //     assertIsMainThread();
 //     myTask();
@@ -83,15 +83,15 @@ inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_
 // template<typename> runnerCompileFailure() {
 //     myTask();
 // }
-class WTF_CAPABILITY_LOCK NamedAssertion { };
+class WTF_CAPABILITY("is current") NamedAssertion { };
 
-// To be used with WTF_REQUIRES_LOCK(mainThread). Symbol is undefined.
+// To be used with WTF_REQUIRES_CAPABILITY(mainThread). Symbol is undefined.
 extern NamedAssertion& mainThread;
-inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_LOCK(mainThread) { ASSERT(isMainThread()); }
+inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread) { ASSERT(isMainThread()); }
 
-// To be used with WTF_REQUIRES_LOCK(mainRunLoop). Symbol is undefined.
+// To be used with WTF_REQUIRES_CAPABILITY(mainRunLoop). Symbol is undefined.
 extern NamedAssertion& mainRunLoop;
-inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_LOCK(mainRunLoop) { ASSERT(isMainRunLoop()); }
+inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) { ASSERT(isMainRunLoop()); }
 
 }
 
