@@ -672,12 +672,12 @@ static constexpr double mmPerInch = 25.4;
 static constexpr double cmPerInch = 2.54;
 static constexpr double QPerInch = 25.4 * 4.0;
 
-static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderStyle* rootElementStyle)
+static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderStyle* style)
 {
-    if (!rootElementStyle)
+    if (!style)
         return 0;
 
-    switch (mapLogicalAxisToPhysicalAxis(makeTextFlow(rootElementStyle->writingMode(), rootElementStyle->direction()), logicalAxis)) {
+    switch (mapLogicalAxisToPhysicalAxis(makeTextFlow(style->writingMode(), style->direction()), logicalAxis)) {
     case BoxAxis::Horizontal:
         return size.width();
 
@@ -849,10 +849,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return value * conversionData.defaultViewportFactor().minDimension();
 
     case CSSUnitType::CSS_VB:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.defaultViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.defaultViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_VI:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.defaultViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.defaultViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_SVH:
         return value * conversionData.smallViewportFactor().height();
@@ -867,10 +867,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return value * conversionData.smallViewportFactor().minDimension();
 
     case CSSUnitType::CSS_SVB:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.smallViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.smallViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_SVI:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.smallViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.smallViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_LVH:
         return value * conversionData.largeViewportFactor().height();
@@ -885,10 +885,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return value * conversionData.largeViewportFactor().minDimension();
 
     case CSSUnitType::CSS_LVB:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.largeViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.largeViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_LVI:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.largeViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.largeViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_DVH:
         return value * conversionData.dynamicViewportFactor().height();
@@ -903,10 +903,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return value * conversionData.dynamicViewportFactor().minDimension();
 
     case CSSUnitType::CSS_DVB:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.dynamicViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.dynamicViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_DVI:
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.dynamicViewportFactor(), conversionData.rootStyle());
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.dynamicViewportFactor(), conversionData.style());
 
     case CSSUnitType::CSS_LHS:
         ASSERT(conversionData.style());
