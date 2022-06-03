@@ -39,7 +39,7 @@ namespace WebCore {
 class PixelBuffer : public RefCounted<PixelBuffer> {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
-    static bool supportedPixelFormat(PixelFormat);
+    WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
     WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     WEBCORE_EXPORT static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
