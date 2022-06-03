@@ -41,7 +41,7 @@ namespace WebCore {
 class PixelBuffer {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
-    static bool supportedPixelFormat(PixelFormat);
+    WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
     WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
