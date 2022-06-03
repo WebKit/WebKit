@@ -31,45 +31,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
         this._flexNodeSet = null;
         this._gridNodeSet = null;
-        this._nodeStyles = null;
         this.element.classList.add("layout-panel");
-    }
-
-    // Public
-
-    inspect(objects)
-    {
-        // Layout panel doesn't show when hasDOMNode is false.
-        let hasDOMNode = super.inspect(objects);
-        if (!hasDOMNode)
-            return false;
-
-        let stylesForNode = WI.cssManager.stylesForNode(this.domNode);
-        stylesForNode.refreshIfNeeded().then((nodeStyles) => {
-            if (nodeStyles === this._nodeStyles)
-                return;
-
-            if (this._nodeStyles) {
-                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
-                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
-            }
-
-            this._nodeStyles = nodeStyles;
-
-            if (this._nodeStyles) {
-                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
-                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
-            }
-
-            this.needsLayout();
-        });
-
-        return hasDOMNode;
-    }
-
-    supportsDOMNode(nodeToInspect)
-    {
-        return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
     // Protected
@@ -188,18 +150,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
             return;
 
         this.needsLayout();
-    }
-
-    _nodeStylesRefreshed()
-    {
-        if (this.isAttached)
-            this.needsLayout();
-    }
-
-    _nodeStylesNeedsRefreshed()
-    {
-        if (this.isAttached)
-            this._nodeStyles?.refresh();
     }
 
     _removeNodeFromNodeSets(domNode)
