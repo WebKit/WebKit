@@ -1719,3 +1719,4 @@ webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/w
 
 webkit.org/b/241191 [ Monterey Debug ] webgl/1.0.3/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]
 
+webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
