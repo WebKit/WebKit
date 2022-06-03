@@ -70,13 +70,10 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     switch (styleAppearance) {
     case SliderThumbHorizontalPart:
     case SliderHorizontalPart:
-    case MediaSliderPart:
-    case MediaFullScreenVolumeSliderPart:
         return AccessibilityOrientation::Horizontal;
     
     case SliderThumbVerticalPart: 
     case SliderVerticalPart:
-    case MediaVolumeSliderPart:
         return AccessibilityOrientation::Vertical;
         
     default:

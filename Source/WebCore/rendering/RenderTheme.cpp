@@ -292,9 +292,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustMenuListStyle(style, element);
     case MenulistButtonPart:
         return adjustMenuListButtonStyle(style, element);
-    case MediaSliderPart:
-    case MediaVolumeSliderPart:
-    case MediaFullScreenVolumeSliderPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
         return adjustSliderTrackStyle(style, element);
@@ -438,7 +435,7 @@ ControlPart RenderTheme::autoAppearanceForElement(const Element* elementPtr) con
                 return SearchFieldResultsButtonPart;
         }
 
-        if (pseudo == ShadowPseudoIds::webkitSliderThumb() || pseudo == ShadowPseudoIds::webkitMediaSliderThumb())
+        if (pseudo == ShadowPseudoIds::webkitSliderThumb())
             return SliderThumbHorizontalPart;
 
         if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
@@ -524,18 +521,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
         return paintSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaSliderPart:
-        return paintMediaSliderTrack(box, paintInfo, integralSnappedRect);
-    case MediaSliderThumbPart:
-        return paintMediaSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaVolumeSliderPart:
-        return paintMediaVolumeSliderTrack(box, paintInfo, integralSnappedRect);
-    case MediaVolumeSliderThumbPart:
-        return paintMediaVolumeSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaFullScreenVolumeSliderPart:
-        return paintMediaFullScreenVolumeSliderTrack(box, paintInfo, integralSnappedRect);
-    case MediaFullScreenVolumeSliderThumbPart:
-        return paintMediaFullScreenVolumeSliderThumb(box, paintInfo, integralSnappedRect);
     case MenulistButtonPart:
     case TextFieldPart:
     case TextAreaPart:

@@ -74,14 +74,7 @@ inline static Decimal sliderPosition(HTMLInputElement& element)
 inline static bool hasVerticalAppearance(HTMLInputElement& input)
 {
     ASSERT(input.renderer());
-    const RenderStyle& sliderStyle = input.renderer()->style();
-
-#if ENABLE(VIDEO)
-    if (sliderStyle.effectiveAppearance() == MediaVolumeSliderPart)
-        return true;
-#endif
-
-    return sliderStyle.effectiveAppearance() == SliderVerticalPart;
+    return input.renderer()->style().effectiveAppearance() == SliderVerticalPart;
 }
 
 // --------------------------------
@@ -176,6 +169,13 @@ void RenderSliderContainer::layout()
 }
 
 // --------------------------------
+
+Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
+{
+    auto element = adoptRef(*new SliderThumbElement(document));
+    element->setPseudo(ShadowPseudoIds::webkitSliderThumb());
+    return element;
+}
 
 SliderThumbElement::SliderThumbElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
@@ -555,28 +555,8 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
     if (!hostStyle)
         return std::nullopt;
 
-    switch (hostStyle->effectiveAppearance()) {
-    case MediaSliderPart:
-    case MediaVolumeSliderPart:
-    case MediaFullScreenVolumeSliderPart:
-        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderThumb();
-        break;
-    default:
-        m_shadowPseudoId = ShadowPseudoIds::webkitSliderThumb();
-        break;
-    }
-
     auto elementStyle = resolveStyle(resolutionContext);
     switch (hostStyle->effectiveAppearance()) {
-    case MediaSliderPart:
-        elementStyle.renderStyle->setEffectiveAppearance(MediaSliderThumbPart);
-        break;
-    case MediaVolumeSliderPart:
-        elementStyle.renderStyle->setEffectiveAppearance(MediaVolumeSliderThumbPart);
-        break;
-    case MediaFullScreenVolumeSliderPart:
-        elementStyle.renderStyle->setEffectiveAppearance(MediaFullScreenVolumeSliderThumbPart);
-        break;
     case SliderVerticalPart:
         elementStyle.renderStyle->setEffectiveAppearance(SliderThumbVerticalPart);
         break;
@@ -588,11 +568,6 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
     }
 
     return elementStyle;
-}
-
-const AtomString& SliderThumbElement::shadowPseudoId() const
-{
-    return m_shadowPseudoId;
 }
 
 Ref<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
@@ -610,37 +585,14 @@ inline SliderContainerElement::SliderContainerElement(Document& document)
 
 Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 {
-    return adoptRef(*new SliderContainerElement(document));
+    auto element = adoptRef(*new SliderContainerElement(document));
+    element->setPseudo(ShadowPseudoIds::webkitSliderContainer());
+    return element;
 }
 
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
-}
-
-std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* hostStyle)
-{
-    // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
-
-    if (!hostStyle)
-        return std::nullopt;
-
-    switch (hostStyle->effectiveAppearance()) {
-    case MediaSliderPart:
-    case MediaVolumeSliderPart:
-    case MediaFullScreenVolumeSliderPart:
-        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderContainer();
-        break;
-    default:
-        m_shadowPseudoId = ShadowPseudoIds::webkitSliderContainer();
-    }
-
-    return std::nullopt;
-}
-
-const AtomString& SliderContainerElement::shadowPseudoId() const
-{
-    return m_shadowPseudoId;
 }
 
 }

@@ -841,9 +841,6 @@ square-button
 button
 default-button
 listbox
-media-fullscreen-volume-slider
-media-slider
-media-volume-slider
 menulist
 menulist-button
 meter

@@ -218,10 +218,8 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
-    if (auto* renderer = element()->renderer()) {
-        ControlPart part = renderer->style().effectiveAppearance();
-        isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
-    }
+    if (auto* renderer = element()->renderer())
+        isVertical = renderer->style().effectiveAppearance() == SliderVerticalPart;
 
     Decimal newValue;
     if (key == "Up")
