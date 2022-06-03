@@ -37,9 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDepthTexture);
 WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    auto* gcgl = context.graphicsContextGL();
-    gcgl->ensureExtensionEnabled("GL_OES_depth_texture"_s);
-    gcgl->ensureExtensionEnabled("GL_ARB_depth_texture"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_depth_texture"_s);
 }
 
 WebGLDepthTexture::~WebGLDepthTexture() = default;

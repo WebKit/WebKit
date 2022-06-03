@@ -37,6 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTFragDepth);
 EXTFragDepth::EXTFragDepth(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_frag_depth"_s);
 }
 
 EXTFragDepth::~EXTFragDepth() = default;

@@ -41,6 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
 }
 
 OESVertexArrayObject::~OESVertexArrayObject() = default;
