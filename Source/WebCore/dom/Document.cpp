@@ -2207,8 +2207,9 @@ static bool isSafeToUpdateStyleOrLayout(const Document& document)
 
 bool Document::updateStyleIfNeeded()
 {
-    if (topDocument().isResolvingContainerQueries())
+    if (isResolvingContainerQueries())
         return false;
+
     RefPtr<FrameView> frameView = view();
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -2260,16 +2261,6 @@ void Document::updateLayout()
         return;
 
     frameView->layoutContext().layout();
-
-    Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
-    while (styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
-        updateStyleIfNeeded();
-
-        if (!frameView->layoutContext().needsLayout())
-            break;
-
-        frameView->layoutContext().layout();
-    }
 }
 
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)

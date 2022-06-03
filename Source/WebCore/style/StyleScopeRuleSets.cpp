@@ -163,6 +163,18 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
     return false;
 }
 
+bool ScopeRuleSets::hasContainerQueries() const
+{
+    if (m_authorStyle->hasContainerQueries())
+        return true;
+    if (m_userStyle && m_userStyle->hasContainerQueries())
+        return true;
+    if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasContainerQueries())
+        return true;
+
+    return false;
+}
+
 std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
     std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;

@@ -4553,8 +4553,6 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
         return descendantsDeque.first().ptr();
     };
 
-    Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
-
     for (unsigned i = 0; i < maxUpdatePasses; ++i) {
         bool didWork = false;
         DescendantsDeque deque;
@@ -4563,7 +4561,6 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
                 didWork = true;
             if (view->needsLayout()) {
                 view->layoutContext().layout();
-                view->frame().document()->styleScope().updateQueryContainerState(queryContainerUpdateContext);
                 didWork = true;
             }
         }

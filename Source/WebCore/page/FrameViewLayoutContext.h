@@ -127,6 +127,7 @@ private:
     friend class SubtreeLayoutStateMaintainer;
     friend class PaginatedLayoutStateMaintainer;
 
+    void performLayout();
     bool canPerformLayout() const;
     bool layoutDisallowed() const { return m_layoutDisallowedCount; }
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
