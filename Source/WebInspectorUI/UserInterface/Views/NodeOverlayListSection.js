@@ -125,11 +125,6 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
-                if (checkboxElement?.checked)
-                    domNode.showLayoutOverlay({color: event.data.value});
-            }, swatch);
-
-            swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, (event) => {
                 domNode.layoutOverlayColor = event.target.value;
             }, swatch);
 

@@ -709,6 +709,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         this._createLayoutOverlayColorSettingIfNeeded();
         this._layoutOverlayColorSetting.value = color.hsl;
+
+        if (this._layoutOverlayShowing)
+            this.showLayoutOverlay({color});
     }
 
     scrollIntoView()
