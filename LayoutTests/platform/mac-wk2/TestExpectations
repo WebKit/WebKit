@@ -1634,8 +1634,6 @@ webkit.org/b/239257 fast/forms/datetimelocal/datetimelocal-editable-components/d
 
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
-webkit.org/b/239307 [ Monterey+ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Pass Crash ]
-
 # [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
