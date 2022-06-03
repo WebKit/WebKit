@@ -1,0 +1,23 @@
+| "\n    "
+| <p>
+|   "Start of right to left content"
+| "\n    "
+| <blockquote>
+|   type="cite"
+|   "\n        "
+|   <p>
+|     dir="ltr"
+|     id="target"
+|     "Some quoted content"
+| <div>
+|   dir="auto"
+|   <#selection-caret>
+|   <br>
+| <blockquote>
+|   type="cite"
+|   "\n        "
+|   <p>
+|     dir="ltr"
+|     "End of quoted content"
+|   "\n    "
+| "\n"
