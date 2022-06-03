@@ -42,28 +42,35 @@ public:
 
     struct LogicalFlexItem {
     public:
-        LogicalFlexItem(const FlexRect&, const ContainerBox&);
+        LogicalFlexItem(const FlexRect&, LengthType widthType, LengthType heightType, const ContainerBox&);
         LogicalFlexItem() = default;
 
-        void setTop(LayoutUnit top) { m_marginRect.setTop(top); }
-        void setLeft(LayoutUnit left) { m_marginRect.setLeft(left); }
-        void setWidth(LayoutUnit width) { m_marginRect.setWidth(width); }
-        void setHeight(LayoutUnit height) { m_marginRect.setHeight(height); }
+        void setTop(LayoutUnit top) { m_marginRect.value.setTop(top); }
+        void setLeft(LayoutUnit left) { m_marginRect.value.setLeft(left); }
+        void setWidth(LayoutUnit width) { m_marginRect.value.setWidth(width); }
+        void setHeight(LayoutUnit height) { m_marginRect.value.setHeight(height); }
 
-        FlexRect rect() const { return m_marginRect; }
-        LayoutPoint topLeft() const { return m_marginRect.topLeft(); }
-        LayoutUnit top() const { return m_marginRect.top(); }
-        LayoutUnit bottom() const { return m_marginRect.bottom(); }
-        LayoutUnit left() const { return m_marginRect.left(); }
-        LayoutUnit right() const { return m_marginRect.right(); }
-        LayoutUnit width() const { return m_marginRect.width(); }
-        LayoutUnit height() const { return m_marginRect.height(); }
+        FlexRect rect() const { return m_marginRect.value; }
+        LayoutPoint topLeft() const { return m_marginRect.value.topLeft(); }
+        LayoutUnit top() const { return m_marginRect.value.top(); }
+        LayoutUnit bottom() const { return m_marginRect.value.bottom(); }
+        LayoutUnit left() const { return m_marginRect.value.left(); }
+        LayoutUnit right() const { return m_marginRect.value.right(); }
+        LayoutUnit width() const { return m_marginRect.value.width(); }
+        LayoutUnit height() const { return m_marginRect.value.height(); }
+
+        bool isHeightAuto() const { return m_marginRect.heightType == LengthType::Auto; }
 
         const RenderStyle& style() const { return m_layoutBox->style(); }
         const ContainerBox& layoutBox() const { return *m_layoutBox; }
 
     private:
-        FlexRect m_marginRect;
+        struct MarginRect {
+            FlexRect value;
+            LengthType widthType { LengthType::Auto };
+            LengthType heightType { LengthType::Auto };
+        };
+        MarginRect m_marginRect { };
         CheckedPtr<const ContainerBox> m_layoutBox;        
     };
     using LogicalFlexItems = Vector<LogicalFlexItem>;    
@@ -86,8 +93,8 @@ private:
     const RenderStyle& m_flexBoxStyle;
 };
 
-inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, const ContainerBox& layoutBox)
-    : m_marginRect(marginRect)
+inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, LengthType widthType, LengthType heightType, const ContainerBox& layoutBox)
+    : m_marginRect({ marginRect, widthType, heightType })
     , m_layoutBox(layoutBox)
 {
 }

@@ -217,9 +217,16 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     };
     reorderFlexItemsIfApplicable();
 
+    auto flexDirection = root().style().flexDirection();
+    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
-    for (size_t index = 0; index < flexItemList.size(); ++index)
-        logicalFlexItemList[index] = { flexItemList[index].marginRect, *flexItemList[index].layoutBox };
+    for (size_t index = 0; index < flexItemList.size(); ++index) {
+        auto& layoutBox = *flexItemList[index].layoutBox;
+        auto& style = layoutBox.style();
+        auto logicalWidthType = flexDirectionIsInlineAxis ? style.width().type() : style.height().type();
+        auto logicalHeightType = flexDirectionIsInlineAxis ? style.height().type() : style.width().type();
+        logicalFlexItemList[index] = { flexItemList[index].marginRect, logicalWidthType, logicalHeightType, layoutBox };
+    }
     return logicalFlexItemList;
 }
 

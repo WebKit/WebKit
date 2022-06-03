@@ -237,8 +237,7 @@ void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, L
     auto alignItems = flexBoxStyle().alignItems();
 
     for (auto& flexItem : flexItems) {
-        auto& height = flexItem.style().height();
-        if (!height.isAuto())
+        if (!flexItem.isHeightAuto())
             continue;
         switch (alignItems.position()) {
         case ItemPosition::Normal:
