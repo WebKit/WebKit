@@ -159,6 +159,7 @@ private:
 
     void bufferASCIICharacter(UChar);
     void bufferCharacter(UChar);
+    template<typename CharacterType> void bufferCharacters(Span<const CharacterType>);
 
     bool emitAndResumeInDataState(SegmentedString&);
     bool emitAndReconsumeInDataState();

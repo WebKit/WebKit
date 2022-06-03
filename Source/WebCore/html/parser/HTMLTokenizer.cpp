@@ -81,6 +81,16 @@ inline void HTMLTokenizer::bufferCharacter(UChar character)
     m_token.appendToCharacter(character);
 }
 
+template<typename CharacterType>
+inline void HTMLTokenizer::bufferCharacters(Span<const CharacterType> characters)
+{
+#if ASSERT_ENABLED
+    for (auto character : characters)
+        ASSERT(character != kEndOfFileMarker);
+#endif
+    m_token.appendToCharacter(characters);
+}
+
 inline bool HTMLTokenizer::emitAndResumeInDataState(SegmentedString& source)
 {
     saveEndTagNameIfNeeded();
@@ -130,8 +140,10 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
         ASSERT(decodedEntity.isEmpty());
         bufferASCIICharacter('&');
     } else {
-        for (unsigned i = 0; i < decodedEntity.length(); ++i)
-            bufferCharacter(decodedEntity[i]);
+        if (decodedEntity.is8Bit())
+            bufferCharacters(decodedEntity.span<LChar>());
+        else
+            bufferCharacters(decodedEntity.span<UChar>());
     }
     return true;
 }

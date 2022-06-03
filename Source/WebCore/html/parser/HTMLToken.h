@@ -122,6 +122,7 @@ public:
     void appendToCharacter(LChar);
     void appendToCharacter(UChar);
     void appendToCharacter(const Vector<LChar, 32>&);
+    template<typename CharacterType> void appendToCharacter(Span<const CharacterType>);
 
     // Comment.
 
@@ -373,6 +374,19 @@ inline void HTMLToken::appendToCharacter(const Vector<LChar, 32>& characters)
     ASSERT(m_type == Uninitialized || m_type == Character);
     m_type = Character;
     m_data.appendVector(characters);
+}
+
+template<typename CharacterType>
+inline void HTMLToken::appendToCharacter(Span<const CharacterType> characters)
+{
+    m_type = Character;
+    m_data.append(characters);
+    if constexpr (std::is_same_v<CharacterType, UChar>) {
+        if (!charactersIsAll8BitData())
+            return;
+        for (auto character : characters)
+            m_data8BitCheck |= character;
+    }
 }
 
 inline const HTMLToken::DataVector& HTMLToken::comment() const
