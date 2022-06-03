@@ -119,7 +119,7 @@ public:
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
     ReceiveOperation awaitableReceiveHTTPRequest() const;
     void webSocketHandshake(CompletionHandler<void()>&& = { });
-    void terminate();
+    void terminate(CompletionHandler<void()>&& = { });
     void cancel();
 
 private:
