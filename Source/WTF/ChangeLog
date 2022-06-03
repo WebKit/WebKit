@@ -49,6 +49,24 @@
         (WTF::WorkQueueBase::platformInitialize):
         (WTF::WorkQueue::assertIsCurrent const):
         (WTF::currentSequenceID):
+2022-05-13  Ben Nham  <nham@apple.com>
+
+        Enforce foreground WebContent memory limit on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=240397
+
+        Reviewed by Chris Dumez.
+
+        We removed the foreground memory limit for WebContent on macOS in r272046. But based on some
+        bug reports that we've seen, it seems like we need to restore some limit to prevent bad user
+        outcomes when a misbehaving process has runaway memory usage.
+
+        This patch adds a foreground memory limit of 8GB or 16GB depending on RAM size. This matches
+        the limits set by other browsers for their content process.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillOfActiveProcess):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+
         * wtf/generic/WorkQueueGeneric.cpp:
         (WTF::WorkQueueBase::platformInitialize):
         (WTF::WorkQueue::assertIsCurrent):
