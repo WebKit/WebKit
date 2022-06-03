@@ -824,6 +824,7 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
 double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, CSSUnitType primitiveType, double value)
 {
     auto selectContainerRenderer = [&](CQ::Axis axis) -> const RenderBox* {
+        conversionData.setUsesContainerUnits();
         if (!conversionData.element())
             return nullptr;
         // FIXME: Use cached query containers when available.

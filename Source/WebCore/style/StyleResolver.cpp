@@ -269,7 +269,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, &element);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
-    if (state.style()->hasViewportUnits())
+    if (state.style()->usesViewportUnits())
         document().setHasStyleWithViewportUnits();
 
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
@@ -465,7 +465,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
-    if (state.style()->hasViewportUnits())
+    if (state.style()->usesViewportUnits())
         document().setHasStyleWithViewportUnits();
 
     return state.takeStyle();

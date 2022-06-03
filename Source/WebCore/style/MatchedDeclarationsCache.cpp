@@ -61,6 +61,8 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     // The cache assumes static knowledge about which properties are inherited.
     if (style.hasExplicitlyInheritedProperties())
         return false;
+    if (style.usesContainerUnits())
+        return false;
 
     // Getting computed style after a font environment change but before full style resolution may involve styles with non-current fonts.
     // Avoid caching them.
@@ -138,7 +140,7 @@ void MatchedDeclarationsCache::invalidate()
 void MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits()
 {
     m_entries.removeIf([](auto& keyValue) {
-        return keyValue.value.renderStyle->hasViewportUnits();
+        return keyValue.value.renderStyle->usesViewportUnits();
     });
 }
 

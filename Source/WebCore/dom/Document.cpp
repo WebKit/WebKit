@@ -4343,7 +4343,7 @@ void Document::updateViewportUnitsOnResize()
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (RefPtr element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         auto* renderer = element->renderer();
-        if (renderer && renderer->style().hasViewportUnits())
+        if (renderer && renderer->style().usesViewportUnits())
             element->invalidateStyle();
     }
 }
