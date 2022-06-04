@@ -305,11 +305,6 @@ void WebInspectorUI::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas,
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::Save(WTFMove(saveDatas), forceSaveAs), m_inspectedPageIdentifier);
 }
 
-void WebInspectorUI::append(const WTF::String& filename, const WTF::String& content)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::Append(filename, content), m_inspectedPageIdentifier);
-}
-
 void WebInspectorUI::load(const WTF::String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTFMove(completionHandler), m_inspectedPageIdentifier);
@@ -423,16 +418,6 @@ void WebInspectorUI::startElementSelection()
 void WebInspectorUI::stopElementSelection()
 {
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setElementSelectionEnabled"_s, { JSON::Value::create(false) });
-}
-
-void WebInspectorUI::didSave(const String& url)
-{
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("savedURL"_s, { JSON::Value::create(url) });
-}
-
-void WebInspectorUI::didAppend(const String& url)
-{
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("appendedToURL"_s, { JSON::Value::create(url) });
 }
 
 void WebInspectorUI::sendMessageToFrontend(const String& message)

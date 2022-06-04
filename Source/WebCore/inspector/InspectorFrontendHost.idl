@@ -77,17 +77,12 @@
     boolean canSave(SaveMode saveMode);
     undefined save(sequence<SaveData> saveDatas, boolean forceSaveAs);
 
-    undefined append(DOMString url, DOMString content);
-
     boolean canLoad();
     [NewObject] Promise<DOMString> load(DOMString path);
-
-    undefined close(DOMString url);
 
     boolean canPickColorFromScreen();
     [NewObject] Promise<DOMString> pickColorFromScreen();
 
-    readonly attribute DOMString port;
     readonly attribute DOMString platform;
     readonly attribute DOMString platformVersionName;
 

@@ -672,28 +672,7 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
 
     WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
         protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
-
-        if (protectedThis->m_inspectorPage)
-            protectedThis->m_inspectorPage->send(Messages::WebInspectorUI::DidSave([actualURL absoluteString]));
-
     });
-}
-
-void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
-{
-    ASSERT(!suggestedURL.isEmpty());
-    
-    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
-    // Do not append unless the user has already confirmed this filename in save().
-    if (!actualURL)
-        return;
-
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
-    [handle seekToEndOfFile];
-    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [handle closeFile];
-
-    m_inspectorPage->send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
 void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)

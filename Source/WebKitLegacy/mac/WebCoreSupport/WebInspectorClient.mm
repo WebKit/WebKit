@@ -435,8 +435,6 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-
-        core([m_frontendWindowController frontendWebView])->mainFrame().script().executeScriptIgnoringException([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
     };
 
     if (!forceSaveAs) {
@@ -466,23 +464,6 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
-}
-
-void WebInspectorFrontendClient::append(const String& suggestedURL, const String& content)
-{
-    ASSERT(!suggestedURL.isEmpty());
-
-    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
-    // do not append unless the user has already confirmed this filename in save().
-    if (!actualURL)
-        return;
-
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
-    [handle seekToEndOfFile];
-    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [handle closeFile];
-
-    core([m_frontendWindowController frontendWebView])->mainFrame().script().executeScriptIgnoringException([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [actualURL absoluteString]]);
 }
 
 // MARK: -

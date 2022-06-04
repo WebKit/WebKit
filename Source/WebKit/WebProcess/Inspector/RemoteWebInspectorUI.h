@@ -64,8 +64,6 @@ public:
     // Called by RemoteWebInspectorUI messages
     void initialize(DebuggableInfoData&&, const String& backendCommandsURL);
     void updateFindString(const String&);
-    void didSave(const String& url);
-    void didAppend(const String& url);
     void sendMessageToFrontend(const String&);
     void showConsole();
     void showResources();
@@ -108,7 +106,6 @@ public:
     void openURLExternally(const String& url) override;
     void revealFileExternally(const String& path) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;
-    void append(const String& url, const String& content) override;
     void load(const String& path, CompletionHandler<void(const String&)>&&) override;
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
     void inspectedURLChanged(const String&) override;

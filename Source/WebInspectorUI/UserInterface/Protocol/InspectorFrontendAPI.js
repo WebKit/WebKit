@@ -27,16 +27,6 @@ InspectorFrontendAPI = {
     _loaded: false,
     _pendingCommands: [],
 
-    savedURL: function(url)
-    {
-        // Not used yet.
-    },
-
-    appendedToURL: function(url)
-    {
-        // Not used yet.
-    },
-
     isTimelineProfilingEnabled: function()
     {
         return WI.timelineManager.isCapturing();

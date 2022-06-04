@@ -126,8 +126,6 @@ public:
     virtual bool canSave(SaveMode) = 0;
     virtual void save(Vector<SaveData>&&, bool forceSaveAs) = 0;
 
-    virtual void append(const String& url, const String& content) = 0;
-
     virtual bool canLoad() = 0;
     virtual void load(const String& path, CompletionHandler<void(const String&)>&&) = 0;
 

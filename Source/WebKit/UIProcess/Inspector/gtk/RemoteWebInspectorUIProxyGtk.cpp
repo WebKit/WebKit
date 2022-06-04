@@ -109,12 +109,7 @@ void RemoteWebInspectorUIProxy::platformBringToFront()
 static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);
-    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
-        return;
-
-    auto* page = static_cast<WebPageProxy*>(userData);
-    GUniquePtr<char> path(g_file_get_path(file));
-    page->send(Messages::RemoteWebInspectorUI::DidSave(String::fromUTF8(path.get())));
+    g_file_replace_contents_finish(file, result, nullptr, nullptr);
 }
 
 void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -157,10 +152,6 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, m_inspectorPage);
-}
-
-void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&)
-{
 }
 
 void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

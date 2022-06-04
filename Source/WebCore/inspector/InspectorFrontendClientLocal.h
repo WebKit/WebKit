@@ -84,7 +84,6 @@ public:
     void revealFileExternally(const String&) override { }
     bool canSave(InspectorFrontendClient::SaveMode) override { return false; }
     void save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) override { }
-    void append(const String&, const String&) override { }
     bool canLoad()  override { return false; }
     void load(const String&, CompletionHandler<void(const String&)>&& completionHandler) override { completionHandler(nullString()); }
 

@@ -418,11 +418,6 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformAppend(const String&, const String&)
-{
-    notImplemented();
-}
-
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
 {
     notImplemented();

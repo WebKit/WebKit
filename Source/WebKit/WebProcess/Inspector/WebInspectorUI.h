@@ -96,9 +96,6 @@ public:
 
     void updateFindString(const String&);
 
-    void didSave(const String& url);
-    void didAppend(const String& url);
-
     void sendMessageToFrontend(const String& message);
     void evaluateInFrontendForTesting(const String& expression);
 
@@ -144,8 +141,6 @@ public:
 
     bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;
-
-    void append(const WTF::String& url, const WTF::String& content) override;
 
     bool canLoad() override;
     void load(const WTF::String& path, WTF::CompletionHandler<void(const WTF::String&)>&&) override;

@@ -509,12 +509,7 @@ void WebInspectorUIProxy::platformStartWindowDrag()
 static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);
-    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
-        return;
-
-    auto* page = static_cast<WebPageProxy*>(userData);
-    GUniquePtr<char> path(g_file_get_path(file));
-    page->send(Messages::WebInspectorUI::DidSave(String::fromUTF8(path.get())));
+    g_file_replace_contents_finish(file, result, nullptr, nullptr);
 }
 
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -561,11 +556,6 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, m_inspectorPage);
-}
-
-void WebInspectorUIProxy::platformAppend(const String&, const String&)
-{
-    notImplemented();
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

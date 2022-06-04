@@ -133,7 +133,6 @@ private:
     void resetState();
     void bringToFront();
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void append(const String& filename, const String& content);
     void load(const String& path, CompletionHandler<void(const String&)>&&);
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void setSheetRect(const WebCore::FloatRect&);
@@ -153,7 +152,6 @@ private:
     void platformResetState();
     void platformBringToFront();
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformAppend(const String& filename, const String& content);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void platformSetSheetRect(const WebCore::FloatRect&);

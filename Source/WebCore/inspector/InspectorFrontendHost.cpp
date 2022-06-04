@@ -413,15 +413,6 @@ String InspectorFrontendHost::platformVersionName() const
 #endif
 }
 
-String InspectorFrontendHost::port() const
-{
-#if PLATFORM(GTK)
-    return "gtk"_s;
-#else
-    return "unknown"_s;
-#endif
-}
-
 void InspectorFrontendHost::copyText(const String& text)
 {
     auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : std::nullopt;
@@ -468,12 +459,6 @@ void InspectorFrontendHost::save(Vector<SaveData>&& saveDatas, bool forceSaveAs)
 {
     if (m_client)
         m_client->save(WTFMove(saveDatas), forceSaveAs);
-}
-
-void InspectorFrontendHost::append(const String& url, const String& content)
-{
-    if (m_client)
-        m_client->append(url, content);
 }
 
 bool InspectorFrontendHost::canLoad()
@@ -530,10 +515,6 @@ void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
 
         promise->resolve<IDLDOMString>(serializedColor);
     });
-}
-
-void InspectorFrontendHost::close(const String&)
-{
 }
 
 void InspectorFrontendHost::sendMessageToBackend(const String& message)

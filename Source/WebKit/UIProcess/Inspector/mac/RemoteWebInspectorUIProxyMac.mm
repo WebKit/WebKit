@@ -170,31 +170,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
 
     WebInspectorUIProxy::showSavePanel(m_window.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
         protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
-
-        if (protectedThis->m_inspectorPage)
-            protectedThis->m_inspectorPage->send(Messages::RemoteWebInspectorUI::DidSave(actualURL.absoluteString));
-
     });
-}
-
-void RemoteWebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
-{
-    // FIXME: Share with WebInspectorUIProxyMac.
-
-    ASSERT(!suggestedURL.isEmpty());
-    
-    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
-    // Do not append unless the user has already confirmed this filename in save().
-    if (!actualURL)
-        return;
-
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
-    [handle seekToEndOfFile];
-    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [handle closeFile];
-
-    WebPageProxy* inspectorPage = webView()->_page.get();
-    inspectorPage->send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
 void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)

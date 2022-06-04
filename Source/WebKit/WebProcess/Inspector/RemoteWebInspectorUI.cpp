@@ -84,16 +84,6 @@ void RemoteWebInspectorUI::updateFindString(const String& findString)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
 }
 
-void RemoteWebInspectorUI::didSave(const String& url)
-{
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("savedURL"_s, { JSON::Value::create(url) });
-}
-
-void RemoteWebInspectorUI::didAppend(const String& url)
-{
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("appendedToURL"_s, { JSON::Value::create(url) });
-}
-
 void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
 {
     m_frontendAPIDispatcher->dispatchMessageAsync(message);
@@ -226,11 +216,6 @@ void RemoteWebInspectorUI::revealFileExternally(const String& path)
 void RemoteWebInspectorUI::save(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Save(WTFMove(saveDatas), forceSaveAs), m_page.identifier());
-}
-
-void RemoteWebInspectorUI::append(const String& filename, const String& content)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Append(filename, content), m_page.identifier());
 }
 
 void RemoteWebInspectorUI::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)

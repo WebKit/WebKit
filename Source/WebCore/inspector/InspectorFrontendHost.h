@@ -97,7 +97,6 @@ public:
 
     String platform() const;
     String platformVersionName() const;
-    String port() const;
 
     struct DebuggableInfo {
         String debuggableType;
@@ -119,12 +118,8 @@ public:
     bool canSave(SaveMode);
     void save(Vector<SaveData>&&, bool forceSaveAs);
 
-    void append(const String& url, const String& content);
-
     bool canLoad();
     void load(const String& path, Ref<DeferredPromise>&&);
-
-    void close(const String& url);
 
     bool canPickColorFromScreen();
     void pickColorFromScreen(Ref<DeferredPromise>&&);

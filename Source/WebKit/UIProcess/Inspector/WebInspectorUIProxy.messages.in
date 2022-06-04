@@ -43,7 +43,6 @@ messages -> WebInspectorUIProxy {
     SetDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 
     Save(Vector<WebCore::InspectorFrontendClient::SaveData> saveDatas, bool forceSaveAs)
-    Append(String filename, String content)
     Load(String path) -> (String content)
     PickColorFromScreen() -> (std::optional<WebCore::Color> color)
 

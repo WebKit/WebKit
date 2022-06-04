@@ -721,18 +721,6 @@ void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveD
     platformSave(WTFMove(saveDatas), forceSaveAs);
 }
 
-void WebInspectorUIProxy::append(const String& filename, const String& content)
-{
-    if (!m_inspectedPage->preferences().developerExtrasEnabled())
-        return;
-
-    ASSERT(!filename.isEmpty());
-    if (filename.isEmpty())
-        return;
-
-    platformAppend(filename, content);
-}
-
 void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
     if (!m_inspectedPage->preferences().developerExtrasEnabled())
@@ -845,11 +833,6 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo&)
 }
 
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
-{
-    notImplemented();
-}
-
-void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
 {
     notImplemented();
 }

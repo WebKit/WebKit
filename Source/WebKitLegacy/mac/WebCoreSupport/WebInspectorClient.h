@@ -158,7 +158,6 @@ private:
 
     bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool base64Encoded) override;
-    void append(const String& url, const String& content) override;
 
 #if !PLATFORM(IOS_FAMILY)
     WebView *m_inspectedWebView;
