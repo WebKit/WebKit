@@ -182,7 +182,6 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
         // This is where we compute how much space the flexing boxes take up if we just
         // let them flex by their flex-grow value. Note that we can't size them below their minimum content width.
         // Such flex items are removed from the final overflow distribution.
-        auto accumulatedWidth = LayoutUnit { };
         while (true) {
             auto didFreeze = false;
             for (auto& stretchingFlex : stretchingItems) {
