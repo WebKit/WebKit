@@ -288,7 +288,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
     // For efficiency, we skip step 5 ("Let root be a new html element with no attributes") and instead use the DocumentFragment as a root node.
-    m_tree.openElements().pushRootNode(HTMLStackItem::create(fragment));
+    m_tree.openElements().pushRootNode(HTMLStackItem(fragment));
 
     if (contextElement.hasTagName(templateTag))
         m_templateInsertionModes.append(InsertionMode::TemplateContents);
@@ -308,20 +308,20 @@ HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
 
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment& fragment, Element& contextElement)
     : m_fragment(&fragment)
+    , m_contextElementStackItem(contextElement)
 {
     ASSERT(!fragment.hasChildNodes());
-    m_contextElementStackItem = HTMLStackItem::create(contextElement);
 }
 
-inline Element& HTMLTreeBuilder::FragmentParsingContext::contextElement() const
+inline Element& HTMLTreeBuilder::FragmentParsingContext::contextElement()
 {
     return contextElementStackItem().element();
 }
 
-inline HTMLStackItem& HTMLTreeBuilder::FragmentParsingContext::contextElementStackItem() const
+inline HTMLStackItem& HTMLTreeBuilder::FragmentParsingContext::contextElementStackItem()
 {
     ASSERT(m_fragment);
-    return *m_contextElementStackItem;
+    return m_contextElementStackItem;
 }
 
 RefPtr<ScriptElement> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
@@ -1082,8 +1082,8 @@ void HTMLTreeBuilder::processStartTag(AtomHTMLToken&& token)
             || token.name() == templateTag
             || token.name() == titleTag) {
             parseError(token);
-            ASSERT(m_tree.headStackItem());
-            m_tree.openElements().pushHTMLHeadElement(*m_tree.headStackItem());
+            ASSERT(!m_tree.headStackItem().isNull());
+            m_tree.openElements().pushHTMLHeadElement(HTMLStackItem(m_tree.headStackItem()));
             processStartTagForInHead(WTFMove(token));
             m_tree.openElements().removeHTMLHeadElement(m_tree.head());
             return;
@@ -1457,7 +1457,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
         }
         // 7.
         ASSERT(furthestBlock->isAbove(*formattingElementRecord));
-        Ref<HTMLStackItem> commonAncestor = formattingElementRecord->next()->stackItem();
+        auto& commonAncestor = formattingElementRecord->next()->stackItem();
         // 8.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements().bookmarkFor(*formattingElement);
         // 9.
@@ -1483,7 +1483,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
             auto newItem = m_tree.createElementFromSavedToken(node->stackItem());
 
             HTMLFormattingElementList::Entry* nodeEntry = m_tree.activeFormattingElements().find(node->element());
-            nodeEntry->replaceElement(newItem.copyRef());
+            nodeEntry->replaceElement(HTMLStackItem(newItem));
             node->replaceElement(WTFMove(newItem));
 
             // 9.8
@@ -1495,13 +1495,13 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
             lastNode = node;
         }
         // 10.
-        m_tree.insertAlreadyParsedChild(commonAncestor.get(), *lastNode);
+        m_tree.insertAlreadyParsedChild(commonAncestor, *lastNode);
         // 11.
         auto newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem());
         // 12. & 13.
         m_tree.takeAllChildrenAndReparent(newItem, *furthestBlock);
         // 14.
-        m_tree.activeFormattingElements().swapTo(*formattingElement, newItem.copyRef(), bookmark);
+        m_tree.activeFormattingElements().swapTo(*formattingElement, HTMLStackItem(newItem), bookmark);
         // 15.
         m_tree.openElements().remove(*formattingElement);
         m_tree.openElements().insertAbove(WTFMove(newItem), *furthestBlock);
@@ -1513,7 +1513,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#reset-the-insertion-mode-appropriately
     bool last = false;
     for (auto* record = &m_tree.openElements().topRecord(); ; record = record->next()) {
-        RefPtr<HTMLStackItem> item = &record->stackItem();
+        auto* item = &record->stackItem();
         if (&item->node() == &m_tree.openElements().rootNode()) {
             last = true;
             bool shouldCreateItem = isParsingFragment();
@@ -1581,7 +1581,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
             return;
         }
         if (item->hasTagName(htmlTag)) {
-            if (m_tree.headStackItem()) {
+            if (!m_tree.headStackItem().isNull()) {
                 m_insertionMode = InsertionMode::AfterHead;
                 return;
             }
@@ -2676,7 +2676,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomHTMLToken&& token)
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#adjusted-current-node
-HTMLStackItem& HTMLTreeBuilder::adjustedCurrentStackItem() const
+HTMLStackItem& HTMLTreeBuilder::adjustedCurrentStackItem()
 {
     ASSERT(!m_tree.isEmpty());
     if (isParsingFragment() && m_tree.openElements().hasOnlyOneElement())

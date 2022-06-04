@@ -115,7 +115,7 @@ inline bool isSelectScopeMarker(HTMLStackItem& item)
 
 }
 
-HTMLElementStack::ElementRecord::ElementRecord(Ref<HTMLStackItem>&& item, std::unique_ptr<ElementRecord> next)
+HTMLElementStack::ElementRecord::ElementRecord(HTMLStackItem&& item, std::unique_ptr<ElementRecord> next)
     : m_item(WTFMove(item))
     , m_next(WTFMove(next))
 {
@@ -123,9 +123,9 @@ HTMLElementStack::ElementRecord::ElementRecord(Ref<HTMLStackItem>&& item, std::u
 
 HTMLElementStack::ElementRecord::~ElementRecord() = default;
 
-void HTMLElementStack::ElementRecord::replaceElement(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::ElementRecord::replaceElement(HTMLStackItem&& item)
 {
-    ASSERT(m_item->isElement());
+    ASSERT(m_item.isElement());
     // FIXME: Should this call finishParsingChildren?
     m_item = WTFMove(item);
 }
@@ -277,60 +277,60 @@ void HTMLElementStack::popUntilForeignContentScopeMarker()
         pop();
 }
     
-void HTMLElementStack::pushRootNode(Ref<HTMLStackItem>&& rootItem)
+void HTMLElementStack::pushRootNode(HTMLStackItem&& rootItem)
 {
-    ASSERT(rootItem->isDocumentFragment());
+    ASSERT(rootItem.isDocumentFragment());
     pushRootNodeCommon(WTFMove(rootItem));
 }
 
-void HTMLElementStack::pushHTMLHtmlElement(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::pushHTMLHtmlElement(HTMLStackItem&& item)
 {
-    ASSERT(item->hasTagName(HTMLNames::htmlTag));
+    ASSERT(item.hasTagName(HTMLNames::htmlTag));
     pushRootNodeCommon(WTFMove(item));
 }
     
-void HTMLElementStack::pushRootNodeCommon(Ref<HTMLStackItem>&& rootItem)
+void HTMLElementStack::pushRootNodeCommon(HTMLStackItem&& rootItem)
 {
     ASSERT(!m_top);
     ASSERT(!m_rootNode);
-    m_rootNode = &rootItem->node();
+    m_rootNode = &rootItem.node();
     pushCommon(WTFMove(rootItem));
 }
 
-void HTMLElementStack::pushHTMLHeadElement(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::pushHTMLHeadElement(HTMLStackItem&& item)
 {
-    ASSERT(item->hasTagName(HTMLNames::headTag));
+    ASSERT(item.hasTagName(HTMLNames::headTag));
     ASSERT(!m_headElement);
-    m_headElement = &item->element();
+    m_headElement = &item.element();
     pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::pushHTMLBodyElement(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::pushHTMLBodyElement(HTMLStackItem&& item)
 {
-    ASSERT(item->hasTagName(HTMLNames::bodyTag));
+    ASSERT(item.hasTagName(HTMLNames::bodyTag));
     ASSERT(!m_bodyElement);
-    m_bodyElement = &item->element();
+    m_bodyElement = &item.element();
     pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::push(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::push(HTMLStackItem&& item)
 {
-    ASSERT(!item->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!item->hasTagName(HTMLNames::headTag));
-    ASSERT(!item->hasTagName(HTMLNames::bodyTag));
+    ASSERT(!item.hasTagName(HTMLNames::htmlTag));
+    ASSERT(!item.hasTagName(HTMLNames::headTag));
+    ASSERT(!item.hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
     pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::insertAbove(Ref<HTMLStackItem>&& item, ElementRecord& recordBelow)
+void HTMLElementStack::insertAbove(HTMLStackItem&& item, ElementRecord& recordBelow)
 {
     ASSERT(m_top);
-    ASSERT(!item->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!item->hasTagName(HTMLNames::headTag));
-    ASSERT(!item->hasTagName(HTMLNames::bodyTag));
+    ASSERT(!item.hasTagName(HTMLNames::htmlTag));
+    ASSERT(!item.hasTagName(HTMLNames::headTag));
+    ASSERT(!item.hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
     if (&recordBelow == m_top.get()) {
-        push(item.copyRef());
+        push(WTFMove(item));
         return;
     }
 
@@ -528,7 +528,7 @@ ContainerNode& HTMLElementStack::rootNode() const
     return *m_rootNode;
 }
 
-void HTMLElementStack::pushCommon(Ref<HTMLStackItem>&& item)
+void HTMLElementStack::pushCommon(HTMLStackItem&& item)
 {
     ASSERT(m_rootNode);
 
