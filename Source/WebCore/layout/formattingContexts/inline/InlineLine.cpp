@@ -92,7 +92,7 @@ void Line::resetTrailingContent()
 
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 {
-    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify);
+    ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify || formattingContext().root().style().textAlignLast() == TextAlignLast::Justify);
     // Text is justified according to the method specified by the text-justify property,
     // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
     // the last line before a forced break or the end of the block is start-aligned.

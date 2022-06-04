@@ -1165,6 +1165,7 @@
         "web-platform-tests/css/css-text/text-align/text-align-end-020.html",
         "web-platform-tests/css/css-text/text-align/text-align-end-021.html",
         "web-platform-tests/css/css-text/text-align/text-align-inline-end-crash.html",
+        "web-platform-tests/css/css-text/text-align/text-align-last-ref.html",
         "web-platform-tests/css/css-text/text-align/text-align-last-001.html",
         "web-platform-tests/css/css-text/text-align/text-align-last-002.html",
         "web-platform-tests/css/css-text/text-align/text-align-last-003.html",
