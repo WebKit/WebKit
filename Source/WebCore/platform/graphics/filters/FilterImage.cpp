@@ -118,7 +118,9 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     ASSERT(sourcePixelBuffer.size() == destinationPixelBuffer.size());
 
     auto destinationSize = destinationPixelBuffer.size();
-    unsigned rowBytes = destinationSize.width() * 4;
+    auto rowBytes = CheckedUint32(destinationSize.width()) * 4;
+    if (UNLIKELY(rowBytes.hasOverflowed()))
+        return;
 
     ConstPixelBufferConversionView source { sourcePixelBuffer.format(), rowBytes, sourcePixelBuffer.data().data() };
     PixelBufferConversionView destination { destinationPixelBuffer.format(), rowBytes, destinationPixelBuffer.data().data() };
@@ -154,11 +156,17 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     if (destinationRect.isEmpty())
         return;
 
-    int size = sourceRectClipped.width() * 4;
-    int destinationBytesPerRow = destinationPixelBufferRect.width() * 4;
-    int sourceBytesPerRow = sourcePixelBufferRect.width() * 4;
-    uint8_t* destinationPixel = destination.data() + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
-    const uint8_t* sourcePixel = source.data() + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4;
+    auto size = CheckedUint32(sourceRectClipped.width()) * 4;
+    auto destinationBytesPerRow = CheckedUint32(destinationPixelBufferRect.width()) * 4;
+    auto sourceBytesPerRow = CheckedUint32(sourcePixelBufferRect.width()) * 4;
+    auto destinationOffset = destinationRect.y() * destinationBytesPerRow + CheckedUint32(destinationRect.x()) * 4;
+    auto sourceOffset = sourceRectClipped.y() * sourceBytesPerRow + CheckedUint32(sourceRectClipped.x()) * 4;
+
+    if (UNLIKELY(size.hasOverflowed() || destinationBytesPerRow.hasOverflowed() || sourceBytesPerRow.hasOverflowed() || destinationOffset.hasOverflowed() || sourceOffset.hasOverflowed()))
+        return;
+
+    uint8_t* destinationPixel = destination.data() + destinationOffset.value();
+    const uint8_t* sourcePixel = source.data() + sourceOffset.value();
 
     for (int y = 0; y < sourceRectClipped.height(); ++y) {
         memcpy(destinationPixel, sourcePixel, size);
