@@ -30,6 +30,7 @@
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingState.h"
 #include "FlexRect.h"
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -80,14 +81,17 @@ public:
     void layout(const ConstraintsForFlexContent&, LogicalFlexItems&);
 
 private:
-    void computeLogicalWidthForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalHeightForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void alignFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void justifyFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
-    LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    using LineRange = WTF::Range<size_t>;
+    void computeLogicalWidthForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalHeightForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void alignFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void justifyFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    LayoutUnit computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const LineRange&, const ConstraintsForFlexContent&) const;
+    LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    using WrappingPositions = Vector<size_t>;
+    WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
 
     const RenderStyle& flexBoxStyle() const { return m_flexBoxStyle; }
 

@@ -39,7 +39,7 @@ FlexLayout::FlexLayout(const RenderStyle& flexBoxStyle)
 {
 }
 
-LayoutUnit FlexLayout::computeAvailableLogicalVerticalSpace(LogicalFlexItems& flexItems, const ConstraintsForFlexContent& flexConstraints) const
+LayoutUnit FlexLayout::computeAvailableLogicalVerticalSpace(const LogicalFlexItems& flexItems, const LineRange&, const ConstraintsForFlexContent& flexConstraints) const
 {
     auto availableLogicalVerticalSpaceFromConstraint = [&] {
         auto flexDirection = flexBoxStyle().flexDirection();
@@ -58,7 +58,7 @@ LayoutUnit FlexLayout::computeAvailableLogicalVerticalSpace(LogicalFlexItems& fl
     return availableSpace;
 }
 
-LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(LogicalFlexItems& flexItems, const ConstraintsForFlexContent& flexConstraints) const
+LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(const LogicalFlexItems& flexItems, const ConstraintsForFlexContent& flexConstraints) const
 {
     auto availableLogicalHorizontalSpaceFromConstraint = [&] {
         auto flexDirection = flexBoxStyle().flexDirection();
@@ -77,7 +77,18 @@ LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(LogicalFlexItems& 
     return availableSpace;
 }
 
-void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+FlexLayout::WrappingPositions FlexLayout::computeWrappingPositions(const LogicalFlexItems& flexItems, LayoutUnit) const
+{
+    if (flexBoxStyle().flexWrap() == FlexWrap::NoWrap) {
+        auto wrappingPositions = WrappingPositions();
+        wrappingPositions.append(flexItems.size());
+        return wrappingPositions;
+    }
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+
+void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flexItems, const LineRange&, LayoutUnit availableSpace)
 {
     auto totalShrink = 0.f;
     auto totalFlexibleSpace = LayoutUnit { };
@@ -143,7 +154,7 @@ void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flex
     computeLogicalWidth();
 }
 
-void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& flexItems, const LineRange&, LayoutUnit availableSpace)
 {
     auto totalFlexibleSpace = LayoutUnit { };
     auto totalGrowth = 0.f;
@@ -211,7 +222,7 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
     computeLogicalWidth();
 }
 
-void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace)
 {
     auto contentLogicalWidth = [&] {
         auto logicalWidth = LayoutUnit { };
@@ -221,12 +232,12 @@ void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, La
     }();
 
     if (availableSpace > contentLogicalWidth)
-        computeLogicalWidthForStretchingFlexItems(flexItems, availableSpace);
+        computeLogicalWidthForStretchingFlexItems(flexItems, lineRange, availableSpace);
     else if (availableSpace < contentLogicalWidth)
-        computeLogicalWidthForShrinkingFlexItems(flexItems, availableSpace);
+        computeLogicalWidthForShrinkingFlexItems(flexItems, lineRange, availableSpace);
 }
 
-void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, const LineRange&, LayoutUnit availableSpace)
 {
     auto alignItems = flexBoxStyle().alignItems();
 
@@ -251,7 +262,7 @@ void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, L
     }
 }
 
-void FlexLayout::alignFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+void FlexLayout::alignFlexItems(LogicalFlexItems& flexItems, const LineRange&, LayoutUnit availableSpace)
 {
     // FIXME: Check if height computation and vertical alignment should merge.
     auto flexBoxAlignItems = flexBoxStyle().alignItems();
@@ -282,7 +293,7 @@ void FlexLayout::alignFlexItems(LogicalFlexItems& flexItems, LayoutUnit availabl
     }
 }
 
-void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, LayoutUnit availableSpace)
+void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange&, LayoutUnit availableSpace)
 {
     auto justifyContent = flexBoxStyle().justifyContent();
     // FIXME: Make this optional.
@@ -360,12 +371,17 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, LayoutUnit availa
 void FlexLayout::layout(const ConstraintsForFlexContent& constraints, LogicalFlexItems& flexItems)
 {
     auto availableLogicalHorizontalSpace = computeAvailableLogicalHorizontalSpace(flexItems, constraints);
-    computeLogicalWidthForFlexItems(flexItems, availableLogicalHorizontalSpace);
+    auto wrappingIndexList = computeWrappingPositions(flexItems, availableLogicalHorizontalSpace);
 
-    auto availableLogicalVerticalSpace = computeAvailableLogicalVerticalSpace(flexItems, constraints);
-    computeLogicalHeightForFlexItems(flexItems, availableLogicalVerticalSpace);
-    alignFlexItems(flexItems, availableLogicalVerticalSpace);
-    justifyFlexItems(flexItems, availableLogicalHorizontalSpace);
+    auto lineRange = Range<size_t> { };
+    for (auto nextWrappingPosition : wrappingIndexList) {
+        lineRange = { lineRange.end(), nextWrappingPosition };
+        computeLogicalWidthForFlexItems(flexItems, lineRange, availableLogicalHorizontalSpace);
+        auto availableLogicalVerticalSpace = computeAvailableLogicalVerticalSpace(flexItems, lineRange, constraints);
+        computeLogicalHeightForFlexItems(flexItems, lineRange, availableLogicalVerticalSpace);
+        alignFlexItems(flexItems, lineRange, availableLogicalVerticalSpace);
+        justifyFlexItems(flexItems, lineRange, availableLogicalHorizontalSpace);
+    }
 }
 
 }

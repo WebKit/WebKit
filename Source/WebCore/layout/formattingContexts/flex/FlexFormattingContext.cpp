@@ -228,7 +228,6 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         logicalFlexItemList[index] = { flexItemList[index].marginRect
             , logicalWidthType
             , logicalHeightType
-            // FIXME: Convert to logical intrinsic width
             , *formattingState.intrinsicWidthConstraintsForBox(layoutBox)
             , layoutBox };
     }
