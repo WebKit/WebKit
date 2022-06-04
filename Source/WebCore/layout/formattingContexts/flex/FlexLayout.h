@@ -85,8 +85,8 @@ private:
     void computeLogicalWidthForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
     void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
     void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
-    void computeLogicalHeightForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
-    void alignFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    LayoutUnit computeLogicalHeightForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void alignFlexItems(LogicalFlexItems&, const LineRange&, VerticalConstraints);
     void justifyFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
     LayoutUnit computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const LineRange&, const ConstraintsForFlexContent&) const;
     LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const ConstraintsForFlexContent&) const;
