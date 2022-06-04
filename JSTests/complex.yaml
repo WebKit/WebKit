@@ -61,3 +61,6 @@
 
 - path: complex/for-in-clobberize.js
   cmd: runComplexTest [], [], "", "--destroy-vm"
+
+- path: complex/intl-date-time-format-date-parse.js
+  cmd: runComplexTest [], [], "TZ=America/New_York"

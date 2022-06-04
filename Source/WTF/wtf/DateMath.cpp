@@ -836,7 +836,12 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
             year = std::nullopt;
         } else {
             // in the normal case (we parsed the year), advance to the next number
-            dateString = ++newPosStr;
+            // ' at 23:12:40 GMT'
+            if (isASCIISpace(newPosStr[0]) && isASCIIAlphaCaselessEqual(newPosStr[1], 'a') && isASCIIAlphaCaselessEqual(newPosStr[2], 't'))
+                newPosStr += 3;
+            else
+                ++newPosStr; // space or comma
+            dateString = newPosStr;
             skipSpacesAndComments(dateString);
         }
 
