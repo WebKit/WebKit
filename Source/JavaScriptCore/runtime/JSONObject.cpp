@@ -467,10 +467,8 @@ inline void Stringifier::unindent()
 
 inline void Stringifier::startNewLine(StringBuilder& builder) const
 {
-    if (m_gap.isEmpty())
-        return;
-    builder.append('\n');
-    builder.append(m_indent);
+    if (willIndent())
+        builder.append('\n', m_indent);
 }
 
 inline Stringifier::Holder::Holder(JSGlobalObject* globalObject, JSObject* object, Structure* structure)
@@ -569,20 +567,20 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifyResult = stringifier.appendStringifiedValue(builder, value, *this, index);
         ASSERT(stringifyResult != StringifyFailedDueToUndefinedOrSymbolValue);
     } else {
-        Identifier propertyName;
+        const Identifier* propertyName;
         JSValue value;
         if (m_hasFastObjectProperties) {
-            propertyName = std::get<0>(m_propertiesAndOffsets[index]);
+            propertyName = &std::get<0>(m_propertiesAndOffsets[index]);
             if (m_object->structureID() == m_structure->id()) {
                 unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
                 value = m_object->getDirect(offset);
             } else {
-                value = m_object->get(globalObject, propertyName);
+                value = m_object->get(globalObject, *propertyName);
                 RETURN_IF_EXCEPTION(scope, false);
             }
         } else {
-            propertyName = m_propertyNames->propertyNameVector()[index];
-            value = m_object->get(globalObject, propertyName);
+            propertyName = &m_propertyNames->propertyNameVector()[index];
+            value = m_object->get(globalObject, *propertyName);
             RETURN_IF_EXCEPTION(scope, false);
         }
 
@@ -593,14 +591,18 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             builder.append(',');
         stringifier.startNewLine(builder);
 
-        // Append the property name.
-        builder.appendQuotedJSONString(propertyName.string());
-        builder.append(':');
-        if (stringifier.willIndent())
-            builder.append(' ');
+        // Append the property name, colon, and space.
+        if (!propertyName->string().impl()->needsEscapingForQuotedJSONString())
+            builder.append('"', propertyName->string(), stringifier.willIndent() ? "\": " : "\":");
+        else {
+            builder.appendQuotedJSONString(propertyName->string());
+            builder.append(':');
+            if (stringifier.willIndent())
+                builder.append(' ');
+        }
 
         // Append the stringified value.
-        stringifyResult = stringifier.appendStringifiedValue(builder, value, *this, propertyName);
+        stringifyResult = stringifier.appendStringifiedValue(builder, value, *this, *propertyName);
     }
     RETURN_IF_EXCEPTION(scope, false);
 

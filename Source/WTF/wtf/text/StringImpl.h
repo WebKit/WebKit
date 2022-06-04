@@ -199,27 +199,35 @@ public:
 
     static constexpr unsigned MaxLength = StringImplShape::MaxLength;
 
-    // The bottom 6 bits in the hash are flags, but reserve 8 bits since StringHash only has 24 bits anyway.
+    // The bottom 8 bits in the hash are flags.
     static constexpr const unsigned s_flagCount = 8;
 
 private:
     static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;
     static_assert(s_flagCount <= StringHasher::flagCount, "StringHasher reserves enough bits for StringImpl flags");
-    static constexpr const unsigned s_flagStringKindCount = 4;
 
-    static constexpr const unsigned s_hashZeroValue = 0;
-    static constexpr const unsigned s_hashFlagStringKindIsAtom = 1u << (s_flagStringKindCount);
-    static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
-    static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtom | s_hashFlagStringKindIsSymbol;
-    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 3;
-    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
     static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
+    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
+    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 3;
+    static constexpr const unsigned s_hashFlagStringKindIsAtom = 1u << 4;
+    static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << 5;
+    static constexpr const unsigned s_hashMaskCharactersClassification = (1u << 6) | (1u << 7);
 
     enum StringKind {
         StringNormal = 0u, // non-symbol, non-atomic
         StringAtom = s_hashFlagStringKindIsAtom, // non-symbol, atomic
         StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
     };
+
+    enum CharactersClassification {
+        CharactersUnknown = 0u << 6, // used for newly allocated non-static strings
+        CharactersNoEscapingNeededForJSONQuoting = 1u << 6,
+        CharactersEscapingNeededForJSONQuoting = 2u << 6,
+    };
+    WTF_EXPORT_PRIVATE void computeCharacterClassification();
+    static bool constexpr needsEscapingForQuotedJSONString(char);
+    static bool constexpr needsEscapingForQuotedJSONString(char16_t);
+    template<typename CharacterType> static constexpr CharactersClassification classifyCharacters(const CharacterType*, unsigned length);
 
     // Create a normal 8-bit string with internal storage (BufferInternal).
     enum Force8Bit { Force8BitConstructor };
@@ -285,8 +293,6 @@ public:
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static constexpr unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static constexpr unsigned flagIsAtom() { return s_hashFlagStringKindIsAtom; }
-    static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
-    static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -315,8 +321,9 @@ public:
     void setIsAtom(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
-
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
+
+    bool needsEscapingForQuotedJSONString();
 
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const LChar* characters, unsigned length);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
@@ -538,6 +545,42 @@ private:
 
 public:
     void assertHashIsCorrect() const;
+
+    // Table originally from the SpiderMonkey JavaScript engine.
+    static constexpr char escapedFormsForJSON[0x100] = {
+        'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
+        'b', 't', 'n', 'u', 'f', 'r', 'u', 'u',
+        'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
+        'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
+        0,   0,   '"', 0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,  '\\', 0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,
+    };
 };
 
 using StaticStringImpl = StringImpl::StaticStringImpl;
@@ -871,7 +914,7 @@ inline StringImpl::StringImpl(unsigned length, Force8Bit)
 }
 
 inline StringImpl::StringImpl(unsigned length)
-    : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), s_hashZeroValue | StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -898,7 +941,7 @@ inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned leng
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, ConstructWithoutCopyingTag)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, characters, StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -917,7 +960,7 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), s_hashZeroValue | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakPtr();
@@ -947,7 +990,7 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<Stri
 }
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferSubstring)
+    : StringImplShape(s_refCountIncrement, length, characters, StringNormal | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);
@@ -1154,7 +1197,7 @@ inline StringImpl::StringImpl(CreateSymbolTag, const LChar* characters, unsigned
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag, const UChar* characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
+    : StringImplShape(s_refCountIncrement, length, characters, StringSymbol | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);
@@ -1230,15 +1273,35 @@ inline void StringImpl::assertHashIsCorrect() const
     ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
 }
 
+constexpr bool StringImpl::needsEscapingForQuotedJSONString(char character)
+{
+    uint8_t index = character;
+    return escapedFormsForJSON[index];
+}
+
+constexpr bool StringImpl::needsEscapingForQuotedJSONString(char16_t character)
+{
+    return character <= 0xFF ? escapedFormsForJSON[character] : U16_IS_SURROGATE(character);
+}
+
+template<typename CharacterType> constexpr StringImpl::CharactersClassification StringImpl::classifyCharacters(const CharacterType* characters, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (needsEscapingForQuotedJSONString(characters[i]))
+            return CharactersEscapingNeededForJSONQuoting;
+    }
+    return CharactersNoEscapingNeededForJSONQuoting;
+}
+
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | classifyCharacters(characters, characterCount - 1) | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {
 }
 
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+        s_hashFlagDidReportCost | stringKind | BufferInternal | classifyCharacters(characters, characterCount - 1) | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
 {
 }
 
@@ -1356,6 +1419,16 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const UChar* ch
         data[i] = character == target ? replacement : character;
     }
     return newImpl;
+}
+
+inline bool StringImpl::needsEscapingForQuotedJSONString()
+{
+    auto classification = m_hashAndFlags & s_hashMaskCharactersClassification;
+    if (classification == CharactersUnknown) {
+        computeCharacterClassification();
+        classification = m_hashAndFlags & s_hashMaskCharactersClassification;
+    }
+    return classification == CharactersEscapingNeededForJSONQuoting;
 }
 
 } // namespace WTF

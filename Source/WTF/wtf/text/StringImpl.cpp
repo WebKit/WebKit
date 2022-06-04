@@ -1713,4 +1713,36 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
     return !memcmp(a, b->characters16(), b->length() * sizeof(UChar));
 }
 
+void StringImpl::computeCharacterClassification()
+{
+    ASSERT((m_hashAndFlags & s_hashMaskCharactersClassification) == CharactersUnknown);
+    unsigned length = this->length();
+    if (is8Bit()) {
+        auto* characters = characters8();
+        for (unsigned i = 0; i < length; ++i) {
+            if (escapedFormsForJSON[characters[i]]) {
+                m_hashAndFlags |= CharactersEscapingNeededForJSONQuoting;
+                return;
+            }
+        }
+    } else {
+        auto* characters = characters16();
+        for (unsigned i = 0; i < length; ++i) {
+            auto character = characters[i];
+            if (character <= 0xFF) {
+                if (escapedFormsForJSON[character]) {
+                    m_hashAndFlags |= CharactersEscapingNeededForJSONQuoting;
+                    return;
+                }
+            } else {
+                if (U16_IS_SURROGATE(character)) {
+                    m_hashAndFlags |= CharactersEscapingNeededForJSONQuoting;
+                    return;
+                }
+            }
+        }
+    }
+    m_hashAndFlags |= CharactersNoEscapingNeededForJSONQuoting;
+}
+
 } // namespace WTF
