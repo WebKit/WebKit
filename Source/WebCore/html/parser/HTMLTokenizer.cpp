@@ -119,14 +119,14 @@ inline bool HTMLTokenizer::emitEndOfFile(SegmentedString& source)
 
 inline void HTMLTokenizer::saveEndTagNameIfNeeded()
 {
-    ASSERT(m_token.type() != HTMLToken::Uninitialized);
-    if (m_token.type() == HTMLToken::StartTag)
+    ASSERT(m_token.type() != HTMLToken::Type::Uninitialized);
+    if (m_token.type() == HTMLToken::Type::StartTag)
         m_appropriateEndTagName = m_token.name();
 }
 
 inline bool HTMLTokenizer::haveBufferedCharacterToken() const
 {
-    return m_token.type() == HTMLToken::Character;
+    return m_token.type() == HTMLToken::Type::Character;
 }
 
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)

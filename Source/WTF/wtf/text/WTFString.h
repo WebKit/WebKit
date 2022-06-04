@@ -61,6 +61,7 @@ public:
 
     // Construct a string with UTF-16 data.
     WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
+    ALWAYS_INLINE String(Span<const UChar> characters) : String(characters.data(), characters.size()) { }
 
     // Construct a string by copying the contents of a vector.  To avoid
     // copying, consider using String::adopt instead.
@@ -76,6 +77,7 @@ public:
     // Construct a string with Latin-1 data.
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
+    ALWAYS_INLINE String(Span<const LChar> characters) : String(characters.data(), characters.size()) { }
     ALWAYS_INLINE static String fromLatin1(const char* characters) { return String { characters }; }
 
     // Construct a string referencing an existing StringImpl.

@@ -56,6 +56,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+enum class HasDuplicateAttribute : bool { No, Yes };
 static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
@@ -66,7 +67,7 @@ static inline void setAttributes(Element& element, Vector<Attribute>& attributes
 
 static inline void setAttributes(Element& element, AtomHTMLToken& token, ParserContentPolicy parserContentPolicy)
 {
-    setAttributes(element, token.attributes(), token.hasDuplicateAttribute(), parserContentPolicy);
+    setAttributes(element, token.attributes(), token.hasDuplicateAttribute() ? HasDuplicateAttribute::Yes : HasDuplicateAttribute::No, parserContentPolicy);
 }
 
 static bool hasImpliedEndTag(const HTMLStackItem& item)
@@ -428,7 +429,7 @@ void HTMLConstructionSite::finishedParsing()
 
 void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 {
-    ASSERT(token.type() == HTMLToken::DOCTYPE);
+    ASSERT(token.type() == HTMLToken::Type::DOCTYPE);
 
     String publicId = token.publicIdentifier();
     String systemId = token.systemIdentifier();
@@ -452,19 +453,19 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLToken::Type::Comment);
     attachLater(currentNode(), Comment::create(ownerDocumentForCurrentNode(), WTFMove(token.comment())));
 }
 
 void HTMLConstructionSite::insertCommentOnDocument(AtomHTMLToken&& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLToken::Type::Comment);
     attachLater(m_attachmentRoot, Comment::create(m_document, WTFMove(token.comment())));
 }
 
 void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomHTMLToken&& token)
 {
-    ASSERT(token.type() == HTMLToken::Comment);
+    ASSERT(token.type() == HTMLToken::Type::Comment);
     ContainerNode& parent = m_openElements.rootNode();
     attachLater(parent, Comment::create(parent.document(), WTFMove(token.comment())));
 }
@@ -526,7 +527,7 @@ void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const Ato
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomHTMLToken&& token)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLToken::Type::StartTag);
     // Normally HTMLElementStack is responsible for calling finishParsingChildren,
     // but self-closing elements are never in the element stack so the stack
     // doesn't get a chance to tell them that we're done parsing their children.
@@ -563,7 +564,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, const AtomString& namespaceURI)
 {
-    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(token.type() == HTMLToken::Type::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
 
     auto element = createElement(token, namespaceURI);
@@ -721,7 +722,7 @@ Ref<Element> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 HTMLStackItem HTMLConstructionSite::createElementFromSavedToken(const HTMLStackItem& item)
 {
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
-    AtomHTMLToken fakeToken(HTMLToken::StartTag, item.localName(), Vector<Attribute>(item.attributes()));
+    AtomHTMLToken fakeToken(HTMLToken::Type::StartTag, item.localName(), Vector<Attribute>(item.attributes()));
     ASSERT(item.namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     ASSERT(isFormattingTag(item.localName()));
     return HTMLStackItem(createHTMLElement(fakeToken), WTFMove(fakeToken), item.namespaceURI());

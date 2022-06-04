@@ -416,13 +416,13 @@ TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceSca
 void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests, Document& document)
 {
     switch (token.type()) {
-    case HTMLToken::Character:
+    case HTMLToken::Type::Character:
         if (!m_inStyle)
             return;
         m_cssScanner.scan(token.characters(), requests);
         return;
 
-    case HTMLToken::EndTag: {
+    case HTMLToken::Type::EndTag: {
         TagId tagId = tagIdFor(token.name());
         if (tagId == TagId::Template) {
             if (m_templateCount)
@@ -439,7 +439,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         return;
     }
 
-    case HTMLToken::StartTag: {
+    case HTMLToken::Type::StartTag: {
         if (m_templateCount)
             return;
         TagId tagId = tagIdFor(token.name());
@@ -511,7 +511,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
     PreloadRequestStream requests;
 
     while (auto token = m_tokenizer.nextToken(m_source)) {
-        if (token->type() == HTMLToken::StartTag)
+        if (token->type() == HTMLToken::Type::StartTag)
             m_tokenizer.updateStateFor(AtomString(token->name()));
         m_scanner.scan(*token, requests, document);
     }
