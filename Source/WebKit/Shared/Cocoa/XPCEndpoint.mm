@@ -27,6 +27,7 @@
 #import "XPCEndpoint.h"
 
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/ASCIILiteral.h>
 
 #if PLATFORM(MAC)
 #import "CodeSigning.h"
