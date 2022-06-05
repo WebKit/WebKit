@@ -331,7 +331,7 @@ const MediaTime& MediaSource::currentTimeFudgeFactor()
 
 bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& contentType)
 {
-    return contentType.containerType() == "audio/aac" || contentType.containerType() == "audio/mpeg";
+    return contentType.containerType() == "audio/aac"_s || contentType.containerType() == "audio/mpeg"_s;
 }
 
 bool MediaSource::hasBufferedTime(const MediaTime& time)

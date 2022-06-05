@@ -788,7 +788,7 @@ public:
 
     static bool getOwnPropertySlot(JSObject* thisObject, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
     {
-        if (String(propertyName.uid()) == "thinAirCustomGetter") {
+        if (String(propertyName.uid()) == "thinAirCustomGetter"_s) {
             slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, testStaticAccessorGetter);
             return true;
         }

@@ -318,10 +318,10 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
 #if ENABLE(REMOTE_INSPECTOR)
 static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInspector::Client::SessionCapabilities::Proxy& proxy, WebKitNetworkProxySettings** settings)
 {
-    if (proxy.type == "system")
+    if (proxy.type == "system"_s)
         return WEBKIT_NETWORK_PROXY_MODE_DEFAULT;
 
-    if (proxy.type == "direct")
+    if (proxy.type == "direct"_s)
         return WEBKIT_NETWORK_PROXY_MODE_NO_PROXY;
 
     if (!proxy.ignoreAddressList.isEmpty()) {

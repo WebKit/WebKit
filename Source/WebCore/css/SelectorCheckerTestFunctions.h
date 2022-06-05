@@ -216,7 +216,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
         if (range.isEmpty())
             continue;
 
-        if (range == "*")
+        if (range == "*"_s)
             return true;
 
         StringView rangeStringView = range.string();

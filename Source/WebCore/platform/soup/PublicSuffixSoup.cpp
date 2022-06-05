@@ -50,7 +50,7 @@ String topPrivatelyControlledDomain(const String& domain)
 
     String lowercaseDomain = domain.convertToASCIILowercase();
 
-    if (lowercaseDomain == "localhost")
+    if (lowercaseDomain == "localhost"_s)
         return lowercaseDomain;
 
     CString domainUTF8 = lowercaseDomain.utf8();

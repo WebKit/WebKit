@@ -199,7 +199,7 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
         return ShouldCallBaseEventHandler::Yes;
 #if ENABLE(DATALIST_ELEMENT)
     const String& key = event.keyIdentifier();
-    if (m_suggestionPicker && (key == "Enter" || key == "Up" || key == "Down")) {
+    if (m_suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s)) {
         m_suggestionPicker->handleKeydownWithIdentifier(key);
         event.setDefaultHandled();
     }
@@ -220,9 +220,9 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
         return;
 #endif
     const String& key = event.keyIdentifier();
-    if (key == "Up")
+    if (key == "Up"_s)
         spinButtonStepUp();
-    else if (key == "Down")
+    else if (key == "Down"_s)
         spinButtonStepDown();
     else
         return;
@@ -300,7 +300,7 @@ void TextFieldInputType::handleBlurEvent()
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event& event)
 {
-    return (event.type() == eventNames().textInputEvent && is<TextEvent>(event) && downcast<TextEvent>(event).data() == "\n")
+    return (event.type() == eventNames().textInputEvent && is<TextEvent>(event) && downcast<TextEvent>(event).data() == "\n"_s)
         || InputType::shouldSubmitImplicitly(event);
 }
 

@@ -2408,7 +2408,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 
     String readOnly = readOnlyValue();
     if (!readOnly.isEmpty())
-        return readOnly == "true" ? false : true;
+        return readOnly == "true"_s ? false : true;
 
     if (isNonNativeTextControl())
         return true;
@@ -2427,7 +2427,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 
     if (isRadioButton()) {
         auto radioGroup = radioGroupAncestor();
-        return radioGroup ? radioGroup->readOnlyValue() != "true" : true;
+        return radioGroup ? radioGroup->readOnlyValue() != "true"_s : true;
     }
 #endif
 

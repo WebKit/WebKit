@@ -164,9 +164,9 @@ enum class BindFlags {
     Device,
 };
 
-static void bindSymlinksRealPath(Vector<CString>& args, const char* path, const char* bindOption = "--ro-bind")
+static void bindSymlinksRealPath(Vector<CString>& args, const String& path, const char* bindOption = "--ro-bind")
 {
-    WTF::String realPath = FileSystem::realPath(String::fromUTF8(path));
+    auto realPath = FileSystem::realPath(path);
     if (path != realPath) {
         CString rpath = realPath.utf8();
         args.appendVector(Vector<CString>({ bindOption, rpath.data(), rpath.data() }));
@@ -188,7 +188,7 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
 
     // Canonicalize the source path, otherwise a symbolic link could
     // point to a location outside of the namespace.
-    bindSymlinksRealPath(args, path, bindType);
+    bindSymlinksRealPath(args, String::fromUTF8(path), bindType);
 
     // As /etc is exposed wholesale, do not layer extraneous bind
     // directives on top, which could fail in the presence of symbolic
@@ -715,8 +715,8 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         }));
     }
 
-    bindSymlinksRealPath(sandboxArgs, "/etc/resolv.conf");
-    bindSymlinksRealPath(sandboxArgs, "/etc/localtime");
+    bindSymlinksRealPath(sandboxArgs, "/etc/resolv.conf"_s);
+    bindSymlinksRealPath(sandboxArgs, "/etc/localtime"_s);
 
     // xdg-desktop-portal defaults to assuming you are host application with
     // full permissions unless it can identify you as a snap or flatpak.

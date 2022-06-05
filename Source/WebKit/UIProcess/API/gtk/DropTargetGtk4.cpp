@@ -160,7 +160,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                     else
                         m_selectionData->setMarkup(String::fromUTF8(reinterpret_cast<const char*>(markupData), length));
                 }
-            } else if (mimeType == "_NETSCAPE_URL") {
+            } else if (mimeType == "_NETSCAPE_URL"_s) {
                 gsize length;
                 const auto* urlData = g_bytes_get_data(data.get(), &length);
                 if (length) {
@@ -169,12 +169,12 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                     if (url.isValid())
                         m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
                 }
-            } else if (mimeType == "text/uri-list") {
+            } else if (mimeType == "text/uri-list"_s) {
                 gsize length;
                 const auto* uriListData = g_bytes_get_data(data.get(), &length);
                 if (length)
                     m_selectionData->setURIList(String::fromUTF8(reinterpret_cast<const char*>(uriListData), length));
-            } else if (mimeType == "application/vnd.webkitgtk.smartpaste")
+            } else if (mimeType == "application/vnd.webkitgtk.smartpaste"_s)
                 m_selectionData->setCanSmartReplace(true);
             else if (mimeType == PasteboardCustomData::gtkType()) {
                 if (g_bytes_get_size(data.get()))

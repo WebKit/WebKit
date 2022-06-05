@@ -46,7 +46,7 @@ Capabilities WebDriverService::platformCapabilities()
 
 bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
 {
-    if (name != "wpe:browserOptions")
+    if (name != "wpe:browserOptions"_s)
         return true;
 
     auto browserOptions = value->asObject();

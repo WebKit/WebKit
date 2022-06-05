@@ -101,9 +101,9 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
     // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
 
     // Turn 0x7F into 8, because backspace needs to always be 8.
-    if (text == "\x7F")
+    if (text == "\x7F"_s)
         text = "\x8"_s;
-    if (unmodifiedText == "\x7F")
+    if (unmodifiedText == "\x7F"_s)
         unmodifiedText = "\x8"_s;
     // Always use 9 for tab.
     if (windowsVirtualKeyCode == 9) {

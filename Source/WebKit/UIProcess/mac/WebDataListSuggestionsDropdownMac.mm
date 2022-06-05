@@ -115,9 +115,9 @@ void WebDataListSuggestionsDropdownMac::selectOption()
 
 void WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier(const String& key)
 {
-    if (key == "Enter")
+    if (key == "Enter"_s)
         selectOption();
-    else if (key == "Up" || key == "Down")
+    else if (key == "Up"_s || key == "Down"_s)
         [m_dropdownUI moveSelectionByDirection:key];
 }
 
@@ -401,12 +401,12 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
     size_t newSelection;
     if (oldSelection != -1) {
-        if (direction == "Up")
+        if (direction == "Up"_s)
             newSelection = oldSelection ? (oldSelection - 1) : (size - 1);
         else
             newSelection = (oldSelection + 1) % size;
     } else
-        newSelection = (direction == "Up") ? (size - 1) : 0;
+        newSelection = (direction == "Up"_s) ? (size - 1) : 0;
 
     [_table selectRowIndexes:[NSIndexSet indexSetWithIndex:newSelection] byExtendingSelection:NO];
     [_table scrollRowToVisible:newSelection];

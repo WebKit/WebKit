@@ -164,7 +164,7 @@ void MediaFragmentURIParser::parseTimeFragment()
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#naming-time
         // Temporal clipping is denoted by the name t, and specified as an interval with a begin 
         // time and an end time
-        if (fragment.first != "t")
+        if (fragment.first != "t"_s)
             continue;
 
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#npt-time

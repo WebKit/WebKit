@@ -38,7 +38,7 @@ struct SVGPropertyTraits { };
 template<>
 struct SVGPropertyTraits<bool> {
     static bool initialValue() { return false; }
-    static bool fromString(const String& string) { return string == "true"; }
+    static bool fromString(const String& string) { return string == "true"_s; }
     static std::optional<bool> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(bool type) { return type ? trueAtom() : falseAtom(); }
 };

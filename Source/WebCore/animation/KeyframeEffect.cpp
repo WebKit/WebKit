@@ -99,11 +99,11 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
     // FIXME: We don't handle custom properties yet.
 
     // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
-    if (idlAttributeName == "cssFloat")
+    if (idlAttributeName == "cssFloat"_s)
         return CSSPropertyFloat;
 
     // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
-    if (idlAttributeName == "cssOffset")
+    if (idlAttributeName == "cssOffset"_s)
         return CSSPropertyOffset;
 
     // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.

@@ -112,7 +112,7 @@ String FormSubmission::Attributes::parseEncodingType(const String& type)
 void FormSubmission::Attributes::updateEncodingType(const String& type)
 {
     m_encodingType = parseEncodingType(type);
-    m_isMultiPartForm = (m_encodingType == "multipart/form-data");
+    m_isMultiPartForm = (m_encodingType == "multipart/form-data"_s);
 }
 
 FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type, bool dialogElementEnabled)

@@ -32,5 +32,5 @@ TEST(WTF_TextStream, CFString)
 {
     TextStream ts;
     ts << reinterpret_cast<id>(const_cast<CFMutableStringRef>(CFSTR("Test")));
-    EXPECT_EQ(ts.release(), "Test");
+    EXPECT_EQ(ts.release(), "Test"_s);
 }

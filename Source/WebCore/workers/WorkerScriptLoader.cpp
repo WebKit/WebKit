@@ -140,7 +140,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     m_destination = fetchOptions.destination;
     m_isCOEPEnabled = scriptExecutionContext.settingsValues().crossOriginEmbedderPolicyEnabled;
 
-    ASSERT(scriptRequest.httpMethod() == "GET");
+    ASSERT(scriptRequest.httpMethod() == "GET"_s);
 
     auto request = makeUnique<ResourceRequest>(WTFMove(scriptRequest));
     if (!request)

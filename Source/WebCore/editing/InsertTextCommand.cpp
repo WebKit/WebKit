@@ -187,7 +187,7 @@ void InsertTextCommand::doApply()
 
     Position endPosition;
     
-    if (m_text == "\t") {
+    if (m_text == "\t"_s) {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
         if (placeholder.isNotNull())

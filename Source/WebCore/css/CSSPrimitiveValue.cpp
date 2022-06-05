@@ -1442,7 +1442,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         result.append(separator.isEmpty() ? "counter(" : "counters(", m_value.counter->identifier(), separator.isEmpty() ? "" : ", ");
         if (!separator.isEmpty())
             serializeString(separator, result);
-        if (!(listStyle.isEmpty() || listStyle == "decimal"))
+        if (!(listStyle.isEmpty() || listStyle == "decimal"_s))
             result.append(", ", listStyle);
         result.append(')');
         return result.toString();

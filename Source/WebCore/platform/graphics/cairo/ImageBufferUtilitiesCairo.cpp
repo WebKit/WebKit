@@ -60,7 +60,7 @@ static cairo_status_t writeFunction(void* output, const unsigned char* data, uns
 
 static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<uint8_t>* output)
 {
-    ASSERT_UNUSED(mimeType, mimeType == "image/png"); // Only PNG output is supported for now.
+    ASSERT_UNUSED(mimeType, mimeType == "image/png"_s); // Only PNG output is supported for now.
 
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }
@@ -79,11 +79,11 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, std::o
     // http://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save-to-bufferv
 
     String type = mimeType.substring(sizeof "image");
-    if (type != "jpeg" && type != "png" && type != "tiff" && type != "ico" && type != "bmp")
+    if (type != "jpeg"_s && type != "png"_s && type != "tiff"_s && type != "ico"_s && type != "bmp"_s)
         return false;
 
     GRefPtr<GdkPixbuf> pixbuf;
-    if (type == "jpeg") {
+    if (type == "jpeg"_s) {
         // JPEG doesn't support alpha channel. The <canvas> spec states that toDataURL() must encode a Porter-Duff
         // composite source-over black for image types that do not support alpha.
         RefPtr<cairo_surface_t> newSurface;
@@ -107,7 +107,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, std::o
         return false;
 
     GUniqueOutPtr<GError> error;
-    if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
+    if (type == "jpeg"_s && quality && *quality >= 0.0 && *quality <= 1.0) {
         String qualityString = String::number(static_cast<int>(*quality * 100.0 + 0.5));
         gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error.outPtr(), "quality", qualityString.utf8().data(), NULL);
     } else

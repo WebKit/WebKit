@@ -814,11 +814,11 @@ void WebFrame::setTextDirection(const String& direction)
     if (!m_coreFrame)
         return;
 
-    if (direction == "auto")
+    if (direction == "auto"_s)
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
-    else if (direction == "ltr")
+    else if (direction == "ltr"_s)
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
-    else if (direction == "rtl")
+    else if (direction == "rtl"_s)
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 

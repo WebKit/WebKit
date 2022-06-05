@@ -216,7 +216,7 @@ bool OriginStorageManager::StorageBucket::isEmpty()
     auto hasValidFile = WTF::anyOf(files, [&](auto file) {
         bool isInvalidFile = (file == originFileName);
 #if PLATFORM(COCOA)
-        isInvalidFile |= (file == ".DS_Store");
+        isInvalidFile |= (file == ".DS_Store"_s);
 #endif
         return !isInvalidFile;
     });

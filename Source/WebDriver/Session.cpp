@@ -648,7 +648,7 @@ void Session::newWindow(std::optional<String> typeHint, Function<void (CommandRe
         RefPtr<JSON::Object> parameters;
         if (typeHint) {
             parameters = JSON::Object::create();
-            parameters->setString("presentationHint"_s, typeHint.value() == "window" ? "Window"_s : "Tab"_s);
+            parameters->setString("presentationHint"_s, typeHint.value() == "window"_s ? "Window"_s : "Tab"_s);
         }
         m_host->sendCommandToBackend("createBrowsingContext"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1328,7 +1328,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
             }
 
             auto booleanResult = resultValue->asString();
-            if (!booleanResult || booleanResult != "true") {
+            if (!booleanResult || booleanResult != "true"_s) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1829,7 +1829,7 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
                     if (!result.isError()) {
                         auto tagName = result.result()->asString();
                         if (!!tagName)
-                            isOptionElement = tagName == "option";
+                            isOptionElement = tagName == "option"_s;
                     }
 
                     Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {

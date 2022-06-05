@@ -330,7 +330,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 #endif
 
     xmlChar* origMethod = sheet->method;
-    if (!origMethod && mimeType == "text/html")
+    if (!origMethod && mimeType == "text/html"_s)
         sheet->method = reinterpret_cast<xmlChar*>(const_cast<char*>("html"));
 
     bool success = false;

@@ -186,13 +186,13 @@ void InspectorFrontendHost::loaded()
 
 static std::optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
 {
-    if (dockSideString == "undocked")
+    if (dockSideString == "undocked"_s)
         return InspectorFrontendClient::DockSide::Undocked;
-    if (dockSideString == "right")
+    if (dockSideString == "right"_s)
         return InspectorFrontendClient::DockSide::Right;
-    if (dockSideString == "left")
+    if (dockSideString == "left"_s)
         return InspectorFrontendClient::DockSide::Left;
-    if (dockSideString == "bottom")
+    if (dockSideString == "bottom"_s)
         return InspectorFrontendClient::DockSide::Bottom;
     return std::nullopt;
 }
@@ -528,12 +528,12 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&& items, ContextMenu& menu)
 {
     for (auto& item : items) {
-        if (item.type == "separator") {
+        if (item.type == "separator"_s) {
             menu.appendItem({ SeparatorType, ContextMenuItemTagNoAction, { } });
             continue;
         }
 
-        if (item.type == "subMenu" && item.subItems) {
+        if (item.type == "subMenu"_s && item.subItems) {
             ContextMenu subMenu;
             populateContextMenu(WTFMove(*item.subItems), subMenu);
 
@@ -541,7 +541,7 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
             continue;
         }
 
-        auto type = item.type == "checkbox" ? CheckableActionType : ActionType;
+        auto type = item.type == "checkbox"_s ? CheckableActionType : ActionType;
         auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
         ContextMenuItem menuItem = { type, action, item.label };
         if (item.enabled)

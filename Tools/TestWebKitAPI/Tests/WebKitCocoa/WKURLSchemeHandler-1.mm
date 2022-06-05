@@ -475,7 +475,7 @@ static bool receivedStop;
         return;
     }
 
-    if (entry->key == "syncxhr://host/test.dat")
+    if (entry->key == "syncxhr://host/test.dat"_s)
         startedXHR = true;
 
     if (!entry->value.shouldRespond)
@@ -487,7 +487,7 @@ static bool receivedStop;
     [task didReceiveData:[NSData dataWithBytesNoCopy:(void*)entry->value.data length:strlen(entry->value.data) freeWhenDone:NO]];
     [task didFinish];
 
-    if (entry->key == "syncxhr://host/test.dat")
+    if (entry->key == "syncxhr://host/test.dat"_s)
         startedXHR = false;
 }
 
@@ -1265,12 +1265,12 @@ static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loaded
                 serverLoop(connection, loadedImage, loadedIFrame);
             });
         };
-        if (path == "/main.html")
+        if (path == "/main.html"_s)
             sendReply({ { { "Content-Type"_s, "text/html"_s } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>"_s });
-        else if (path == "/imgsrc") {
+        else if (path == "/imgsrc"_s) {
             loadedImage = true;
             sendReply({ "image content"_s });
-        } else if (path == "/iframesrc") {
+        } else if (path == "/iframesrc"_s) {
             loadedIFrame = true;
             sendReply({ "iframe content"_s });
         } else

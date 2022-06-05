@@ -844,7 +844,7 @@ std::optional<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTr
 
     GValue encodingsValue = G_VALUE_INIT;
     g_value_init(&encodingsValue, GST_TYPE_LIST);
-    if (kind == "audio") {
+    if (kind == "audio"_s) {
         if (!init.sendEncodings.isEmpty()) {
             auto encodingData = fromRTCEncodingParameters(init.sendEncodings[0]);
             GValue value = G_VALUE_INIT;

@@ -89,7 +89,7 @@ void WebInspectorClient::sendMessageToFrontend(const String& message)
 
 bool WebInspectorClient::inspectorAttachDisabled()
 {
-    return loadSetting(inspectorAttachDisabledSetting) == "true";
+    return loadSetting(inspectorAttachDisabledSetting) == "true"_s;
 }
 
 void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
@@ -104,7 +104,7 @@ void WebInspectorClient::deleteInspectorStartsAttached()
 
 bool WebInspectorClient::inspectorStartsAttached()
 {
-    return loadSetting(inspectorStartsAttachedSetting) == "true";
+    return loadSetting(inspectorStartsAttachedSetting) == "true"_s;
 }
 
 void WebInspectorClient::setInspectorStartsAttached(bool attached)

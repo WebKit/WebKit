@@ -67,7 +67,7 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (object.isString() && keyPathElement == "length") {
+    if (object.isString() && keyPathElement == "length"_s) {
         result = jsNumber(asString(object)->length());
         return true;
     }
@@ -76,31 +76,31 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
 
     auto* obj = asObject(object);
     Identifier identifier = Identifier::fromString(vm, keyPathElement);
-    if (obj->inherits<JSArray>() && keyPathElement == "length") {
+    if (obj->inherits<JSArray>() && keyPathElement == "length"_s) {
         result = obj->get(&lexicalGlobalObject, identifier);
         RETURN_IF_EXCEPTION(scope, false);
         return true;
     }
-    if (obj->inherits<JSBlob>() && (keyPathElement == "size" || keyPathElement == "type")) {
-        if (keyPathElement == "size") {
+    if (obj->inherits<JSBlob>() && (keyPathElement == "size"_s || keyPathElement == "type"_s)) {
+        if (keyPathElement == "size"_s) {
             result = jsNumber(jsCast<JSBlob*>(obj)->wrapped().size());
             return true;
         }
-        if (keyPathElement == "type") {
+        if (keyPathElement == "type"_s) {
             result = jsString(vm, jsCast<JSBlob*>(obj)->wrapped().type());
             return true;
         }
     }
     if (obj->inherits<JSFile>()) {
-        if (keyPathElement == "name") {
+        if (keyPathElement == "name"_s) {
             result = jsString(vm, jsCast<JSFile*>(obj)->wrapped().name());
             return true;
         }
-        if (keyPathElement == "lastModified") {
+        if (keyPathElement == "lastModified"_s) {
             result = jsNumber(jsCast<JSFile*>(obj)->wrapped().lastModified());
             return true;
         }
-        if (keyPathElement == "lastModifiedDate") {
+        if (keyPathElement == "lastModifiedDate"_s) {
             result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->wrapped().lastModified()).value()));
             return true;
         }

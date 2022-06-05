@@ -35,10 +35,10 @@ namespace WebDriver {
 static bool soupServerListen(SoupServer* server, const std::optional<String>& host, unsigned port, GError** error)
 {
     static const auto options = static_cast<SoupServerListenOptions>(0);
-    if (!host || host.value() == "local")
+    if (!host || host.value() == "local"_s)
         return soup_server_listen_local(server, port, options, error);
 
-    if (host.value() == "all")
+    if (host.value() == "all"_s)
         return soup_server_listen_all(server, port, options, error);
 
     GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.value().utf8().data(), port));

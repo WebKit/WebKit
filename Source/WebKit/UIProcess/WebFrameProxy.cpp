@@ -174,7 +174,7 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This should be a call to a single MIMETypeRegistry function; adding a new one if needed.
     // FIXME: This is doing case sensitive comparisons on MIME types, should be using ASCII case insensitive instead.
-    return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || m_MIMEType == "application/x-webarchive" || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
+    return m_MIMEType == "text/html"_s || m_MIMEType == "image/svg+xml"_s || m_MIMEType == "application/x-webarchive"_s || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
 }
 
 bool WebFrameProxy::isDisplayingPDFDocument() const

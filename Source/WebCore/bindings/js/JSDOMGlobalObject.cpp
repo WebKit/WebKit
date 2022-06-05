@@ -152,7 +152,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
     scope.assertNoException();
 
     ExceptionCode code { TypeError };
-    if (codeValue == "AbortError")
+    if (codeValue == "AbortError"_s)
         code = AbortError;
     auto value = createDOMException(globalObject, code, message);
 

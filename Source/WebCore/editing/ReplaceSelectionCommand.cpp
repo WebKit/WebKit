@@ -115,13 +115,13 @@ private:
 
 static bool isInterchangeNewlineNode(const Node* node)
 {
-    static NeverDestroyed<String> interchangeNewlineClassString = String::fromLatin1(AppleInterchangeNewline);
+    static NeverDestroyed<String> interchangeNewlineClassString = AppleInterchangeNewline ""_s;
     return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node* node)
 {
-    static NeverDestroyed<String> convertedSpaceSpanClassString = String::fromLatin1(AppleConvertedSpace);
+    static NeverDestroyed<String> convertedSpaceSpanClassString = AppleConvertedSpace ""_s;
     return is<HTMLElement>(node) && downcast<HTMLElement>(*node).attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
 }
 
@@ -1071,7 +1071,7 @@ static bool isInlineNodeWithStyle(const Node* node)
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
     const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
-        || classAttributeValue == AppleConvertedSpace
+        || classAttributeValue == AppleConvertedSpace ""_s
         || classAttributeValue == ApplePasteAsQuotation)
         return true;
 

@@ -533,7 +533,7 @@ bool GraphicsContextGLOpenGL::checkVaryingsPacking(PlatformGLObject vertexShader
             continue;
 
         // Don't count built in varyings.
-        if (symbolName == "gl_FragCoord" || symbolName == "gl_FrontFacing" || symbolName == "gl_PointCoord")
+        if (symbolName == "gl_FragCoord"_s || symbolName == "gl_FrontFacing"_s || symbolName == "gl_PointCoord"_s)
             continue;
 
         const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
@@ -1218,7 +1218,7 @@ std::optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(P
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
-        if (name == symbolEntry.value.get().mappedName.c_str())
+        if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
             return symbolEntry.key;
     }
     return std::nullopt;
@@ -1270,7 +1270,7 @@ String GraphicsContextGLOpenGL::mappedSymbolName(PlatformGLObject shaders[2], si
             
             const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
             for (const auto& symbolEntry : symbolMap) {
-                if (name == symbolEntry.value.get().mappedName.c_str())
+                if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
                     return symbolEntry.key;
             }
         }

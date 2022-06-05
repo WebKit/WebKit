@@ -77,7 +77,7 @@ bool ResourceHandle::start()
 
     // Only allow the POST and GET methods for non-HTTP requests.
     auto request = firstRequest();
-    if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET" && request.httpMethod() != "POST") {
+    if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET"_s && request.httpMethod() != "POST"_s) {
         scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
@@ -425,7 +425,7 @@ void ResourceHandle::continueAfterDidReceiveResponse()
 
 bool ResourceHandle::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
 {
-    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
+    if (request.httpMethod() == "GET"_s || request.httpMethod() == "HEAD"_s)
         return false;
 
     if (!request.url().protocolIsInHTTPFamily())
@@ -434,10 +434,10 @@ bool ResourceHandle::shouldRedirectAsGET(const ResourceRequest& request, bool cr
     if (delegate()->response().isSeeOther())
         return true;
 
-    if ((delegate()->response().isMovedPermanently() || delegate()->response().isFound()) && (request.httpMethod() == "POST"))
+    if ((delegate()->response().isMovedPermanently() || delegate()->response().isFound()) && (request.httpMethod() == "POST"_s))
         return true;
 
-    if (crossOrigin && (request.httpMethod() == "DELETE"))
+    if (crossOrigin && (request.httpMethod() == "DELETE"_s))
         return true;
 
     return false;

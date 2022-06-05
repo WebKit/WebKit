@@ -172,13 +172,13 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
 
     auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
-        if (lowercaseType == "text/uri-list") {
+        if (lowercaseType == "text/uri-list"_s) {
             return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto& urlString) {
                 return Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString);
             });
         }
 
-        if (lowercaseType == "text/html" && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+        if (lowercaseType == "text/html"_s && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
             // If the pasteboard contains files and the page requests 'text/html', we only read from rich text types to prevent file
             // paths from leaking (e.g. from plain text data on the pasteboard) since we sanitize cross-origin markup. However, if
             // custom pasteboard data is disabled, then we can't ensure that the markup we deliver is sanitized, so we fall back to
@@ -207,7 +207,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     if (!Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
         return { };
 
-    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/html") {
+    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/html"_s) {
         if (!document.frame())
             return { };
         WebContentMarkupReader reader { *document.frame() };
@@ -215,7 +215,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
         return reader.markup;
     }
 
-    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list") {
+    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
         return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto&) {
             return true;
         });
@@ -261,9 +261,9 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
     }
 
     String sanitizedData;
-    if (type == "text/html")
+    if (type == "text/html"_s)
         sanitizedData = sanitizeMarkup(data);
-    else if (type == "text/uri-list") {
+    else if (type == "text/uri-list"_s) {
         auto url = URL({ }, data);
         if (url.isValid())
             sanitizedData = url.string();
@@ -612,23 +612,23 @@ void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
 
 static OptionSet<DragOperation> dragOpFromIEOp(const String& operation)
 {
-    if (operation == "uninitialized")
+    if (operation == "uninitialized"_s)
         return anyDragOperation();
-    if (operation == "none")
+    if (operation == "none"_s)
         return { };
-    if (operation == "copy")
+    if (operation == "copy"_s)
         return { DragOperation::Copy };
-    if (operation == "link")
+    if (operation == "link"_s)
         return { DragOperation::Link };
-    if (operation == "move")
+    if (operation == "move"_s)
         return { DragOperation::Generic, DragOperation::Move };
-    if (operation == "copyLink")
+    if (operation == "copyLink"_s)
         return { DragOperation::Copy, DragOperation::Link };
-    if (operation == "copyMove")
+    if (operation == "copyMove"_s)
         return { DragOperation::Copy, DragOperation::Generic, DragOperation::Move };
-    if (operation == "linkMove")
+    if (operation == "linkMove"_s)
         return { DragOperation::Link, DragOperation::Generic, DragOperation::Move };
-    if (operation == "all")
+    if (operation == "all"_s)
         return anyDragOperation();
     return { DragOperation::Private }; // Really a marker for "no conversion".
 }
@@ -682,7 +682,7 @@ void DataTransfer::setDestinationOperationMask(OptionSet<DragOperation> operatio
 
 String DataTransfer::dropEffect() const
 {
-    return m_dropEffect == "uninitialized" ? "none"_s : m_dropEffect;
+    return m_dropEffect == "uninitialized"_s ? "none"_s : m_dropEffect;
 }
 
 void DataTransfer::setDropEffect(const String& effect)
@@ -690,7 +690,7 @@ void DataTransfer::setDropEffect(const String& effect)
     if (!forDrag())
         return;
 
-    if (effect != "none" && effect != "copy" && effect != "link" && effect != "move")
+    if (effect != "none"_s && effect != "copy"_s && effect != "link"_s && effect != "move"_s)
         return;
 
     // FIXME: The spec allows this in all circumstances. There is probably no value

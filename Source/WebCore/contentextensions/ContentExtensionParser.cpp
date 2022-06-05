@@ -219,13 +219,13 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
 
     String actionType = actionObject->getString("type"_s);
 
-    if (actionType == "block")
+    if (actionType == "block"_s)
         return Action { BlockLoadAction() };
-    if (actionType == "ignore-previous-rules")
+    if (actionType == "ignore-previous-rules"_s)
         return Action { IgnorePreviousRulesAction() };
-    if (actionType == "block-cookies")
+    if (actionType == "block-cookies"_s)
         return Action { BlockCookiesAction() };
-    if (actionType == "css-display-none") {
+    if (actionType == "css-display-none"_s) {
         String selectorString = actionObject->getString("selector"_s);
         if (!selectorString)
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
@@ -233,21 +233,21 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
             return std::nullopt; // Skip rules with invalid selectors to be backwards-compatible.
         return Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } };
     }
-    if (actionType == "make-https")
+    if (actionType == "make-https"_s)
         return Action { MakeHTTPSAction() };
-    if (actionType == "notify") {
+    if (actionType == "notify"_s) {
         String notification = actionObject->getString("notification"_s);
         if (!notification)
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
         return Action { NotifyAction { { WTFMove(notification) } } };
     }
-    if (actionType == "redirect") {
+    if (actionType == "redirect"_s) {
         auto action = RedirectAction::parse(*actionObject, urlFilter);
         if (!action)
             return makeUnexpected(action.error());
         return Action { RedirectAction { WTFMove(*action) } };
     }
-    if (actionType == "modify-headers") {
+    if (actionType == "modify-headers"_s) {
         auto action = ModifyHeadersAction::parse(*actionObject);
         if (!action)
             return makeUnexpected(action.error());

@@ -206,7 +206,7 @@ void MediaDocument::defaultEventHandler(Event& event)
             return;
 
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.keyIdentifier() == "U+0020") { // space
+        if (keyboardEvent.keyIdentifier() == "U+0020"_s) { // space
             if (video->paused()) {
                 if (video->canPlay())
                     video->play();

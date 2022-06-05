@@ -50,9 +50,9 @@ struct SVGPropertyTraits<EdgeModeType> {
 
     static EdgeModeType fromString(const String& value)
     {
-        if (value == "duplicate")
+        if (value == "duplicate"_s)
             return EdgeModeType::Duplicate;
-        if (value == "wrap")
+        if (value == "wrap"_s)
             return EdgeModeType::Wrap;
         if (value == noneAtom())
             return EdgeModeType::None;

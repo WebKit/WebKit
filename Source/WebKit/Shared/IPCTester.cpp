@@ -92,9 +92,9 @@ namespace WebKit {
 
 static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
 {
-    if (driverName.isEmpty() || driverName == "default")
+    if (driverName.isEmpty() || driverName == "default"_s)
         driverName = String::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
-    if (driverName.isEmpty() || driverName == "default")
+    if (driverName.isEmpty() || driverName == "default"_s)
         return defaultTestDriver;
     auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, driverName.utf8().data()));
     RELEASE_ASSERT(testDriver);

@@ -121,7 +121,7 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     if (event.defaultHandled())
         return ShouldCallBaseEventHandler::Yes;
     const String& key = event.keyIdentifier();
-    if (key != "Up" && key != "Down" && key != "Left" && key != "Right")
+    if (key != "Up"_s && key != "Down"_s && key != "Left"_s && key != "Right"_s)
         return ShouldCallBaseEventHandler::Yes;
 
     ASSERT(element());
@@ -132,7 +132,7 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
     if (isSpatialNavigationEnabled(element()->document().frame()))
         return ShouldCallBaseEventHandler::Yes;
-    bool forward = (key == "Down" || key == "Right");
+    bool forward = (key == "Down"_s || key == "Right"_s);
 
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
     // of malformed HTML.
@@ -160,7 +160,7 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
 {
     const String& key = event.keyIdentifier();
-    if (key != "U+0020")
+    if (key != "U+0020"_s)
         return;
 
     ASSERT(element());

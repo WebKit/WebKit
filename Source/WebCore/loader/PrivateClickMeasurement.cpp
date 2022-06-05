@@ -141,7 +141,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     EphemeralNonce destinationNonce;
     RegistrableDomain sourceDomain;
     for (auto& parameter : parameters) {
-        if (parameter.key == "attributionSource") {
+        if (parameter.key == "attributionSource"_s) {
             if (parameter.value.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter had no value."_s);
             if (!sourceDomain.isEmpty())
@@ -154,7 +154,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
 
             if (sourceDomain.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter had no registrable domain."_s);
-        } else if (parameter.key == "attributionDestinationNonce") {
+        } else if (parameter.key == "attributionDestinationNonce"_s) {
             if (parameter.value.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionDestinationNonce query parameter had no value."_s);
             if (!destinationNonce.nonce.isEmpty())

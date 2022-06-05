@@ -1080,6 +1080,7 @@ __attribute__((visibility ("default")))
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -1101,12 +1102,14 @@ inline String toProtocolString(TestProtocolTypeDomainEnum value)
 template<>
 inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
 {
-    if (value == "shared")
-        return TestProtocolTypeDomainEnumShared;
-    if (value == "1")
-        return TestProtocolTypeDomainEnum1;
-    if (value == "2")
-        return TestProtocolTypeDomainEnum2;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTypeDomainEnum> mappings[] = {
+        { "1", TestProtocolTypeDomainEnum1 },
+        { "2", TestProtocolTypeDomainEnum2 },
+        { "shared", TestProtocolTypeDomainEnumShared },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 

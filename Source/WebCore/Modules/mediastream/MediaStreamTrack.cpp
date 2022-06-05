@@ -161,20 +161,20 @@ void MediaStreamTrack::setContentHint(const String& hintValue)
 {
     MediaStreamTrackPrivate::HintValue value;
     if (m_private->isAudio()) {
-        if (hintValue == "")
+        if (hintValue.isEmpty())
             value = MediaStreamTrackPrivate::HintValue::Empty;
-        else if (hintValue == "speech")
+        else if (hintValue == "speech"_s)
             value = MediaStreamTrackPrivate::HintValue::Speech;
-        else if (hintValue == "music")
+        else if (hintValue == "music"_s)
             value = MediaStreamTrackPrivate::HintValue::Music;
         else
             return;
     } else {
-        if (hintValue == "")
+        if (hintValue.isEmpty())
             value = MediaStreamTrackPrivate::HintValue::Empty;
-        else if (hintValue == "detail")
+        else if (hintValue == "detail"_s)
             value = MediaStreamTrackPrivate::HintValue::Detail;
-        else if (hintValue == "motion")
+        else if (hintValue == "motion"_s)
             value = MediaStreamTrackPrivate::HintValue::Motion;
         else if (hintValue == textAtom())
             value = MediaStreamTrackPrivate::HintValue::Text;

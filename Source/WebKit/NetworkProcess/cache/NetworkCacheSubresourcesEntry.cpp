@@ -156,7 +156,7 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)
 {
-    ASSERT(m_key.type() == "SubResources");
+    ASSERT(m_key.type() == "SubResources"_s);
 }
 
 SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest& request, const SubresourceInfo* previousInfo)
@@ -210,7 +210,7 @@ SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<Sub
     , m_timeStamp(WallTime::now())
     , m_subresources(makeSubresourceInfoVector(subresourceLoads, nullptr))
 {
-    ASSERT(m_key.type() == "SubResources");
+    ASSERT(m_key.type() == "SubResources"_s);
 }
     
 void SubresourcesEntry::updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)

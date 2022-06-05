@@ -247,7 +247,7 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     ASSERT(request.cachePolicy() != WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache);
 
     // FIXME: Support HEAD requests.
-    if (request.httpMethod() != "GET")
+    if (request.httpMethod() != "GET"_s)
         return RetrieveDecision::NoDueToHTTPMethod;
     if (request.cachePolicy() == WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
@@ -265,7 +265,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isInHTTPFamily())
         return StoreDecision::NoDueToProtocol;
 
-    if (originalRequest.httpMethod() != "GET")
+    if (originalRequest.httpMethod() != "GET"_s)
         return StoreDecision::NoDueToHTTPMethod;
 
     auto requestDirectives = WebCore::parseCacheControlDirectives(originalRequest.httpHeaderFields());

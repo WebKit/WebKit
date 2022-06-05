@@ -186,7 +186,7 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
 
     for (const auto& pair : descriptor.requiredLimits) {
 #define SET_VALUE_32(LIMIT) \
-    else if (pair.key == #LIMIT) { \
+    else if (pair.key == #LIMIT ""_s) { \
         CheckedUint32 narrowed = pair.value; \
         if (narrowed.hasOverflowed()) { \
             requestInvalidDevice(); \
@@ -195,7 +195,7 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.LIMIT = narrowed.value(); \
     }
 #define SET_VALUE_64(LIMIT) \
-    else if (pair.key == #LIMIT) \
+    else if (pair.key == #LIMIT ""_s) \
         limits.LIMIT = pair.value;
 
         if (false) { }

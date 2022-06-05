@@ -90,7 +90,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
             LOG_ERROR("Failed to parse MHTML, invalid MIME header.");
             return nullptr;
         }
-        if (resourceHeader->contentType() == "multipart/alternative") {
+        if (resourceHeader->contentType() == "multipart/alternative"_s) {
             // Ignore IE nesting which makes little sense (IE seems to nest only some of the frames).
             RefPtr<MHTMLArchive> subframeArchive = parseArchiveWithHeader(resourceHeader.get());
             if (!subframeArchive) {

@@ -49,22 +49,22 @@ CanvasPattern::~CanvasPattern() = default;
 
 bool CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY)
 {
-    if (type.isEmpty() || type == "repeat") {
+    if (type.isEmpty() || type == "repeat"_s) {
         repeatX = true;
         repeatY = true;
         return true;
     }
-    if (type == "no-repeat") {
+    if (type == "no-repeat"_s) {
         repeatX = false;
         repeatY = false;
         return true;
     }
-    if (type == "repeat-x") {
+    if (type == "repeat-x"_s) {
         repeatX = true;
         repeatY = false;
         return true;
     }
-    if (type == "repeat-y") {
+    if (type == "repeat-y"_s) {
         repeatX = false;
         repeatY = true;
         return true;

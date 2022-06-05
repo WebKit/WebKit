@@ -343,7 +343,7 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, c
     // No Quirks - no quirks apply. Web pages will obey the specifications to the letter.
 
     // Check for Quirks Mode.
-    if (name != "html"
+    if (name != "html"_s
         || startsWithLettersIgnoringASCIICase(publicId, "+//silmaril//dtd html pro v0r11 19970101//"_s)
         || startsWithLettersIgnoringASCIICase(publicId, "-//advasoft ltd//dtd html 3.0 aswedit + extensions//"_s)
         || startsWithLettersIgnoringASCIICase(publicId, "-//as//dtd html 3.0 aswedit + extensions//"_s)

@@ -2208,18 +2208,18 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
     String currentStateValue = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_currentAttr));
     
     // If "false", empty, or missing, return false state.
-    if (currentStateValue.isEmpty() || currentStateValue == "false")
+    if (currentStateValue.isEmpty() || currentStateValue == "false"_s)
         return AccessibilityCurrentState::False;
     
-    if (currentStateValue == "page")
+    if (currentStateValue == "page"_s)
         return AccessibilityCurrentState::Page;
-    if (currentStateValue == "step")
+    if (currentStateValue == "step"_s)
         return AccessibilityCurrentState::Step;
-    if (currentStateValue == "location")
+    if (currentStateValue == "location"_s)
         return AccessibilityCurrentState::Location;
-    if (currentStateValue == "date")
+    if (currentStateValue == "date"_s)
         return AccessibilityCurrentState::Date;
-    if (currentStateValue == "time")
+    if (currentStateValue == "time"_s)
         return AccessibilityCurrentState::Time;
     
     // Any value not included in the list of allowed values should be treated as "true".
@@ -2315,7 +2315,7 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
 
 std::optional<String> AccessibilityObject::attributeValue(const String& attributeName) const
 {
-    if (attributeName == "name") {
+    if (attributeName == "name"_s) {
         auto value = getAttribute(nameAttr);
         if (!value.isNull())
             return value;

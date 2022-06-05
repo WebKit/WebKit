@@ -39,13 +39,13 @@ void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStri
 #if ENABLE(MEDIA_STREAM)
     String typeString = WebKit::toImpl(type)->string();
     std::variant<WebCore::MockMicrophoneProperties, WebCore::MockSpeakerProperties, WebCore::MockCameraProperties, WebCore::MockDisplayProperties> properties;
-    if (typeString == "camera")
+    if (typeString == "camera"_s)
         properties = WebCore::MockCameraProperties { };
-    else if (typeString == "screen")
+    else if (typeString == "screen"_s)
         properties = WebCore::MockDisplayProperties { };
-    else if (typeString == "speaker")
+    else if (typeString == "speaker"_s)
         properties = WebCore::MockSpeakerProperties { };
-    else if (typeString != "microphone")
+    else if (typeString != "microphone"_s)
         return;
 
     toImpl(context)->addMockMediaDevice({ WebKit::toImpl(persistentId)->string(), WebKit::toImpl(label)->string(), WTFMove(properties) });

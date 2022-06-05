@@ -387,7 +387,7 @@ bool URL::setProtocol(StringView newProtocol)
         return true;
     }
 
-    if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file")
+    if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file"_s)
         return true;
 
     if (isLocalFile() && host().isEmpty())

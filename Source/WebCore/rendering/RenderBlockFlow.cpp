@@ -1583,7 +1583,7 @@ static inline bool needsAppleMailPaginationQuirk(LegacyRootInlineBox& lineBox)
     if (!renderer.settings().appleMailPaginationQuirkEnabled())
         return false;
 
-    if (renderer.element() && renderer.element()->idForStyleResolution() == "messageContentContainer")
+    if (renderer.element() && renderer.element()->idForStyleResolution() == "messageContentContainer"_s)
         return true;
 
     return false;

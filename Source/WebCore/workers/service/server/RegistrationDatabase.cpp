@@ -322,11 +322,11 @@ static ASCIILiteral updateViaCacheToString(ServiceWorkerUpdateViaCache update)
 
 static std::optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String& update)
 {
-    if (update == "Imports")
+    if (update == "Imports"_s)
         return ServiceWorkerUpdateViaCache::Imports;
-    if (update == "All")
+    if (update == "All"_s)
         return ServiceWorkerUpdateViaCache::All;
-    if (update == "None")
+    if (update == "None"_s)
         return ServiceWorkerUpdateViaCache::None;
 
     return std::nullopt;
@@ -346,9 +346,9 @@ static ASCIILiteral workerTypeToString(WorkerType workerType)
 
 static std::optional<WorkerType> stringToWorkerType(const String& type)
 {
-    if (type == "Classic")
+    if (type == "Classic"_s)
         return WorkerType::Classic;
-    if (type == "Module")
+    if (type == "Module"_s)
         return WorkerType::Module;
 
     return std::nullopt;

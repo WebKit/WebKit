@@ -66,7 +66,7 @@ public:
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
 protected:
-    bool hasEntitlement(const char* entitlement);
+    bool hasEntitlement(ASCIILiteral entitlement);
     bool isClientSandboxed();
 
     OSObjectPtr<xpc_connection_t> m_connection;

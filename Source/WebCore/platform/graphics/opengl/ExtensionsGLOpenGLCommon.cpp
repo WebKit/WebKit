@@ -106,7 +106,7 @@ bool ExtensionsGLOpenGLCommon::supports(const String& name)
     // We explicitly do not support this extension until
     // we fix the following bug:
     // https://bugs.webkit.org/show_bug.cgi?id=149734
-    if (name == "GL_ANGLE_translated_shader_source")
+    if (name == "GL_ANGLE_translated_shader_source"_s)
         return false;
 
     return platformSupportsExtension(name);
@@ -114,7 +114,7 @@ bool ExtensionsGLOpenGLCommon::supports(const String& name)
 
 void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
 {
-    if (name == "GL_OES_standard_derivatives") {
+    if (name == "GL_OES_standard_derivatives"_s) {
         // Enable support in ANGLE (if not enabled already)
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         ShBuiltInResources ANGLEResources = compiler.getResources();
@@ -122,7 +122,7 @@ void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
             ANGLEResources.OES_standard_derivatives = 1;
             compiler.setResources(ANGLEResources);
         }
-    } else if (name == "GL_EXT_draw_buffers") {
+    } else if (name == "GL_EXT_draw_buffers"_s) {
         // Enable support in ANGLE (if not enabled already)
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         ShBuiltInResources ANGLEResources = compiler.getResources();
@@ -131,7 +131,7 @@ void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
             ANGLEResources.MaxDrawBuffers = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS_EXT);
             compiler.setResources(ANGLEResources);
         }
-    } else if (name == "GL_EXT_shader_texture_lod") {
+    } else if (name == "GL_EXT_shader_texture_lod"_s) {
         // Enable support in ANGLE (if not enabled already)
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         ShBuiltInResources ANGLEResources = compiler.getResources();
@@ -139,7 +139,7 @@ void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
             ANGLEResources.EXT_shader_texture_lod = 1;
             compiler.setResources(ANGLEResources);
         }
-    } else if (name == "GL_EXT_frag_depth") {
+    } else if (name == "GL_EXT_frag_depth"_s) {
         // Enable support in ANGLE (if not enabled already)
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         ShBuiltInResources ANGLEResources = compiler.getResources();
@@ -152,7 +152,7 @@ void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
 
 bool ExtensionsGLOpenGLCommon::isEnabled(const String& name)
 {
-    if (name == "GL_OES_standard_derivatives") {
+    if (name == "GL_OES_standard_derivatives"_s) {
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         return compiler.getResources().OES_standard_derivatives;
     }

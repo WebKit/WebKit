@@ -5933,9 +5933,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     for (size_t i = 0; i < commands.size(); ++i) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (commands[i].commandName == "insertText:")
+        if (commands[i].commandName == "insertText:"_s)
             [self insertText:commands[i].text];
-        else if (commands[i].commandName == "noop:")
+        else if (commands[i].commandName == "noop:"_s)
             ; // Do nothing. This case can be removed once <rdar://problem/9025012> is fixed.
         else
             [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];

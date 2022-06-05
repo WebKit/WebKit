@@ -137,7 +137,7 @@ void PreviewConverter::platformFailedAppending()
 
 bool PreviewConverter::isPlatformPasswordError(const ResourceError& error) const
 {
-    return error.errorCode() == kQLReturnPasswordProtected && error.domain() == "QuickLookErrorDomain";
+    return error.errorCode() == kQLReturnPasswordProtected && error.domain() == "QuickLookErrorDomain"_s;
 }
 
 static NSDictionary *optionsWithPassword(const String& password)

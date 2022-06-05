@@ -134,7 +134,7 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
     if (event.isKeyboardEvent() && event.type() == eventNames().keydownEvent) {
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
 
-        if (keyboardEvent.keyIdentifier() == "U+0009") {
+        if (keyboardEvent.keyIdentifier() == "U+0009"_s) {
             if (keyboardEvent.ctrlKey() || keyboardEvent.metaKey() || keyboardEvent.altGraphKey())
                 return false;
 

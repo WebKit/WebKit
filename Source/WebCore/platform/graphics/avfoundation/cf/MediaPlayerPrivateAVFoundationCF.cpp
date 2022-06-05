@@ -1911,7 +1911,7 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
     RetainPtr<CFStringRef> schemeRef = adoptCF(CFURLCopyScheme(requestURL.get()));
     String scheme = schemeRef.get();
 
-    if (scheme == "skd") {
+    if (scheme == "skd"_s) {
         RetainPtr<CFURLRef> absoluteURL = adoptCF(CFURLCopyAbsoluteURL(requestURL.get()));
         RetainPtr<CFStringRef> keyURIRef = CFURLGetString(absoluteURL.get());
         String keyURI = keyURIRef.get();

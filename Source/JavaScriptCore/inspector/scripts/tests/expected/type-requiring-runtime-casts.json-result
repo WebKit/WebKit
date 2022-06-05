@@ -699,7 +699,7 @@ void BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JS
 #if ASSERT_ENABLED
     auto result = value->asString();
     ASSERT(result);
-    ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
+    ASSERT(result == "Ducks"_s || result == "Hens"_s || result == "Crows"_s || result == "Flamingos"_s);
 #endif
 }
 
@@ -1181,6 +1181,7 @@ __attribute__((visibility ("default")))
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -1204,14 +1205,15 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
-    if (value == "Pigs")
-        return TestProtocolTestUncastedAnimalsPigs;
-    if (value == "Cows")
-        return TestProtocolTestUncastedAnimalsCows;
-    if (value == "Cats")
-        return TestProtocolTestUncastedAnimalsCats;
-    if (value == "Hens")
-        return TestProtocolTestUncastedAnimalsHens;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals> mappings[] = {
+        { "Cats", TestProtocolTestUncastedAnimalsCats },
+        { "Cows", TestProtocolTestUncastedAnimalsCows },
+        { "Hens", TestProtocolTestUncastedAnimalsHens },
+        { "Pigs", TestProtocolTestUncastedAnimalsPigs },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 
@@ -1232,14 +1234,15 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
-    if (value == "Ducks")
-        return TestProtocolTestCastedAnimalsDucks;
-    if (value == "Hens")
-        return TestProtocolTestCastedAnimalsHens;
-    if (value == "Crows")
-        return TestProtocolTestCastedAnimalsCrows;
-    if (value == "Flamingos")
-        return TestProtocolTestCastedAnimalsFlamingos;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals> mappings[] = {
+        { "Crows", TestProtocolTestCastedAnimalsCrows },
+        { "Ducks", TestProtocolTestCastedAnimalsDucks },
+        { "Flamingos", TestProtocolTestCastedAnimalsFlamingos },
+        { "Hens", TestProtocolTestCastedAnimalsHens },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 

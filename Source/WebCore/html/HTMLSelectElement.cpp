@@ -1114,7 +1114,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
         return false;
 
     if (!isSpatialNavigationEnabled(document().frame())) {
-        if (event->keyIdentifier() == "Down" || event->keyIdentifier() == "Up") {
+        if (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s) {
             focus();
             document().updateStyleIfNeeded();
             // Calling focus() may cause us to lose our renderer. Return true so
@@ -1170,21 +1170,21 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
         // When using caret browsing, we want to be able to move the focus
         // out of the select element when user hits a left or right arrow key.
         if (document().settings().caretBrowsingEnabled()) {
-            if (keyIdentifier == "Left" || keyIdentifier == "Right")
+            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s)
                 return;
         }
 
-        if (keyIdentifier == "Down" || keyIdentifier == "Right")
+        if (keyIdentifier == "Down"_s || keyIdentifier == "Right"_s)
             listIndex = nextValidIndex(listIndex, SkipForwards, 1);
-        else if (keyIdentifier == "Up" || keyIdentifier == "Left")
+        else if (keyIdentifier == "Up"_s || keyIdentifier == "Left"_s)
             listIndex = nextValidIndex(listIndex, SkipBackwards, 1);
-        else if (keyIdentifier == "PageDown")
+        else if (keyIdentifier == "PageDown"_s)
             listIndex = nextValidIndex(listIndex, SkipForwards, 3);
-        else if (keyIdentifier == "PageUp")
+        else if (keyIdentifier == "PageUp"_s)
             listIndex = nextValidIndex(listIndex, SkipBackwards, 3);
-        else if (keyIdentifier == "Home")
+        else if (keyIdentifier == "Home"_s)
             listIndex = nextValidIndex(-1, SkipForwards, 1);
-        else if (keyIdentifier == "End")
+        else if (keyIdentifier == "End"_s)
             listIndex = nextValidIndex(listItems.size(), SkipBackwards, 1);
         else
             handled = false;
@@ -1419,48 +1419,48 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         int endIndex = 0;
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
-            if (keyIdentifier == "Down" || keyIdentifier == "PageDown") {
+            if (keyIdentifier == "Down"_s || keyIdentifier == "PageDown"_s) {
                 int startIndex = lastSelectedListIndex();
                 handled = true;
-                if (keyIdentifier == "Down")
+                if (keyIdentifier == "Down"_s)
                     endIndex = nextSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipForwards);
-            } else if (keyIdentifier == "Up" || keyIdentifier == "PageUp") {
+            } else if (keyIdentifier == "Up"_s || keyIdentifier == "PageUp"_s) {
                 int startIndex = optionToListIndex(selectedIndex());
                 handled = true;
-                if (keyIdentifier == "Up")
+                if (keyIdentifier == "Up"_s)
                     endIndex = previousSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipBackwards);
             }
         } else {
             // Set the end index based on the current end index.
-            if (keyIdentifier == "Down") {
+            if (keyIdentifier == "Down"_s) {
                 endIndex = nextSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == "Up") {
+            } else if (keyIdentifier == "Up"_s) {
                 endIndex = previousSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == "PageDown") {
+            } else if (keyIdentifier == "PageDown"_s) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipForwards);
                 handled = true;
-            } else if (keyIdentifier == "PageUp") {
+            } else if (keyIdentifier == "PageUp"_s) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipBackwards);
                 handled = true;
             }
         }
-        if (keyIdentifier == "Home") {
+        if (keyIdentifier == "Home"_s) {
             endIndex = firstSelectableListIndex();
             handled = true;
-        } else if (keyIdentifier == "End") {
+        } else if (keyIdentifier == "End"_s) {
             endIndex = lastSelectableListIndex();
             handled = true;
         }
 
         if (isSpatialNavigationEnabled(document().frame()))
             // Check if the selection moves to the boundary.
-            if (keyIdentifier == "Left" || keyIdentifier == "Right" || ((keyIdentifier == "Down" || keyIdentifier == "Up") && endIndex == m_activeSelectionEndIndex))
+            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s || ((keyIdentifier == "Down"_s || keyIdentifier == "Up"_s) && endIndex == m_activeSelectionEndIndex))
                 return;
 
         if (endIndex >= 0 && handled) {

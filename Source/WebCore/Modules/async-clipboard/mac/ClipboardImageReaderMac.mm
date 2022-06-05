@@ -35,7 +35,7 @@ namespace WebCore {
 
 void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBuffer>&& buffer)
 {
-    if (m_mimeType == "image/png") {
+    if (m_mimeType == "image/png"_s) {
         auto image = adoptNS([[NSImage alloc] initWithData:buffer->createNSData().get()]);
         if (auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil]) {
             auto representation = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:cgImage]);

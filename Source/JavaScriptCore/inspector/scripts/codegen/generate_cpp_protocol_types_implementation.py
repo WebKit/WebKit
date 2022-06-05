@@ -293,7 +293,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append('    auto result = value->asString();')
         lines.append('    ASSERT(result);')
 
-        assert_condition = ' || '.join(['result == "%s"' % enum_value for enum_value in enum_member.type.enum_values()])
+        assert_condition = ' || '.join(['result == "%s"_s' % enum_value for enum_value in enum_member.type.enum_values()])
         lines.append('    ASSERT(%s);' % assert_condition)
         lines.append('#endif')
         lines.append('}')

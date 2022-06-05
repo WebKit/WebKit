@@ -58,7 +58,7 @@ String CheckboxInputType::valueMissingText() const
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
 {
     const String& key = event.keyIdentifier();
-    if (key != "U+0020")
+    if (key != "U+0020"_s)
         return;
     dispatchSimulatedClickIfActive(event);
 }

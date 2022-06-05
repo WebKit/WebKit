@@ -85,7 +85,7 @@ static bool isEGLImageAvailable(bool useIndexedGetString)
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i) {
             String extension = String::fromLatin1(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
-            if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
+            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
                 return true;
         }
     } else
@@ -93,7 +93,7 @@ static bool isEGLImageAvailable(bool useIndexedGetString)
     {
         String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
         for (auto& extension : extensionsString.split(' ')) {
-            if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
+            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
                 return true;
         }
     }

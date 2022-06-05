@@ -43,11 +43,10 @@
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
 
-#define JavaCocoaPluginIdentifier   "com.apple.JavaPluginCocoa"
-#define JavaCarbonPluginIdentifier  "com.apple.JavaAppletPlugin"
+static constexpr auto JavaCocoaPluginIdentifier ="com.apple.JavaPluginCocoa"_s;
+static constexpr auto JavaCarbonPluginIdentifier = "com.apple.JavaAppletPlugin"_s;
 
-#define QuickTimeCarbonPluginIdentifier       "com.apple.QuickTime Plugin.plugin"
-#define QuickTimeCocoaPluginIdentifier        "com.apple.quicktime.webplugin"
+static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webplugin"_s;
 
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
@@ -245,7 +244,7 @@
 - (BOOL)isQuickTimePlugIn
 {
     const String& bundleIdentifier = [self bundleIdentifier];
-    return bundleIdentifier == QuickTimeCocoaPluginIdentifier || bundleIdentifier == QuickTimeCocoaPluginIdentifier;
+    return bundleIdentifier == QuickTimeCocoaPluginIdentifier;
 }
 
 - (BOOL)isJavaPlugIn

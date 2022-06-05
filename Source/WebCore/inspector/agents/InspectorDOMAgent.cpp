@@ -2202,11 +2202,11 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             
             String invalidValue = axObject->invalidStatus();
-            if (invalidValue == "false")
+            if (invalidValue == "false"_s)
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::False;
-            else if (invalidValue == "grammar")
+            else if (invalidValue == "grammar"_s)
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::Grammar;
-            else if (invalidValue == "spelling")
+            else if (invalidValue == "spelling"_s)
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::Spelling;
             else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::True;
@@ -2245,9 +2245,9 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                 }
 
                 String ariaLive = axObject->liveRegionStatus();
-                if (ariaLive == "assertive")
+                if (ariaLive == "assertive"_s)
                     liveRegionStatus = Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
-                else if (ariaLive == "polite")
+                else if (ariaLive == "polite"_s)
                     liveRegionStatus = Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
             }
 

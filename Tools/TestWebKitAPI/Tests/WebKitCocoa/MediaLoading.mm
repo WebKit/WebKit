@@ -169,9 +169,9 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
             };
             totalRequests++;
             auto path = HTTPServer::parsePath(request);
-            if (path == "/")
+            if (path == "/"_s)
                 sendResponse({ videoPlayTestHTML }, HTTPResponse::IncludeContentLength::Yes);
-            else if (path == "/video.mp4")
+            else if (path == "/video.mp4"_s)
                 sendResponse(testVideoBytes(), HTTPResponse::IncludeContentLength::No);
             else
                 ASSERT(path.isNull());

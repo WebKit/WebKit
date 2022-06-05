@@ -339,7 +339,7 @@ void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionH
 
 bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& request)
 {
-    if (request.httpMethod() != "GET")
+    if (request.httpMethod() != "GET"_s)
         return false;
     if (!request.httpHeaderField(HTTPHeaderName::Range).isEmpty())
         return false;
@@ -612,7 +612,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
 
 void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
-    ASSERT(storageKey.type() == "Resource");
+    ASSERT(storageKey.type() == "Resource"_s);
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey, m_storage.salt());
     m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record, auto timings) {
         if (!record) {

@@ -2155,13 +2155,13 @@ void TestController::setPluginSupportedMode(const String& mode)
     WKArrayAppendItem(mimeTypesNetscape.get(), toWK("application/x-webkit-test-netscape").get());
     auto namePdf = toWK("WebKit built-in PDF");
 
-    if (m_unsupportedPluginMode == "allOrigins") {
+    if (m_unsupportedPluginMode == "allOrigins"_s) {
         WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
         WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;
     }
 
-    if (m_unsupportedPluginMode == "specificOrigin") {
+    if (m_unsupportedPluginMode == "specificOrigin"_s) {
         WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
         WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;

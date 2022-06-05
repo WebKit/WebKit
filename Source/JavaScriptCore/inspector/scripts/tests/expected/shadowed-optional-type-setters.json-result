@@ -860,6 +860,7 @@ __attribute__((visibility ("default")))
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -881,12 +882,14 @@ inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 template<>
 inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
 {
-    if (value == "null")
-        return TestProtocolRuntimeKeyPathTypeNull;
-    if (value == "string")
-        return TestProtocolRuntimeKeyPathTypeString;
-    if (value == "array")
-        return TestProtocolRuntimeKeyPathTypeArray;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolRuntimeKeyPathType> mappings[] = {
+        { "array", TestProtocolRuntimeKeyPathTypeArray },
+        { "null", TestProtocolRuntimeKeyPathTypeNull },
+        { "string", TestProtocolRuntimeKeyPathTypeString },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 

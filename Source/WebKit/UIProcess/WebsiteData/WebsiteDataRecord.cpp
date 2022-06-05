@@ -48,7 +48,7 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
     if (hostName == String(kCFHTTPCookieLocalFileDomain))
         return displayNameForLocalFiles();
 #else
-    if (hostName == "localhost")
+    if (hostName == "localhost"_s)
         return hostName;
 #endif
     return displayNameForHostName(hostName);
@@ -67,11 +67,11 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
 {
     const auto& protocol = securityOrigin.protocol;
 
-    if (protocol == "file")
+    if (protocol == "file"_s)
         return displayNameForLocalFiles();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (protocol == "http" || protocol == "https")
+    if (protocol == "http"_s || protocol == "https"_s)
         return WebCore::topPrivatelyControlledDomain(securityOrigin.host);
 #endif
 

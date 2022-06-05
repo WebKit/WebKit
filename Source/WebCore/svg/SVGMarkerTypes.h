@@ -66,9 +66,9 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
     }
     static SVGMarkerUnitsType fromString(const String& value)
     {
-        if (value == "userSpaceOnUse")
+        if (value == "userSpaceOnUse"_s)
             return SVGMarkerUnitsUserSpaceOnUse;
-        if (value == "strokeWidth")
+        if (value == "strokeWidth"_s)
             return SVGMarkerUnitsStrokeWidth;
         return SVGMarkerUnitsUnknown;
     }

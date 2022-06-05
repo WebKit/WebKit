@@ -222,11 +222,11 @@ void RemoteInspectorClient::connectionDidClose()
 
 static Inspector::DebuggableType debuggableType(const String& targetType)
 {
-    if (targetType == "JavaScript")
+    if (targetType == "JavaScript"_s)
         return Inspector::DebuggableType::JavaScript;
-    if (targetType == "ServiceWorker")
+    if (targetType == "ServiceWorker"_s)
         return Inspector::DebuggableType::ServiceWorker;
-    if (targetType == "WebPage")
+    if (targetType == "WebPage"_s)
         return Inspector::DebuggableType::WebPage;
     RELEASE_ASSERT_NOT_REACHED();
 }

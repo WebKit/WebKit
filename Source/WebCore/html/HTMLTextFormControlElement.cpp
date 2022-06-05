@@ -293,9 +293,9 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
 void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, const String& directionString, const AXTextStateChangeIntent& intent)
 {
     TextFieldSelectionDirection direction = SelectionHasNoDirection;
-    if (directionString == "forward")
+    if (directionString == "forward"_s)
         direction = SelectionHasForwardDirection;
-    else if (directionString == "backward")
+    else if (directionString == "backward"_s)
         direction = SelectionHasBackwardDirection;
 
     if (setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent))

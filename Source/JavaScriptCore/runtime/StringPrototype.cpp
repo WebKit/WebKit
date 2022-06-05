@@ -1946,13 +1946,13 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
         String formString = formValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (formString == "NFC")
+        if (formString == "NFC"_s)
             form = NormalizationForm::NFC;
-        else if (formString == "NFD")
+        else if (formString == "NFD"_s)
             form = NormalizationForm::NFD;
-        else if (formString == "NFKC")
+        else if (formString == "NFKC"_s)
             form = NormalizationForm::NFKC;
-        else if (formString == "NFKD")
+        else if (formString == "NFKD"_s)
             form = NormalizationForm::NFKD;
         else
             return throwVMRangeError(globalObject, scope, "argument does not match any normalization form"_s);

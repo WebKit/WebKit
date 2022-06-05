@@ -119,7 +119,7 @@ LengthBox Theme::controlPadding(ControlPart part, const FontCascade&, const Leng
 void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
     // We only handle one icon at the moment.
-    if (name != "wireless-playback")
+    if (name != "wireless-playback"_s)
         return;
 
     GraphicsContextStateSaver stateSaver(context);

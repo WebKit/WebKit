@@ -140,7 +140,7 @@ void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, cons
             return;
         }
 
-        if (usages && !key.use.isNull() && key.use != "enc") {
+        if (usages && !key.use.isNull() && key.use != "enc"_s) {
             exceptionCallback(DataError);
             return;
         }

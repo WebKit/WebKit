@@ -291,7 +291,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::defineOwnProperty(JSObjec
     if (!propertyName.isSymbol()) {
 static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
 {
-    return propertyName == "unforgeableAttribute" || propertyName == "unforgeableOperation";
+    return propertyName == "unforgeableAttribute"_s || propertyName == "unforgeableOperation"_s;
 }
 
         if (!isLegacyUnforgeablePropertyName(propertyName)) {

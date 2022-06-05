@@ -2469,7 +2469,7 @@ bool NetworkProcess::allowsPrivateClickMeasurementTestFunctionality() const
     auto auditToken = sourceApplicationAuditToken();
     if (!auditToken)
         return false;
-    return WTF::hasEntitlement(*auditToken, "com.apple.private.webkit.adattributiond.testing");
+    return WTF::hasEntitlement(*auditToken, "com.apple.private.webkit.adattributiond.testing"_s);
 #endif
 }
 

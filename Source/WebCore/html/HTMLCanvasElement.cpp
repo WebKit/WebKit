@@ -347,7 +347,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 
 bool HTMLCanvasElement::is2dType(const String& type)
 {
-    return type == "2d";
+    return type == "2d"_s;
 }
 
 CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
@@ -410,18 +410,18 @@ static bool shouldEnableWebGL(const Settings& settings)
 bool HTMLCanvasElement::isWebGLType(const String& type)
 {
     // Retain support for the legacy "webkit-3d" name.
-    return type == "webgl" || type == "experimental-webgl"
+    return type == "webgl"_s || type == "experimental-webgl"_s
 #if ENABLE(WEBGL2)
-        || type == "webgl2"
+        || type == "webgl2"_s
 #endif
-        || type == "webkit-3d";
+        || type == "webkit-3d"_s;
 }
 
 GraphicsContextGLWebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 {
     ASSERT(isWebGLType(type));
 #if ENABLE(WEBGL2)
-    if (type == "webgl2")
+    if (type == "webgl2"_s)
         return WebGLVersion::WebGL2;
 #else
     UNUSED_PARAM(type);
@@ -486,7 +486,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type,
 
 bool HTMLCanvasElement::isBitmapRendererType(const String& type)
 {
-    return type == "bitmaprenderer";
+    return type == "bitmaprenderer"_s;
 }
 
 ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)

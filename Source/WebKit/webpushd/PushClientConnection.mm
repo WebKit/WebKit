@@ -111,7 +111,7 @@ bool ClientConnection::hostAppHasPushInjectEntitlement()
     return hostHasEntitlement("com.apple.private.webkit.webpush.inject"_s);
 }
 
-bool ClientConnection::hostHasEntitlement(const char* entitlement)
+bool ClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 {
     if (!m_hostAppAuditToken)
         return false;

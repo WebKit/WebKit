@@ -65,7 +65,7 @@ void InputMethodState::setPurposeOrHintForInputMode(WebCore::InputMode inputMode
 static bool inputElementHasDigitsPattern(WebCore::HTMLInputElement& element)
 {
     const auto& pattern = element.attributeWithoutSynchronization(WebCore::HTMLNames::patternAttr);
-    return pattern == "\\d*" || pattern == "[0-9]*";
+    return pattern == "\\d*"_s || pattern == "[0-9]*"_s;
 }
 
 void InputMethodState::setPurposeForInputElement(WebCore::HTMLInputElement& element)

@@ -718,6 +718,7 @@ using namespace Inspector;
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 

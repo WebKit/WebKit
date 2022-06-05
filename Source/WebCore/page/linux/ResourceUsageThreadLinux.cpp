@@ -268,7 +268,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (name == "BMScavenger")
+        if (name == "BMScavenger"_s)
             return true;
 
         return false;

@@ -38,7 +38,7 @@ namespace WebCore {
 
 String SecurityOriginData::toString() const
 {
-    if (protocol == "file")
+    if (protocol == "file"_s)
         return "file://"_s;
 
     if (protocol.isEmpty() && host.isEmpty())

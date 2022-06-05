@@ -524,7 +524,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
     
     // Return false if there is no image type or the image type is JPEG, because
     // JPEG does not support alpha transparency.
-    if (uti.isEmpty() || uti == "public.jpeg")
+    if (uti.isEmpty() || uti == "public.jpeg"_s)
         return false;
     
     // FIXME: Could return false for other non-transparent image formats.
@@ -575,7 +575,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 #endif // PLATFORM(IOS_FAMILY)
     
     String uti = this->uti();
-    if (uti.isEmpty() || uti != "public.xbitmap-image")
+    if (uti.isEmpty() || uti != "public.xbitmap-image"_s)
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.

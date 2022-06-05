@@ -219,7 +219,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     auto attachment = page()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
     if (attachment) {
 #if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
-        isPDFAttachment = attachment->utiType() == [UTTypePDF.identifier UTF8String];
+        isPDFAttachment = attachment->utiType() == String(UTTypePDF.identifier);
 #else
         isPDFAttachment = attachment->utiType() == String(kUTTypePDF);
 #endif

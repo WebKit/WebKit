@@ -318,11 +318,11 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
                     continue;
                 size_t size = *parsedSize;
 
-                if (key == "a" || key == "audio" || key == "*")
+                if (key == "a"_s || key == "audio"_s || key == "*"_s)
                     maxBufferSizeAudio = size * units;
-                if (key == "v" || key == "video" || key == "*")
+                if (key == "v"_s || key == "video"_s || key == "*"_s)
                     maxBufferSizeVideo = size * units;
-                if (key == "t" || key == "text" || key == "*")
+                if (key == "t"_s || key == "text"_s || key == "*"_s)
                     maxBufferSizeText = size * units;
             }
         }

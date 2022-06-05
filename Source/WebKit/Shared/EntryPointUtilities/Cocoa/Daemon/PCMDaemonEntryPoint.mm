@@ -140,7 +140,7 @@ int PCMDaemonMain(int argc, const char** argv)
         _CFPrefsSetReadOnly(YES);
 #endif
         enterSandbox();
-        startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond", connectionAdded, connectionRemoved, connectionEventHandler);
+        startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond"_s, connectionAdded, connectionRemoved, connectionEventHandler);
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();

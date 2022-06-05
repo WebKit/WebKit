@@ -129,7 +129,7 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
         return languages.isEmpty() ? emptyString() : languages[0];
     };
     unsigned timeout = 0;
-    while (getLanguageFromNSUserDefaults() != "en-GB" && ++timeout < 100)
+    while (getLanguageFromNSUserDefaults() != "en-GB"_s && ++timeout < 100)
         TestWebKitAPI::Util::sleep(0.1);
     EXPECT_WK_STREQ(@"en-GB", getLanguageFromNSUserDefaults());
 

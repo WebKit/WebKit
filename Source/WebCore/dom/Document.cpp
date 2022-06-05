@@ -6284,7 +6284,7 @@ bool Document::isTelephoneNumberParsingAllowed() const
 String Document::originIdentifierForPasteboard() const
 {
     auto origin = securityOrigin().toString();
-    if (origin != "null")
+    if (origin != "null"_s)
         return origin;
     if (!m_uniqueIdentifier)
         m_uniqueIdentifier = makeString("null:"_s, UUID::createVersion4());

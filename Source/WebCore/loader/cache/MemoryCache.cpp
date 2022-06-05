@@ -114,7 +114,7 @@ bool MemoryCache::add(CachedResource& resource)
     if (disabled())
         return false;
 
-    if (resource.resourceRequest().httpMethod() != "GET")
+    if (resource.resourceRequest().httpMethod() != "GET"_s)
         return false;
 
     ASSERT(isMainThread());

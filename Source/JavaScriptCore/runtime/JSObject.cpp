@@ -533,7 +533,7 @@ String JSObject::calculatedClassName(JSObject* object)
     if (UNLIKELY(scope.exception()))
         scope.clearException();
 
-    if (constructorFunctionName.isNull() || constructorFunctionName == "Object") {
+    if (constructorFunctionName.isNull() || constructorFunctionName == "Object"_s) {
         PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
         if (object->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot)) {
             EXCEPTION_ASSERT(!scope.exception());

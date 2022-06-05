@@ -2099,7 +2099,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     String keyURI = [[[avRequest request] URL] absoluteString];
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    if (scheme == "skd") {
+    if (scheme == "skd"_s) {
         INFO_LOG(LOGIDENTIFIER, "received skd:// URI");
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         // Create an initData with the following layout:
@@ -2139,7 +2139,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (scheme == "clearkey") {
+    if (scheme == "clearkey"_s) {
         String keyID = [[[avRequest request] URL] resourceSpecifier];
         auto encodedKeyId = PAL::UTF8Encoding().encode(keyID, PAL::UnencodableHandling::URLEncodedEntities);
         auto initData = SharedBuffer::create(WTFMove(encodedKeyId));

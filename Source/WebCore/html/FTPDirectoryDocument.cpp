@@ -268,7 +268,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
         filename = makeString(StringView { result.filename, result.filenameLength }, '/');
 
         // We have no interest in linking to "current directory"
-        if (filename == "./")
+        if (filename == "./"_s)
             return;
     } else
         filename = String(result.filename, result.filenameLength);

@@ -153,7 +153,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     if (!rangeAndOffset)
         return;
 
-    auto removeCoreSpellingMarkers = annotation == "NSSpellingState";
+    auto removeCoreSpellingMarkers = annotation == "NSSpellingState"_s;
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::PlatformTextChecking;
     RefPtr document = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame().document();
     document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {

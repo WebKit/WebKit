@@ -48,9 +48,9 @@ static inline std::optional<RTCIceProtocol> toRTCIceProtocol(const String& proto
 {
     if (protocol.isEmpty())
         return { };
-    if (protocol == "udp")
+    if (protocol == "udp"_s)
         return RTCIceProtocol::Udp;
-    ASSERT(protocol == "tcp");
+    ASSERT(protocol == "tcp"_s);
     return RTCIceProtocol::Tcp;
 }
 
@@ -58,11 +58,11 @@ static inline std::optional<RTCIceTcpCandidateType> toRTCIceTcpCandidateType(con
 {
     if (type.isEmpty())
         return { };
-    if (type == "active")
+    if (type == "active"_s)
         return RTCIceTcpCandidateType::Active;
-    if (type == "passive")
+    if (type == "passive"_s)
         return RTCIceTcpCandidateType::Passive;
-    ASSERT(type == "so");
+    ASSERT(type == "so"_s);
     return RTCIceTcpCandidateType::So;
 }
 
@@ -70,13 +70,13 @@ static inline std::optional<RTCIceCandidateType> toRTCIceCandidateType(const Str
 {
     if (type.isEmpty())
         return { };
-    if (type == "host")
+    if (type == "host"_s)
         return RTCIceCandidateType::Host;
-    if (type == "srflx")
+    if (type == "srflx"_s)
         return RTCIceCandidateType::Srflx;
-    if (type == "prflx")
+    if (type == "prflx"_s)
         return RTCIceCandidateType::Prflx;
-    ASSERT(type == "relay");
+    ASSERT(type == "relay"_s);
     return RTCIceCandidateType::Relay;
 }
 
@@ -255,15 +255,15 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
                 return { };
 
             it++;
-            if (token == "typ")
+            if (token == "typ"_s)
                 type = *it;
-            else if (token == "raddr")
+            else if (token == "raddr"_s)
                 relatedAddress = *it;
-            else if (token == "rport")
+            else if (token == "rport"_s)
                 relatedPort = parseInteger<unsigned>(*it).value_or(0);
-            else if (token == "tcptype")
+            else if (token == "tcptype"_s)
                 tcptype = *it;
-            else if (token == "ufrag")
+            else if (token == "ufrag"_s)
                 usernameFragment = *it;
             break;
         }

@@ -67,7 +67,7 @@ static inline Vector<uint64_t> queryCache(const Vector<RecordInformation>* recor
     if (!records)
         return { };
 
-    if (!options.ignoreMethod && request.httpMethod() != "GET")
+    if (!options.ignoreMethod && request.httpMethod() != "GET"_s)
         return { };
 
     Vector<uint64_t> results;
@@ -309,7 +309,7 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
         return;
     }
 
-    if (!options.ignoreMethod && options.request.httpMethod() != "GET")
+    if (!options.ignoreMethod && options.request.httpMethod() != "GET"_s)
         return;
 
     auto* records = recordsFromURL(options.request.url());

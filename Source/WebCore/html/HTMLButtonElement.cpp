@@ -155,7 +155,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
     if (is<KeyboardEvent>(event)) {
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
+        if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
             setActive(true, true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
@@ -172,7 +172,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
                     return;
             }
         }
-        if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020") {
+        if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
             if (active())
                 dispatchSimulatedClick(&keyboardEvent);
             keyboardEvent.setDefaultHandled();

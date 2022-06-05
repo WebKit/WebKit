@@ -289,7 +289,7 @@ static bool buildInsetRadii(Vector<String>& radii, const String& topLeftRadius, 
     if (showBottomLeft)
         radii.append(bottomLeftRadius);
 
-    return radii.size() == 1 && radii[0] == "0px";
+    return radii.size() == 1 && radii[0] == "0px"_s;
 }
 
 static String buildInsetString(const String& top, const String& right, const String& bottom, const String& left,

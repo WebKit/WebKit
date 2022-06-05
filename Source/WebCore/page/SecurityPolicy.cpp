@@ -82,7 +82,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
 String SecurityPolicy::referrerToOriginString(const String& referrer)
 {
     String originString = SecurityOrigin::createFromString(referrer)->toString();
-    if (originString == "null")
+    if (originString == "null"_s)
         return String();
     // A security origin is not a canonical URL as it lacks a path. Add /
     // to turn it into a canonical URL we can use as referrer.

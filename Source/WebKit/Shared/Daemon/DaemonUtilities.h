@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void startListeningForMachServiceConnections(const char* serviceName, const char* entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
+void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
 RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&&);
 
 } // namespace WebKit

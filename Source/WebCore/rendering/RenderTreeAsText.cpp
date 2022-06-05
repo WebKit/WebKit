@@ -142,7 +142,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
         return false;
 
     const HTMLElement& element = downcast<HTMLSpanElement>(*node);
-    if (element.getAttribute(classAttr) != "Apple-style-span")
+    if (element.getAttribute(classAttr) != "Apple-style-span"_s)
         return false;
 
     if (!node->hasChildNodes())

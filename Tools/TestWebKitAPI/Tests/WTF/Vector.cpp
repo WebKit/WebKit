@@ -143,8 +143,8 @@ TEST(WTF_Vector, IsolatedCopy)
 
     auto vector2 = crossThreadCopy(vector1);
 
-    EXPECT_TRUE("s1" == vector2[0]);
-    EXPECT_TRUE("s2" == vector2[1]);
+    EXPECT_TRUE("s1"_s == vector2[0]);
+    EXPECT_TRUE("s2"_s == vector2[1]);
 
     EXPECT_FALSE(data1 == vector2[0].impl());
     EXPECT_FALSE(data2 == vector2[1].impl());
@@ -152,8 +152,8 @@ TEST(WTF_Vector, IsolatedCopy)
     auto vector3 = crossThreadCopy(WTFMove(vector1));
     EXPECT_EQ(0U, vector1.size());
 
-    EXPECT_TRUE("s1" == vector3[0]);
-    EXPECT_TRUE("s2" == vector3[1]);
+    EXPECT_TRUE("s1"_s == vector3[0]);
+    EXPECT_TRUE("s2"_s == vector3[1]);
 
     EXPECT_TRUE(data1 == vector3[0].impl());
     EXPECT_FALSE(data2 == vector3[1].impl());
@@ -905,9 +905,9 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1");
-    EXPECT_TRUE(mapped[1] == "v2");
-    EXPECT_TRUE(mapped[2] == "v3");
+    EXPECT_TRUE(mapped[0] == "v1"_s);
+    EXPECT_TRUE(mapped[1] == "v2"_s);
+    EXPECT_TRUE(mapped[2] == "v3"_s);
 
     mapped = WTF::map(map, [&] (const auto& pair) -> String {
         return pair.key;
@@ -915,9 +915,9 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "k1");
-    EXPECT_TRUE(mapped[1] == "k2");
-    EXPECT_TRUE(mapped[2] == "k3");
+    EXPECT_TRUE(mapped[0] == "k1"_s);
+    EXPECT_TRUE(mapped[1] == "k2"_s);
+    EXPECT_TRUE(mapped[2] == "k3"_s);
 
     mapped = WTF::map(WTFMove(map), [&] (KeyValuePair<String, String>&& pair) -> String {
         return WTFMove(pair.value);
@@ -925,9 +925,9 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1");
-    EXPECT_TRUE(mapped[1] == "v2");
-    EXPECT_TRUE(mapped[2] == "v3");
+    EXPECT_TRUE(mapped[0] == "v1"_s);
+    EXPECT_TRUE(mapped[1] == "v2"_s);
+    EXPECT_TRUE(mapped[2] == "v3"_s);
 
     EXPECT_TRUE(map.contains("k1"_s));
     EXPECT_TRUE(map.contains("k2"_s));

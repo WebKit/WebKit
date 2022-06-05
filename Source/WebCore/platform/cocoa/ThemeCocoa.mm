@@ -37,7 +37,7 @@ namespace WebCore {
 
 void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
-    if (name == "wireless-playback") {
+    if (name == "wireless-playback"_s) {
         GraphicsContextStateSaver stateSaver(context);
         context.setFillColor(Color::black);
 
@@ -72,12 +72,12 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
     }
 
 #if ENABLE(APPLE_PAY)
-    if (name == "apple-pay-logo-black") {
+    if (name == "apple-pay-logo-black"_s) {
         context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::Black), FloatRect(FloatPoint::zero(), size));
         return;
     }
 
-    if (name == "apple-pay-logo-white") {
+    if (name == "apple-pay-logo-white"_s) {
         context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::White), FloatRect(FloatPoint::zero(), size));
         return;
     }

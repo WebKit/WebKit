@@ -100,11 +100,11 @@ static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& ty
 {
     // From the Mac port: Ignore any trailing charset - JS strings are
     // Unicode, which encapsulates the charset issue.
-    if (type == "text/plain")
+    if (type == "text/plain"_s)
         return ClipboardDataTypeText;
-    if (type == "text/html")
+    if (type == "text/html"_s)
         return ClipboardDataTypeMarkup;
-    if (type == "Files" || type == "text/uri-list")
+    if (type == "Files"_s || type == "text/uri-list"_s)
         return ClipboardDataTypeURIList;
 
     // Not a known type, so just default to using the text portion.

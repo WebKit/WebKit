@@ -2146,7 +2146,7 @@ AXCoreObject* AXIsolatedObject::firstAnonymousBlockChild() const
 
 std::optional<String> AXIsolatedObject::attributeValue(const String& attributeName) const
 {
-    if (attributeName == "name") {
+    if (attributeName == "name"_s) {
         if (m_propertyMap.contains(AXPropertyName::NameAttribute))
             return stringAttributeValue(AXPropertyName::NameAttribute);
     }

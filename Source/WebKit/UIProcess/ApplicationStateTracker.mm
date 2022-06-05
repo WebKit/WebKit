@@ -55,7 +55,7 @@ ApplicationType applicationType(UIWindow *window)
     if (_UIApplicationIsExtension())
         return ApplicationType::Extension;
 
-    if (WTF::processHasEntitlement("com.apple.UIKit.vends-view-services") && window._isHostedInAnotherProcess)
+    if (WTF::processHasEntitlement("com.apple.UIKit.vends-view-services"_s) && window._isHostedInAnotherProcess)
         return ApplicationType::ViewService;
 
     return ApplicationType::Application;

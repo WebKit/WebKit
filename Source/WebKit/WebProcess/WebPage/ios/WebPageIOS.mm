@@ -561,7 +561,7 @@ bool WebPage::parentProcessHasServiceWorkerEntitlement() const
     if (disableServiceWorkerEntitlementTestingOverride)
         return false;
     
-    static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers") || WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.web-browser");
+    static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers"_s) || WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.web-browser"_s);
     return hasEntitlement;
 }
 
@@ -3512,7 +3512,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         else if (element.isTelephoneField())
             information.elementType = InputType::Phone;
         else if (element.isNumberField())
-            information.elementType = element.getAttribute(HTMLNames::patternAttr) == "\\d*" || element.getAttribute(HTMLNames::patternAttr) == "[0-9]*" ? InputType::NumberPad : InputType::Number;
+            information.elementType = element.getAttribute(HTMLNames::patternAttr) == "\\d*"_s || element.getAttribute(HTMLNames::patternAttr) == "[0-9]*"_s ? InputType::NumberPad : InputType::Number;
         else if (element.isDateTimeLocalField())
             information.elementType = InputType::DateTimeLocal;
         else if (element.isDateField())
@@ -3527,7 +3527,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             information.elementType = InputType::URL;
         else if (element.isText()) {
             const AtomString& pattern = element.attributeWithoutSynchronization(HTMLNames::patternAttr);
-            if (pattern == "\\d*" || pattern == "[0-9]*")
+            if (pattern == "\\d*"_s || pattern == "[0-9]*"_s)
                 information.elementType = InputType::NumberPad;
             else {
                 information.elementType = InputType::Text;
@@ -4398,7 +4398,7 @@ String WebPage::platformUserAgent(const URL&) const
     if (!document)
         return String();
 
-    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS")
+    if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS"_s)
         return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
 
     return String();

@@ -23,6 +23,7 @@
 
 #include "FEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -60,21 +61,17 @@ struct SVGPropertyTraits<CompositeOperationType> {
 
     static CompositeOperationType fromString(const String& value)
     {
-        if (value == "over")
-            return FECOMPOSITE_OPERATOR_OVER;
-        if (value == "in")
-            return FECOMPOSITE_OPERATOR_IN;
-        if (value == "out")
-            return FECOMPOSITE_OPERATOR_OUT;
-        if (value == "atop")
-            return FECOMPOSITE_OPERATOR_ATOP;
-        if (value == "xor")
-            return FECOMPOSITE_OPERATOR_XOR;
-        if (value == "arithmetic")
-            return FECOMPOSITE_OPERATOR_ARITHMETIC;
-        if (value == "lighter")
-            return FECOMPOSITE_OPERATOR_LIGHTER;
-        return FECOMPOSITE_OPERATOR_UNKNOWN;
+        static constexpr std::pair<ComparableASCIILiteral, CompositeOperationType> mappings[] = {
+            { "arithmetic", FECOMPOSITE_OPERATOR_ARITHMETIC },
+            { "atop", FECOMPOSITE_OPERATOR_ATOP },
+            { "in", FECOMPOSITE_OPERATOR_IN },
+            { "lighter", FECOMPOSITE_OPERATOR_LIGHTER },
+            { "out", FECOMPOSITE_OPERATOR_OUT },
+            { "over", FECOMPOSITE_OPERATOR_OVER },
+            { "xor", FECOMPOSITE_OPERATOR_XOR },
+        };
+        static constexpr SortedArrayMap map { mappings };
+        return map.get(value, FECOMPOSITE_OPERATOR_UNKNOWN);
     }
 };
 

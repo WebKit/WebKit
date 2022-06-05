@@ -46,7 +46,7 @@ Vector<unsigned> breakingLocationsFromICU(const Vector<UInt16>& testString, cons
     ASSERT(utf8Locale.length() < bufferSize);
     memcpy(buffer, utf8Locale.data(), utf8Locale.length());
     CString icuValue;
-    if (lineBreakValue != "auto")
+    if (lineBreakValue != "auto"_s)
         icuValue = lineBreakValue.utf8();
     UErrorCode status = U_ZERO_ERROR;
     uloc_setKeywordValue("lb", icuValue.data(), buffer, bufferSize, &status);

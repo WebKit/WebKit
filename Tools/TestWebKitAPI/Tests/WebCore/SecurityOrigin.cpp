@@ -133,18 +133,18 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_FALSE(o11->port());
 #endif
 
-    EXPECT_EQ("http://example.com", o1->toString());
-    EXPECT_EQ("http://example.com", o2->toString());
-    EXPECT_EQ("http://example.com", o3->toString());
-    EXPECT_EQ("http://example.com", o4->toString());
-    EXPECT_EQ("http://example.com", o5->toString());
-    EXPECT_EQ("http://example.com", o6->toString());
-    EXPECT_EQ("http://example.com:81", o7->toString());
-    EXPECT_EQ("null", o8->toString());
+    EXPECT_EQ("http://example.com"_s, o1->toString());
+    EXPECT_EQ("http://example.com"_s, o2->toString());
+    EXPECT_EQ("http://example.com"_s, o3->toString());
+    EXPECT_EQ("http://example.com"_s, o4->toString());
+    EXPECT_EQ("http://example.com"_s, o5->toString());
+    EXPECT_EQ("http://example.com"_s, o6->toString());
+    EXPECT_EQ("http://example.com:81"_s, o7->toString());
+    EXPECT_EQ("null"_s, o8->toString());
 #if PLATFORM(COCOA)
-    EXPECT_EQ("x-apple-ql-id://host", o9->toString());
-    EXPECT_EQ("x-apple-ql-magic://host", o10->toString());
-    EXPECT_EQ("x-apple-ql-id2://host", o11->toString());
+    EXPECT_EQ("x-apple-ql-id://host"_s, o9->toString());
+    EXPECT_EQ("x-apple-ql-magic://host"_s, o10->toString());
+    EXPECT_EQ("x-apple-ql-id2://host"_s, o11->toString());
 #endif
 
     EXPECT_TRUE(o1->isSameOriginAs(o2.get()));

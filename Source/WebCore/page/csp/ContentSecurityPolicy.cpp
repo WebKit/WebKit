@@ -761,7 +761,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     CSPInfo info;
 
     String blockedURI;
-    if (blockedURLString == "eval" || blockedURLString == "inline")
+    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s)
         blockedURI = blockedURLString;
     else {
         // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.
@@ -797,7 +797,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     ASSERT(m_client || is<Document>(m_scriptExecutionContext));
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
-    unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
+    unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
 
     // 1. Dispatch violation event.
     SecurityPolicyViolationEventInit violationEventInit;

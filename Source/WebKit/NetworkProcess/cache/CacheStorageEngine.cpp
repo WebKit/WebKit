@@ -193,7 +193,7 @@ static uint64_t getDirectorySize(const String& directoryPath)
             auto fileNames = FileSystem::listDirectory(path);
             for (auto& fileName : fileNames) {
                 // Files in /Blobs directory are hard link.
-                if (fileName == "Blobs")
+                if (fileName == "Blobs"_s)
                     continue;
                 paths.append(FileSystem::pathByAppendingComponent(path, fileName));
             }

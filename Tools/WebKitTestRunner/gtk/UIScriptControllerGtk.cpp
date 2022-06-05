@@ -167,7 +167,7 @@ void UIScriptControllerGtk::addViewToWindow(JSValueRef callback)
 
 void UIScriptControllerGtk::overridePreference(JSStringRef preference, JSStringRef value)
 {
-    if (toWTFString(preference) != "WebKitMinimumFontSize")
+    if (toWTFString(preference) != "WebKitMinimumFontSize"_s)
         return;
 
     auto preferences = TestController::singleton().platformPreferences();

@@ -140,7 +140,7 @@ bool MIMETypeCache::shouldOverrideExtendedType(const ContentType& type)
     // it is not RFC 3003 compliant.
     if (equalLettersIgnoringASCIICase(type.containerType(), "audio/mpeg"_s)) {
         auto codecs = type.codecs();
-        return codecs.size() == 1 && codecs[0] == "mp3";
+        return codecs.size() == 1 && codecs[0] == "mp3"_s;
     }
 
     return false;

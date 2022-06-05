@@ -3547,7 +3547,7 @@ static bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap&
         const String& gridAreaName = columnNames[currentColumn];
 
         // Unamed areas are always valid (we consider them to be 1x1).
-        if (gridAreaName == ".")
+        if (gridAreaName == "."_s)
             continue;
 
         size_t lookAheadColumn = currentColumn + 1;
@@ -4787,7 +4787,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 
 bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
 {
-    if (syntax != "*") {
+    if (syntax != "*"_s) {
         m_range.consumeWhitespace();
 
         // First check for keywords
@@ -4812,7 +4812,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax)
 
 void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies)
 {
-    if (syntax != "*") {
+    if (syntax != "*"_s) {
         m_range.consumeWhitespace();
         auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
         if (!m_range.atEnd())
@@ -4827,7 +4827,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
 
 RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState& builderState)
 {
-    if (syntax != "*") {
+    if (syntax != "*"_s) {
         m_range.consumeWhitespace();
         auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
         if (primitiveVal && primitiveVal->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*primitiveVal).isLength()) {

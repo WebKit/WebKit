@@ -207,9 +207,9 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     m_numeric = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kn)] == "true"_s;
 
     const String& caseFirstString = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kf)];
-    if (caseFirstString == "lower")
+    if (caseFirstString == "lower"_s)
         m_caseFirst = CaseFirst::Lower;
-    else if (caseFirstString == "upper")
+    else if (caseFirstString == "upper"_s)
         m_caseFirst = CaseFirst::Upper;
     else
         m_caseFirst = CaseFirst::False;

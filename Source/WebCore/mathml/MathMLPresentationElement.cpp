@@ -44,6 +44,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -323,43 +324,28 @@ const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const
 MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomString& attributeValue)
 {
     // The mathvariant attribute values is case-sensitive.
-    if (attributeValue == "normal")
-        return MathVariant::Normal;
-    if (attributeValue == "bold")
-        return MathVariant::Bold;
-    if (attributeValue == "italic")
-        return MathVariant::Italic;
-    if (attributeValue == "bold-italic")
-        return MathVariant::BoldItalic;
-    if (attributeValue == "double-struck")
-        return MathVariant::DoubleStruck;
-    if (attributeValue == "bold-fraktur")
-        return MathVariant::BoldFraktur;
-    if (attributeValue == "script")
-        return MathVariant::Script;
-    if (attributeValue == "bold-script")
-        return MathVariant::BoldScript;
-    if (attributeValue == "fraktur")
-        return MathVariant::Fraktur;
-    if (attributeValue == "sans-serif")
-        return MathVariant::SansSerif;
-    if (attributeValue == "bold-sans-serif")
-        return MathVariant::BoldSansSerif;
-    if (attributeValue == "sans-serif-italic")
-        return MathVariant::SansSerifItalic;
-    if (attributeValue == "sans-serif-bold-italic")
-        return MathVariant::SansSerifBoldItalic;
-    if (attributeValue == "monospace")
-        return MathVariant::Monospace;
-    if (attributeValue == "initial")
-        return MathVariant::Initial;
-    if (attributeValue == "tailed")
-        return MathVariant::Tailed;
-    if (attributeValue == "looped")
-        return MathVariant::Looped;
-    if (attributeValue == "stretched")
-        return MathVariant::Stretched;
-    return MathVariant::None;
+    static constexpr std::pair<ComparableASCIILiteral, MathVariant> mappings[] = {
+        { "bold", MathVariant::Bold },
+        { "bold-fraktur", MathVariant::BoldFraktur },
+        { "bold-italic", MathVariant::BoldItalic },
+        { "bold-sans-serif", MathVariant::BoldSansSerif },
+        { "bold-script", MathVariant::BoldScript },
+        { "double-struck", MathVariant::DoubleStruck },
+        { "fraktur", MathVariant::Fraktur },
+        { "initial", MathVariant::Initial },
+        { "italic", MathVariant::Italic },
+        { "looped", MathVariant::Looped },
+        { "monospace", MathVariant::Monospace },
+        { "normal", MathVariant::Normal },
+        { "sans-serif", MathVariant::SansSerif },
+        { "sans-serif-bold-italic", MathVariant::SansSerifBoldItalic },
+        { "sans-serif-italic", MathVariant::SansSerifItalic },
+        { "script", MathVariant::Script },
+        { "stretched", MathVariant::Stretched },
+        { "tailed", MathVariant::Tailed },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    return map.get(attributeValue, MathVariant::None);
 }
 
 std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVariant()

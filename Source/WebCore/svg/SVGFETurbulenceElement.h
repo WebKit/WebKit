@@ -53,9 +53,9 @@ struct SVGPropertyTraits<SVGStitchOptions> {
 
     static SVGStitchOptions fromString(const String& value)
     {
-        if (value == "stitch")
+        if (value == "stitch"_s)
             return SVG_STITCHTYPE_STITCH;
-        if (value == "noStitch")
+        if (value == "noStitch"_s)
             return SVG_STITCHTYPE_NOSTITCH;
         return SVG_STITCHTYPE_UNKNOWN;
     }
@@ -82,9 +82,9 @@ struct SVGPropertyTraits<TurbulenceType> {
 
     static TurbulenceType fromString(const String& value)
     {
-        if (value == "fractalNoise")
+        if (value == "fractalNoise"_s)
             return TurbulenceType::FractalNoise;
-        if (value == "turbulence")
+        if (value == "turbulence"_s)
             return TurbulenceType::Turbulence;
         return TurbulenceType::Unknown;
     }

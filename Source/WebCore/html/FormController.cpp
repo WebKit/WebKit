@@ -147,7 +147,7 @@ FormControlState FormController::SavedFormState::takeControlState(const FormElem
 void FormController::SavedFormState::appendReferencedFilePaths(Vector<String>& vector) const
 {
     for (auto& element : m_map) {
-        if (element.key.second != "file") // type
+        if (element.key.second != "file"_s) // type
             continue;
         for (auto& state : element.value) {
             for (auto& file : HTMLInputElement::filesFromFileInputFormControlState(state))

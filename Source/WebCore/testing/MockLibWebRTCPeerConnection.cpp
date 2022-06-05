@@ -218,22 +218,22 @@ MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(const Str
 
 static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createConnection(const String& testCase, webrtc::PeerConnectionObserver& observer)
 {
-    if (testCase == "ICECandidates")
+    if (testCase == "ICECandidates"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer);
 
-    if (testCase == "MDNSICECandidatesWithDelay")
+    if (testCase == "MDNSICECandidatesWithDelay"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer, 1000);
 
-    if (testCase == "ICEConnectionState")
+    if (testCase == "ICEConnectionState"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileCreatingOffer")
+    if (testCase == "LibWebRTCReleasingWhileCreatingOffer"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileGettingStats")
+    if (testCase == "LibWebRTCReleasingWhileGettingStats"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileSettingDescription")
+    if (testCase == "LibWebRTCReleasingWhileSettingDescription"_s)
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(observer);
 
     return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(observer);

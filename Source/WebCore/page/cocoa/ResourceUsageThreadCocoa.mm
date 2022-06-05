@@ -154,7 +154,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
     }
 
     // Main thread is always first.
-    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread");
+    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread"_s);
 
     mach_port_t resourceUsageMachThread = mach_thread_self();
     mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
@@ -199,7 +199,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (thread.threadName == "JavaScriptCore bmalloc scavenger")
+        if (thread.threadName == "JavaScriptCore bmalloc scavenger"_s)
             return true;
 
         // WebKit uses many WorkQueues with common prefixes.

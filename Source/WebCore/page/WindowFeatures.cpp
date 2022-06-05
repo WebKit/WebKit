@@ -216,7 +216,7 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIIL
 
     auto& value = it->value;
     return value.isNull()
-        || value == "1"
+        || value == "1"_s
         || equalLettersIgnoringASCIICase(value, "yes"_s)
         || equalLettersIgnoringASCIICase(value, "on"_s);
 }

@@ -38,13 +38,13 @@ TEST(WTF, StringCreationFromLiteral)
 {
     String stringFromLiteralViaASCII("Explicit construction syntax"_s);
     EXPECT_EQ(strlen("Explicit construction syntax"), stringFromLiteralViaASCII.length());
-    EXPECT_EQ("Explicit construction syntax", stringFromLiteralViaASCII);
+    EXPECT_EQ("Explicit construction syntax"_s, stringFromLiteralViaASCII);
     EXPECT_TRUE(stringFromLiteralViaASCII.is8Bit());
     EXPECT_EQ(String("Explicit construction syntax"_s), stringFromLiteralViaASCII);
 
     String stringFromLiteral = "String Literal"_str;
     EXPECT_EQ(strlen("String Literal"), stringFromLiteral.length());
-    EXPECT_EQ("String Literal", stringFromLiteral);
+    EXPECT_EQ("String Literal"_s, stringFromLiteral);
     EXPECT_TRUE(stringFromLiteral.is8Bit());
     EXPECT_EQ(String("String Literal"_s), stringFromLiteral);
 }

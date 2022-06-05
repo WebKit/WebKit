@@ -173,7 +173,7 @@ bool SVGTests::hasFeatureForLegacyBindings(const String& feature, const String& 
         return true;
 
     // If the version number matches the style of the feature name, then use the set to see if the feature is supported.
-    if (version.isEmpty() || (hasSVG10FeaturePrefix && version == "1.0") || (hasSVG11FeaturePrefix && version == "1.1"))
+    if (version.isEmpty() || (hasSVG10FeaturePrefix && version == "1.0"_s) || (hasSVG11FeaturePrefix && version == "1.1"_s))
         return supportedSVGFeatureSet.contains(feature);
 
     return false;

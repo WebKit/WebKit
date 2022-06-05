@@ -10309,7 +10309,7 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
     ShareableBitmap::Handle handle;
 #if PLATFORM(MAC)
     auto attachment = attachmentForIdentifier(identifier);
-    if (attachment && attachment->contentType() == "public.directory") {
+    if (attachment && attachment->contentType() == "public.directory"_s) {
         updateIconForDirectory(attachment->fileWrapper(), attachment->identifier());
         return;
     }

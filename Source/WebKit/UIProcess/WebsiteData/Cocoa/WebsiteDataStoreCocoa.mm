@@ -623,7 +623,7 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
 
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
-    return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
+    return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement);
 }
 
 bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()

@@ -3126,7 +3126,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     auto nameString = nameValue.toWTFString(globalObject);
     CHECK_EXCEPTION();
 
-    if (nameString == "SyntaxError" && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
+    if (nameString == "SyntaxError"_s && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
         auto fileNameString = fileNameValue.toWTFString(globalObject);
         CHECK_EXCEPTION();
         auto lineNumberString = lineNumberValue.toWTFString(globalObject);

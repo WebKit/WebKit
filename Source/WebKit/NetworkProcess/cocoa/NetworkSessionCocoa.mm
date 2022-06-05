@@ -1870,7 +1870,7 @@ void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
 #if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
 static bool isActingOnBehalfOfAFullWebBrowser(const String& bundleID)
 {
-    return bundleID == "com.apple.webbookmarksd";
+    return bundleID == "com.apple.webbookmarksd"_s;
 }
 #endif
 

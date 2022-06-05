@@ -181,11 +181,11 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         computedProperties.ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
 
         String invalidValue = axObject->invalidStatus();
-        if (invalidValue == "false")
+        if (invalidValue == "false"_s)
             computedProperties.invalidStatus = "false"_s;
-        else if (invalidValue == "grammar")
+        else if (invalidValue == "grammar"_s)
             computedProperties.invalidStatus = "grammar"_s;
-        else if (invalidValue == "spelling")
+        else if (invalidValue == "spelling"_s)
             computedProperties.invalidStatus = "spelling"_s;
         else
             computedProperties.invalidStatus = "true"_s;
