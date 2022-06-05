@@ -1187,6 +1187,20 @@ static void logResourceRevalidationDecision(CachedResource::RevalidationDecision
     }
 }
 
+#if ENABLE(SERVICE_WORKER)
+static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
+{
+    // FIXME: We should validate/specify this behavior.
+    if (options.serviceWorkerRegistrationIdentifier != cachedOptions.serviceWorkerRegistrationIdentifier)
+        return true;
+
+    if (options.serviceWorkersMode == cachedOptions.serviceWorkersMode)
+        return false;
+
+    return cachedOptions.mode == FetchOptions::Mode::Navigate || cachedOptions.destination == FetchOptions::Destination::Worker || cachedOptions.destination == FetchOptions::Destination::Sharedworker;
+}
+#endif
+
 CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, CachedResourceRequest& cachedResourceRequest, CachedResource* existingResource, ForPreload forPreload, ImageLoading imageLoading) const
 {
     auto& request = cachedResourceRequest.resourceRequest();
@@ -1201,8 +1215,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
 #if ENABLE(SERVICE_WORKER)
-    // FIXME: We should validate/specify this behavior.
-    if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier != existingResource->options().serviceWorkerRegistrationIdentifier || cachedResourceRequest.options().serviceWorkersMode != existingResource->options().serviceWorkersMode) {
+    if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
     }
