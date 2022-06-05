@@ -3991,4 +3991,15 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     mainFrame().setDocument(WTFMove(document));
 }
 
+void Page::forceRepaintAllFrames()
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView || !frameView->renderView())
+            continue;
+
+        frameView->renderView()->repaintViewAndCompositedLayers();
+    }
+}
+
 } // namespace WebCore

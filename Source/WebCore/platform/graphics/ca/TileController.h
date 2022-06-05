@@ -167,7 +167,6 @@ private:
     bool isInWindow() const final { return m_isInWindow; }
     void setTileCoverage(TileCoverage) final;
     void revalidateTiles() final;
-    void forceRepaint() final;
     IntRect tileGridExtent() const final;
     void setScrollingPerformanceTestingEnabled(bool flag) final { m_scrollingPerformanceTestingEnabled = flag; }
     double retainedTileBackingStoreMemory() const final;

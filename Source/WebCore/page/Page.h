@@ -964,6 +964,8 @@ public:
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
 
+    WEBCORE_EXPORT void forceRepaintAllFrames();
+
 private:
     struct Navigation {
         RegistrableDomain domain;

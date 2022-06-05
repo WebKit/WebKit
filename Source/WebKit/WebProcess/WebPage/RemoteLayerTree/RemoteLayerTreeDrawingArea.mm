@@ -210,14 +210,7 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     if (m_isRenderingSuspended)
         return;
 
-    for (Frame* frame = &m_webPage.corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        FrameView* frameView = frame->view();
-        if (!frameView || !frameView->tiledBacking())
-            continue;
-
-        frameView->tiledBacking()->forceRepaint();
-    }
-
+    m_webPage.corePage()->forceRepaintAllFrames();
     updateRendering();
 }
 
