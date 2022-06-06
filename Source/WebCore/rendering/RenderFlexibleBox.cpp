@@ -2354,8 +2354,14 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 
     m_flexLayout->updateFormattingRootGeometryAndInvalidate();
 
+    resetHasDefiniteHeight();
     for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
+
+        // FIXME: This needs a more fine-grained handling.
+        flexItem.clearOverridingContentSize();
+        flexItem.setChildNeedsLayout(MarkOnlyThis);
         flexItem.layoutIfNeeded();
+
         auto minMaxContentSize = computeFlexItemMinMaxSizes(flexItem);
         m_flexLayout->updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
     }
