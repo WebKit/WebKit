@@ -529,10 +529,12 @@ TEST(AppPrivacyReport, NonAppInitiatedRequestWithServiceWorkerSoftUpdate)
 
 static void runWebProcessPlugInTest(IsAppInitiated isAppInitiated)
 {
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::respondWithChallengeThenOK);
+
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AppPrivacyReportPlugIn"];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
 
-    NSString *url = @"https://webkit.org";
+    NSString *url = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
 
     __block bool isDone = false;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
