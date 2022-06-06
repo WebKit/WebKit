@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+div[contenteditable] {
+    opacity: 0;
+    position: absolute;
+    left: -1000px;
+}
+</style>
+</head>
+<body>
+<div contenteditable inputmode="none"></div>
+<script>
+jsTestIsAsync = true;
+observedKeyUp = 0;
+
+addEventListener("load", async () => {
+    description("This test verifies that key events are dispatched when performing a keypress in a programmatically focused hidden editable container with inputmode='none'. To manually run the test, load the page with a hardware keyboard attached and press the 'a' key.");
+
+    const logKeyEvent = (event) => testPassed(`Observed ${event.type} with key: "${event.key}"`);
+    const editor = document.querySelector("div[contenteditable]");
+    editor.addEventListener("keydown", logKeyEvent);
+    editor.addEventListener("keypress", logKeyEvent);
+    editor.addEventListener("keyup", (event) => {
+        logKeyEvent(event);
+        observedKeyUp = true;
+    });
+
+    await UIHelper.setHardwareKeyboardAttached(true);
+
+    editor.focus();
+    await UIHelper.keyDown("a");
+    await shouldBecomeEqual("observedKeyUp", "true");
+
+    editor.remove();
+    finishJSTest();
+});
+</script>
+</body>
+</html>
