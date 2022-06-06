@@ -1814,6 +1814,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTTextureNorm16.cpp
         html/canvas/EXTsRGB.cpp
         html/canvas/KHRParallelShaderCompile.cpp
+        html/canvas/OESDrawBuffersIndexed.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/OESFBORenderMipmap.cpp
         html/canvas/OESStandardDerivatives.cpp
@@ -1877,6 +1878,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTTextureNorm16.idl
     html/canvas/EXTsRGB.idl
     html/canvas/KHRParallelShaderCompile.idl
+    html/canvas/OESDrawBuffersIndexed.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/OESFBORenderMipmap.idl
     html/canvas/OESStandardDerivatives.idl

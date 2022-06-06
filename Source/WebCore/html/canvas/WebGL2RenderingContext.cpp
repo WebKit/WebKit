@@ -45,6 +45,7 @@
 #include "InspectorInstrumentation.h"
 #include "KHRParallelShaderCompile.h"
 #include "Logging.h"
+#include "OESDrawBuffersIndexed.h"
 #include "OESTextureFloatLinear.h"
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
@@ -2536,10 +2537,33 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             return nullptr;
         }
         return m_boundIndexedUniformBuffers[index];
+    // OES_draw_buffers_indexed state
+    // ANGLE will synthesize an error if the extension
+    // was not enabled or the index is out of bounds
+    case GraphicsContextGL::BLEND_EQUATION_RGB:
+    case GraphicsContextGL::BLEND_EQUATION_ALPHA:
+    case GraphicsContextGL::BLEND_SRC_RGB:
+    case GraphicsContextGL::BLEND_SRC_ALPHA:
+    case GraphicsContextGL::BLEND_DST_RGB:
+    case GraphicsContextGL::BLEND_DST_ALPHA:
+        return m_context->getIntegeri(target, index);
+    case GraphicsContextGL::COLOR_WRITEMASK:
+        return getIndexedBooleanArrayParameter(target, index);
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getIndexedParameter", "invalid parameter name");
         return nullptr;
     }
+}
+
+Vector<bool> WebGL2RenderingContext::getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index)
+{
+    ASSERT(pname == GraphicsContextGL::COLOR_WRITEMASK);
+    GCGLint value[4];
+    m_context->getIntegeri_v(pname, index, value);
+    Vector<bool> vector(4);
+    for (unsigned i = 0; i < 4; ++i)
+        vector[i] = value[i];
+    return vector;
 }
 
 std::optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
@@ -2720,6 +2744,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic"_s, EXTTextureFilterAnisotropic::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureNorm16, m_extTextureNorm16, "EXT_texture_norm16"_s, EXTTextureNorm16::supported(*m_context));
     ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile"_s, KHRParallelShaderCompile::supported(*m_context));
+    ENABLE_IF_REQUESTED(OESDrawBuffersIndexed, m_oesDrawBuffersIndexed, "OES_draw_buffers_indexed"_s, OESDrawBuffersIndexed::supported(*m_context));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear"_s, OESTextureFloatLinear::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc"_s, WebGLCompressedTextureASTC::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc"_s, WebGLCompressedTextureATC::supported(*m_context));
@@ -2758,6 +2783,7 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("EXT_texture_filter_anisotropic", EXTTextureFilterAnisotropic::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_norm16", EXTTextureNorm16::supported(*m_context))
     APPEND_IF_SUPPORTED("KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_draw_buffers_indexed", OESDrawBuffersIndexed::supported(*m_context))
     APPEND_IF_SUPPORTED("OES_texture_float_linear", OESTextureFloatLinear::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*m_context))

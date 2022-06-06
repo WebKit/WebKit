@@ -50,6 +50,7 @@ public:
         EXTTextureNorm16Name,
         EXTsRGBName,
         KHRParallelShaderCompileName,
+        OESDrawBuffersIndexedName,
         OESElementIndexUintName,
         OESFBORenderMipmapName,
         OESStandardDerivativesName,

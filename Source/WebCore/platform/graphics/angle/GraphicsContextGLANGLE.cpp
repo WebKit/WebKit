@@ -374,6 +374,13 @@ void GraphicsContextGLANGLE::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value
     GL_GetIntegervRobustANGLE(pname, value.bufSize, nullptr, value.data);
 }
 
+void GraphicsContextGLANGLE::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) // NOLINT
+{
+    if (!makeContextCurrent())
+        return;
+    GL_GetIntegeri_vRobustANGLE(pname, index, value.bufSize, nullptr, value.data);
+}
+
 void GraphicsContextGLANGLE::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
     if (!makeContextCurrent())
@@ -2926,6 +2933,62 @@ void GraphicsContextGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
         return;
 
     GL_DrawBuffersEXT(bufs.bufSize, bufs.data);
+}
+
+void GraphicsContextGLANGLE::enableiOES(GCGLenum target, GCGLuint index)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_EnableiOES(target, index);
+}
+
+void GraphicsContextGLANGLE::disableiOES(GCGLenum target, GCGLuint index)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_DisableiOES(target, index);
+}
+
+void GraphicsContextGLANGLE::blendEquationiOES(GCGLuint buf, GCGLenum mode)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_BlendEquationiOES(buf, mode);
+}
+
+void GraphicsContextGLANGLE::blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_BlendEquationSeparateiOES(buf, modeRGB, modeAlpha);
+}
+
+void GraphicsContextGLANGLE::blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_BlendFunciOES(buf, src, dst);
+}
+
+void GraphicsContextGLANGLE::blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_BlendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+}
+
+void GraphicsContextGLANGLE::colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_ColorMaskiOES(buf, red, green, blue, alpha);
 }
 
 bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()

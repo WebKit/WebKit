@@ -67,6 +67,7 @@
 #include "Logging.h"
 #include "NavigatorWebXR.h"
 #include "NotImplemented.h"
+#include "OESDrawBuffersIndexed.h"
 #include "OESElementIndexUint.h"
 #include "OESFBORenderMipmap.h"
 #include "OESStandardDerivatives.h"
@@ -4013,6 +4014,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extTextureNorm16, "EXT_texture_norm16");
     CHECK_EXTENSION(m_extsRGB, "EXT_sRGB");
     CHECK_EXTENSION(m_khrParallelShaderCompile, "KHR_parallel_shader_compile");
+    CHECK_EXTENSION(m_oesDrawBuffersIndexed, "OES_draw_buffers_indexed");
     CHECK_EXTENSION(m_oesElementIndexUint, "OES_element_index_uint");
     CHECK_EXTENSION(m_oesFBORenderMipmap, "OES_fbo_render_mipmap");
     CHECK_EXTENSION(m_oesStandardDerivatives, "OES_standard_derivatives");
@@ -8120,6 +8122,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extTextureNorm16);
     LOSE_EXTENSION(m_extsRGB);
     LOSE_EXTENSION(m_khrParallelShaderCompile);
+    LOSE_EXTENSION(m_oesDrawBuffersIndexed);
     LOSE_EXTENSION(m_oesElementIndexUint);
     LOSE_EXTENSION(m_oesFBORenderMipmap);
     LOSE_EXTENSION(m_oesStandardDerivatives);

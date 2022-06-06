@@ -126,6 +126,7 @@ public:
     void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
     GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
     void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) final;
+    void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) final; // NOLINT
     GCGLint64 getInteger64(GCGLenum pname) final;
     GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
@@ -311,6 +312,13 @@ public:
     bool isExtensionEnabled(const String&) override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
+    void enableiOES(GCGLenum target, GCGLuint index) final;
+    void disableiOES(GCGLenum target, GCGLuint index) final;
+    void blendEquationiOES(GCGLuint buf, GCGLenum mode) final;
+    void blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha) final;
+    void blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst) final;
+    void blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) final;
+    void colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) final;
 
     PlatformGLObject createBuffer() final;
     PlatformGLObject createFramebuffer() final;

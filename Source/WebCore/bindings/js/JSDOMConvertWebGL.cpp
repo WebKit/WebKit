@@ -42,6 +42,7 @@
 #include "JSEXTTextureNorm16.h"
 #include "JSEXTsRGB.h"
 #include "JSKHRParallelShaderCompile.h"
+#include "JSOESDrawBuffersIndexed.h"
 #include "JSOESElementIndexUint.h"
 #include "JSOESFBORenderMipmap.h"
 #include "JSOESStandardDerivatives.h"
@@ -179,6 +180,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTTextureNorm16)
         TO_JS(EXTsRGB)
         TO_JS(KHRParallelShaderCompile)
+        TO_JS(OESDrawBuffersIndexed)
         TO_JS(OESElementIndexUint)
         TO_JS(OESFBORenderMipmap)
         TO_JS(OESStandardDerivatives)

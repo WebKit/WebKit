@@ -116,6 +116,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetString(uint32_t name) -> (String returnValue) Synchronous
     void GetFloatv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<float> value) Synchronous
     void GetIntegerv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<int32_t> value) Synchronous
+    void GetIntegeri_v(uint32_t pname, uint32_t index) -> (IPC::ArrayReference<int32_t, 4> value) Synchronous
     void GetInteger64(uint32_t pname) -> (int64_t returnValue) Synchronous
     void GetInteger64i(uint32_t pname, uint32_t index) -> (int64_t returnValue) Synchronous
     void GetProgrami(uint32_t program, uint32_t pname) -> (int32_t returnValue) Synchronous
@@ -293,6 +294,13 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void GetTranslatedShaderSourceANGLE(uint32_t arg0) -> (String returnValue) Synchronous
     void DrawBuffersEXT(IPC::ArrayReference<uint32_t> bufs)
+    void EnableiOES(uint32_t target, uint32_t index)
+    void DisableiOES(uint32_t target, uint32_t index)
+    void BlendEquationiOES(uint32_t buf, uint32_t mode)
+    void BlendEquationSeparateiOES(uint32_t buf, uint32_t modeRGB, uint32_t modeAlpha)
+    void BlendFunciOES(uint32_t buf, uint32_t src, uint32_t dst)
+    void BlendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
+    void ColorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void PaintRenderingResultsToPixelBuffer() -> (std::optional<IPC::PixelBufferReference> returnValue) Synchronous
 }

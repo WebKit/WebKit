@@ -1872,6 +1872,18 @@ void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> valu
     ::glGetFloatv(pname, value.data);
 }
 
+void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) // NOLINT
+{
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(value);
+    if (!makeContextCurrent())
+        return;
+
+    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
+    // ::glGetIntegeri_v(pname, index, value.data);
+}
+
 GCGLint64 GraphicsContextGLOpenGL::getInteger64(GCGLenum pname)
 {
     UNUSED_PARAM(pname);
@@ -3079,6 +3091,34 @@ void GraphicsContextGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> buffers)
 String GraphicsContextGLOpenGL::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     return getExtensions().getTranslatedShaderSourceANGLE(shader);
+}
+
+void GraphicsContextGLOpenGL::enableiOES(GCGLenum, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::disableiOES(GCGLenum, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::blendEquationiOES(GCGLuint, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendEquationSeparateiOES(GCGLuint, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendFunciOES(GCGLuint, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendFuncSeparateiOES(GCGLuint, GCGLenum, GCGLenum, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::colorMaskiOES(GCGLuint, GCGLboolean, GCGLboolean, GCGLboolean, GCGLboolean)
+{
 }
 
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)

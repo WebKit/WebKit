@@ -584,6 +584,19 @@ void RemoteGraphicsContextGLProxy::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint>
     }
 }
 
+void RemoteGraphicsContextGLProxy::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) // NOLINT
+{
+    constexpr std::array<int32_t, 4> valueReplyEmpty { };
+    IPC::ArrayReference<int32_t, 4> valueReply { valueReplyEmpty };
+    if (!isContextLost()) {
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetIntegeri_v(pname, index), Messages::RemoteGraphicsContextGL::GetIntegeri_v::Reply(valueReply));
+        if (!sendResult)
+            markContextLost();
+        else
+            memcpy(value.data, valueReply.data(), value.bufSize * sizeof(int32_t));
+    }
+}
+
 GCGLint64 RemoteGraphicsContextGLProxy::getInteger64(GCGLenum pname)
 {
     int64_t returnValue = { };
@@ -2282,6 +2295,69 @@ void RemoteGraphicsContextGLProxy::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
 {
     if (!isContextLost()) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawBuffersEXT(IPC::ArrayReference<uint32_t>(reinterpret_cast<const uint32_t*>(bufs.data), bufs.bufSize)));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::enableiOES(GCGLenum target, GCGLuint index)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::EnableiOES(target, index));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::disableiOES(GCGLenum target, GCGLuint index)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::DisableiOES(target, index));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::blendEquationiOES(GCGLuint buf, GCGLenum mode)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::BlendEquationiOES(buf, mode));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::BlendEquationSeparateiOES(buf, modeRGB, modeAlpha));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::BlendFunciOES(buf, src, dst));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::BlendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::ColorMaskiOES(buf, static_cast<bool>(red), static_cast<bool>(green), static_cast<bool>(blue), static_cast<bool>(alpha)));
         if (!sendResult)
             markContextLost();
     }

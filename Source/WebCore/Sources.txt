@@ -1371,6 +1371,7 @@ html/canvas/EXTsRGB.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
 html/canvas/KHRParallelShaderCompile.cpp
+html/canvas/OESDrawBuffersIndexed.cpp
 html/canvas/OESElementIndexUint.cpp
 html/canvas/OESFBORenderMipmap.cpp
 html/canvas/OESStandardDerivatives.cpp
@@ -3548,6 +3549,7 @@ JSNotificationEvent.cpp
 JSNotificationOptions.cpp
 JSNotificationPermission.cpp
 JSNotificationPermissionCallback.cpp
+JSOESDrawBuffersIndexed.cpp
 JSOESElementIndexUint.cpp
 JSOESFBORenderMipmap.cpp
 JSOESStandardDerivatives.cpp
