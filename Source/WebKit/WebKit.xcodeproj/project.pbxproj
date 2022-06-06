@@ -2752,6 +2752,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+				DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -15088,6 +15089,7 @@
 				07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */,
 				1A4D664C18A3030E00D82E21 /* WKFrameInfo.h in Headers */,
 				2DF9EEE81A78245500B6CFBE /* WKFrameInfoInternal.h in Headers */,
+				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
 				1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */,
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
