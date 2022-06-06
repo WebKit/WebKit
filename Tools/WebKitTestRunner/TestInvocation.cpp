@@ -908,13 +908,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled")) {
-#if PLATFORM(MAC)
-        return adoptWK(WKBooleanCreate(IsSecureEventInputEnabled()));
-#else
-        return adoptWK(WKBooleanCreate(false));
-#endif
-    }
+    if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().mainWebView()->isSecureEventInputEnabled()));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetCustomUserAgent")) {
         WKPageSetCustomUserAgent(TestController::singleton().mainWebView()->page(), stringValue(messageBody));

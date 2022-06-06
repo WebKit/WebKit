@@ -76,8 +76,8 @@ public:
     ~PlatformWebView();
 
     WKPageRef page();
-    PlatformWKView platformView() { return m_view; }
-    PlatformWindow platformWindow() { return m_window; }
+    PlatformWKView platformView() const { return m_view; }
+    PlatformWindow platformWindow() const { return m_window; }
     static PlatformWindow keyWindow();
 
     enum class WebViewSizingMode {
@@ -102,6 +102,8 @@ public:
     void setTextInChromeInputField(const String&);
     void selectChromeInputField();
     String getSelectedTextInChromeInputField();
+
+    bool isSecureEventInputEnabled() const;
 
     bool drawsBackground() const;
     void setDrawsBackground(bool);

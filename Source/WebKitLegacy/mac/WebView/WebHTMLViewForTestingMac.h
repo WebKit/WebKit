@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKBase.h>
-#import <WebKit/WKWebView.h>
+#pragma once
 
-#if !TARGET_OS_IPHONE
+#if PLATFORM(MAC)
 
-@class _WKFrameHandle;
+#import <WebKit/WebHTMLView.h>
 
-@interface WKWebView (WKTestingMac)
-
-@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager;
-@property (nonatomic, readonly) BOOL _shouldRequestCandidates;
-@property (nonatomic, readonly) NSMenu *_activeMenu;
-
-- (void)_requestControlledElementID;
-- (void)_handleControlledElementIDResponse:(NSString *)identifier;
-
-- (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate;
-- (void)_didHandleAcceptedCandidate;
-
-- (void)_forceRequestCandidates;
-- (void)_didUpdateCandidateListVisibility:(BOOL)visible;
-
-- (void)_insertText:(id)string replacementRange:(NSRange)replacementRange;
-- (NSRect)_candidateRect;
-
-- (void)_setHeaderBannerHeight:(int)height;
-- (void)_setFooterBannerHeight:(int)height;
-- (NSSet<NSView *> *)_pdfHUDs;
-
-- (void)_simulateMouseMove:(NSEvent *)event;
-- (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
-
+@interface WebHTMLView (TestingSupportMac)
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
-
 @end
 
-#endif // !TARGET_OS_IPHONE
+#endif // PLATFORM(MAC)

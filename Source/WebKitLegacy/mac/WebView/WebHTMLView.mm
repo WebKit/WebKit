@@ -7103,6 +7103,19 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 
 @end
 
+#if PLATFORM(MAC)
+
+@implementation WebHTMLView (TestingSupportMac)
+
+- (BOOL)_secureEventInputEnabledForTesting
+{
+    return _private->isInSecureInputState;
+}
+
+@end
+
+#endif // PLATFORM(MAC)
+
 // This is used by AppKit/TextKit. It should be possible to remove this once
 // -[NSAttributedString _documentFromRange:document:documentAttributes:subresources:] is removed.
 @implementation NSURL (WebDataURL)

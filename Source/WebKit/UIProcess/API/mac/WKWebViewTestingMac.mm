@@ -133,6 +133,11 @@
     });
 }
 
+- (BOOL)_secureEventInputEnabledForTesting
+{
+    return _impl->inSecureInputState();
+}
+
 @end
 
 #endif // PLATFORM(MAC)
