@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
@@ -37,7 +37,6 @@
 
 #include "AffineTransform.h"
 #include "CairoOperations.h"
-#include "DecomposedGlyphs.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
@@ -436,12 +435,6 @@ void GraphicsContextCairo::drawGlyphs(const Font& font, const GlyphBufferGlyph* 
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
         state.textDrawingMode(), state.strokeThickness(), state.dropShadow().offset, state.dropShadow().color,
         fontSmoothing);
-}
-
-void GraphicsContextCairo::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    auto positionedGlyphs = decomposedGlyphs.positionedGlyphs();
-    return drawGlyphs(font, positionedGlyphs.glyphs.data(), positionedGlyphs.advances.data(), positionedGlyphs.glyphs.size(), positionedGlyphs.localAnchor, positionedGlyphs.smoothingMode);
 }
 
 cairo_t* GraphicsContextCairo::cr() const

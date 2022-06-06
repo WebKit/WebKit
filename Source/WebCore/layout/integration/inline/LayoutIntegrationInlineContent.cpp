@@ -87,7 +87,7 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
 InlineContent::~InlineContent()
 {
     for (auto& box : boxes)
-        TextPainter::removeGlyphDisplayList(rendererForLayoutBox(box.layoutBox()).document(), box);
+        TextPainter::removeGlyphDisplayList(box);
 }
 
 const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const

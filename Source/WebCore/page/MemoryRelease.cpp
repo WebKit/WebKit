@@ -74,9 +74,10 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     FontCache::forCurrentThread().purgeInactiveFontData();
     FontCache::forCurrentThread().clearWidthCaches();
 
+    TextPainter::clearGlyphDisplayLists();
+
     for (auto* document : Document::allDocuments()) {
         document->clearSelectorQueryCache();
-        document->glyphDisplayListCache().clear();
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (auto* renderView = document->renderView())

@@ -145,7 +145,6 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class FullscreenManager;
-class GlyphDisplayListCache;
 class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
@@ -1684,8 +1683,6 @@ public:
 
     std::optional<PAL::SessionID> sessionID() const final;
 
-    GlyphDisplayListCache& glyphDisplayListCache();
-
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -2278,8 +2275,6 @@ private:
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
     WeakHashSet<Element> m_elementsWithPendingUserAgentShadowTreeUpdates;
-
-    std::unique_ptr<GlyphDisplayListCache> m_glyphDisplayListCache;
 };
 
 Element* eventTargetElementForDocument(Document*);

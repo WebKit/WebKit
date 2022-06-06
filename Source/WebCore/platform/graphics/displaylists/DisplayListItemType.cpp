@@ -80,8 +80,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(DrawFilteredImageBuffer);
     case ItemType::DrawGlyphs:
         return sizeof(DrawGlyphs);
-    case ItemType::DrawDecomposedGlyphs:
-        return sizeof(DrawDecomposedGlyphs);
     case ItemType::DrawImageBuffer:
         return sizeof(DrawImageBuffer);
     case ItemType::DrawNativeImage:
@@ -212,7 +210,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
-    case ItemType::DrawDecomposedGlyphs:
     case ItemType::DrawImageBuffer:
     case ItemType::DrawLine:
     case ItemType::DrawLinesForText:
@@ -314,7 +311,6 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
     case ItemType::DrawFilteredImageBuffer:
-    case ItemType::DrawDecomposedGlyphs:
     case ItemType::DrawImageBuffer:
     case ItemType::DrawNativeImage:
     case ItemType::DrawPattern:

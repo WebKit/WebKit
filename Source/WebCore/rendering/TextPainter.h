@@ -61,29 +61,27 @@ public:
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     template<typename LayoutRun>
-    void setGlyphDisplayListIfNeeded(Document& document, const LayoutRun& run, const PaintInfo& paintInfo, const TextRun& textRun)
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const TextRun& textRun)
     {
         if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
-            TextPainter::removeGlyphDisplayList(document, run);
+            TextPainter::removeGlyphDisplayList(run);
         else
-            m_glyphDisplayList = document.glyphDisplayListCache().get(run, m_font, m_context, textRun);
+            m_glyphDisplayList = GlyphDisplayListCache<LayoutRun>::singleton().get(run, m_font, m_context, textRun);
     }
 
     template<typename LayoutRun>
-    static void removeGlyphDisplayList(Document& document, const LayoutRun& run)
-    {
-        document.glyphDisplayListCache().remove(run);
-    }
+    static void removeGlyphDisplayList(const LayoutRun& run) { GlyphDisplayListCache<LayoutRun>::singleton().remove(run); }
 
+    static void clearGlyphDisplayLists();
     static bool shouldUseGlyphDisplayList(const PaintInfo&);
     WEBCORE_EXPORT static void setForceUseGlyphDisplayListForTesting(bool);
     WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
 
 private:
     template<typename LayoutRun>
-    static DisplayList::DisplayList* glyphDisplayListIfExists(Document& document, const LayoutRun& run)
+    static DisplayList::DisplayList* glyphDisplayListIfExists(const LayoutRun& run)
     {
-        return document.glyphDisplayListCache().getIfExists(run);
+        return GlyphDisplayListCache<LayoutRun>::singleton().getIfExists(run);
     }
 
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,

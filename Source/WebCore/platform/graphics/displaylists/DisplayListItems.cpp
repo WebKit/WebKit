@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DisplayListItems.h"
 
-#include "DecomposedGlyphs.h"
 #include "DisplayListReplayer.h"
 #include "Filter.h"
 #include "FontCascade.h"
@@ -177,28 +176,50 @@ void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourc
     context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
 }
 
-DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGlyphs&& positionedGlyphs, const FloatRect& bounds)
+DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatRect& bounds, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(fontIdentifier)
-    , m_positionedGlyphs(WTFMove(positionedGlyphs))
+    , m_glyphs(WTFMove(glyphs))
+    , m_advances(WTFMove(advances))
     , m_bounds(bounds)
+    , m_localAnchor(localAnchor)
+    , m_smoothingMode(smoothingMode)
 {
 }
 
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(font.renderingResourceIdentifier())
-    , m_positionedGlyphs { { glyphs, count }, { advances, count }, localAnchor, smoothingMode }
-    , m_bounds(m_positionedGlyphs.computeBounds(font))
+    , m_localAnchor(localAnchor)
+    , m_smoothingMode(smoothingMode)
 {
+    m_glyphs.reserveInitialCapacity(count);
+    m_advances.reserveInitialCapacity(count);
+    for (unsigned i = 0; i < count; ++i) {
+        m_glyphs.uncheckedAppend(glyphs[i]);
+        m_advances.uncheckedAppend(advances[i]);
+    }
+    computeBounds(font);
 }
 
 void DrawGlyphs::apply(GraphicsContext& context, const Font& font) const
 {
-    return context.drawGlyphs(font, m_positionedGlyphs.glyphs.data(), m_positionedGlyphs.advances.data(), m_positionedGlyphs.glyphs.size(), anchorPoint(), m_positionedGlyphs.smoothingMode);
+    context.drawGlyphs(font, m_glyphs.data(), m_advances.data(), m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
-void DrawDecomposedGlyphs::apply(GraphicsContext& context, const Font& font, const DecomposedGlyphs& decomposedGlyphs) const
+void DrawGlyphs::computeBounds(const Font& font)
 {
-    return context.drawDecomposedGlyphs(font, decomposedGlyphs);
+    // FIXME: This code doesn't actually take the extents of the glyphs into consideration. It assumes that
+    // the glyph lies entirely within its [(ascent + descent), advance] rect.
+    float ascent = font.fontMetrics().floatAscent();
+    float descent = font.fontMetrics().floatDescent();
+    FloatPoint current = localAnchor();
+    size_t numGlyphs = m_glyphs.size();
+    for (size_t i = 0; i < numGlyphs; ++i) {
+        GlyphBufferAdvance advance = m_advances[i];
+        FloatRect glyphRect = FloatRect(current.x(), current.y() - ascent, width(advance), ascent + descent);
+        m_bounds.unite(glyphRect);
+
+        current.move(width(advance), height(advance));
+    }
 }
 
 NO_RETURN_DUE_TO_ASSERT void DrawImageBuffer::apply(GraphicsContext&) const
@@ -591,7 +612,7 @@ void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 }
 
 #if !LOG_DISABLED
-TextStream& operator<<(TextStream& ts, ItemType type)
+static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
     case ItemType::Save: ts << "save"; break;
@@ -616,7 +637,6 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ClipPath: ts << "clip-path"; break;
     case ItemType::DrawFilteredImageBuffer: ts << "draw-filtered-image-buffer"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
-    case ItemType::DrawDecomposedGlyphs: ts << "draw-decomposed-glyphs"; break;
     case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
     case ItemType::DrawSystemImage: ts << "draw-system-image"; break;
@@ -776,14 +796,7 @@ void dumpItem(TextStream& ts, const DrawGlyphs& item, OptionSet<AsTextFlag>)
     ts.dumpProperty("local-anchor", item.localAnchor());
     ts.dumpProperty("anchor-point", item.anchorPoint());
     ts.dumpProperty("length", item.glyphs().size());
-}
 
-void dumpItem(TextStream& ts, const DrawDecomposedGlyphs& item, OptionSet<AsTextFlag> flags)
-{
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers)) {
-        ts.dumpProperty("font-identifier", item.fontIdentifier());
-        ts.dumpProperty("draw-glyphs-data-identifier", item.decomposedGlyphsIdentifier());
-    }
 }
 
 void dumpItem(TextStream& ts, const DrawImageBuffer& item, OptionSet<AsTextFlag> flags)
@@ -1073,9 +1086,6 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         break;
     case ItemType::DrawGlyphs:
         dumpItem(ts, item.get<DrawGlyphs>(), flags);
-        break;
-    case ItemType::DrawDecomposedGlyphs:
-        dumpItem(ts, item.get<DrawDecomposedGlyphs>(), flags);
         break;
     case ItemType::DrawImageBuffer:
         dumpItem(ts, item.get<DrawImageBuffer>(), flags);

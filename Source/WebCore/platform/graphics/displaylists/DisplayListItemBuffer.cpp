@@ -115,9 +115,6 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::DrawGlyphs:
         ASSERT_NOT_REACHED();
         return;
-    case ItemType::DrawDecomposedGlyphs:
-        ASSERT_NOT_REACHED();
-        return;
     case ItemType::DrawImageBuffer:
         get<DrawImageBuffer>().apply(context);
         return;
@@ -264,9 +261,6 @@ void ItemHandle::destroy()
     case ItemType::DrawGlyphs:
         get<DrawGlyphs>().~DrawGlyphs();
         return;
-    case ItemType::DrawDecomposedGlyphs:
-        get<DrawDecomposedGlyphs>().~DrawDecomposedGlyphs();
-        break;
     case ItemType::DrawLinesForText:
         get<DrawLinesForText>().~DrawLinesForText();
         return;
@@ -489,8 +483,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<DrawFocusRingRects>(itemOffset, *this);
     case ItemType::DrawGlyphs:
         return copyInto<DrawGlyphs>(itemOffset, *this);
-    case ItemType::DrawDecomposedGlyphs:
-        return copyInto<DrawDecomposedGlyphs>(itemOffset, *this);
     case ItemType::DrawImageBuffer:
         return copyInto<DrawImageBuffer>(itemOffset, *this);
     case ItemType::DrawLinesForText:

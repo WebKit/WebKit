@@ -91,7 +91,6 @@
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
 #include "GenericCachedHTMLCollection.h"
-#include "GlyphDisplayListCache.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
@@ -9175,13 +9174,6 @@ bool Document::isSameSiteForCookies(const URL& url) const
 {
     auto domain = isTopDocument() ? RegistrableDomain(securityOrigin().data()) : RegistrableDomain(siteForCookies());
     return domain.matches(url);
-}
-
-GlyphDisplayListCache& Document::glyphDisplayListCache()
-{
-    if (!m_glyphDisplayListCache)
-        m_glyphDisplayListCache = makeUnique<GlyphDisplayListCache>();
-    return *m_glyphDisplayListCache;
 }
 
 } // namespace WebCore

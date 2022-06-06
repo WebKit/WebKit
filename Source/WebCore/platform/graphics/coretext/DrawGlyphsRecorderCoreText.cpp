@@ -82,12 +82,7 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     CGContextDelegateSetCallback(contextDelegate.get(), deEndLayer, reinterpret_cast<CGContextDelegateCallback>(&endLayer));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
-#if HAVE(CORE_TEXT_FIX_FOR_RADAR_93925620)
-    auto contextType = kCGContextTypeUnknown;
-#else
-    auto contextType = kCGContextTypeWindow;
-#endif
-    auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), contextType, nullptr, nullptr));
+    auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), kCGContextTypeUnknown, nullptr, nullptr));
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
@@ -196,11 +191,7 @@ void DrawGlyphsRecorder::updateCTM(const AffineTransform& ctm)
 {
     if (m_owner.getCTM() == ctm)
         return;
-    // Instead of recording a SetCTM command, we compute the transform needed
-    // to change the current CTM to `ctm`. This allows the recorded comamnds
-    // to be re-used by elements drawing the same text in different locations.
-    if (auto inverseOfCurrentCTM = m_owner.getCTM().inverse())
-        m_owner.concatCTM(*inverseOfCurrentCTM * ctm);
+    m_owner.setCTM(ctm);
 }
 
 void DrawGlyphsRecorder::updateShadow(const DropShadow& dropShadow, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
@@ -312,7 +303,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
         initialPenPosition.move(0, -ascentDelta);
     }
 
-    m_owner.drawGlyphsAndCacheResources(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, initialPenPosition, m_smoothingMode);
+    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, initialPenPosition, m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }

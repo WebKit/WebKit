@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DecomposedGlyphs.h"
 #include "Font.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
@@ -45,7 +44,6 @@ public:
     virtual NativeImage* getNativeImage(RenderingResourceIdentifier) const = 0;
     virtual std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier) const = 0;
     virtual Font* getFont(RenderingResourceIdentifier) const = 0;
-    virtual DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier) const = 0;
 };
 
 class LocalResourceHeap : public ResourceHeap {
@@ -63,11 +61,6 @@ public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
     {
         m_resources.add(renderingResourceIdentifier, WTFMove(font));
-    }
-
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<DecomposedGlyphs>&& decomposedGlyphs)
-    {
-        m_resources.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
     }
 
     ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const final
@@ -99,11 +92,6 @@ public:
         return get<Font>(renderingResourceIdentifier);
     }
 
-    DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<DecomposedGlyphs>(renderingResourceIdentifier);
-    }
-
     void clear()
     {
         m_resources.clear();
@@ -120,7 +108,7 @@ private:
         return std::get<Ref<T>>(iterator->value).ptr();
     }
 
-    using Resource = std::variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>, Ref<DecomposedGlyphs>>;
+    using Resource = std::variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>>;
     HashMap<RenderingResourceIdentifier, Resource> m_resources;
 };
 
