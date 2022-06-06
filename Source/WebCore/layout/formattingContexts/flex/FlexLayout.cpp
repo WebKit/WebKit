@@ -39,7 +39,7 @@ FlexLayout::FlexLayout(const RenderStyle& flexBoxStyle)
 {
 }
 
-FlexLayout::LineHeightList FlexLayout::computeAvailableLogicalVerticalSpace(const LogicalFlexItems& flexItems, const WrappingPositions& wrappingIndexList, const ConstraintsForFlexContent& flexConstraints) const
+FlexLayout::LineHeightList FlexLayout::computeAvailableLogicalVerticalSpace(const LogicalFlexItems& flexItems, const WrappingPositions& wrappingIndexList, const LogicalConstraints& flexConstraints) const
 {
     auto lineHeightList = LineHeightList(wrappingIndexList.size());
     auto lineRange = Range<size_t> { };
@@ -56,33 +56,18 @@ FlexLayout::LineHeightList FlexLayout::computeAvailableLogicalVerticalSpace(cons
         accumulatedContentHeight += lineHeightList[index];
     }
 
-    auto availableLogicalVerticalSpaceFromConstraint = [&] {
-        auto flexDirection = flexBoxStyle().flexDirection();
-        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        if (flexDirectionIsInlineAxis)
-            return flexConstraints.availableVerticalSpace();
-        return std::optional<LayoutUnit> { flexConstraints.horizontal().logicalWidth };
-    };
-    if (auto availableSpace = availableLogicalVerticalSpaceFromConstraint(); availableSpace && accumulatedContentHeight < *availableSpace) {
-        auto extraSpacePerLine = (*availableSpace - accumulatedContentHeight) / lineHeightList.size();
+    if (flexConstraints.verticalSpace && accumulatedContentHeight < *flexConstraints.verticalSpace) {
+        auto extraSpacePerLine = (*flexConstraints.verticalSpace - accumulatedContentHeight) / lineHeightList.size();
         for (size_t index = 0; index < lineHeightList.size(); ++index)
             lineHeightList[index] += extraSpacePerLine;
     }
     return lineHeightList;
 }
 
-LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(const LogicalFlexItems& flexItems, const ConstraintsForFlexContent& flexConstraints) const
+LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(const LogicalFlexItems& flexItems, const LogicalConstraints& flexConstraints) const
 {
-    auto availableLogicalHorizontalSpaceFromConstraint = [&] {
-        auto flexDirection = flexBoxStyle().flexDirection();
-        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        if (flexDirectionIsInlineAxis)
-            return std::optional<LayoutUnit> { flexConstraints.horizontal().logicalWidth }; 
-        return flexConstraints.availableVerticalSpace();
-    };
-
-    if (auto availableSpace = availableLogicalHorizontalSpaceFromConstraint())
-        return *availableSpace;
+    if (flexConstraints.horizontalSpace)
+        return *flexConstraints.horizontalSpace;
 
     auto availableSpace = LayoutUnit { };
     for (auto& flexItem : flexItems)
@@ -412,14 +397,14 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
     }
 }
 
-void FlexLayout::layout(const ConstraintsForFlexContent& constraints, LogicalFlexItems& flexItems)
+void FlexLayout::layout(const LogicalConstraints& constraints, LogicalFlexItems& flexItems)
 {
     auto availableLogicalHorizontalSpace = computeAvailableLogicalHorizontalSpace(flexItems, constraints);
     auto wrappingIndexList = computeWrappingPositions(flexItems, availableLogicalHorizontalSpace);
     auto lineHeightList = computeAvailableLogicalVerticalSpace(flexItems, wrappingIndexList, constraints);
 
     auto lineRange = Range<size_t> { };
-    auto lineTop = constraints.logicalTop();
+    auto lineTop = LayoutUnit { };
     for (size_t index = 0; index < wrappingIndexList.size(); ++index) {
         lineRange = { lineRange.end(), wrappingIndexList[index] };
 

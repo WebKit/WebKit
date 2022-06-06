@@ -77,8 +77,12 @@ public:
         IntrinsicWidthConstraints m_intrinsicWidthConstraints { };
         CheckedPtr<const ContainerBox> m_layoutBox;        
     };
-    using LogicalFlexItems = Vector<LogicalFlexItem>;    
-    void layout(const ConstraintsForFlexContent&, LogicalFlexItems&);
+    using LogicalFlexItems = Vector<LogicalFlexItem>;
+    struct LogicalConstraints {
+        std::optional<LayoutUnit> verticalSpace;
+        std::optional<LayoutUnit> horizontalSpace;
+    };
+    void layout(const LogicalConstraints&, LogicalFlexItems&);
 
 private:
     using LineRange = WTF::Range<size_t>;
@@ -91,10 +95,10 @@ private:
 
     using WrappingPositions = Vector<size_t>;
     WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
-    LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const LogicalConstraints&) const;
 
     using LineHeightList = Vector<LayoutUnit>;
-    LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const ConstraintsForFlexContent&) const;
+    LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const LogicalConstraints&) const;
 
     const RenderStyle& flexBoxStyle() const { return m_flexBoxStyle; }
 

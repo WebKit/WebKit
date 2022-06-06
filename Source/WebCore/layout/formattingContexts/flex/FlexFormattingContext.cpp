@@ -287,13 +287,21 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
     }
 }
 
-void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints)
+void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForFlexContent& constraints)
 {
-    auto flexConstraints = downcast<ConstraintsForFlexContent>(constraints);
-    auto logicalFlexItems = convertFlexItemsToLogicalSpace(flexConstraints);
+    auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
     auto flexLayout = FlexLayout { root().style() };
-    flexLayout.layout(flexConstraints, logicalFlexItems);
-    setFlexItemsGeometry(logicalFlexItems, flexConstraints);
+
+    auto logicalFlexConstraints = [&] {
+        auto flexDirection = root().style().flexDirection();
+        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+        auto logicalVerticalSapce = flexDirectionIsInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
+        auto logicalHorizontalSapce = flexDirectionIsInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
+        return FlexLayout::LogicalConstraints { logicalVerticalSapce, logicalHorizontalSapce };
+    };
+
+    flexLayout.layout(logicalFlexConstraints(), logicalFlexItems);
+    setFlexItemsGeometry(logicalFlexItems, constraints);
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration()
