@@ -2366,6 +2366,8 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
         m_flexLayout->updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
     }
     m_flexLayout->layout();
+    setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + m_flexLayout->contentLogicalHeight() + borderAfter() + paddingAfter()));
+    updateLogicalHeight();
 }
 #endif
 

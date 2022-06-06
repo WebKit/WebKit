@@ -57,8 +57,14 @@ void FlexFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConten
 
 LayoutUnit FlexFormattingContext::usedContentHeight() const
 {
-    auto& lines = formattingState().lines();
-    return LayoutUnit { lines.last().bottom() - lines.first().top() };
+    auto contentTop = LayoutUnit::max();
+    auto contentBottom = LayoutUnit::min();
+    for (auto& flexItem : childrenOfType<Box>(root())) {
+        auto marginBox = Layout::BoxGeometry::marginBoxRect(geometryForBox(flexItem));
+        contentTop = std::min(contentTop, marginBox.top());
+        contentBottom = std::max(contentBottom, marginBox.bottom());
+    }
+    return std::max(0_lu, contentBottom - contentTop);
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
