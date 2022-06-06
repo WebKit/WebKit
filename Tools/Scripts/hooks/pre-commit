@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-LOCATION = '{{ location }}'
+LOCATION = r'{{ location }}'
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 
 
