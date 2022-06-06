@@ -1105,8 +1105,22 @@ JSObjectRef UIScriptControllerIOS::menuRect() const
     if (!calloutBar.window)
         return nullptr;
 
-    CGRect rectInRootViewCoordinates = [calloutBar convertRect:calloutBar.bounds toView:platformContentView()];
-    return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
+    return toObject([calloutBar convertRect:calloutBar.bounds toView:platformContentView()]);
+}
+
+JSObjectRef UIScriptControllerIOS::contextMenuRect() const
+{
+    auto *window = webView().window;
+    auto *contextMenuView = [findAllViewsInHierarchyOfType(window, NSClassFromString(@"_UIContextMenuView")) firstObject];
+    if (!contextMenuView)
+        return nullptr;
+
+    return toObject([contextMenuView convertRect:contextMenuView.bounds toView:nil]);
+}
+
+JSObjectRef UIScriptControllerIOS::toObject(CGRect rect) const
+{
+    return m_context->objectFromRect(WebCore::FloatRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
 }
 
 bool UIScriptControllerIOS::isDismissingMenu() const

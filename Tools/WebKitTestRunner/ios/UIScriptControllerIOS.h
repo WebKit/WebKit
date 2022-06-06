@@ -30,6 +30,8 @@
 #import "UIScriptControllerCocoa.h"
 #import <wtf/BlockPtr.h>
 
+typedef struct CGRect CGRect;
+
 namespace WebCore {
 class FloatPoint;
 class FloatRect;
@@ -123,6 +125,7 @@ private:
     void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef) override;
     bool isShowingPopover() const override;
     JSObjectRef rectForMenuAction(JSStringRef) const override;
+    JSObjectRef contextMenuRect() const override;
     JSObjectRef menuRect() const override;
     bool isDismissingMenu() const override;
     void chooseMenuAction(JSStringRef, JSValueRef) override;
@@ -169,6 +172,8 @@ private:
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
     void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
+
+    JSObjectRef toObject(CGRect) const;
 
     bool isWebContentFirstResponder() const override;
 };
