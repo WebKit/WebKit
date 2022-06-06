@@ -9,13 +9,22 @@ list(APPEND TestWTF_SOURCES
 
     generic/UtilitiesGeneric.cpp
 )
+list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
+    ${WEBKIT_LIBRARIES_DIR}/include
+)
 
 list(APPEND TestJavaScriptCore_SOURCES
     ${test_main_SOURCES}
 )
+list(APPEND TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
+    ${WEBKIT_LIBRARIES_DIR}/include
+)
 
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
+)
+list(APPEND TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
+    ${WEBKIT_LIBRARIES_DIR}/include
 )
 
 # TestWebKit
@@ -35,6 +44,9 @@ if (ENABLE_WEBKIT)
 
         playstation/PlatformUtilitiesPlayStation.cpp
         playstation/PlatformWebViewPlayStation.cpp
+    )
+    list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
+        ${WEBKIT_LIBRARIES_DIR}/include
     )
 
     # Exclude tests which don't finish.

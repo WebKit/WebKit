@@ -47,13 +47,13 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    loadLibraryOrExit("libpng16");
-    loadLibraryOrExit("libicu");
-    loadLibraryOrExit("libfreetype");
-    loadLibraryOrExit("libfontconfig");
-    loadLibraryOrExit("libharfbuzz");
-    loadLibraryOrExit("libcairo");
-    loadLibraryOrExit("libSceNKWebKitRequirements");
+    loadLibraryOrExit(PNG_LOAD_AT);
+    loadLibraryOrExit(ICU_LOAD_AT);
+    loadLibraryOrExit(Freetype_LOAD_AT);
+    loadLibraryOrExit(Fontconfig_LOAD_AT);
+    loadLibraryOrExit(HarfBuzz_LOAD_AT);
+    loadLibraryOrExit(Cairo_LOAD_AT);
+    loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
 #endif
