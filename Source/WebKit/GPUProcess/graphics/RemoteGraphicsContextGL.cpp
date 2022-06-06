@@ -363,6 +363,15 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC
     m_context->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
 }
 
+void RemoteGraphicsContextGL::paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&& completionHandler)
+{
+    std::optional<IPC::PixelBufferReference> returnValue;
+    assertIsCurrent(workQueue());
+    if (auto pixelBuffer = m_context->paintRenderingResultsToPixelBuffer())
+        returnValue = pixelBuffer.releaseNonNull();
+    completionHandler(WTFMove(returnValue));
+}
+
 } // namespace WebKit
 
 #endif

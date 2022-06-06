@@ -2375,19 +2375,6 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
     }
 }
 
-RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::paintRenderingResultsToPixelBuffer()
-{
-    std::optional<IPC::PixelBufferReference> returnValue;
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToPixelBuffer(), Messages::RemoteGraphicsContextGL::PaintRenderingResultsToPixelBuffer::Reply(returnValue));
-        if (!sendResult)
-            markContextLost();
-    }
-    if (!returnValue)
-        return nullptr;
-    return returnValue->takePixelBuffer();
-}
-
 }
 
 #endif

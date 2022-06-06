@@ -1382,12 +1382,4 @@
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
     }
-    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&& completionHandler)
-    {
-        std::optional<IPC::PixelBufferReference> returnValue = { };
-        assertIsCurrent(workQueue());
-        if (auto pixelBuffer = m_context->paintRenderingResultsToPixelBuffer())
-            returnValue = pixelBuffer.releaseNonNull();
-        completionHandler(WTFMove(returnValue));
-    }
 
