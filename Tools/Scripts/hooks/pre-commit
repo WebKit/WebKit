@@ -31,7 +31,7 @@ for line in staged or unstaged:
         project_files.append(line)
 
 if project_files:
-    code = subprocess.run([os.path.join(SCRIPTS, 'sort-Xcode-project-file')] + project_files).returncode
+    code = subprocess.run(['perl', os.path.join(SCRIPTS, 'sort-Xcode-project-file')] + project_files).returncode
     if staged:
         code += subprocess.run(['git', 'add'] + project_files).returncode
     sys.exit(code)

@@ -43,7 +43,7 @@ def message(source=None, sha=None):
 
     try:
         for line in subprocess.check_output(
-            [os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters'],
+            ['perl', os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters'],
             **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
         ).splitlines():
             if line == '~':
