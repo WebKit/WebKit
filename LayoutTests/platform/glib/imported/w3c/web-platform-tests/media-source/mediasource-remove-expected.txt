@@ -11,8 +11,8 @@ PASS Test remove while update pending.
 PASS Test aborting a remove operation.
 PASS Test remove with a start at the duration.
 PASS Test remove transitioning readyState from 'ended' to 'open'.
-FAIL Test removing all appended data. assert_equals: Initial buffered range. expected "{ [0.095, 6.548) }" but got "{ [0.000, 6.548) }"
-FAIL Test removing beginning of appended data. assert_equals: Initial buffered range. expected "{ [0.095, 6.548) }" but got "{ [0.000, 6.548) }"
-FAIL Test removing the middle of appended data. assert_equals: Initial buffered range. expected "{ [0.095, 6.548) }" but got "{ [0.000, 6.548) }"
-FAIL Test removing the end of appended data. assert_equals: Initial buffered range. expected "{ [0.095, 6.548) }" but got "{ [0.000, 6.548) }"
+PASS Test removing all appended data.
+PASS Test removing beginning of appended data.
+FAIL Test removing the middle of appended data. assert_equals: Buffered ranges after remove(). expected "{ [0.095, 0.997) [3.298, 6.548) }" but got "{ [0.095, 0.975) [3.298, 6.548) }"
+FAIL Test removing the end of appended data. assert_equals: Buffered ranges after remove(). expected "{ [0.095, 1.022) }" but got "{ [0.095, 0.995) }"
 
