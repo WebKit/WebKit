@@ -262,14 +262,16 @@ void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, co
 
 void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace)
 {
-    auto alignItems = flexBoxStyle().alignItems();
+    auto flexBoxAlignItems = flexBoxStyle().alignItems();
     auto lineHeight = LayoutUnit { };
 
     for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
         auto& flexItem = flexItems[index];
         if (!flexItem.isHeightAuto())
             continue;
-        switch (alignItems.position()) {
+        auto& flexItemAlignSelf = flexItem.style().alignSelf();
+        auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexBoxAlignItems;
+        switch (alignValue.position()) {
         case ItemPosition::Normal:
         case ItemPosition::Stretch:
             flexItem.setHeight(availableSpace);
