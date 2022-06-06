@@ -30,7 +30,7 @@
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, DataDetectorsCore)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, DDScannerResult, PAL_EXPORT)
 
 #if PLATFORM(MAC)
