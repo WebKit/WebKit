@@ -82,16 +82,16 @@
     { "name": "ews168", "platform": "*" },
     { "name": "ews169", "platform": "mac-bigsur" },
     { "name": "ews170", "platform": "tvos-simulator-15" },
-    { "name": "ews171", "platform": "mac-bigsur" },
-    { "name": "ews172", "platform": "mac-bigsur" },
-    { "name": "ews173", "platform": "mac-bigsur" },
-    { "name": "ews174", "platform": "mac-bigsur" },
-    { "name": "ews175", "platform": "mac-bigsur" },
-    { "name": "ews176", "platform": "mac-bigsur" },
-    { "name": "ews177", "platform": "mac-bigsur" },
-    { "name": "ews178", "platform": "mac-bigsur" },
-    { "name": "ews179", "platform": "mac-bigsur" },
-    { "name": "ews180", "platform": "mac-bigsur" },
+    { "name": "ews171", "platform": "mac-monterey" },
+    { "name": "ews172", "platform": "mac-monterey" },
+    { "name": "ews173", "platform": "mac-monterey" },
+    { "name": "ews174", "platform": "mac-monterey" },
+    { "name": "ews175", "platform": "mac-monterey" },
+    { "name": "ews176", "platform": "mac-monterey" },
+    { "name": "ews177", "platform": "mac-monterey" },
+    { "name": "ews178", "platform": "mac-monterey" },
+    { "name": "ews179", "platform": "mac-monterey" },
+    { "name": "ews180", "platform": "mac-monterey" },
     { "name": "ews181", "platform": "mac-bigsur" },
     { "name": "ews182", "platform": "mac-bigsur" },
     { "name": "ews183", "platform": "*" },
@@ -154,17 +154,17 @@
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
-      "name": "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
-      "factory": "macOSBuildOnlyFactory", "platform": "mac-bigsur",
+      "name": "macOS-AppleSilicon-Monterey-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
+      "factory": "macOSBuildOnlyFactory", "platform": "mac-monterey",
       "configuration": "debug", "architectures": ["arm64"],
-      "triggers": ["macos-applesilicon-big-sur-debug-wk2-tests-ews"],
+      "triggers": ["macos-applesilicon-monterey-debug-wk2-tests-ews"],
       "workernames": ["ews171", "ews172", "ews173", "ews174"]
     },
     {
-      "name": "macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
-      "factory": "macOSWK2Factory", "platform": "mac-bigsur",
+      "name": "macOS-AppleSilicon-Monterey-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-monterey",
       "configuration": "debug", "architectures": ["arm64"],
-      "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
+      "triggered_by": ["macos-applesilicon-monterey-debug-build-ews"],
       "workernames": ["ews172", "ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
@@ -356,7 +356,7 @@
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
-            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Monterey-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
             "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
@@ -370,7 +370,7 @@
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
-            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Monterey-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
             "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
@@ -408,12 +408,12 @@
       "builderNames": ["macOS-Release-WK2-Stress-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-applesilicon-big-sur-debug-build-ews",
-      "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-Build-EWS"]
+      "type": "Triggerable", "name": "macos-applesilicon-monterey-debug-build-ews",
+      "builderNames": ["macOS-AppleSilicon-Monterey-Debug-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-applesilicon-big-sur-debug-wk2-tests-ews",
-      "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-applesilicon-monterey-debug-wk2-tests-ews",
+      "builderNames": ["macOS-AppleSilicon-Monterey-Debug-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "ios-15-sim-build-ews",
