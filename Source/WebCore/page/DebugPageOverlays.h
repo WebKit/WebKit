@@ -40,7 +40,7 @@ class DebugPageOverlays {
 public:
     static DebugPageOverlays& singleton();
 
-    enum class RegionType {
+    enum class RegionType : uint8_t {
         WheelEventHandlers,
         NonFastScrollableRegion,
         InteractionRegion,
@@ -50,6 +50,8 @@ public:
     static void didLayout(Frame&);
     static void didChangeEventHandlers(Frame&);
     static void doAfterUpdateRendering(Page&);
+
+    static bool shouldPaintOverlayIntoLayerForRegionType(Page&, RegionType);
 
     WEBCORE_EXPORT static void settingsChanged(Page&);
 
@@ -69,6 +71,8 @@ private:
     }
     
     void updateOverlayRegionVisibility(Page&, OptionSet<DebugOverlayRegions>);
+
+    bool shouldPaintOverlayIntoLayer(Page&, RegionType) const;
 
     RegionOverlay* regionOverlayForPage(Page&, RegionType) const;
     RegionOverlay& ensureRegionOverlayForPage(Page&, RegionType);
@@ -114,6 +118,13 @@ inline void DebugPageOverlays::doAfterUpdateRendering(Page& page)
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::WheelEventHandlers);
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::NonFastScrollableRegion);
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::InteractionRegion);
+}
+
+inline bool DebugPageOverlays::shouldPaintOverlayIntoLayerForRegionType(Page& page, RegionType regionType)
+{
+    if (LIKELY(!hasOverlays(page)))
+        return false;
+    return sharedDebugOverlays->shouldPaintOverlayIntoLayer(page, regionType);
 }
 
 } // namespace WebCore
