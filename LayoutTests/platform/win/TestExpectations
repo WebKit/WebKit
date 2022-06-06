@@ -3693,7 +3693,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [
 editing/caret/emoji.html [ Failure ]
 editing/deleting/skip-virama-001.html [ Failure ]
 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
+fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure Timeout ]
 fast/block/positioning/016.html [ Failure ]
 fast/block/positioning/025.html [ Failure ]
 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
@@ -3852,10 +3852,6 @@ svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 # FIXME: create bugs to track the following failures:
 accessibility/add-children-pseudo-element.html [ Failure ]
-fast/canvas/2d.currentPoint.html [ Failure ]
-fast/canvas/2d.getPath.modification.html [ Failure ]
-fast/canvas/2d.getPath.newobject.html [ Failure ]
-fast/canvas/2d.setPath.html [ Failure ]
 fast/forms/file/entries-api/drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-drag-folder.html [ Failure ]
@@ -5061,3 +5057,11 @@ fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-rem
 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-offset-repaint.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure ]
+
+webkit.org/b/241268 webanimations/accelerated-transform-animation-from-scale-zero-and-implicit-to-kefyrame.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/241281 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+webkit.org/b/241281 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ ImageOnlyFailure ]
+
+webkit.org/b/241282 webanimations/accelerated-animations-and-motion-path.html [ Pass Failure ]
+

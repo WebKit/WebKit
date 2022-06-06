@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
-
 #include "WebGLExtension.h"
 
 namespace WebCore {
@@ -46,5 +44,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

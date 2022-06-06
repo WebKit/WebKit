@@ -772,7 +772,7 @@ static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc* self, InternalS
 
             const char* streamId;
             gst_event_parse_stream_start(streamStart.get(), &streamId);
-            if (track.id() == streamId) {
+            if (track.id() == StringView::fromLatin1(streamId)) {
                 pad = currentPad;
                 break;
             }

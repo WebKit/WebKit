@@ -840,10 +840,10 @@ uint64_t AccessibilityObjectAtspi::state() const
     if (m_coreObject->isBusy())
         addState(Atspi::State::Busy);
 
-    if (m_coreObject->invalidStatus() != "false")
+    if (m_coreObject->invalidStatus() != "false"_s)
         addState(Atspi::State::InvalidEntry);
 
-    if (m_coreObject->supportsAutoComplete() && m_coreObject->autoCompleteValue() != "none")
+    if (m_coreObject->supportsAutoComplete() && m_coreObject->autoCompleteValue() != "none"_s)
         addState(Atspi::State::SupportsAutocompletion);
 
     return states;

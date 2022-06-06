@@ -2312,11 +2312,11 @@ static std::pair<bool, RefPtr<Frame>> contentFrameForNode(Node* target)
 
 static std::optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)
 {
-    if (dragOperation == "copy")
+    if (dragOperation == "copy"_s)
         return DragOperation::Copy;
-    if (dragOperation == "move")
+    if (dragOperation == "move"_s)
         return DragOperation::Move;
-    if (dragOperation == "link")
+    if (dragOperation == "link"_s)
         return DragOperation::Link;
     return std::nullopt;
 }
@@ -3861,7 +3861,7 @@ bool EventHandler::accessibilityPreventsEventPropagation(KeyboardEvent& event)
         return false;
 
     // Check for key events that are relevant to accessibility: tab and arrows keys that change focus
-    if (event.keyIdentifier() == "U+0009")
+    if (event.keyIdentifier() == "U+0009"_s)
         return true;
     FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
     if (direction != FocusDirection::None)
@@ -3880,14 +3880,14 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         m_frame.editor().handleKeyboardEvent(event);
         if (event.defaultHandled())
             return;
-        if (event.key() == "Escape") {
+        if (event.key() == "Escape"_s) {
             if (RefPtr activeModalDialog = m_frame.document()->activeModalDialog())
                 activeModalDialog->queueCancelTask();
-        } else if (event.keyIdentifier() == "U+0009")
+        } else if (event.keyIdentifier() == "U+0009"_s)
             defaultTabEventHandler(event);
-        else if (event.keyIdentifier() == "U+0008")
+        else if (event.keyIdentifier() == "U+0008"_s)
             defaultBackspaceEventHandler(event);
-        else if (event.keyIdentifier() == "PageUp" || event.keyIdentifier() == "PageDown") {
+        else if (event.keyIdentifier() == "PageUp"_s || event.keyIdentifier() == "PageDown"_s) {
             if (startKeyboardScrolling(event))
                 event.setDefaultHandled();
         } else {
@@ -4253,7 +4253,7 @@ bool EventHandler::isKeyboardOptionTab(KeyboardEvent& event)
     auto& eventNames = WebCore::eventNames();
     return (event.type() == eventNames.keydownEvent || event.type() == eventNames.keypressEvent)
         && event.altKey()
-        && event.keyIdentifier() == "U+0009";
+        && event.keyIdentifier() == "U+0009"_s;
 }
 
 bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent& event)

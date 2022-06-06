@@ -2895,10 +2895,20 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
         style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
 
-        // FIXME: Some of these cases could be narrowed down or optimized better.
-        forceFullLayout = isLayoutDependent(propertyID, style, styledRenderer())
-            || styledElement->isInShadowTree()
-            || (document.styleScope().resolverIfExists() && document.styleScope().resolverIfExists()->hasViewportDependentMediaQueries() && document.ownerElement());
+        forceFullLayout = [&] {
+            // FIXME: Some of these cases could be narrowed down or optimized better.
+            if (isLayoutDependent(propertyID, style, styledRenderer()))
+                return true;
+            // FIXME: Why?
+            if (styledElement->isInShadowTree())
+                return true;
+            if (!document.ownerElement())
+                return false;
+            if (!document.styleScope().resolverIfExists())
+                return false;
+            auto& ruleSets = document.styleScope().resolverIfExists()->ruleSets();
+            return ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries();
+        }();
 
         if (forceFullLayout)
             document.updateLayoutIgnorePendingStylesheets();

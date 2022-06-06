@@ -538,7 +538,7 @@ class UtilsVk : angle::NonCopyable
 
     // Allocates a single descriptor set.
     angle::Result allocateDescriptorSet(ContextVk *contextVk,
-                                        vk::ResourceUseList *resourceUseList,
+                                        vk::CommandBufferHelperCommon *commandBufferHelper,
                                         Function function,
                                         vk::RefCountedDescriptorPoolBinding *bindingOut,
                                         VkDescriptorSet *descriptorSetOut);

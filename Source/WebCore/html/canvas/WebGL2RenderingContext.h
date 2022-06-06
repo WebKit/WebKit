@@ -281,6 +281,7 @@ private:
     RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
 
     long long getInt64Parameter(GCGLenum);
+    Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
     void initializeVertexArrayObjects() final;
     bool validateBufferTarget(const char* functionName, GCGLenum target) final;

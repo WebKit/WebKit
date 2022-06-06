@@ -386,7 +386,7 @@ String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& sh
             }
         }
 
-        if (origin->m_constructorName == "Object")
+        if (origin->m_constructorName == "Object"_s)
             break;
     }
 

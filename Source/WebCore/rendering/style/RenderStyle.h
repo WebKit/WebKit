@@ -197,8 +197,10 @@ public:
     void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
     void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
 
-    void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
-    bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
+    void setUsesViewportUnits() { m_nonInheritedFlags.usesViewportUnits = true; }
+    bool usesViewportUnits() const { return m_nonInheritedFlags.usesViewportUnits; }
+    void setUsesContainerUnits() { m_nonInheritedFlags.usesContainerUnits = true; }
+    bool usesContainerUnits() const { return m_nonInheritedFlags.usesContainerUnits; }
 
     void setColumnStylesFromPaginationMode(const Pagination::Mode&);
     
@@ -1992,7 +1994,8 @@ private:
 #if ENABLE(DARK_MODE_CSS)
         unsigned hasExplicitlySetColorScheme : 1;
 #endif
-        unsigned hasViewportUnits : 1;
+        unsigned usesViewportUnits : 1;
+        unsigned usesContainerUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned disallowsFastPathInheritance : 1;
         unsigned isUnique : 1; // Style cannot be shared.
@@ -2133,7 +2136,8 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
 #if ENABLE(DARK_MODE_CSS)
         && hasExplicitlySetColorScheme == other.hasExplicitlySetColorScheme
 #endif
-        && hasViewportUnits == other.hasViewportUnits
+        && usesViewportUnits == other.usesViewportUnits
+        && usesContainerUnits == other.usesContainerUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
         && disallowsFastPathInheritance == other.disallowsFastPathInheritance
         && isUnique == other.isUnique
@@ -2159,7 +2163,8 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     unicodeBidi = other.unicodeBidi;
     floating = other.floating;
     tableLayout = other.tableLayout;
-    hasViewportUnits = other.hasViewportUnits;
+    usesViewportUnits = other.usesViewportUnits;
+    usesContainerUnits = other.usesContainerUnits;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
 

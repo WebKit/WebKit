@@ -32,7 +32,7 @@ TEST(WTF_TextStream, NSString)
 {
     TextStream ts;
     ts << @"Test";
-    EXPECT_EQ(ts.release(), "Test");
+    EXPECT_EQ(ts.release(), "Test"_s);
 }
 
 TEST(WTF_TextStream, NSArray)
@@ -40,12 +40,12 @@ TEST(WTF_TextStream, NSArray)
     {
         TextStream ts;
         ts << @[@"Test1", @"Test2"];
-        EXPECT_EQ(ts.release(), "[Test1, Test2]");
+        EXPECT_EQ(ts.release(), "[Test1, Test2]"_s);
     }
     {
         TextStream ts;
         ts << @[@"Test1", @[@"Test2", @"Test3"]];
-        EXPECT_EQ(ts.release(), "[Test1, [Test2, Test3]]");
+        EXPECT_EQ(ts.release(), "[Test1, [Test2, Test3]]"_s);
     }
 }
 
@@ -53,7 +53,7 @@ TEST(WTF_TextStream, NSNumber)
 {
     TextStream ts;
     ts << @(3);
-    EXPECT_EQ(ts.release(), "3");
+    EXPECT_EQ(ts.release(), "3"_s);
 }
 
 TEST(WTF_TextStream, id)
@@ -61,5 +61,5 @@ TEST(WTF_TextStream, id)
     TextStream ts;
     id value = @(3);
     ts << value;
-    EXPECT_EQ(ts.release(), "3");
+    EXPECT_EQ(ts.release(), "3"_s);
 }

@@ -931,47 +931,47 @@ String mediaElementLiveBroadcastStateText()
 
 String localizedMediaControlElementString(const String& name)
 {
-    if (name == "AudioElement")
+    if (name == "AudioElement"_s)
         return WEB_UI_STRING("audio playback", "accessibility label for audio element controller");
-    if (name == "VideoElement")
+    if (name == "VideoElement"_s)
         return WEB_UI_STRING("video playback", "accessibility label for video element controller");
-    if (name == "MuteButton")
+    if (name == "MuteButton"_s)
         return WEB_UI_STRING("mute", "accessibility label for mute button");
-    if (name == "UnMuteButton")
+    if (name == "UnMuteButton"_s)
         return WEB_UI_STRING("unmute", "accessibility label for turn mute off button");
-    if (name == "PlayButton")
+    if (name == "PlayButton"_s)
         return WEB_UI_STRING("play", "accessibility label for play button");
-    if (name == "PauseButton")
+    if (name == "PauseButton"_s)
         return WEB_UI_STRING("pause", "accessibility label for pause button");
-    if (name == "Slider")
+    if (name == "Slider"_s)
         return WEB_UI_STRING("movie time", "accessibility label for timeline slider");
-    if (name == "SliderThumb")
+    if (name == "SliderThumb"_s)
         return WEB_UI_STRING("timeline slider thumb", "accessibility label for timeline thumb");
-    if (name == "RewindButton")
+    if (name == "RewindButton"_s)
         return WEB_UI_STRING("back 30 seconds", "accessibility label for seek back 30 seconds button");
-    if (name == "ReturnToRealtimeButton")
+    if (name == "ReturnToRealtimeButton"_s)
         return WEB_UI_STRING("return to real time", "accessibility label for return to real time button");
-    if (name == "CurrentTimeDisplay")
+    if (name == "CurrentTimeDisplay"_s)
         return WEB_UI_STRING("elapsed time", "accessibility label for elapsed time display");
-    if (name == "TimeRemainingDisplay")
+    if (name == "TimeRemainingDisplay"_s)
         return WEB_UI_STRING("remaining time", "accessibility label for time remaining display");
-    if (name == "StatusDisplay")
+    if (name == "StatusDisplay"_s)
         return WEB_UI_STRING("status", "accessibility label for movie status");
-    if (name == "EnterFullscreenButton")
+    if (name == "EnterFullscreenButton"_s)
         return WEB_UI_STRING("enter full screen", "accessibility label for enter full screen button");
-    if (name == "ExitFullscreenButton")
+    if (name == "ExitFullscreenButton"_s)
         return WEB_UI_STRING("exit full screen", "accessibility label for exit full screen button");
-    if (name == "SeekForwardButton")
+    if (name == "SeekForwardButton"_s)
         return WEB_UI_STRING("fast forward", "accessibility label for fast forward button");
-    if (name == "SeekBackButton")
+    if (name == "SeekBackButton"_s)
         return WEB_UI_STRING("fast reverse", "accessibility label for fast reverse button");
-    if (name == "ShowClosedCaptionsButton")
+    if (name == "ShowClosedCaptionsButton"_s)
         return WEB_UI_STRING("show closed captions", "accessibility label for show closed captions button");
-    if (name == "HideClosedCaptionsButton")
+    if (name == "HideClosedCaptionsButton"_s)
         return WEB_UI_STRING("hide closed captions", "accessibility label for hide closed captions button");
 
     // FIXME: the ControlsPanel container should never be visible in the accessibility hierarchy.
-    if (name == "ControlsPanel")
+    if (name == "ControlsPanel"_s)
         return String();
 
     ASSERT_NOT_REACHED();
@@ -980,45 +980,45 @@ String localizedMediaControlElementString(const String& name)
 
 String localizedMediaControlElementHelpText(const String& name)
 {
-    if (name == "AudioElement")
+    if (name == "AudioElement"_s)
         return WEB_UI_STRING("audio element playback controls and status display", "accessibility help text for audio element controller");
-    if (name == "VideoElement")
+    if (name == "VideoElement"_s)
         return WEB_UI_STRING("video element playback controls and status display", "accessibility help text for video element controller");
-    if (name == "MuteButton")
+    if (name == "MuteButton"_s)
         return WEB_UI_STRING("mute audio tracks", "accessibility help text for mute button");
-    if (name == "UnMuteButton")
+    if (name == "UnMuteButton"_s)
         return WEB_UI_STRING("unmute audio tracks", "accessibility help text for un mute button");
-    if (name == "PlayButton")
+    if (name == "PlayButton"_s)
         return WEB_UI_STRING("begin playback", "accessibility help text for play button");
-    if (name == "PauseButton")
+    if (name == "PauseButton"_s)
         return WEB_UI_STRING("pause playback", "accessibility help text for pause button");
-    if (name == "Slider")
+    if (name == "Slider"_s)
         return WEB_UI_STRING("movie time scrubber", "accessibility help text for timeline slider");
-    if (name == "SliderThumb")
+    if (name == "SliderThumb"_s)
         return WEB_UI_STRING("movie time scrubber thumb", "accessibility help text for timeline slider thumb");
-    if (name == "RewindButton")
+    if (name == "RewindButton"_s)
         return WEB_UI_STRING("seek movie back 30 seconds", "accessibility help text for jump back 30 seconds button");
-    if (name == "ReturnToRealtimeButton")
+    if (name == "ReturnToRealtimeButton"_s)
         return WEB_UI_STRING("resume real time streaming", "accessibility help text for return streaming movie to real time button");
-    if (name == "CurrentTimeDisplay")
+    if (name == "CurrentTimeDisplay"_s)
         return WEB_UI_STRING("current movie time in seconds", "accessibility help text for elapsed time display");
-    if (name == "TimeRemainingDisplay")
+    if (name == "TimeRemainingDisplay"_s)
         return WEB_UI_STRING("number of seconds of movie remaining", "accessibility help text for remaining time display");
-    if (name == "StatusDisplay")
+    if (name == "StatusDisplay"_s)
         return WEB_UI_STRING("current movie status", "accessibility help text for movie status display");
-    if (name == "SeekBackButton")
+    if (name == "SeekBackButton"_s)
         return WEB_UI_STRING("seek quickly back", "accessibility help text for fast rewind button");
-    if (name == "SeekForwardButton")
+    if (name == "SeekForwardButton"_s)
         return WEB_UI_STRING("seek quickly forward", "accessibility help text for fast forward button");
-    if (name == "FullscreenButton")
+    if (name == "FullscreenButton"_s)
         return WEB_UI_STRING("Play movie in full screen mode", "accessibility help text for enter full screen button");
-    if (name == "ShowClosedCaptionsButton")
+    if (name == "ShowClosedCaptionsButton"_s)
         return WEB_UI_STRING("start displaying closed captions", "accessibility help text for show closed captions button");
-    if (name == "HideClosedCaptionsButton")
+    if (name == "HideClosedCaptionsButton"_s)
         return WEB_UI_STRING("stop displaying closed captions", "accessibility help text for hide closed captions button");
 
     // The description of this button is descriptive enough that it doesn't require help text.
-    if (name == "EnterFullscreenButton")
+    if (name == "EnterFullscreenButton"_s)
         return String();
     
     ASSERT_NOT_REACHED();

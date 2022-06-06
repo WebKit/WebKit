@@ -59,7 +59,7 @@ static String testPathFromURL(WKURLRef url)
 
     auto hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
     String hostString(hostCFString.get());
-    if (hostString == "127.0.0.1")
+    if (hostString == "127.0.0.1"_s)
         return pathString;
 
     return String();

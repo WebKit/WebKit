@@ -176,7 +176,7 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     HTMLElement::parseAttribute(name, value);
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (name == typeAttr && attachmentType() == "application/pdf") {
+    if (name == typeAttr && attachmentType() == "application/pdf"_s) {
         setImageMenuEnabled(true);
         ImageControlsMac::updateImageControls(*this);
     }

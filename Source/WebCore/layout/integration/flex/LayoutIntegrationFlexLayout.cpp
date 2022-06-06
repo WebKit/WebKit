@@ -171,7 +171,7 @@ void FlexLayout::collectOverflow()
 
 LayoutUnit FlexLayout::contentLogicalHeight() const
 {
-    return { };
+    return Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState }.usedContentHeight();
 }
 
 }

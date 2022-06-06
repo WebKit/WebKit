@@ -13,7 +13,7 @@ PASS Updating CSSRotate.angle to a CSSUnitValue with type other than angle throw
 PASS Updating CSSRotate.angle to a CSSMathValue that doesn't match <angle> throws a TypeError
 PASS CSSRotate can be constructed from a single angle
 PASS CSSRotate can be constructed from numberish coordinates
-FAIL CSSRotate can be constructed from CSSMathValues Type error
+PASS CSSRotate can be constructed from CSSMathValues
 PASS CSSRotate.x can be updated to a double
 PASS CSSRotate.x can be updated to a number CSSUnitValue
 PASS CSSRotate.x can be updated to a CSSMathValue matching <number>

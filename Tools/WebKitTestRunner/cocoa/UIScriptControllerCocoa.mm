@@ -141,7 +141,7 @@ void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
 
 void UIScriptControllerCocoa::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
-    if (toWTFString(preferenceRef) == "WebKitMinimumFontSize")
+    if (toWTFString(preferenceRef) == "WebKitMinimumFontSize"_s)
         webView().configuration.preferences.minimumFontSize = toWTFString(valueRef).toDouble();
 }
 

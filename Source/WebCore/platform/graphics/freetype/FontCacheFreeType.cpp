@@ -353,7 +353,7 @@ static String getFamilyNameStringFromFamily(const String& family)
         return "fantasy"_s;
 
 #if PLATFORM(GTK)
-    if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font")
+    if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
         return defaultGtkSystemFont();
 #endif
 

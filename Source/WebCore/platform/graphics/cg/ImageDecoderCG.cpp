@@ -76,7 +76,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
         CFDictionarySetValue(options.get(), kCGImageSourceUseHardwareAcceleration, kCFBooleanFalse);
 
 #if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
-    if (ImageDecoderCG::restrictedDecodingEnabled())
+    if (ImageDecoderCG::decodingHEICEnabled())
         CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
 #endif
 
@@ -268,7 +268,7 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-bool ImageDecoderCG::s_enableRestrictedDecoding = false;
+bool ImageDecoderCG::s_enableDecodingHEIC = false;
 bool ImageDecoderCG::s_hardwareAcceleratedDecodingDisabled = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
@@ -524,7 +524,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
     
     // Return false if there is no image type or the image type is JPEG, because
     // JPEG does not support alpha transparency.
-    if (uti.isEmpty() || uti == "public.jpeg")
+    if (uti.isEmpty() || uti == "public.jpeg"_s)
         return false;
     
     // FIXME: Could return false for other non-transparent image formats.
@@ -575,7 +575,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 #endif // PLATFORM(IOS_FAMILY)
     
     String uti = this->uti();
-    if (uti.isEmpty() || uti != "public.xbitmap-image")
+    if (uti.isEmpty() || uti != "public.xbitmap-image"_s)
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
@@ -611,14 +611,14 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }
 
-void ImageDecoderCG::enableRestrictedDecoding()
+void ImageDecoderCG::enableDecodingHEIC()
 {
-    s_enableRestrictedDecoding = true;
+    s_enableDecodingHEIC = true;
 }
 
-bool ImageDecoderCG::restrictedDecodingEnabled()
+bool ImageDecoderCG::decodingHEICEnabled()
 {
-    return s_enableRestrictedDecoding;
+    return s_enableDecodingHEIC;
 }
 
 void ImageDecoderCG::disableHardwareAcceleratedDecoding()

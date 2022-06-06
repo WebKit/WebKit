@@ -93,11 +93,6 @@ private:
     void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
-#if ENABLE(VIDEO)
-    bool paintMediaSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
-#endif
-
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
 #if ENABLE(DATALIST_ELEMENT)

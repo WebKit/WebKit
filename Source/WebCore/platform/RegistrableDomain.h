@@ -55,7 +55,7 @@ public:
 
     bool operator!=(const RegistrableDomain& other) const { return m_registrableDomain != other.m_registrableDomain; }
     bool operator==(const RegistrableDomain& other) const { return m_registrableDomain == other.m_registrableDomain; }
-    bool operator==(const char* other) const { return m_registrableDomain == other; }
+    bool operator==(ASCIILiteral other) const { return m_registrableDomain == other; }
 
     bool matches(const URL& url) const
     {

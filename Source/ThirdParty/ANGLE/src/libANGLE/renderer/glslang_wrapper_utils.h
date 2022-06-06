@@ -54,14 +54,13 @@ struct GlslangSourceOptions
 
 struct GlslangSpirvOptions
 {
-    gl::ShaderType shaderType                 = gl::ShaderType::InvalidEnum;
-    SurfaceRotation preRotation               = SurfaceRotation::Identity;
-    bool negativeViewportSupported            = false;
-    bool transformPositionToVulkanClipSpace   = false;
-    bool removeEarlyFragmentTestsOptimization = false;
-    bool removeDebugInfo                      = false;
-    bool isTransformFeedbackStage             = false;
-    bool isTransformFeedbackEmulated          = false;
+    gl::ShaderType shaderType               = gl::ShaderType::InvalidEnum;
+    bool negativeViewportSupported          = false;
+    bool transformPositionToVulkanClipSpace = false;
+    bool removeDebugInfo                    = false;
+    bool isLastPreFragmentStage             = false;
+    bool isTransformFeedbackStage           = false;
+    bool isTransformFeedbackEmulated        = false;
 };
 
 struct UniformBindingInfo final

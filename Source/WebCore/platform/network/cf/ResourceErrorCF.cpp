@@ -208,11 +208,11 @@ CFStreamError ResourceError::cfStreamError() const
     CFStreamError result;
     result.error = m_errorCode;
 
-    if (m_domain == "NSCustomErrorDomain")
+    if (m_domain == "NSCustomErrorDomain"_s)
         result.domain = kCFStreamErrorDomainCustom;
-    else if (m_domain == "NSPOSIXErrorDomain")
+    else if (m_domain == "NSPOSIXErrorDomain"_s)
         result.domain = kCFStreamErrorDomainPOSIX;
-    else if (m_domain == "NSOSStatusErrorDomain")
+    else if (m_domain == "NSOSStatusErrorDomain"_s)
         result.domain = kCFStreamErrorDomainMacOSStatus;
     else {
         result.domain = kCFStreamErrorDomainCustom;

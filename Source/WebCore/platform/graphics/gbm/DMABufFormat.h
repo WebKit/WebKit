@@ -271,7 +271,7 @@ inline DMABufFormat DMABufFormat::create<DMABufFormat::FourCC::UYVY>()
 template<>
 inline DMABufFormat DMABufFormat::create<DMABufFormat::FourCC::VYUY>()
 {
-    return DMABufFormat::instantiate<FourCC::YVYU,
+    return DMABufFormat::instantiate<FourCC::VYUY,
         PlaneDefinition<FourCC::GR88, 0, 0>>();
 }
 
@@ -285,7 +285,7 @@ inline DMABufFormat DMABufFormat::create<DMABufFormat::FourCC::VUYA>()
 template<>
 inline DMABufFormat DMABufFormat::create<DMABufFormat::FourCC::AYUV>()
 {
-    return DMABufFormat::instantiate<FourCC::VUYA,
+    return DMABufFormat::instantiate<FourCC::AYUV,
         PlaneDefinition<FourCC::ABGR8888, 0, 0>>();
 }
 
@@ -318,54 +318,38 @@ inline DMABufFormat DMABufFormat::create<DMABufFormat::FourCC::Y42B>()
 
 inline DMABufFormat DMABufFormat::create(uint32_t fourccValue)
 {
+#define CREATE_FORMAT_FOR_FOURCC(FourCCValue) \
+    case uint32_t(FourCC::FourCCValue): \
+        return create<FourCC::FourCCValue>();
+
     switch (fourccValue) {
-    case uint32_t(FourCC::XRGB8888):
-        return create<FourCC::XRGB8888>();
-    case uint32_t(FourCC::XBGR8888):
-        return create<FourCC::XBGR8888>();
-    case uint32_t(FourCC::RGBX8888):
-        return create<FourCC::RGBX8888>();
-    case uint32_t(FourCC::BGRX8888):
-        return create<FourCC::BGRX8888>();
-    case uint32_t(FourCC::ARGB8888):
-        return create<FourCC::ARGB8888>();
-    case uint32_t(FourCC::ABGR8888):
-        return create<FourCC::ABGR8888>();
-    case uint32_t(FourCC::RGBA8888):
-        return create<FourCC::RGBA8888>();
-    case uint32_t(FourCC::BGRA8888):
-        return create<FourCC::BGRA8888>();
-    case uint32_t(FourCC::I420):
-        return create<FourCC::I420>();
-    case uint32_t(FourCC::YV12):
-        return create<FourCC::YV12>();
-    case uint32_t(FourCC::A420):
-        return create<FourCC::A420>();
-    case uint32_t(FourCC::NV12):
-        return create<FourCC::NV12>();
-    case uint32_t(FourCC::NV21):
-        return create<FourCC::NV21>();
-    case uint32_t(FourCC::YUY2):
-        return create<FourCC::YUY2>();
-    case uint32_t(FourCC::YVYU):
-        return create<FourCC::YVYU>();
-    case uint32_t(FourCC::UYVY):
-        return create<FourCC::UYVY>();
-    case uint32_t(FourCC::VYUY):
-        return create<FourCC::UYVY>();
-    case uint32_t(FourCC::VUYA):
-        return create<FourCC::VUYA>();
-    case uint32_t(FourCC::AYUV):
-        return create<FourCC::AYUV>();
-    case uint32_t(FourCC::Y444):
-        return create<FourCC::Y444>();
-    case uint32_t(FourCC::Y41B):
-        return create<FourCC::Y41B>();
-    case uint32_t(FourCC::Y42B):
-        return create<FourCC::Y42B>();
+    CREATE_FORMAT_FOR_FOURCC(XRGB8888);
+    CREATE_FORMAT_FOR_FOURCC(XBGR8888);
+    CREATE_FORMAT_FOR_FOURCC(RGBX8888);
+    CREATE_FORMAT_FOR_FOURCC(BGRX8888);
+    CREATE_FORMAT_FOR_FOURCC(ARGB8888);
+    CREATE_FORMAT_FOR_FOURCC(ABGR8888);
+    CREATE_FORMAT_FOR_FOURCC(RGBA8888);
+    CREATE_FORMAT_FOR_FOURCC(BGRA8888);
+    CREATE_FORMAT_FOR_FOURCC(I420);
+    CREATE_FORMAT_FOR_FOURCC(YV12);
+    CREATE_FORMAT_FOR_FOURCC(A420);
+    CREATE_FORMAT_FOR_FOURCC(NV12);
+    CREATE_FORMAT_FOR_FOURCC(NV21);
+    CREATE_FORMAT_FOR_FOURCC(YUY2);
+    CREATE_FORMAT_FOR_FOURCC(YVYU);
+    CREATE_FORMAT_FOR_FOURCC(UYVY);
+    CREATE_FORMAT_FOR_FOURCC(VYUY);
+    CREATE_FORMAT_FOR_FOURCC(VUYA);
+    CREATE_FORMAT_FOR_FOURCC(AYUV);
+    CREATE_FORMAT_FOR_FOURCC(Y444);
+    CREATE_FORMAT_FOR_FOURCC(Y41B);
+    CREATE_FORMAT_FOR_FOURCC(Y42B);
     default:
         break;
     }
+
+#undef CREATE_FORMAT_FOR_FOURCC
 
     return { };
 }

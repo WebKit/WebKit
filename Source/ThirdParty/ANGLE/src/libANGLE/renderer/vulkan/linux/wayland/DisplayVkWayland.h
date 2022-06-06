@@ -44,6 +44,7 @@ class DisplayVkWayland : public DisplayVkLinux
                                     EGLint *numModifiers) override;
 
   private:
+    bool mOwnDisplay;
     wl_display *mWaylandDisplay;
     // Supported DRM formats
     std::vector<EGLint> mDrmFormats;

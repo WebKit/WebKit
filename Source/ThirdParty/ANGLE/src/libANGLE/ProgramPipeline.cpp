@@ -354,7 +354,7 @@ void ProgramPipeline::updateExecutableTessellationProperties()
     }
 }
 
-void ProgramPipeline::updateFragmentInoutRange()
+void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
 {
     Program *fragmentProgram = getShaderProgram(gl::ShaderType::Fragment);
 
@@ -363,22 +363,8 @@ void ProgramPipeline::updateFragmentInoutRange()
         return;
     }
 
-    const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
-    mState.mExecutable->mFragmentInoutRange     = fragmentExecutable.mFragmentInoutRange;
-}
-
-void ProgramPipeline::updateUsesEarlyFragmentTestsOptimization()
-{
-    Program *fragmentProgram = getShaderProgram(gl::ShaderType::Fragment);
-
-    if (!fragmentProgram)
-    {
-        return;
-    }
-
-    const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
-    mState.mExecutable->mUsesEarlyFragmentTestsOptimization =
-        fragmentExecutable.mUsesEarlyFragmentTestsOptimization;
+    const ProgramExecutable &fragmentExecutable  = fragmentProgram->getExecutable();
+    mState.mExecutable->mFragmentInoutRange      = fragmentExecutable.mFragmentInoutRange;
     mState.mExecutable->mEnablesPerSampleShading = fragmentExecutable.mEnablesPerSampleShading;
 }
 
@@ -424,8 +410,7 @@ void ProgramPipeline::updateExecutable()
     updateExecutableTessellationProperties();
 
     // Fragment Shader ProgramExecutable properties
-    updateFragmentInoutRange();
-    updateUsesEarlyFragmentTestsOptimization();
+    updateFragmentInoutRangeAndEnablesPerSampleShading();
 
     // All Shader ProgramExecutable properties
     mState.updateExecutableTextures();

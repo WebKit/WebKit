@@ -128,10 +128,10 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!pixelBuffer)
         return std::nullopt;
 
-    if (pixelBuffer->data().length() < 4)
+    if (pixelBuffer->sizeInBytes() < 4)
         return std::nullopt;
 
-    auto snapshotData = pixelBuffer->data().data();
+    auto snapshotData = pixelBuffer->bytes();
     return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
 }
 

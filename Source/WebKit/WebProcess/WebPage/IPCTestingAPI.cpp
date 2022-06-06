@@ -1974,7 +1974,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     if (scope.exception())
         return false;
 
-    if (type == "IntPoint") {
+    if (type == "IntPoint"_s) {
         if (!encodePointType<WebCore::IntPoint>(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert IntPoint"_s);
             return false;
@@ -1982,7 +1982,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "FloatPoint") {
+    if (type == "FloatPoint"_s) {
         if (!encodePointType<WebCore::IntPoint>(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert FloatPoint"_s);
             return false;
@@ -1990,7 +1990,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "IntRect") {
+    if (type == "IntRect"_s) {
         if (!encodeRectType<WebCore::IntRect>(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert IntRect"_s);
             return false;
@@ -1998,7 +1998,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "FloatRect") {
+    if (type == "FloatRect"_s) {
         if (!encodeRectType<WebCore::FloatRect>(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert FloatRect"_s);
             return false;
@@ -2007,7 +2007,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     }
 
 #if ENABLE(GPU_PROCESS)
-    if (type == "RemoteRenderingBackendCreationParameters") {
+    if (type == "RemoteRenderingBackendCreationParameters"_s) {
         if (!encodeRemoteRenderingBackendCreationParameters(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert RemoteRenderingBackendCreationParameters"_s);
             return false;
@@ -2016,7 +2016,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     }
 #endif
 
-    if (type == "SharedMemory") {
+    if (type == "SharedMemory"_s) {
         if (!encodeSharedMemory(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert SharedMemory"_s);
             return false;
@@ -2024,7 +2024,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "FrameInfoData") {
+    if (type == "FrameInfoData"_s) {
         if (!encodeFrameInfoData(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to get the frame"_s);
             return false;
@@ -2036,7 +2036,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     if (scope.exception())
         return false;
 
-    if (type == "StreamConnectionBuffer") {
+    if (type == "StreamConnectionBuffer"_s) {
         if (!encodeStreamConnectionBuffer(encoder, globalObject, jsValue, scope)) {
             *exception = createTypeError(context, "Failed to convert StreamConnectionBuffer"_s);
             return false;
@@ -2044,7 +2044,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "Semaphore") {
+    if (type == "Semaphore"_s) {
         if (!encodeSemaphore(encoder, globalObject, jsValue, scope)) {
             *exception = createTypeError(context, "Failed to convert Semaphore"_s);
             return false;
@@ -2052,7 +2052,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "Attachment") {
+    if (type == "Attachment"_s) {
         if (!encodeAttachment(encoder, globalObject, jsValue, scope)) {
             *exception = createTypeError(context, "Failed to convert Attachment"_s);
             return false;
@@ -2060,7 +2060,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "Vector") {
+    if (type == "Vector"_s) {
         if (!jsValue.inherits<JSC::JSArray>()) {
             *exception = createTypeError(context, "Vector value must be an array"_s);
             return false;
@@ -2068,7 +2068,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return encodeArrayArgument(encoder, ArrayMode::Vector, context, toRef(globalObject, jsValue), exception);
     }
 
-    if (type == "String") {
+    if (type == "String"_s) {
         if (jsValue.isUndefinedOrNull()) {
             encoder << String { };
             return true;
@@ -2080,7 +2080,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "URL") {
+    if (type == "URL"_s) {
         if (jsValue.isUndefinedOrNull()) {
             encoder << URL { };
             return true;
@@ -2092,7 +2092,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "RegistrableDomain") {
+    if (type == "RegistrableDomain"_s) {
         if (jsValue.isUndefinedOrNull()) {
             encoder << WebCore::RegistrableDomain { };
             return true;
@@ -2104,7 +2104,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-    if (type == "RGBA") {
+    if (type == "RGBA"_s) {
         if (!jsValue.isNumber()) {
             *exception = createTypeError(context, "RGBA value should be a number"_s);
             return false;
@@ -2115,27 +2115,27 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     }
 
     bool numericResult;
-    if (type == "bool")
+    if (type == "bool"_s)
         numericResult = encodeNumericType<bool>(encoder, jsValue);
-    else if (type == "double")
+    else if (type == "double"_s)
         numericResult = encodeNumericType<double>(encoder, jsValue);
-    else if (type == "float")
+    else if (type == "float"_s)
         numericResult = encodeNumericType<float>(encoder, jsValue);
-    else if (type == "int8_t")
+    else if (type == "int8_t"_s)
         numericResult = encodeNumericType<int8_t>(encoder, jsValue);
-    else if (type == "int16_t")
+    else if (type == "int16_t"_s)
         numericResult = encodeNumericType<int16_t>(encoder, jsValue);
-    else if (type == "int32_t")
+    else if (type == "int32_t"_s)
         numericResult = encodeNumericType<int32_t>(encoder, jsValue);
-    else if (type == "int64_t")
+    else if (type == "int64_t"_s)
         numericResult = encodeNumericType<int64_t>(encoder, jsValue);
-    else if (type == "uint8_t")
+    else if (type == "uint8_t"_s)
         numericResult = encodeNumericType<uint8_t>(encoder, jsValue);
-    else if (type == "uint16_t")
+    else if (type == "uint16_t"_s)
         numericResult = encodeNumericType<uint16_t>(encoder, jsValue);
-    else if (type == "uint32_t")
+    else if (type == "uint32_t"_s)
         numericResult = encodeNumericType<uint32_t>(encoder, jsValue);
-    else if (type == "uint64_t")
+    else if (type == "uint64_t"_s)
         numericResult = encodeNumericType<uint64_t>(encoder, jsValue);
     else {
         *exception = createTypeError(context, "Bad type name"_s);

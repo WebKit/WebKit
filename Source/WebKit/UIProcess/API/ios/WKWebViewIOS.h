@@ -162,6 +162,8 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
 
+@property (nonatomic, readonly) BOOL _shouldAvoidSecurityHeuristicScoreUpdates;
+
 @property (nonatomic, readonly) BOOL _isBackground;
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) BOOL _haveSetObscuredInsets;

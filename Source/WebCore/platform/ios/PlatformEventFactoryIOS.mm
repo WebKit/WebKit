@@ -518,9 +518,9 @@ public:
         // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
 
         // Turn 0x7F into 8, because backspace needs to always be 8.
-        if (m_text == "\x7F")
+        if (m_text == "\x7F"_s)
             m_text = "\x8"_s;
-        if (m_unmodifiedText == "\x7F")
+        if (m_unmodifiedText == "\x7F"_s)
             m_unmodifiedText = "\x8"_s;
         // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
         if (m_windowsVirtualKeyCode == 9) {

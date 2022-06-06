@@ -102,7 +102,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
             wrapper->valueChanged(coreObject->valueForRange());
         break;
     case AXInvalidStatusChanged:
-        wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false");
+        wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false"_s);
         break;
     case AXElementBusyChanged:
         wrapper->stateChanged("busy", coreObject->isBusy());
@@ -200,6 +200,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     case AXPositionInSetChanged:
         break;
     case AXDescribedByChanged:
+        break;
+    case AXHasPopupChanged:
         break;
     }
 }

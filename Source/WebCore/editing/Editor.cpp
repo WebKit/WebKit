@@ -362,7 +362,7 @@ bool Editor::handleTextEvent(TextEvent& event)
     }
 
     String data = event.data();
-    if (data == "\n") {
+    if (data == "\n"_s) {
         if (event.isLineBreak())
             return insertLineBreak();
         return insertParagraphSeparator();
@@ -1310,7 +1310,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]) || isStartOfNewWord);
 
     bool shouldConsiderApplyingAutocorrection = false;
-    if (text == " " || text == "\t")
+    if (text == " "_s || text == "\t"_s)
         shouldConsiderApplyingAutocorrection = true;
 
     if (text.length() == 1 && u_ispunct(text[0]) && !isAmbiguousBoundaryCharacter(text[0]))

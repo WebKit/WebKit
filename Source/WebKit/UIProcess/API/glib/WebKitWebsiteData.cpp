@@ -191,7 +191,7 @@ const char* webkit_website_data_get_name(WebKitWebsiteData* websiteData)
     g_return_val_if_fail(websiteData, nullptr);
 
     if (websiteData->displayName.isNull()) {
-        if (websiteData->record.displayName == "Local documents on your computer")
+        if (websiteData->record.displayName == "Local documents on your computer"_s)
             websiteData->displayName = _("Local files");
         else
             websiteData->displayName = websiteData->record.displayName.utf8();

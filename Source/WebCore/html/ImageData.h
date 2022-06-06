@@ -28,10 +28,10 @@
 
 #pragma once
 
+#include "ByteArrayPixelBuffer.h"
 #include "ExceptionOr.h"
 #include "ImageDataSettings.h"
 #include "IntSize.h"
-#include "PixelBuffer.h"
 #include "PredefinedColorSpace.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Forward.h>
@@ -40,8 +40,8 @@ namespace WebCore {
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    WEBCORE_EXPORT static Ref<ImageData> create(Ref<PixelBuffer>&&);
-    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<PixelBuffer>&&);
+    WEBCORE_EXPORT static Ref<ImageData> create(Ref<ByteArrayPixelBuffer>&&);
+    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ByteArrayPixelBuffer>&&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&, PredefinedColorSpace);
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, std::optional<ImageDataSettings> = std::nullopt);
@@ -59,7 +59,7 @@ public:
     Uint8ClampedArray& data() const { return m_data.get(); }
     PredefinedColorSpace colorSpace() const { return m_colorSpace; }
 
-    Ref<PixelBuffer> pixelBuffer() const;
+    Ref<ByteArrayPixelBuffer> pixelBuffer() const;
 
 private:
     explicit ImageData(const IntSize&, Ref<JSC::Uint8ClampedArray>&&, PredefinedColorSpace);

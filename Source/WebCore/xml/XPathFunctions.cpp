@@ -290,7 +290,7 @@ void Function::setArguments(const String& name, Vector<std::unique_ptr<Expressio
     // Functions that use the context node as an implicit argument are context node sensitive when they
     // have no arguments, but when explicit arguments are added, they are no longer context node sensitive.
     // As of this writing, the only exception to this is the "lang" function.
-    if (name != "lang" && !arguments.isEmpty())
+    if (name != "lang"_s && !arguments.isEmpty())
         setIsContextNodeSensitive(false);
 
     setSubexpressions(WTFMove(arguments));

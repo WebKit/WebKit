@@ -119,14 +119,14 @@ inline bool HTMLTokenizer::emitEndOfFile(SegmentedString& source)
 
 inline void HTMLTokenizer::saveEndTagNameIfNeeded()
 {
-    ASSERT(m_token.type() != HTMLToken::Uninitialized);
-    if (m_token.type() == HTMLToken::StartTag)
+    ASSERT(m_token.type() != HTMLToken::Type::Uninitialized);
+    if (m_token.type() == HTMLToken::Type::StartTag)
         m_appropriateEndTagName = m_token.name();
 }
 
 inline bool HTMLTokenizer::haveBufferedCharacterToken() const
 {
-    return m_token.type() == HTMLToken::Character;
+    return m_token.type() == HTMLToken::Type::Character;
 }
 
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)
@@ -306,8 +306,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         if (character == kEndOfFileMarker) {
             parseError();
-            bufferASCIICharacter('<');
-            bufferASCIICharacter('/');
+            bufferCharacters("</"_s);
             RECONSUME_IN(DataState);
         }
         parseError();
@@ -347,8 +346,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
             ADVANCE_PAST_NON_NEWLINE_TO(RCDATAEndTagNameState);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         RECONSUME_IN(RCDATAState);
     END_STATE()
 
@@ -374,8 +372,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             if (isAppropriateEndTag())
                 return commitToCompleteEndTag(source);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         m_token.appendToCharacter(m_temporaryBuffer);
         m_bufferedEndTagName.clear();
         m_temporaryBuffer.clear();
@@ -398,8 +395,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
             ADVANCE_PAST_NON_NEWLINE_TO(RAWTEXTEndTagNameState);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         RECONSUME_IN(RAWTEXTState);
     END_STATE()
 
@@ -425,8 +421,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             if (isAppropriateEndTag())
                 return commitToCompleteEndTag(source);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         m_token.appendToCharacter(m_temporaryBuffer);
         m_bufferedEndTagName.clear();
         m_temporaryBuffer.clear();
@@ -440,8 +435,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEndTagOpenState);
         }
         if (character == '!') {
-            bufferASCIICharacter('<');
-            bufferASCIICharacter('!');
+            bufferCharacters("<!"_s);
             ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapeStartState);
         }
         bufferASCIICharacter('<');
@@ -454,8 +448,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
             ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEndTagNameState);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         RECONSUME_IN(ScriptDataState);
     END_STATE()
 
@@ -481,8 +474,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             if (isAppropriateEndTag())
                 return commitToCompleteEndTag(source);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         m_token.appendToCharacter(m_temporaryBuffer);
         m_bufferedEndTagName.clear();
         m_temporaryBuffer.clear();
@@ -577,8 +569,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             appendToPossibleEndTag(convertASCIIAlphaToLower(character));
             ADVANCE_PAST_NON_NEWLINE_TO(ScriptDataEscapedEndTagNameState);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         RECONSUME_IN(ScriptDataEscapedState);
     END_STATE()
 
@@ -604,8 +595,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             if (isAppropriateEndTag())
                 return commitToCompleteEndTag(source);
         }
-        bufferASCIICharacter('<');
-        bufferASCIICharacter('/');
+        bufferCharacters("</"_s);
         m_token.appendToCharacter(m_temporaryBuffer);
         m_bufferedEndTagName.clear();
         m_temporaryBuffer.clear();
@@ -864,8 +854,10 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ASSERT(decodedEntity.isEmpty());
             m_token.appendToAttributeValue('&');
         } else {
-            for (unsigned i = 0; i < decodedEntity.length(); ++i)
-                m_token.appendToAttributeValue(decodedEntity[i]);
+            if (decodedEntity.is8Bit())
+                m_token.appendToAttributeValue(decodedEntity.span<LChar>());
+            else
+                m_token.appendToAttributeValue(decodedEntity.span<UChar>());
         }
         // We're supposed to switch back to the attribute value state that
         // we were in when we were switched into this state. Rather than
@@ -1020,17 +1012,14 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         parseError();
-        m_token.appendToComment('-');
-        m_token.appendToComment('-');
+        m_token.appendToComment("--"_s);
         m_token.appendToComment(character);
         ADVANCE_TO(CommentState);
     END_STATE()
 
     BEGIN_STATE(CommentEndBangState)
         if (character == '-') {
-            m_token.appendToComment('-');
-            m_token.appendToComment('-');
-            m_token.appendToComment('!');
+            m_token.appendToComment("--!"_s);
             ADVANCE_PAST_NON_NEWLINE_TO(CommentEndDashState);
         }
         if (character == '>')
@@ -1039,9 +1028,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
             return emitAndReconsumeInDataState();
         }
-        m_token.appendToComment('-');
-        m_token.appendToComment('-');
-        m_token.appendToComment('!');
+        m_token.appendToComment("--!"_s);
         m_token.appendToComment(character);
         ADVANCE_TO(CommentState);
     END_STATE()
@@ -1385,8 +1372,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(CDATASectionDoubleRightSquareBracketState)
         if (character == '>')
             ADVANCE_PAST_NON_NEWLINE_TO(DataState);
-        bufferASCIICharacter(']');
-        bufferASCIICharacter(']');
+        bufferCharacters("]]"_s);
         RECONSUME_IN(CDATASectionState);
     END_STATE()
 

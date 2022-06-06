@@ -1756,7 +1756,7 @@ bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& pa
     float zoomLevel = o.style().effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
 
-    if (o.style().effectiveAppearance() ==  SliderHorizontalPart || o.style().effectiveAppearance() ==  MediaSliderPart) {
+    if (o.style().effectiveAppearance() ==  SliderHorizontalPart) {
         bounds.setHeight(zoomedTrackWidth);
         bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
     } else if (o.style().effectiveAppearance() == SliderVerticalPart) {

@@ -1730,32 +1730,32 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             && src2->virtualRegister().isConstant()
             && m_codeBlock->constantRegister(src2->virtualRegister()).get().isString()) {
             String value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
-            if (value == "undefined") {
+            if (value == "undefined"_s) {
                 rewind();
                 OpTypeofIsUndefined::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "boolean") {
+            if (value == "boolean"_s) {
                 rewind();
                 OpIsBoolean::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "number") {
+            if (value == "number"_s) {
                 rewind();
                 OpIsNumber::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "string") {
+            if (value == "string"_s) {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, StringType);
                 return true;
             }
-            if (value == "symbol") {
+            if (value == "symbol"_s) {
                 rewind();
                 OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
                 return true;
             }
-            if (value == "bigint") {
+            if (value == "bigint"_s) {
                 rewind();
 #if USE(BIGINT32)
                 OpIsBigInt::emit(this, dst, op.m_value);
@@ -1764,12 +1764,12 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
 #endif
                 return true;
             }
-            if (value == "object") {
+            if (value == "object"_s) {
                 rewind();
                 OpTypeofIsObject::emit(this, dst, op.m_value);
                 return true;
             }
-            if (value == "function") {
+            if (value == "function"_s) {
                 rewind();
                 OpTypeofIsFunction::emit(this, dst, op.m_value);
                 return true;

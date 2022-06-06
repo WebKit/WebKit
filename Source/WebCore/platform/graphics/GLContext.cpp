@@ -180,7 +180,7 @@ unsigned GLContext::version()
         Vector<String> versionStringComponents = versionString.split(' ');
 
         Vector<String> versionDigits;
-        if (versionStringComponents[0] == "OpenGL") {
+        if (versionStringComponents[0] == "OpenGL"_s) {
             // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
             // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
             // third component in both cases.

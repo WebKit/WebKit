@@ -138,7 +138,7 @@ bool ResourceLoadStatisticsStore::shouldSkip(const RegistrableDomain& domain) co
 {
     ASSERT(!RunLoop::isMain());
     return !(parameters().isRunningTest)
-    && m_shouldIncludeLocalhost == ShouldIncludeLocalhost::No && domain.string() == "localhost";
+    && m_shouldIncludeLocalhost == ShouldIncludeLocalhost::No && domain.string() == "localhost"_s;
 }
 
 void ResourceLoadStatisticsStore::setIsRunningTest(bool value)

@@ -413,12 +413,7 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(const String&, const String&, bool, bool)
-{
-    notImplemented();
-}
-
-void WebInspectorUIProxy::platformAppend(const String&, const String&)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
 {
     notImplemented();
 }

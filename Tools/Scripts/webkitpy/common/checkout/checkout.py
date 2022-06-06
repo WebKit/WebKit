@@ -173,7 +173,7 @@ for l in lines[1:]:
         num_commits = len(self.COMMIT_SUBJECT_RE.findall(encoded_patch))
         if isinstance(self._scm, Git) and num_commits:
             self._executive.run_command(
-                ['git', 'am'],
+                ['git', 'am', '--keep-non-patch'],
                 input=self.filter_patch_content(encoded_patch, reviewer=patch.reviewer().full_name if patch.reviewer() else None),
                 cwd=self._scm.checkout_root,
             )

@@ -155,8 +155,8 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
     m_input.append(m_codec->decode(data, length, false, false, ignoredSawErrorFlag));
 
     while (auto token = m_tokenizer.nextToken(m_input)) {
-        bool isEnd = token->type() == HTMLToken::EndTag;
-        if (isEnd || token->type() == HTMLToken::StartTag) {
+        bool isEnd = token->type() == HTMLToken::Type::EndTag;
+        if (isEnd || token->type() == HTMLToken::Type::StartTag) {
             AtomString tagName(token->name());
             if (!isEnd) {
                 m_tokenizer.updateStateFor(tagName);

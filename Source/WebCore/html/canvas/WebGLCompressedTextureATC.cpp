@@ -26,7 +26,6 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
 #include "WebGLCompressedTextureATC.h"
 
 #include <wtf/IsoMallocInlines.h>

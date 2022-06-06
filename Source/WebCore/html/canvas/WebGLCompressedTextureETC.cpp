@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "WebGLCompressedTextureETC.h"
 
-#include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

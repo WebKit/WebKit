@@ -138,7 +138,6 @@ void WebInspectorFrontendClient::startWindowDrag() { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::showCertificate(const CertificateInfo&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }
-void WebInspectorFrontendClient::save(const String&, const String&, bool, bool) { }
-void WebInspectorFrontendClient::append(const String&, const String&) { }
+void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 
 #endif // PLATFORM(IOS_FAMILY)

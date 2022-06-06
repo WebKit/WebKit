@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
-
 #include "WebGLExtension.h"
 
 namespace WebCore {
@@ -37,9 +35,9 @@ public:
     explicit WebGLDrawBuffers(WebGLRenderingContextBase&);
     virtual ~WebGLDrawBuffers();
 
-    static bool supported(WebGLRenderingContextBase&);
-
     ExtensionName getName() const override;
+
+    static bool supported(WebGLRenderingContextBase&);
 
     void drawBuffersWEBGL(const Vector<GCGLenum>& buffers);
 
@@ -48,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

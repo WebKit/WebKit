@@ -347,6 +347,13 @@
         m_context->getIntegerv(pname, value);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(value.data()), value.size()));
     }
+    void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(IPC::ArrayReference<int32_t, 4>)>&& completionHandler) // NOLINT
+    {
+        std::array<GCGLint, 4> value { };
+        assertIsCurrent(workQueue());
+        m_context->getIntegeri_v(pname, index, value);
+        completionHandler(IPC::ArrayReference<int32_t, 4>(reinterpret_cast<int32_t*>(value.data()), value.size()));
+    }
     void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
     {
         GCGLint64 returnValue = { };
@@ -1333,19 +1340,46 @@
         assertIsCurrent(workQueue());
         m_context->drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
     }
+    void enableiOES(uint32_t target, uint32_t index)
+    {
+        assertIsCurrent(workQueue());
+        m_context->enableiOES(target, index);
+    }
+    void disableiOES(uint32_t target, uint32_t index)
+    {
+        assertIsCurrent(workQueue());
+        m_context->disableiOES(target, index);
+    }
+    void blendEquationiOES(uint32_t buf, uint32_t mode)
+    {
+        assertIsCurrent(workQueue());
+        m_context->blendEquationiOES(buf, mode);
+    }
+    void blendEquationSeparateiOES(uint32_t buf, uint32_t modeRGB, uint32_t modeAlpha)
+    {
+        assertIsCurrent(workQueue());
+        m_context->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
+    }
+    void blendFunciOES(uint32_t buf, uint32_t src, uint32_t dst)
+    {
+        assertIsCurrent(workQueue());
+        m_context->blendFunciOES(buf, src, dst);
+    }
+    void blendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
+    {
+        assertIsCurrent(workQueue());
+        m_context->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    }
+    void colorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha)
+    {
+        assertIsCurrent(workQueue());
+        m_context->colorMaskiOES(buf, static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
+    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(static_cast<size_t>(paramsSize), 0);
         assertIsCurrent(workQueue());
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
-    }
-    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&& completionHandler)
-    {
-        std::optional<IPC::PixelBufferReference> returnValue = { };
-        assertIsCurrent(workQueue());
-        if (auto pixelBuffer = m_context->paintRenderingResultsToPixelBuffer())
-            returnValue = pixelBuffer.releaseNonNull();
-        completionHandler(WTFMove(returnValue));
     }
 

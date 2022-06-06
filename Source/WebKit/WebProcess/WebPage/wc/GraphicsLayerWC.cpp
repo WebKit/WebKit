@@ -109,7 +109,6 @@ public:
     void didEndLiveResize() final { };
     IntSize tileSize() const final { return m_tileGrid.tilePixelSize(); }
     void revalidateTiles() final { }
-    void forceRepaint() final { }
     IntRect tileGridExtent() const final { return { }; }
     void setScrollingPerformanceTestingEnabled(bool flag) final { }
     bool scrollingPerformanceTestingEnabled() const final { return false; };

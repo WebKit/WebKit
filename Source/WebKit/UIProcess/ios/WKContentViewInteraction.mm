@@ -11068,6 +11068,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
 }
 
+- (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
+{
+    return NO;
+}
+
 #endif
 
 @end

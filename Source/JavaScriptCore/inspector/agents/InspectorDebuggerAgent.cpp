@@ -939,15 +939,15 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnExceptions(const
     RefPtr<JSC::Breakpoint> allExceptionsBreakpoint;
     RefPtr<JSC::Breakpoint> uncaughtExceptionsBreakpoint;
 
-    if (stateString == "all") {
+    if (stateString == "all"_s) {
         allExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
         if (!allExceptionsBreakpoint)
             return makeUnexpected(errorString);
-    } else if (stateString == "uncaught") {
+    } else if (stateString == "uncaught"_s) {
         uncaughtExceptionsBreakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
         if (!uncaughtExceptionsBreakpoint)
             return makeUnexpected(errorString);
-    } else if (stateString != "none")
+    } else if (stateString != "none"_s)
         return makeUnexpected(makeString("Unknown state: "_s, stateString));
 
     m_debugger.setPauseOnAllExceptionsBreakpoint(WTFMove(allExceptionsBreakpoint));

@@ -56,20 +56,19 @@ RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(Ref<PixelBuffer>&& pixe
     auto width = size.width();
     auto height = size.height();
 
-    auto data = pixelBuffer->takeData();
-    auto dataBaseAddress = data->data();
-    auto leakedData = &data.leakRef();
+    auto dataBaseAddress = pixelBuffer->bytes();
+    auto leakedBuffer = &pixelBuffer.leakRef();
     
     auto derefBuffer = [] (void* context, const void*) {
-        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
+        static_cast<PixelBuffer*>(context)->deref();
     };
 
     CVPixelBufferRef cvPixelBufferRaw = nullptr;
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedData, nullptr, &cvPixelBufferRaw);
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedBuffer, nullptr, &cvPixelBufferRaw);
 
     auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
     if (!cvPixelBuffer) {
-        derefBuffer(leakedData, nullptr);
+        derefBuffer(leakedBuffer, nullptr);
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);

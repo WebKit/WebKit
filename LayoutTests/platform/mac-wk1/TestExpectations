@@ -1849,3 +1849,5 @@ webkit.org/b/240841 fast/forms/scroll-into-view-and-show-validation-message.html
 
 webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure Timeout ]
 webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure Timeout ]
+
+webkit.org/b/241266 compositing/video/video-border-radius.html [ Pass Timeout ]

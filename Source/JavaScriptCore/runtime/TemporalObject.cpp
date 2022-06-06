@@ -306,7 +306,7 @@ std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObj
     String stringValue = value.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-    if (stringValue != "auto")
+    if (stringValue != "auto"_s)
         throwRangeError(globalObject, scope, makeString("fractionalSecondDigits must be 'auto' or 0 through 9, not "_s, ellipsizeAt(100, stringValue)));
 
     return std::nullopt;

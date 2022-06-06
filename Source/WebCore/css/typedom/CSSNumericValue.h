@@ -55,7 +55,8 @@ public:
     
     bool equals(FixedVector<CSSNumberish>&&);
     
-    Ref<CSSUnitValue> to(String&&);
+    ExceptionOr<Ref<CSSUnitValue>> to(String&&);
+    ExceptionOr<Ref<CSSUnitValue>> to(CSSUnitType);
     ExceptionOr<Ref<CSSMathSum>> toSum(FixedVector<String>&&);
 
     const CSSNumericType& type() const { return m_type; }
@@ -64,6 +65,15 @@ public:
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
+
+    // https://drafts.css-houdini.org/css-typed-om/#sum-value-value
+    using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
+    struct Addend {
+        double value;
+        UnitMap units;
+    };
+    using SumValue = Vector<Addend>;
+    virtual std::optional<SumValue> toSumValue() const = 0;
 
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);

@@ -50,13 +50,13 @@ struct SVGPropertyTraits<ChannelSelectorType> {
 
     static ChannelSelectorType fromString(const String& value)
     {
-        if (value == "R")
+        if (value == "R"_s)
             return CHANNEL_R;
-        if (value == "G")
+        if (value == "G"_s)
             return CHANNEL_G;
-        if (value == "B")
+        if (value == "B"_s)
             return CHANNEL_B;
-        if (value == "A")
+        if (value == "A"_s)
             return CHANNEL_A;
         return CHANNEL_UNKNOWN;
     }

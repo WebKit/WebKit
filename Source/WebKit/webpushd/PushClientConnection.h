@@ -81,7 +81,7 @@ private:
     void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
 
-    bool hostHasEntitlement(const char*);
+    bool hostHasEntitlement(ASCIILiteral);
 
     template<DaemonMessageType messageType, typename... Args>
     void sendDaemonMessage(Args&&...) const;

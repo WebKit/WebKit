@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class CSSNumericValue;
+enum class CSSUnitType : uint8_t;
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
 class CSSNumericType {
@@ -49,9 +50,13 @@ public:
     BaseTypeStorage percent;
     Markable<CSSNumericBaseType, EnumMarkableTraits<CSSNumericBaseType>> percentHint;
 
+    static std::optional<CSSNumericType> create(CSSUnitType, int exponent = 1);
     bool operator==(const CSSNumericType& other) const;
+    bool operator!=(const CSSNumericType& other) const { return !(*this == other); }
     static std::optional<CSSNumericType> addTypes(const Vector<Ref<CSSNumericValue>>&);
+    static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
     static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);
+    static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
     BaseTypeStorage& valueForType(CSSNumericBaseType);
     const BaseTypeStorage& valueForType(CSSNumericBaseType type) const { return const_cast<CSSNumericType*>(this)->valueForType(type); }
     void applyPercentHint(CSSNumericBaseType);
@@ -80,9 +85,6 @@ public:
     }
 
     String debugString() const;
-private:
-    static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
-    static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
 };
 
 } // namespace WebCore

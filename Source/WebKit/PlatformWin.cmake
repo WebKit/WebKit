@@ -78,6 +78,7 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp
 
+    WebProcess/Inspector/win/RemoteWebInspectorUIWin.cpp
     WebProcess/Inspector/win/WebInspectorUIWin.cpp
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp

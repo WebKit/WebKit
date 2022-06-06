@@ -113,12 +113,12 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     auto key = keyboardEvent.keyIdentifier();
     auto code = keyboardEvent.code();
 
-    if (key == "Left" && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
+    if (key == "Left"_s && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if ((key == "Right" || code == "Comma" || code == "Minus" || code == "Period" || code == "Slash" || code == "Semicolon")
+    if ((key == "Right"_s || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
         && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
@@ -127,20 +127,20 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (isFieldOwnerReadOnly())
         return;
 
-    if (key == "Up") {
+    if (key == "Up"_s) {
         stepUp();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if (key == "Down") {
+    if (key == "Down"_s) {
         stepDown();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
     // Clear value when pressing backspace or delete.
-    if (key == "U+0008" || key == "U+007F") {
+    if (key == "U+0008"_s || key == "U+007F"_s) {
         setEmptyValue(DispatchInputAndChangeEvents);
         keyboardEvent.setDefaultHandled();
         return;

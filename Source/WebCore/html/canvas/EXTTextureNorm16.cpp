@@ -37,9 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureNorm16);
 EXTTextureNorm16::EXTTextureNorm16(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-#if USE(ANGLE)
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_norm16"_s);
-#endif
 }
 
 EXTTextureNorm16::~EXTTextureNorm16() = default;

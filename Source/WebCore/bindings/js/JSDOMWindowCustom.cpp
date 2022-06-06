@@ -626,7 +626,7 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunction_openDatabaseBody(J
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled()) {
-        if (name != "null" || version != "null" || displayName != "null" || estimatedSize)
+        if (name != "null"_s || version != "null"_s || displayName != "null"_s || estimatedSize)
             propagateException(*lexicalGlobalObject, throwScope, Exception(UnknownError, "Web SQL is deprecated"_s));
         return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype()));
     }

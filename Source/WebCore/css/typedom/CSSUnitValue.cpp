@@ -40,43 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnitValue);
 
-static std::optional<CSSNumericType> numericType(CSSUnitType unit)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-create-a-type
-    CSSNumericType type;
-    switch (unitCategory(unit)) {
-    case CSSUnitCategory::Number:
-        return { WTFMove(type) };
-    case CSSUnitCategory::Percent:
-        type.percent = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Length:
-        type.length = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Angle:
-        type.angle = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Time:
-        type.time = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Frequency:
-        type.frequency = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Resolution:
-        type.resolution = 1;
-        return { WTFMove(type) };
-    case CSSUnitCategory::Other:
-        if (unit == CSSUnitType::CSS_FR) {
-            type.flex = 1;
-            return { WTFMove(type) };
-        }
-        break;
-    }
-    
-    return std::nullopt;
-}
-
-static CSSUnitType parseUnit(const String& unit)
+CSSUnitType CSSUnitValue::parseUnit(const String& unit)
 {
     if (unit == "number"_s)
         return CSSUnitType::CSS_NUMBER;
@@ -122,7 +86,7 @@ ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& 
     auto parsedUnit = parseUnit(unit);
     if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
         return Exception { TypeError };
-    auto type = numericType(parsedUnit);
+    auto type = CSSNumericType::create(parsedUnit);
     if (!type)
         return Exception { TypeError };
     auto unitValue = adoptRef(*new CSSUnitValue(value, parsedUnit));
@@ -131,10 +95,83 @@ ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& 
 }
 
 CSSUnitValue::CSSUnitValue(double value, CSSUnitType unit)
-    : CSSNumericValue(numericType(unit).value_or(CSSNumericType()))
+    : CSSNumericValue(CSSNumericType::create(unit).value_or(CSSNumericType()))
     , m_value(value)
     , m_unit(unit)
 {
+}
+
+static double conversionToCanonicalUnitsScaleFactor(CSSUnitType unit)
+{
+    constexpr double pixelsPerInch = 96;
+    constexpr double pixelsPerCentimeter = pixelsPerInch / 2.54;
+    constexpr double pointsPerInch = 72;
+    constexpr double picasPerInch = 6;
+
+    switch (unit) {
+    case CSSUnitType::CSS_MS:
+        return 0.001;
+    case CSSUnitType::CSS_CM:
+        return pixelsPerCentimeter;
+    case CSSUnitType::CSS_DPCM:
+        return 1.0 / pixelsPerCentimeter;
+    case CSSUnitType::CSS_MM:
+        return pixelsPerCentimeter / 10;
+    case CSSUnitType::CSS_Q:
+        return pixelsPerCentimeter / 40;
+    case CSSUnitType::CSS_IN:
+        return pixelsPerInch;
+    case CSSUnitType::CSS_DPI:
+        return 1.0 / pixelsPerInch;
+    case CSSUnitType::CSS_PT:
+        return pixelsPerInch / pointsPerInch;
+    case CSSUnitType::CSS_PC:
+        return pixelsPerInch / picasPerInch;
+    case CSSUnitType::CSS_RAD:
+        return 180 / piDouble;
+    case CSSUnitType::CSS_GRAD:
+        return 0.9;
+    case CSSUnitType::CSS_TURN:
+        return 360;
+    case CSSUnitType::CSS_KHZ:
+        return 1000;
+    default:
+        return 1.0;
+    }
+}
+
+RefPtr<CSSUnitValue> CSSUnitValue::convertTo(CSSUnitType unit) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#convert-a-cssunitvalue
+    if (unitCategory(unitEnum()) != unitCategory(unit))
+        return nullptr;
+
+    return create(m_value * conversionToCanonicalUnitsScaleFactor(unitEnum()) / conversionToCanonicalUnitsScaleFactor(unit), unit);
+}
+
+auto CSSUnitValue::toSumValue() const -> std::optional<SumValue>
+{
+    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
+    auto canonicalUnit = [] (CSSUnitType unit) {
+        // FIXME: We probably want to change the definition of canonicalUnitTypeForCategory so this lambda isn't necessary.
+        auto category = unitCategory(unit);
+        switch (category) {
+        case CSSUnitCategory::Percent:
+            return CSSUnitType::CSS_PERCENTAGE;
+        case CSSUnitCategory::Other:
+            if (unit == CSSUnitType::CSS_FR)
+                return CSSUnitType::CSS_FR;
+            break;
+        default:
+            break;
+        }
+        return canonicalUnitTypeForCategory(category);
+    } (m_unit);
+    auto convertedValue = m_value * conversionToCanonicalUnitsScaleFactor(unitEnum()) / conversionToCanonicalUnitsScaleFactor(canonicalUnit);
+
+    if (m_unit == CSSUnitType::CSS_NUMBER)
+        return { { { convertedValue, { } } } };
+    return { { { convertedValue, { { canonicalUnit, 1 } } } } };
 }
 
 } // namespace WebCore

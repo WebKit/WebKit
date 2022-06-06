@@ -127,6 +127,11 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         return this._resource.finished;
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         let saveData = {
@@ -326,7 +331,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         let initialContent = requestInitialContent ? await this.requestLocalResourceOverrideInitialContent() : {};
         let localResourceOverride = await this._resource.createLocalResourceOverride(type, initialContent);
         WI.networkManager.addLocalResourceOverride(localResourceOverride);
-        WI.showLocalResourceOverride(localResourceOverride);
+        WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this._resource});
     }
 
     _populateCreateLocalResourceOverrideContextMenu(contextMenu, event)
@@ -378,7 +383,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             });
 
             if (!this._resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride);
+                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this._resource});
         });
     }
 
@@ -387,7 +392,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         WI.FileUtilities.import((files) => {
             console.assert(files.length === 1, files);
 
-            this.resource.mappedFilePath = InspectorFrontendHost.getPath(files[0]);
+            this.resource.mappedFilePath = files[0].getPath();
         });
     }
 

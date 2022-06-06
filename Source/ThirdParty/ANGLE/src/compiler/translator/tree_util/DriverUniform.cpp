@@ -24,22 +24,19 @@ namespace
 {
 constexpr ImmutableString kEmulatedDepthRangeParams = ImmutableString("ANGLEDepthRangeParams");
 
-constexpr const char kViewport[]               = "viewport";
-constexpr const char kClipDistancesEnabled[]   = "clipDistancesEnabled";
-constexpr const char kUnused[]                 = "_unused";
-constexpr const char kAdvancedBlendEquation[]  = "advancedBlendEquation";
-constexpr const char kXfbVerticesPerInstance[] = "xfbVerticesPerInstance";
-constexpr const char kXfbBufferOffsets[]       = "xfbBufferOffsets";
-constexpr const char kAcbBufferOffsets[]       = "acbBufferOffsets";
-constexpr const char kDepthRange[]             = "depthRange";
-constexpr const char kNumSamples[]             = "numSamples";
-constexpr const char kHalfRenderArea[]         = "halfRenderArea";
-constexpr const char kFlipXY[]                 = "flipXY";
-constexpr const char kNegFlipXY[]              = "negFlipXY";
-constexpr const char kPreRotation[]            = "preRotation";
-constexpr const char kFragRotation[]           = "fragRotation";
-constexpr const char kDither[]                 = "dither";
+constexpr const char kAcbBufferOffsets[] = "acbBufferOffsets";
+constexpr const char kDepthRange[]       = "depthRange";
+constexpr const char kRenderArea[]       = "renderArea";
+constexpr const char kFlipXY[]           = "flipXY";
+constexpr const char kDither[]           = "dither";
+constexpr const char kMisc[]             = "misc";
 
+// Extended uniforms
+constexpr const char kViewport[]               = "viewport";
+constexpr const char kXfbBufferOffsets[]       = "xfbBufferOffsets";
+constexpr const char kXfbVerticesPerInstance[] = "xfbVerticesPerInstance";
+constexpr const char kUnused[]                 = "unused";
+constexpr const char kUnused2[]                = "unused2";
 }  // anonymous namespace
 
 // Class DriverUniform
@@ -79,27 +76,32 @@ bool DriverUniform::addComputeDriverUniformsToShader(TIntermBlock *root, TSymbol
 
 TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
 {
-    constexpr size_t kNumGraphicsDriverUniforms                                                = 8;
-    constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
-        {kViewport, kClipDistancesEnabled, kAdvancedBlendEquation, kXfbVerticesPerInstance,
-         kNumSamples, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
+    constexpr size_t kNumGraphicsDriverUniforms                                                = 6;
+    constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {{
+        kAcbBufferOffsets,
+        kDepthRange,
+        kRenderArea,
+        kFlipXY,
+        kDither,
+        kMisc,
+    }};
 
     // This field list mirrors the structure of GraphicsDriverUniforms in ContextVk.cpp.
     TFieldList *driverFieldList = new TFieldList;
 
     const std::array<TType *, kNumGraphicsDriverUniforms> kDriverUniformTypes = {{
-        new TType(EbtFloat, EbpHigh, EvqGlobal, 4),
-        new TType(EbtUInt, EbpHigh,
-                  EvqGlobal),  // uint clipDistancesEnabled;  // 32 bits for 32 clip distances max
-        new TType(
-            EbtUInt, EbpLow,
-            EvqGlobal),  // uint advancedBlendEquation;
-                         // Up to BlendEquationType::HslLuminosity-BlendEquationType::Multiply+1
-        new TType(EbtInt, EbpHigh, EvqGlobal),
-        new TType(EbtInt, EbpLow, EvqGlobal),  // uint numSamples;         // Up to 16
-        new TType(EbtInt, EbpHigh, EvqGlobal, 4),
-        new TType(EbtUInt, EbpHigh, EvqGlobal, 4),
-        createEmulatedDepthRangeType(symbolTable),
+        // acbBufferOffsets: Packed ubyte8
+        new TType(EbtUInt, EbpHigh, EvqGlobal, 2),
+        // depthRange: Near and far depth
+        new TType(EbtFloat, EbpHigh, EvqGlobal, 2),
+        // renderArea: Packed ushort2
+        new TType(EbtUInt, EbpHigh, EvqGlobal),
+        // flipXY: Packed snorm4
+        new TType(EbtUInt, EbpHigh, EvqGlobal),
+        // dither: ushort
+        new TType(EbtUInt, EbpHigh, EvqGlobal),
+        // misc: Various bits of state
+        new TType(EbtUInt, EbpHigh, EvqGlobal),
     }};
 
     for (size_t uniformIndex = 0; uniformIndex < kNumGraphicsDriverUniforms; ++uniformIndex)
@@ -114,7 +116,7 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
     return driverFieldList;
 }
 
-TType *DriverUniform::createEmulatedDepthRangeType(TSymbolTable *symbolTable)
+const TType *DriverUniform::createEmulatedDepthRangeType(TSymbolTable *symbolTable)
 {
     // If already defined, return it immediately.
     if (mEmulatedDepthRangeType != nullptr)
@@ -131,17 +133,12 @@ TType *DriverUniform::createEmulatedDepthRangeType(TSymbolTable *symbolTable)
         new TField(floatType, ImmutableString("far"), TSourceLoc(), SymbolType::AngleInternal));
     depthRangeParamsFields->push_back(
         new TField(floatType, ImmutableString("diff"), TSourceLoc(), SymbolType::AngleInternal));
-    // This additional field might be used by subclass such as TranslatorMetal.
-    depthRangeParamsFields->push_back(new TField(floatType, ImmutableString("reserved"),
-                                                 TSourceLoc(), SymbolType::AngleInternal));
 
     TStructure *emulatedDepthRangeParams = new TStructure(
         symbolTable, kEmulatedDepthRangeParams, depthRangeParamsFields, SymbolType::AngleInternal);
 
     mEmulatedDepthRangeType = new TType(emulatedDepthRangeParams, false);
 
-    // Note: this should really return a const TType *, but one of its uses is with TField who takes
-    // a non-const TType.  See comment on that class.
     return mEmulatedDepthRangeType;
 }
 
@@ -155,10 +152,10 @@ bool DriverUniform::addGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbo
     ASSERT(!mDriverUniforms);
 
     // Declare the depth range struct type.
-    TType *emulatedDepthRangeType     = createEmulatedDepthRangeType(symbolTable);
-    TType *emulatedDepthRangeDeclType = new TType(emulatedDepthRangeType->getStruct(), true);
+    const TType *emulatedDepthRangeType     = createEmulatedDepthRangeType(symbolTable);
+    const TType *emulatedDepthRangeDeclType = new TType(emulatedDepthRangeType->getStruct(), true);
 
-    TVariable *depthRangeVar =
+    const TVariable *depthRangeVar =
         new TVariable(symbolTable->nextUniqueId(), kEmptyImmutableString, SymbolType::Empty,
                       TExtension::UNDEFINED, emulatedDepthRangeDeclType);
 
@@ -184,8 +181,8 @@ bool DriverUniform::addGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbo
         // this one.
         auto varName    = ImmutableString("ANGLE_angleUniforms");
         auto result     = DeclareStructure(root, symbolTable, driverFieldList, EvqUniform,
-                                       TMemoryQualifier::Create(), 0,
-                                       ImmutableString(vk::kDriverUniformsBlockName), &varName);
+                                           TMemoryQualifier::Create(), 0,
+                                           ImmutableString(vk::kDriverUniformsBlockName), &varName);
         mDriverUniforms = result.second;
     }
 
@@ -217,51 +214,144 @@ TIntermTyped *DriverUniform::createDriverUniformRef(const char *fieldName) const
     return new TIntermBinary(EOpIndexDirectStruct, angleUniformsRef, indexRef);
 }
 
-TIntermTyped *DriverUniform::getViewportRef() const
-{
-    return createDriverUniformRef(kViewport);
-}
-
-TIntermTyped *DriverUniform::getAbcBufferOffsets() const
+TIntermTyped *DriverUniform::getAcbBufferOffsets() const
 {
     return createDriverUniformRef(kAcbBufferOffsets);
 }
 
-TIntermTyped *DriverUniform::getXfbVerticesPerInstance() const
+TIntermTyped *DriverUniform::getDepthRange() const
 {
-    return createDriverUniformRef(kXfbVerticesPerInstance);
+    ASSERT(mEmulatedDepthRangeType != nullptr);
+
+    TIntermTyped *depthRangeRef = createDriverUniformRef(kDepthRange);
+    TIntermTyped *nearRef       = new TIntermSwizzle(depthRangeRef, {0});
+    TIntermTyped *farRef        = new TIntermSwizzle(depthRangeRef->deepCopy(), {1});
+    TIntermTyped *diff          = new TIntermBinary(EOpSub, farRef, nearRef);
+
+    TIntermSequence args = {
+        nearRef->deepCopy(),
+        farRef->deepCopy(),
+        diff,
+    };
+
+    return TIntermAggregate::CreateConstructor(*mEmulatedDepthRangeType, &args);
 }
 
-TIntermTyped *DriverUniform::getXfbBufferOffsets() const
+TIntermTyped *DriverUniform::getViewportZScale() const
 {
-    return createDriverUniformRef(kXfbBufferOffsets);
+    ASSERT(mEmulatedDepthRangeType != nullptr);
+
+    TIntermTyped *depthRangeRef = createDriverUniformRef(kDepthRange);
+    TIntermTyped *nearRef       = new TIntermSwizzle(depthRangeRef, {0});
+    TIntermTyped *farRef        = new TIntermSwizzle(depthRangeRef->deepCopy(), {1});
+
+    TIntermTyped *isNegative = new TIntermBinary(EOpLessThan, farRef, nearRef);
+
+    return new TIntermTernary(isNegative, CreateFloatNode(-1, EbpMedium),
+                              CreateFloatNode(1, EbpMedium));
+}
+
+TIntermTyped *DriverUniform::getHalfRenderArea() const
+{
+    TIntermTyped *renderAreaRef = createDriverUniformRef(kRenderArea);
+    TIntermTyped *width = new TIntermBinary(EOpBitwiseAnd, renderAreaRef, CreateUIntNode(0xFFFF));
+    TIntermTyped *height =
+        new TIntermBinary(EOpBitShiftRight, renderAreaRef->deepCopy(), CreateUIntNode(16));
+
+    TIntermSequence widthArgs = {
+        width,
+    };
+    TIntermTyped *widthAsFloat =
+        TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtFloat, EbpHigh>(), &widthArgs);
+
+    TIntermSequence heightArgs = {
+        height,
+    };
+    TIntermTyped *heightAsFloat = TIntermAggregate::CreateConstructor(
+        *StaticType::GetBasic<EbtFloat, EbpHigh>(), &heightArgs);
+
+    TIntermSequence args = {
+        widthAsFloat,
+        heightAsFloat,
+    };
+
+    TIntermTyped *renderArea =
+        TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtFloat, EbpHigh, 2>(), &args);
+    return new TIntermBinary(EOpVectorTimesScalar, renderArea, CreateFloatNode(0.5, EbpMedium));
+}
+
+TIntermTyped *DriverUniform::getFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const
+{
+    TIntermTyped *flipXY = createDriverUniformRef(kFlipXY);
+    TIntermTyped *values =
+        CreateBuiltInUnaryFunctionCallNode("unpackSnorm4x8", flipXY, *symbolTable, 310);
+
+    if (stage == DriverUniformFlip::Fragment)
+    {
+        return new TIntermSwizzle(values, {0, 1});
+    }
+
+    return new TIntermSwizzle(values, {2, 3});
+}
+
+TIntermTyped *DriverUniform::getNegFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const
+{
+    TIntermTyped *flipXY = getFlipXY(symbolTable, stage);
+
+    constexpr std::array<float, 2> kMultiplier = {1, -1};
+    return new TIntermBinary(EOpMul, flipXY, CreateVecNode(kMultiplier.data(), 2, EbpLow));
+}
+
+TIntermTyped *DriverUniform::getDither() const
+{
+    return createDriverUniformRef(kDither);
+}
+
+TIntermTyped *DriverUniform::getSwapXY() const
+{
+    TIntermTyped *miscRef = createDriverUniformRef(kMisc);
+    TIntermTyped *swapXY  = new TIntermBinary(EOpBitwiseAnd, miscRef,
+                                              CreateUIntNode(vk::kDriverUniformsMiscSwapXYMask));
+
+    TIntermSequence args = {
+        swapXY,
+    };
+    return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtBool, EbpUndefined>(),
+                                               &args);
+}
+
+TIntermTyped *DriverUniform::getAdvancedBlendEquation() const
+{
+    TIntermTyped *miscRef = createDriverUniformRef(kMisc);
+    TIntermTyped *equation =
+        new TIntermBinary(EOpBitShiftRight, miscRef,
+                          CreateUIntNode(vk::kDriverUniformsMiscAdvancedBlendEquationOffset));
+    equation = new TIntermBinary(EOpBitwiseAnd, equation,
+                                 CreateUIntNode(vk::kDriverUniformsMiscAdvancedBlendEquationMask));
+
+    return equation;
+}
+
+TIntermTyped *DriverUniform::getNumSamples() const
+{
+    TIntermTyped *miscRef     = createDriverUniformRef(kMisc);
+    TIntermTyped *sampleCount = new TIntermBinary(
+        EOpBitShiftRight, miscRef, CreateUIntNode(vk::kDriverUniformsMiscSampleCountOffset));
+    sampleCount = new TIntermBinary(EOpBitwiseAnd, sampleCount,
+                                    CreateUIntNode(vk::kDriverUniformsMiscSampleCountMask));
+
+    return sampleCount;
 }
 
 TIntermTyped *DriverUniform::getClipDistancesEnabled() const
 {
-    return createDriverUniformRef(kClipDistancesEnabled);
-}
+    TIntermTyped *miscRef     = createDriverUniformRef(kMisc);
+    TIntermTyped *enabledMask = new TIntermBinary(
+        EOpBitShiftRight, miscRef, CreateUIntNode(vk::kDriverUniformsMiscEnabledClipPlanesOffset));
+    enabledMask = new TIntermBinary(EOpBitwiseAnd, enabledMask,
+                                    CreateUIntNode(vk::kDriverUniformsMiscEnabledClipPlanesMask));
 
-TIntermTyped *DriverUniform::getDepthRangeRef() const
-{
-    return createDriverUniformRef(kDepthRange);
-}
-
-TIntermTyped *DriverUniform::getDepthRangeReservedFieldRef() const
-{
-    TIntermTyped *depthRange = createDriverUniformRef(kDepthRange);
-
-    return new TIntermBinary(EOpIndexDirectStruct, depthRange, CreateIndexNode(3));
-}
-
-TIntermTyped *DriverUniform::getNumSamplesRef() const
-{
-    return createDriverUniformRef(kNumSamples);
-}
-
-TIntermTyped *DriverUniform::getAdvancedBlendEquationRef() const
-{
-    return createDriverUniformRef(kAdvancedBlendEquation);
+    return enabledMask;
 }
 
 //
@@ -271,19 +361,21 @@ TFieldList *DriverUniformExtended::createUniformFields(TSymbolTable *symbolTable
 {
     TFieldList *driverFieldList = DriverUniform::createUniformFields(symbolTable);
 
-    constexpr size_t kNumGraphicsDriverUniformsExt = 7;
+    constexpr size_t kNumGraphicsDriverUniformsExt = 5;
     constexpr std::array<const char *, kNumGraphicsDriverUniformsExt>
         kGraphicsDriverUniformNamesExt = {
-            {kHalfRenderArea, kFlipXY, kNegFlipXY, kDither, kUnused, kFragRotation, kPreRotation}};
+            {kViewport, kXfbBufferOffsets, kXfbVerticesPerInstance, kUnused, kUnused2}};
 
     const std::array<TType *, kNumGraphicsDriverUniformsExt> kDriverUniformTypesExt = {{
-        new TType(EbtFloat, EbpHigh, EvqGlobal, 2),
-        new TType(EbtFloat, EbpLow, EvqGlobal, 2),
-        new TType(EbtFloat, EbpLow, EvqGlobal, 2),
+        // viewport: vec4
+        new TType(EbtFloat, EbpHigh, EvqGlobal, 4),
+        // xfbBufferOffsets: uvec4
+        new TType(EbtInt, EbpHigh, EvqGlobal, 4),
+        // xfbVerticesPerInstance: uint
+        new TType(EbtInt, EbpHigh, EvqGlobal),
+        // unused: uvec3
         new TType(EbtUInt, EbpHigh, EvqGlobal),
-        new TType(EbtUInt, EbpHigh, EvqGlobal),
-        new TType(EbtFloat, EbpLow, EvqGlobal, 2, 2),
-        new TType(EbtFloat, EbpLow, EvqGlobal, 2, 2),
+        new TType(EbtUInt, EbpHigh, EvqGlobal, 2),
     }};
 
     for (size_t uniformIndex = 0; uniformIndex < kNumGraphicsDriverUniformsExt; ++uniformIndex)
@@ -298,43 +390,36 @@ TFieldList *DriverUniformExtended::createUniformFields(TSymbolTable *symbolTable
     return driverFieldList;
 }
 
-TIntermTyped *DriverUniformExtended::getFlipXYRef() const
+TIntermTyped *DriverUniformExtended::getViewport() const
 {
-    return createDriverUniformRef(kFlipXY);
+    return createDriverUniformRef(kViewport);
 }
 
-TIntermTyped *DriverUniformExtended::getNegFlipXYRef() const
+TIntermTyped *DriverUniformExtended::getXfbBufferOffsets() const
 {
-    return createDriverUniformRef(kNegFlipXY);
+    return createDriverUniformRef(kXfbBufferOffsets);
 }
 
-TIntermTyped *DriverUniformExtended::getNegFlipYRef() const
+TIntermTyped *DriverUniformExtended::getXfbVerticesPerInstance() const
 {
-    // Create a swizzle to "negFlipXY.y"
-    TIntermTyped *negFlipXY     = createDriverUniformRef(kNegFlipXY);
-    TVector<int> swizzleOffsetY = {1};
-    TIntermSwizzle *negFlipY    = new TIntermSwizzle(negFlipXY, swizzleOffsetY);
-    return negFlipY;
+    return createDriverUniformRef(kXfbVerticesPerInstance);
 }
 
-TIntermTyped *DriverUniformExtended::getPreRotationMatrixRef() const
+TIntermTyped *MakeSwapXMultiplier(TIntermTyped *swapped)
 {
-    return createDriverUniformRef(kPreRotation);
+    // float(!swapped)
+    TIntermSequence args = {
+        new TIntermUnary(EOpLogicalNot, swapped, nullptr),
+    };
+    return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtFloat, EbpLow>(), &args);
 }
 
-TIntermTyped *DriverUniformExtended::getFragRotationMatrixRef() const
+TIntermTyped *MakeSwapYMultiplier(TIntermTyped *swapped)
 {
-    return createDriverUniformRef(kFragRotation);
+    // float(swapped)
+    TIntermSequence args = {
+        swapped,
+    };
+    return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtFloat, EbpLow>(), &args);
 }
-
-TIntermTyped *DriverUniformExtended::getHalfRenderAreaRef() const
-{
-    return createDriverUniformRef(kHalfRenderArea);
-}
-
-TIntermTyped *DriverUniformExtended::getDitherRef() const
-{
-    return createDriverUniformRef(kDither);
-}
-
 }  // namespace sh

@@ -732,7 +732,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, API::Dictionary& message)
 {
 #if PLATFORM(GTK)
-    if (messageName == "GetSnapshot") {
+    if (messageName == "GetSnapshot"_s) {
         SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"_s))->value());
         uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"_s))->value();
         SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<API::UInt64*>(message.get("SnapshotRegion"_s))->value());

@@ -324,7 +324,7 @@ TIntermNode *EmitDitheringBlock(TCompiler *compiler,
     TIntermTyped *ditherControl = specConst->getDither();
     if (ditherControl == nullptr)
     {
-        ditherControl = driverUniforms->getDitherRef();
+        ditherControl = driverUniforms->getDither();
     }
 
     // if (dither != 0)

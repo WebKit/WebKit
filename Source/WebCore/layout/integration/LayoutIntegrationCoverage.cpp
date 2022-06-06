@@ -678,8 +678,33 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
 {
     if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
         return false;
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return false;
+
+    auto& flexBoxStyle = flexBox.style();
+    if (!flexBoxStyle.isHorizontalWritingMode() || !flexBoxStyle.isLeftToRightDirection())
+        return false;
+    if (flexBoxStyle.flexWrap() == FlexWrap::Reverse)
+        return false;
+    if (flexBoxStyle.alignItems().position() == ItemPosition::Baseline)
+        return false;
+    if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
+        return false;
+    if (!flexBoxStyle.rowGap().isNormal() || !flexBoxStyle.columnGap().isNormal())
+        return false;
+
+    for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
+        if (!is<RenderBox>(flexItem))
+            return false;
+        if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
+            return false;
+        if (flexItem.isSVGRootOrLegacySVGRoot())
+            return false;
+        auto& flexItemStyle = flexItem.style();
+        if (!flexItemStyle.maxWidth().isUndefined() || !flexItemStyle.maxHeight().isUndefined())
+            return false;
+        if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
+            return false;
+    }
+    return true;
 }
 
 }

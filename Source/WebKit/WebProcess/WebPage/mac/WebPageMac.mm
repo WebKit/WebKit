@@ -259,7 +259,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
 
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
-        if (commands[i].commandName == "insertText:") {
+        if (commands[i].commandName == "insertText:"_s) {
             if (frame.editor().hasComposition()) {
                 eventWasHandled = true;
                 frame.editor().confirmComposition(commands[i].text);
@@ -303,7 +303,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     ASSERT(!platformEvent->macEvent()); // Cannot have a native event in WebProcess.
 
     // Don't handle Esc while handling keydown event, we need to dispatch a keypress first.
-    if (platformEvent->type() != PlatformEvent::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation")
+    if (platformEvent->type() != PlatformEvent::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation"_s)
         return false;
 
     if (handleKeyEventByRelinquishingFocusToChrome(event))
@@ -435,33 +435,33 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     bool didPerformAction = false;
     
     if (!frame->settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled()) {
-        if (selector == "moveUp:")
+        if (selector == "moveUp:"_s)
             didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
-        else if (selector == "moveToBeginningOfParagraph:")
+        else if (selector == "moveToBeginningOfParagraph:"_s)
             didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
-        else if (selector == "moveToBeginningOfDocument:") {
+        else if (selector == "moveToBeginningOfDocument:"_s) {
             didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
             didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
-        } else if (selector == "moveDown:")
+        } else if (selector == "moveDown:"_s)
             didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
-        else if (selector == "moveToEndOfParagraph:")
+        else if (selector == "moveToEndOfParagraph:"_s)
             didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
-        else if (selector == "moveToEndOfDocument:") {
+        else if (selector == "moveToEndOfDocument:"_s) {
             didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
             didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
-        } else if (selector == "moveLeft:")
+        } else if (selector == "moveLeft:"_s)
             didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
-        else if (selector == "moveWordLeft:")
+        else if (selector == "moveWordLeft:"_s)
             didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Page);
-        else if (selector == "moveRight:")
+        else if (selector == "moveRight:"_s)
             didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
-        else if (selector == "moveWordRight:")
+        else if (selector == "moveWordRight:"_s)
             didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Page);
     }
 
-    if (selector == "moveToLeftEndOfLine:")
+    if (selector == "moveToLeftEndOfLine:"_s)
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goBack() : m_page->backForward().goForward();
-    else if (selector == "moveToRightEndOfLine:")
+    else if (selector == "moveToRightEndOfLine:"_s)
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goForward() : m_page->backForward().goBack();
 
     return didPerformAction;

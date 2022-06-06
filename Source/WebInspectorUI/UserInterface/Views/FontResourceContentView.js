@@ -157,7 +157,7 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
             if (!this.resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride);
+                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this.resource});
         });
     }
 

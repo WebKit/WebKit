@@ -48,52 +48,101 @@ WI.FileUtilities = class FileUtilities {
         return "web-inspector:///" + encodeURIComponent(FileUtilities.sanitizeFilename(filename));
     }
 
-    static save(saveData, forceSaveAs)
+    static canSave(saveMode)
     {
-        console.assert(saveData);
-        if (!saveData)
-            return;
+        console.assert(Object.values(WI.FileUtilities.SaveMode).includes(saveMode), saveMode);
+        return InspectorFrontendHost.canSave(saveMode);
+    }
 
-        if (typeof saveData.customSaveHandler === "function") {
-            saveData.customSaveHandler(forceSaveAs);
+    static async save(saveMode, fileVariants, forceSaveAs)
+    {
+        console.assert(WI.FileUtilities.canSave(saveMode), saveMode);
+
+        console.assert(fileVariants);
+        if (!fileVariants) {
+            InspectorFrontendHost.beep();
             return;
         }
 
-        console.assert(saveData.content);
-        if (!saveData.content)
-            return;
+        let isFileVariantsMode = saveMode === WI.FileUtilities.SaveMode.FileVariants;
+        if (isFileVariantsMode)
+            forceSaveAs = true;
 
-        let suggestedName = saveData.suggestedName;
-        if (!suggestedName) {
-            let url = saveData.url || "";
-            suggestedName = parseURL(url).lastPathComponent;
+        if (typeof fileVariants.customSaveHandler === "function") {
+            fileVariants.customSaveHandler(forceSaveAs);
+            return;
+        }
+
+        if (!isFileVariantsMode && !Array.isArray(fileVariants))
+            fileVariants = [fileVariants];
+
+        console.assert(Array.isArray(fileVariants), fileVariants);
+        if (!Array.isArray(fileVariants)) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let promises = fileVariants.map((fileVariant) => {
+            let content = fileVariant.content;
+            console.assert(content, fileVariant);
+            if (!content)
+                return null;
+
+            let displayType = fileVariant.displayType || "";
+            console.assert(!isFileVariantsMode || fileVariant.displayType, fileVariant);
+            if (!fileVariant.displayType && isFileVariantsMode)
+                return null;
+
+            let suggestedName = fileVariant.suggestedName;
             if (!suggestedName) {
-                suggestedName = WI.UIString("Untitled");
-                let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
-                if (dataURLTypeMatch) {
-                    let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
-                    if (fileExtension)
-                        suggestedName += "." + fileExtension;
+                let url = fileVariant.url || "";
+                suggestedName = parseURL(url).lastPathComponent;
+                if (!suggestedName) {
+                    suggestedName = WI.UIString("Untitled");
+                    let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
+                    if (dataURLTypeMatch) {
+                        let fileExtension = WI.fileExtensionForMIMEType(dataURLTypeMatch[1]);
+                        if (fileExtension)
+                            suggestedName += "." + fileExtension;
+                    }
                 }
             }
-        }
+            let url = WI.FileUtilities.inspectorURLForFilename(suggestedName);
 
-        suggestedName = FileUtilities.inspectorURLForFilename(suggestedName);
+            if (typeof content === "string") {
+                return Promise.resolve({
+                    displayType,
+                    url,
+                    content,
+                    base64Encoded: !!fileVariant.base64Encoded,
+                });
+            }
 
-        if (typeof saveData.content === "string") {
-            const base64Encoded = saveData.base64Encoded || false;
-            InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
+            let wrappedPromise = new WI.WrappedPromise;
+            let fileReader = new FileReader;
+            fileReader.addEventListener("loadend", () => {
+                wrappedPromise.resolve({
+                    displayType,
+                    url,
+                    content: parseDataURL(fileReader.result).data,
+                    base64Encoded: true,
+                });
+            });
+            fileReader.readAsDataURL(content);
+            return wrappedPromise.promise;
+        });
+        if (promises.includes(null)) {
+            InspectorFrontendHost.beep();
             return;
         }
 
-        let fileReader = new FileReader;
-        fileReader.addEventListener("loadend", () => {
-            let dataURLComponents = parseDataURL(fileReader.result);
+        let saveDatas = await Promise.all(promises);
 
-            const base64Encoded = true;
-            InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
-        });
-        fileReader.readAsDataURL(saveData.content);
+        console.assert(isFileVariantsMode || saveDatas.length === 1, saveDatas);
+        console.assert(!isFileVariantsMode || new Set(saveDatas.map((saveData) => saveData.displayType)).size === saveDatas.length, saveDatas);
+        console.assert(!isFileVariantsMode || new Set(saveDatas.map((saveData) => WI.urlWithoutExtension(saveData.url))).size === 1, saveDatas);
+
+        InspectorFrontendHost.save(saveDatas, !!forceSaveAs);
     }
 
     static import(callback, {multiple} = {})
@@ -217,4 +266,10 @@ WI.FileUtilities = class FileUtilities {
             await callback(result);
         }
     }
+};
+
+// Keep in sync with `InspectorFrontendClient::SaveMode` and `InspectorFrontendHost::SaveMode`.
+WI.FileUtilities.SaveMode = {
+    SingleFile: "single-file",
+    FileVariants: "file-variants",
 };

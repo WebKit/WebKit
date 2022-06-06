@@ -218,27 +218,25 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
-    if (auto* renderer = element()->renderer()) {
-        ControlPart part = renderer->style().effectiveAppearance();
-        isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
-    }
+    if (auto* renderer = element()->renderer())
+        isVertical = renderer->style().effectiveAppearance() == SliderVerticalPart;
 
     Decimal newValue;
-    if (key == "Up")
+    if (key == "Up"_s)
         newValue = current + step;
-    else if (key == "Down")
+    else if (key == "Down"_s)
         newValue = current - step;
-    else if (key == "Left")
+    else if (key == "Left"_s)
         newValue = isVertical ? current + step : current - step;
-    else if (key == "Right")
+    else if (key == "Right"_s)
         newValue = isVertical ? current - step : current + step;
-    else if (key == "PageUp")
+    else if (key == "PageUp"_s)
         newValue = current + bigStep;
-    else if (key == "PageDown")
+    else if (key == "PageDown"_s)
         newValue = current - bigStep;
-    else if (key == "Home")
+    else if (key == "Home"_s)
         newValue = isVertical ? stepRange.maximum() : stepRange.minimum();
-    else if (key == "End")
+    else if (key == "End"_s)
         newValue = isVertical ? stepRange.minimum() : stepRange.maximum();
     else
         return ShouldCallBaseEventHandler::Yes; // Did not match any key binding.

@@ -588,7 +588,7 @@ TriState intlBooleanOption(JSGlobalObject* globalObject, JSObject* options, Prop
     return triState(value.toBoolean(globalObject));
 }
 
-String intlStringOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, std::initializer_list<const char*> values, ASCIILiteral notFound, ASCIILiteral fallback)
+String intlStringOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
@@ -823,9 +823,9 @@ String removeUnicodeLocaleExtension(const String& locale)
     if (partsSize > 0)
         builder.append(parts[0]);
     for (size_t p = 1; p < partsSize; ++p) {
-        if (parts[p] == "x")
+        if (parts[p] == "x"_s)
             atPrivate = true;
-        if (!atPrivate && parts[p] == "u" && p + 1 < partsSize) {
+        if (!atPrivate && parts[p] == "u"_s && p + 1 < partsSize) {
             // Skip the u- and anything that follows until another singleton.
             // While the next part is part of the unicode extension, skip it.
             while (p + 1 < partsSize && parts[p + 1].length() > 1)

@@ -63,6 +63,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         headers = [
             '"%s.h"' % self.protocol_name(),
             Generator.string_for_file_include('%sArrayConversions.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
+            '<wtf/SortedArrayMap.h>',
         ]
         headers.sort()
 
@@ -165,9 +166,13 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         lines.append('template<>')
         lines.append('inline std::optional<%s> fromProtocolString(const String& value)' % objc_enum_name)
         lines.append('{')
-        for enum_value in enum_values:
-            lines.append('    if (value == "%s")' % enum_value)
-            lines.append('        return %s%s;' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)))
+        lines.append('    static constexpr std::pair<ComparableASCIILiteral, %s> mappings[] = {' % objc_enum_name);
+        for enum_value in sorted(enum_values):
+            lines.append('        { "%s", %s%s },' % (enum_value, objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)));
+        lines.append('    };');
+        lines.append('    static constexpr SortedArrayMap map { mappings };');
+        lines.append('    if (auto* result = map.tryGet(value))');
+        lines.append('        return *result;');
         lines.append('    return std::nullopt;')
         lines.append('}')
         return '\n'.join(lines)

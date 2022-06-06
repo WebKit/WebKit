@@ -37,16 +37,17 @@ class CSSNumericArray;
 class CSSMathMin final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMin);
 public:
-    template<typename... Args> static Ref<CSSMathMin> create(Args&&... args) { return adoptRef(*new CSSMathMin(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSMathMin>> create(FixedVector<CSSNumberish>&&);
+    static ExceptionOr<Ref<CSSMathMin>> create(Vector<Ref<CSSNumericValue>>&&);
     const CSSNumericArray& values() const;
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Min; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMin; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    std::optional<SumValue> toSumValue() const final;
 
-    CSSMathMin(FixedVector<CSSNumberish>&&);
-    CSSMathMin(Vector<Ref<CSSNumericValue>>&&);
+    CSSMathMin(Vector<Ref<CSSNumericValue>>&&, CSSNumericType&&);
     Ref<CSSNumericArray> m_values;
 };
 

@@ -169,7 +169,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     auto point = ECPointPtr(EC_POINT_new(group));
 
     // Currently we only support elliptic curves over GF(p).   
-    if (EC_POINT_set_affine_coordinates_GFp(group, point.get(), BIGNUMPtr(convertToBigNumber(nullptr, x)).get(), BIGNUMPtr(convertToBigNumber(nullptr, y)).get(), nullptr) <= 0)
+    if (EC_POINT_set_affine_coordinates_GFp(group, point.get(), convertToBigNumber(x).get(), convertToBigNumber(y).get(), nullptr) <= 0)
         return nullptr;
 
     if (EC_KEY_set_public_key(key.get(), point.get()) <= 0)
@@ -195,13 +195,13 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     auto point = ECPointPtr(EC_POINT_new(group));
 
     // Currently we only support elliptic curves over GF(p).   
-    if (EC_POINT_set_affine_coordinates_GFp(group, point.get(), BIGNUMPtr(convertToBigNumber(nullptr, x)).get(), BIGNUMPtr(convertToBigNumber(nullptr, y)).get(), nullptr) <= 0)
+    if (EC_POINT_set_affine_coordinates_GFp(group, point.get(), convertToBigNumber(x).get(), convertToBigNumber(y).get(), nullptr) <= 0)
         return nullptr;
 
     if (EC_KEY_set_public_key(key.get(), point.get()) <= 0)
         return nullptr;
 
-    if (EC_KEY_set_private_key(key.get(), BIGNUMPtr(convertToBigNumber(nullptr, d)).get()) <= 0)
+    if (EC_KEY_set_private_key(key.get(), convertToBigNumber(d).get()) <= 0)
         return nullptr;
 
     if (EC_KEY_check_key(key.get()) <= 0)
@@ -357,7 +357,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         return nullptr;
 
     auto pkey = EvpPKeyPtr(EVP_PKCS82PKEY(p8inf.get()));
-    if (!pkey || EVP_PKEY_type(pkey->type) != EVP_PKEY_EC)
+    if (!pkey || EVP_PKEY_base_id(pkey.get()) != EVP_PKEY_EC)
         return nullptr;
 
     auto ecKey = EVP_PKEY_get0_EC_KEY(pkey.get());

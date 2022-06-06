@@ -169,7 +169,7 @@ private:
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);
 
-    void updateBufferInternal(const SharedBuffer&);
+    void updateBufferInternal(const FragmentedSharedBuffer&);
 
     void didReplaceSharedBufferContents() override;
 

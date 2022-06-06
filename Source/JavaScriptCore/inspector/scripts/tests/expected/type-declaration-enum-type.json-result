@@ -841,6 +841,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeTwoLeggedAnimals) {
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -864,14 +865,15 @@ inline String toProtocolString(TestProtocolRuntimeFarmAnimals value)
 template<>
 inline std::optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const String& value)
 {
-    if (value == "Pigs")
-        return TestProtocolRuntimeFarmAnimalsPigs;
-    if (value == "Cows")
-        return TestProtocolRuntimeFarmAnimalsCows;
-    if (value == "Cats")
-        return TestProtocolRuntimeFarmAnimalsCats;
-    if (value == "Hens")
-        return TestProtocolRuntimeFarmAnimalsHens;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolRuntimeFarmAnimals> mappings[] = {
+        { "Cats", TestProtocolRuntimeFarmAnimalsCats },
+        { "Cows", TestProtocolRuntimeFarmAnimalsCows },
+        { "Hens", TestProtocolRuntimeFarmAnimalsHens },
+        { "Pigs", TestProtocolRuntimeFarmAnimalsPigs },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 
@@ -892,14 +894,15 @@ inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
 template<>
 inline std::optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(const String& value)
 {
-    if (value == "Ducks")
-        return TestProtocolRuntimeTwoLeggedAnimalsDucks;
-    if (value == "Hens")
-        return TestProtocolRuntimeTwoLeggedAnimalsHens;
-    if (value == "Crows")
-        return TestProtocolRuntimeTwoLeggedAnimalsCrows;
-    if (value == "Flamingos")
-        return TestProtocolRuntimeTwoLeggedAnimalsFlamingos;
+    static constexpr std::pair<ComparableASCIILiteral, TestProtocolRuntimeTwoLeggedAnimals> mappings[] = {
+        { "Crows", TestProtocolRuntimeTwoLeggedAnimalsCrows },
+        { "Ducks", TestProtocolRuntimeTwoLeggedAnimalsDucks },
+        { "Flamingos", TestProtocolRuntimeTwoLeggedAnimalsFlamingos },
+        { "Hens", TestProtocolRuntimeTwoLeggedAnimalsHens },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    if (auto* result = map.tryGet(value))
+        return *result;
     return std::nullopt;
 }
 

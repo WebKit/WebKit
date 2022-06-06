@@ -115,7 +115,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData
             exceptionCallback(SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig") {
+        if (usages && !key.use.isNull() && key.use != "sig"_s) {
             exceptionCallback(DataError);
             return;
         }

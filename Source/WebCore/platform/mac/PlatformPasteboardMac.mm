@@ -234,7 +234,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
             domPasteboardTypes.add(type);
         else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
             auto domTypeAsString = String::fromUTF8(domType);
-            if (domTypeAsString == "text/uri-list" && stringForType(legacyURLPasteboardType()).isEmpty())
+            if (domTypeAsString == "text/uri-list"_s && stringForType(legacyURLPasteboardType()).isEmpty())
                 continue;
             domPasteboardTypes.add(WTFMove(domTypeAsString));
         }
@@ -288,16 +288,16 @@ int64_t PlatformPasteboard::changeCount() const
 
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
-    if (domType == "text/plain")
+    if (domType == "text/plain"_s)
         return legacyStringPasteboardType();
 
-    if (domType == "text/html")
+    if (domType == "text/html"_s)
         return legacyHTMLPasteboardType();
 
-    if (domType == "text/uri-list")
+    if (domType == "text/uri-list"_s)
         return legacyURLPasteboardType();
 
-    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png"_s)
         return legacyPNGPasteboardType();
 
     return { };

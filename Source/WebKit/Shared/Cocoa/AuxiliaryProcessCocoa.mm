@@ -87,7 +87,7 @@ void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageNa
     CRASH_WITH_INFO(WTF::enumToUnderlyingType(messageName));
 }
 
-bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
+bool AuxiliaryProcess::parentProcessHasEntitlement(ASCIILiteral entitlement)
 {
     return WTF::hasEntitlement(m_connection->xpcConnection(), entitlement);
 }
@@ -170,7 +170,7 @@ void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& ke
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 #if ASSERT_ENABLED
         id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages"_s);
 #endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);

@@ -112,6 +112,11 @@ CBORValue::CBORValue(const char* inString)
 {
 }
 
+CBORValue::CBORValue(ASCIILiteral inString)
+    : CBORValue(String { inString })
+{
+}
+
 CBORValue::CBORValue(String&& inString)
     : m_type(Type::String)
     , m_stringValue(WTFMove(inString))

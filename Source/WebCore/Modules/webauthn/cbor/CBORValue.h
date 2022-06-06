@@ -134,6 +134,7 @@ public:
     explicit CBORValue(const WebCore::BufferSource&);
 
     explicit CBORValue(const char*);
+    explicit CBORValue(ASCIILiteral);
     explicit CBORValue(String&&);
     explicit CBORValue(const String&);
 

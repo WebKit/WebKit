@@ -472,15 +472,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ListboxPart:
         m_value.valueID = CSSValueListbox;
         break;
-    case MediaSliderPart:
-        m_value.valueID = CSSValueMediaSlider;
-        break;
-    case MediaVolumeSliderPart:
-        m_value.valueID = CSSValueMediaVolumeSlider;
-        break;
-    case MediaFullScreenVolumeSliderPart:
-        m_value.valueID = CSSValueMediaFullscreenVolumeSlider;
-        break;
     case MenulistPart:
         m_value.valueID = CSSValueMenulist;
         break;
@@ -532,9 +523,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
 #endif
-    case MediaFullScreenVolumeSliderThumbPart:
-    case MediaSliderThumbPart:
-    case MediaVolumeSliderThumbPart:
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:

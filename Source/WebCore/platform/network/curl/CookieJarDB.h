@@ -77,7 +77,7 @@ private:
 
     bool m_detectedDatabaseCorruption { false };
 
-    bool isOnMemory() const { return (m_databasePath == ":memory:"); };
+    bool isOnMemory() const { return m_databasePath == ":memory:"_s; };
 
     bool openDatabase();
     void closeDatabase();

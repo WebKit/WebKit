@@ -62,7 +62,7 @@ String topPrivatelyControlledDomain(const String& domain)
 
     return cache.get().ensure(isolatedDomain, [&isolatedDomain] {
         const auto lowercaseDomain = isolatedDomain.convertToASCIILowercase();
-        if (lowercaseDomain == "localhost")
+        if (lowercaseDomain == "localhost"_s)
             return lowercaseDomain;
 
         if (URL::hostIsIPAddress(lowercaseDomain))

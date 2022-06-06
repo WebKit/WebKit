@@ -90,6 +90,9 @@ struct ValidateASTOptions
     // If PruneNoOps has been run, check that no statements are ever added after branches in the
     // same block.  Those statements would be dead code.
     bool validateNoStatementsAfterBranch = false;
+    // Check that swizzle is not applied to swizzle.  Swizzles of swizzles are folded in
+    // TIntermSwizzle::fold.
+    bool validateNoSwizzleOfSwizzle = true;
 
     // Once set, disallows any further transformations on the tree.  Used before AST post-processing
     // which requires that the tree remains unmodified.

@@ -251,8 +251,8 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(RefPtr<WebCore::Pixe
 
     // FIXME: This should not be needed. Maybe ArrayBufferView should be ThreadSafeRefCounted as it is used in accross multiple threads.
     // The call below is synchronous and we transfer the ownership of the `pixelBuffer`.
-    if (pixelBuffer)
-        pixelBuffer->data().disableThreadingChecks();
+    if (is<ByteArrayPixelBuffer>(pixelBuffer))
+        downcast<ByteArrayPixelBuffer>(*pixelBuffer).data().disableThreadingChecks();
     m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
         if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
@@ -361,6 +361,15 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC
     const GCGLint* offsets = reinterpret_cast<const GCGLint*>(countsOffsetsAndInstanceCounts.data<1>());
     const Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(countsOffsetsAndInstanceCounts);
     m_context->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
+}
+
+void RemoteGraphicsContextGL::paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<IPC::PixelBufferReference>&&)>&& completionHandler)
+{
+    std::optional<IPC::PixelBufferReference> returnValue;
+    assertIsCurrent(workQueue());
+    if (auto pixelBuffer = m_context->paintRenderingResultsToPixelBuffer())
+        returnValue = pixelBuffer.releaseNonNull();
+    completionHandler(WTFMove(returnValue));
 }
 
 } // namespace WebKit

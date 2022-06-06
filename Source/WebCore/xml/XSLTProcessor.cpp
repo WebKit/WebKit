@@ -71,7 +71,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     String documentSource = sourceString;
 
     RefPtr<Document> result;
-    if (sourceMIMEType == "text/plain") {
+    if (sourceMIMEType == "text/plain"_s) {
         result = XMLDocument::createXHTML(frame, ownerDocument->settings(), sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else

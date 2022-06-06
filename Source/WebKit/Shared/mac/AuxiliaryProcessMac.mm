@@ -478,7 +478,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
         return false;
     if (std::strcmp(cachedSandboxHeader.sandboxBuildID, SANDBOX_BUILD_ID))
         return false;
-    if (cachedSandboxHeader.osVersion != osVersion)
+    if (StringView::fromLatin1(cachedSandboxHeader.osVersion) != osVersion)
         return false;
 
     const bool haveBuiltin = cachedSandboxHeader.builtinSize != std::numeric_limits<uint32_t>::max();
@@ -732,7 +732,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 
     bool enableMessageFilter = false;
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter");
+    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter"_s);
 #endif
     sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 

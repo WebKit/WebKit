@@ -221,10 +221,10 @@ static bool isVP8CodecConfigurationRecordSupported(const VPCodecConfigurationRec
 
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
-    if (codecConfiguration.codecName == "vp08" || codecConfiguration.codecName == "vp8")
+    if (codecConfiguration.codecName == "vp08"_s || codecConfiguration.codecName == "vp8"_s)
         return isVP8CodecConfigurationRecordSupported(codecConfiguration);
 
-    if (codecConfiguration.codecName == "vp09" || codecConfiguration.codecName == "vp9")
+    if (codecConfiguration.codecName == "vp09"_s || codecConfiguration.codecName == "vp9"_s)
         return isVP9CodecConfigurationRecordSupported(codecConfiguration);
 
     return false;
@@ -589,7 +589,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     videoInfo->colorSpace.primaries = convertToPlatformVideoColorPrimaries(record.colorPrimaries);
     videoInfo->colorSpace.transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics);
     videoInfo->colorSpace.matrix = convertToPlatformVideoMatrixCoefficients(record.matrixCoefficients);
-    videoInfo->codecName = record.codecName == "vp09" ? 'vp09' : 'vp08';
+    videoInfo->codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
     return videoInfo;
 }
 

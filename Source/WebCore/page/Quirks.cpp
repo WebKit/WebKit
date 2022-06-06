@@ -87,12 +87,12 @@ static inline bool isYahooMail(Document& document)
 
 static bool isTwitterDocument(Document& document)
 {
-    return RegistrableDomain(document.url()).string() == "twitter.com";
+    return RegistrableDomain(document.url()).string() == "twitter.com"_s;
 }
 
 static bool isYouTubeDocument(Document& document)
 {
-    return RegistrableDomain(document.url()).string() == "youtube.com";
+    return RegistrableDomain(document.url()).string() == "youtube.com"_s;
 }
 
 Quirks::Quirks(Document& document)
@@ -400,24 +400,24 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         auto& url = m_document->topDocument().url();
         auto host = url.host().convertToASCIILowercase();
 
-        if (host == "wix.com" || host.endsWith(".wix.com"_s)) {
+        if (host == "wix.com"_s || host.endsWith(".wix.com"_s)) {
             // Disable simulated mouse dispatching for template selection.
             return startsWithLettersIgnoringASCIICase(url.path(), "/website/templates/"_s) ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
         }
 
-        if ((host == "desmos.com" || host.endsWith(".desmos.com"_s)) && startsWithLettersIgnoringASCIICase(url.path(), "/calculator/"_s))
+        if ((host == "desmos.com"_s || host.endsWith(".desmos.com"_s)) && startsWithLettersIgnoringASCIICase(url.path(), "/calculator/"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "figma.com" || host.endsWith(".figma.com"_s))
+        if (host == "figma.com"_s || host.endsWith(".figma.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "trello.com" || host.endsWith(".trello.com"_s))
+        if (host == "trello.com"_s || host.endsWith(".trello.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "airtable.com" || host.endsWith(".airtable.com"_s))
+        if (host == "airtable.com"_s || host.endsWith(".airtable.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "msn.com" || host.endsWith(".msn.com"_s))
+        if (host == "msn.com"_s || host.endsWith(".msn.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "flipkart.com" || host.endsWith(".flipkart.com"_s))
+        if (host == "flipkart.com"_s || host.endsWith(".flipkart.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "iqiyi.com" || host.endsWith(".iqiyi.com"_s))
+        if (host == "iqiyi.com"_s || host.endsWith(".iqiyi.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trailers.apple.com"_s)
             return ShouldDispatchSimulatedMouseEvents::Yes;
@@ -425,7 +425,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "naver.com"_s)
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "nba.com" || host.endsWith(".nba.com"_s))
+        if (host == "nba.com"_s || host.endsWith(".nba.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host.endsWith(".naver.com"_s)) {
             // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
@@ -440,7 +440,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
                 return ShouldDispatchSimulatedMouseEvents::No;
             return ShouldDispatchSimulatedMouseEvents::Yes;
         }
-        if (host == "mybinder.org" || host.endsWith(".mybinder.org"_s))
+        if (host == "mybinder.org"_s || host.endsWith(".mybinder.org"_s))
             return ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org;
         return ShouldDispatchSimulatedMouseEvents::No;
     };
@@ -485,7 +485,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
         if (element.getIdAttribute() == "magnifierLens"_s)
             return true;
         if (auto* sibling = element.nextElementSibling())
-            return sibling->getIdAttribute() == "magnifierLens";
+            return sibling->getIdAttribute() == "magnifierLens"_s;
     }
 
     if (equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "soundcloud.com"_s) && is<Element>(target))
@@ -536,7 +536,7 @@ bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) con
         if (is<Element>(target)) {
             unsigned depth = 3;
             for (auto* element = downcast<Element>(target); element && depth; element = element->parentElement(), --depth) {
-                if (element->localName() == "paper-item" && element->classList().contains("yt-dropdown-menu"_s))
+                if (element->localName() == "paper-item"_s && element->classList().contains("yt-dropdown-menu"_s))
                     return true;
             }
         }
@@ -956,7 +956,7 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
 
     if (!m_shouldEnableLegacyGetUserMediaQuirk) {
         auto host = m_document->securityOrigin().host();
-        m_shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com" || host == "www.warbyparker.com";
+        m_shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com"_s || host == "www.warbyparker.com"_s;
     }
     return m_shouldEnableLegacyGetUserMediaQuirk.value();
 }
@@ -973,7 +973,7 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 
     auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
 
-    m_shouldDisableElementFullscreenQuirk = domain == "nfl.com" || domain.endsWith(".nfl.com"_s);
+    m_shouldDisableElementFullscreenQuirk = domain == "nfl.com"_s || domain.endsWith(".nfl.com"_s);
 
     return m_shouldDisableElementFullscreenQuirk.value();
 #else
@@ -991,7 +991,7 @@ bool Quirks::needsCanPlayAfterSeekedQuirk() const
 
     auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
 
-    m_needsCanPlayAfterSeekedQuirk = domain == "hulu.com" || domain.endsWith(".hulu.com"_s);
+    m_needsCanPlayAfterSeekedQuirk = domain == "hulu.com"_s || domain.endsWith(".hulu.com"_s);
 
     return m_needsCanPlayAfterSeekedQuirk.value();
 }
@@ -1447,7 +1447,7 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 
 bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
 {
-    return protocol == "msteams"_s && (requesterOrigin.host == "teams.live.com" || requesterOrigin.host == "teams.microsoft.com");
+    return protocol == "msteams"_s && (requesterOrigin.host == "teams.live.com"_s || requesterOrigin.host == "teams.microsoft.com"_s);
 }
 
 #if ENABLE(IMAGE_ANALYSIS)

@@ -490,6 +490,9 @@
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
 
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7"))
+
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
     "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")

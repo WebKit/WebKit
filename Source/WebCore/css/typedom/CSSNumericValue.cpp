@@ -88,7 +88,7 @@ static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const 
         auto& firstUnitValue = downcast<CSSUnitValue>(values[0].get());
         auto unit = firstUnitValue.unitEnum();
         double result = firstUnitValue.value();
-        for (size_t i = 1; i < values.size(); i++)
+        for (size_t i = 1; i < values.size(); ++i)
             result = operation(result, downcast<CSSUnitValue>(values[i].get()).value());
         return CSSUnitValue::create(result, unit);
     }
@@ -143,7 +143,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<C
     if (allUnitValues) {
         bool multipleUnitsFound { false };
         std::optional<size_t> nonNumberUnitIndex;
-        for (size_t i = 0; i < values.size(); i++) {
+        for (size_t i = 0; i < values.size(); ++i) {
             auto unit = downcast<CSSUnitValue>(values[i].get()).unitEnum();
             if (unit == CSSUnitType::CSS_NUMBER)
                 continue;
@@ -194,10 +194,10 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::min(FixedVector<CSSNumberish>
     if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::min<double>, values))
         return { *result };
 
-    if (!CSSNumericType::addTypes(values))
-        return Exception { TypeError };
-
-    return { CSSMathMin::create(WTFMove(values)) };
+    auto result = CSSMathMin::create(WTFMove(values));
+    if (result.hasException())
+        return result.releaseException();
+    return { result.releaseReturnValue() };
 }
 
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::max(FixedVector<CSSNumberish>&& numberishes)
@@ -208,10 +208,10 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::max(FixedVector<CSSNumberish>
     if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::max<double>, values))
         return { *result };
 
-    if (!CSSNumericType::addTypes(values))
-        return Exception { TypeError };
-
-    return { CSSMathMax::create(WTFMove(values)) };
+    auto result = CSSMathMax::create(WTFMove(values));
+    if (result.hasException())
+        return result.releaseException();
+    return { result.releaseReturnValue() };
 }
 
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
@@ -233,12 +233,41 @@ bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& value)
     return false;
 }
 
-Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
+ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(String&& unit)
 {
-    UNUSED_PARAM(unit);
+    return to(CSSUnitValue::parseUnit(unit));
+}
+
+ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
+{
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
-    // FIXME: add impl.
-    return CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER);
+    auto type = CSSNumericType::create(unit);
+    if (!type)
+        return Exception { SyntaxError };
+
+    auto sumValue = toSumValue();
+    if (!sumValue || sumValue->size() != 1)
+        return Exception { TypeError };
+
+    auto& addend = (*sumValue)[0];
+    auto unconverted = [] (const auto& addend) -> RefPtr<CSSUnitValue> {
+        switch (addend.units.size()) {
+        case 0:
+            return CSSUnitValue::create(addend.value, CSSUnitType::CSS_NUMBER);
+        case 1:
+            return CSSUnitValue::create(addend.value, addend.units.begin()->key);
+        default:
+            break;
+        }
+        return nullptr;
+    } (addend);
+    if (!unconverted)
+        return Exception { TypeError };
+
+    auto converted = unconverted->convertTo(unit);
+    if (!converted)
+        return Exception { TypeError };
+    return converted.releaseNonNull();
 }
 
 ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)

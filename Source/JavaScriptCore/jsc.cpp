@@ -1668,7 +1668,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
     if (callFrame->argumentCount() > 1) {
         String type = callFrame->argument(1).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (type != "binary")
+        if (type != "binary"_s)
             return throwVMError(globalObject, scope, "Expected 'binary' as second argument."_s);
         isBinary = true;
     }
@@ -3126,7 +3126,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     auto nameString = nameValue.toWTFString(globalObject);
     CHECK_EXCEPTION();
 
-    if (nameString == "SyntaxError" && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
+    if (nameString == "SyntaxError"_s && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
         auto fileNameString = fileNameValue.toWTFString(globalObject);
         CHECK_EXCEPTION();
         auto lineNumberString = lineNumberValue.toWTFString(globalObject);

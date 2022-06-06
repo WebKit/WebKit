@@ -47,8 +47,8 @@ TEST(NowPlayingInfoArtwork, ValueConstruction)
 {
     WebCore::NowPlayingInfoArtwork test { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
 
-    EXPECT_EQ("http://artwork.com/how_so_pretty.jpeg", test.src);
-    EXPECT_EQ("image/jpeg", test.mimeType);
+    EXPECT_EQ("http://artwork.com/how_so_pretty.jpeg"_s, test.src);
+    EXPECT_EQ("image/jpeg"_s, test.mimeType);
 }
 
 TEST(NowPlayingInfoArtwork, OperatorEqual)

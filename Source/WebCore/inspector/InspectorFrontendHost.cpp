@@ -30,6 +30,7 @@
 #include "config.h"
 #include "InspectorFrontendHost.h"
 
+#include "CanvasRenderingContext2D.h"
 #include "CertificateInfo.h"
 #include "ColorConversion.h"
 #include "ColorSerialization.h"
@@ -50,7 +51,6 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
-#include "InspectorFrontendClient.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromiseDeferred.h"
@@ -61,6 +61,7 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
+#include "Path2D.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SystemSoundManager.h"
@@ -185,13 +186,13 @@ void InspectorFrontendHost::loaded()
 
 static std::optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
 {
-    if (dockSideString == "undocked")
+    if (dockSideString == "undocked"_s)
         return InspectorFrontendClient::DockSide::Undocked;
-    if (dockSideString == "right")
+    if (dockSideString == "right"_s)
         return InspectorFrontendClient::DockSide::Right;
-    if (dockSideString == "left")
+    if (dockSideString == "left"_s)
         return InspectorFrontendClient::DockSide::Left;
-    if (dockSideString == "bottom")
+    if (dockSideString == "bottom"_s)
         return InspectorFrontendClient::DockSide::Bottom;
     return std::nullopt;
 }
@@ -412,15 +413,6 @@ String InspectorFrontendHost::platformVersionName() const
 #endif
 }
 
-String InspectorFrontendHost::port() const
-{
-#if PLATFORM(GTK)
-    return "gtk"_s;
-#else
-    return "unknown"_s;
-#endif
-}
-
 void InspectorFrontendHost::copyText(const String& text)
 {
     auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : std::nullopt;
@@ -456,23 +448,17 @@ void InspectorFrontendHost::revealFileExternally(const String& path)
         m_client->revealFileExternally(path);
 }
 
-bool InspectorFrontendHost::canSave()
+bool InspectorFrontendHost::canSave(SaveMode saveMode)
 {
     if (m_client)
-        return m_client->canSave();
+        return m_client->canSave(saveMode);
     return false;
 }
 
-void InspectorFrontendHost::save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs)
+void InspectorFrontendHost::save(Vector<SaveData>&& saveDatas, bool forceSaveAs)
 {
     if (m_client)
-        m_client->save(url, content, base64Encoded, forceSaveAs);
-}
-
-void InspectorFrontendHost::append(const String& url, const String& content)
-{
-    if (m_client)
-        m_client->append(url, content);
+        m_client->save(WTFMove(saveDatas), forceSaveAs);
 }
 
 bool InspectorFrontendHost::canLoad()
@@ -531,15 +517,6 @@ void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
     });
 }
 
-void InspectorFrontendHost::close(const String&)
-{
-}
-
-String InspectorFrontendHost::getPath(const File& file)
-{
-    return file.path();
-}
-
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     if (m_client)
@@ -551,12 +528,12 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&& items, ContextMenu& menu)
 {
     for (auto& item : items) {
-        if (item.type == "separator") {
+        if (item.type == "separator"_s) {
             menu.appendItem({ SeparatorType, ContextMenuItemTagNoAction, { } });
             continue;
         }
 
-        if (item.type == "subMenu" && item.subItems) {
+        if (item.type == "subMenu"_s && item.subItems) {
             ContextMenu subMenu;
             populateContextMenu(WTFMove(*item.subItems), subMenu);
 
@@ -564,7 +541,7 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
             continue;
         }
 
-        auto type = item.type == "checkbox" ? CheckableActionType : ActionType;
+        auto type = item.type == "checkbox"_s ? CheckableActionType : ActionType;
         auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
         ContextMenuItem menuItem = { type, action, item.label };
         if (item.enabled)
@@ -818,5 +795,29 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
+String InspectorFrontendHost::getPath(const File& file) const
+{
+    return file.path();
+}
+
+float InspectorFrontendHost::getCurrentX(const CanvasRenderingContext2D& context) const
+{
+    return context.currentX();
+}
+
+float InspectorFrontendHost::getCurrentY(const CanvasRenderingContext2D& context) const
+{
+    return context.currentY();
+}
+
+Ref<Path2D> InspectorFrontendHost::getPath(const CanvasRenderingContext2D& context) const
+{
+    return context.getPath();
+}
+
+void InspectorFrontendHost::setPath(CanvasRenderingContext2D& context, Path2D& path) const
+{
+    context.setPath(path);
+}
 
 } // namespace WebCore

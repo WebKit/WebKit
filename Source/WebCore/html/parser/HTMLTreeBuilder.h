@@ -164,7 +164,7 @@ private:
     bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
     void processTokenInForeignContent(AtomHTMLToken&&);
     
-    HTMLStackItem& adjustedCurrentStackItem() const;
+    HTMLStackItem& adjustedCurrentStackItem();
 
     void callTheAdoptionAgency(AtomHTMLToken&);
 
@@ -188,17 +188,17 @@ private:
         FragmentParsingContext(DocumentFragment&, Element& contextElement);
 
         DocumentFragment* fragment() const;
-        Element& contextElement() const;
-        HTMLStackItem& contextElementStackItem() const;
+        Element& contextElement();
+        HTMLStackItem& contextElementStackItem();
 
     private:
         DocumentFragment* m_fragment { nullptr };
-        RefPtr<HTMLStackItem> m_contextElementStackItem;
+        HTMLStackItem m_contextElementStackItem;
     };
 
     HTMLDocumentParser& m_parser;
     const HTMLParserOptions m_options;
-    const FragmentParsingContext m_fragmentContext;
+    FragmentParsingContext m_fragmentContext;
 
     HTMLConstructionSite m_tree;
 

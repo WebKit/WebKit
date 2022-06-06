@@ -117,7 +117,7 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
             exceptionCallback(SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig") {
+        if (usages && !key.use.isNull() && key.use != "sig"_s) {
             exceptionCallback(DataError);
             return;
         }

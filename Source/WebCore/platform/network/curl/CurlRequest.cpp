@@ -242,13 +242,13 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->appendRequestHeaders(httpHeaderFields);
 
     const auto& method = m_request.httpMethod();
-    if (method == "GET")
+    if (method == "GET"_s)
         m_curlHandle->enableHttpGetRequest();
-    else if (method == "POST")
+    else if (method == "POST"_s)
         setupPOST();
-    else if (method == "PUT")
+    else if (method == "PUT"_s)
         setupPUT();
-    else if (method == "HEAD")
+    else if (method == "HEAD"_s)
         m_curlHandle->enableHttpHeadRequest();
     else {
         m_curlHandle->setHttpCustomRequest(method);
@@ -324,8 +324,8 @@ size_t CurlRequest::willSendData(char* buffer, size_t blockSize, size_t numberOf
 
 size_t CurlRequest::didReceiveHeader(String&& header)
 {
-    static const auto emptyLineCRLF = "\r\n";
-    static const auto emptyLineLF = "\n";
+    static constexpr auto emptyLineCRLF = "\r\n"_s;
+    static constexpr auto emptyLineLF = "\n"_s;
 
     if (isCompletedOrCancelled())
         return 0;

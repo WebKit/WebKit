@@ -150,7 +150,7 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
 
     String resultText = integrity->columnText(0);
 
-    if (resultText != "ok") {
+    if (resultText != "ok"_s) {
         LOG_ERROR("Search autosave database integrity check failed - %s", resultText.ascii().data());
         return false;
     }

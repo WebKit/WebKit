@@ -106,6 +106,7 @@ public:
     void trackDidChangeEnabled(AudioTrackPrivate&, bool enabled);
 
     void willSeek();
+    void seekToTime(const MediaTime&) final;
     FloatSize naturalSize();
 
     uint64_t protectedTrackID() const { return m_protectedTrackID; }
@@ -253,6 +254,7 @@ private:
     FloatSize m_currentSize;
     bool m_parsingSucceeded { true };
     bool m_waitingForKey { true };
+    bool m_seeking { false };
     uint64_t m_enabledVideoTrackID { notFound };
     uint64_t m_protectedTrackID { notFound };
     uint64_t m_mapID;

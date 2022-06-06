@@ -94,6 +94,8 @@ public:
         return copy;
     }
 
+    void setUsesContainerUnits() const;
+
 private:
     const RenderStyle* m_style { nullptr };
     const RenderStyle* m_rootStyle { nullptr };

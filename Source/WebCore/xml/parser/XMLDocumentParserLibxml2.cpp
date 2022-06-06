@@ -422,7 +422,7 @@ static bool shouldAllowExternalLoad(const URL& url)
     String urlString = url.string();
 
     // On non-Windows platforms libxml asks for this URL, the "XML_XML_DEFAULT_CATALOG", on initialization.
-    if (urlString == "file:///etc/xml/catalog")
+    if (urlString == "file:///etc/xml/catalog"_s)
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
@@ -590,7 +590,7 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
 
 bool XMLDocumentParser::supportsXMLVersion(const String& version)
 {
-    return version == "1.0";
+    return version == "1.0"_s;
 }
 
 XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
@@ -1255,17 +1255,17 @@ static void internalSubsetHandler(void* closure, const xmlChar* name, const xmlC
 static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* externalId, const xmlChar*)
 {
     String extId = toString(externalId);
-    if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
-        || (extId == "-//W3C//DTD XHTML 1.1//EN")
-        || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN")
-        || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN")
-        || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
-        || (extId == "-//W3C//DTD MathML 2.0//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"))
+    if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN"_s)
+        || (extId == "-//W3C//DTD XHTML 1.1//EN"_s)
+        || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN"_s)
+        || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN"_s)
+        || (extId == "-//W3C//DTD XHTML Basic 1.0//EN"_s)
+        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"_s)
+        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"_s)
+        || (extId == "-//W3C//DTD MathML 2.0//EN"_s)
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"_s)
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN"_s)
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"_s))
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 

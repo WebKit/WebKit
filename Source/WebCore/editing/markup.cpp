@@ -740,9 +740,9 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
 {
     if (is<Comment>(node)) {
         auto& commentNode = downcast<Comment>(node);
-        if (!m_inMSOList && commentNode.data() == "[if !supportLists]")
+        if (!m_inMSOList && commentNode.data() == "[if !supportLists]"_s)
             m_inMSOList = true;
-        else if (m_inMSOList && commentNode.data() == "[endif]")
+        else if (m_inMSOList && commentNode.data() == "[endif]"_s)
             m_inMSOList = false;
         else
             return false;
@@ -768,7 +768,7 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
         if (msoListDefinitionsEnd == notFound || start >= msoListDefinitionsEnd)
             return false;
 
-        append("<head><style class=\"" WebKitMSOListQuirksStyle "\">\n<!--\n",
+        append("<head><style class=\"", WebKitMSOListQuirksStyle, "\">\n<!--\n",
             StringView(textChild.data()).substring(start, msoListDefinitionsEnd - start + 3),
             "\n-->\n</style></head>");
 
@@ -1174,7 +1174,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
 
     auto createHTMLBRElement = [&document]() {
         auto element = HTMLBRElement::create(document);
-        element->setAttributeWithoutSynchronization(classAttr, AtomString::fromLatin1(AppleInterchangeNewline));
+        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline ""_s);
         return element;
     };
 
@@ -1277,7 +1277,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
 {
     RefPtr<DocumentFragment> fragment = outputDoc.createDocumentFragment();
     
-    if (sourceMIMEType == "text/html") {
+    if (sourceMIMEType == "text/html"_s) {
         // As far as I can tell, there isn't a spec for how transformToFragment is supposed to work.
         // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
         // Unfortunately, that's an implementation detail of the parser.

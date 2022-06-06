@@ -1136,6 +1136,7 @@ public:
     virtual String getString(GCGLenum name) = 0;
     virtual void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) = 0;
     virtual void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) = 0;
+    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) = 0; // NOLINT
     virtual GCGLint64 getInteger64(GCGLenum pname) = 0;
     virtual GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) = 0;
     virtual GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) = 0;
@@ -1397,10 +1398,20 @@ public:
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
+    // GL_OES_draw_buffers_indexed
+    virtual void enableiOES(GCGLenum target, GCGLuint index) = 0;
+    virtual void disableiOES(GCGLenum target, GCGLuint index) = 0;
+    virtual void blendEquationiOES(GCGLuint buf, GCGLenum mode) = 0;
+    virtual void blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha) = 0;
+    virtual void blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst) = 0;
+    virtual void blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) = 0;
+    virtual void colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) = 0;
+
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);
     GCGLint getInteger(GCGLenum pname);
+    GCGLint getIntegeri(GCGLenum pname, GCGLuint index);
     GCGLint getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname);
     GCGLint getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname);
 
@@ -1548,6 +1559,13 @@ inline GCGLint GraphicsContextGL::getInteger(GCGLenum pname)
 {
     GCGLint value[1] { };
     getIntegerv(pname, value);
+    return value[0];
+}
+
+inline GCGLint GraphicsContextGL::getIntegeri(GCGLenum pname, GCGLuint index)
+{
+    GCGLint value[4] { };
+    getIntegeri_v(pname, index, value);
     return value[0];
 }
 

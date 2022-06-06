@@ -60,7 +60,7 @@ String topPrivatelyControlledDomain(const String& domain)
         return domain;
 
     String lowercaseDomain = domain.convertToASCIILowercase();
-    if (lowercaseDomain == "localhost")
+    if (lowercaseDomain == "localhost"_s)
         return lowercaseDomain;
 
     if (isPublicSuffix(lowercaseDomain))

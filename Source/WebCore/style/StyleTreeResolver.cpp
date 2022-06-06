@@ -836,10 +836,8 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
-        if (shouldIterateChildren) {
-            if (updateQueryContainer(element, *style, previousContainerType) == QueryContainerAction::Layout)
-                shouldIterateChildren = false;
-        }
+        if (style && updateQueryContainer(element, *style, previousContainerType) == QueryContainerAction::Layout)
+            shouldIterateChildren = false;
 
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);

@@ -209,17 +209,25 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
                 contextMenu.appendItem(WI.UIString("Start Audit"), () => {
                     this._start();
                 }, WI.auditManager.runningState !== WI.AuditManager.RunningState.Inactive);
-
-                contextMenu.appendSeparator();
-
-                contextMenu.appendItem(WI.UIString("Export Audit"), () => {
-                    WI.auditManager.export(this.representedObject);
-                });
             }
 
-            contextMenu.appendItem(WI.UIString("Export Result"), () => {
-                WI.auditManager.export(this.representedObject.result);
-            }, !this.representedObject.result);
+            contextMenu.appendSeparator();
+
+            if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants)) {
+                contextMenu.appendItem(WI.UIString("Export"), () => {
+                    WI.auditManager.export(WI.FileUtilities.SaveMode.FileVariants, this.representedObject);
+                });
+            } else if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
+                if (isTest) {
+                    contextMenu.appendItem(WI.FileUtilities.SaveMode.SingleFile, WI.UIString("Export Audit"), () => {
+                        WI.auditManager.export(this.representedObject);
+                    });
+                }
+
+                contextMenu.appendItem(WI.FileUtilities.SaveMode.SingleFile, WI.UIString("Export Result"), () => {
+                    WI.auditManager.export(this.representedObject.result);
+                }, !this.representedObject.result);
+            }
 
             if (isTest && this.representedObject.editable) {
                 contextMenu.appendSeparator();

@@ -75,11 +75,11 @@ std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String uni
 {
     int propertyIndex = -1;
 
-    if (unicodePropertyName == "Script" || unicodePropertyName == "sc")
+    if (unicodePropertyName == "Script"_s || unicodePropertyName == "sc"_s)
         propertyIndex = scriptHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "Script_Extensions" || unicodePropertyName == "scx")
+    else if (unicodePropertyName == "Script_Extensions"_s || unicodePropertyName == "scx"_s)
         propertyIndex = scriptExtensionHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "General_Category" || unicodePropertyName == "gc")
+    else if (unicodePropertyName == "General_Category"_s || unicodePropertyName == "gc"_s)
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
 
     if (propertyIndex == -1)

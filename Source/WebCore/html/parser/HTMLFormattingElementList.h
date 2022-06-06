@@ -47,7 +47,7 @@ public:
     class Entry {
     public:
         // Inline because they're hot and Vector<T> uses them.
-        explicit Entry(Ref<HTMLStackItem>&& item)
+        explicit Entry(HTMLStackItem&& item)
             : m_item(WTFMove(item))
         {
         }
@@ -56,24 +56,22 @@ public:
         {
         }
 
-        bool isMarker() const { return !m_item; }
+        bool isMarker() const { return m_item.isNull(); }
 
-        HTMLStackItem* stackItem() const { return m_item.get(); }
+        const HTMLStackItem& stackItem() const { return m_item; }
         Element& element() const
         {
-            // The fact that !m_item == isMarker() is an implementation detail
-            // callers should check isMarker() before calling element().
-            ASSERT(m_item);
-            return m_item->element();
+            // Callers should check isMarker() before calling element().
+            return m_item.element();
         }
-        void replaceElement(Ref<HTMLStackItem>&& item) { m_item = WTFMove(item); }
+        void replaceElement(HTMLStackItem&& item) { m_item = WTFMove(item); }
 
         // Needed for use with Vector.  These are super-hot and must be inline.
-        bool operator==(Element* element) const { return !m_item ? !element : &m_item->element() == element; }
-        bool operator!=(Element* element) const { return !m_item ? !!element : &m_item->element() != element; }
+        bool operator==(Element* element) const { return m_item.elementOrNull() == element; }
+        bool operator!=(Element* element) const { return m_item.elementOrNull() != element; }
 
     private:
-        RefPtr<HTMLStackItem> m_item;
+        HTMLStackItem m_item;
     };
 
     class Bookmark {
@@ -105,11 +103,11 @@ public:
 
     Entry* find(Element&);
     bool contains(Element&);
-    void append(Ref<HTMLStackItem>&&);
+    void append(HTMLStackItem&&);
     void remove(Element&);
 
     Bookmark bookmarkFor(Element&);
-    void swapTo(Element& oldElement, Ref<HTMLStackItem>&& newItem, const Bookmark&);
+    void swapTo(Element& oldElement, HTMLStackItem&& newItem, const Bookmark&);
 
     void appendMarker();
     // clearToLastMarker also clears the marker (per the HTML5 spec).
@@ -127,7 +125,7 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#list-of-active-formatting-elements
     // These functions enforce the "Noah's Ark" condition, which removes redundant mis-nested elements.
-    void tryToEnsureNoahsArkConditionQuickly(HTMLStackItem&, Vector<HTMLStackItem*>& remainingCandidates);
+    Vector<const HTMLStackItem*> tryToEnsureNoahsArkConditionQuickly(HTMLStackItem&);
     void ensureNoahsArkCondition(HTMLStackItem&);
 
     Vector<Entry> m_entries;

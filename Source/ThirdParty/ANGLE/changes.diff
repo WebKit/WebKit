@@ -229,10 +229,10 @@ index e1555cff0ce083f309e845eab2678be57839122e..ad08da0ed2befa72cf2a5291a6d91c62
              return "Test";
          case 0:
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index 285734ba963e988732c51e2e69a32a7db19938eb..4a73b4134efd7ea50fd3215bf5ff5b069bb69cc6 100644
+index 6eb21d9e204cd958448603938053f9c72bb91846..e21456e19ce5112a5535080193979d0858b7d58b 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
 +++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
-@@ -158,7 +158,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
+@@ -157,7 +157,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
                                               bool isTransformFeedbackStage,
                                               GlslangProgramInterfaceInfo *programInterfaceInfo,
                                               ShaderInterfaceVariableInfoMap *variableInfoMapOut);
@@ -241,7 +241,7 @@ index 285734ba963e988732c51e2e69a32a7db19938eb..4a73b4134efd7ea50fd3215bf5ff5b06
  // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
  void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
                                 const gl::ProgramState &programState,
-@@ -171,6 +171,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
+@@ -170,6 +170,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
                                          const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                          const angle::spirv::Blob &initialSpirvBlob,
                                          angle::spirv::Blob *spirvBlobOut);
@@ -272,10 +272,10 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index 39b6a8b44d49ead070ccf5e615a845506b32122b..bc140d80e0d9d180027a2d33619ee05a6464ab6a 100644
+index 038515414371ccde7b55e50d41465438dc163b00..67e137dc22a12cf56394162754090f7d102bf48b 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
-@@ -588,6 +588,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -577,6 +577,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
      gl::AttributesMask mDirtyDefaultAttribsMask;
      DirtyBits mDirtyBits;
  
@@ -285,10 +285,10 @@ index 39b6a8b44d49ead070ccf5e615a845506b32122b..bc140d80e0d9d180027a2d33619ee05a
      mtl::RenderPipelineDesc mRenderPipelineDesc;
      mtl::DepthStencilDesc mDepthStencilDesc;
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d509454b10ca7 100644
+index 89bb8b23a4f712adfa3f9b72967d36d6cfe14527..dc2f5fe8fbd3c8bc2c11f9982f76f7a290be0517 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -1692,10 +1692,19 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1693,10 +1693,19 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
      endEncoding(true);
      mCmdBuffer.commit(operation);
@@ -308,7 +308,7 @@ index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d5094
      if (mCmdBuffer.needsFlushForDrawCallLimits())
      {
          flushCommandBuffer(mtl::NoWait);
-@@ -1716,6 +1725,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1717,6 +1726,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      endEncoding(false);
      mCmdBuffer.present(presentationDrawable);
      mCmdBuffer.commit(mtl::NoWait);
@@ -316,7 +316,7 @@ index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d5094
  }
  
  angle::Result ContextMtl::finishCommandBuffer()
-@@ -1751,6 +1761,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1752,6 +1762,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      endEncoding(false);
  
      ensureCommandBufferReady();
@@ -324,39 +324,6 @@ index 5afa5102a4b09613f5adc3ab4a968f569b4ec21b..acc9c3c7cae91ea89c4d8bc8a30d5094
  
      // Need to re-apply everything on next draw call.
      mDirtyBits.set();
-@@ -2215,6 +2226,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-                                     gl::DrawElementsType indexTypeOrNone,
-                                     const void *indices,
-                                     bool xfbPass)
-+{
-+    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
-+                            indexTypeOrNone, indices, xfbPass));
-+    if (!mRenderEncoder.valid())
-+    {
-+        // Flush occurred during setup, due to running out of memory while setting up the render
-+        // pass state. This would happen for example when there is no more space in the uniform
-+        // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
-+        // buffer memory for new usage. In this case, re-run the setup.
-+        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
-+                                indexTypeOrNone, indices, xfbPass));
-+        // Setup with flushed state should either produce a working encoder or fail with an error
-+        // result.
-+        ASSERT(mRenderEncoder.valid());
-+    }
-+    return angle::Result::Continue;
-+}
-+
-+angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
-+                                        gl::PrimitiveMode mode,
-+                                        GLint firstVertex,
-+                                        GLsizei vertexOrIndexCount,
-+                                        GLsizei instances,
-+                                        gl::DrawElementsType indexTypeOrNone,
-+                                        const void *indices,
-+                                        bool xfbPass)
- {
-     ASSERT(mProgram);
- 
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
 index 13aec00fac3e4ea8932a86883dcc6eff7f30f59c..295a3788aa012838660233608df48f10bd269831 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
@@ -371,56 +338,6 @@ index 13aec00fac3e4ea8932a86883dcc6eff7f30f59c..295a3788aa012838660233608df48f10
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
-diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 8e2d6eb6967f907b8224641610a369a2000f90f7..7f0c4de62558749e79614996699519f5fc164d71 100644
---- a/src/libANGLE/renderer/metal/ProgramMtl.mm
-+++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1257,20 +1257,40 @@ void InitArgumentBufferEncoder(mtl::Context *context,
-         {
-             continue;
-         }
--        // If we exceed the default uniform max size, try to allocate a buffer. Worst case
--        // scenario, fall back on a large setBytes.
-+        if(mAuxBufferPool)
-+        {
-+            mAuxBufferPool->releaseInFlightBuffers(context);
-+        }
-+        // If we exceed the default inline max size, try to allocate a buffer
-         bool needsCommitUniform = true;
--        if (needsCommitUniform)
-+        if (needsCommitUniform && uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize)
-         {
--            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
-+            ASSERT(uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize);
-             cmdEncoder->setBytes(shaderType, uniformBlock.uniformData.data(),
-                                  uniformBlock.uniformData.size(),
-                                  mtl::kDefaultUniformsBindingIndex);
-         }
-+        else if(needsCommitUniform)
-+        {
-+            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
-+            mtl::BufferRef mtlBufferOut;
-+            size_t  offsetOut;
-+            uint8_t * ptrOut;
-+            //Allocate a new Uniform buffer
-+            ANGLE_TRY(getBufferPool(context)->allocate(context,
-+                uniformBlock.uniformData.size(), &ptrOut, &mtlBufferOut, &offsetOut));
-+            //Copy the uniform result
-+            memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
-+            //Commit
-+            ANGLE_TRY(getBufferPool(context)->commit(context));
-+            //Set buffer
-+            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut, mtl::kDefaultUniformsBindingIndex);
-+
- 
--        mDefaultUniformBlocksDirty.reset(shaderType);
-         }
- 
-+        mDefaultUniformBlocksDirty.reset(shaderType);
-+    }
-     return angle::Result::Continue;
- }
- 
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -435,18 +352,9 @@ index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
-index 9cc1e56ef6140e75b77b7ec2916dbb6954c752fd..c6618ecc2259f22756b61738d041e679420ce8bf 100644
+index 3f3086c36d3ae3886af05a044bbdc834e63d2239..c6618ecc2259f22756b61738d041e679420ce8bf 100644
 --- a/src/libANGLE/renderer/metal/mtl_common.h
 +++ b/src/libANGLE/renderer/metal/mtl_common.h
-@@ -139,7 +139,7 @@ constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
- constexpr uint32_t kMaxShaderBuffers     = 31;
- constexpr uint32_t kMaxShaderSamplers    = 16;
- constexpr size_t kInlineConstDataMaxSize = 4 * 1024;
--constexpr size_t kDefaultUniformsMaxSize = 4 * 1024;
-+constexpr size_t kDefaultUniformsMaxSize = 16 * 1024;
- constexpr uint32_t kMaxViewports         = 1;
- 
- // Restrict in-flight resource usage to 400 MB.
 @@ -147,6 +147,11 @@ constexpr uint32_t kMaxViewports         = 1;
  // will be flushed next time
  constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;

@@ -149,9 +149,9 @@ bool AccessibilityTableCell::isTableHeaderCell() const
 bool AccessibilityTableCell::isColumnHeaderCell() const
 {
     const AtomString& scope = getAttribute(scopeAttr);
-    if (scope == "col" || scope == "colgroup")
+    if (scope == "col"_s || scope == "colgroup"_s)
         return true;
-    if (scope == "row" || scope == "rowgroup")
+    if (scope == "row"_s || scope == "rowgroup"_s)
         return false;
     if (!isTableHeaderCell())
         return false;
@@ -177,9 +177,9 @@ bool AccessibilityTableCell::isColumnHeaderCell() const
 bool AccessibilityTableCell::isRowHeaderCell() const
 {
     const AtomString& scope = getAttribute(scopeAttr);
-    if (scope == "row" || scope == "rowgroup")
+    if (scope == "row"_s || scope == "rowgroup"_s)
         return true;
-    if (scope == "col" || scope == "colgroup")
+    if (scope == "col"_s || scope == "colgroup"_s)
         return false;
     if (!isTableHeaderCell())
         return false;
@@ -259,7 +259,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
 
         ASSERT(is<AccessibilityObject>(tableCell));
         const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
-        if (scope == "colgroup" && isTableCellInSameColGroup(tableCell))
+        if (scope == "colgroup"_s && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
         else if (tableCell->isColumnHeaderCell())
             headers.append(tableCell);
@@ -284,7 +284,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
             continue;
         
         const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
-        if (scope == "rowgroup" && isTableCellInSameRowGroup(tableCell))
+        if (scope == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
             headers.append(tableCell);
         else if (tableCell->isRowHeaderCell())
             headers.append(tableCell);
@@ -449,7 +449,7 @@ int AccessibilityTableCell::axRowSpan() const
 
     // ARIA 1.1: Authors must set the value of aria-rowspan to an integer greater than or equal to 0.
     // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
-    if (getAttribute(aria_rowspanAttr) == "0")
+    if (getAttribute(aria_rowspanAttr) == "0"_s)
         return 0;
     if (int value = getIntegralAttribute(aria_rowspanAttr); value >= 1)
         return value;

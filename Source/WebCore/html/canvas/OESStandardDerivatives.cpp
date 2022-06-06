@@ -26,8 +26,8 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
 #include "OESStandardDerivatives.h"
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,6 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OESStandardDerivatives);
 OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_standard_derivatives"_s);
 }
 
 OESStandardDerivatives::~OESStandardDerivatives() = default;
@@ -44,6 +45,11 @@ OESStandardDerivatives::~OESStandardDerivatives() = default;
 WebGLExtension::ExtensionName OESStandardDerivatives::getName() const
 {
     return OESStandardDerivativesName;
+}
+
+bool OESStandardDerivatives::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_OES_standard_derivatives"_s);
 }
 
 } // namespace WebCore

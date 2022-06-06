@@ -156,9 +156,8 @@ public:
 private:
     void updateWindowTitle() const;
 
-    bool canSave() override { return true; }
-    void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) override;
-    void append(const String& url, const String& content) override;
+    bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
+    void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool base64Encoded) override;
 
 #if !PLATFORM(IOS_FAMILY)
     WebView *m_inspectedWebView;

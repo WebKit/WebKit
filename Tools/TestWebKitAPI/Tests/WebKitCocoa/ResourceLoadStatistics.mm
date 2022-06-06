@@ -545,15 +545,15 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://prevalent-example.com/"]]];
 
     auto messages = [delegate waitForMessages:2];
-    auto contains = [] (const Vector<String>& array, const char* expected) {
+    auto contains = [] (const Vector<String>& array, ASCIILiteral expected) {
         for (auto& s : array) {
             if (s == expected)
                 return true;
         }
         return false;
     };
-    EXPECT_TRUE(contains(messages, "1"));
-    EXPECT_TRUE(contains(messages, "2"));
+    EXPECT_TRUE(contains(messages, "1"_s));
+    EXPECT_TRUE(contains(messages, "2"_s));
 }
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)

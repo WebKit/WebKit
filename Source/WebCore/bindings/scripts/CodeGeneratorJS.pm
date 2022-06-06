@@ -1350,7 +1350,7 @@ sub GenerateIsLegacyUnforgeablePropertyName
     
     return 0 if (scalar(@unforgeablePropertyNames) == 0);
     
-    my $condition = join(" || ", map { "propertyName == \"" . $_ . "\"" } @unforgeablePropertyNames);
+    my $condition = join(" || ", map { "propertyName == \"" . $_ . "\"_s" } @unforgeablePropertyNames);
     
     push(@$outputArray, "static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)\n");
     push(@$outputArray, "{\n");

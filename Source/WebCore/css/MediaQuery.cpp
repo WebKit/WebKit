@@ -52,7 +52,7 @@ String MediaQuery::serialize() const
         result.append("not ");
         break;
     case MediaQuery::None:
-        shouldOmitMediaType = !m_expressions.isEmpty() && m_mediaType == "all";
+        shouldOmitMediaType = !m_expressions.isEmpty() && m_mediaType == "all"_s;
         break;
     }
     bool needsAnd = false;

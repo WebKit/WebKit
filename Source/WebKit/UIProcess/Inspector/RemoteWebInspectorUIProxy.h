@@ -132,8 +132,7 @@ private:
     void reopen();
     void resetState();
     void bringToFront();
-    void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
-    void append(const String& filename, const String& content);
+    void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void load(const String& path, CompletionHandler<void(const String&)>&&);
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void setSheetRect(const WebCore::FloatRect&);
@@ -152,8 +151,7 @@ private:
     void platformCloseFrontendPageAndWindow();
     void platformResetState();
     void platformBringToFront();
-    void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
-    void platformAppend(const String& filename, const String& content);
+    void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void platformSetSheetRect(const WebCore::FloatRect&);

@@ -344,8 +344,6 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
 #endif  // defined(ANGLE_ENABLE_ASSERTS)
 
-#define UNREACHABLE_IS_NORETURN 0
-
 #define ANGLE_UNUSED_VARIABLE(variable) (static_cast<void>(variable))
 
 // A macro to indicate unimplemented functionality

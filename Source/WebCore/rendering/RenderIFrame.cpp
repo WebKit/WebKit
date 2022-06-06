@@ -76,7 +76,7 @@ bool RenderIFrame::isFullScreenIFrame() const
 {
     // Some authors implement fullscreen popups as out-of-flow iframes with size set to full viewport (using vw/vh units).
     // The size used may not perfectly match the viewport size so the following heuristic uses a relaxed constraint.
-    return style().hasOutOfFlowPosition() && style().hasViewportUnits();
+    return style().hasOutOfFlowPosition() && style().usesViewportUnits();
 }
 
 bool RenderIFrame::flattenFrame() const

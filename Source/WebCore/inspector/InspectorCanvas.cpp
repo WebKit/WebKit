@@ -733,26 +733,26 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 static bool shouldSnapshotBitmapRendererAction(const String& name)
 {
-    return name == "transferFromImageBitmap";
+    return name == "transferFromImageBitmap"_s;
 }
 
 #if ENABLE(WEBGL)
 static bool shouldSnapshotWebGLAction(const String& name)
 {
-    return name == "clear"
-        || name == "drawArrays"
-        || name == "drawElements";
+    return name == "clear"_s
+        || name == "drawArrays"_s
+        || name == "drawElements"_s;
 }
 #endif
 
 #if ENABLE(WEBGL2)
 static bool shouldSnapshotWebGL2Action(const String& name)
 {
-    return name == "clear"
-        || name == "drawArrays"
-        || name == "drawArraysInstanced"
-        || name == "drawElements"
-        || name == "drawElementsInstanced";
+    return name == "clear"_s
+        || name == "drawArrays"_s
+        || name == "drawArraysInstanced"_s
+        || name == "drawElements"_s
+        || name == "drawElementsInstanced"_s;
 }
 #endif
 

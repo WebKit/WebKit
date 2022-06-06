@@ -109,9 +109,9 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
         return [WI.debuggerManager.activeCallFrame];
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._textEditor.revealPosition(position, options);
     }
 
     closed()
@@ -132,13 +132,32 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     restoreFromCookie(cookie)
     {
-        if ("lineNumber" in cookie && "columnNumber" in cookie)
-            this.revealPosition(new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
+        let textRangeToSelect = null;
+        if (!isNaN(cookie.startLine) && !isNaN(cookie.startColumn) && !isNaN(cookie.endLine) && !isNaN(cookie.endColumn))
+            textRangeToSelect = new WI.TextRange(cookie.startLine, cookie.startColumn, cookie.endLine, cookie.endColumn);
+
+        let position = null;
+        if (!isNaN(cookie.lineNumber) && !isNaN(cookie.columnNumber))
+            position = new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber);
+        else if (textRangeToSelect)
+            position = textRangeToSelect.startPosition();
+
+        let scrollOffset = null;
+        if (!isNaN(cookie.scrollOffsetX) && !isNaN(cookie.scrollOffsetY))
+            scrollOffset = new WI.Point(cookie.scrollOffsetX, cookie.scrollOffsetY);
+
+        if (position)
+            this.revealPosition(position, {...cookie, textRangeToSelect, scrollOffset});
     }
 
     get supportsSave()
     {
         return true;
+    }
+
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
     }
 
     get saveData()

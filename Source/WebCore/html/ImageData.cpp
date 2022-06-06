@@ -50,13 +50,13 @@ PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSetting
     return defaultColorSpace;
 }
 
-Ref<ImageData> ImageData::create(Ref<PixelBuffer>&& pixelBuffer)
+Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
     return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace));
 }
 
-RefPtr<ImageData> ImageData::create(RefPtr<PixelBuffer>&& pixelBuffer)
+RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer)
 {
     if (!pixelBuffer)
         return nullptr;
@@ -153,10 +153,10 @@ ImageData::ImageData(const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data, Pr
 
 ImageData::~ImageData() = default;
 
-Ref<PixelBuffer> ImageData::pixelBuffer() const
+Ref<ByteArrayPixelBuffer> ImageData::pixelBuffer() const
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
-    return PixelBuffer::create(format, m_size, m_data.get());
+    return ByteArrayPixelBuffer::create(format, m_size, m_data.get());
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)

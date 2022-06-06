@@ -296,6 +296,20 @@ void SetFloatUniformMatrixFast(unsigned int arrayElementOffset,
 }
 }  // anonymous namespace
 
+bool IsRotatedAspectRatio(SurfaceRotation rotation)
+{
+    switch (rotation)
+    {
+        case SurfaceRotation::Rotated90Degrees:
+        case SurfaceRotation::Rotated270Degrees:
+        case SurfaceRotation::FlippedRotated90Degrees:
+        case SurfaceRotation::FlippedRotated270Degrees:
+            return true;
+        default:
+            return false;
+    }
+}
+
 void RotateRectangle(const SurfaceRotation rotation,
                      const bool flipY,
                      const int framebufferWidth,

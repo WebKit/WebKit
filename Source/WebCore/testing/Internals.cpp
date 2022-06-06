@@ -1237,10 +1237,10 @@ double Internals::timeToNextAnimationTick(WebAnimation& animation) const
 
 ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, const String& pseudoId)
 {
-    if (pseudoId != "before" && pseudoId != "after")
+    if (pseudoId != "before"_s && pseudoId != "after"_s)
         return Exception { InvalidAccessError };
 
-    return pseudoId == "before" ? element.beforePseudoElement() : element.afterPseudoElement();
+    return pseudoId == "before"_s ? element.beforePseudoElement() : element.afterPseudoElement();
 }
 
 ExceptionOr<String> Internals::elementRenderTreeAsText(Element& element)
@@ -1989,11 +1989,11 @@ ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue
     if (!document || !document->view())
         return Exception { InvalidAccessError };
 
-    if (colorValue == "transparent") {
+    if (colorValue == "transparent"_s) {
         document->view()->setBaseBackgroundColor(Color::transparentBlack);
         return { };
     }
-    if (colorValue == "white") {
+    if (colorValue == "white"_s) {
         document->view()->setBaseBackgroundColor(Color::white);
         return { };
     }
@@ -2007,15 +2007,15 @@ ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int page
         return Exception { InvalidAccessError };
 
     Pagination pagination;
-    if (mode == "Unpaginated")
+    if (mode == "Unpaginated"_s)
         pagination.mode = Pagination::Unpaginated;
-    else if (mode == "LeftToRightPaginated")
+    else if (mode == "LeftToRightPaginated"_s)
         pagination.mode = Pagination::LeftToRightPaginated;
-    else if (mode == "RightToLeftPaginated")
+    else if (mode == "RightToLeftPaginated"_s)
         pagination.mode = Pagination::RightToLeftPaginated;
-    else if (mode == "TopToBottomPaginated")
+    else if (mode == "TopToBottomPaginated"_s)
         pagination.mode = Pagination::TopToBottomPaginated;
-    else if (mode == "BottomToTopPaginated")
+    else if (mode == "BottomToTopPaginated"_s)
         pagination.mode = Pagination::BottomToTopPaginated;
     else
         return Exception { SyntaxError };
@@ -2674,18 +2674,18 @@ void Internals::toggleOverwriteModeEnabled()
 static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionList)
 {
     const struct {
-        const char* name;
+        ASCIILiteral name;
         FindOptionFlag value;
     } flagList[] = {
-        {"CaseInsensitive", CaseInsensitive},
-        {"AtWordStarts", AtWordStarts},
-        {"TreatMedialCapitalAsWordStart", TreatMedialCapitalAsWordStart},
-        {"Backwards", Backwards},
-        {"WrapAround", WrapAround},
-        {"StartInSelection", StartInSelection},
-        {"DoNotRevealSelection", DoNotRevealSelection},
-        {"AtWordEnds", AtWordEnds},
-        {"DoNotTraverseFlatTree", DoNotTraverseFlatTree},
+        { "CaseInsensitive"_s, CaseInsensitive },
+        { "AtWordStarts"_s, AtWordStarts },
+        { "TreatMedialCapitalAsWordStart"_s, TreatMedialCapitalAsWordStart },
+        { "Backwards"_s, Backwards },
+        { "WrapAround"_s, WrapAround },
+        { "StartInSelection"_s, StartInSelection },
+        { "DoNotRevealSelection"_s, DoNotRevealSelection },
+        { "AtWordEnds"_s, AtWordEnds },
+        { "DoNotTraverseFlatTree"_s, DoNotTraverseFlatTree },
     };
     FindOptions result;
     for (auto& option : optionList) {
@@ -2726,7 +2726,7 @@ ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const V
     if (parsedOptions.hasException())
         return parsedOptions.releaseException();
 
-    bool mark = markMatches == "mark";
+    bool mark = markMatches == "mark"_s;
     return document->editor().countMatchesForText(text, std::nullopt, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
 }
 
@@ -4086,15 +4086,15 @@ String Internals::elementBufferingPolicy(HTMLMediaElement& element)
 ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaElement& element, const String& modeString)
 {
     DynamicRangeMode mode;
-    if (modeString == "None")
+    if (modeString == "None"_s)
         mode = DynamicRangeMode::None;
-    else if (modeString == "Standard")
+    else if (modeString == "Standard"_s)
         mode = DynamicRangeMode::Standard;
-    else if (modeString == "HLG")
+    else if (modeString == "HLG"_s)
         mode = DynamicRangeMode::HLG;
-    else if (modeString == "HDR10")
+    else if (modeString == "HDR10"_s)
         mode = DynamicRangeMode::HDR10;
-    else if (modeString == "DolbyVisionPQ")
+    else if (modeString == "DolbyVisionPQ"_s)
         mode = DynamicRangeMode::DolbyVisionPQ;
     else
         return Exception { SyntaxError };
@@ -5311,7 +5311,7 @@ void Internals::postTask(RefPtr<VoidCallback>&& callback)
 
 static std::optional<TaskSource> taskSourceFromString(const String& taskSourceName)
 {
-    if (taskSourceName == "DOMManipulation")
+    if (taskSourceName == "DOMManipulation"_s)
         return TaskSource::DOMManipulation;
     return std::nullopt;
 }
@@ -6296,7 +6296,7 @@ bool Internals::hasSandboxMachLookupAccessToGlobalName(const String& process, co
 {
 #if PLATFORM(COCOA)
     pid_t pid;
-    if (process == "com.apple.WebKit.WebContent")
+    if (process == "com.apple.WebKit.WebContent"_s)
         pid = getpid();
     else
         RELEASE_ASSERT_NOT_REACHED();
@@ -6313,7 +6313,7 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
 {
 #if PLATFORM(COCOA)
     pid_t pid;
-    if (process == "com.apple.WebKit.WebContent")
+    if (process == "com.apple.WebKit.WebContent"_s)
         pid = getpid();
     else
         RELEASE_ASSERT_NOT_REACHED();

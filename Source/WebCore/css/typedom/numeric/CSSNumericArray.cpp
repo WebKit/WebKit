@@ -67,7 +67,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericArray::item(size_t index)
 
 void CSSNumericArray::forEach(Function<void(const CSSNumericValue&, bool first)> function)
 {
-    for (size_t i = 0; i < m_array.size(); i++)
+    for (size_t i = 0; i < m_array.size(); ++i)
         function(m_array[i], !i);
 }
 

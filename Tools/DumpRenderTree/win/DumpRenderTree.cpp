@@ -1289,7 +1289,7 @@ static void runTest(const string& inputLine)
 
     request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     request->setHTTPMethod(methodBStr);
-    if (hostName == "localhost" || hostName == "127.0.0.1")
+    if (hostName == "localhost"_s || hostName == "127.0.0.1"_s)
         request->setAllowsAnyHTTPSCertificate();
     frame->loadRequest(request.get());
 

@@ -86,7 +86,8 @@ class DynamicBuffer : angle::NonCopyable
     // This releases resources when they might currently be in use.
     void release(RendererVk *renderer);
 
-    // This adds in-flight buffers to the mResourceUseList in the sharegroup and then releases them.
+    // This adds in-flight buffers to the mResourceUseList in the share group and then releases
+    // them.
     void releaseInFlightBuffersToResourceUseList(ContextVk *contextVk);
 
     // This frees resources immediately.
@@ -140,6 +141,8 @@ enum class DescriptorCacheResult
 
 // Shared handle to a descriptor pool. Each helper is allocated from the dynamic descriptor pool.
 // Can be used to share descriptor pools between multiple ProgramVks and the ContextVk.
+class CommandBufferHelperCommon;
+
 class DescriptorPoolHelper final : public Resource
 {
   public:
@@ -156,13 +159,13 @@ class DescriptorPoolHelper final : public Resource
     void release(ContextVk *contextVk, VulkanCacheType cacheType);
 
     angle::Result allocateDescriptorSets(Context *context,
-                                         ResourceUseList *resourceUseList,
+                                         CommandBufferHelperCommon *commandBufferHelper,
                                          const DescriptorSetLayout &descriptorSetLayout,
                                          uint32_t descriptorSetCount,
                                          VkDescriptorSet *descriptorSetsOut);
 
     angle::Result allocateAndCacheDescriptorSet(Context *context,
-                                                ResourceUseList *resourceUseList,
+                                                CommandBufferHelperCommon *commandBufferHelper,
                                                 const DescriptorSetDesc &desc,
                                                 const DescriptorSetLayout &descriptorSetLayout,
                                                 VkDescriptorSet *descriptorSetOut);
@@ -209,14 +212,14 @@ class DynamicDescriptorPool final : angle::NonCopyable
     // We use the descriptor type to help count the number of free sets.
     // By convention, sets are indexed according to the constants in vk_cache_utils.h.
     angle::Result allocateDescriptorSets(Context *context,
-                                         ResourceUseList *resourceUseList,
+                                         CommandBufferHelperCommon *commandBufferHelper,
                                          const DescriptorSetLayout &descriptorSetLayout,
                                          uint32_t descriptorSetCount,
                                          RefCountedDescriptorPoolBinding *bindingOut,
                                          VkDescriptorSet *descriptorSetsOut);
 
     angle::Result getOrAllocateDescriptorSet(Context *context,
-                                             ResourceUseList *resourceUseList,
+                                             CommandBufferHelperCommon *commandBufferHelper,
                                              const DescriptorSetDesc &desc,
                                              const DescriptorSetLayout &descriptorSetLayout,
                                              RefCountedDescriptorPoolBinding *bindingOut,
@@ -1094,7 +1097,7 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     // The markOpen and markClosed functions are to aid in proper use of the *CommandBufferHelper.
     // saw invalid use due to threading issues that can be easily caught by marking when it's safe
-    // (open) to write to the commandbuffer.
+    // (open) to write to the command buffer.
 #if !defined(ANGLE_ENABLE_ASSERTS)
     void markOpen() {}
     void markClosed() {}
@@ -1105,7 +1108,12 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     bool hasGLMemoryBarrierIssued() const { return mHasGLMemoryBarrierIssued; }
 
-    vk::ResourceUseList &getResourceUseList() { return mResourceUseList; }
+    ResourceUseList &&releaseResourceUseList() { return std::move(mResourceUseList); }
+
+    void retainResource(Resource *resource);
+
+    void retainReadOnlyResource(ReadWriteResource *readWriteResource);
+    void retainReadWriteResource(ReadWriteResource *readWriteResource);
 
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;

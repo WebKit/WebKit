@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class GraphicsLayer;
 class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
@@ -49,9 +48,6 @@ public:
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
 
-#if !USE(COORDINATED_GRAPHICS)
-    void setChildren(const Vector<GraphicsLayer*>&);
-#endif
     void setChildren(const Vector<TextureMapperLayer*>&);
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);

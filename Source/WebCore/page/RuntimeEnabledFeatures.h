@@ -78,9 +78,6 @@ public:
     bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
     void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-    void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
-    bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
-
 #if ENABLE(WEBXR)
     void setWebXREnabled(bool isEnabled) { m_webXREnabled = isEnabled; }
     bool webXREnabled() const { return m_webXREnabled; }
@@ -273,7 +270,6 @@ private:
     bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
-    bool m_inspectorAdditionsEnabled { false };
 #if ENABLE(WEBXR)
     bool m_webXREnabled { false };
 #endif

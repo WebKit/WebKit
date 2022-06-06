@@ -28,6 +28,11 @@ class AggregateAssignArraysInSSBOsTraverser : public TIntermTraverser
   protected:
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
+        // Replace all aggregate assignments to arrays in SSBOs with element-by-element assignments.
+        // TODO(anglebug.com/7363): this implementation only works for the simple case (assignment
+        // statement), not more complex cases such as assignment-as-expression or functions with
+        // side effects in the RHS.
+
         if (node->getOp() != EOpAssign)
         {
             return true;

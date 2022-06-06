@@ -68,7 +68,7 @@ bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
 auto BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     const String& key = event.keyIdentifier();
-    if (key == "U+0020") {
+    if (key == "U+0020"_s) {
         ASSERT(element());
         element()->setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case

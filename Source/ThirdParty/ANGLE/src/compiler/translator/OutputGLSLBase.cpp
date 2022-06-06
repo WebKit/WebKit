@@ -1426,7 +1426,7 @@ bool NeedsToWriteLayoutQualifier(const TType &type)
 
 void EmitEarlyFragmentTestsGLSL(const TCompiler &compiler, TInfoSinkBase &sink)
 {
-    if (compiler.isEarlyFragmentTestsSpecified() || compiler.isEarlyFragmentTestsOptimized())
+    if (compiler.isEarlyFragmentTestsSpecified())
     {
         sink << "layout (early_fragment_tests) in;\n";
     }

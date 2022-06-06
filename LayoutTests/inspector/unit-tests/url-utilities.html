@@ -540,6 +540,40 @@ function test()
     });
 
     suite.addTestCase({
+        name: "WI.urlWithoutExtension",
+        test() {
+            function test(url, expected) {
+                InspectorTest.expectEqual(WI.urlWithoutExtension(url), expected, `Removing extension of '${url}' should be '${expected}'.`);
+            }
+
+            function testVariations(url, expected) {
+                test(url, expected);
+                test(url + "?query", expected);
+                test(url + "?query=value", expected);
+                test(url + "#fragment", expected);
+                test(url + "?query#fragment", expected);
+                test(url + "?query=value#fragment", expected);
+            }
+
+            testVariations("http://example.com", "http://example.com/");
+            testVariations("http://example.com/a", "http://example.com/a");
+            testVariations("http://example.com/a/", "http://example.com/a/");
+            testVariations("http://example.com/a.b", "http://example.com/a");
+            testVariations("http://example.com/a.b/", "http://example.com/a.b/");
+            testVariations("http://example.com/a.b.c", "http://example.com/a");
+            testVariations("http://example.com/a.b.c/", "http://example.com/a.b.c/");
+            testVariations("http://example.com/a/b", "http://example.com/a/b");
+            testVariations("http://example.com/a/b/", "http://example.com/a/b/");
+            testVariations("http://example.com/a/b.c", "http://example.com/a/b");
+            testVariations("http://example.com/a/b.c/", "http://example.com/a/b.c/");
+            testVariations("http://example.com/a/b.c.d", "http://example.com/a/b");
+            testVariations("http://example.com/a/b.c.d/", "http://example.com/a/b.c.d/");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "WI.urlWithoutFragment",
         test() {
             function test(url, expected) {

@@ -51,13 +51,13 @@ struct SVGPropertyTraits<ColorMatrixType> {
 
     static ColorMatrixType fromString(const String& value)
     {
-        if (value == "matrix")
+        if (value == "matrix"_s)
             return FECOLORMATRIX_TYPE_MATRIX;
-        if (value == "saturate")
+        if (value == "saturate"_s)
             return FECOLORMATRIX_TYPE_SATURATE;
-        if (value == "hueRotate")
+        if (value == "hueRotate"_s)
             return FECOLORMATRIX_TYPE_HUEROTATE;
-        if (value == "luminanceToAlpha")
+        if (value == "luminanceToAlpha"_s)
             return FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
         return FECOLORMATRIX_TYPE_UNKNOWN;
     }

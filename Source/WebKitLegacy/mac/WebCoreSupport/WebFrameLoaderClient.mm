@@ -1393,7 +1393,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 #if PLATFORM(IOS_FAMILY)
     bool willProduceHTMLView;
     // Fast path that skips initialization of objc class objects.
-    if ([dataSource _documentLoader]->responseMIMEType() == "text/html")
+    if ([dataSource _documentLoader]->responseMIMEType() == "text/html"_s)
         willProduceHTMLView = true;
     else
         willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];

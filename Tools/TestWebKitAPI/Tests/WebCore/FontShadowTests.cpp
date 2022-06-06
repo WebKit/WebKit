@@ -47,20 +47,20 @@ TEST_F(FontShadowTest, InvalidColor)
     FontShadow fontShadow;
     fontShadow.offset = { 1.1, 2.2 };
     fontShadow.blurRadius = 3.3;
-    EXPECT_EQ(serializationForCSS(fontShadow), "none");
+    EXPECT_EQ(serializationForCSS(fontShadow), "none"_s);
     fontShadow.color = Color();
-    EXPECT_EQ(serializationForCSS(fontShadow), "none");
+    EXPECT_EQ(serializationForCSS(fontShadow), "none"_s);
 }
 
 TEST_F(FontShadowTest, NoOffsetOrBlurRadius)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
-    EXPECT_EQ(serializationForCSS(fontShadow), "none");
+    EXPECT_EQ(serializationForCSS(fontShadow), "none"_s);
     fontShadow.offset = { 0, 0 };
-    EXPECT_EQ(serializationForCSS(fontShadow), "none");
+    EXPECT_EQ(serializationForCSS(fontShadow), "none"_s);
     fontShadow.blurRadius = 0;
-    EXPECT_EQ(serializationForCSS(fontShadow), "none");
+    EXPECT_EQ(serializationForCSS(fontShadow), "none"_s);
 }
 
 TEST_F(FontShadowTest, NoOffset)
@@ -68,9 +68,9 @@ TEST_F(FontShadowTest, NoOffset)
     FontShadow fontShadow;
     fontShadow.color = Color::red;
     fontShadow.blurRadius = 3.3;
-    EXPECT_EQ(serializationForCSS(fontShadow), "0px 0px rgb(255, 0, 0) 3.3px");
+    EXPECT_EQ(serializationForCSS(fontShadow), "0px 0px rgb(255, 0, 0) 3.3px"_s);
     fontShadow.offset = { 0, 0 };
-    EXPECT_EQ(serializationForCSS(fontShadow), "0px 0px rgb(255, 0, 0) 3.3px");
+    EXPECT_EQ(serializationForCSS(fontShadow), "0px 0px rgb(255, 0, 0) 3.3px"_s);
 }
 
 TEST_F(FontShadowTest, NegativeOffset)
@@ -79,7 +79,7 @@ TEST_F(FontShadowTest, NegativeOffset)
     fontShadow.color = Color::red;
     fontShadow.offset = { -1.1, -2.2 };
     fontShadow.blurRadius = 3.3;
-    EXPECT_EQ(serializationForCSS(fontShadow), "-1.1px -2.2px rgb(255, 0, 0) 3.3px");
+    EXPECT_EQ(serializationForCSS(fontShadow), "-1.1px -2.2px rgb(255, 0, 0) 3.3px"_s);
 }
 
 TEST_F(FontShadowTest, NoBlurRadius)
@@ -87,9 +87,9 @@ TEST_F(FontShadowTest, NoBlurRadius)
     FontShadow fontShadow;
     fontShadow.color = Color::red;
     fontShadow.offset = { 1.1, 2.2 };
-    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0)");
+    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0)"_s);
     fontShadow.blurRadius = 0;
-    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0)");
+    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0)"_s);
 }
 
 TEST_F(FontShadowTest, NegativeBlurRadius)
@@ -98,7 +98,7 @@ TEST_F(FontShadowTest, NegativeBlurRadius)
     fontShadow.color = Color::red;
     fontShadow.offset = { 1.1, 2.2 };
     fontShadow.blurRadius = -3.3;
-    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0) -3.3px");
+    EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0) -3.3px"_s);
 }
 
 TEST_F(FontShadowTest, AllNegative)
@@ -107,7 +107,7 @@ TEST_F(FontShadowTest, AllNegative)
     fontShadow.color = Color::red;
     fontShadow.offset = { -1.1, -2.2 };
     fontShadow.blurRadius = -3.3;
-    EXPECT_EQ(serializationForCSS(fontShadow), "-1.1px -2.2px rgb(255, 0, 0) -3.3px");
+    EXPECT_EQ(serializationForCSS(fontShadow), "-1.1px -2.2px rgb(255, 0, 0) -3.3px"_s);
 }
 
 } // namespace TestWebKitAPI

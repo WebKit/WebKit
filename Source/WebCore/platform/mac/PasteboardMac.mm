@@ -611,7 +611,7 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
     }
 
     // Reject types that might contain subframe information.
-    if (type == "text/rtf" || type == "public.rtf" || type == "com.apple.traditional-mac-plain-text")
+    if (type == "text/rtf"_s || type == "public.rtf"_s || type == "com.apple.traditional-mac-plain-text"_s)
         return String();
 
     auto utiType = UTIFromMIMEType(type);
@@ -669,7 +669,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType)
 {
-    if (cocoaType == "NeXT plain ascii pasteboard type")
+    if (cocoaType == "NeXT plain ascii pasteboard type"_s)
         return; // Skip this ancient type that gets auto-supplied by some system conversion.
 
     // UTI may not do these right, so make sure we get the right, predictable result

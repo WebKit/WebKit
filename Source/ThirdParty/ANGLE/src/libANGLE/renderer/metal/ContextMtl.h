@@ -537,28 +537,17 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // src/compiler/translator/DriverUniformMetal.cpp
     struct DriverUniforms
     {
-        float viewport[4];
-
-        // 32 bits for 32 clip distances
-        uint32_t enabledClipDistances;
-
+        uint32_t acbBufferOffsets[2];
+        float depthRange[2];
+        uint32_t renderArea;
+        uint32_t flipXY;
         uint32_t unused;
-        int32_t xfbVerticesPerInstance;
-
-        int32_t numSamples;
+        uint32_t misc;
 
         int32_t xfbBufferOffsets[4];
-        uint32_t acbBufferOffsets[4];
-
-        // We'll use x, y, z, w for near / far / diff / zscale respectively.
-        float depthRange[4];
-
-        // Metal specific
-        float halfRenderArea[2];
-        float flipXY[2];
-        float negFlipXY[2];
-        uint32_t coverageMask;
-        uint32_t unusedMetal;
+        int32_t xfbVerticesPerInstance;
+        uint32_t coverageMask;  // Metal specific
+        uint32_t unused2[2];
     };
     static_assert(sizeof(DriverUniforms) % (sizeof(uint32_t) * 4) == 0,
                   "DriverUniforms should be 16 bytes aligned");

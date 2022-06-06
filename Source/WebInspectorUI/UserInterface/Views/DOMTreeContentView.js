@@ -244,6 +244,11 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         return WI.canArchiveMainFrame();
     }
 
+    get saveMode()
+    {
+        return WI.FileUtilities.SaveMode.SingleFile;
+    }
+
     get saveData()
     {
         return {customSaveHandler: () => { WI.archiveMainFrame(); }};

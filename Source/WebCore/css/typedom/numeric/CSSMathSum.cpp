@@ -83,6 +83,55 @@ void CSSMathSum::serialize(StringBuilder& builder, OptionSet<SerializationArgume
         builder.append(')');
 }
 
+auto CSSMathSum::toSumValue() const -> std::optional<SumValue>
+{
+    auto convertToNumericType = [] (const UnitMap& units) -> std::optional<CSSNumericType> {
+        // https://drafts.css-houdini.org/css-typed-om/#create-a-type-from-a-unit-map
+        CSSNumericType type;
+        for (auto& pair : units) {
+            auto unit = CSSNumericType::create(pair.key, pair.value);
+            if (!unit)
+                return std::nullopt;
+            auto multipliedType = CSSNumericType::multiplyTypes(type, *unit);
+            if (!multipliedType)
+                return std::nullopt;
+            type = WTFMove(*multipliedType);
+        }
+        return type;
+    };
+
+    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
+    SumValue values;
+    for (auto& item : m_values->array()) {
+        auto value = item->toSumValue();
+        if (!value)
+            return std::nullopt;
+        for (auto& subvalue : *value) {
+            auto index = values.findIf([&](auto& value) {
+                return value.units == subvalue.units;
+            });
+            if (index == notFound)
+                values.append(WTFMove(subvalue));
+            else
+                values[index].value += subvalue.value;
+        }
+    }
+
+    auto type = convertToNumericType(values[0].units);
+    if (!type)
+        return std::nullopt;
+    for (size_t i = 1; i < values.size(); ++i) {
+        auto thisType = convertToNumericType(values[i].units);
+        if (!thisType)
+            return std::nullopt;
+        type = CSSNumericType::addTypes(*type, *thisType);
+        if (!type)
+            return std::nullopt;
+    }
+    
+    return { WTFMove(values) };
+}
+
 } // namespace WebCore
 
 #endif

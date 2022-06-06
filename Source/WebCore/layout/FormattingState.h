@@ -47,7 +47,7 @@ public:
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
 
-    void setIntrinsicWidthConstraintsForBox(const Box&,  IntrinsicWidthConstraints);
+    void setIntrinsicWidthConstraintsForBox(const Box&, IntrinsicWidthConstraints);
     std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraintsForBox(const Box&) const;
     void clearIntrinsicWidthConstraints(const Box&);
 

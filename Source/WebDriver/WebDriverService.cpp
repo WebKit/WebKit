@@ -370,10 +370,10 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject,
     Timeouts timeouts;
     auto end = timeoutsObject.end();
     for (auto it = timeoutsObject.begin(); it != end; ++it) {
-        if (it->key == "sessionId")
+        if (it->key == "sessionId"_s)
             continue;
 
-        if (it->key == "script" && it->value->isNull()) {
+        if (it->key == "script"_s && it->value->isNull()) {
             timeouts.script = std::numeric_limits<double>::infinity();
             continue;
         }
@@ -383,11 +383,11 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject,
         if (!timeoutMS)
             return std::nullopt;
 
-        if (it->key == "script")
+        if (it->key == "script"_s)
             timeouts.script = timeoutMS.value();
-        else if (it->key == "pageLoad")
+        else if (it->key == "pageLoad"_s)
             timeouts.pageLoad = timeoutMS.value();
-        else if (it->key == "implicit")
+        else if (it->key == "implicit"_s)
             timeouts.implicit = timeoutMS.value();
         else if (ignoreUnknownTimeout == IgnoreUnknownTimeout::No)
             return std::nullopt;
@@ -405,10 +405,10 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
     if (!proxy.type)
         return std::nullopt;
 
-    if (proxy.type == "direct" || proxy.type == "autodetect" || proxy.type == "system")
+    if (proxy.type == "direct"_s || proxy.type == "autodetect"_s || proxy.type == "system"_s)
         return proxy;
 
-    if (proxy.type == "pac") {
+    if (proxy.type == "pac"_s) {
         proxy.autoconfigURL = proxyObject.getString("proxyAutoconfigUrl"_s);
         if (!proxy.autoconfigURL)
             return std::nullopt;
@@ -416,7 +416,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
         return proxy;
     }
 
-    if (proxy.type == "manual") {
+    if (proxy.type == "manual"_s) {
         if (auto value = proxyObject.getValue("ftpProxy"_s)) {
             auto ftpProxy = value->asString();
             if (!ftpProxy)
@@ -484,26 +484,26 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
 
 static std::optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
 {
-    if (pageLoadStrategy == "none")
+    if (pageLoadStrategy == "none"_s)
         return PageLoadStrategy::None;
-    if (pageLoadStrategy == "normal")
+    if (pageLoadStrategy == "normal"_s)
         return PageLoadStrategy::Normal;
-    if (pageLoadStrategy == "eager")
+    if (pageLoadStrategy == "eager"_s)
         return PageLoadStrategy::Eager;
     return std::nullopt;
 }
 
 static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior(const String& unhandledPromptBehavior)
 {
-    if (unhandledPromptBehavior == "dismiss")
+    if (unhandledPromptBehavior == "dismiss"_s)
         return UnhandledPromptBehavior::Dismiss;
-    if (unhandledPromptBehavior == "accept")
+    if (unhandledPromptBehavior == "accept"_s)
         return UnhandledPromptBehavior::Accept;
-    if (unhandledPromptBehavior == "dismiss and notify")
+    if (unhandledPromptBehavior == "dismiss and notify"_s)
         return UnhandledPromptBehavior::DismissAndNotify;
-    if (unhandledPromptBehavior == "accept and notify")
+    if (unhandledPromptBehavior == "accept and notify"_s)
         return UnhandledPromptBehavior::AcceptAndNotify;
-    if (unhandledPromptBehavior == "ignore")
+    if (unhandledPromptBehavior == "ignore"_s)
         return UnhandledPromptBehavior::Ignore;
     return std::nullopt;
 }
@@ -585,37 +585,37 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
     for (auto it = capabilities.begin(); it != end; ++it) {
         if (it->value->isNull())
             continue;
-        if (it->key == "acceptInsecureCerts") {
+        if (it->key == "acceptInsecureCerts"_s) {
             auto acceptInsecureCerts = it->value->asBoolean();
             if (!acceptInsecureCerts)
                 return nullptr;
             result->setBoolean(it->key, *acceptInsecureCerts);
-        } else if (it->key == "browserName" || it->key == "browserVersion" || it->key == "platformName") {
+        } else if (it->key == "browserName"_s || it->key == "browserVersion"_s || it->key == "platformName"_s) {
             auto stringValue = it->value->asString();
             if (!stringValue)
                 return nullptr;
             result->setString(it->key, stringValue);
-        } else if (it->key == "pageLoadStrategy") {
+        } else if (it->key == "pageLoadStrategy"_s) {
             auto pageLoadStrategy = it->value->asString();
             if (!pageLoadStrategy || !deserializePageLoadStrategy(pageLoadStrategy))
                 return nullptr;
             result->setString(it->key, pageLoadStrategy);
-        } else if (it->key == "proxy") {
+        } else if (it->key == "proxy"_s) {
             auto proxy = it->value->asObject();
             if (!proxy || !deserializeProxy(*proxy))
                 return nullptr;
             result->setValue(it->key, *proxy);
-        } else if (it->key == "strictFileInteractability") {
+        } else if (it->key == "strictFileInteractability"_s) {
             auto strictFileInteractability = it->value->asBoolean();
             if (!strictFileInteractability)
                 return nullptr;
             result->setBoolean(it->key, *strictFileInteractability);
-        } else if (it->key == "timeouts") {
+        } else if (it->key == "timeouts"_s) {
             auto timeouts = it->value->asObject();
             if (!timeouts || !deserializeTimeouts(*timeouts, IgnoreUnknownTimeout::No))
                 return nullptr;
             result->setValue(it->key, *timeouts);
-        } else if (it->key == "unhandledPromptBehavior") {
+        } else if (it->key == "unhandledPromptBehavior"_s) {
             auto unhandledPromptBehavior = it->value->asString();
             if (!unhandledPromptBehavior || !deserializeUnhandledPromptBehavior(unhandledPromptBehavior))
                 return nullptr;
@@ -670,23 +670,23 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
 
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
-        if (it->key == "browserName" && platformCapabilities.browserName) {
+        if (it->key == "browserName"_s && platformCapabilities.browserName) {
             auto browserName = it->value->asString();
             if (!equalIgnoringASCIICase(platformCapabilities.browserName.value(), browserName))
                 return nullptr;
-        } else if (it->key == "browserVersion" && platformCapabilities.browserVersion) {
+        } else if (it->key == "browserVersion"_s && platformCapabilities.browserVersion) {
             auto browserVersion = it->value->asString();
             if (!platformCompareBrowserVersions(browserVersion, platformCapabilities.browserVersion.value()))
                 return nullptr;
-        } else if (it->key == "platformName" && platformCapabilities.platformName) {
+        } else if (it->key == "platformName"_s && platformCapabilities.platformName) {
             auto platformName = it->value->asString();
             if (!equalLettersIgnoringASCIICase(platformName, "any"_s) && platformCapabilities.platformName.value() != platformName)
                 return nullptr;
-        } else if (it->key == "acceptInsecureCerts" && platformCapabilities.acceptInsecureCerts) {
+        } else if (it->key == "acceptInsecureCerts"_s && platformCapabilities.acceptInsecureCerts) {
             auto acceptInsecureCerts = it->value->asBoolean();
             if (acceptInsecureCerts && !platformCapabilities.acceptInsecureCerts.value())
                 return nullptr;
-        } else if (it->key == "proxy") {
+        } else if (it->key == "proxy"_s) {
             auto proxyType = it->value->asObject()->getString("proxyType"_s);
             if (!platformSupportProxyType(proxyType))
                 return nullptr;
@@ -1225,7 +1225,7 @@ void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<voi
     if (auto value = parameters->getValue("type"_s)) {
         auto valueString = value->asString();
         if (!!valueString) {
-            if (valueString == "window" || valueString == "tab")
+            if (valueString == "window"_s || valueString == "tab"_s)
                 typeHint = valueString;
         } else if (!value->isNull()) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
@@ -1313,11 +1313,11 @@ static inline bool isValidStrategy(const String& strategy)
 {
     // §12.1 Locator Strategies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-table-of-location-strategies
-    return strategy == "css selector"
-        || strategy == "link text"
-        || strategy == "partial link text"
-        || strategy == "tag name"
-        || strategy == "xpath";
+    return strategy == "css selector"_s
+        || strategy == "link text"_s
+        || strategy == "partial link text"_s
+        || strategy == "tag name"_s
+        || strategy == "xpath"_s;
 }
 
 static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, Session::ElementIsShadowRoot isShadowRoot, String& strategy, String& selector)
@@ -1337,7 +1337,7 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
         // Currently there is an opened discussion about if the following values has to be supported for a Shadow Root
         // because the current implementation doesn't support them. We have them disabled for now.
         // https://github.com/w3c/webdriver/issues/1610
-        if (strategy == "tag name" || strategy == "xpath") {
+        if (strategy == "tag name"_s || strategy == "xpath"_s) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSelector));
             return false;
         }
@@ -1915,7 +1915,7 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, std::op
 static std::optional<Action> processNullAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     auto subtype = actionItem.getString("type"_s);
-    if (subtype != "pause") {
+    if (subtype != "pause"_s) {
         errorMessage = String("The parameter 'type' in null action is invalid or missing"_s);
         return std::nullopt;
     }
@@ -1931,11 +1931,11 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause")
+    if (subtype == "pause"_s)
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "keyUp")
+    else if (subtype == "keyUp"_s)
         actionSubtype = Action::Subtype::KeyUp;
-    else if (subtype == "keyDown")
+    else if (subtype == "keyDown"_s)
         actionSubtype = Action::Subtype::KeyDown;
     else {
         errorMessage = String("The parameter 'type' of key action is invalid"_s);
@@ -2013,9 +2013,9 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
             action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
         } else {
             auto origin = originValue->asString();
-            if (origin == "viewport")
+            if (origin == "viewport"_s)
                 action.origin = PointerOrigin { PointerOrigin::Type::Viewport, std::nullopt };
-            else if (origin == "pointer")
+            else if (origin == "pointer"_s)
                 action.origin = PointerOrigin { PointerOrigin::Type::Pointer, std::nullopt };
             else {
                 errorMessage = String("The parameter 'origin' is invalid in action"_s);
@@ -2050,15 +2050,15 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause")
+    if (subtype == "pause"_s)
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "pointerUp")
+    else if (subtype == "pointerUp"_s)
         actionSubtype = Action::Subtype::PointerUp;
-    else if (subtype == "pointerDown")
+    else if (subtype == "pointerDown"_s)
         actionSubtype = Action::Subtype::PointerDown;
-    else if (subtype == "pointerMove")
+    else if (subtype == "pointerMove"_s)
         actionSubtype = Action::Subtype::PointerMove;
-    else if (subtype == "pointerCancel")
+    else if (subtype == "pointerCancel"_s)
         actionSubtype = Action::Subtype::PointerCancel;
     else {
         errorMessage = String("The parameter 'type' of pointer action is invalid"_s);
@@ -2107,9 +2107,9 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause")
+    if (subtype == "pause"_s)
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "scroll")
+    else if (subtype == "scroll"_s)
         actionSubtype = Action::Subtype::Scroll;
     else {
         errorMessage = String("The parameter 'type' of wheel action is invalid"_s);
@@ -2175,11 +2175,11 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
     if (!pointerType)
         return parameters;
 
-    if (pointerType == "mouse")
+    if (pointerType == "mouse"_s)
         parameters.pointerType = PointerType::Mouse;
-    else if (pointerType == "pen")
+    else if (pointerType == "pen"_s)
         parameters.pointerType = PointerType::Pen;
-    else if (pointerType == "touch")
+    else if (pointerType == "touch"_s)
         parameters.pointerType = PointerType::Touch;
     else {
         errorMessage = String("The parameter 'pointerType' in action sequence pointer parameters is invalid"_s);
@@ -2199,13 +2199,13 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
 
     auto type = actionSequence->getString("type"_s);
     InputSource::Type inputSourceType;
-    if (type == "key")
+    if (type == "key"_s)
         inputSourceType = InputSource::Type::Key;
-    else if (type == "pointer")
+    else if (type == "pointer"_s)
         inputSourceType = InputSource::Type::Pointer;
-    else if (type == "wheel")
+    else if (type == "wheel"_s)
         inputSourceType = InputSource::Type::Wheel;
-    else if (type == "none")
+    else if (type == "none"_s)
         inputSourceType = InputSource::Type::None;
     else {
         errorMessage = String("The parameter 'type' is invalid or missing in action sequence"_s);

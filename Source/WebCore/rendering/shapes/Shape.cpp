@@ -200,13 +200,12 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { IntPoint(), imageRect.size() });
     
-    // We could get to a value where PixelBuffer could be nullopt. A case where ImageRect.size() is huge, PixelBuffer::tryCreate
-    // can return a nullopt because data size has overflowed. Refer rdar://problem/61793884
+    // We could get to a value where PixelBuffer could be nullptr because ImageRect.size()
+    // is huge and the data size overflows. Refer rdar://problem/61793884.
     if (!pixelBuffer)
         return createShape();
 
-    auto& pixelArray = pixelBuffer->data();
-    unsigned pixelArrayLength = pixelArray.length();
+    unsigned pixelArrayLength = pixelBuffer->sizeInBytes();
     unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
     uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
 
@@ -217,7 +216,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         for (int y = minBufferY; y < maxBufferY; ++y) {
             int startX = -1;
             for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {
-                uint8_t alpha = pixelArray.item(pixelArrayOffset);
+                uint8_t alpha = pixelBuffer->item(pixelArrayOffset);
                 bool alphaAboveThreshold = alpha > alphaPixelThreshold;
                 if (startX == -1 && alphaAboveThreshold) {
                     startX = x;

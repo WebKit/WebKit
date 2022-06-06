@@ -66,7 +66,7 @@ float CSSToLengthConversionData::zoom() const
 FloatSize CSSToLengthConversionData::defaultViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
-        m_viewportDependencyDetectionStyle->setHasViewportUnits();
+        m_viewportDependencyDetectionStyle->setUsesViewportUnits();
 
     if (!m_renderView)
         return { };
@@ -77,7 +77,7 @@ FloatSize CSSToLengthConversionData::defaultViewportFactor() const
 FloatSize CSSToLengthConversionData::smallViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
-        m_viewportDependencyDetectionStyle->setHasViewportUnits();
+        m_viewportDependencyDetectionStyle->setUsesViewportUnits();
 
     if (!m_renderView)
         return { };
@@ -88,7 +88,7 @@ FloatSize CSSToLengthConversionData::smallViewportFactor() const
 FloatSize CSSToLengthConversionData::largeViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
-        m_viewportDependencyDetectionStyle->setHasViewportUnits();
+        m_viewportDependencyDetectionStyle->setUsesViewportUnits();
 
     if (!m_renderView)
         return { };
@@ -99,12 +99,18 @@ FloatSize CSSToLengthConversionData::largeViewportFactor() const
 FloatSize CSSToLengthConversionData::dynamicViewportFactor() const
 {
     if (m_viewportDependencyDetectionStyle)
-        m_viewportDependencyDetectionStyle->setHasViewportUnits();
+        m_viewportDependencyDetectionStyle->setUsesViewportUnits();
 
     if (!m_renderView)
         return { };
 
     return m_renderView->sizeForCSSDynamicViewportUnits() / 100.0;
+}
+
+void CSSToLengthConversionData::setUsesContainerUnits() const
+{
+    if (m_viewportDependencyDetectionStyle)
+        m_viewportDependencyDetectionStyle->setUsesContainerUnits();
 }
 
 } // namespace WebCore

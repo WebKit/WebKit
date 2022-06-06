@@ -326,7 +326,7 @@ static String attributesOfElement(AccessibilityUIElement& element)
 
     bool isFirst = true;
     for (const auto& key : keys) {
-        if (key == "id" || key == "toolkit")
+        if (key == "id"_s || key == "toolkit"_s)
             continue;
 
         if (!isFirst)
@@ -385,7 +385,7 @@ static bool checkElementState(WebCore::AccessibilityObjectAtspi* element, WebCor
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     String attributeName = toWTFString(attribute);
-    if (attributeName == "AXSelectedText") {
+    if (attributeName == "AXSelectedText"_s) {
         if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
             return JSStringCreateWithCharacters(nullptr, 0);
 
@@ -397,18 +397,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    if (attributeName == "AXPlaceholderValue")
+    if (attributeName == "AXPlaceholderValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("placeholder-text"_s)).leakRef();
-    if (attributeName == "AXInvalid") {
+    if (attributeName == "AXInvalid"_s) {
         auto textAttributes = m_element->textAttributes();
         auto value = textAttributes.attributes.get("invalid"_s);
         if (value.isEmpty())
             value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true"_s : "false"_s;
         return OpaqueJSString::tryCreate(value).leakRef();
     }
-    if (attributeName == "AXARIALive")
+    if (attributeName == "AXARIALive"_s)
         return OpaqueJSString::tryCreate(attributes.get("live"_s)).leakRef();
-    if (attributeName == "AXARIARelevant")
+    if (attributeName == "AXARIARelevant"_s)
         return OpaqueJSString::tryCreate(attributes.get("relevant"_s)).leakRef();
 
     return JSStringCreateWithCharacters(nullptr, 0);
@@ -419,21 +419,21 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     String attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    if (attributeName == "AXARIASetSize")
+    if (attributeName == "AXARIASetSize"_s)
         return attributes.get("setsize"_s).toDouble();
-    if (attributeName == "AXARIAPosInSet")
+    if (attributeName == "AXARIAPosInSet"_s)
         return attributes.get("posinset"_s).toDouble();
-    if (attributeName == "AXARIAColumnCount")
+    if (attributeName == "AXARIAColumnCount"_s)
         return attributes.get("colcount"_s).toDouble();
-    if (attributeName == "AXARIARowCount")
+    if (attributeName == "AXARIARowCount"_s)
         return attributes.get("rowcount"_s).toDouble();
-    if (attributeName == "AXARIAColumnIndex")
+    if (attributeName == "AXARIAColumnIndex"_s)
         return attributes.get("colindex"_s).toDouble();
-    if (attributeName == "AXARIARowIndex")
+    if (attributeName == "AXARIARowIndex"_s)
         return attributes.get("rowindex"_s).toDouble();
-    if (attributeName == "AXARIAColumnSpan")
+    if (attributeName == "AXARIAColumnSpan"_s)
         return attributes.get("colspan"_s).toDouble();
-    if (attributeName == "AXARIARowSpan")
+    if (attributeName == "AXARIARowSpan"_s)
         return attributes.get("rowspan"_s).toDouble();
 
     return 0;
@@ -509,18 +509,18 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
     String attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
-    if (attributeName == "AXElementBusy")
+    if (attributeName == "AXElementBusy"_s)
         return checkElementState(m_element.get(), WebCore::Atspi::State::Busy);
-    if (attributeName == "AXModal")
+    if (attributeName == "AXModal"_s)
         return checkElementState(m_element.get(), WebCore::Atspi::State::Modal);
-    if (attributeName == "AXSupportsAutoCompletion")
+    if (attributeName == "AXSupportsAutoCompletion"_s)
         return checkElementState(m_element.get(), WebCore::Atspi::State::SupportsAutocompletion);
-    if (attributeName == "AXInterfaceTable")
+    if (attributeName == "AXInterfaceTable"_s)
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Table);
-    if (attributeName == "AXInterfaceTableCell")
+    if (attributeName == "AXInterfaceTableCell"_s)
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell);
-    if (attributeName == "AXARIAAtomic")
-        return m_element->attributes().get("atomic"_s) == "true";
+    if (attributeName == "AXARIAAtomic"_s)
+        return m_element->attributes().get("atomic"_s) == "true"_s;
 
     return false;
 }
@@ -528,7 +528,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
     String attributeName = toWTFString(attribute);
-    if (attributeName != "AXValue")
+    if (attributeName != "AXValue"_s)
         return false;
 
     m_element->updateBackingStore();
@@ -544,7 +544,7 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
     auto attributes = m_element->attributes();
     String isReadOnly = attributes.get("readonly"_s);
     if (!isReadOnly.isEmpty())
-        return isReadOnly == "true" ? false : true;
+        return isReadOnly == "true"_s ? false : true;
 
     // If we have a listbox or combobox and the value can be set, the options should be selectable.
     auto elementRole = m_element->role();
@@ -578,19 +578,19 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
     String attributeName = toWTFString(attribute);
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    if (attributeName == "AXARIASetSize")
+    if (attributeName == "AXARIASetSize"_s)
         return attributes.contains("setsize"_s);
-    if (attributeName == "AXARIAPosInSet")
+    if (attributeName == "AXARIAPosInSet"_s)
         return attributes.contains("posinset"_s);
-    if (attributeName == "AXARIALive") {
+    if (attributeName == "AXARIALive"_s) {
         auto value = attributes.get("live"_s);
-        return !value.isEmpty() && value != "off";
+        return !value.isEmpty() && value != "off"_s;
     }
-    if (attributeName == "AXARIARelevant")
+    if (attributeName == "AXARIARelevant"_s)
         return attributes.contains("relevant"_s);
-    if (attributeName == "AXARIAAtomic")
+    if (attributeName == "AXARIAAtomic"_s)
         return attributes.contains("atomic"_s);
-    if (attributeName == "AXElementBusy")
+    if (attributeName == "AXElementBusy"_s)
         return true;
 
     return false;
@@ -1018,7 +1018,7 @@ bool AccessibilityUIElement::isPressActionSupported()
 {
     m_element->updateBackingStore();
     auto name = m_element->actionName();
-    return name == "press" || name == "jump";
+    return name == "press"_s || name == "jump"_s;
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
@@ -1103,7 +1103,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
 bool AccessibilityUIElement::ariaIsGrabbed() const
 {
     m_element->updateBackingStore();
-    return m_element->attributes().get("grabbed"_s) == "true";
+    return m_element->attributes().get("grabbed"_s) == "true"_s;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const

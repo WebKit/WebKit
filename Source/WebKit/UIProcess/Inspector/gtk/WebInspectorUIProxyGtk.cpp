@@ -509,17 +509,13 @@ void WebInspectorUIProxy::platformStartWindowDrag()
 static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);
-    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
-        return;
-
-    auto* page = static_cast<WebPageProxy*>(userData);
-    GUniquePtr<char> path(g_file_get_path(file));
-    page->send(Messages::WebInspectorUI::DidSave(String::fromUTF8(path.get())));
+    g_file_replace_contents_finish(file, result, nullptr, nullptr);
 }
 
-void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    UNUSED_PARAM(forceSaveDialog);
+    ASSERT(saveDatas.size() == 1);
+    UNUSED_PARAM(forceSaveAs);
 
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
@@ -536,7 +532,7 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
-    URL url { suggestedURL };
+    URL url { saveDatas[0].url };
     // Strip leading / character.
     gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
 
@@ -545,14 +541,14 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
 
     Vector<uint8_t> dataVector;
     CString dataString;
-    if (base64Encoded) {
-        auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
+    if (saveDatas[0].base64Encoded) {
+        auto decodedData = base64Decode(saveDatas[0].content, Base64DecodeOptions::ValidatePadding);
         if (!decodedData)
             return;
         decodedData->shrinkToFit();
         dataVector = WTFMove(*decodedData);
     } else
-        dataString = content.utf8();
+        dataString = saveDatas[0].content.utf8();
 
     const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
@@ -560,11 +556,6 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, m_inspectorPage);
-}
-
-void WebInspectorUIProxy::platformAppend(const String&, const String&)
-{
-    notImplemented();
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

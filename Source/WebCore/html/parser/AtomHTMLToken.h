@@ -34,17 +34,17 @@
 
 namespace WebCore {
 
-enum class HasDuplicateAttribute : bool { No, Yes };
-
 class AtomHTMLToken {
 public:
+    using Type = HTMLToken::Type;
+
     explicit AtomHTMLToken(HTMLToken&);
-    AtomHTMLToken(HTMLToken::Type, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
+    AtomHTMLToken(Type, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
 
     AtomHTMLToken(const AtomHTMLToken&) = delete;
     AtomHTMLToken(AtomHTMLToken&&) = default;
 
-    HTMLToken::Type type() const;
+    Type type() const;
 
     // StartTag, EndTag, DOCTYPE.
 
@@ -67,8 +67,7 @@ public:
 
     // Characters
 
-    const UChar* characters() const;
-    unsigned charactersLength() const;
+    Span<const UChar> characters() const;
     bool charactersIsAll8BitData() const;
 
     // Comment
@@ -76,108 +75,98 @@ public:
     const String& comment() const;
     String& comment();
 
-    HasDuplicateAttribute hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
+    bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; }
 
 private:
-    HTMLToken::Type m_type;
-
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
 
     AtomString m_name; // StartTag, EndTag, DOCTYPE.
-
     String m_data; // Comment
+    std::unique_ptr<DoctypeData> m_doctypeData; // DOCTYPE.
+    Vector<Attribute> m_attributes; // StartTag, EndTag.
 
     // We don't want to copy the characters out of the HTMLToken, so we keep a pointer to its buffer instead.
     // This buffer is owned by the HTMLToken and causes a lifetime dependence between these objects.
     // FIXME: Add a mechanism for "internalizing" the characters when the HTMLToken is destroyed.
-    const UChar* m_externalCharacters; // Character
-    unsigned m_externalCharactersLength; // Character
+    Span<const UChar> m_externalCharacters; // Character
+
+    Type m_type;
     bool m_externalCharactersIsAll8BitData; // Character
-
-    std::unique_ptr<DoctypeData> m_doctypeData; // DOCTYPE.
-
-    bool m_selfClosing; // StartTag, EndTag.
-    Vector<Attribute> m_attributes; // StartTag, EndTag.
-
-    HasDuplicateAttribute m_hasDuplicateAttribute { HasDuplicateAttribute::No };
+    bool m_selfClosing { false }; // StartTag, EndTag.
+    bool m_hasDuplicateAttribute { false };
 };
 
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
 bool hasAttribute(const Vector<Attribute>&, const AtomString& localName);
 
-inline HTMLToken::Type AtomHTMLToken::type() const
+inline auto AtomHTMLToken::type() const -> Type
 {
     return m_type;
 }
 
 inline const AtomString& AtomHTMLToken::name() const
 {
-    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag || m_type == Type::DOCTYPE);
     return m_name;
 }
 
 inline void AtomHTMLToken::setName(const AtomString& name)
 {
-    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag || m_type == Type::DOCTYPE);
     m_name = name;
 }
 
 inline bool AtomHTMLToken::selfClosing() const
 {
-    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
     return m_selfClosing;
 }
 
 inline Vector<Attribute>& AtomHTMLToken::attributes()
 {
-    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
     return m_attributes;
 }
 
 inline const Vector<Attribute>& AtomHTMLToken::attributes() const
 {
-    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
     return m_attributes;
 }
 
-inline const UChar* AtomHTMLToken::characters() const
+inline Span<const UChar> AtomHTMLToken::characters() const
 {
-    ASSERT(m_type == HTMLToken::Character);
+    ASSERT(m_type == Type::Character);
     return m_externalCharacters;
-}
-
-inline unsigned AtomHTMLToken::charactersLength() const
-{
-    ASSERT(m_type == HTMLToken::Character);
-    return m_externalCharactersLength;
 }
 
 inline bool AtomHTMLToken::charactersIsAll8BitData() const
 {
+    ASSERT(m_type == Type::Character);
     return m_externalCharactersIsAll8BitData;
 }
 
 inline const String& AtomHTMLToken::comment() const
 {
-    ASSERT(m_type == HTMLToken::Comment);
+    ASSERT(m_type == Type::Comment);
     return m_data;
 }
 
 inline String& AtomHTMLToken::comment()
 {
-    ASSERT(m_type == HTMLToken::Comment);
+    ASSERT(m_type == Type::Comment);
     return m_data;
 }
 
 inline bool AtomHTMLToken::forceQuirks() const
 {
-    ASSERT(m_type == HTMLToken::DOCTYPE);
+    ASSERT(m_type == Type::DOCTYPE);
     return m_doctypeData->forceQuirks;
 }
 
 inline String AtomHTMLToken::publicIdentifier() const
 {
-    ASSERT(m_type == HTMLToken::DOCTYPE);
+    ASSERT(m_type == Type::DOCTYPE);
     if (!m_doctypeData->hasPublicIdentifier)
         return String();
     return StringImpl::create8BitIfPossible(m_doctypeData->publicIdentifier);
@@ -226,7 +215,7 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
         if (addedAttributes.add(qualifiedName.localName()).isNewEntry)
             m_attributes.uncheckedAppend(Attribute(WTFMove(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value)));
         else
-            m_hasDuplicateAttribute = HasDuplicateAttribute::Yes;
+            m_hasDuplicateAttribute = true;
     }
 }
 
@@ -234,35 +223,34 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     : m_type(token.type())
 {
     switch (m_type) {
-    case HTMLToken::Uninitialized:
+    case Type::Uninitialized:
         ASSERT_NOT_REACHED();
         return;
-    case HTMLToken::DOCTYPE:
+    case Type::DOCTYPE:
         if (LIKELY(token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().impl(), token.name().data(), 4)))
             m_name = HTMLNames::htmlTag->localName();
         else
             m_name = AtomString(token.name().data(), token.name().size());
         m_doctypeData = token.releaseDoctypeData();
         return;
-    case HTMLToken::EndOfFile:
+    case Type::EndOfFile:
         return;
-    case HTMLToken::StartTag:
-    case HTMLToken::EndTag:
+    case Type::StartTag:
+    case Type::EndTag:
         m_selfClosing = token.selfClosing();
         m_name = HTMLNames::findHTMLTag(token.name());
         if (UNLIKELY(m_name.isNull()))
             m_name = AtomString(token.name().data(), token.name().size());
         initializeAttributes(token.attributes());
         return;
-    case HTMLToken::Comment:
+    case Type::Comment:
         if (token.commentIsAll8BitData())
             m_data = String::make8BitFrom16BitSource(token.comment());
         else
             m_data = String(token.comment());
         return;
-    case HTMLToken::Character:
-        m_externalCharacters = token.characters().data();
-        m_externalCharactersLength = token.characters().size();
+    case Type::Character:
+        m_externalCharacters = token.characters().span();
         m_externalCharactersIsAll8BitData = token.charactersIsAll8BitData();
         return;
     }
@@ -270,12 +258,11 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
 }
 
 inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, const AtomString& name, Vector<Attribute>&& attributes)
-    : m_type(type)
-    , m_name(name)
-    , m_selfClosing(false)
+    : m_name(name)
     , m_attributes(WTFMove(attributes))
+    , m_type(type)
 {
-    ASSERT(type == HTMLToken::StartTag || type == HTMLToken::EndTag);
+    ASSERT(type == Type::StartTag || type == Type::EndTag);
 }
 
 } // namespace WebCore

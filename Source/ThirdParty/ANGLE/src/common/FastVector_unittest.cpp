@@ -319,6 +319,32 @@ TEST(FlatUnorderedSet, BasicUsage)
     }
 }
 
+// Comparison of FlatUnorderedSet
+TEST(FlatUnorderedSet, Comparison)
+{
+    FlatUnorderedSet<int, 3> testSet0;
+    FlatUnorderedSet<int, 3> testSet1;
+    EXPECT_TRUE(testSet0.empty());
+    EXPECT_TRUE(testSet1.empty());
+
+    testSet0.insert(5);
+    EXPECT_FALSE(testSet0 == testSet1);
+
+    testSet0.insert(10);
+    EXPECT_FALSE(testSet0 == testSet1);
+
+    testSet1.insert(5);
+    EXPECT_FALSE(testSet0 == testSet1);
+
+    testSet1.insert(15);
+    EXPECT_FALSE(testSet0 == testSet1);
+
+    testSet1.clear();
+    testSet1.insert(5);
+    testSet1.insert(10);
+    EXPECT_TRUE(testSet0 == testSet1);
+}
+
 // Basic functionality for FastIntegerSet
 TEST(FastIntegerSet, BasicUsage)
 {

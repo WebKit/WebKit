@@ -433,7 +433,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 + (BOOL)web_requiresCustomSnapshotting
 {
-    static bool hasGlobalCaptureEntitlement = WTF::processHasEntitlement("com.apple.QuartzCore.global-capture");
+    static bool hasGlobalCaptureEntitlement = WTF::processHasEntitlement("com.apple.QuartzCore.global-capture"_s);
     return !hasGlobalCaptureEntitlement;
 }
 

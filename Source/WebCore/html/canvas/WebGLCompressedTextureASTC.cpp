@@ -24,12 +24,10 @@
  */
 
 #include "config.h"
-#include "WebGLCompressedTextureASTC.h"
 
 #if ENABLE(WEBGL)
+#include "WebGLCompressedTextureASTC.h"
 
-#include "RuntimeEnabledFeatures.h"
-#include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

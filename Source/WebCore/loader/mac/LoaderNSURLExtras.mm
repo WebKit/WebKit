@@ -62,7 +62,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
     // Do not correct filenames that are reported with a mime type of tar, and 
     // have a filename which has .tar in it or ends in .tgz
-    if ((mimeType == "application/tar" || mimeType == "application/x-tar")
+    if ((mimeType == "application/tar"_s || mimeType == "application/x-tar"_s)
         && (String(filename).containsIgnoringASCIICase(".tar"_s)
         || String(filename).endsWithIgnoringASCIICase(".tgz"_s))) {
         return filename;
@@ -70,7 +70,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
     // I don't think we need to worry about this for the image case
     // If the type is known, check the extension and correct it if necessary.
-    if (mimeType != "application/octet-stream" && mimeType != "text/plain") {
+    if (mimeType != "application/octet-stream"_s && mimeType != "text/plain"_s) {
         Vector<String> extensions = MIMETypeRegistry::extensionsForMIMEType(mimeType);
 
         if (extensions.isEmpty() || !extensions.contains(String(extension))) {

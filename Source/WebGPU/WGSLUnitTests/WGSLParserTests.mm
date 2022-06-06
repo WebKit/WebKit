@@ -55,14 +55,14 @@
     XCTAssert(shader->globalVars().size() == 0);
     XCTAssert(shader->functions().size() == 0);
     WGSL::AST::StructDecl& str = shader->structs()[0];
-    XCTAssert(str.name() == "B");
+    XCTAssert(str.name() == "B"_s);
     XCTAssert(str.attributes().isEmpty());
     XCTAssert(str.members().size() == 1);
     XCTAssert(str.members()[0]->attributes().isEmpty());
-    XCTAssert(str.members()[0]->name() == "a");
+    XCTAssert(str.members()[0]->name() == "a"_s);
     XCTAssert(str.members()[0]->type().isNamed());
     WGSL::AST::NamedType& memberType = downcast<WGSL::AST::NamedType>(str.members()[0]->type());
-    XCTAssert(memberType.name() == "i32");
+    XCTAssert(memberType.name() == "i32"_s);
 }
 
 - (void)testParsingGlobalVariable {
@@ -81,14 +81,14 @@
     XCTAssert(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group() == 0);
     XCTAssert(var.attributes()[1]->isBinding());
     XCTAssert(downcast<WGSL::AST::BindingAttribute>(var.attributes()[1].get()).binding() == 0);
-    XCTAssert(var.name() == "x");
+    XCTAssert(var.name() == "x"_s);
     XCTAssert(var.maybeQualifier());
     XCTAssert(var.maybeQualifier()->storageClass() == WGSL::AST::StorageClass::Storage);
     XCTAssert(var.maybeQualifier()->accessMode() == WGSL::AST::AccessMode::ReadWrite);
     XCTAssert(var.maybeTypeDecl());
     XCTAssert(var.maybeTypeDecl()->isNamed());
     WGSL::AST::NamedType& namedType = downcast<WGSL::AST::NamedType>(*var.maybeTypeDecl());
-    XCTAssert(namedType.name() == "B");
+    XCTAssert(namedType.name() == "B"_s);
     XCTAssert(!var.maybeInitializer());
 }
 
@@ -108,7 +108,7 @@
     XCTAssert(func.attributes().size() == 1);
     XCTAssert(func.attributes()[0]->isStage());
     XCTAssert(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage() == WGSL::AST::StageAttribute::Stage::Compute);
-    XCTAssert(func.name() == "main");
+    XCTAssert(func.name() == "main"_s);
     XCTAssert(func.parameters().size() == 0);
     XCTAssert(func.returnAttributes().isEmpty());
     XCTAssert(func.maybeReturnType() == nullptr);
@@ -120,8 +120,8 @@
     WGSL::AST::StructureAccess& structAccess = downcast<WGSL::AST::StructureAccess>(*stmt.maybeLhs());
     XCTAssert(structAccess.base()->isIdentifier());
     WGSL::AST::IdentifierExpression base = downcast<WGSL::AST::IdentifierExpression>(structAccess.base().get());
-    XCTAssert(base.identifier() == "x");
-    XCTAssert(structAccess.fieldName() == "a");
+    XCTAssert(base.identifier() == "x"_s);
+    XCTAssert(structAccess.fieldName() == "a"_s);
     XCTAssert(stmt.rhs().isInt32Literal());
     WGSL::AST::Int32Literal& rhs = downcast<WGSL::AST::Int32Literal>(stmt.rhs());
     XCTAssert(rhs.value() == 42);
@@ -149,9 +149,9 @@
         XCTAssert(func.attributes().size() == 1);
         XCTAssert(func.attributes()[0]->isStage());
         XCTAssert(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage() == WGSL::AST::StageAttribute::Stage::Vertex);
-        XCTAssert(func.name() == "vertexShader");
+        XCTAssert(func.name() == "vertexShader"_s);
         XCTAssert(func.parameters().size() == 1);
-        XCTAssert(func.parameters()[0]->name() == "x");
+        XCTAssert(func.parameters()[0]->name() == "x"_s);
         XCTAssert(func.parameters()[0]->attributes().size() == 1);
         XCTAssert(func.parameters()[0]->attributes()[0]->isLocation());
         XCTAssert(downcast<WGSL::AST::LocationAttribute>(func.parameters()[0]->attributes()[0].get()).location() == 0);
@@ -159,10 +159,10 @@
         WGSL::AST::ParameterizedType& paramType = downcast<WGSL::AST::ParameterizedType>(func.parameters()[0]->type());
         XCTAssert(paramType.base() == WGSL::AST::ParameterizedType::Base::Vec4);
         XCTAssert(paramType.elementType().isNamed());
-        XCTAssert(downcast<WGSL::AST::NamedType>(paramType.elementType()).name() == "f32");
+        XCTAssert(downcast<WGSL::AST::NamedType>(paramType.elementType()).name() == "f32"_s);
         XCTAssert(func.returnAttributes().size() == 1);
         XCTAssert(func.returnAttributes()[0]->isBuiltin());
-        XCTAssert(downcast<WGSL::AST::BuiltinAttribute>(func.returnAttributes()[0].get()).name() == "position");
+        XCTAssert(downcast<WGSL::AST::BuiltinAttribute>(func.returnAttributes()[0].get()).name() == "position"_s);
         XCTAssert(func.maybeReturnType());
         XCTAssert(func.maybeReturnType()->isParameterized());
         XCTAssert(func.body().statements().size() == 1);
@@ -177,7 +177,7 @@
         XCTAssert(func.attributes().size() == 1);
         XCTAssert(func.attributes()[0]->isStage());
         XCTAssert(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage() == WGSL::AST::StageAttribute::Stage::Fragment);
-        XCTAssert(func.name() == "fragmentShader");
+        XCTAssert(func.name() == "fragmentShader"_s);
         XCTAssert(func.parameters().size() == 0);
         XCTAssert(func.returnAttributes().size() == 1);
         XCTAssert(func.returnAttributes()[0]->isLocation());

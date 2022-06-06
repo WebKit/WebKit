@@ -199,7 +199,7 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
     if (auto map = style.counterDirectives())
         directives = map->get(identifier);
 
-    if (identifier == "list-item") {
+    if (identifier == "list-item"_s) {
         auto itemDirectives = listItemCounterDirectives(renderer);
         if (!directives.resetValue)
             directives.resetValue = itemDirectives.resetValue;

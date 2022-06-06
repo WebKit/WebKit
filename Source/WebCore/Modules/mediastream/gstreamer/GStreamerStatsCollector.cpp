@@ -203,13 +203,13 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
 
 static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& type)
 {
-    if (type == "host")
+    if (type == "host"_s)
         return RTCIceCandidateType::Host;
-    if (type == "srflx")
+    if (type == "srflx"_s)
         return RTCIceCandidateType::Srflx;
-    if (type == "prflx")
+    if (type == "prflx"_s)
         return RTCIceCandidateType::Prflx;
-    if (type == "relay")
+    if (type == "relay"_s)
         return RTCIceCandidateType::Relay;
 
     return { };

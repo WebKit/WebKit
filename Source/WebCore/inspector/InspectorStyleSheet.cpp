@@ -474,7 +474,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
 
         if (is<CSSMediaRule>(parentRule)) {
             auto* media = downcast<CSSMediaRule>(parentRule)->media();
-            if (media && media->length() && media->mediaText() != "all") {
+            if (media && media->length() && media->mediaText() != "all"_s) {
                 auto mediaRulePayload = Protocol::CSS::Grouping::create()
                     .setType(Protocol::CSS::Grouping::Type::MediaRule)
                     .release();
@@ -492,7 +492,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
             }
 
             auto& media = downcast<CSSImportRule>(parentRule)->media();
-            if (media.length() && media.mediaText() != "all") {
+            if (media.length() && media.mediaText() != "all"_s) {
                 auto mediaRulePayload = Protocol::CSS::Grouping::create()
                     .setType(Protocol::CSS::Grouping::Type::MediaImportRule)
                     .release();
@@ -550,7 +550,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
         auto* styleSheet = parentRule->parentStyleSheet();
         while (styleSheet) {
             auto* media = styleSheet->media();
-            if (media && media->length() && media->mediaText() != "all") {
+            if (media && media->length() && media->mediaText() != "all"_s) {
                 auto sheetGroupingPayload = Protocol::CSS::Grouping::create()
                     .setType(is<HTMLStyleElement>(styleSheet->ownerNode()) ? Protocol::CSS::Grouping::Type::MediaStyleNode: Protocol::CSS::Grouping::Type::MediaLinkNode)
                     .release();
@@ -842,7 +842,7 @@ String InspectorStyle::shorthandValue(const String& shorthandProperty) const
         if (m_style->isPropertyImplicit(individualProperty))
             continue;
         String individualValue = m_style->getPropertyValue(individualProperty);
-        if (individualValue == "initial")
+        if (individualValue == "initial"_s)
             continue;
         if (!builder.isEmpty())
             builder.append(' ');

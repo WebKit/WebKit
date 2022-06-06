@@ -1017,11 +1017,11 @@ HRESULT WebFrame::setTextDirection(_In_ BSTR direction)
         return E_UNEXPECTED;
 
     String directionString(direction, SysStringLen(direction));
-    if (directionString == "auto")
+    if (directionString == "auto"_s)
         coreFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
-    else if (directionString == "ltr")
+    else if (directionString == "ltr"_s)
         coreFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
-    else if (directionString == "rtl")
+    else if (directionString == "rtl"_s)
         coreFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
     return S_OK;
 }
@@ -1351,7 +1351,7 @@ HRESULT WebFrame::canProvideDocumentSource(bool* result)
         BString mimeTypeBStr;
         if (SUCCEEDED(urlResponse->MIMEType(&mimeTypeBStr))) {
             String mimeType(mimeTypeBStr, SysStringLen(mimeTypeBStr));
-            *result = mimeType == "text/html" || WebCore::MIMETypeRegistry::isXMLMIMEType(mimeType);
+            *result = mimeType == "text/html"_s || WebCore::MIMETypeRegistry::isXMLMIMEType(mimeType);
         }
     }
     return hr;

@@ -361,16 +361,16 @@ int64_t PlatformPasteboard::changeCount() const
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (domType == "text/plain")
+    if (domType == "text/plain"_s)
         return kUTTypePlainText;
 
-    if (domType == "text/html")
+    if (domType == "text/html"_s)
         return kUTTypeHTML;
 
-    if (domType == "text/uri-list")
+    if (domType == "text/uri-list"_s)
         return kUTTypeURL;
 
-    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png"_s)
         return kUTTypePNG;
 ALLOW_DEPRECATED_DECLARATIONS_END
 

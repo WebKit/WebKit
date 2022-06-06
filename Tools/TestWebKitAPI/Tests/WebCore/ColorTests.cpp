@@ -241,7 +241,7 @@ TEST(Color, Constructor)
     EXPECT_FLOAT_EQ(0.5, g);
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
-    EXPECT_EQ(serializationForCSS(c1), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c1), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 TEST(Color, CopyConstructor)
@@ -256,7 +256,7 @@ TEST(Color, CopyConstructor)
     EXPECT_FLOAT_EQ(0.5, g);
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
-    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 TEST(Color, Assignment)
@@ -271,7 +271,7 @@ TEST(Color, Assignment)
     EXPECT_FLOAT_EQ(0.5, g);
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
-    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 TEST(Color, Equality)
@@ -333,7 +333,7 @@ TEST(Color, MoveConstructor)
     EXPECT_FLOAT_EQ(0.5, g);
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
-    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 TEST(Color, MoveAssignment)
@@ -354,7 +354,7 @@ TEST(Color, MoveAssignment)
     EXPECT_FLOAT_EQ(0.5, g);
     EXPECT_FLOAT_EQ(0.25, b);
     EXPECT_FLOAT_EQ(1.0, alpha);
-    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 Color makeColor()
@@ -365,7 +365,7 @@ Color makeColor()
 TEST(Color, ReturnValues)
 {
     Color c2 = makeColor();
-    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)");
+    EXPECT_EQ(serializationForCSS(c2), "color(display-p3 1 0.5 0.25)"_s);
 }
 
 TEST(Color, P3ConversionToSRGB)

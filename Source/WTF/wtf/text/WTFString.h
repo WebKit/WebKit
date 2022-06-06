@@ -61,6 +61,7 @@ public:
 
     // Construct a string with UTF-16 data.
     WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
+    ALWAYS_INLINE String(Span<const UChar> characters) : String(characters.data(), characters.size()) { }
 
     // Construct a string by copying the contents of a vector.  To avoid
     // copying, consider using String::adopt instead.
@@ -76,6 +77,7 @@ public:
     // Construct a string with Latin-1 data.
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
+    ALWAYS_INLINE String(Span<const LChar> characters) : String(characters.data(), characters.size()) { }
     ALWAYS_INLINE static String fromLatin1(const char* characters) { return String { characters }; }
 
     // Construct a string referencing an existing StringImpl.
@@ -335,19 +337,13 @@ private:
 static_assert(sizeof(String) == sizeof(void*), "String should effectively be a pointer to a StringImpl, and efficient to pass by value");
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
-inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const String& a, ASCIILiteral b) { return equal(a.impl(), b); }
-inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
-inline bool operator==(const char* a, const String& b) { return equal(reinterpret_cast<const LChar*>(a), b.impl()); }
 inline bool operator==(ASCIILiteral a, const String& b) { return equal(b.impl(), a); }
 template<size_t inlineCapacity> inline bool operator==(const Vector<char, inlineCapacity>& a, const String& b) { return equal(b.impl(), a.data(), a.size()); }
 template<size_t inlineCapacity> inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
 inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator!=(const String& a, ASCIILiteral b) { return !equal(a.impl(), b); }
-inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
-inline bool operator!=(const char* a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a), b.impl()); }
 inline bool operator!=(ASCIILiteral a, const String& b) { return !equal(b.impl(), a); }
 template<size_t inlineCapacity> inline bool operator!=(const Vector<char, inlineCapacity>& a, const String& b) { return !(a == b); }
 template<size_t inlineCapacity> inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }

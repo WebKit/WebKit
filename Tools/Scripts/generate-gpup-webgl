@@ -96,7 +96,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
 #endif
-#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC)
+#if USE(LIBGBM)
+    void PrepareForDisplay() -> (WebCore::DMABufObject dmabufObject) Synchronous NotStreamEncodableReply
+#endif
+#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(LIBGBM)
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
@@ -118,6 +121,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void PaintRenderingResultsToPixelBuffer() -> (std::optional<IPC::PixelBufferReference> returnValue) Synchronous
 {}
 }}
 
@@ -825,8 +829,9 @@ class webkit_ipc_cpp_impl(object):
         self.return_value_expr = return_value_expr
 
     def __str__(self):
+        nolint = " // NOLINT" if "_" in self.name else ""
         body = "".join(f"\n        {b}" for b in self.pre_call_stmts + self.call_stmts + self.post_call_stmts)
-        return f"""    void {self.name}{self.overload_suffix}({str(self.args)})
+        return f"""    void {self.name}{self.overload_suffix}({str(self.args)}){nolint}
     {{{body}
     }}"""
 

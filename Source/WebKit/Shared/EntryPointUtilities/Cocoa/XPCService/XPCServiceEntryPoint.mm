@@ -45,7 +45,7 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (isClientSandboxed()) {
         // FIXME(<rdar://problem/54178641>): Remove this check once WebKit can work without network access.
-        if (hasEntitlement("com.apple.security.network.client"))
+        if (hasEntitlement("com.apple.security.network.client"_s))
             return true;
 
         audit_token_t auditToken = { };
@@ -144,7 +144,7 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     return true;
 }
 
-bool XPCServiceInitializerDelegate::hasEntitlement(const char* entitlement)
+bool XPCServiceInitializerDelegate::hasEntitlement(ASCIILiteral entitlement)
 {
     return WTF::hasEntitlement(m_connection.get(), entitlement);
 }

@@ -390,7 +390,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return false;
     
 #if !PLATFORM(IOS_FAMILY) && !ENABLE(BUBBLEWRAP_SANDBOX)
-    if (m_data.protocol == "file" && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
+    if (m_data.protocol == "file"_s && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 
@@ -505,7 +505,7 @@ String SecurityOrigin::toString() const
 {
     if (isUnique())
         return "null"_s;
-    if (m_data.protocol == "file" && m_enforcesFilePathSeparation)
+    if (m_data.protocol == "file"_s && m_enforcesFilePathSeparation)
         return "null"_s;
     return toRawString();
 }
@@ -530,7 +530,7 @@ static inline bool areOriginsMatching(const SecurityOrigin& origin1, const Secur
     if (origin1.protocol() != origin2.protocol())
         return false;
 
-    if (origin1.protocol() == "file")
+    if (origin1.protocol() == "file"_s)
         return origin1.enforcesFilePathSeparation() == origin2.enforcesFilePathSeparation();
 
     if (origin1.host() != origin2.host())

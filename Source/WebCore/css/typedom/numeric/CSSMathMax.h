@@ -37,16 +37,17 @@ class CSSNumericArray;
 class CSSMathMax final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMax);
 public:
-    template<typename... Args> static Ref<CSSMathMax> create(Args&&... args) { return adoptRef(*new CSSMathMax(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSMathMax>> create(FixedVector<CSSNumberish>&&);
+    static ExceptionOr<Ref<CSSMathMax>> create(Vector<Ref<CSSNumericValue>>&&);
     const CSSNumericArray& values() const;
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Max; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMax; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    std::optional<SumValue> toSumValue() const final;
 
-    CSSMathMax(FixedVector<CSSNumberish>&&);
-    CSSMathMax(Vector<Ref<CSSNumericValue>>&&);
+    CSSMathMax(Vector<Ref<CSSNumericValue>>&&, CSSNumericType&&);
     Ref<CSSNumericArray> m_values;
 };
 

@@ -27,7 +27,7 @@ media.addEventListener("webkitfullscreenchange", () => {
         shadowRoot.host.remove();
         finishJSTest();
     });
-});
+}, { once: true });
 
 media.addEventListener("play", () => {
     media.pause();

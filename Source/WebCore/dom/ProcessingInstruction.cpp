@@ -86,7 +86,7 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, Clo
 
 void ProcessingInstruction::checkStyleSheet()
 {
-    if (m_target == "xml-stylesheet" && document().frame() && parentNode() == &document()) {
+    if (m_target == "xml-stylesheet"_s && document().frame() && parentNode() == &document()) {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
@@ -97,7 +97,7 @@ void ProcessingInstruction::checkStyleSheet()
 
         m_isCSS = type.isEmpty() || type == cssContentTypeAtom();
 #if ENABLE(XSLT)
-        m_isXSL = type == "text/xml" || type == "text/xsl" || type == "application/xml" || type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom+xml";
+        m_isXSL = type == "text/xml"_s || type == "text/xsl"_s || type == "application/xml"_s || type == "application/xhtml+xml"_s || type == "application/rss+xml"_s || type == "application/atom+xml"_s;
         if (!m_isCSS && !m_isXSL)
 #else
         if (!m_isCSS)
@@ -106,7 +106,7 @@ void ProcessingInstruction::checkStyleSheet()
 
         String href = attributes->get<HashTranslatorASCIILiteral>("href"_s);
         String alternate = attributes->get<HashTranslatorASCIILiteral>("alternate"_s);
-        m_alternate = alternate == "yes";
+        m_alternate = alternate == "yes"_s;
         m_title = attributes->get<HashTranslatorASCIILiteral>("title"_s);
         m_media = attributes->get<HashTranslatorASCIILiteral>("media"_s);
 

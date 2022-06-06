@@ -8781,6 +8781,138 @@ TEST_P(StateChangeTestES3, CullFaceAndFrontFace)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests state change for draw primitive mode
+TEST_P(StateChangeTestES3, PrimitiveMode)
+{
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+uniform float height;
+
+// Hardcoded positions for a number of draw modes, using different vertex offsets.
+const vec2 kVertices[35] = vec2[35](
+    // Two triangle
+    vec2(-1, -1), vec2(1, -1), vec2(-1, 1),
+    vec2(-1,  1), vec2(1, -1), vec2( 1, 1),
+    // A triangle strip with 8 triangles
+    vec2(   -1, -0.5), vec2(   -1,  0.5),
+    vec2(-0.75, -0.5), vec2(-0.75,  0.5),
+    vec2( -0.5, -0.5), vec2( -0.5,  0.5),
+    vec2(-0.25, -0.5), vec2(-0.25,  0.5),
+    vec2(    0, -0.5), vec2(    0,  0.5),
+    // A triangle fan with 4 triangles
+    vec2(0.5, 0), vec2(1, -0.5), vec2(1, 0.5), vec2(0, 0.5), vec2(0, -0.5), vec2(1, -0.5),
+    // One line
+    vec2(-1, -0.49), vec2(1, -0.49),
+    // One line strip
+    vec2(-1, 0.51), vec2(0, 0.51), vec2(1, 0.51),
+    // One line loop
+    vec2(-.99, -.99), vec2(0.99, -.99), vec2(0.99, 0.99), vec2(-.99, 0.99),
+    // Four points
+    vec2(-.99, -.99), vec2(0.99, -.99), vec2(0.99, 0.99), vec2(-.99, 0.99)
+);
+
+void main()
+{
+    gl_Position = vec4(kVertices[gl_VertexID], 0, 1);
+    gl_PointSize = 1.;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 colorOut;
+uniform vec4 color;
+void main()
+{
+    colorOut = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, "color");
+    ASSERT_NE(colorLoc, -1);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw the following:
+    //
+    // 1. Red with two triangles
+    // 2. Green with a triangle strip
+    // 3. Blue with a triangle fan
+    // 4. Yellow with a line
+    // 5. Cyan with a line strip
+    // 6. Magenta with a line loop
+    // 7. White with four points
+    //
+    //
+    //     +---------------------------+  <-- 7: corners
+    //     |                           |
+    //     |             1             |
+    //     |                           |
+    //     +-------------+-------------+  <-- 5: horizontal line
+    //     |             |             |
+    //     |             |             |
+    //     |             |             |
+    //     |      2      |      3      |  <-- 6: border around image
+    //     |             |             |
+    //     |             |             |
+    //     |             |             |
+    //     +-------------+-------------+  <-- 4: horizontal line
+    //     |                           |
+    //     |             1             |
+    //     |                           |
+    //     +---------------------------+
+
+    glUniform4f(colorLoc, 1, 0, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glUniform4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLE_STRIP, 6, 10);
+
+    glUniform4f(colorLoc, 0, 0, 1, 1);
+    glDrawArrays(GL_TRIANGLE_FAN, 16, 6);
+
+    glUniform4f(colorLoc, 1, 1, 0, 1);
+    glDrawArrays(GL_LINES, 22, 2);
+
+    glUniform4f(colorLoc, 0, 1, 1, 1);
+    glDrawArrays(GL_LINE_STRIP, 24, 3);
+
+    glUniform4f(colorLoc, 1, 0, 1, 1);
+    glDrawArrays(GL_LINE_LOOP, 27, 4);
+
+    glUniform4f(colorLoc, 1, 1, 1, 1);
+    glDrawArrays(GL_POINTS, 31, 4);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Verify results
+    EXPECT_PIXEL_RECT_EQ(1, 1, w - 2, h / 4 - 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(1, 3 * h / 4 + 1, w - 2, h / 4 - 2, GLColor::red);
+
+    EXPECT_PIXEL_RECT_EQ(1, h / 4 + 1, w / 2 - 2, h / 2 - 2, GLColor::green);
+
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, h / 4 + 1, w / 2 - 2, h / 2 - 2, GLColor::blue);
+
+    EXPECT_PIXEL_RECT_EQ(1, h / 4, w / 2 - 2, 1, GLColor::yellow);
+
+    EXPECT_PIXEL_RECT_EQ(1, 3 * h / 4, w / 2 - 2, 1, GLColor::cyan);
+
+    EXPECT_PIXEL_RECT_EQ(1, 0, w - 2, 1, GLColor::magenta);
+    EXPECT_PIXEL_RECT_EQ(0, 1, 1, h - 2, GLColor::magenta);
+    EXPECT_PIXEL_RECT_EQ(w - 1, 1, 1, h - 2, GLColor::magenta);
+    EXPECT_PIXEL_RECT_EQ(1, h - 1, w - 2, 1, GLColor::magenta);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(w - 1, 0, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(0, h - 1, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(w - 1, h - 1, GLColor::white);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests that vertex attributes are correctly bound after a masked clear.  In the Vulkan backend,
 // the masked clear is done with an internal shader that doesn't use vertex attributes.
 TEST_P(StateChangeTestES3, DrawMaskedClearDraw)

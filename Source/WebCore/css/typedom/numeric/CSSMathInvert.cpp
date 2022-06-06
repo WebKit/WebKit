@@ -84,6 +84,27 @@ void CSSMathInvert::serialize(StringBuilder& builder, OptionSet<SerializationArg
         builder.append(')');
 }
 
+auto CSSMathInvert::toSumValue() const -> std::optional<SumValue>
+{
+    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
+    auto values = m_value->toSumValue();
+    if (!values)
+        return std::nullopt;
+    if (values->size() != 1)
+        return std::nullopt;
+    auto& value = (*values)[0];
+    if (!value.value)
+        return std::nullopt;
+    value.value = 1.0 / value.value;
+
+    UnitMap negatedExponents;
+    for (auto& pair : value.units)
+        negatedExponents.add(pair.key, -1 * pair.value);
+    value.units = WTFMove(negatedExponents);
+
+    return values;
+}
+
 } // namespace WebCore
 
 #endif

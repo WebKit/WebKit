@@ -183,6 +183,13 @@ class ProgramExecutable final : public angle::Subject
         return mActiveSamplerTypes;
     }
 
+    void setActive(size_t textureUnit,
+                   const SamplerBinding &samplerBinding,
+                   const gl::LinkedUniform &samplerUniform);
+    void setInactive(size_t textureUnit);
+    void hasSamplerTypeConflict(size_t textureUnit);
+    void hasSamplerFormatConflict(size_t textureUnit);
+
     void updateActiveSamplers(const ProgramState &programState);
 
     bool hasDefaultUniforms() const;
@@ -224,7 +231,6 @@ class ProgramExecutable final : public angle::Subject
     const RangeUI &getImageUniformRange() const { return mImageUniformRange; }
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
     const RangeUI &getFragmentInoutRange() const { return mFragmentInoutRange; }
-    bool usesEarlyFragmentTestsOptimization() const { return mUsesEarlyFragmentTestsOptimization; }
     bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
     BlendEquationBitSet getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
@@ -466,7 +472,6 @@ class ProgramExecutable final : public angle::Subject
     std::vector<InterfaceBlock> mShaderStorageBlocks;
 
     RangeUI mFragmentInoutRange;
-    bool mUsesEarlyFragmentTestsOptimization;
     bool mEnablesPerSampleShading;
 
     // KHR_blend_equation_advanced supported equation list

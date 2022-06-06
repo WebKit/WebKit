@@ -99,7 +99,7 @@ public:
 #endif
     
 #if PLATFORM(COCOA)
-    bool parentProcessHasEntitlement(const char* entitlement);
+    bool parentProcessHasEntitlement(ASCIILiteral entitlement);
 #endif
 
 protected:

@@ -134,7 +134,7 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
         }];
         TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
         ++timeout;
-    } while (cookieString != "" && timeout < 50);
+    } while (!cookieString.isEmpty() && timeout < 50);
     EXPECT_WK_STREQ("foo=bar", cookieString);
 }
 

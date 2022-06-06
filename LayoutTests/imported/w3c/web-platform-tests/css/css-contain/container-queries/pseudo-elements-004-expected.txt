@@ -5,10 +5,10 @@ PASS Initial color for ::marker
 PASS Initial color for ::first-line
 PASS Initial color for ::first-letter
 PASS Initial color for ::backdrop
-FAIL Color for ::before depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Color for ::after depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Color for ::marker depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Color for ::first-line depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Color for ::first-letter depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL Color for ::backdrop depending on container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Color for ::before depending on container
+PASS Color for ::after depending on container
+PASS Color for ::marker depending on container
+PASS Color for ::first-line depending on container
+PASS Color for ::first-letter depending on container
+PASS Color for ::backdrop depending on container
 

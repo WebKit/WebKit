@@ -109,11 +109,11 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     }
 
     String referrer = request.internalRequestReferrer();
-    if (referrer == "no-referrer") {
+    if (referrer == "no-referrer"_s) {
         options.referrerPolicy = ReferrerPolicy::NoReferrer;
         referrer = String();
     } else
-        referrer = (referrer == "client") ? context.url().strippedForUseAsReferrer() : URL(context.url(), referrer).strippedForUseAsReferrer();
+        referrer = (referrer == "client"_s) ? context.url().strippedForUseAsReferrer() : URL(context.url(), referrer).strippedForUseAsReferrer();
     if (options.referrerPolicy == ReferrerPolicy::EmptyString)
         options.referrerPolicy = context.referrerPolicy();
 

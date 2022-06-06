@@ -2207,8 +2207,9 @@ static bool isSafeToUpdateStyleOrLayout(const Document& document)
 
 bool Document::updateStyleIfNeeded()
 {
-    if (topDocument().isResolvingContainerQueries())
+    if (isResolvingContainerQueries())
         return false;
+
     RefPtr<FrameView> frameView = view();
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -2260,16 +2261,6 @@ void Document::updateLayout()
         return;
 
     frameView->layoutContext().layout();
-
-    Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
-    while (styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
-        updateStyleIfNeeded();
-
-        if (!frameView->layoutContext().needsLayout())
-            break;
-
-        frameView->layoutContext().layout();
-    }
 }
 
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
@@ -4352,7 +4343,7 @@ void Document::updateViewportUnitsOnResize()
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (RefPtr element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         auto* renderer = element->renderer();
-        if (renderer && renderer->style().hasViewportUnits())
+        if (renderer && renderer->style().usesViewportUnits())
             element->invalidateStyle();
     }
 }
@@ -6293,7 +6284,7 @@ bool Document::isTelephoneNumberParsingAllowed() const
 String Document::originIdentifierForPasteboard() const
 {
     auto origin = securityOrigin().toString();
-    if (origin != "null")
+    if (origin != "null"_s)
         return origin;
     if (!m_uniqueIdentifier)
         m_uniqueIdentifier = makeString("null:"_s, UUID::createVersion4());

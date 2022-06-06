@@ -49,7 +49,7 @@ namespace WebCore {
 
 bool isOnAccessControlSimpleRequestMethodAllowlist(const String& method)
 {
-    return method == "GET" || method == "HEAD" || method == "POST";
+    return method == "GET"_s || method == "HEAD"_s || method == "POST"_s;
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
@@ -247,12 +247,12 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     bool starAllowed = storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse;
     if (!starAllowed)
         starAllowed = checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled();
-    if (accessControlOriginString == "*" && starAllowed)
+    if (accessControlOriginString == "*"_s && starAllowed)
         return { };
 
     String securityOriginString = securityOrigin.toString();
     if (accessControlOriginString != securityOriginString) {
-        if (accessControlOriginString == "*")
+        if (accessControlOriginString == "*"_s)
             return makeUnexpected("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s);
         if (accessControlOriginString.find(',') != notFound)
             return makeUnexpected("Access-Control-Allow-Origin cannot contain more than one origin."_s);
@@ -261,7 +261,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
 
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
-        if (accessControlCredentialsString != "true")
+        if (accessControlCredentialsString != "true"_s)
             return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
     }
 

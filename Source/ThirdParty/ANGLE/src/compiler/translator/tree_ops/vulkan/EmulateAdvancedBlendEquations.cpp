@@ -21,7 +21,6 @@
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
-#include "compiler/translator/tree_util/RunAtTheBeginningOfShader.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 
 namespace sh
@@ -127,7 +126,7 @@ bool Builder::build(TIntermBlock *root)
     generateEquationSwitch(blendBlock);
 
     // Place the entire blend block under an if (equation != 0)
-    TIntermTyped *equationUniform = mDriverUniforms->getAdvancedBlendEquationRef();
+    TIntermTyped *equationUniform = mDriverUniforms->getAdvancedBlendEquation();
     TIntermTyped *notZero = new TIntermBinary(EOpNotEqual, equationUniform, CreateUIntNode(0));
 
     TIntermIfElse *blend = new TIntermIfElse(notZero, blendBlock, nullptr);
@@ -1182,7 +1181,7 @@ void Builder::generateEquationSwitch(TIntermBlock *blendBlock)
     }
 
     // A driver uniform is used to communicate the blend equation to use.
-    TIntermTyped *equationUniform = mDriverUniforms->getAdvancedBlendEquationRef();
+    TIntermTyped *equationUniform = mDriverUniforms->getAdvancedBlendEquation();
 
     blendBlock->appendStatement(new TIntermSwitch(equationUniform, switchBody));
 

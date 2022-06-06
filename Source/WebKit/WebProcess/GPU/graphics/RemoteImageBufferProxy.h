@@ -243,8 +243,7 @@ protected:
         auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, srcRect.size());
         if (!pixelBuffer)
             return nullptr;
-        auto& data = pixelBuffer->data();
-        if (!m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, srcRect, { data.data(), data.byteLength() }))
+        if (!m_remoteRenderingBackendProxy->getPixelBufferForImageBuffer(m_renderingResourceIdentifier, destinationFormat, srcRect, { pixelBuffer->bytes(), pixelBuffer->sizeInBytes() }))
             return nullptr;
         return pixelBuffer;
     }

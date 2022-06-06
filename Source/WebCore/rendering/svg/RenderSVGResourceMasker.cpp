@@ -76,12 +76,11 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
 
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
-        const SVGRenderStyle& svgStyle = style().svgStyle();
-
         auto maskColorSpace = DestinationColorSpace::SRGB();
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        const SVGRenderStyle& svgStyle = style().svgStyle();
         if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
             maskColorSpace = DestinationColorSpace::LinearSRGB();

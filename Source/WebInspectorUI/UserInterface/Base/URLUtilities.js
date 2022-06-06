@@ -289,6 +289,24 @@ WI.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
     return header + firstChunk + middleChunk + lastChunk;
 };
 
+WI.urlWithoutExtension = function(urlString)
+{
+    let url = null;
+    try {
+        url = new URL(urlString);
+    } catch { }
+    if (!url)
+        return urlString;
+
+    let firstDotInLastPathComponentIndex = url.pathname.indexOf(".", url.pathname.lastIndexOf("/"));
+    if (firstDotInLastPathComponentIndex !== -1)
+        url.pathname = url.pathname.substring(0, firstDotInLastPathComponentIndex);
+
+    url.search = "";
+    url.hash = "";
+    return url.toString();
+};
+
 WI.urlWithoutFragment = function(urlString)
 {
     try {

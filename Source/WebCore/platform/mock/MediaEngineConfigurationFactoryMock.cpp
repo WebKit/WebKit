@@ -49,20 +49,20 @@ static bool canDecodeMedia(const MediaDecodingConfiguration& configuration)
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha")
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha"_s)
             return false;
     }
 
     // Only the "mock-with-hdr" codec supports HDR)
     if (videoConfig && (videoConfig->colorGamut || videoConfig->hdrMetadataType || videoConfig->transferFunction)) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-hdr")
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-hdr"_s)
             return false;
     }
 
     // Audio decoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
     if (audioConfig) {
-        if (ContentType(audioConfig->contentType).containerType() != "audio/mp4")
+        if (ContentType(audioConfig->contentType).containerType() != "audio/mp4"_s)
             return false;
 
         // Can only support spatial rendering of tracks with multichannel audio:
@@ -81,7 +81,7 @@ static bool canSmoothlyDecodeMedia(const MediaDecodingConfiguration& configurati
 
     auto audioConfig = configuration.audio;
     if (audioConfig && !audioConfig->channels.isNull())
-        return audioConfig->channels == "2";
+        return audioConfig->channels == "2"_s;
 
     return true;
 }
@@ -89,7 +89,7 @@ static bool canSmoothlyDecodeMedia(const MediaDecodingConfiguration& configurati
 static bool canPowerEfficientlyDecodeMedia(const MediaDecodingConfiguration& configuration)
 {
     auto videoConfig = configuration.video;
-    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4")
+    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4"_s)
         return false;
 
     auto audioConfig = configuration.audio;
@@ -112,13 +112,13 @@ static bool canEncodeMedia(const MediaEncodingConfiguration& configuration)
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha")
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha"_s)
             return false;
     }
 
     // Audio encoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
-    if (audioConfig && ContentType(audioConfig->contentType).containerType() != "audio/mp4")
+    if (audioConfig && ContentType(audioConfig->contentType).containerType() != "audio/mp4"_s)
         return false;
 
     return true;
@@ -131,7 +131,7 @@ static bool canSmoothlyEncodeMedia(const MediaEncodingConfiguration& configurati
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig && !audioConfig->channels.isNull() && audioConfig->channels != "2")
+    if (audioConfig && !audioConfig->channels.isNull() && audioConfig->channels != "2"_s)
         return false;
 
     return true;
@@ -140,7 +140,7 @@ static bool canSmoothlyEncodeMedia(const MediaEncodingConfiguration& configurati
 static bool canPowerEfficientlyEncodeMedia(const MediaEncodingConfiguration& configuration)
 {
     auto videoConfig = configuration.video;
-    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4")
+    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4"_s)
         return false;
 
     auto audioConfig = configuration.audio;

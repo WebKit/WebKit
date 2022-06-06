@@ -521,14 +521,14 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
     else
         bitmapInfo |= kCGImageAlphaLast;
 
-    Ref pixelArray = pixelBuffer->data();
-    auto dataSize = pixelArray->byteLength();
-    auto data = pixelArray->data();
+    Ref protectedPixelBuffer = pixelBuffer;
+    auto dataSize = pixelBuffer->sizeInBytes();
+    auto data = pixelBuffer->bytes();
 
     verifyImageBufferIsBigEnough(data, dataSize);
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&pixelArray.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
-        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
+        static_cast<PixelBuffer*>(context)->deref();
     }));
 
     auto imageSize = pixelBuffer->size();

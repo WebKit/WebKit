@@ -54,12 +54,12 @@ TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
     GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, nullptr));
     auto jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1}");
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1}"_s);
 
     GUniquePtr<GstStructure> innerStructure(gst_structure_new("bar", "boo", G_TYPE_BOOLEAN, FALSE, "double-val", G_TYPE_DOUBLE, 2.42, nullptr));
     gst_structure_set(structure.get(), "inner", GST_TYPE_STRUCTURE, innerStructure.get(), nullptr);
     jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"inner\":{\"boo\":0,\"double-val\":2.42}}");
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
 }
 
 } // namespace TestWebKitAPI

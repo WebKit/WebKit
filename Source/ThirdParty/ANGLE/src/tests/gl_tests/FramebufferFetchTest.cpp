@@ -395,7 +395,7 @@ class FramebufferFetchES31 : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void BasicTest(GLProgram program)
+    void BasicTest(GLProgram &program)
     {
         GLFramebuffer framebuffer;
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -424,7 +424,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void MultipleRenderTargetTest(GLProgram program)
+    void MultipleRenderTargetTest(GLProgram &program)
     {
         GLFramebuffer framebuffer;
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -478,7 +478,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void MultipleRenderTargetArrayTest(GLProgram program)
+    void MultipleRenderTargetArrayTest(GLProgram &program)
     {
         GLFramebuffer framebuffer;
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -532,7 +532,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void MultipleDrawTest(GLProgram program)
+    void MultipleDrawTest(GLProgram &program)
     {
         GLFramebuffer framebuffer;
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -565,7 +565,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void DrawNonFetchDrawFetchTest(GLProgram programNonFetch, GLProgram programFetch)
+    void DrawNonFetchDrawFetchTest(GLProgram &programNonFetch, GLProgram &programFetch)
     {
         glUseProgram(programNonFetch);
         ASSERT_GL_NO_ERROR();
@@ -631,7 +631,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void DrawFetchDrawNonFetchTest(GLProgram programNonFetch, GLProgram programFetch)
+    void DrawFetchDrawNonFetchTest(GLProgram &programNonFetch, GLProgram &programFetch)
     {
         glUseProgram(programFetch);
         ASSERT_GL_NO_ERROR();
@@ -700,8 +700,8 @@ class FramebufferFetchES31 : public ANGLETest
         Clear,
     };
 
-    void DrawNonFetchDrawFetchInStorageBufferTest(GLProgram programNonFetch,
-                                                  GLProgram programFetch,
+    void DrawNonFetchDrawFetchInStorageBufferTest(GLProgram &programNonFetch,
+                                                  GLProgram &programFetch,
                                                   StorageBufferTestPostFetchAction postFetchAction)
     {
         // Create output buffer
@@ -797,8 +797,8 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void DrawNonFetchDrawFetchWithDifferentAttachmentsTest(GLProgram programNonFetch,
-                                                           GLProgram programFetch)
+    void DrawNonFetchDrawFetchWithDifferentAttachmentsTest(GLProgram &programNonFetch,
+                                                           GLProgram &programFetch)
     {
         glUseProgram(programNonFetch);
         ASSERT_GL_NO_ERROR();
@@ -916,9 +916,9 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void DrawNonFetchDrawFetchWithDifferentProgramsTest(GLProgram programNonFetch,
-                                                        GLProgram programFetch1,
-                                                        GLProgram programFetch2)
+    void DrawNonFetchDrawFetchWithDifferentProgramsTest(GLProgram &programNonFetch,
+                                                        GLProgram &programFetch1,
+                                                        GLProgram &programFetch2)
     {
         glUseProgram(programNonFetch);
         ASSERT_GL_NO_ERROR();
@@ -1019,7 +1019,7 @@ class FramebufferFetchES31 : public ANGLETest
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void DrawFetchBlitDrawFetchTest(GLProgram programNonFetch, GLProgram programFetch)
+    void DrawFetchBlitDrawFetchTest(GLProgram &programNonFetch, GLProgram &programFetch)
     {
         glUseProgram(programFetch);
         ASSERT_GL_NO_ERROR();

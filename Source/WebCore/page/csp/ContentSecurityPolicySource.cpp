@@ -66,16 +66,16 @@ bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
         return true;
 
     // host-sources can do direct-upgrades.
-    if (scheme == "http" && urlScheme == "https")
+    if (scheme == "http"_s && urlScheme == "https"_s)
         return true;
-    if (scheme == "ws" && (urlScheme == "wss" || urlScheme == "https" || urlScheme == "http"))
+    if (scheme == "ws"_s && (urlScheme == "wss"_s || urlScheme == "https"_s || urlScheme == "http"_s))
         return true;
-    if (scheme == "wss" && urlScheme == "https")
+    if (scheme == "wss"_s && urlScheme == "https"_s)
         return true;
 
     // self-sources can always upgrade to secure protocols and side-grade insecure protocols.
     if ((m_isSelfSource
-        && ((urlScheme == "https" || urlScheme == "wss") || (scheme == "http" && urlScheme == "ws"))))
+        && ((urlScheme == "https"_s || urlScheme == "wss"_s) || (scheme == "http"_s && urlScheme == "ws"_s))))
         return true;
 
     return false;

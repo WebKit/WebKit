@@ -50,22 +50,31 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this.element.classList.add("recording", this.representedObject.type);
 
         if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging()) {
+            if (isCanvas2D) {
                 this._pathContext = null;
 
                 this._showPathButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-path", WI.UIString("Show Path"), WI.UIString("Hide Path"), "Images/Path.svg", 16, 16);
+                this._showPathButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
                 this._showPathButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showPathButtonClicked, this);
                 this._showPathButtonNavigationItem.activated = !!WI.settings.showCanvasPath.value;
             }
 
             this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.repeatedUIString.showTransparencyGridTooltip(), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
-            this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
             this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
 
-            this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export-recording", WI.UIString("Export"), "Images/Export.svg", 15, 15);
+            if (isCanvas2D && WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants))
+                this._saveMode = WI.FileUtilities.SaveMode.FileVariants;
+            else if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile))
+                this._saveMode = WI.FileUtilities.SaveMode.SingleFile;
+            else
+                this._saveMode = null;
+
+            this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
+            this._exportButtonNavigationItem.tooltip = WI.UIString("Export (%s)").format(WI.saveKeyboardShortcut.displayName);
             this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-            this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+            this._exportButtonNavigationItem.enabled = this._saveMode;
             this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportNavigationItemClicked, this);
             this._updateExportButton();
         }
@@ -83,7 +92,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             return [];
 
         let navigationItems = [this._exportButtonNavigationItem, new WI.DividerNavigationItem];
-        if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging())
+        if (isCanvas2D)
             navigationItems.push(this._showPathButtonNavigationItem);
 
         navigationItems.push(this._showGridButtonNavigationItem);
@@ -128,7 +137,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
         if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging())
+            if (isCanvas2D)
                 this._updateCanvasPath();
             this._updateImageGrid();
         }
@@ -145,12 +154,17 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     get supportsSave()
     {
-        return true;
+        return !!this._saveMode;
+    }
+
+    get saveMode()
+    {
+        return this._saveMode;
     }
 
     get saveData()
     {
-        return {customSaveHandler: () => { this._exportRecording(); }};
+        return {customSaveHandler: () => { this._export(); }};
     }
 
     initialLayout()
@@ -187,31 +201,55 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     // Private
 
-    _exportRecording()
+    _export()
     {
-        let filename = this.representedObject.displayName;
-
-        WI.FileUtilities.save({
-            content: JSON.stringify(this.representedObject.toJSON()),
-            suggestedName: filename + ".json",
-            forceSaveAs: true,
-        });
-    }
-
-    _exportReduction()
-    {
-        if (!this.representedObject.ready) {
-            InspectorFrontendHost.beep();
+        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile) {
+            this._exportRecording();
             return;
         }
 
         let filename = this.representedObject.displayName;
 
-        WI.FileUtilities.save({
+        let data = [];
+        data.push({
+            displayType: WI.UIString("Recording"),
+            content: JSON.stringify(this.representedObject.toJSON()),
+            suggestedName: filename + ".recording",
+        });
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready) {
+            data.push({
+                displayType: WI.UIString("Reduction"),
+                content: this.representedObject.toHTML(),
+                suggestedName: filename + ".html",
+            });
+        }
+
+        const forceSaveAs = true;
+        WI.FileUtilities.save(WI.FileUtilities.SaveMode.FileVariants, data, forceSaveAs);
+    }
+
+    _exportRecording()
+    {
+        let filename = this.representedObject.displayName;
+
+        const forceSaveAs = true;
+        WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
+            content: JSON.stringify(this.representedObject.toJSON()),
+            suggestedName: filename + ".recording",
+        }, forceSaveAs);
+    }
+
+    _exportReduction()
+    {
+        console.assert(this.representedObject.ready);
+
+        let filename = this.representedObject.displayName;
+
+        const forceSaveAs = true;
+        WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
             content: this.representedObject.toHTML(),
             suggestedName: filename + ".html",
-            forceSaveAs: true,
-        });
+        }, forceSaveAs);
     }
 
     _generateContentCanvas2D(index)
@@ -235,7 +273,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let snapshotIndex = Math.floor(index / WI.RecordingContentView.SnapshotInterval);
         let snapshot = this._snapshots[snapshotIndex];
 
-        let showCanvasPath = WI.ImageUtilities.supportsCanvasPathDebugging() && WI.settings.showCanvasPath.value;
         let indexOfLastBeginPathAction = Infinity;
 
         let actions = this.representedObject.actions;
@@ -273,7 +310,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 actions[i].apply(snapshot.context);
             }
 
-            if (showCanvasPath && indexOfLastBeginPathAction <= to) {
+            if (WI.settings.showCanvasPath.value && indexOfLastBeginPathAction <= to) {
                 if (!this._pathContext) {
                     let pathCanvas = document.createElement("canvas");
                     pathCanvas.classList.add("path");
@@ -390,7 +427,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._previewContainer.removeChildren();
 
-        if (showCanvasPath) {
+        if (WI.settings.showCanvasPath.value) {
             indexOfLastBeginPathAction = this._index;
             while (indexOfLastBeginPathAction > snapshot.index && actions[indexOfLastBeginPathAction].name !== "beginPath")
                 --indexOfLastBeginPathAction;
@@ -449,6 +486,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _updateExportButton()
     {
+        if (this._saveMode !== WI.FileUtilities.SaveMode.SingleFile)
+            return;
+
         if (this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready)
             this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)\nShift-click to export a HTML reduction").format(WI.saveKeyboardShortcut.displayName);
         else
@@ -507,10 +547,12 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _handleExportNavigationItemClicked(event)
     {
-        if (event.data.nativeEvent.shiftKey && this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready)
+        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile && this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready && event.data.nativeEvent.shiftKey) {
             this._exportReduction();
-        else
-            this._exportRecording();
+            return;
+        }
+
+        this._export();
     }
 
     _sliderChanged()

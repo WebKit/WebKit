@@ -302,10 +302,10 @@ TEST_F(FragmentedSharedBufferTest, toHexString)
     builder.append(WTFMove(t1));
     auto buffer = builder.take();
     String result = buffer->toHexString();
-    EXPECT_EQ(result, "110512");
+    EXPECT_EQ(result, "110512"_s);
     builder.reset();
     buffer = builder.take();
-    EXPECT_EQ(buffer->toHexString(), "");
+    EXPECT_EQ(buffer->toHexString(), ""_s);
 }
 
 TEST_F(FragmentedSharedBufferTest, read)
@@ -315,12 +315,12 @@ TEST_F(FragmentedSharedBufferTest, read)
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         Vector<uint8_t> data = sharedBuffer.read(4, 3);
         EXPECT_EQ(data.size(), 3u);
-        EXPECT_EQ(String(data.data(), 3), " is");
+        EXPECT_EQ(StringView(data.data(), 3), " is"_s);
 
         data = sharedBuffer.read(4, 1000);
         EXPECT_EQ(data.size(), 18u);
 
-        EXPECT_EQ(String(data.data(), 18), " is a simple test.");
+        EXPECT_EQ(StringView(data.data(), 18), " is a simple test."_s);
     };
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
@@ -382,7 +382,7 @@ static bool checkChunks(const std::vector<String>& chunks, const char* const exp
     }
 
     for (size_t i = 0; i < chunks.size(); ++i) {
-        if (chunks[i] != expectedChunks[i])
+        if (chunks[i] != StringView::fromLatin1(expectedChunks[i]))
             return false;
     }
     return true;
@@ -432,25 +432,25 @@ TEST_F(SharedBufferChunkReaderTest, peekData)
         SharedBufferChunkReader chunkReader(&sharedBuffer, "is");
 
         String chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, "Th");
+        EXPECT_EQ(chunk, "Th"_s);
 
         Vector<uint8_t> data;
         size_t read = chunkReader.peek(data, 3);
         EXPECT_EQ(read, 3u);
 
-        EXPECT_EQ(String(data.data(), 3), " is");
+        EXPECT_EQ(String(data.data(), 3), " is"_s);
 
         read = chunkReader.peek(data, 1000);
         EXPECT_EQ(read, 18u);
 
-        EXPECT_EQ(String(data.data(), 18), " is a simple test.");
+        EXPECT_EQ(String(data.data(), 18), " is a simple test."_s);
 
         // Ensure the cursor has not changed.
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, " ");
+        EXPECT_EQ(chunk, " "_s);
 
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, " a simple test.");
+        EXPECT_EQ(chunk, " a simple test."_s);
 
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
         EXPECT_TRUE(chunk.isNull());
@@ -529,22 +529,22 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
         auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         SharedBufferChunkReader chunkReader(sharedBuffer.ptr(), "is");
         String chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, "Th");
+        EXPECT_EQ(chunk, "Th"_s);
 
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, " ");
+        EXPECT_EQ(chunk, " "_s);
 
         chunkReader.setSeparator("he");
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, " t");
+        EXPECT_EQ(chunk, " t"_s);
 
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, " most ridiculous history t");
+        EXPECT_EQ(chunk, " most ridiculous history t"_s);
 
         // Set a non existing separator.
         chunkReader.setSeparator("tchinta");
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
-        EXPECT_EQ(chunk, "re is.");
+        EXPECT_EQ(chunk, "re is."_s);
 
         // We should be at the end of the string, so any subsequent call to nextChunk should return null.
         chunkReader.setSeparator(".");

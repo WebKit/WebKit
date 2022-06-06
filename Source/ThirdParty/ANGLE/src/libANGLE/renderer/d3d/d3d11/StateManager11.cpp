@@ -3605,9 +3605,9 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
         {
             case gl::ShaderType::Vertex:
             {
-                if (mCurrentConstantBufferVS[bufferIndex] == constantBuffer->getSerial() &&
-                    mCurrentConstantBufferVSOffset[bufferIndex] == uniformBufferOffset &&
-                    mCurrentConstantBufferVSSize[bufferIndex] == uniformBufferSize)
+                if (mCurrentConstantBufferVS[cache.registerIndex] == constantBuffer->getSerial() &&
+                    mCurrentConstantBufferVSOffset[cache.registerIndex] == uniformBufferOffset &&
+                    mCurrentConstantBufferVSSize[cache.registerIndex] == uniformBufferSize)
                 {
                     continue;
                 }
@@ -3633,9 +3633,9 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
 
             case gl::ShaderType::Fragment:
             {
-                if (mCurrentConstantBufferPS[bufferIndex] == constantBuffer->getSerial() &&
-                    mCurrentConstantBufferPSOffset[bufferIndex] == uniformBufferOffset &&
-                    mCurrentConstantBufferPSSize[bufferIndex] == uniformBufferSize)
+                if (mCurrentConstantBufferPS[cache.registerIndex] == constantBuffer->getSerial() &&
+                    mCurrentConstantBufferPSOffset[cache.registerIndex] == uniformBufferOffset &&
+                    mCurrentConstantBufferPSSize[cache.registerIndex] == uniformBufferSize)
                 {
                     continue;
                 }

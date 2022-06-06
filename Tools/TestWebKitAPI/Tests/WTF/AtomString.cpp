@@ -33,7 +33,7 @@ TEST(WTF, AtomStringCreationFromLiteral)
 {
     AtomString stringWithTemplate("Template Literal"_s);
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
-    ASSERT_TRUE(stringWithTemplate == "Template Literal");
+    ASSERT_TRUE(stringWithTemplate == "Template Literal"_s);
     ASSERT_TRUE(stringWithTemplate.string().is8Bit());
 }
 

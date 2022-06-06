@@ -469,11 +469,11 @@ static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, S
     auto errorCode = WKErrorGetErrorCode(error);
 
     // We need to do some error mapping here to match the test expectations (Mac error names are expected).
-    if (errorDomain == "WebKitNetworkError") {
+    if (errorDomain == "WebKitNetworkError"_s) {
         errorDomain = "NSURLErrorDomain"_s;
         errorCode = -999;
     }
-    if (errorDomain ==  "WebKitPolicyError")
+    if (errorDomain == "WebKitPolicyError"_s)
         errorDomain = "WebKitErrorDomain"_s;
 
     stringBuilder.append("<NSError domain ", errorDomain, ", code ", errorCode);

@@ -126,14 +126,19 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
 
     get supportsSave()
     {
-        var currentContentView = this._contentViewContainer.currentContentView;
-        return currentContentView && currentContentView.supportsSave;
+        return !!this._contentViewContainer.currentContentView?.supportsSave;
+    }
+
+    get saveMode()
+    {
+        console.assert(this.supportsSave);
+        return this._contentViewContainer.currentContentView?.saveMode;
     }
 
     get saveData()
     {
-        var currentContentView = this._contentViewContainer.currentContentView;
-        return currentContentView && currentContentView.saveData || null;
+        console.assert(this.supportsSave);
+        return this._contentViewContainer.currentContentView?.saveData;
     }
 
     get supportsSearch()

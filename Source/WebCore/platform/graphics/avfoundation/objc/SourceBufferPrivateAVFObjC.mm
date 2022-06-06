@@ -1416,9 +1416,19 @@ bool SourceBufferPrivateAVFObjC::isActive() const
 void SourceBufferPrivateAVFObjC::willSeek()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    // Set seeking to true so that no samples will be re-enqueued between
+    // now and when seekToTime() is called. Without this, the AVSBDL may
+    // request new samples mid seek, causing incorrect samples to be displayed
+    // during a seek operation.
+    m_seeking = true;
     flush();
 }
 
+void SourceBufferPrivateAVFObjC::seekToTime(const MediaTime& time)
+{
+    m_seeking = false;
+    SourceBufferPrivate::seekToTime(time);
+}
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
     return valueOrDefault(m_cachedSize);
@@ -1500,7 +1510,7 @@ bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
 
 bool SourceBufferPrivateAVFObjC::isSeeking() const
 {
-    return m_mediaSource && m_mediaSource->isSeeking();
+    return m_seeking;
 }
 
 MediaTime SourceBufferPrivateAVFObjC::currentMediaTime() const

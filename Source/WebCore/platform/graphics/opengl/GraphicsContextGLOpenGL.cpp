@@ -533,7 +533,7 @@ bool GraphicsContextGLOpenGL::checkVaryingsPacking(PlatformGLObject vertexShader
             continue;
 
         // Don't count built in varyings.
-        if (symbolName == "gl_FragCoord" || symbolName == "gl_FrontFacing" || symbolName == "gl_PointCoord")
+        if (symbolName == "gl_FragCoord"_s || symbolName == "gl_FrontFacing"_s || symbolName == "gl_PointCoord"_s)
             continue;
 
         const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
@@ -1218,7 +1218,7 @@ std::optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(P
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
-        if (name == symbolEntry.value.get().mappedName.c_str())
+        if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
             return symbolEntry.key;
     }
     return std::nullopt;
@@ -1270,7 +1270,7 @@ String GraphicsContextGLOpenGL::mappedSymbolName(PlatformGLObject shaders[2], si
             
             const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
             for (const auto& symbolEntry : symbolMap) {
-                if (name == symbolEntry.value.get().mappedName.c_str())
+                if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
                     return symbolEntry.key;
             }
         }
@@ -1870,6 +1870,18 @@ void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> valu
         return;
 
     ::glGetFloatv(pname, value.data);
+}
+
+void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) // NOLINT
+{
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(value);
+    if (!makeContextCurrent())
+        return;
+
+    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
+    // ::glGetIntegeri_v(pname, index, value.data);
 }
 
 GCGLint64 GraphicsContextGLOpenGL::getInteger64(GCGLenum pname)
@@ -3081,6 +3093,34 @@ String GraphicsContextGLOpenGL::getTranslatedShaderSourceANGLE(PlatformGLObject 
     return getExtensions().getTranslatedShaderSourceANGLE(shader);
 }
 
+void GraphicsContextGLOpenGL::enableiOES(GCGLenum, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::disableiOES(GCGLenum, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::blendEquationiOES(GCGLuint, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendEquationSeparateiOES(GCGLuint, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendFunciOES(GCGLuint, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::blendFuncSeparateiOES(GCGLuint, GCGLenum, GCGLenum, GCGLenum, GCGLenum)
+{
+}
+
+void GraphicsContextGLOpenGL::colorMaskiOES(GCGLuint, GCGLboolean, GCGLboolean, GCGLboolean, GCGLboolean)
+{
+}
+
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
@@ -3140,7 +3180,7 @@ RefPtr<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer(
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();
         const size_t rowStride = size.width() * 4;
-        uint8_t* top = results->data().data();
+        uint8_t* top = results->bytes();
         uint8_t* bottom = top + (size.height() - 1) * rowStride;
         std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
         for (; top < bottom; top += rowStride, bottom -= rowStride) {

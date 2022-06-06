@@ -105,32 +105,32 @@ bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
 {
     // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
     // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample/GL_APPLE_framebuffer_multisample.
-    if (name == "GL_ANGLE_framebuffer_blit")
+    if (name == "GL_ANGLE_framebuffer_blit"_s)
         return m_availableExtensions.contains("GL_EXT_framebuffer_blit"_s);
-    if (name == "GL_ANGLE_framebuffer_multisample")
+    if (name == "GL_ANGLE_framebuffer_multisample"_s)
         return m_availableExtensions.contains("GL_EXT_framebuffer_multisample"_s);
-    if (name == "GL_ANGLE_instanced_arrays") {
+    if (name == "GL_ANGLE_instanced_arrays"_s) {
         return (m_availableExtensions.contains("GL_ARB_instanced_arrays"_s) || m_availableExtensions.contains("GL_EXT_instanced_arrays"_s))
             && (m_availableExtensions.contains("GL_ARB_draw_instanced"_s) || m_availableExtensions.contains("GL_EXT_draw_instanced"_s));
     }
 
-    if (name == "GL_EXT_sRGB")
+    if (name == "GL_EXT_sRGB"_s)
         return m_availableExtensions.contains("GL_EXT_texture_sRGB"_s) && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB"_s) || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"_s));
 
-    if (name == "GL_EXT_frag_depth")
+    if (name == "GL_EXT_frag_depth"_s)
         return m_availableExtensions.contains("GL_EXT_frag_depth"_s);
 
     // Desktop GL always supports GL_OES_rgb8_rgba8.
-    if (name == "GL_OES_rgb8_rgba8")
+    if (name == "GL_OES_rgb8_rgba8"_s)
         return true;
 
     // If GL_ARB_texture_float or GL_OES_texture_float is available then we report
     // GL_OES_texture_half_float, GL_OES_texture_float_linear and GL_OES_texture_half_float_linear as available.
-    if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float" || name == "GL_OES_texture_float_linear" || name == "GL_OES_texture_half_float_linear")
+    if (name == "GL_OES_texture_float"_s || name == "GL_OES_texture_half_float"_s || name == "GL_OES_texture_float_linear"_s || name == "GL_OES_texture_half_float_linear"_s)
         return m_availableExtensions.contains("GL_ARB_texture_float"_s) || m_availableExtensions.contains("GL_OES_texture_float"_s);
 
     // GL_OES_vertex_array_object
-    if (name == "GL_OES_vertex_array_object") {
+    if (name == "GL_OES_vertex_array_object"_s) {
 #if (PLATFORM(GTK))
         return m_availableExtensions.contains("GL_ARB_vertex_array_object"_s);
 #else
@@ -139,20 +139,20 @@ bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
     }
 
     // Desktop GL always supports the standard derivative functions
-    if (name == "GL_OES_standard_derivatives")
+    if (name == "GL_OES_standard_derivatives"_s)
         return true;
 
     // Desktop GL always supports UNSIGNED_INT indices
-    if (name == "GL_OES_element_index_uint")
+    if (name == "GL_OES_element_index_uint"_s)
         return true;
     
-    if (name == "GL_EXT_shader_texture_lod")
+    if (name == "GL_EXT_shader_texture_lod"_s)
         return m_availableExtensions.contains("GL_EXT_shader_texture_lod"_s);
     
-    if (name == "GL_EXT_texture_filter_anisotropic")
+    if (name == "GL_EXT_texture_filter_anisotropic"_s)
         return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic"_s);
 
-    if (name == "GL_EXT_draw_buffers") {
+    if (name == "GL_EXT_draw_buffers"_s) {
 #if PLATFORM(GTK)
         return m_availableExtensions.contains("GL_ARB_draw_buffers"_s);
 #else

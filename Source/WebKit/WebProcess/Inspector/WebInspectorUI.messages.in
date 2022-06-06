@@ -47,9 +47,6 @@ messages -> WebInspectorUI {
     StartElementSelection()
     StopElementSelection()
 
-    DidSave(String url)
-    DidAppend(String url)
-
     SendMessageToFrontend(String message)
     EvaluateInFrontendForTesting(String expression)
 }

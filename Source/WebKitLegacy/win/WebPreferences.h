@@ -255,8 +255,6 @@ public:
     // IWebPreferencesPrivate6
     virtual HRESULT STDMETHODCALLTYPE dataTransferItemsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setDataTransferItemsEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE inspectorAdditionsEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setInspectorAdditionsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE visualViewportAPIEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setVisualViewportAPIEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE CSSOMViewScrollingAPIEnabled(_Out_ BOOL*);

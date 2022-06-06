@@ -42,7 +42,7 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     case PixelFormat::RGB10A8:
         return false;
     }
-    
+
     ASSERT_NOT_REACHED();
     return false;
 }
@@ -56,119 +56,45 @@ CheckedUint32 PixelBuffer::computeBufferSize(const PixelBufferFormat& format, co
     return size.area<RecordOverflow>() * bytesPerPixel;
 }
 
-RefPtr<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
+PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, uint8_t* bytes, size_t sizeInBytes)
+    : m_format(format)
+    , m_size(size)
+    , m_bytes(bytes)
+    , m_sizeInBytes(sizeInBytes)
 {
-    ASSERT(supportedPixelFormat(format.pixelFormat));
-    ASSERT(computeBufferSize(format, size) == dataByteLength);
-
-    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
-    if (!pixelArray)
-        return nullptr;
-    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
-}
-
-RefPtr<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
-{
-    ASSERT(supportedPixelFormat(format.pixelFormat));
-
-    auto bufferSize = computeBufferSize(format, size);
-    if (bufferSize.hasOverflowed())
-        return nullptr;
-    if (bufferSize > std::numeric_limits<int32_t>::max())
-        return nullptr;
-    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
-    if (!pixelArray)
-        return nullptr;
-    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
-}
-
-RefPtr<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
-{
-    ASSERT(supportedPixelFormat(format.pixelFormat));
-
-    auto bufferSize = computeBufferSize(format, size);
-    if (bufferSize.hasOverflowed())
-        return nullptr;
-    if (bufferSize != arrayBuffer->byteLength())
-        return nullptr;
-    auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize);
-    if (!pixelArray)
-        return nullptr;
-    return adoptRef(new PixelBuffer(format, size, pixelArray.releaseNonNull()));
-}
-
-Ref<PixelBuffer> PixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
-{
-    return adoptRef(*new PixelBuffer(format, size, { data }));
-}
-
-PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
-    : m_format { format }
-    , m_size { size }
-    , m_data { WTFMove(data) }
-{
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_data->length());
-}
-
-PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
-    : m_format { format }
-    , m_size { size }
-    , m_data { data }
-{
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_data->length());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_sizeInBytes);
 }
 
 PixelBuffer::~PixelBuffer() = default;
 
-uint8_t* PixelBuffer::bytes() const
-{
-    return m_data->data();
-}
-
-size_t PixelBuffer::sizeInBytes() const
-{
-    ASSERT(m_data->byteLength() == m_size.area() * 4);
-    return m_data->byteLength();
-}
-
 bool PixelBuffer::setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, sizeInBytes()))
+    if (!isSumSmallerThanOrEqual(byteOffset, dataByteLength, m_sizeInBytes))
         return false;
 
-    memmove(bytes() + byteOffset, data, dataByteLength);
+    memmove(m_bytes + byteOffset, data, dataByteLength);
     return true;
 }
 
 bool PixelBuffer::zeroRange(size_t byteOffset, size_t rangeByteLength)
 {
-    if (!isSumSmallerThanOrEqual(byteOffset, rangeByteLength, sizeInBytes()))
+    if (!isSumSmallerThanOrEqual(byteOffset, rangeByteLength, m_sizeInBytes))
         return false;
 
-    memset(bytes() + byteOffset, 0, rangeByteLength);
+    memset(m_bytes + byteOffset, 0, rangeByteLength);
     return true;
 }
 
 uint8_t PixelBuffer::item(size_t index) const
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < sizeInBytes());
-    return bytes()[index];
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < m_sizeInBytes);
+    return m_bytes[index];
 }
 
 void PixelBuffer::set(size_t index, double value)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < sizeInBytes());
-    bytes()[index] = JSC::Uint8ClampedAdaptor::toNativeFromDouble(value);
-}
-
-RefPtr<PixelBuffer> PixelBuffer::createScratchPixelBuffer(const IntSize& size) const
-{
-    return PixelBuffer::tryCreate(m_format, size);
-}
-
-TextStream& operator<<(TextStream& ts, const PixelBuffer& pixelBuffer)
-{
-    return ts << &pixelBuffer.data() << "format ( " << pixelBuffer.format() << ")";
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < m_sizeInBytes);
+    m_bytes[index] = JSC::Uint8ClampedAdaptor::toNativeFromDouble(value);
 }
 
 } // namespace WebCore

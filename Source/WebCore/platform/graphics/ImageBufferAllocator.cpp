@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ImageBufferAllocator.h"
 
+#include "ByteArrayPixelBuffer.h"
 #include "ImageBuffer.h"
-#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ RefPtr<ImageBuffer> ImageBufferAllocator::createImageBuffer(const FloatSize& siz
 
 RefPtr<PixelBuffer> ImageBufferAllocator::createPixelBuffer(const PixelBufferFormat& format, const IntSize& size) const
 {
-    return PixelBuffer::tryCreate(format, size);
+    return ByteArrayPixelBuffer::tryCreate(format, size);
 }
 
 } // namespace WebCore

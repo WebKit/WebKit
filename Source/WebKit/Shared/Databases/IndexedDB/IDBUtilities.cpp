@@ -37,13 +37,13 @@ String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::Secur
     StringBuilder stringBuilder;
 
     String originString = openingOrigin.toString();
-    if (originString == "null")
+    if (originString == "null"_s)
         return String();
     stringBuilder.append(originString);
     stringBuilder.append('_');
 
     originString = mainFrameOrigin.toString();
-    if (originString == "null")
+    if (originString == "null"_s)
         return String();
     stringBuilder.append(originString);
 

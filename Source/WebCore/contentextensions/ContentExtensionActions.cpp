@@ -211,17 +211,17 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
 
     String value = object->getString("value"_s);
 
-    if (operation == "set") {
+    if (operation == "set"_s) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { SetOperation { WTFMove(header), WTFMove(value) } };
     }
-    if (operation == "append") {
+    if (operation == "append"_s) {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { AppendOperation { WTFMove(header), WTFMove(value) } };
     }
-    if (operation == "remove")
+    if (operation == "remove"_s)
         return ModifyHeaderInfo { RemoveOperation { WTFMove(header) } };
     return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
@@ -507,7 +507,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
         auto scheme = WTF::URLParser::maybeCanonicalizeScheme(uncanonicalizedScheme);
         if (!scheme)
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
-        if (scheme == "javascript")
+        if (scheme == "javascript"_s)
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         action.scheme = WTFMove(*scheme);
     }

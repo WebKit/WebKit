@@ -109,9 +109,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         return objects;
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._textEditor.revealPosition(position, options);
     }
 
     closed()
@@ -155,10 +155,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
             content: this._textEditor.string,
         };
 
-        if (this.resource instanceof WI.CSSStyleSheet) {
+        if (this.resource instanceof WI.CSSStyleSheet)
             saveData.suggestedName = "InspectorStyleSheet.css";
-            saveData.forceSaveAs = true;
-        } else {
+        else {
             saveData.url = this.resource.url;
 
             if (this.resource.urlComponents.path === "/") {

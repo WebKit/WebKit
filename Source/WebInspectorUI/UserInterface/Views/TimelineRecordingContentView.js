@@ -202,6 +202,11 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         return this._recording.canExport();
     }
 
+    get saveMode()
+    {
+        return this._recording.exportMode;
+    }
+
     get saveData()
     {
         return {customSaveHandler: () => { this._exportTimelineRecording(); }};
@@ -628,11 +633,11 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         let filename = frameName ? `${frameName}-recording` : this._recording.displayName;
 
-        WI.FileUtilities.save({
+        const forceSaveAs = true;
+        WI.FileUtilities.save(this._recording.exportMode, {
             content: JSON.stringify(json),
             suggestedName: filename + ".json",
-            forceSaveAs: true,
-        });
+        }, forceSaveAs);
     }
 
     _exportButtonNavigationItemClicked(event)

@@ -40,8 +40,7 @@ static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
-    auto& data = frontPixelBuffer->data();
-    auto got = Color { SRGBA<uint8_t> { data.item(0), data.item(1), data.item(2), data.item(3) } };
+    auto got = Color { SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) } };
     if (got != expected)
         return ::testing::AssertionFailure() << "color is not expected. Got: " << got << ", expected: " << expected << ".";
     return ::testing::AssertionSuccess();

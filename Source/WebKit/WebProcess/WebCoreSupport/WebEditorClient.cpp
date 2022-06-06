@@ -417,18 +417,18 @@ void WebEditorClient::subFrameScrollPositionChanged()
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
 {
     String key = event->keyIdentifier();
-    if (key == "Up")
+    if (key == "Up"_s)
         type = WKInputFieldActionTypeMoveUp;
-    else if (key == "Down")
+    else if (key == "Down"_s)
         type = WKInputFieldActionTypeMoveDown;
-    else if (key == "U+001B")
+    else if (key == "U+001B"_s)
         type = WKInputFieldActionTypeCancel;
-    else if (key == "U+0009") {
+    else if (key == "U+0009"_s) {
         if (event->shiftKey())
             type = WKInputFieldActionTypeInsertBacktab;
         else
             type = WKInputFieldActionTypeInsertTab;
-    } else if (key == "Enter")
+    } else if (key == "Enter"_s)
         type = WKInputFieldActionTypeInsertNewline;
     else
         return false;

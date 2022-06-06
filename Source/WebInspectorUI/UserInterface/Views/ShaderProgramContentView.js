@@ -107,6 +107,13 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             break;
         }
         }
+
+        if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants))
+            this._saveMode = WI.FileUtilities.SaveMode.FileVariants;
+        else if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile))
+            this._saveMode = WI.FileUtilities.SaveMode.SingleFile;
+        else
+            this._saveMode = null;
     }
 
     // Public
@@ -127,42 +134,63 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
     get supportsSave()
     {
-        return true;
+        return !!this._saveMode;
+    }
+
+    get saveMode()
+    {
+        return this._saveMode;
     }
 
     get saveData()
     {
-        let filename = "";
-        switch (this._lastActiveEditor) {
-        case this._computeEditor:
-            filename = WI.UIString("Compute");
-            break;
-        case this._fragmentEditor:
-            filename = WI.UIString("Fragment");
-            break;
-        case this._vertexEditor:
-            filename = WI.UIString("Vertex");
-            break;
-        }
-        console.assert(filename);
+        let data = [];
+        let addDataForEditor = (editor) => {
+            if (!editor || (editor !== this._lastActiveEditor && this._saveMode === WI.FileUtilities.SaveMode.SingleFile))
+                return;
 
-        let extension = "";
-        switch (this.representedObject.canvas.contextType) {
-        case WI.Canvas.ContextType.WebGL:
-        case WI.Canvas.ContextType.WebGL2:
-            extension = WI.unlocalizedString(".glsl");
-            break;
-        case WI.Canvas.ContextType.WebGPU:
-            extension = WI.unlocalizedString(".wsl");
-            break;
-        }
-        console.assert(extension);
+            let filename = "";
+            let displayType = "";
+            switch (editor) {
+            case this._computeEditor:
+                filename = WI.UIString("Compute");
+                displayType = WI.UIString("Compute Shader");
+                break;
+            case this._fragmentEditor:
+                filename = WI.UIString("Fragment");
+                displayType = WI.UIString("Fragment Shader");
+                break;
+            case this._vertexEditor:
+                filename = WI.UIString("Vertex");
+                displayType = WI.UIString("Vertex Shader");
+                break;
+            }
+            console.assert(filename);
+            console.assert(displayType);
 
-        return {
-            content: this._lastActiveEditor.string,
-            suggestedName: filename + extension,
-            forceSaveAs: true,
+            let extension = "";
+            switch (this.representedObject.canvas.contextType) {
+            case WI.Canvas.ContextType.WebGL:
+            case WI.Canvas.ContextType.WebGL2:
+                extension = WI.unlocalizedString(".glsl");
+                break;
+            case WI.Canvas.ContextType.WebGPU:
+                extension = WI.unlocalizedString(".wsl");
+                break;
+            }
+            console.assert(extension);
+
+            data.push({
+                displayType,
+                content: editor.string,
+                suggestedName: filename + extension,
+                forceSaveAs: true,
+            });
         };
+        addDataForEditor(this._computeEditor);
+        addDataForEditor(this._fragmentEditor);
+        addDataForEditor(this._vertexEditor);
+        return data;
     }
 
     get supportsSearch()
@@ -210,9 +238,9 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
         this._lastActiveEditor.revealNextSearchResult(changeFocus);
     }
 
-    revealPosition(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, options = {})
     {
-        this._lastActiveEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
+        this._lastActiveEditor.revealPosition(position, options);
     }
 
     // Private

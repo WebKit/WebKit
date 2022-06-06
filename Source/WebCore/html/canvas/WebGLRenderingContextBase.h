@@ -87,6 +87,7 @@ class HTMLImageElement;
 class ImageData;
 class IntSize;
 class KHRParallelShaderCompile;
+class OESDrawBuffersIndexed;
 class OESElementIndexUint;
 class OESFBORenderMipmap;
 class OESStandardDerivatives;
@@ -720,6 +721,7 @@ protected:
     RefPtr<EXTTextureNorm16> m_extTextureNorm16;
     RefPtr<EXTsRGB> m_extsRGB;
     RefPtr<KHRParallelShaderCompile> m_khrParallelShaderCompile;
+    RefPtr<OESDrawBuffersIndexed> m_oesDrawBuffersIndexed;
     RefPtr<OESElementIndexUint> m_oesElementIndexUint;
     RefPtr<OESFBORenderMipmap> m_oesFBORenderMipmap;
     RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;

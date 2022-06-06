@@ -135,7 +135,7 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     ++nextElement;
 
     // Support the legacy identifiers (with no parameters) for VP8 and VP9.
-    if ((configuration.codecName == "vp8" || configuration.codecName == "vp9") && nextElement == codecSplit.end())
+    if ((configuration.codecName == "vp8"_s || configuration.codecName == "vp9"_s) && nextElement == codecSplit.end())
         return configuration;
 
     // The format of the 'vp09' codec string is specified in the webm GitHub repo:
@@ -145,7 +145,7 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     // within their allowed range, the processing device SHALL treat it as an error."
 
     // Codec identifier: legal values are 'vp08' or 'vp09'.
-    if (configuration.codecName != "vp08" && configuration.codecName != "vp09")
+    if (configuration.codecName != "vp08"_s && configuration.codecName != "vp09"_s)
         return std::nullopt;
 
     if (nextElement == codecSplit.end())

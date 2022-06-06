@@ -108,9 +108,24 @@ public:
 
     WEBCORE_EXPORT virtual void openURLExternally(const String& url) = 0;
     WEBCORE_EXPORT virtual void revealFileExternally(const String& path) = 0;
-    virtual bool canSave() = 0;
-    virtual void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) = 0;
-    virtual void append(const String& url, const String& content) = 0;
+
+    // Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendHost::SaveMode`.
+    enum class SaveMode : uint8_t {
+        SingleFile,
+        FileVariants,
+    };
+    struct SaveData {
+        String displayType;
+        String url;
+        String content;
+        bool base64Encoded;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<SaveData> decode(Decoder&);
+    };
+    virtual bool canSave(SaveMode) = 0;
+    virtual void save(Vector<SaveData>&&, bool forceSaveAs) = 0;
+
     virtual bool canLoad() = 0;
     virtual void load(const String& path, CompletionHandler<void(const String&)>&&) = 0;
 
@@ -141,6 +156,39 @@ public:
     WEBCORE_EXPORT virtual bool isUnderTest() = 0;
 };
 
+template<class Encoder>
+void InspectorFrontendClient::SaveData::encode(Encoder& encoder) const
+{
+    encoder << displayType;
+    encoder << url;
+    encoder << content;
+    encoder << base64Encoded;
+}
+
+template<class Decoder>
+std::optional<InspectorFrontendClient::SaveData> InspectorFrontendClient::SaveData::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    std::optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return std::nullopt; \
+
+    DECODE(displayType, String)
+    DECODE(url, String)
+    DECODE(content, String)
+    DECODE(base64Encoded, bool)
+
+#undef DECODE
+
+    return { {
+        WTFMove(*displayType),
+        WTFMove(*url),
+        WTFMove(*content),
+        WTFMove(*base64Encoded),
+    } };
+}
+
 } // namespace WebCore
 
 namespace WTF {
@@ -151,6 +199,14 @@ template<> struct EnumTraits<WebCore::InspectorFrontendClient::Appearance> {
         WebCore::InspectorFrontendClient::Appearance::System,
         WebCore::InspectorFrontendClient::Appearance::Light,
         WebCore::InspectorFrontendClient::Appearance::Dark
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InspectorFrontendClient::SaveMode> {
+    using values = EnumValues<
+        WebCore::InspectorFrontendClient::SaveMode,
+        WebCore::InspectorFrontendClient::SaveMode::SingleFile,
+        WebCore::InspectorFrontendClient::SaveMode::FileVariants
     >;
 };
 

@@ -2614,7 +2614,7 @@ bool isMediaDiskCacheDisabled()
         auto s = String::fromLatin1(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
         if (!s.isEmpty()) {
             String value = s.stripWhiteSpace().convertToLowercaseWithoutLocale();
-            result = (value == "1" || value == "t" || value == "true");
+            result = (value == "1"_s || value == "t"_s || value == "true"_s);
         }
     });
 #endif

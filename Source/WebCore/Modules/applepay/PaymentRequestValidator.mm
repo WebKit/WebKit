@@ -117,7 +117,7 @@ static ExceptionOr<void> validateCountryCode(const String& countryCode)
         return Exception { TypeError, "Missing country code."_s };
 
     for (auto *countryCodePtr = uloc_getISOCountries(); *countryCodePtr; ++countryCodePtr) {
-        if (countryCode == *countryCodePtr)
+        if (countryCode == StringView::fromLatin1(*countryCodePtr))
             return { };
     }
 
@@ -134,7 +134,7 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 
     int32_t length;
     while (auto *currencyCodePtr = uenum_next(currencyCodes.get(), &length, &errorCode)) {
-        if (currencyCodePtr == currencyCode)
+        if (currencyCode == StringView::fromLatin1(currencyCodePtr))
             return { };
     }
 

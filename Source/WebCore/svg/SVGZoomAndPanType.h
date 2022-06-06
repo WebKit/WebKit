@@ -41,9 +41,9 @@ struct SVGPropertyTraits<SVGZoomAndPanType> {
     static String toString(SVGZoomAndPanType) { return emptyString(); }
     static SVGZoomAndPanType fromString(const String& value)
     {
-        if (value == "disable")
+        if (value == "disable"_s)
             return SVGZoomAndPanDisable;
-        if (value == "magnify")
+        if (value == "magnify"_s)
             return SVGZoomAndPanMagnify;
         return SVGZoomAndPanUnknown;
     }

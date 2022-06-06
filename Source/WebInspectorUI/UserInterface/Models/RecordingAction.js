@@ -320,16 +320,14 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 }
             }
 
-            if (WI.ImageUtilities.supportsCanvasPathDebugging()) {
-                let currentX = currentState.get("currentX");
-                let invalidX = (currentX < 0 || currentX >= context.canvas.width) && (!lastState || currentX !== lastState.get("currentX"));
+            let currentX = currentState.get("currentX");
+            let invalidX = (currentX < 0 || currentX >= context.canvas.width) && (!lastState || currentX !== lastState.get("currentX"));
 
-                let currentY = currentState.get("currentY");
-                let invalidY = (currentY < 0 || currentY >= context.canvas.height) && (!lastState || currentY !== lastState.get("currentY"));
+            let currentY = currentState.get("currentY");
+            let invalidY = (currentY < 0 || currentY >= context.canvas.height) && (!lastState || currentY !== lastState.get("currentY"));
 
-                if (invalidX || invalidY)
-                    this._warning = WI.UIString("This action moves the path outside the visible area");
-            }
+            if (invalidX || invalidY)
+                this._warning = WI.UIString("This action moves the path outside the visible area");
         }
     }
 

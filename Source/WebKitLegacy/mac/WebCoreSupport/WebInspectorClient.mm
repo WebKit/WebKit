@@ -383,15 +383,34 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [[m_frontendWindowController.get() window] setTitle:title];
 }
 
-void WebInspectorFrontendClient::save(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+bool WebInspectorFrontendClient::canSave(InspectorFrontendClient::SaveMode saveMode)
 {
+    switch (saveMode) {
+    case InspectorFrontendClient::SaveMode::SingleFile:
+        return true;
+
+    case InspectorFrontendClient::SaveMode::FileVariants:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
+{
+    // FIXME: Share with WebInspectorUIProxyMac.
+
+    ASSERT(saveDatas.size() == 1);
+
+    auto suggestedURL = saveDatas[0].url;
     ASSERT(!suggestedURL.isEmpty());
 
     NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).get();
     if (!platformURL) {
         platformURL = [NSURL URLWithString:suggestedURL];
         // The user must confirm new filenames before we can save to them.
-        forceSaveDialog = true;
+        forceSaveAs = true;
     }
 
     ASSERT(platformURL);
@@ -400,7 +419,8 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
 
     // Necessary for the block below.
     String suggestedURLCopy = suggestedURL;
-    String contentCopy = content;
+    String contentCopy = saveDatas[0].content;
+    bool base64Encoded = saveDatas[0].base64Encoded;
 
     auto saveToURL = ^(NSURL *actualURL) {
         ASSERT(actualURL);
@@ -408,18 +428,16 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
 
         if (base64Encoded) {
-            auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
+            auto decodedData = base64Decode(contentCopy, Base64DecodeOptions::ValidatePadding);
             if (!decodedData)
                 return;
             RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-
-        core([m_frontendWindowController frontendWebView])->mainFrame().script().executeScriptIgnoringException([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
     };
 
-    if (!forceSaveDialog) {
+    if (!forceSaveAs) {
         saveToURL(platformURL);
         return;
     }
@@ -446,23 +464,6 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
         [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
-}
-
-void WebInspectorFrontendClient::append(const String& suggestedURL, const String& content)
-{
-    ASSERT(!suggestedURL.isEmpty());
-
-    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
-    // do not append unless the user has already confirmed this filename in save().
-    if (!actualURL)
-        return;
-
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
-    [handle seekToEndOfFile];
-    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [handle closeFile];
-
-    core([m_frontendWindowController frontendWebView])->mainFrame().script().executeScriptIgnoringException([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [actualURL absoluteString]]);
 }
 
 // MARK: -

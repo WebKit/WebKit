@@ -30,6 +30,7 @@
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingState.h"
 #include "FlexRect.h"
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -38,31 +39,78 @@ namespace Layout {
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexLayout {
 public:
-    FlexLayout(const FlexFormattingState&, const RenderStyle& flexBoxStyle);
+    FlexLayout(const RenderStyle& flexBoxStyle);
 
     struct LogicalFlexItem {
-        FlexRect marginRect;
-        CheckedPtr<const ContainerBox> layoutBox;        
+    public:
+        LogicalFlexItem(const FlexRect&, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints, const ContainerBox&);
+        LogicalFlexItem() = default;
+
+        void setTop(LayoutUnit top) { m_marginRect.value.setTop(top); }
+        void setLeft(LayoutUnit left) { m_marginRect.value.setLeft(left); }
+        void setWidth(LayoutUnit width) { m_marginRect.value.setWidth(width); }
+        void setHeight(LayoutUnit height) { m_marginRect.value.setHeight(height); }
+
+        FlexRect rect() const { return m_marginRect.value; }
+        LayoutPoint topLeft() const { return m_marginRect.value.topLeft(); }
+        LayoutUnit top() const { return m_marginRect.value.top(); }
+        LayoutUnit bottom() const { return m_marginRect.value.bottom(); }
+        LayoutUnit left() const { return m_marginRect.value.left(); }
+        LayoutUnit right() const { return m_marginRect.value.right(); }
+        LayoutUnit width() const { return m_marginRect.value.width(); }
+        LayoutUnit height() const { return m_marginRect.value.height(); }
+
+        bool isHeightAuto() const { return m_marginRect.heightType == LengthType::Auto; }
+
+        LayoutUnit minimumContentWidth() const { return m_intrinsicWidthConstraints.minimum; }
+
+        const RenderStyle& style() const { return m_layoutBox->style(); }
+        const ContainerBox& layoutBox() const { return *m_layoutBox; }
+
+    private:
+        struct MarginRect {
+            FlexRect value;
+            LengthType widthType { LengthType::Auto };
+            LengthType heightType { LengthType::Auto };
+        };
+        MarginRect m_marginRect { };
+        IntrinsicWidthConstraints m_intrinsicWidthConstraints { };
+        CheckedPtr<const ContainerBox> m_layoutBox;        
     };
-    using LogicalFlexItems = Vector<LogicalFlexItem>;    
-    void layout(const ConstraintsForFlexContent&, LogicalFlexItems&);
+    using LogicalFlexItems = Vector<LogicalFlexItem>;
+    struct LogicalConstraints {
+        std::optional<LayoutUnit> verticalSpace;
+        std::optional<LayoutUnit> horizontalSpace;
+    };
+    void layout(const LogicalConstraints&, LogicalFlexItems&);
 
 private:
-    void computeLogicalWidthForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void computeLogicalHeightForFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void alignFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    void justifyFlexItems(LogicalFlexItems&, LayoutUnit availableSpace);
-    LayoutUnit computeAvailableLogicalVerticalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
-    LayoutUnit computeAvailableLogicalHorizontalSpace(LogicalFlexItems&, const ConstraintsForFlexContent&) const;
+    using LineRange = WTF::Range<size_t>;
+    void computeLogicalWidthForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalWidthForStretchingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void computeLogicalHeightForFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
+    void alignFlexItems(LogicalFlexItems&, const LineRange&, VerticalConstraints);
+    void justifyFlexItems(LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace);
 
-    const FlexFormattingState& formattingState() const { return m_formattingState; }
+    using WrappingPositions = Vector<size_t>;
+    WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
+    LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const LogicalConstraints&) const;
+
+    using LineHeightList = Vector<LayoutUnit>;
+    LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const LogicalConstraints&) const;
+
     const RenderStyle& flexBoxStyle() const { return m_flexBoxStyle; }
 
-    const FlexFormattingState& m_formattingState;
     const RenderStyle& m_flexBoxStyle;
 };
+
+inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints intrinsicWidthConstraints, const ContainerBox& layoutBox)
+    : m_marginRect({ marginRect, widthType, heightType })
+    , m_intrinsicWidthConstraints(intrinsicWidthConstraints)
+    , m_layoutBox(layoutBox)
+{
+}
 
 }
 }

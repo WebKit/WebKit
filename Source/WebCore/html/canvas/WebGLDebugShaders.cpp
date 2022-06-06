@@ -26,11 +26,10 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
 #include "WebGLDebugShaders.h"
 
-#include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,6 +47,11 @@ WebGLDebugShaders::~WebGLDebugShaders() = default;
 WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
 {
     return WebGLDebugShadersName;
+}
+
+bool WebGLDebugShaders::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension("GL_ANGLE_translated_shader_source"_s);
 }
 
 String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader& shader)

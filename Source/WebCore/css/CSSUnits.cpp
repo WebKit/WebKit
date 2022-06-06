@@ -147,11 +147,6 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
     return CSSUnitType::CSS_UNKNOWN;
 }
 
-CSSUnitType canonicalUnitType(CSSUnitType unitType)
-{
-    return canonicalUnitTypeForCategory(unitCategory(unitType));
-}
-
 TextStream& operator<<(TextStream& ts, CSSUnitCategory category)
 {
     switch (category) {

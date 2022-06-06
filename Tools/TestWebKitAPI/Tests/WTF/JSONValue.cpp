@@ -631,7 +631,7 @@ TEST(JSONValue, ParseJSON)
         EXPECT_TRUE(value);
         auto stringValue = value->asString();
         EXPECT_TRUE(!!stringValue);
-        EXPECT_EQ("foo", stringValue);
+        EXPECT_EQ("foo"_s, stringValue);
     }
 
     {

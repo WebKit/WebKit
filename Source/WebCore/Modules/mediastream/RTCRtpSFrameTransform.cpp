@@ -77,7 +77,7 @@ void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint6
         return;
     }
 
-    if (std::get<CryptoKeyAlgorithm>(algorithm).name != "HKDF") {
+    if (std::get<CryptoKeyAlgorithm>(algorithm).name != "HKDF"_s) {
         promise.reject(Exception { TypeError, "Only HKDF is supported"_s });
         return;
     }

@@ -462,11 +462,13 @@ bool ValidateTextureMaxAnisotropyValue(const Context *context,
 
 bool ValidateFragmentShaderColorBufferMaskMatch(const Context *context)
 {
+    const auto &glState            = context->getState();
     const Program *program         = context->getActiveLinkedProgram();
-    const Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
+    const Framebuffer *framebuffer = glState.getDrawFramebuffer();
 
-    auto drawBufferMask     = framebuffer->getDrawBufferMask().to_ulong();
-    auto fragmentOutputMask = program->getExecutable().getActiveOutputVariablesMask().to_ulong();
+    auto drawBufferMask =
+        framebuffer->getDrawBufferMask() & glState.getBlendStateExt().compareColorMask(0);
+    auto fragmentOutputMask = program->getExecutable().getActiveOutputVariablesMask();
 
     return drawBufferMask == (drawBufferMask & fragmentOutputMask);
 }

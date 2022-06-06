@@ -887,7 +887,7 @@ for l in lines[1:]:
         if not patch:
             commands += [['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id={}'.format(self.getProperty('patch_id', '')), '-o', '.buildbot-diff']]
         commands += [
-            ['git', 'am', '.buildbot-diff'],
+            ['git', 'am', '--keep-non-patch', '.buildbot-diff'],
             ['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
         ]
         for command in commands:

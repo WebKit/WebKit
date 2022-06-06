@@ -122,7 +122,7 @@ TimeZoneID utcTimeZoneIDSlow();
 CalendarID utcTimeZoneID();
 
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
-String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, ASCIILiteral notFound, ASCIILiteral fallback);
+String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);

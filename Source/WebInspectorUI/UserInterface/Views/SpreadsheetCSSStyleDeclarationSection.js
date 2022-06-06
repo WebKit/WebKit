@@ -178,8 +178,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (this._style.editable) {
             this.element.addEventListener("click", this._handleClick.bind(this));
 
-            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
-            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);
+            if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
+                new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
+                new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);
+            }
         }
     }
 
@@ -435,8 +437,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         } else
             url = sourceCode.url;
 
-        const saveAs = event.shiftKey;
-        WI.FileUtilities.save({url: url, content: sourceCode.content}, saveAs);
+        let forceSaveAs = event.shiftKey;
+        WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {url, content: sourceCode.content}, forceSaveAs);
     }
 
     _handleMouseDown(event)

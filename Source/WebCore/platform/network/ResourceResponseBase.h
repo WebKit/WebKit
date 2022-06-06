@@ -134,7 +134,7 @@ public:
     template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
     template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
 
-    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
+    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"_s; }
 
     WEBCORE_EXPORT bool isAttachment() const;
     WEBCORE_EXPORT bool isAttachmentWithFilename() const;

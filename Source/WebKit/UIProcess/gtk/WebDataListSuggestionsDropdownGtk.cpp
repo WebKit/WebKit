@@ -220,7 +220,7 @@ void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String
     GtkTreeModel* model;
     GtkTreeIter iter;
     bool hasSelection = gtk_tree_selection_get_selected(selection, &model, &iter);
-    if (key == "Enter") {
+    if (key == "Enter"_s) {
         if (hasSelection) {
             GUniqueOutPtr<char> item;
             gtk_tree_model_get(model, &iter, 0, &item.outPtr(), -1);
@@ -230,12 +230,12 @@ void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String
         return;
     }
 
-    if (key == "Up") {
+    if (key == "Up"_s) {
         if ((hasSelection && gtk_tree_model_iter_previous(model, &iter)) || gtk_tree_model_iter_nth_child(model, &iter, nullptr, gtk_tree_model_iter_n_children(model, nullptr) - 1))
             gtk_tree_selection_select_iter(selection, &iter);
         else
             return;
-    } else if (key == "Down") {
+    } else if (key == "Down"_s) {
         if ((hasSelection && gtk_tree_model_iter_next(model, &iter)) || gtk_tree_model_get_iter_first(model, &iter))
             gtk_tree_selection_select_iter(selection, &iter);
         else

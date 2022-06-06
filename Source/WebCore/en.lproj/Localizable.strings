@@ -493,6 +493,9 @@
 /* Display name for text track kind 'forced'. */
 "Forced (text track)" = "Forced";
 
+/* Label for the save data format selector when saving data in Web Inspector */
+"Format:" = "Format:";
+
 /* Undo action name */
 "Format Block (Undo action name)" = "Formatting";
 

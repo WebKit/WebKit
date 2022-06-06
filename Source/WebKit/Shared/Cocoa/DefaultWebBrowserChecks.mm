@@ -52,7 +52,7 @@ bool isRunningTest(const String& bundleID)
 
 Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
 {
-    if (bundleID == "inAppBrowserPrivacyTestIdentifier") {
+    if (bundleID == "inAppBrowserPrivacyTestIdentifier"_s) {
         static NeverDestroyed domains = std::array {
             WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1"_s),
         };
@@ -237,7 +237,7 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
             return;
         }
 
-        fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser");
+        fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
     });
 
     return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
@@ -247,7 +247,7 @@ static bool isFullWebBrowser(const String& bundleIdentifier)
 {
     ASSERT(!isInWebKitChildProcess());
 
-    static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser");
+    static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser"_s);
 
     return fullWebBrowser || isRunningTest(bundleIdentifier);
 }
