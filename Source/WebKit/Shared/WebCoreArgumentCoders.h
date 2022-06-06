@@ -141,6 +141,7 @@ class LinearTimingFunction;
 class Notification;
 class PasteboardCustomData;
 class PaymentInstallmentConfiguration;
+class PixelBuffer;
 class ProtectionSpace;
 class Region;
 class ResourceError;
@@ -843,6 +844,11 @@ template<> struct ArgumentCoder<UnixFileDescriptor> {
 };
 
 #endif
+
+template<> struct ArgumentCoder<WebCore::PixelBuffer> {
+    template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
+    static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
+};
 
 } // namespace IPC
 
