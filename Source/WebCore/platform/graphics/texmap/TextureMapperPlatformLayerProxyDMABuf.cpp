@@ -279,9 +279,11 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
             yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
     case DMABufFormat::FourCC::YUY2:
-    case DMABufFormat::FourCC::UYVY:
-    case DMABufFormat::FourCC::VUYA:
     case DMABufFormat::FourCC::YVYU:
+    case DMABufFormat::FourCC::UYVY:
+    case DMABufFormat::FourCC::VYUY:
+    case DMABufFormat::FourCC::VUYA:
+    case DMABufFormat::FourCC::AYUV:
         texmapGL.drawTexturePackedYUV(data.texture[0],
             yuvToRGB, m_flags, IntSize(data.width, data.height), targetRect, modelViewMatrix, opacity);
         break;
