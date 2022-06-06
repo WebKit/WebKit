@@ -40,12 +40,17 @@ public:
     RemoteResourceCache(WebCore::ProcessIdentifier webProcessIdentifier);
 
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&, QualifiedRenderingResourceIdentifier);
-    WebCore::ImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
     void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
-    WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
-    std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
+    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
+
+    WebCore::ImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
+    WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
+    WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;
+
+    std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
+
     void deleteAllFonts();
     bool releaseRemoteResource(QualifiedRenderingResourceIdentifier);
 

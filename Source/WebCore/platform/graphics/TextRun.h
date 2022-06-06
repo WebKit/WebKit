@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef TextRun_h
-#define TextRun_h
+#pragma once
 
 #include "TabSize.h"
 #include "TextFlags.h"
@@ -42,6 +41,7 @@ struct GlyphData;
 
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
+    friend void add(Hasher&, const TextRun&);
 public:
     explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
@@ -63,6 +63,43 @@ public:
         : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
     {
     }
+
+    explicit TextRun(WTF::HashTableDeletedValueType)
+        : m_text(WTF::HashTableDeletedValue)
+        , m_tabSize(0)
+        , m_xpos(0)
+        , m_horizontalGlyphStretch(0)
+        , m_expansion(0)
+        , m_expansionBehavior(ExpansionBehavior::defaultBehavior())
+        , m_allowTabs(0)
+        , m_direction(0)
+        , m_directionalOverride(0)
+        , m_characterScanForCodePath(0)
+        , m_disableSpacing(0)
+    {
+    }
+
+    explicit TextRun(WTF::HashTableEmptyValueType)
+        : m_text()
+        , m_tabSize(0)
+        , m_xpos(0)
+        , m_horizontalGlyphStretch(0)
+        , m_expansion(0)
+        , m_expansionBehavior(ExpansionBehavior::defaultBehavior())
+        , m_allowTabs(0)
+        , m_direction(0)
+        , m_directionalOverride(0)
+        , m_characterScanForCodePath(0)
+        , m_disableSpacing(0)
+    {
+    }
+
+    TextRun(const TextRun&) = default;
+    TextRun& operator=(const TextRun&) = default;
+    bool operator==(const TextRun&) const;
+
+    bool isHashTableEmptyValue() const { return m_text.isNull(); }
+    bool isHashTableDeletedValue() const { return m_text.isHashTableDeletedValue(); }
 
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
@@ -115,6 +152,8 @@ public:
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
     StringView text() const { return m_text; }
 
+    TextRun isolatedCopy() const;
+
 private:
     String m_text;
 
@@ -142,6 +181,14 @@ inline void TextRun::setTabSize(bool allow, const TabSize& size)
     m_tabSize = size;
 }
 
+inline TextRun TextRun::isolatedCopy() const
+{
+    TextRun clone = *this;
+    if (m_text.impl() && m_text.impl()->isExternal())
+        clone.m_text = m_text.isolatedCopy();
+    return clone;
 }
 
-#endif
+TextStream& operator<<(TextStream&, const TextRun&);
+
+} // namespace WebCore

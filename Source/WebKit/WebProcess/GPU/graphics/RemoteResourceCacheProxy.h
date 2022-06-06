@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RenderingUpdateID.h"
+#include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
@@ -41,7 +42,7 @@ namespace WebKit {
 
 class RemoteRenderingBackendProxy;
 
-class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer {
+class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer, public WebCore::DecomposedGlyphs::Observer {
 public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
@@ -53,6 +54,7 @@ public:
     void recordNativeImageUse(WebCore::NativeImage&);
     void recordFontUse(WebCore::Font&);
     void recordImageBufferUse(WebCore::ImageBuffer&);
+    void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
 
     void finalizeRenderingUpdate();
 
@@ -66,9 +68,12 @@ private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, RenderingUpdateID>;
+    using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::DecomposedGlyphs>>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
+    void releaseDecomposedGlyphs(WebCore::RenderingResourceIdentifier) override;
     void clearNativeImageMap();
+    void clearDecomposedGlyphsMap();
 
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
@@ -78,6 +83,7 @@ private:
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
     FontHashMap m_fonts;
+    DecomposedGlyphsHashMap m_decomposedGlyphs;
 
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
 

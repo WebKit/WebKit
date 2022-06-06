@@ -83,7 +83,7 @@ LegacyInlineTextBox::~LegacyInlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
-    TextPainter::removeGlyphDisplayList(*this);
+    TextPainter::removeGlyphDisplayList(renderer().document(), *this);
 }
 
 bool LegacyInlineTextBox::hasTextContent() const

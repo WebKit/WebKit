@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsContext.h"
 #include "InMemoryDisplayList.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -32,7 +33,6 @@
 namespace WebCore {
 
 class FloatRect;
-class GraphicsContext;
 
 namespace DisplayList {
 
@@ -61,7 +61,11 @@ public:
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
 private:
-    std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
+    struct ApplyItemResult {
+        std::optional<StopReplayReason> stopReason;
+        std::optional<RenderingResourceIdentifier> resourceIdentifier;
+    };
+    ApplyItemResult applyItem(ItemHandle);
 
     GraphicsContext& m_context;
     const DisplayList& m_displayList;

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
  * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +64,7 @@ private:
     void clearRect(const WebCore::FloatRect&) override;
 
     void drawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned numGlyphs, const WebCore::FloatPoint&, WebCore::FontSmoothingMode) override;
+    void drawDecomposedGlyphs(const WebCore::Font&, const WebCore::DecomposedGlyphs&) override;
 
     void drawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destination, const WebCore::FloatRect& source, const WebCore::ImagePaintingOptions&) override;
     void drawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect&, WebCore::Filter&, WebCore::FilterResults&) override;

@@ -51,9 +51,13 @@ class Recorder : public GraphicsContext {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
-    enum class DeconstructDrawGlyphs : bool { No, Yes };
+    enum class DrawGlyphsMode {
+        Normal,
+        DeconstructUsingDrawGlyphsCommands,
+        DeconstructUsingDrawDecomposedGlyphsCommands,
+    };
 
-    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No);
+    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsMode = DrawGlyphsMode::Normal);
     WEBCORE_EXPORT virtual ~Recorder();
 
     virtual void convertToLuminanceMask() = 0;
@@ -83,6 +87,7 @@ protected:
     virtual void recordClipPath(const Path&, WindRule) = 0;
     virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
+    virtual void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) = 0;
     virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawSystemImage(SystemImage&, const FloatRect&) = 0;
@@ -134,6 +139,7 @@ protected:
     virtual bool recordResourceUse(ImageBuffer&) = 0;
     virtual bool recordResourceUse(const SourceImage&) = 0;
     virtual bool recordResourceUse(Font&) = 0;
+    virtual bool recordResourceUse(DecomposedGlyphs&) = 0;
 
     struct ContextState {
         GraphicsContextState state;
@@ -213,7 +219,8 @@ private:
     WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
 
     WEBCORE_EXPORT void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) final;
-    WEBCORE_EXPORT void drawGlyphsAndCacheFont(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
+    WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
+    WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
 
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
     WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
@@ -270,10 +277,12 @@ private:
 
     const AffineTransform& ctm() const;
 
+    bool shouldDeconstructDrawGlyphs() const;
+
     Vector<ContextState, 4> m_stateStack;
     std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
     float m_initialScale { 1 };
-    const DeconstructDrawGlyphs m_deconstructDrawGlyphs { DeconstructDrawGlyphs::No };
+    const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 };
 
 } // namespace DisplayList

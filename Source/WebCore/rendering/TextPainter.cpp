@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 #include "config.h"
 #include "TextPainter.h"
 
+#include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
@@ -218,15 +219,6 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow, m_shadowColorFilter);
 }
 
-void TextPainter::clearGlyphDisplayLists()
-{
-    GlyphDisplayListCache<LegacyInlineTextBox>::singleton().clear();
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
-        GlyphDisplayListCache<InlineDisplay::Box>::singleton().clear();
-#endif
-}
-
 static bool forceUseGlyphDisplayListForTesting = false;
 
 bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
@@ -249,10 +241,10 @@ String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, Opt
     for (auto textBox : InlineIterator::textBoxesFor(*textNode.renderer())) {
         DisplayList::DisplayList* displayList = nullptr;
         if (auto* legacyInlineBox = textBox.legacyInlineBox())
-            displayList = TextPainter::glyphDisplayListIfExists(*legacyInlineBox);
+            displayList = TextPainter::glyphDisplayListIfExists(textNode.renderer()->document(), *legacyInlineBox);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         else
-            displayList = TextPainter::glyphDisplayListIfExists(*textBox.inlineBox());
+            displayList = TextPainter::glyphDisplayListIfExists(textNode.renderer()->document(), *textBox.inlineBox());
 #endif
         if (displayList) {
             builder.append(displayList->asText(flags));
