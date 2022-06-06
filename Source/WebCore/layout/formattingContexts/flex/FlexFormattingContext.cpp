@@ -264,12 +264,14 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             };
             break;
         }
-        case FlexDirection::ColumnReverse:
+        case FlexDirection::ColumnReverse: {
+            auto visualBottom = constraints.logicalTop() + constraints.availableVerticalSpace().value_or(logicalWidth);
             borderBoxTopLeft = {
                 constraints.horizontal().logicalLeft + logicalFlexItem.top(),
-                constraints.logicalTop() + logicalWidth - logicalFlexItem.right() + flexItemGeometry.marginBefore()
+                visualBottom - logicalFlexItem.right() + flexItemGeometry.marginBefore()
             };
             break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
