@@ -3556,8 +3556,6 @@ imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Fa
 
 webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
 
-webkit.org/b/238229 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Crash ]
-
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash ]
 
 webkit.org/b/238519 animations/shadow-host-child-change.html [ Pass ImageOnlyFailure ]
@@ -3567,8 +3565,6 @@ webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 webkit.org/b/238284 editing/spelling/spellcheck-async-remove-frame.html [ Pass Crash ]
 
 webkit.org/b/238771 media/video-played-ranges-1.html [ Pass Failure ]
-
-webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
 
 webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
 
@@ -3628,6 +3624,20 @@ webkit.org/b/240579 http/tests/push-api/subscribe-grant-permissions.html [ Skip 
 webkit.org/b/240579 http/wpt/push-api/pushEvent.any.serviceworker.html [ Skip ]
 webkit.org/b/240579 http/wpt/push-api/pushManager.any.html [ Skip ]
 webkit.org/b/240579 http/wpt/push-api/pushManager.any.serviceworker.html [ Skip ]
+
+# These tests finish with unfired UI script callbacks, causing crashes. See webkit.org/b/236794
+editing/spelling/editing-word-with-marker-1.html
+fast/events/ios/pdf-modifer-key-down-crash.html
+fast/media/mq-inverted-colors-live-update-for-listener.html
+fast/media/mq-prefers-contrast-live-update-for-listener.html
+fast/media/mq-prefers-reduced-motion-live-update-for-listener.html
+imported/w3c/web-platform-tests/clipboard-apis/async-raw-write-read.tentative.https.html
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
+imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html
+swipe/main-frame-pinning-requirement.html
 
 
 webkit.org/b/240659 fast/text/isolate-ignore.html [ Crash ]
