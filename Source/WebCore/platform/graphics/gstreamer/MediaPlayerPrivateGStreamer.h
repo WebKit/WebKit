@@ -479,6 +479,7 @@ private:
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
+    void configureDepayloader(GstElement*);
     void configureVideoDecoder(GstElement*);
 
     void setPlaybinURL(const URL& urlString);
