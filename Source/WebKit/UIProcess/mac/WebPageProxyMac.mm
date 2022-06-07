@@ -232,15 +232,10 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     if (!hasRunningProcess())
         return nullptr;
 
-    SharedMemory::IPCHandle ipcHandle;
+    RefPtr<WebCore::SharedBuffer> buffer;
     const Seconds messageTimeout(20);
-    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(ipcHandle), messageTimeout);
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!ipcHandle.handle.isNull(), nullptr);
-
-    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return nullptr;
-    return sharedMemoryBuffer->createSharedBuffer(ipcHandle.dataSize);
+    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(buffer), messageTimeout);
+    return buffer;
 }
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)

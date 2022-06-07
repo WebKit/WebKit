@@ -897,12 +897,12 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
 
     auto retainedSelf = retainPtr(self);
-    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::SharedBufferDataReference& pdfData) {
+    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) {
         retainedSelf->_pdfPrintCallbackID = 0;
-        if (pdfData.isEmpty())
+        if (!pdfData)
             return;
 
-        auto data = pdfData.buffer()->createCFData();
+        auto data = pdfData->createCFData();
         auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
         retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
     });

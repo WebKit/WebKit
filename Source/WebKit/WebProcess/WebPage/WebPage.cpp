@@ -5514,7 +5514,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 }
 
 #if PLATFORM(COCOA)
-void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(const IPC::SharedBufferReference&)>&& completionHandler)
+void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     auto& frameView = *m_page->mainFrame().view();
     IntSize snapshotSize;
@@ -5539,7 +5539,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>&
     frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
     frameView.setPaintBehavior(originalPaintBehavior);
 
-    completionHandler(IPC::SharedBufferReference(SharedBuffer::create(pdfData.get())));
+    completionHandler(SharedBuffer::create(pdfData.get()));
 }
 
 void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
@@ -5593,12 +5593,12 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     completionHandler(handle);
 }
 
-void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::SharedBufferReference&)>&& callback)
+void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& callback)
 {
     PrintContextAccessScope scope { *this };
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
-    callback(IPC::SharedBufferReference(SharedBuffer::create(pdfPageData.get())));
+    callback(SharedBuffer::create(pdfPageData.get()));
 }
 
 void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)

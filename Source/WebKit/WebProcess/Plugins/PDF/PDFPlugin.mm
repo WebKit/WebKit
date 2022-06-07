@@ -2639,15 +2639,8 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
             auto plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, type, plainTextString.get(), pageIdentifier), Messages::WebPasteboardProxy::SetPasteboardStringForType::Reply(newChangeCount), 0);
         } else {
-            SharedMemory::Handle handle;
             auto buffer = SharedBuffer::create(data);
-            {
-                auto sharedMemory = SharedMemory::copyBuffer(buffer.get());
-                if (!sharedMemory)
-                    continue;
-                sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-            }
-            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type, SharedMemory::IPCHandle { WTFMove(handle), buffer->size() }, pageIdentifier), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
+            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type, WTFMove(buffer), pageIdentifier), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
         }
     }
 }

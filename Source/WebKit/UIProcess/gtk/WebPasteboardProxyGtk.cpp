@@ -55,10 +55,10 @@ void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionH
     Clipboard::get(pasteboardName).readFilePaths(WTFMove(completionHandler));
 }
 
-void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferReference&&)>&& completionHandler)
+void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), [completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
-        completionHandler(IPC::SharedBufferReference(WTFMove(buffer)));
+        completionHandler(WTFMove(buffer));
     });
 }
 
