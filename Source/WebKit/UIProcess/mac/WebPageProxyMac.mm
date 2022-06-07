@@ -224,15 +224,10 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     if (!hasRunningProcess())
         return nullptr;
 
-    SharedMemory::IPCHandle ipcHandle;
+    RefPtr<WebCore::SharedBuffer> buffer;
     const Seconds messageTimeout(20);
-    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(ipcHandle), messageTimeout);
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!ipcHandle.handle.isNull(), nullptr);
-
-    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return nullptr;
-    return sharedMemoryBuffer->createSharedBuffer(ipcHandle.dataSize);
+    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(buffer), messageTimeout);
+    return buffer;
 }
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
@@ -776,16 +771,16 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::handleContextMenuCopyCroppedImage(const String& preferredMIMEType)
+void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 {
     if (!m_activeContextMenu)
         return;
 
-    RetainPtr image = m_activeContextMenu->croppedImageResult();
+    RetainPtr image = m_activeContextMenu->copySubjectResult();
     if (!image)
         return;
 
-    auto [data, type] = imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get());
+    auto [data, type] = imageDataForRemoveBackground(image.get(), preferredMIMEType.createCFString().get());
     if (!data)
         return;
 

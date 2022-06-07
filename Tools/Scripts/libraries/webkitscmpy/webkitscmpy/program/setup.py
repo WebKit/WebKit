@@ -279,7 +279,6 @@ class Setup(Command):
                 with open(source_path, 'r') as f:
                     from jinja2 import Template
                     contents = Template(f.read()).render(
-                        git=local.Git.executable(),
                         location=source_path,
                         python=os.path.basename(sys.executable),
                     )

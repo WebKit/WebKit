@@ -37,8 +37,6 @@ namespace WebCore {
 
 class ImageBufferCairoBackend : public ImageBufferBackend {
 public:
-    RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const override;
-
     void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
 
     void transformToColorSpace(const DestinationColorSpace&) override;

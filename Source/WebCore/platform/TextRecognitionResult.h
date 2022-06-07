@@ -27,6 +27,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+OBJC_CLASS NSAttributedString;
 OBJC_CLASS VKCImageAnalysis;
 
 #if ENABLE(DATA_DETECTION)
@@ -261,10 +262,10 @@ template<class Decoder> std::optional<TextRecognitionResult> TextRecognitionResu
     }};
 }
 
-} // namespace WebCore
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/TextRecognitionResultAdditions.h>
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult&, const CharacterRange&);
 #endif
+
+} // namespace WebCore
 
 #endif // ENABLE(IMAGE_ANALYSIS)

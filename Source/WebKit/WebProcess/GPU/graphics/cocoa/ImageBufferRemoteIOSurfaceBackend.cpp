@@ -112,12 +112,6 @@ RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingSt
     return { };
 }
 
-RefPtr<Image> ImageBufferRemoteIOSurfaceBackend::copyImage(BackingStoreCopy, PreserveResolution) const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
 String ImageBufferRemoteIOSurfaceBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     RELEASE_ASSERT_NOT_REACHED();

@@ -162,10 +162,6 @@ class MockMediaSessionCoordinator;
 class HTMLModelElement;
 #endif
 
-namespace ImageOverlay {
-class CroppedImage;
-}
-
 template<typename IDLType> class DOMPromiseDeferred;
 
 struct MockWebAuthenticationConfiguration;

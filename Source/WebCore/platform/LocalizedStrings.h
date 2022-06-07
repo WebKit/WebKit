@@ -375,8 +375,8 @@ namespace WebCore {
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    WEBCORE_EXPORT String contextMenuItemTagCopyCroppedImage();
-    WEBCORE_EXPORT String contextMenuItemTitleMarkupImage();
+    WEBCORE_EXPORT String contextMenuItemTagCopySubject();
+    WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)

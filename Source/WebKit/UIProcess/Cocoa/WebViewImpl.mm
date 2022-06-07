@@ -249,7 +249,7 @@ static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRe
     return request;
 }
 
-void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& source, const String& target, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
 {
     if (!isLiveTextAvailableAndEnabled()) {
         completion({ });
@@ -265,11 +265,11 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
     auto cgImage = imageBitmap->makeCGImage();
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (!target.isEmpty())
-        return requestImageAnalysisWithIdentifiers(ensureImageAnalyzer(), imageURL, source, target, cgImage.get(), WTFMove(completion));
+    if (!targetLanguageIdentifier.isEmpty())
+        return requestVisualTranslation(ensureImageAnalyzer(), imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTFMove(completion));
 #else
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(target);
+    UNUSED_PARAM(sourceLanguageIdentifier);
+    UNUSED_PARAM(targetLanguageIdentifier);
 #endif
 
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
@@ -5937,17 +5937,74 @@ bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInVie
 #endif
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditions.mm>
-#else
-void WebViewImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect)
+void WebViewImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle& bitmapHandle, WebCore::FloatRect bounds)
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    auto imageBitmap = ShareableBitmap::create(bitmapHandle);
+    if (!imageBitmap)
+        return;
+
+    auto image = imageBitmap->makeCGImage();
+    if (!image)
+        return;
+
+    auto request = WebKit::createImageAnalyzerRequest(image.get(), VKAnalysisTypeText);
+    m_currentImageAnalysisRequestID = processImageAnalyzerRequest(request.get(), [this, weakThis = WeakPtr { *this }, bounds](CocoaImageAnalysis *result, NSError *error) {
+        if (!weakThis || !m_currentImageAnalysisRequestID)
+            return;
+
+        m_currentImageAnalysisRequestID = 0;
+        if (error || !result)
+            return;
+
+        m_imageAnalysisInteractionBounds = bounds;
+        installImageAnalysisOverlayView(result);
+    });
+#else
+    UNUSED_PARAM(bitmapHandle);
+    UNUSED_PARAM(bounds);
+#endif
 }
 
 void WebViewImpl::cancelElementFullscreenVideoExtraction()
 {
-}
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (auto identifier = std::exchange(m_currentImageAnalysisRequestID, 0))
+        [m_imageAnalyzer cancelRequestID:identifier];
+    uninstallImageAnalysisOverlayView();
 #endif
+}
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
+{
+    if (!m_imageAnalysisOverlayView) {
+        m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
+        m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
+        [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
+        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
+        RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
+            m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
+    }
+
+    [m_imageAnalysisOverlayView setAnalysis:analysis];
+    [m_view addSubview:m_imageAnalysisOverlayView.get()];
+}
+
+void WebViewImpl::uninstallImageAnalysisOverlayView()
+{
+    if (!m_imageAnalysisOverlayView)
+        return;
+
+    RELEASE_LOG(ImageAnalysis, "Uninstalling image analysis overlay view");
+    [m_imageAnalysisOverlayView removeFromSuperview];
+    m_imageAnalysisOverlayViewDelegate = nil;
+    m_imageAnalysisOverlayView = nil;
+    m_imageAnalysisInteractionBounds = { };
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace WebKit
 

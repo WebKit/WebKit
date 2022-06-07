@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct TextRecognitionOptions {
-    String source;
-    String target;
+    String sourceLanguageIdentifier;
+    String targetLanguageIdentifier;
 
     enum class AllowSnapshots : bool { No, Yes };
     AllowSnapshots allowSnapshots { AllowSnapshots::Yes };

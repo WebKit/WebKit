@@ -577,6 +577,12 @@ class WebkitFlatpak:
         self.sccache_token = ""
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
+        self.dbus_proxy_process = None
+
+    def __del__(self):
+        if self.dbus_proxy_process:
+            self.dbus_proxy_process.kill()
+
     def execute_command(self, args, stdout=None, stderr=None, env=None, keep_signals=True):
         if keep_signals:
             ctx_manager = nullcontext()
@@ -755,9 +761,7 @@ class WebkitFlatpak:
         self.a11y_socket = tempfile.NamedTemporaryFile(dir=self.socket_dir.name, delete=False)
 
         try:
-            proxy_proc = subprocess.Popen((dbus_proxy_path, a11y_bus_address, self.a11y_socket.name))
-
-            atexit.register(lambda: proxy_proc.terminate())
+            self.dbus_proxy_process = subprocess.Popen((dbus_proxy_path, a11y_bus_address, self.a11y_socket.name, "--talk=org.a11y.Bus"), close_fds=True)
         except (subprocess.CalledProcessError) as e:
             _log.warning("Failed to run xdg-dbus-proxy {}. Can't forward a11y bus.".format(e))
             return []

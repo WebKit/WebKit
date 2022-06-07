@@ -61,6 +61,7 @@
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/FontCache.h>
+#import <WebCore/FontCacheCoreText.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryController.h>
@@ -154,6 +155,10 @@
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
+#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
+#import <pal/spi/ios/DataDetectorsUISPI.h>
+#endif
+
 #import <WebCore/MediaAccessibilitySoftLink.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
@@ -224,6 +229,16 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 }
 #endif
 
+static void softlinkDataDetectorsFrameworks()
+{
+#if ENABLE(DATA_DETECTION)
+    PAL::isDataDetectorsCoreFrameworkAvailable();
+#if PLATFORM(IOS_FAMILY)
+    DataDetectorsUILibrary();
+#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(DATA_DETECTION)
+}
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
@@ -281,7 +296,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     setCurrentUserInterfaceIdiomIsSmallScreen(parameters.currentUserInterfaceIdiomIsSmallScreen);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
-    RenderThemeIOS::setContentSizeCategory(parameters.contentSizeCategory);
+    setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
 #endif
@@ -418,6 +433,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (!isParentProcessAFullWebBrowser(*this))
         disableURLSchemeCheckInDataDetectors();
+
+    // Soft link frameworks related to Data Detection before we disconnect from launchd because these frameworks connect to
+    // launchd temporarily at link time to register XPC services. See rdar://93598951 (my feature request to stop doing that)
+    softlinkDataDetectorsFrameworks();
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)

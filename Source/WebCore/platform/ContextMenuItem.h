@@ -149,8 +149,8 @@ enum ContextMenuAction {
     ContextMenuItemTagAddHighlightToNewQuickNote,
     ContextMenuItemTagLookUpImage,
     ContextMenuItemTagTranslate,
-    ContextMenuItemTagCopyCroppedImage,
-    ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopyCroppedImage,
+    ContextMenuItemTagCopySubject,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopySubject,
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

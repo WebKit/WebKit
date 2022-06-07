@@ -48,13 +48,13 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef, VKImageOrientation, 
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-class ImageAnalysisMarkupSwizzler {
+class RemoveBackgroundSwizzler {
 public:
-    ImageAnalysisMarkupSwizzler(CGImageRef, CGRect);
-    ~ImageAnalysisMarkupSwizzler() = default;
+    RemoveBackgroundSwizzler(CGImageRef, CGRect);
+    ~RemoveBackgroundSwizzler() = default;
 
 private:
-    InstanceMethodSwizzler m_imageMarkupRequestSwizzler;
+    InstanceMethodSwizzler m_removeBackgroundRequestSwizzler;
 };
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

@@ -75,8 +75,7 @@ public:
     ResourceUsageOverlayPainter(ResourceUsageOverlay& overlay)
         : m_overlay(overlay)
     {
-        FontCascadeDescription fontDescription;
-        RenderTheme::singleton().systemFont(CSSValueMessageBox, fontDescription);
+        auto fontDescription = RenderTheme::singleton().systemFont(CSSValueMessageBox);
         fontDescription.setComputedSize(gFontSize);
         m_textFont = FontCascade(WTFMove(fontDescription), 0, 0);
         m_textFont.update(nullptr);

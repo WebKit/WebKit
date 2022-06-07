@@ -54,7 +54,6 @@
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
 #import "SessionStateCoding.h"
-#import "SharedBufferReference.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -1741,13 +1740,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
-    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::SharedBufferReference& pdfData) {
-        if (pdfData.isEmpty()) {
+    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](RefPtr<WebCore::SharedBuffer>&& pdfData) {
+        if (!pdfData || pdfData->isEmpty()) {
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
 
-        auto data = pdfData.unsafeBuffer()->createCFData();
+        auto data = pdfData->createCFData();
         handler((NSData *)data.get(), nil);
     });
 }
@@ -2324,15 +2323,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
-- (void)_startImageAnalysis:(NSString *)source target:(NSString *)target
+- (void)_startImageAnalysis:(NSString *)sourceLanguageIdentifier target:(NSString *)targetLanguageIdentifier
 {
 #if ENABLE(IMAGE_ANALYSIS)
     THROW_IF_SUSPENDED;
 
-    if (!_page || !_page->preferences().imageAnalysisQueueEnabled() || !WebKit::canStartImageAnalysis(source))
+    if (!_page || !_page->preferences().visualTranslationEnabled() || !WebKit::languageIdentifierSupportsLiveText(sourceLanguageIdentifier))
         return;
 
-    _page->startImageAnalysis(source, target);
+    _page->startVisualTranslation(sourceLanguageIdentifier, targetLanguageIdentifier);
 #endif
 }
 

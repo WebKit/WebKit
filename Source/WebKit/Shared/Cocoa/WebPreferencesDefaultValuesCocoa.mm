@@ -30,6 +30,7 @@
 
 #import "ImageAnalysisUtilities.h"
 #import <Foundation/NSBundle.h>
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -45,22 +46,40 @@ bool defaultScrollAnimatorEnabled()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-bool defaultTextRecognitionEnhancementsEnabled()
+bool defaultTextRecognitionInVideosEnabled()
 {
-    return textRecognitionEnhancementsSystemFeatureEnabled();
+    static bool enabled = false;
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(VisualIntelligence, LiveText);
+    });
+#endif
+    return enabled;
 }
 
-bool defaultImageAnalysisQueueEnabled()
+bool defaultVisualTranslationEnabled()
 {
-    return imageAnalysisQueueSystemFeatureEnabled();
+    static bool enabled = false;
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(Translate, EnableVisualIntelligenceUI);
+    });
+#endif
+    return enabled;
 }
 
-bool defaultImageAnalysisMarkupEnabled()
+bool defaultRemoveBackgroundEnabled()
 {
-    // FIXME: The is- prefix on this helper method is inconsistent with the adjacent system
-    // feature flag checks. This will be fixed upon upstreaming the code from WebKitAdditions,
-    // when these helper methods will be removed entirely.
-    return isImageAnalysisMarkupSystemFeatureEnabled();
+    static bool enabled = false;
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(VisualIntelligence, RemoveBackground);
+    });
+#endif
+    return enabled;
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

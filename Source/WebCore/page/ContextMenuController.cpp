@@ -536,7 +536,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
-    case ContextMenuItemTagCopyCroppedImage:
+    case ContextMenuItemTagCopySubject:
     case ContextMenuItemTagLookUpImage:
         // These should be handled at the client layer.
         ASSERT_NOT_REACHED();
@@ -857,7 +857,7 @@ void ContextMenuController::populate()
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    ContextMenuItem copyCroppedImageItem { ActionType, ContextMenuItemTagCopyCroppedImage, contextMenuItemTagCopyCroppedImage() };
+    ContextMenuItem copySubjectItem { ActionType, ContextMenuItemTagCopySubject, contextMenuItemTagCopySubject() };
 #endif
 
     Node* node = m_context.hitTestResult().innerNonSharedNode();
@@ -926,8 +926,8 @@ void ContextMenuController::populate()
 
                 if (image && !image->isAnimated()) {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-                    if (m_client.supportsCopyCroppedImage())
-                        appendItem(copyCroppedImageItem, m_contextMenu.get());
+                    if (m_client.supportsCopySubject())
+                        appendItem(copySubjectItem, m_contextMenu.get());
 #endif
 #if ENABLE(IMAGE_ANALYSIS)
                     if (m_client.supportsLookUpInImages())
@@ -1408,7 +1408,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCopyLinkToClipboard:
         case ContextMenuItemTagOpenImageInNewWindow:
         case ContextMenuItemTagCopyImageToClipboard:
-        case ContextMenuItemTagCopyCroppedImage:
+        case ContextMenuItemTagCopySubject:
 #if PLATFORM(GTK)
         case ContextMenuItemTagCopyImageUrlToClipboard:
 #endif

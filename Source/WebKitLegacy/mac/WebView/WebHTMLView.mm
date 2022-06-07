@@ -599,7 +599,7 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
-    case ContextMenuItemTagCopyCroppedImage:
+    case ContextMenuItemTagCopySubject:
     case ContextMenuItemTagLookUpImage:
         return std::nullopt;
 
@@ -7102,6 +7102,19 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 }
 
 @end
+
+#if PLATFORM(MAC)
+
+@implementation WebHTMLView (TestingSupportMac)
+
+- (BOOL)_secureEventInputEnabledForTesting
+{
+    return _private->isInSecureInputState;
+}
+
+@end
+
+#endif // PLATFORM(MAC)
 
 // This is used by AppKit/TextKit. It should be possible to remove this once
 // -[NSAttributedString _documentFromRange:document:documentAttributes:subresources:] is removed.

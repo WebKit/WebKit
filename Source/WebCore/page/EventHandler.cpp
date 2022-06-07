@@ -2551,10 +2551,10 @@ RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
     if (!is<RenderImage>(renderer))
         return nullptr;
 
-#if USE(APPLE_INTERNAL_SDK)
-    if (isAdditionalTextRecognitionCandidateElement(*candidateElement))
-        return candidateElement;
-#endif
+    if (candidateElement->document().settings().textRecognitionInVideosEnabled()) {
+        if (auto video = dynamicDowncast<HTMLVideoElement>(*candidateElement); video && video->paused())
+            return candidateElement;
+    }
 
 #if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(*candidateElement))

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -669,6 +669,7 @@
 		E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F439B1A1284D8C39003DE041 /* WebHTMLViewForTestingMac.h in Headers */ = {isa = PBXBuildFile; fileRef = F439B1A0284D8C39003DE041 /* WebHTMLViewForTestingMac.h */; };
 		F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1530,6 +1531,7 @@
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F439B1A0284D8C39003DE041 /* WebHTMLViewForTestingMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewForTestingMac.h; sourceTree = "<group>"; };
 		F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLElementPrivate.h; sourceTree = "<group>"; };
 		F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutocapitalizeTypes.h; sourceTree = "<group>"; };
 		F508946902B71D59018A9CD4 /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSViewExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2204,6 +2206,7 @@
 				F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */,
 				35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */,
 				35081D9502B6D4D80ACA2ACA /* WebHTMLView.mm */,
+				F439B1A0284D8C39003DE041 /* WebHTMLViewForTestingMac.h */,
 				93185DB506679F42005D5E7E /* WebHTMLViewInternal.h */,
 				35081D9602B6D4D80ACA2ACA /* WebHTMLViewPrivate.h */,
 			);
@@ -3024,6 +3027,7 @@
 				939810550824BF01008DF038 /* WebHTMLRepresentation.h in Headers */,
 				939810560824BF01008DF038 /* WebHTMLRepresentationPrivate.h in Headers */,
 				939810570824BF01008DF038 /* WebHTMLView.h in Headers */,
+				F439B1A1284D8C39003DE041 /* WebHTMLViewForTestingMac.h in Headers */,
 				939810A10824BF01008DF038 /* WebHTMLViewInternal.h in Headers */,
 				939810580824BF01008DF038 /* WebHTMLViewPrivate.h in Headers */,
 				939810180824BF01008DF038 /* WebIconDatabase.h in Headers */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -308,16 +308,7 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
     return platformActiveSelectionForegroundColor(options);
 }
 
-static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT& logFont, float fontSize)
-{    
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(logFont.lfFaceName);
-    fontDescription.setSpecifiedSize(fontSize);
-    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
-    fontDescription.setIsItalic(logFont.lfItalic);
-}
-
-void RenderThemeWin::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
+FontCascadeDescription RenderThemeWin::systemFont(CSSValueID valueID) const
 {
     static bool initialized;
     static NONCLIENTMETRICS ncm;
@@ -357,12 +348,18 @@ void RenderThemeWin::updateCachedSystemFontDescription(CSSValueID valueID, FontC
     default: { // Everything else uses the stock GUI font.
         HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
         if (!hGDI)
-            return;
+            return FontCascadeDescription();
         if (::GetObject(hGDI, sizeof(logFont), &logFont) <= 0)
-            return;
+            return FontCascadeDescription();
     }
     }
-    fillFontDescription(fontDescription, logFont, shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight));
+    FontCascadeDescription fontDescription;
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setOneFamily(logFont.lfFaceName);
+    fontDescription.setSpecifiedSize(shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight));
+    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
+    fontDescription.setIsItalic(logFont.lfItalic);
+    return fontDescription;
 }
 
 bool RenderThemeWin::supportsFocus(ControlPart appearance) const

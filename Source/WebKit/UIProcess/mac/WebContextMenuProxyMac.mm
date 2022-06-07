@@ -308,14 +308,14 @@ void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto* page = this->page();
-    if (!page || !page->preferences().imageAnalysisMarkupEnabled())
+    if (!page || !page->preferences().removeBackgroundEnabled())
         return;
 
     auto context = m_context.controlledImageElementContext();
     if (!context)
         return;
 
-    page->shouldAllowImageMarkup(*context, [protectedThis = Ref { *this }, weakMenu = WeakObjCPtr<NSMenu> { m_menu.get() }](bool shouldAllow) mutable {
+    page->shouldAllowRemoveBackground(*context, [protectedThis = Ref { *this }, weakMenu = WeakObjCPtr<NSMenu> { m_menu.get() }](bool shouldAllow) mutable {
         if (!shouldAllow)
             return;
 
@@ -327,7 +327,7 @@ void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
         if (!image)
             return;
 
-        requestImageAnalysisMarkup(image.get(), [protectedThis = WTFMove(protectedThis), weakMenu = WTFMove(weakMenu)](CGImageRef result, CGRect) {
+        requestBackgroundRemoval(image.get(), [protectedThis = WTFMove(protectedThis), weakMenu = WTFMove(weakMenu)](CGImageRef result, CGRect) {
             if (!result)
                 return;
 
@@ -335,14 +335,14 @@ void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
             if (!strongMenu)
                 return;
 
-            auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
-            [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
-            [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
-            [markupImageItem setAction:@selector(markupImage)];
-            [markupImageItem setIndentationLevel:[strongMenu itemArray].lastObject.indentationLevel];
-            [strongMenu addItem:markupImageItem.get()];
+            auto removeBackgroundItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleRemoveBackground() action:@selector(removeBackground) keyEquivalent:@""]);
+            [removeBackgroundItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleRemoveBackground()]];
+            [removeBackgroundItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
+            [removeBackgroundItem setAction:@selector(removeBackground)];
+            [removeBackgroundItem setIndentationLevel:[strongMenu itemArray].lastObject.indentationLevel];
+            [strongMenu addItem:removeBackgroundItem.get()];
 
-            protectedThis->m_croppedImageResult = result;
+            protectedThis->m_copySubjectResult = result;
         });
     });
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -373,7 +373,7 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
     if (!elementContext)
         return;
 
-    auto [data, type] = imageDataForCroppedImageResult(m_croppedImageResult.get(), m_context.controlledImageMIMEType().createCFString().get());
+    auto [data, type] = imageDataForRemoveBackground(m_copySubjectResult.get(), m_context.controlledImageMIMEType().createCFString().get());
     if (!data)
         return;
 
@@ -558,8 +558,8 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return _WKMenuItemIdentifierTranslate;
 
-    case ContextMenuItemTagCopyCroppedImage:
-        return _WKMenuItemIdentifierCopyCroppedImage;
+    case ContextMenuItemTagCopySubject:
+        return _WKMenuItemIdentifierCopySubject;
 
     case ContextMenuItemTagShareMenu:
         return _WKMenuItemIdentifierShareMenu;
@@ -629,7 +629,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
-    std::optional<WebContextMenuItemData> copyCroppedImageItem;
+    std::optional<WebContextMenuItemData> copySubjectItem;
     std::optional<WebContextMenuItemData> lookUpImageItem;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -639,9 +639,9 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
             ASSERT(!lookUpImageItem);
             lookUpImageItem = { item };
             return true;
-        case ContextMenuItemTagCopyCroppedImage:
-            ASSERT(!copyCroppedImageItem);
-            copyCroppedImageItem = { item };
+        case ContextMenuItemTagCopySubject:
+            ASSERT(!copySubjectItem);
+            copySubjectItem = { item };
             return true;
         default:
             break;
@@ -665,7 +665,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto imageBitmap = hitTestData.imageBitmap;
 
     RetainPtr sparseMenuItems = [NSPointerArray strongObjectsPointerArray];
-    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), copyCroppedImageItem = WTFMove(copyCroppedImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), copySubjectItem = WTFMove(copySubjectItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -687,10 +687,10 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
             UNUSED_PARAM(imageURL);
 #endif
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-            if (copyCroppedImageItem) {
+            if (copySubjectItem) {
                 if (auto image = imageBitmap->makeCGImageCopy()) {
-                    protectedThis->m_croppedImageResult = nullptr;
-                    requestImageAnalysisMarkup(image.get(), [weakPage, protectedThis, copyCroppedImageItem = WTFMove(*copyCroppedImageItem)](auto result, auto) {
+                    protectedThis->m_copySubjectResult = nullptr;
+                    requestBackgroundRemoval(image.get(), [weakPage, protectedThis, copySubjectItem = WTFMove(*copySubjectItem)](auto result, auto) {
                         if (!result)
                             return;
 
@@ -698,13 +698,13 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
                         if (!page)
                             return;
 
-                        protectedThis->m_croppedImageResult = result;
-                        [protectedThis->m_menu addItem:createMenuActionItem(copyCroppedImageItem).get()];
+                        protectedThis->m_copySubjectResult = result;
+                        [protectedThis->m_menu addItem:createMenuActionItem(copySubjectItem).get()];
                     });
                 }
             }
 #else
-            UNUSED_PARAM(copyCroppedImageItem);
+            UNUSED_PARAM(copySubjectItem);
 #endif
         }
 

@@ -19,15 +19,19 @@ set(WebKitTestRunner_SOURCES
     WorkQueueManager.cpp
 )
 
-set(WebKitTestRunner_LIBRARIES
-    TestRunnerShared
-)
+set(WebKitTestRunner_LIBRARIES TestRunnerShared)
+
 set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
+    PAL
+    WTF
     WebCore
     WebCoreTestSupport
     WebKit
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
+endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     if (HAVE_STD_EXPERIMENTAL_FILESYSTEM)
@@ -43,14 +47,6 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
     ${WebKitTestRunner_DIR}
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
-)
-
-list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
-    ${WEBCORE_DIR}/testing/js
-)
-
-list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(WebKitTestRunner_WEB_PREFERENCES_TEMPLATES
@@ -97,10 +93,6 @@ set(WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     ${WebKitTestRunner_DIR}
     ${WebKitTestRunner_DIR}/InjectedBundle
-)
-
-list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES

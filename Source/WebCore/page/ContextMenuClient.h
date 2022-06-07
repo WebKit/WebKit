@@ -56,7 +56,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    virtual bool supportsCopyCroppedImage() = 0;
+    virtual bool supportsCopySubject() = 0;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)

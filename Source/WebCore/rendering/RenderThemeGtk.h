@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,7 +29,7 @@ class RenderThemeGtk final : public RenderThemeAdwaita {
 private:
     virtual ~RenderThemeGtk() = default;
 
-    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+    FontCascadeDescription systemFont(CSSValueID) const override;
     Seconds caretBlinkInterval() const override;
 };
 

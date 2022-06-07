@@ -39,10 +39,10 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCIm
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCImageAnalysisInteraction, PAL_EXPORT, true)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCImageAnalysisOverlayView, PAL_EXPORT, true)
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VisionKitCoreSoftLinkAdditions.mm>
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, vk_cgImageRemoveBackground, void, (CGImageRef image, BOOL crop, VKCGImageRemoveBackgroundCompletion completion), (image, crop, completion), PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundRequestHandler, PAL_EXPORT, true)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundRequest, PAL_EXPORT, true)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundResult, PAL_EXPORT, true)
 #endif
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

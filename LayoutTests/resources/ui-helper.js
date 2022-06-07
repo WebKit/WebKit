@@ -778,6 +778,16 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static dismissMenu()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.dismissMenu()", resolve);
+        });
+    }
+
     static waitForKeyboardToHide()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
@@ -1352,6 +1362,13 @@ window.UIHelper = class UIHelper {
     {
         return new Promise(resolve => {
             testRunner.runUIScript("JSON.stringify(uiController.menuRect)", result => resolve(JSON.parse(result)));
+        });
+    }
+
+    static contextMenuRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.contextMenuRect)", result => resolve(JSON.parse(result)));
         });
     }
 

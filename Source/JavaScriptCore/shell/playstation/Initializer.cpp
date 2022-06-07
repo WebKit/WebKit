@@ -46,5 +46,5 @@ static void initializer(void)
 #if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
 #endif
-    loadLibraryOrExit("libicu");
+    loadLibraryOrExit(ICU_LOAD_AT);
 }

@@ -57,7 +57,7 @@ NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMen
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";
 
 NSString * const _WKMenuItemIdentifierTranslate = @"WKMenuItemIdentifierTranslate";
-NSString * const _WKMenuItemIdentifierCopyCroppedImage = @"WKMenuItemIdentifierCopyCroppedImage";
+NSString * const _WKMenuItemIdentifierCopySubject = @"WKMenuItemIdentifierCopySubject";
 
 NSString * const _WKMenuItemIdentifierSpellingMenu = @"WKMenuItemIdentifierSpellingMenu";
 NSString * const _WKMenuItemIdentifierShowSpellingPanel = @"WKMenuItemIdentifierShowSpellingPanel";

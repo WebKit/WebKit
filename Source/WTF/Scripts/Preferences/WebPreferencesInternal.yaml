@@ -357,34 +357,6 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
-ImageAnalysisMarkupEnabled:
-  type: bool
-  humanReadableName: "Image analysis markup"
-  humanReadableDescription: "Enable image analysis markup"
-  condition: ENABLE(IMAGE_ANALYSIS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebCore:
-      default: false
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: defaultImageAnalysisMarkupEnabled()
-
-ImageAnalysisQueueEnabled:
-  type: bool
-  humanReadableName: "Image analysis queue"
-  humanReadableDescription: "Enable image analysis queue"
-  condition: ENABLE(IMAGE_ANALYSIS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebCore:
-      default: false
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: defaultImageAnalysisQueueEnabled()
-
 InlineFormattingContextIntegrationEnabled:
   type: bool
   humanReadableName: "Next-generation inline layout integration (IFC)"
@@ -734,6 +706,20 @@ PreferSandboxedMediaParsing:
     WebKit:
       default: true
 
+RemoveBackgroundEnabled:
+  type: bool
+  humanReadableName: "Remove Background"
+  humanReadableDescription: "Enable Remove Background"
+  condition: ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultRemoveBackgroundEnabled()
+
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
   humanReadableName: "CG Display Lists: Replay for Testing"
@@ -860,10 +846,10 @@ TextAutosizingUsesIdempotentMode:
     WebCore:
       default: false
 
-TextRecognitionEnhancementsEnabled:
+TextRecognitionInVideosEnabled:
   type: bool
-  humanReadableName: "Text Recognition Enhancements"
-  humanReadableDescription: "Enable Text Recognition Enhancements"
+  humanReadableName: "Text Recognition in Videos"
+  humanReadableDescription: "Enable Text Recognition in Videos"
   condition: ENABLE(IMAGE_ANALYSIS)
   exposed: [ WebKit ]
   defaultValue:
@@ -872,7 +858,7 @@ TextRecognitionEnhancementsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: defaultTextRecognitionEnhancementsEnabled()
+      default: defaultTextRecognitionInVideosEnabled()
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
@@ -964,6 +950,20 @@ UseSceneKitForModel:
   defaultValue:
     WebKit:
       default: false
+
+VisualTranslationEnabled:
+  type: bool
+  humanReadableName: "Visual Translation"
+  humanReadableDescription: "Enable Visual Translation"
+  condition: ENABLE(IMAGE_ANALYSIS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultVisualTranslationEnabled()
 
 WebAPIStatisticsEnabled:
   type: bool

@@ -111,10 +111,8 @@ public:
 
     virtual void finalizeDrawIntoContext(GraphicsContext&) { }
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
-    virtual RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const = 0;
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
-    WEBCORE_EXPORT virtual RefPtr<Image> sinkIntoImage(PreserveResolution);
 
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 

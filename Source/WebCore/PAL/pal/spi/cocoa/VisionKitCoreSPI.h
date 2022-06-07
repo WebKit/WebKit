@@ -150,8 +150,63 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) BOOL shouldWrap;
 @end
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/VisionKitCoreSPIAdditions.h>
+#if HAVE(VK_IMAGE_TRANSLATION_SUPPORT)
+
+#if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>)
+#import <VisionKitCore/VKCImageAnalysisTranslation.h>
+#else
+
+@interface VKCTranslatedParagraph : NSObject
+@property (nonatomic, readonly) VKQuad *quad;
+@property (nonatomic, readonly) NSString *text;
+@end
+
+@interface VKCImageAnalysisTranslation : NSObject
+@property (nonatomic, readonly) NSArray<VKCTranslatedParagraph *> *paragraphs;
+@end
 #endif
+
+@interface VKCImageAnalysis (Staging_93280734)
+- (void)translateFrom:(NSString *)sourceLanguage to:(NSString *)targetLanguage withCompletion:(void (^)(VKCImageAnalysisTranslation *translation, NSError *))completion;
+@end
+
+@interface VKCTranslatedParagraph (Staging_93280734)
+@property (nonatomic, readonly) BOOL isPassthrough;
+@end
+
+#endif // HAVE(VK_IMAGE_TRANSLATION_SUPPORT)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#if __has_include(<VisionKitCore/VKImageClass_Private.h>)
+#import <VisionKitCore/VKImageClass_Private.h>
+#else
+
+typedef void (^VKCGImageRemoveBackgroundCompletion)(CGImageRef, CGRect cropRect, NSError *);
+extern void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
+
+#endif
+
+#if __has_include(<VisionKitCore/VKCRemoveBackgroundRequestHandler.h>)
+#import <VisionKitCore/VKCRemoveBackgroundRequest.h>
+#import <VisionKitCore/VKCRemoveBackgroundRequestHandler.h>
+#import <VisionKitCore/VKCRemoveBackgroundResult.h>
+#else
+@interface VKCRemoveBackgroundResult : NSObject
+@property (nonatomic, readonly) CGRect cropRect;
+- (CGImageRef)createCGImage;
+@end
+
+@interface VKCRemoveBackgroundRequest : NSObject
+- (instancetype)initWithCGImage:(CGImageRef)image;
+@property (nonatomic, readonly) CGImageRef CGImage;
+@end
+
+@interface VKCRemoveBackgroundRequestHandler : NSObject
+- (void)performRequest:(VKCRemoveBackgroundRequest *)request completion:(void (^)(VKCRemoveBackgroundResult *result, NSError *error))completion;
+@end
+#endif
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

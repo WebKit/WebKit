@@ -261,10 +261,13 @@ IGNORE_WARNINGS_END
 
 - (void)_dismissAllContextMenuInteractions
 {
-#if PLATFORM(IOS)
+#if USE(UICONTEXTMENU)
     for (id <UIInteraction> interaction in self.contentView.interactions) {
-        if ([interaction isKindOfClass:UIContextMenuInteraction.class])
-            [(UIContextMenuInteraction *)interaction dismissMenu];
+        if (auto contextMenuInteraction = dynamic_objc_cast<UIContextMenuInteraction>(interaction)) {
+            [UIView performWithoutAnimation:^{
+                [contextMenuInteraction dismissMenu];
+            }];
+        }
     }
 #endif
 }

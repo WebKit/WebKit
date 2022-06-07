@@ -54,7 +54,7 @@ public:
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    virtual CGImageRef croppedImageResult() const { return nullptr; }
+    virtual CGImageRef copySubjectResult() const { return nullptr; }
 #endif
 
 protected:

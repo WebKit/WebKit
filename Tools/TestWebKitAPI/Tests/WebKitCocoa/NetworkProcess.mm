@@ -428,21 +428,27 @@ TEST(_WKDataTask, Basic)
     constexpr auto html = "<script>document.cookie='testkey=value'</script>"_s;
     constexpr auto secondResponse = "second response"_s;
     Vector<char> secondRequest;
-    auto server = HTTPServer([&](const Connection& connection) {
-        connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
-            connection.send(HTTPResponse(html).serialize(), [&, connection] {
-                connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
-                    secondRequest = WTFMove(request);
-                    connection.send(HTTPResponse(secondResponse).serialize());
-                });
-            });
-        });
+    auto server = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/initial_request"_s) {
+                co_await connection.awaitableSend(HTTPResponse(html).serialize());
+                continue;
+            }
+            if (path == "/second_request"_s) {
+                secondRequest = WTFMove(request);
+                co_await connection.awaitableSend(HTTPResponse(secondResponse).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
     });
     auto webView = adoptNS([TestWKWebView new]);
-    [webView synchronouslyLoadRequest:server.request()];
+    [webView synchronouslyLoadRequest:server.request("/initial_request"_s)];
 
     __block bool done = false;
-    RetainPtr<NSMutableURLRequest> postRequest = adoptNS([server.request() mutableCopy]);
+    RetainPtr<NSMutableURLRequest> postRequest = adoptNS([server.request("/second_request"_s) mutableCopy]);
     [postRequest setMainDocumentURL:postRequest.get().URL];
     [postRequest setHTTPMethod:@"POST"];
     auto requestBody = "request body";

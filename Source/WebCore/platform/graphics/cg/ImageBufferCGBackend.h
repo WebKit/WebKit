@@ -43,9 +43,6 @@ public:
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
-    RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const override;
-    RefPtr<Image> sinkIntoImage(PreserveResolution) override;
-
     void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
 
     String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const override;

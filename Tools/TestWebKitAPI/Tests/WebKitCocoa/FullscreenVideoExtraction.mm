@@ -25,6 +25,265 @@
 
 #import "config.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/FullscreenVideoExtractionAdditions.mm>
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#import "ImageAnalysisTestingUtilities.h"
+#import "InstanceMethodSwizzler.h"
+#import "PlatformUtilities.h"
+#import "Test.h"
+#import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFullscreenDelegate.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/RunLoop.h>
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+
+#if PLATFORM(IOS_FAMILY)
+
+static void swizzledPresentViewController(UIViewController *, SEL, UIViewController *, BOOL, dispatch_block_t completion)
+{
+    dispatch_async(dispatch_get_main_queue(), completion);
+}
+
 #endif
+
+static int32_t swizzledProcessRequest(VKCImageAnalyzer *, SEL, id request, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
+{
+    dispatch_async(dispatch_get_main_queue(), [completion = makeBlockPtr(completion)] {
+        completion(TestWebKitAPI::createImageAnalysisWithSimpleFixedResults().get(), nil);
+    });
+    return 100;
+}
+
+static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnalysis *)
+{
+}
+
+@interface FullscreenVideoExtractionWebView : TestWKWebView
+@end
+
+@implementation FullscreenVideoExtractionWebView {
+    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisRequestSwizzler;
+#if PLATFORM(IOS_FAMILY)
+    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisInteractionSwizzler;
+#else
+    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisOverlaySwizzler;
+#endif
+    bool _doneEnteringFullscreen;
+    bool _doneExitingFullscreen;
+}
+
++ (RetainPtr<FullscreenVideoExtractionWebView>)create
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    configuration.preferences._fullScreenEnabled = YES;
+    auto webView = adoptNS([[FullscreenVideoExtractionWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"element-fullscreen"];
+    return webView;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithFrame:frame configuration:configuration]))
+        return nil;
+
+    _imageAnalysisRequestSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKImageAnalyzerClass(),
+        @selector(processRequest:progressHandler:completionHandler:),
+        reinterpret_cast<IMP>(swizzledProcessRequest)
+    );
+
+#if PLATFORM(IOS_FAMILY)
+    _imageAnalysisInteractionSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKCImageAnalysisInteractionClass(),
+        @selector(setAnalysis:),
+        reinterpret_cast<IMP>(swizzledSetAnalysis)
+    );
+#else
+    _imageAnalysisOverlaySwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKCImageAnalysisOverlayViewClass(),
+        @selector(setAnalysis:),
+        reinterpret_cast<IMP>(swizzledSetAnalysis)
+    );
+#endif
+
+    return self;
+}
+
+- (void)loadVideoSource:(NSString *)source
+{
+    __block bool done = false;
+    [self callAsyncJavaScript:@"loadSource(source)" arguments:@{ @"source" : source } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)enterFullscreen
+{
+#if PLATFORM(IOS_FAMILY)
+    // Work around lack of a real UIApplication in TestWebKitAPIApp on iOS. Without this,
+    // -presentViewController:animated:completion: never calls the completion handler,
+    // which means we never transition into WKFullscreenStateInFullscreen.
+    InstanceMethodSwizzler presentationSwizzler {
+        UIViewController.class,
+        @selector(presentViewController:animated:completion:),
+        reinterpret_cast<IMP>(swizzledPresentViewController)
+    };
+#endif // PLATFORM(IOS_FAMILY)
+
+    _doneEnteringFullscreen = false;
+    [self evaluateJavaScript:@"enterFullscreen()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&_doneEnteringFullscreen);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)exitFullscreen
+{
+    _doneExitingFullscreen = false;
+    [self evaluateJavaScript:@"exitFullscreen()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&_doneExitingFullscreen);
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)didChangeValueForKey:(NSString *)key
+{
+    [super didChangeValueForKey:key];
+
+    if (![key isEqualToString:@"fullscreenState"])
+        return;
+
+    auto state = self.fullscreenState;
+    switch (state) {
+    case WKFullscreenStateNotInFullscreen:
+        _doneExitingFullscreen = true;
+        break;
+    case WKFullscreenStateInFullscreen:
+        _doneEnteringFullscreen = true;
+        break;
+    default:
+        break;
+    }
+}
+
+- (void)pause
+{
+    [self objectByEvaluatingJavaScript:@"video.pause()"];
+    [self waitForNextPresentationUpdate];
+}
+
+- (void)play
+{
+    __block bool done = false;
+    [self callAsyncJavaScript:@"video.play()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    [self waitForNextPresentationUpdate];
+}
+
+- (double)waitForVideoFrame
+{
+    __block double result = 0;
+    __block bool done = false;
+    [self callAsyncJavaScript:@"waitForVideoFrame()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(NSNumber *timestamp, NSError *error) {
+        EXPECT_NULL(error);
+        result = timestamp.doubleValue;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (BOOL)hasActiveImageAnalysis
+{
+#if PLATFORM(IOS_FAMILY)
+    for (id<UIInteraction> interaction in self.textInputContentView.interactions) {
+        if ([interaction isKindOfClass:PAL::getVKCImageAnalysisInteractionClass()])
+            return YES;
+    }
+#else
+    for (NSView *subview in self.subviews) {
+        if ([subview isKindOfClass:PAL::getVKCImageAnalysisOverlayViewClass()])
+            return YES;
+    }
+#endif
+    return NO;
+}
+
+- (void)waitForImageAnalysisToBegin
+{
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return self.hasActiveImageAnalysis;
+    }, 3, @"Expected image analysis to begin.");
+}
+
+- (void)waitForImageAnalysisToEnd
+{
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return !self.hasActiveImageAnalysis;
+    }, 3, @"Expected image analysis to end.");
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+TEST(FullscreenVideoExtraction, TogglePlaybackInElementFullscreen)
+{
+    auto webView = [FullscreenVideoExtractionWebView create];
+    [webView loadVideoSource:@"test.mp4"];
+
+    [webView enterFullscreen];
+    [webView pause];
+    [webView waitForImageAnalysisToBegin];
+
+    [webView play];
+    [webView waitForImageAnalysisToEnd];
+}
+
+TEST(FullscreenVideoExtraction, AddVideoAfterEnteringFullscreen)
+{
+    auto webView = [FullscreenVideoExtractionWebView create];
+    [webView loadVideoSource:@"test.mp4"];
+    [webView objectByEvaluatingJavaScript:@"video.remove()"];
+
+    [webView enterFullscreen];
+    [webView objectByEvaluatingJavaScript:@"container.appendChild(video); 0;"];
+    [webView play];
+    [webView waitForVideoFrame];
+    [webView pause];
+    [webView waitForImageAnalysisToBegin];
+}
+
+TEST(FullscreenVideoExtraction, DoNotAnalyzeVideoAfterExitingFullscreen)
+{
+    auto webView = [FullscreenVideoExtractionWebView create];
+    [webView loadVideoSource:@"test.mp4"];
+
+    [webView enterFullscreen];
+    [webView pause];
+    [webView waitForImageAnalysisToBegin];
+
+    [webView exitFullscreen];
+    [webView waitForImageAnalysisToEnd];
+
+    [webView play];
+    [webView pause];
+
+    bool doneWaiting = false;
+    RunLoop::main().dispatchAfter(300_ms, [&] {
+        EXPECT_FALSE([webView hasActiveImageAnalysis]);
+        doneWaiting = true;
+    });
+    Util::run(&doneWaiting);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

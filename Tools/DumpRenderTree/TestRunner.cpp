@@ -1634,7 +1634,7 @@ static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectR
 static JSValueRef getSecureEventInputIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
-    return JSValueMakeBoolean(context, IsSecureEventInputEnabled());
+    return JSValueMakeBoolean(context, static_cast<TestRunner*>(JSObjectGetPrivate(thisObject))->isSecureEventInputEnabled());
 #else
     return JSValueMakeBoolean(context, false);
 #endif
@@ -2372,3 +2372,12 @@ void TestRunner::willNavigate()
         m_shouldSwapToDefaultSessionOnNextNavigation = false;
     }
 }
+
+#if !PLATFORM(MAC)
+
+bool TestRunner::isSecureEventInputEnabled() const
+{
+    return false;
+}
+
+#endif

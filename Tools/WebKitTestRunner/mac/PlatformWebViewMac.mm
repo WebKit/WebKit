@@ -34,6 +34,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -252,6 +253,11 @@ void PlatformWebView::forceWindowFramesChanged()
 void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
 {
     [platformView() setAllowsBackForwardNavigationGestures:enabled];
+}
+
+bool PlatformWebView::isSecureEventInputEnabled() const
+{
+    return platformView()._secureEventInputEnabledForTesting;
 }
 
 } // namespace WTR

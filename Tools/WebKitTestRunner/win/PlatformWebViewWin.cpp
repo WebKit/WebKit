@@ -278,4 +278,9 @@ void PlatformWebView::setEditable(bool)
 {
 }
 
+bool PlatformWebView::isSecureEventInputEnabled() const
+{
+    return false;
+}
+
 } // namespace WTR

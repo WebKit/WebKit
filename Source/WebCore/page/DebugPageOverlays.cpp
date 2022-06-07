@@ -40,6 +40,9 @@
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
 #include "Region.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#include "RenderView.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include <wtf/SortedArrayMap.h>
@@ -57,6 +60,8 @@ public:
     PageOverlay& overlay() { return *m_overlay; }
 
     void setRegionChanged() { m_regionChanged = true; }
+
+    virtual bool shouldPaintOverlayIntoLayer() const { return true; }
 
 protected:
     RegionOverlay(Page&, Color);
@@ -257,10 +262,13 @@ private:
 
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
 
-    FloatRect rectForSettingAtIndex(unsigned);
-    bool valueForSetting(ASCIILiteral);
-        
-    std::optional<InteractionRegion> activeRegion();
+    FloatRect rectForSettingAtIndex(unsigned) const;
+    bool valueForSetting(ASCIILiteral) const;
+
+    std::optional<std::pair<RenderLayer&, GraphicsLayer&>> activeLayer() const;
+    std::optional<InteractionRegion> activeRegion() const;
+
+    bool shouldPaintOverlayIntoLayer() const override { return valueForSetting("regions"_s); }
 
     struct Setting {
         ASCIILiteral key;
@@ -278,16 +286,13 @@ private:
         { "hover"_s, "CSS Hover"_s, false },
         { "regions"_s, "Show Regions"_s, false }
     };
-    
-    Vector<InteractionRegion> m_regions;
+
     IntPoint m_mouseLocationInContentCoordinates;
 };
 
 bool InteractionRegionOverlay::updateRegion()
 {
     m_overlay->setNeedsDisplay();
-    m_regions = interactionRegions(m_page, { { 0, 0 }, m_page.mainFrame().view()->contentsSize() });
-    
     return true;
 }
 
@@ -301,12 +306,41 @@ static Vector<Path> pathsForRegion(const InteractionRegion& region)
     return PathUtilities::pathsWithShrinkWrappedRects(rects, std::max(region.borderRadius, radius));
 }
 
-std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion()
+std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay::activeLayer() const
 {
+    // FIXME: This should hit-test to find the correct layer, once we store InteractionRegions
+    // on each layer instead of keeping them all on the root.
+    auto* frameView = m_page.mainFrame().view();
+    if (!frameView || !frameView->renderView())
+        return std::nullopt;
+
+    auto* layer = frameView->renderView()->enclosingLayer();
+    if (!layer || !layer->backing())
+        return std::nullopt;
+
+    auto* graphicsLayer = layer->backing()->graphicsLayer();
+    if (!graphicsLayer)
+        return std::nullopt;
+
+    return { { *layer, *graphicsLayer } };
+}
+
+std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
+{
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    auto layerPair = activeLayer();
+    if (!layerPair)
+        return std::nullopt;
+    auto& [layer, graphicsLayer] = *layerPair;
+
     std::optional<InteractionRegion> hitRegion;
     float hitRegionArea = 0;
     
-    for (const auto& region : m_regions) {
+    FloatSize offset(layer.offsetFromAncestor(&layer.compositor().rootRenderLayer()));
+    FloatPoint mouseLocationInLayerCoordinates = m_mouseLocationInContentCoordinates - offset;
+
+    auto regions = graphicsLayer.eventRegion().interactionRegions();
+    for (const auto& region : regions) {
         float area = 0;
         FloatRect boundingRect;
         for (const auto& rect : region.regionInLayerCoordinates.rects()) {
@@ -317,13 +351,13 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion()
             area += rect.area();
         }
 
-        if (!boundingRect.contains(m_mouseLocationInContentCoordinates))
+        if (!boundingRect.contains(mouseLocationInLayerCoordinates))
             continue;
 
         auto paths = pathsForRegion(region);
         bool didHitRegion = false;
         for (const auto& path : paths) {
-            if (path.contains(m_mouseLocationInContentCoordinates)) {
+            if (path.contains(mouseLocationInLayerCoordinates)) {
                 didHitRegion = true;
                 break;
             }
@@ -341,7 +375,13 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion()
         }
     }
     
+    if (hitRegion)
+        hitRegion->regionInLayerCoordinates.translate(roundedIntSize(offset));
+
     return hitRegion;
+#else
+    return std::nullopt;
+#endif
 }
 
 static void drawCheckbox(const String& text, GraphicsContext& context, const FontCascade& font, const FloatRect& box, bool state)
@@ -369,7 +409,7 @@ static void drawCheckbox(const String& text, GraphicsContext& context, const Fon
     context.strokePath(checkboxPath);
 }
 
-FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index)
+FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index) const
 {
     auto viewSize = m_page.mainFrame().view()->layoutSize();
     static constexpr float settingsWidth = 150;
@@ -381,7 +421,7 @@ FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index)
     };
 }
 
-bool InteractionRegionOverlay::valueForSetting(ASCIILiteral name)
+bool InteractionRegionOverlay::valueForSetting(ASCIILiteral name) const
 {
     for (const auto& setting : m_settings) {
         if (name == setting.key)
@@ -427,16 +467,6 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
     GraphicsContextStateSaver stateSaver(context);
     
     context.clearRect(dirtyRect);
-
-    if (valueForSetting("regions"_s)) {
-        context.setStrokeThickness(2);
-        context.setStrokeColor(Color::green);
-
-        for (const auto& region : m_regions) {
-            for (const auto& rect : region.regionInLayerCoordinates.rects())
-                context.strokeRect(rect, 2);
-        }
-    }
 
     auto region = activeRegion();
 
@@ -536,6 +566,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
         cursorToSet = handCursor();
         if (event.button() == LeftButton && event.type() == PlatformEvent::MousePressed) {
             m_settings[i].value = !m_settings[i].value;
+            m_page.forceRepaintAllFrames();
             return true;
         }
     }
@@ -736,6 +767,13 @@ void DebugPageOverlays::settingsChanged(Page& page)
         return;
 
     DebugPageOverlays::singleton().updateOverlayRegionVisibility(page, activeOverlayRegions);
+}
+
+bool DebugPageOverlays::shouldPaintOverlayIntoLayer(Page& page, RegionType regionType) const
+{
+    if (auto* overlay = regionOverlayForPage(page, regionType))
+        return overlay->shouldPaintOverlayIntoLayer();
+    return false;
 }
 
 }

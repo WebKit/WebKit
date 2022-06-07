@@ -348,8 +348,8 @@ bool Editor::handleTextEvent(TextEvent& event)
     if (event.isDrop())
         return false;
 
-    if (event.isPaste() || event.isMarkup()) {
-        auto action = event.isMarkup() ? EditAction::MarkupImage : EditAction::Paste;
+    if (event.isPaste() || event.isRemoveBackground()) {
+        auto action = event.isRemoveBackground() ? EditAction::RemoveBackground : EditAction::Paste;
         if (event.pastingFragment()) {
 #if PLATFORM(IOS_FAMILY)
             if (client()->performsTwoStepPaste(event.pastingFragment()))
@@ -644,8 +644,8 @@ void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smart
     if (!target)
         return;
 
-    ASSERT(action == EditAction::MarkupImage || action == EditAction::Paste);
-    auto type = action == EditAction::MarkupImage ? TextEventInputMarkup : TextEventInputPaste;
+    ASSERT(action == EditAction::RemoveBackground || action == EditAction::Paste);
+    auto type = action == EditAction::RemoveBackground ? TextEventInputRemoveBackground : TextEventInputPaste;
     target->dispatchEvent(TextEvent::createForFragmentPaste(document().windowProxy(), WTFMove(pastingFragment), type, smartReplace, matchStyle, respectsMailBlockquote));
 }
 
@@ -701,7 +701,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
         return;
 
     AccessibilityReplacedText replacedText;
-    if (AXObjectCache::accessibilityEnabled() && (editingAction == EditAction::Paste || editingAction == EditAction::Insert || editingAction == EditAction::MarkupImage))
+    if (AXObjectCache::accessibilityEnabled() && (editingAction == EditAction::Paste || editingAction == EditAction::Insert || editingAction == EditAction::RemoveBackground))
         replacedText = AccessibilityReplacedText(selection);
 
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment };

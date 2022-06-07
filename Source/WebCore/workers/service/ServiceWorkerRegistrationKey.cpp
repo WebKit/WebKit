@@ -114,11 +114,19 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
             return std::nullopt;
     }
 
+    auto scheme = StringView(key).left(first);
+    auto host = StringView(key).substring(first + 1, second - first - 1);
+
+    URL topOriginURL { makeString(scheme, "://", host) };
+    if (!topOriginURL.isValid())
+        return std::nullopt;
+
     URL scope { key.substring(third + 1) };
     if (!scope.isValid())
         return std::nullopt;
 
-    return ServiceWorkerRegistrationKey { { key.left(first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
+    SecurityOriginData topOrigin { scheme.toString(), host.toString(), shortPort };
+    return ServiceWorkerRegistrationKey { WTFMove(topOrigin), WTFMove(scope) };
 }
 
 #if !LOG_DISABLED

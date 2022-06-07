@@ -181,9 +181,6 @@ void WebGL2RenderingContext::initializeNewContext()
     ASSERT(m_textureUnits.size() >= 8);
     m_boundSamplers.clear();
     m_boundSamplers.resize(m_textureUnits.size());
-
-    // FIXME: this should likely be removed.
-    initializeShaderExtensions();
 }
 
 void WebGL2RenderingContext::resetUnpackParameters()
@@ -237,15 +234,6 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
     bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
 #endif
 
-}
-
-void WebGL2RenderingContext::initializeShaderExtensions()
-{
-    // FIXME: these are in the WebGL 2.0 core API and should be removed.
-    m_context->ensureExtensionEnabled("GL_OES_standard_derivatives"_s);
-    m_context->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
-    m_context->ensureExtensionEnabled("GL_EXT_shader_texture_lod"_s);
-    m_context->ensureExtensionEnabled("GL_EXT_frag_depth"_s);
 }
 
 bool WebGL2RenderingContext::validateBufferTarget(const char* functionName, GCGLenum target)

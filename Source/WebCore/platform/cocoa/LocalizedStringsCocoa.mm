@@ -306,14 +306,14 @@ String contextMenuItemTagLookUpImage()
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-String contextMenuItemTagCopyCroppedImage()
+String contextMenuItemTagCopySubject()
 {
-    return WEB_UI_STRING("Copy Cropped Image", "Title for Copy Cropped Image");
+    return WEB_UI_STRING("Copy Subject", "Title for Copy Subject");
 }
 
-String contextMenuItemTitleMarkupImage()
+String contextMenuItemTitleRemoveBackground()
 {
-    return WEB_UI_STRING("Markup Image", "Image analysis markup menu item");
+    return WEB_UI_STRING("Remove Background", "Remove Background menu item");
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

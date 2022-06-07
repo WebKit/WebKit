@@ -438,4 +438,9 @@ void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
     [platformView() setAllowsBackForwardNavigationGestures:enabled];
 }
 
+bool PlatformWebView::isSecureEventInputEnabled() const
+{
+    return false;
+}
+
 } // namespace WTR
