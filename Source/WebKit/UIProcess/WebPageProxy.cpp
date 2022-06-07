@@ -4514,9 +4514,10 @@ void WebPageProxy::getSamplingProfilerOutput(CompletionHandler<void(const String
     sendWithAsyncReply(Messages::WebPage::GetSamplingProfilerOutput(), WTFMove(callback));
 }
 
-static CompletionHandler<void(const std::optional<IPC::SharedBufferReference>& data)> toAPIDataCallback(CompletionHandler<void(API::Data*)>&& callback)
+template <typename T>
+static CompletionHandler<void(T data)> toAPIDataCallbackT(CompletionHandler<void(API::Data*)>&& callback)
 {
-    return [callback = WTFMove(callback)] (const std::optional<IPC::SharedBufferReference>& data) mutable {
+    return [callback = WTFMove(callback)] (T data) mutable {
         if (!data) {
             callback(nullptr);
             return;
@@ -4524,6 +4525,9 @@ static CompletionHandler<void(const std::optional<IPC::SharedBufferReference>& d
         callback(API::Data::create(data->data(), data->size()).ptr());
     };
 }
+
+auto* toAPIDataCallback = toAPIDataCallbackT<const std::optional<IPC::SharedBufferReference>&>;
+auto* toAPIDataSharedBufferCallback = toAPIDataCallbackT<RefPtr<WebCore::SharedBuffer>&&>;
 
 #if ENABLE(MHTML)
 void WebPageProxy::getContentsAsMHTMLData(CompletionHandler<void(API::Data*)>&& callback)
@@ -9157,7 +9161,7 @@ uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& pr
 
 uint64_t WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
 {
-    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
+    return sendWithAsyncReply(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count), toAPIDataSharedBufferCallback(WTFMove(callback)), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(API::Error*)>&& callback)
@@ -9173,7 +9177,7 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& p
 #endif
 
 #if PLATFORM(COCOA)
-void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(const IPC::SharedBufferReference&)>&& callback)
+void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& callback)
 {
     if (!hasRunningProcess()) {
         callback({ });
