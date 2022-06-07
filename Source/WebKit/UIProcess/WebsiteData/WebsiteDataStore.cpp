@@ -39,7 +39,6 @@
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebBackForwardCache.h"
-#include "WebCookieManagerProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
@@ -1707,11 +1706,6 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
     callback();
 }
 #endif
-
-void WebsiteDataStore::flushCookies(CompletionHandler<void()>&& completionHandler)
-{
-    networkProcess().flushCookies(sessionID(), WTFMove(completionHandler));
-}
 
 void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
 {

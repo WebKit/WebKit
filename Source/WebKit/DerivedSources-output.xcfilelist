@@ -502,9 +502,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebConnectionMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessagesReplies.h

@@ -183,6 +183,8 @@ UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
 UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
 UIProcess/API/glib/WebKitWebsitePolicies.cpp @no-unify
 
+UIProcess/API/soup/HTTPCookieStoreSoup.cpp
+
 UIProcess/API/wpe/InputMethodFilterWPE.cpp @no-unify
 UIProcess/API/wpe/PageClientImpl.cpp @no-unify
 UIProcess/API/wpe/TouchGestureController.cpp @no-unify
@@ -226,7 +228,6 @@ UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 
 UIProcess/linux/MemoryPressureMonitor.cpp
 
-UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/wpe/WebPageProxyWPE.cpp

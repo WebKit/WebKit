@@ -24,17 +24,19 @@
  */
 
 #include "config.h"
-#include "WebCookieManagerProxy.h"
+#include "APIHTTPCookieStore.h"
 
+#include "NetworkProcess.h"
 #include "NetworkProcessProxy.h"
+#include "SoupCookiePersistentStorageType.h"
 #include "WebCookieManagerMessages.h"
 
-namespace WebKit {
+namespace API {
 
-void WebCookieManagerProxy::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
+void HTTPCookieStore::setCookiePersistentStorage(const WTF::String& storagePath, WebKit::SoupCookiePersistentStorageType storageType)
 {
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType), 0);
+    if (auto* networkProcess = networkProcessIfExists())
+        networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(m_sessionID, storagePath, storageType), 0);
 }
 
-} // namespace WebKit
+} // namespace API

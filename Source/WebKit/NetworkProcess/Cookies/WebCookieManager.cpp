@@ -28,7 +28,6 @@
 
 #include "NetworkProcess.h"
 #include "WebCookieManagerMessages.h"
-#include "WebCookieManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
@@ -130,7 +129,7 @@ void WebCookieManager::setCookies(PAL::SessionID sessionID, const Vector<Cookie>
 void WebCookieManager::notifyCookiesDidChange(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
-    m_process.send(Messages::WebCookieManagerProxy::CookiesDidChange(sessionID), 0);
+    m_process.send(Messages::NetworkProcessProxy::CookiesDidChange(sessionID), 0);
 }
 
 void WebCookieManager::startObservingCookieChanges(PAL::SessionID sessionID)
