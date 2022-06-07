@@ -90,7 +90,6 @@ if (ENABLE_WEBCORE)
         Fontconfig::Fontconfig
         Freetype::Freetype
         HarfBuzz::HarfBuzz
-        ICU::uc
         OpenSSL::SSL
         PNG::PNG
         WebKitRequirements::WebKitResources
