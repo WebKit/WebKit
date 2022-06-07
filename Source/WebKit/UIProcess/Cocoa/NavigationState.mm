@@ -424,7 +424,7 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
         completionHandler(false);
         return;
     }
-    page.websiteDataStore().soAuthorizationCoordinator().tryAuthorize(WTFMove(navigationAction), page, WTFMove(completionHandler));
+    page.websiteDataStore().soAuthorizationCoordinator(page).tryAuthorize(WTFMove(navigationAction), page, WTFMove(completionHandler));
 #else
     completionHandler(false);
 #endif

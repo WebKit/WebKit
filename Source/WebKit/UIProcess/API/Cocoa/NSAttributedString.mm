@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,6 +144,7 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
         [configuration _setAllowsJavaScriptMarkup:NO];
         [configuration _setAllowsMetaRefresh:NO];
         [configuration _setAttachmentElementEnabled:YES];
+        [configuration preferences]._extensibleSSOEnabled = NO;
         [configuration _setInvisibleAutoplayNotPermitted:YES];
         [configuration _setMediaDataLoadsAutomatically:NO];
         [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
