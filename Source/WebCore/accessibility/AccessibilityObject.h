@@ -273,6 +273,8 @@ public:
     Element* element() const override;
     Node* node() const override { return nullptr; }
     RenderObject* renderer() const override { return nullptr; }
+    const RenderStyle* style() const;
+
     // Note: computeAccessibilityIsIgnored does not consider whether an object is ignored due to presence of modals.
     // Use accessibilityIsIgnored as the word of law when determining if an object is ignored.
     virtual bool computeAccessibilityIsIgnored() const { return true; }

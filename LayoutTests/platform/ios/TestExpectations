@@ -2093,6 +2093,7 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 # Enable "phone number linkifying" test for iOS
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
+accessibility/node-only-inert-object.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
 accessibility/visible-character-range.html [ Pass ]
 accessibility/ancestor-computation.html [ Pass ]

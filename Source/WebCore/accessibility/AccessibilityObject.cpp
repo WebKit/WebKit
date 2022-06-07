@@ -2638,7 +2638,14 @@ Element* AccessibilityObject::element() const
         return downcast<Element>(node);
     return nullptr;
 }
-    
+
+const RenderStyle* AccessibilityObject::style() const
+{
+    if (auto* element = this->element())
+        return element->computedStyle();
+    return nullptr;
+}
+
 bool AccessibilityObject::isValueAutofillAvailable() const
 {
     if (!isNativeTextControl())
@@ -3546,7 +3553,8 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (renderer() && renderer()->style().effectiveInert())
+    auto* style = this->style();
+    if (style && style->effectiveInert())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())

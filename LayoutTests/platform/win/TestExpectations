@@ -273,6 +273,9 @@ fast/events/mouseover-button.html [ Skip ]
 # TODO Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=241022.
+accessibility/node-only-inert-object.html [ Failure ]
+
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]

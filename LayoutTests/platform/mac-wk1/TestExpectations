@@ -605,6 +605,9 @@ editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
+# The inert attribute isn't making objects inaccessible on WK1.
+accessibility/node-only-inert-object.html [ Failure ]
+
 # Skip due to lack of DumpRenderTree `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
 accessibility/visible-character-range.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
