@@ -75,7 +75,7 @@ void ResourceResponse::disableLazyInitialization()
     lazyInit(AllFields);
 }
 
-CertificateInfo ResourceResponse::platformCertificateInfo() const
+CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte> auditToken) const
 {
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
     if (!cfResponse)
@@ -89,6 +89,15 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
     if (!trustValue)
         return { };
     auto trust = checked_cf_cast<SecTrustRef>(trustValue);
+
+#if HAVE(SEC_TRUST_SET_CLIENT_AUDIT_TOKEN)
+    if (trust && auditToken.size()) {
+        auto data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const uint8_t*>(auditToken.data()), auditToken.size()));
+        SecTrustSetClientAuditToken(trust, data.get());
+    }
+#else
+    UNUSED_PARAM(auditToken);
+#endif
 
     SecTrustResultType trustResultType;
     OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);

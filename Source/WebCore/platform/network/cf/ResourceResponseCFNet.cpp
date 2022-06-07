@@ -108,7 +108,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     m_initLevel = initLevel;
 }
 
-CertificateInfo ResourceResponse::platformCertificateInfo() const
+CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte>) const
 {
     return { };
 }

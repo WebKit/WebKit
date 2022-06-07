@@ -34,6 +34,7 @@
 #include <wtf/Box.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Markable.h>
+#include <wtf/Span.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
@@ -141,7 +142,7 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
-    WEBCORE_EXPORT void includeCertificateInfo() const;
+    WEBCORE_EXPORT void includeCertificateInfo(Span<const std::byte> = { }) const;
     void setCertificateInfo(CertificateInfo&& info) { m_certificateInfo = WTFMove(info); }
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
@@ -237,7 +238,7 @@ protected:
 
     // The ResourceResponse subclass should shadow these functions to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
-    CertificateInfo platformCertificateInfo() const { return CertificateInfo(); };
+    CertificateInfo platformCertificateInfo(Span<const std::byte>) const { return CertificateInfo(); };
     String platformSuggestedFileName() const { return String(); }
 
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }

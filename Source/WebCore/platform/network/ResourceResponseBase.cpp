@@ -290,11 +290,11 @@ void ResourceResponseBase::setType(Type type)
     m_type = type;
 }
 
-void ResourceResponseBase::includeCertificateInfo() const
+void ResourceResponseBase::includeCertificateInfo(Span<const std::byte> auditToken) const
 {
     if (m_certificateInfo)
         return;
-    m_certificateInfo = static_cast<const ResourceResponse*>(this)->platformCertificateInfo();
+    m_certificateInfo = static_cast<const ResourceResponse*>(this)->platformCertificateInfo(auditToken);
 }
 
 String ResourceResponseBase::suggestedFilename() const
