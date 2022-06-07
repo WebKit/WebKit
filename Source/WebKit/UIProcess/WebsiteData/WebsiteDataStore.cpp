@@ -535,6 +535,8 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
     for (auto dataType : dataTypes) {
+        if (dataTypes.contains(WebsiteDataType::MemoryCache))
+            processAccessType = ProcessAccessType::OnlyIfLaunched;
         if (WebsiteData::ownerProcess(dataType) != WebsiteDataProcessType::Network)
             continue;
         if (dataType != WebsiteDataType::Cookies || !isNonPersistentStore)

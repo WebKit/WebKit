@@ -294,6 +294,7 @@ public:
 
     void clearServiceWorkerRegistrations();
 
+    void clearMemoryCache();
     void clearDOMCache(WKStringRef origin);
     void clearDOMCaches();
     bool hasDOMCache(WKStringRef origin);

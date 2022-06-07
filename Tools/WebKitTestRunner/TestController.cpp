@@ -2993,6 +2993,14 @@ void TestController::clearDOMCaches()
     runUntil(context.done, noTimeout);
 }
 
+void TestController::clearMemoryCache()
+{
+    ClearDOMCacheCallbackContext context(*this);
+
+    WKWebsiteDataStoreRemoveMemoryCaches(websiteDataStore(), &context, clearDOMCacheCallback);
+    runUntil(context.done, noTimeout);
+}
+
 struct StorageVoidCallbackContext {
     explicit StorageVoidCallbackContext(TestController& controller)
         : testController(controller)

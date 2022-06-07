@@ -522,6 +522,8 @@ public:
 
     unsigned long serverTrustEvaluationCallbackCallsCount();
 
+    void clearMemoryCache();
+
     // Private Click Measurement.
     void dumpPrivateClickMeasurement();
     void clearPrivateClickMeasurement();

@@ -732,6 +732,14 @@ void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, 
     });
 }
 
+void WKWebsiteDataStoreRemoveMemoryCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction callback)
+{
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::MemoryCache;
+    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
+        callback(context);
+    });
+}
+
 void WKWebsiteDataStoreRemoveFetchCacheForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKSecurityOriginRef origin, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
 {
     WebKit::WebsiteDataRecord dataRecord;

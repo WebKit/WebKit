@@ -1360,7 +1360,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         dumpPrivateClickMeasurement();
         return nullptr;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearMemoryCache")) {
+        TestController::singleton().clearMemoryCache();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "ClearPrivateClickMeasurement")) {
         TestController::singleton().clearPrivateClickMeasurement();
         return nullptr;

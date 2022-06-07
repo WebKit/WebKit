@@ -1,0 +1,31 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+promise_test(async (test) => {
+    const uuid = token();
+    const url = get_host_info().HTTP_REMOTE_ORIGIN + '/WebKit/fetch/resources/clear-memory-cache.py?uuid=' + uuid;
+
+    await fetch(url, { mode: 'cors', headers: [['header', 'value']] });
+
+    let response = await fetch(url, { mode: 'cors' });
+    assert_equals(await response.text(), "1");
+
+    if (window.testRunner && testRunner.clearMemoryCache)
+        testRunner.clearMemoryCache();
+
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    await fetch(url, { mode: 'cors', headers: [['header', 'value']] });
+
+    response = await fetch(url, { mode: 'cors' });
+
+    if (!window.testRunner)
+        return;
+
+    assert_equals(await response.text(), "2");
+}, "Clear memory cache between fetches");
+</script>
