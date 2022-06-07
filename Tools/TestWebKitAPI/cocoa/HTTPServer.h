@@ -113,6 +113,7 @@ public:
     void send(String&&, CompletionHandler<void()>&& = nullptr) const;
     void send(Vector<uint8_t>&&, CompletionHandler<void()>&& = nullptr) const;
     void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void(bool)>&& = nullptr) const;
+    SendOperation awaitableSend(Vector<uint8_t>&&);
     SendOperation awaitableSend(String&&);
     void sendAndReportError(Vector<uint8_t>&&, CompletionHandler<void(bool)>&&) const;
     void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&, size_t minimumSize = 1) const;

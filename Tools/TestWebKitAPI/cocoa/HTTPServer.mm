@@ -467,6 +467,11 @@ void SendOperation::await_suspend(std::experimental::coroutine_handle<> handle)
     });
 }
 
+SendOperation Connection::awaitableSend(Vector<uint8_t>&& message)
+{
+    return { dataFromVector(WTFMove(message)), *this };
+}
+
 SendOperation Connection::awaitableSend(String&& message)
 {
     return { dataFromString(WTFMove(message)), *this };
