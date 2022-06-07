@@ -78,7 +78,7 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 {
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
         return gDidProcessRequestCount == numberOfRequests;
-    }, 3, @"Timed out waiting for %u image analysis to complete.", numberOfRequests);
+    }, 3, @"Timed out waiting for %u image analysis requests to complete.", numberOfRequests);
 
     [self waitForNextPresentationUpdate];
     EXPECT_EQ(gDidProcessRequestCount, numberOfRequests);
@@ -154,7 +154,7 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
         NSString *key = feature.key;
-        if ([key isEqualToString:@"TextRecognitionEnhancementsEnabled"] || [key isEqualToString:@"ImageAnalysisQueueEnabled"] || [key isEqualToString:@"RemoveBackgroundEnabled"])
+        if ([key isEqualToString:@"TextRecognitionInVideosEnabled"] || [key isEqualToString:@"VisualTranslationEnabled"] || [key isEqualToString:@"RemoveBackgroundEnabled"])
             [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
     }
     [configuration _setAttachmentElementEnabled:YES];
