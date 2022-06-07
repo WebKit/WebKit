@@ -74,7 +74,13 @@ Reviewed by NOBODY (OOPS!).
         return ''
 
 def main(file_name=None, source=None, sha=None):
-    if source not in (None, 'commit', 'template'):
+    with open(file_name, 'r') as commit_message_file:
+        content = commit_message_file.read()
+
+    if source not in (None, 'commit', 'template', 'merge'):
+        return 0
+    
+    if source == 'merge' and not content.startswith('Revert'):
         return 0
 
     if os.environ.get('GIT_EDITOR', '') == ':':
