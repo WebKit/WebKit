@@ -5,22 +5,24 @@
 
 description("Testing <code>ButtonsContainer</code> layout.");
 
-const tenPtWideButton = new Button;
+const layoutDelegate = { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) };
+
+const tenPtWideButton = new Button({ layoutDelegate });
 tenPtWideButton.width = 10;
 
-const twentyPtWideButton = new Button;
+const twentyPtWideButton = new Button({ layoutDelegate });
 twentyPtWideButton.width = 20;
 
-const thirtyPtWideButton = new Button;
+const thirtyPtWideButton = new Button({ layoutDelegate });
 thirtyPtWideButton.width = 30;
 
 // Should be disregarded by the container.
-const disabledButton = new Button;
+const disabledButton = new Button({ layoutDelegate });
 disabledButton.width = 15;
 disabledButton.enabled = false;
 
 // Should be disregarded by the container.
-const droppedButton = new Button;
+const droppedButton = new Button({ layoutDelegate });
 droppedButton.width = 25;
 droppedButton.dropped = true;
 

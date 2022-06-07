@@ -41,7 +41,7 @@ class AutoHideController
         this._mediaControls.element.addEventListener("pointerleave", this);
         this._mediaControls.element.addEventListener("pointerout", this);
 
-        if (GestureRecognizer.SupportsTouches)
+        if (this._mediaControls.layoutTraits.supportsTouches())
             this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
 
         this.autoHideDelay = AutoHideDelayMS;

@@ -8,7 +8,7 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>Button</code> class <code>iconName</code> property.");
 
-const layoutDelegate = {};
+const layoutDelegate = { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) };
 
 const button = new Button({ layoutDelegate });
 
@@ -18,6 +18,7 @@ shouldBeEqualToString("button.iconName", "");
 
 debug("");
 debug("Setting an iconName with invalid layout traits should throw");
+layoutDelegate.layoutTraits = null;
 shouldThrow(function() { button.iconName = Icons.Pause });
 shouldBeEqualToString("button.iconName", "");
 

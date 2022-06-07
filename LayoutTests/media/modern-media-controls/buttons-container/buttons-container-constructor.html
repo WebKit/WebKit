@@ -5,6 +5,8 @@
 
 description("Testing the <code>ButtonsContainer</code> constructor.");
 
+const layoutDelegate = { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) };
+
 const defaultContainer = new ButtonsContainer;
 shouldBeEqualToString("defaultContainer.element.localName", "div");
 shouldBeEqualToString("defaultContainer.element.className.trim()", "buttons-container");
@@ -13,7 +15,11 @@ shouldBe("defaultContainer.leftMargin", "16");
 shouldBe("defaultContainer.rightMargin", "16");
 shouldBe("defaultContainer.children", "[]");
 
-const buttons = [new Button, new Button];
+const buttons = [
+    new Button({ layoutDelegate }),
+    new Button({ layoutDelegate }),
+];
+
 const containerWithParameters = new ButtonsContainer({
     buttonMargin: 10,
     leftMargin: 20,

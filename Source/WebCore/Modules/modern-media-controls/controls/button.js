@@ -48,7 +48,7 @@ class Button extends LayoutItem
 
         this._enabled = true;
 
-        if (GestureRecognizer.SupportsTouches)
+        if (this.layoutTraits.supportsTouches())
             this._tapGestureRecognizer = new TapGestureRecognizer(this.element, this);
         else
             this.element.addEventListener("click", this);

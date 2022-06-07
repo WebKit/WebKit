@@ -91,6 +91,13 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
+    supportsTouches()
+    {
+        // Can be overridden by subclasses.
+
+        return GestureRecognizer.SupportsTouches;
+    }
+
     additionalControlScaleFactor()
     {
         return 1;

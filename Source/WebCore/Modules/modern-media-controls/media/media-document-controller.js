@@ -42,7 +42,7 @@ class MediaDocumentController
 
         let deviceType = window.navigator.platform;
         if (deviceType == "MacIntel")
-            deviceType = GestureRecognizer.SupportsTouches ? "ipad" : "mac";
+            deviceType = mediaController.layoutTraits.supportsTouches() ? "ipad" : "mac";
 
         media.classList.add(deviceType);
 
