@@ -85,7 +85,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 {
     auto separator = applicationName.isEmpty() ? "" : " ";
     if (type == UserAgentType::Desktop)
-        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 
     // FIXME: We should deprecate and remove this override; see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
     if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation")))))
