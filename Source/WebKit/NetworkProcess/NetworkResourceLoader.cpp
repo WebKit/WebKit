@@ -748,8 +748,13 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         if (validationSucceeded) {
             m_cacheEntryForValidation = m_cache->update(originalRequest(), *m_cacheEntryForValidation, m_response, m_privateRelayed);
             // If the request was conditional then this revalidation was not triggered by the network cache and we pass the 304 response to WebCore.
-            if (originalRequest().isConditional())
+            if (originalRequest().isConditional()) {
+                // Add CORP header to the 304 response if previously set to avoid being blocked by load checker due to COEP.
+                auto crossOriginResourcePolicy = m_cacheEntryForValidation->response().httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy);
+                if (!crossOriginResourcePolicy.isEmpty())
+                    m_response.setHTTPHeaderField(HTTPHeaderName::CrossOriginResourcePolicy, crossOriginResourcePolicy);
                 m_cacheEntryForValidation = nullptr;
+            }
         } else
             m_cacheEntryForValidation = nullptr;
     }

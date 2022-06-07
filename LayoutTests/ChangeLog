@@ -1,3 +1,15 @@
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Incorrect CORP/COEP check in 304 responses
+        https://bugs.webkit.org/show_bug.cgi?id=238238
+        <rdar://problem/90706510>
+
+        Reviewed by Youenn Fablet.
+
+        Mark some tests with DumpJSConsoleLogInStdErr modifier.
+
+        * TestExpectations:
+
 2022-05-06  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Fix script-src-elem policies in workers
