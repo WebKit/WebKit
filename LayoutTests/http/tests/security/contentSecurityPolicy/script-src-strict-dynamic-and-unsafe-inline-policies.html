@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- This tests that we properly handle multiple policies when one includes strict-dynamic and another unsafe-inline. -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'nonce-dummy' 'strict-dynamic'">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script nonce="dummy">
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+      }
+    </script>
+  </head>
+  <body>
+    <script type="text/javascript" nonce="dummy">console.log('allowed');</script>
+  </body>
+</html>
