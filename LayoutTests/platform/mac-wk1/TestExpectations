@@ -1851,3 +1851,5 @@ webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/w
 webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure Timeout ]
 
 webkit.org/b/241266 compositing/video/video-border-radius.html [ Pass Timeout ]
+
+webkit.org/b/241376 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ]
