@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -186,7 +186,7 @@ public:
     virtual Seconds caretBlinkInterval() const { return 500_ms; }
 
     // System fonts and colors for CSS.
-    void systemFont(CSSValueID, FontCascadeDescription&) const;
+    virtual FontCascadeDescription systemFont(CSSValueID) const = 0;
     virtual Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const;
 
     virtual int minimumMenuListSize(const RenderStyle&) const { return 0; }
@@ -272,8 +272,6 @@ public:
 
 protected:
     virtual bool canPaint(const PaintInfo&, const Settings&) const { return true; }
-    virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
-    virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;

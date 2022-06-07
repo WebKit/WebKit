@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -234,54 +234,6 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
 
 #endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
 
-FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID valueID) const
-{
-    static NeverDestroyed<std::array<FontCascadeDescription, 17>> fontDescriptions;
-
-    ASSERT(std::all_of(std::begin(fontDescriptions.get()), std::end(fontDescriptions.get()), [](auto& description) {
-        return !description.isAbsoluteSize();
-    }));
-
-    switch (valueID) {
-    case CSSValueAppleSystemHeadline:
-        return fontDescriptions.get()[0];
-    case CSSValueAppleSystemBody:
-        return fontDescriptions.get()[1];
-    case CSSValueAppleSystemTitle0:
-        return fontDescriptions.get()[2];
-    case CSSValueAppleSystemTitle1:
-        return fontDescriptions.get()[3];
-    case CSSValueAppleSystemTitle2:
-        return fontDescriptions.get()[4];
-    case CSSValueAppleSystemTitle3:
-        return fontDescriptions.get()[5];
-    case CSSValueAppleSystemTitle4:
-        return fontDescriptions.get()[6];
-    case CSSValueAppleSystemSubheadline:
-        return fontDescriptions.get()[7];
-    case CSSValueAppleSystemFootnote:
-        return fontDescriptions.get()[8];
-    case CSSValueAppleSystemCaption1:
-        return fontDescriptions.get()[9];
-    case CSSValueAppleSystemCaption2:
-        return fontDescriptions.get()[10];
-    case CSSValueAppleSystemShortHeadline:
-        return fontDescriptions.get()[11];
-    case CSSValueAppleSystemShortBody:
-        return fontDescriptions.get()[12];
-    case CSSValueAppleSystemShortSubheadline:
-        return fontDescriptions.get()[13];
-    case CSSValueAppleSystemShortFootnote:
-        return fontDescriptions.get()[14];
-    case CSSValueAppleSystemShortCaption1:
-        return fontDescriptions.get()[15];
-    case CSSValueAppleSystemTallBody:
-        return fontDescriptions.get()[16];
-    default:
-        return RenderTheme::cachedSystemFontDescription(valueID);
-    }
-}
-
 static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
 {
     auto resultRef = adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(font, kCTFontCSSWeightAttribute)));
@@ -301,7 +253,7 @@ static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
     return FontSelectionValue(900);
 }
 
-void RenderThemeCocoa::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
+FontCascadeDescription RenderThemeCocoa::systemFont(CSSValueID valueID) const
 {
     auto cocoaFontClass = [] {
 #if PLATFORM(IOS_FAMILY)
@@ -438,11 +390,13 @@ void RenderThemeCocoa::updateCachedSystemFontDescription(CSSValueID valueID, Fon
 
     ASSERT(fontDescriptor);
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
+    FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(style);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
     fontDescription.setWeight(cssWeightOfSystemFont(font.get()));
     fontDescription.setItalic(normalItalicValue());
+    return fontDescription;
 }
 
 }

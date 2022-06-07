@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +45,7 @@ private:
     bool supportsFocusRing(const RenderStyle&) const final;
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
-    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override { };
+    FontCascadeDescription systemFont(CSSValueID) const override { return FontCascadeDescription(); };
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;

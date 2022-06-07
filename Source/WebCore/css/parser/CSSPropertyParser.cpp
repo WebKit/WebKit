@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -5071,8 +5071,7 @@ bool CSSPropertyParser::consumeSystemFont(bool important)
     if (!m_range.atEnd())
         return false;
     
-    FontCascadeDescription fontDescription;
-    RenderTheme::singleton().systemFont(systemFontID, fontDescription);
+    auto fontDescription = RenderTheme::singleton().systemFont(systemFontID);
     if (!fontDescription.isAbsoluteSize())
         return false;
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -1395,45 +1395,6 @@ auto RenderTheme::colorCache(OptionSet<StyleColorOptions> options) const -> Colo
     return m_colorCacheMap.ensure(optionsIgnoringVisitedLink.toRaw(), [] {
         return ColorCache();
     }).iterator->value;
-}
-
-FontCascadeDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
-{
-    static NeverDestroyed<std::array<FontCascadeDescription, 10>> fontDescriptions;
-    switch (systemFontID) {
-    case CSSValueCaption:
-        return fontDescriptions.get()[0];
-    case CSSValueIcon:
-        return fontDescriptions.get()[1];
-    case CSSValueMenu:
-        return fontDescriptions.get()[2];
-    case CSSValueMessageBox:
-        return fontDescriptions.get()[3];
-    case CSSValueSmallCaption:
-        return fontDescriptions.get()[4];
-    case CSSValueStatusBar:
-        return fontDescriptions.get()[5];
-    case CSSValueWebkitMiniControl:
-        return fontDescriptions.get()[6];
-    case CSSValueWebkitSmallControl:
-        return fontDescriptions.get()[7];
-    case CSSValueWebkitControl:
-        return fontDescriptions.get()[8];
-    case CSSValueNone:
-        return fontDescriptions.get()[9];
-    default:
-        ASSERT_NOT_REACHED();
-        return fontDescriptions.get()[9];
-    }
-}
-
-void RenderTheme::systemFont(CSSValueID systemFontID, FontCascadeDescription& fontDescription) const
-{
-    fontDescription = cachedSystemFontDescription(systemFontID);
-    if (fontDescription.isAbsoluteSize())
-        return;
-
-    updateCachedSystemFontDescription(systemFontID, fontDescription);
 }
 
 Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOptions> options) const
