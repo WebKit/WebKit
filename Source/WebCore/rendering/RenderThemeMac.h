@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,8 +40,6 @@ struct AttachmentLayout;
 class RenderThemeMac final : public RenderThemeCocoa {
 public:
     friend NeverDestroyed<RenderThemeMac>;
-
-    CFStringRef contentSizeCategory() const final;
 
     // A method asking if the control changes its tint when the window has focus or not.
     bool controlSupportsTints(const RenderObject&) const final;

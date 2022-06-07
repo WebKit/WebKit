@@ -27,6 +27,7 @@
 #import "RenderThemeCocoa.h"
 
 #import "ApplePayLogoSystemImage.h"
+#import "FontCacheCoreText.h"
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
 #import "ImageBuffer.h"

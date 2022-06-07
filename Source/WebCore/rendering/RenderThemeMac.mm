@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -259,11 +259,6 @@ RenderTheme& RenderTheme::singleton()
 bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&) const
 {
     return paintInfo.context().hasPlatformContext();
-}
-
-CFStringRef RenderThemeMac::contentSizeCategory() const
-{
-    return kCTFontContentSizeCategoryL;
 }
 
 RenderThemeMac::RenderThemeMac()

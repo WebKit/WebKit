@@ -87,6 +87,7 @@
 #import <WebCore/File.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FontCacheCoreText.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameView.h>
@@ -4385,7 +4386,7 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
 
 void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
-    RenderThemeIOS::setContentSizeCategory(contentSizeCategory);
+    setContentSizeCategory(contentSizeCategory);
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 

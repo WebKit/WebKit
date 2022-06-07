@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import <WebCore/FontCacheCoreText.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -68,11 +69,11 @@ TEST(TextStyleFontSize, Startup)
 
 TEST(TextStyleFontSize, AfterCrash)
 {
-    auto *originalContentSizeCategory = static_cast<NSString *>(WebCore::RenderThemeCocoa::singleton().contentSizeCategory());
+    auto *originalContentSizeCategory = static_cast<NSString *>(WebCore::contentSizeCategory());
     auto *preferredContentSizeCategory = [[UIApplication sharedApplication] preferredContentSizeCategory];
     ASSERT_TRUE((!originalContentSizeCategory && !preferredContentSizeCategory) || [originalContentSizeCategory isEqualToString:preferredContentSizeCategory]);
 
-    WebCore::RenderThemeIOS::setContentSizeCategory(contentSizeCategory);
+    WebCore::setContentSizeCategory(contentSizeCategory);
 
     auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleBody, contentSizeCategory, nullptr));
     auto sizeNumber = adoptCF(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontSizeAttribute));
@@ -88,7 +89,7 @@ TEST(TextStyleFontSize, AfterCrash)
     
     ASSERT_EQ(actual, expected);
 
-    WebCore::RenderThemeIOS::setContentSizeCategory(String());
+    WebCore::setContentSizeCategory(String());
 }
 
 #endif // PLATFORM(IOS_FAMILY)
