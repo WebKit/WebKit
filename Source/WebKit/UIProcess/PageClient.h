@@ -500,13 +500,13 @@ public:
     virtual WebCore::Color contentViewBackgroundColor() = 0;
     virtual String sceneID() = 0;
 
-    virtual void beginFullscreenVideoExtraction(const ShareableBitmap::Handle&, AVPlayerViewController *) = 0;
-    virtual void cancelFullscreenVideoExtraction(AVPlayerViewController *) = 0;
+    virtual void beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle&, AVPlayerViewController *) = 0;
+    virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;
 #endif
-    virtual bool isFullscreenVideoExtractionEnabled() const { return false; }
+    virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
 
-    virtual void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) { }
-    virtual void cancelElementFullscreenVideoExtraction() { }
+    virtual void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect) { }
+    virtual void cancelTextRecognitionForVideoInElementFullscreen() { }
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

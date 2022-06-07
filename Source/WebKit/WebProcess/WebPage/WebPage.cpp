@@ -8066,7 +8066,7 @@ void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::
 }
 
 #if ENABLE(VIDEO)
-void WebPage::extractVideoInElementFullScreen(const HTMLVideoElement& element)
+void WebPage::beginTextRecognitionForVideoInElementFullScreen(const HTMLVideoElement& element)
 {
     RefPtr view = element.document().view();
     if (!view)
@@ -8084,12 +8084,12 @@ void WebPage::extractVideoInElementFullScreen(const HTMLVideoElement& element)
     if (rectInRootView.isEmpty())
         return;
 
-    send(Messages::WebPageProxy::ExtractVideoInElementFullScreen(mediaPlayerIdentifier, rectInRootView));
+    send(Messages::WebPageProxy::BeginTextRecognitionForVideoInElementFullScreen(mediaPlayerIdentifier, rectInRootView));
 }
 
-void WebPage::cancelVideoExtractionInElementFullScreen()
+void WebPage::cancelTextRecognitionForVideoInElementFullScreen()
 {
-    send(Messages::WebPageProxy::CancelVideoExtractionInElementFullScreen());
+    send(Messages::WebPageProxy::CancelTextRecognitionForVideoInElementFullScreen());
 }
 #endif // ENABLE(VIDEO)
 

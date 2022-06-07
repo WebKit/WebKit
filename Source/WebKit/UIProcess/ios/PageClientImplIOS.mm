@@ -1058,29 +1058,29 @@ String PageClientImpl::sceneID()
     return [m_contentView window].windowScene._sceneIdentifier;
 }
 
-void PageClientImpl::beginFullscreenVideoExtraction(const ShareableBitmap::Handle& imageHandle, AVPlayerViewController *playerViewController)
+void PageClientImpl::beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle& imageHandle, AVPlayerViewController *playerViewController)
 {
-    [m_contentView beginFullscreenVideoExtraction:imageHandle playerViewController:playerViewController];
+    [m_contentView beginTextRecognitionForFullscreenVideo:imageHandle playerViewController:playerViewController];
 }
 
-void PageClientImpl::cancelFullscreenVideoExtraction(AVPlayerViewController *controller)
+void PageClientImpl::cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *controller)
 {
-    [m_contentView cancelFullscreenVideoExtraction:controller];
+    [m_contentView cancelTextRecognitionForFullscreenVideo:controller];
 }
 
-bool PageClientImpl::isFullscreenVideoExtractionEnabled() const
+bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
 {
-    return [m_contentView isFullscreenVideoExtractionEnabled];
+    return [m_contentView isTextRecognitionInFullscreenVideoEnabled];
 }
 
-void PageClientImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
+void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
 {
-    [m_contentView beginElementFullscreenVideoExtraction:bitmapHandle bounds:bounds];
+    [m_contentView beginTextRecognitionForVideoInElementFullscreen:bitmapHandle bounds:bounds];
 }
 
-void PageClientImpl::cancelElementFullscreenVideoExtraction()
+void PageClientImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
-    [m_contentView cancelElementFullscreenVideoExtraction];
+    [m_contentView cancelTextRecognitionForVideoInElementFullscreen];
 }
 
 bool PageClientImpl::hasResizableWindows() const

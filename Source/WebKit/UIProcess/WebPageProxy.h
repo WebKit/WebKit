@@ -2102,8 +2102,8 @@ public:
     }
 #endif
 
-    void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
-    void cancelVideoExtractionInElementFullScreen();
+    void beginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
+    void cancelTextRecognitionForVideoInElementFullScreen();
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
@@ -2677,8 +2677,8 @@ private:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    void updateFullscreenVideoExtraction();
-    void fullscreenVideoExtractionTimerFired();
+    void updateFullscreenVideoTextRecognition();
+    void fullscreenVideoTextRecognitionTimerFired();
 #endif
 
     const Identifier m_identifier;
@@ -3265,9 +3265,9 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     std::optional<PlaybackSessionContextIdentifier> m_currentFullscreenVideoSessionIdentifier;
-    RunLoop::Timer<WebPageProxy> m_fullscreenVideoExtractionTimer;
+    RunLoop::Timer<WebPageProxy> m_fullscreenVideoTextRecognitionTimer;
 #endif
-    bool m_hasPendingElementFullScreenVideoExtraction { false };
+    bool m_isPerformingTextRecognitionInElementFullScreen { false };
 };
 
 #ifdef __OBJC__

@@ -61,10 +61,10 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 {
 }
 
-@interface FullscreenVideoExtractionWebView : TestWKWebView
+@interface FullscreenVideoTextRecognitionWebView : TestWKWebView
 @end
 
-@implementation FullscreenVideoExtractionWebView {
+@implementation FullscreenVideoTextRecognitionWebView {
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisRequestSwizzler;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisInteractionSwizzler;
@@ -75,11 +75,11 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
     bool _doneExitingFullscreen;
 }
 
-+ (RetainPtr<FullscreenVideoExtractionWebView>)create
++ (RetainPtr<FullscreenVideoTextRecognitionWebView>)create
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     configuration.preferences._fullScreenEnabled = YES;
-    auto webView = adoptNS([[FullscreenVideoExtractionWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]);
+    auto webView = adoptNS([[FullscreenVideoTextRecognitionWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]);
     [webView synchronouslyLoadTestPageNamed:@"element-fullscreen"];
     return webView;
 }
@@ -234,9 +234,9 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 
 namespace TestWebKitAPI {
 
-TEST(FullscreenVideoExtraction, TogglePlaybackInElementFullscreen)
+TEST(FullscreenVideoTextRecognition, TogglePlaybackInElementFullscreen)
 {
-    auto webView = [FullscreenVideoExtractionWebView create];
+    auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];
 
     [webView enterFullscreen];
@@ -247,9 +247,9 @@ TEST(FullscreenVideoExtraction, TogglePlaybackInElementFullscreen)
     [webView waitForImageAnalysisToEnd];
 }
 
-TEST(FullscreenVideoExtraction, AddVideoAfterEnteringFullscreen)
+TEST(FullscreenVideoTextRecognition, AddVideoAfterEnteringFullscreen)
 {
-    auto webView = [FullscreenVideoExtractionWebView create];
+    auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];
     [webView objectByEvaluatingJavaScript:@"video.remove()"];
 
@@ -261,9 +261,9 @@ TEST(FullscreenVideoExtraction, AddVideoAfterEnteringFullscreen)
     [webView waitForImageAnalysisToBegin];
 }
 
-TEST(FullscreenVideoExtraction, DoNotAnalyzeVideoAfterExitingFullscreen)
+TEST(FullscreenVideoTextRecognition, DoNotAnalyzeVideoAfterExitingFullscreen)
 {
-    auto webView = [FullscreenVideoExtractionWebView create];
+    auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];
 
     [webView enterFullscreen];

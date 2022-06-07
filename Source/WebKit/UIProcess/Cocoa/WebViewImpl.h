@@ -678,8 +678,8 @@ public:
     void didFinishPresentation(WKRevealItemPresenter *);
 #endif
 
-    void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect);
-    void cancelElementFullscreenVideoExtraction();
+    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect);
+    void cancelTextRecognitionForVideoInElementFullscreen();
 
 private:
 #if HAVE(TOUCH_BAR)

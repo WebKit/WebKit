@@ -77,7 +77,7 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
     : WebCore::EventListener(WebCore::EventListener::CPPEventListenerType)
     , m_page(page)
 #if ENABLE(VIDEO)
-    , m_mainVideoElementExtractionTimer(RunLoop::main(), this, &WebFullScreenManager::mainVideoElementExtractionTimerFired)
+    , m_mainVideoElementTextRecognitionTimer(RunLoop::main(), this, &WebFullScreenManager::mainVideoElementTextRecognitionTimerFired)
 #endif
 {
 }
@@ -389,9 +389,9 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
     if (targetElement == m_mainVideoElement.get()) {
         auto& targetVideoElement = downcast<WebCore::HTMLVideoElement>(*targetElement);
         if (targetVideoElement.paused() && !targetVideoElement.seeking())
-            scheduleMainVideoElementExtraction();
+            scheduleTextRecognitionForMainVideo();
         else
-            endMainVideoElementExtractionIfNeeded();
+            endTextRecognitionForMainVideoIfNeeded();
     }
 #else
     UNUSED_PARAM(event);
@@ -401,7 +401,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
 
 #if ENABLE(VIDEO)
 
-void WebFullScreenManager::mainVideoElementExtractionTimerFired()
+void WebFullScreenManager::mainVideoElementTextRecognitionTimerFired()
 {
     if (!m_element || !m_element->document().fullscreenManager().isFullscreen())
         return;
@@ -411,25 +411,25 @@ void WebFullScreenManager::mainVideoElementExtractionTimerFired()
     if (!m_mainVideoElement)
         return;
 
-    if (m_isExtractingMainVideoElement)
-        m_page->cancelVideoExtractionInElementFullScreen();
+    if (m_isPerformingTextRecognitionInMainVideo)
+        m_page->cancelTextRecognitionForVideoInElementFullScreen();
 
-    m_isExtractingMainVideoElement = true;
-    m_page->extractVideoInElementFullScreen(*m_mainVideoElement);
+    m_isPerformingTextRecognitionInMainVideo = true;
+    m_page->beginTextRecognitionForVideoInElementFullScreen(*m_mainVideoElement);
 }
 
-void WebFullScreenManager::scheduleMainVideoElementExtraction()
+void WebFullScreenManager::scheduleTextRecognitionForMainVideo()
 {
-    m_mainVideoElementExtractionTimer.startOneShot(250_ms);
+    m_mainVideoElementTextRecognitionTimer.startOneShot(250_ms);
 }
 
-void WebFullScreenManager::endMainVideoElementExtractionIfNeeded()
+void WebFullScreenManager::endTextRecognitionForMainVideoIfNeeded()
 {
-    m_mainVideoElementExtractionTimer.stop();
+    m_mainVideoElementTextRecognitionTimer.stop();
 
-    if (m_isExtractingMainVideoElement) {
-        m_page->cancelVideoExtractionInElementFullScreen();
-        m_isExtractingMainVideoElement = false;
+    if (m_isPerformingTextRecognitionInMainVideo) {
+        m_page->cancelTextRecognitionForVideoInElementFullScreen();
+        m_isPerformingTextRecognitionInMainVideo = false;
     }
 }
 
@@ -449,7 +449,7 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
         for (auto& eventName : eventsToObserve.get())
             m_mainVideoElement->removeEventListener(eventName, *this, { });
 
-        endMainVideoElementExtractionIfNeeded();
+        endTextRecognitionForMainVideoIfNeeded();
     }
 
     m_mainVideoElement = WTFMove(element);
@@ -459,7 +459,7 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
             m_mainVideoElement->addEventListener(eventName, *this, { });
 
         if (m_mainVideoElement->paused())
-            scheduleMainVideoElementExtraction();
+            scheduleTextRecognitionForMainVideo();
     }
 }
 

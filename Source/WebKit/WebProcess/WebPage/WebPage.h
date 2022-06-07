@@ -1539,8 +1539,8 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    void extractVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
-    void cancelVideoExtractionInElementFullScreen();
+    void beginTextRecognitionForVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
+    void cancelTextRecognitionForVideoInElementFullScreen();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

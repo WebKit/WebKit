@@ -303,12 +303,12 @@ private:
     WebCore::Color contentViewBackgroundColor() final;
     String sceneID() final;
 
-    void beginFullscreenVideoExtraction(const ShareableBitmap::Handle&, AVPlayerViewController *) final;
-    void cancelFullscreenVideoExtraction(AVPlayerViewController *) final;
-    bool isFullscreenVideoExtractionEnabled() const final;
+    void beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle&, AVPlayerViewController *) final;
+    void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
+    bool isTextRecognitionInFullscreenVideoEnabled() const final;
 
-    void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
-    void cancelElementFullscreenVideoExtraction() final;
+    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
+    void cancelTextRecognitionForVideoInElementFullscreen() final;
 
     bool hasResizableWindows() const final;
 

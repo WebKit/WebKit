@@ -5937,7 +5937,7 @@ bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInVie
 #endif
 }
 
-void WebViewImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle& bitmapHandle, WebCore::FloatRect bounds)
+void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle& bitmapHandle, WebCore::FloatRect bounds)
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto imageBitmap = ShareableBitmap::create(bitmapHandle);
@@ -5966,7 +5966,7 @@ void WebViewImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::H
 #endif
 }
 
-void WebViewImpl::cancelElementFullscreenVideoExtraction()
+void WebViewImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (auto identifier = std::exchange(m_currentImageAnalysisRequestID, 0))
