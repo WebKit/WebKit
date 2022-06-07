@@ -81,10 +81,11 @@ PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel ma
     buildCascade();
 }
 
-PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback)
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, std::optional<ScopeOrdinal> rollbackScope, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback)
     : m_matchResult(parent.m_matchResult)
     , m_includedProperties(parent.m_includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
+    , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
     , m_direction(parent.direction())
     , m_directionIsUnresolved(false)
@@ -179,18 +180,16 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
 
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
-    auto skipForRollback = [&] {
-        if (!m_maximumCascadeLayerPriorityForRollback)
-            return false;
-        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
-            return false;
-        if (cascadeLevel < m_maximumCascadeLevel)
-            return false;
-        if (matchedProperties.fromStyleAttribute == FromStyleAttribute::Yes)
+    auto includePropertiesForRollback = [&] {
+        if (m_rollbackScope && matchedProperties.styleScopeOrdinal > *m_rollbackScope)
             return true;
-        return matchedProperties.cascadeLayerPriority > *m_maximumCascadeLayerPriorityForRollback;
+        if (cascadeLevel < m_maximumCascadeLevel)
+            return true;
+        if (matchedProperties.fromStyleAttribute == FromStyleAttribute::Yes)
+            return false;
+        return matchedProperties.cascadeLayerPriority <= *m_maximumCascadeLayerPriorityForRollback;
     };
-    if (skipForRollback())
+    if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
     auto& styleProperties = *matchedProperties.properties;

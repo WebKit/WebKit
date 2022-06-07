@@ -383,7 +383,7 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevert()
 
     --rollbackCascadeLevel;
 
-    auto key = makeRollbackCascadeKey(rollbackCascadeLevel, 0);
+    auto key = makeRollbackCascadeKey(rollbackCascadeLevel);
     return m_rollbackCascades.ensure(key, [&] {
         return makeUnique<const PropertyCascade>(m_cascade, rollbackCascadeLevel);
     }).iterator->value.get();
@@ -402,15 +402,15 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
     if (property.fromStyleAttribute == FromStyleAttribute::No)
         --rollbackLayerPriority;
 
-    auto key = makeRollbackCascadeKey(property.cascadeLevel, rollbackLayerPriority);
+    auto key = makeRollbackCascadeKey(property.cascadeLevel, property.styleScopeOrdinal, rollbackLayerPriority);
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, property.cascadeLevel, rollbackLayerPriority);
+        return makeUnique<const PropertyCascade>(m_cascade, property.cascadeLevel, property.styleScopeOrdinal, rollbackLayerPriority);
     }).iterator->value.get();
 }
 
-auto Builder::makeRollbackCascadeKey(CascadeLevel cascadeLevel, CascadeLayerPriority cascadeLayerPriority) -> RollbackCascadeKey
+auto Builder::makeRollbackCascadeKey(CascadeLevel cascadeLevel, ScopeOrdinal scopeOrdinal, CascadeLayerPriority cascadeLayerPriority) -> RollbackCascadeKey
 {
-    return { static_cast<unsigned>(cascadeLevel), static_cast<unsigned>(cascadeLayerPriority) };
+    return { static_cast<unsigned>(cascadeLevel), static_cast<unsigned>(scopeOrdinal), static_cast<unsigned>(cascadeLayerPriority) };
 }
 
 }

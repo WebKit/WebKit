@@ -46,7 +46,7 @@ public:
     };
 
     PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
-    PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
+    PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
 
@@ -85,6 +85,7 @@ private:
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
     const CascadeLevel m_maximumCascadeLevel;
+    const std::optional<ScopeOrdinal> m_rollbackScope;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
     mutable Direction m_direction;
     mutable bool m_directionIsUnresolved { true };
