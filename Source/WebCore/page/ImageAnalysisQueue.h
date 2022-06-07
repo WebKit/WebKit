@@ -46,7 +46,7 @@ public:
     ImageAnalysisQueue(Page&);
     ~ImageAnalysisQueue();
 
-    WEBCORE_EXPORT void enqueueAllImages(Document&, const String& source, const String& target);
+    WEBCORE_EXPORT void enqueueAllImages(Document&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
     void clear();
 
     void enqueueIfNeeded(HTMLImageElement&);
@@ -67,8 +67,9 @@ private:
     static bool firstIsHigherPriority(const Task&, const Task&);
     unsigned nextTaskNumber() { return ++m_currentTaskNumber; }
 
-    String m_source;
-    String m_target;
+    // FIXME: Refactor the source and target LIDs into either a std::pair<> of strings, or its own named struct.
+    String m_sourceLanguageIdentifier;
+    String m_targetLanguageIdentifier;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashMap<HTMLImageElement, URL> m_queuedElements;

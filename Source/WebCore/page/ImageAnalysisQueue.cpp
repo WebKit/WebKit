@@ -109,16 +109,16 @@ void ImageAnalysisQueue::resumeProcessingSoon()
     m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
 }
 
-void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& source, const String& target)
+void ImageAnalysisQueue::enqueueAllImages(Document& document, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
 {
     if (!m_page)
         return;
 
-    if (source != m_source || target != m_target)
+    if (sourceLanguageIdentifier != m_sourceLanguageIdentifier || targetLanguageIdentifier != m_targetLanguageIdentifier)
         clear();
 
-    m_source = source;
-    m_target = target;
+    m_sourceLanguageIdentifier = sourceLanguageIdentifier;
+    m_targetLanguageIdentifier = targetLanguageIdentifier;
     enqueueAllImagesRecursive(document);
 }
 
@@ -149,8 +149,8 @@ void ImageAnalysisQueue::resumeProcessing()
         if (auto* image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
-        auto allowSnapshots = m_target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
-        m_page->chrome().client().requestTextRecognition(*element, { m_source, m_target, allowSnapshots }, [this, page = m_page] (auto&&) {
+        auto allowSnapshots = m_targetLanguageIdentifier.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
+        m_page->chrome().client().requestTextRecognition(*element, { m_sourceLanguageIdentifier, m_targetLanguageIdentifier, allowSnapshots }, [this, page = m_page] (auto&&) {
             if (!page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
@@ -169,8 +169,8 @@ void ImageAnalysisQueue::clear()
     m_resumeProcessingTimer.stop();
     m_queue = { };
     m_queuedElements.clear();
-    m_source = { };
-    m_target = { };
+    m_sourceLanguageIdentifier = { };
+    m_targetLanguageIdentifier = { };
     m_currentTaskNumber = 0;
 }
 

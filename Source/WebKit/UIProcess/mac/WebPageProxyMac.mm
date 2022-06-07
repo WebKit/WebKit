@@ -771,16 +771,16 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::handleContextMenuCopyCroppedImage(const String& preferredMIMEType)
+void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 {
     if (!m_activeContextMenu)
         return;
 
-    RetainPtr image = m_activeContextMenu->croppedImageResult();
+    RetainPtr image = m_activeContextMenu->copySubjectResult();
     if (!image)
         return;
 
-    auto [data, type] = imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get());
+    auto [data, type] = imageDataForRemoveBackground(image.get(), preferredMIMEType.createCFString().get());
     if (!data)
         return;
 

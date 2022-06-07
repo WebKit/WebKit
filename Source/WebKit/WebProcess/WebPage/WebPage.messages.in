@@ -500,7 +500,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     ReplaceImageWithMarkupResults(struct WebCore::ElementContext context, Vector<String> types, IPC::DataReference data)
-    ShouldAllowImageMarkup(struct WebCore::ElementContext context) -> (bool result)
+    ShouldAllowRemoveBackground(struct WebCore::ElementContext context) -> (bool result)
 #endif
 
     SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
@@ -675,7 +675,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(IMAGE_ANALYSIS)
     UpdateWithTextRecognitionResult(struct WebCore::TextRecognitionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::TextRecognitionUpdateResult result)
-    StartImageAnalysis(String source, String target)
+    StartVisualTranslation(String sourceLanguageIdentifier, String targetLanguageIdentifier)
 #endif
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)

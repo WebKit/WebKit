@@ -7232,9 +7232,9 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 #endif
         return;
 
-    case ContextMenuItemTagCopyCroppedImage:
+    case ContextMenuItemTagCopySubject:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        handleContextMenuCopyCroppedImage(hitTestData.sourceImageMIMEType);
+        handleContextMenuCopySubject(hitTestData.sourceImageMIMEType);
 #endif
         return;
 
@@ -8867,9 +8867,9 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& source, const String& target, CompletionHandler<void(TextRecognitionResult&&)>&& completionHandler)
+void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completionHandler)
 {
-    pageClient().requestTextRecognition(imageURL, imageData, source, target, WTFMove(completionHandler));
+    pageClient().requestTextRecognition(imageURL, imageData, sourceLanguageIdentifier, targetLanguageIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
@@ -8887,10 +8887,10 @@ void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& resul
     sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
 
-void WebPageProxy::startImageAnalysis(const String& source, const String& target)
+void WebPageProxy::startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
 {
     if (hasRunningProcess())
-        send(Messages::WebPage::StartImageAnalysis(source, target));
+        send(Messages::WebPage::StartVisualTranslation(sourceLanguageIdentifier, targetLanguageIdentifier));
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -11409,9 +11409,9 @@ void WebPageProxy::cancelVideoExtractionInElementFullScreen()
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::shouldAllowImageMarkup(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
 {
-    sendWithAsyncReply(Messages::WebPage::ShouldAllowImageMarkup(context), WTFMove(completion));
+    sendWithAsyncReply(Messages::WebPage::ShouldAllowRemoveBackground(context), WTFMove(completion));
 }
 
 #endif

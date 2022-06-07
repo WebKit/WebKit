@@ -241,13 +241,6 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #else
 
-#if ENABLE(IMAGE_ANALYSIS)
-static bool canAttemptTextRecognitionForNonImageElements(const WebKit::InteractionInformationAtPosition& information, const WebKit::WebPreferences&)
-{
-    return false;
-}
-#endif // ENABLE(IMAGE_ANALYSIS)
-
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecognizer *mouseRecognizer, WKMouseGestureRecognizer *alternativeMouseRecognizer)
@@ -260,8 +253,24 @@ static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecogni
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-
 #endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+static bool canAttemptTextRecognitionForNonImageElements(const WebKit::InteractionInformationAtPosition& information, const WebKit::WebPreferences& preferences)
+{
+    return preferences.textRecognitionInVideosEnabled() && information.isPausedVideo;
+}
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+@interface AVPlayerViewController (Staging_86237428)
+- (void)setImageAnalysis:(CocoaImageAnalysis *)analysis;
+@end
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace WebKit {
 using namespace WebCore;
@@ -4666,7 +4675,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     };
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    [self doAfterComputingImageAnalysisResultsForMarkup:WTFMove(requestRectsToEvadeIfNeeded)];
+    [self doAfterComputingImageAnalysisResultsForBackgroundRemoval:WTFMove(requestRectsToEvadeIfNeeded)];
 #else
     requestRectsToEvadeIfNeeded();
 #endif
@@ -4674,29 +4683,29 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-- (UIMenu *)imageAnalysisMarkupMenu
+- (UIMenu *)removeBackgroundMenu
 {
-    if (!_page || !_page->preferences().imageAnalysisMarkupEnabled())
+    if (!_page || !_page->preferences().removeBackgroundEnabled())
         return nil;
 
-    if (_page->editorState().isMissingPostLayoutData || !_imageAnalysisMarkupData)
+    if (_page->editorState().isMissingPostLayoutData || !_removeBackgroundData)
         return nil;
 
-    if (_imageAnalysisMarkupData->element != _page->editorState().postLayoutData().selectedEditableImage)
+    if (_removeBackgroundData->element != _page->editorState().postLayoutData().selectedEditableImage)
         return nil;
 
-    return [self menuWithInlineAction:WebCore::contextMenuItemTitleMarkupImage() identifier:@"WKActionMarkupImage" handler:[](WKContentView *view) {
-        auto markupData = std::exchange(view->_imageAnalysisMarkupData, { });
-        if (!markupData)
+    return [self menuWithInlineAction:WebCore::contextMenuItemTitleRemoveBackground() identifier:@"WKActionRemoveBackground" handler:[](WKContentView *view) {
+        auto data = std::exchange(view->_removeBackgroundData, { });
+        if (!data)
             return;
 
-        auto [elementContext, image, preferredMIMEType] = *markupData;
-        if (auto [data, type] = WebKit::imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get()); data)
+        auto [elementContext, image, preferredMIMEType] = *data;
+        if (auto [data, type] = WebKit::imageDataForRemoveBackground(image.get(), preferredMIMEType.createCFString().get()); data)
             view->_page->replaceImageWithMarkupResults(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
     }];
 }
 
-- (void)doAfterComputingImageAnalysisResultsForMarkup:(CompletionHandler<void()>&&)completion
+- (void)doAfterComputingImageAnalysisResultsForBackgroundRemoval:(CompletionHandler<void()>&&)completion
 {
     if (_page->editorState().isMissingPostLayoutData) {
         completion();
@@ -4704,19 +4713,19 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     auto elementToAnalyze = _page->editorState().postLayoutData().selectedEditableImage;
-    if (_imageAnalysisMarkupData && _imageAnalysisMarkupData->element == elementToAnalyze) {
+    if (_removeBackgroundData && _removeBackgroundData->element == elementToAnalyze) {
         completion();
         return;
     }
 
-    _imageAnalysisMarkupData = std::nullopt;
+    _removeBackgroundData = std::nullopt;
 
     if (!elementToAnalyze) {
         completion();
         return;
     }
 
-    _page->shouldAllowImageMarkup(*elementToAnalyze, [context = *elementToAnalyze, completion = WTFMove(completion), weakSelf = WeakObjCPtr<WKContentView>(self)](bool shouldAllow) mutable {
+    _page->shouldAllowRemoveBackground(*elementToAnalyze, [context = *elementToAnalyze, completion = WTFMove(completion), weakSelf = WeakObjCPtr<WKContentView>(self)](bool shouldAllow) mutable {
         auto strongSelf = weakSelf.get();
         if (!shouldAllow || !strongSelf) {
             completion();
@@ -4742,7 +4751,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
                 return;
             }
 
-            WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
+            WebKit::requestBackgroundRemoval(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf) {
                     completion();
@@ -4750,9 +4759,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
                 }
 
                 if (result)
-                    strongSelf->_imageAnalysisMarkupData = { { context, { result }, sourceMIMEType } };
+                    strongSelf->_removeBackgroundData = { { context, { result }, sourceMIMEType } };
                 else
-                    strongSelf->_imageAnalysisMarkupData = std::nullopt;
+                    strongSelf->_removeBackgroundData = std::nullopt;
                 completion();
             });
         });
@@ -7643,7 +7652,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    _imageAnalysisMarkupData = std::nullopt;
+    _removeBackgroundData = std::nullopt;
 #endif
 
     _page->prepareSelectionForContextMenuWithLocationInView(WebCore::roundedIntPoint(locationInView), [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](bool shouldPresentMenu, auto& item) {
@@ -7652,7 +7661,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             return completionHandler(false, nil);
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        [strongSelf doAfterComputingImageAnalysisResultsForMarkup:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }]() mutable {
+        [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }]() mutable {
             completionHandler(shouldPresentMenu, item.get());
         }];
 #else
@@ -9853,7 +9862,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)buildMenuForWebViewWithBuilder:(id <UIMenuBuilder>)builder
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (auto menu = self.imageAnalysisMarkupMenu)
+    if (auto menu = self.removeBackgroundMenu)
         [builder insertSiblingMenu:menu beforeMenuForIdentifier:UIMenuFormat];
 #endif
 
@@ -10664,8 +10673,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _contextMenuForMachineReadableCode.clear();
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    _imageAnalysisMarkupData = std::nullopt;
-    _croppedImageResult = nil;
+    _removeBackgroundData = std::nullopt;
+    _copySubjectResult = nil;
 #endif
 }
 
@@ -10694,8 +10703,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     [self uninstallImageAnalysisInteraction];
-    _imageAnalysisMarkupData = std::nullopt;
-    _croppedImageResult = nil;
+    _removeBackgroundData = std::nullopt;
+    _copySubjectResult = nil;
 #endif
 }
 
@@ -10746,7 +10755,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return NO;
 }
 
-- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData source:(NSString *)source target:(NSString *)target completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
 {
     auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
     if (!imageBitmap) {
@@ -10761,11 +10770,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (target.length)
-        return WebKit::requestImageAnalysisWithIdentifiers(self.imageAnalyzer, imageURL, source, target, cgImage.get(), WTFMove(completion));
+    if (targetLanguageIdentifier.length)
+        return WebKit::requestVisualTranslation(self.imageAnalyzer, imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTFMove(completion));
 #else
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(target);
+    UNUSED_PARAM(sourceLanguageIdentifier);
+    UNUSED_PARAM(targetLanguageIdentifier);
 #endif
 
     auto request = [self createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
@@ -10793,7 +10802,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif // USE(QUICK_LOOK)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    _croppedImageResult = nil;
+    _copySubjectResult = nil;
 #endif
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
@@ -10920,10 +10929,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (_page->preferences().imageAnalysisMarkupEnabled()) {
-        WebKit::requestImageAnalysisMarkup(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+    if (_page->preferences().removeBackgroundEnabled()) {
+        WebKit::requestBackgroundRemoval(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
             if (auto strongSelf = weakSelf.get())
-                strongSelf->_croppedImageResult = result;
+                strongSelf->_copySubjectResult = result;
         });
     }
 #endif
@@ -10998,10 +11007,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         }];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        if (strongSelf->_page->preferences().imageAnalysisMarkupEnabled()) {
-            WebKit::requestImageAnalysisMarkup(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+        if (strongSelf->_page->preferences().removeBackgroundEnabled()) {
+            WebKit::requestBackgroundRemoval(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
                 if (auto strongSelf = weakSelf.get())
-                    strongSelf->_croppedImageResult = result;
+                    strongSelf->_copySubjectResult = result;
             });
         }
 #endif
@@ -11017,17 +11026,17 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-- (BOOL)actionSheetAssistantShouldIncludeCopyCroppedImageAction:(WKActionSheetAssistant *)assistant
+- (BOOL)actionSheetAssistantShouldIncludeCopySubjectAction:(WKActionSheetAssistant *)assistant
 {
-    return !!_croppedImageResult;
+    return !!_copySubjectResult;
 }
 
-- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copySubject:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
 {
-    if (!_croppedImageResult)
+    if (!_copySubjectResult)
         return;
 
-    auto [data, type] = WebKit::imageDataForCroppedImageResult(_croppedImageResult.get(), (__bridge CFStringRef)sourceMIMEType);
+    auto [data, type] = WebKit::imageDataForRemoveBackground(_copySubjectResult.get(), (__bridge CFStringRef)sourceMIMEType);
     if (!data)
         return;
 
@@ -11054,37 +11063,148 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
-#else
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysisTypeVisualSearch;
+#endif
 
 - (void)beginFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)imageData playerViewController:(AVPlayerViewController *)controller
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    ASSERT(_page->preferences().textRecognitionInVideosEnabled());
+
+    if (_fullscreenVideoExtractionRequestIdentifier)
+        return;
+
+    auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
+    if (!imageBitmap)
+        return;
+
+    auto cgImage = imageBitmap->makeCGImage();
+    if (!cgImage)
+        return;
+
+    auto request = [self createImageAnalyzerRequest:analysisTypesForFullscreenVideo image:cgImage.get()];
+    _fullscreenVideoExtractionRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self), controller = RetainPtr { controller }] (CocoaImageAnalysis *result, NSError *) mutable {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        strongSelf->_fullscreenVideoExtractionRequestIdentifier = 0;
+
+        if ([controller respondsToSelector:@selector(setImageAnalysis:)])
+            [controller setImageAnalysis:result];
+    }).get()];
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
 - (void)cancelFullscreenVideoExtraction:(AVPlayerViewController *)controller
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (auto identifier = std::exchange(_fullscreenVideoExtractionRequestIdentifier, 0))
+        [_imageAnalyzer cancelRequestID:identifier];
+
+    if ([controller respondsToSelector:@selector(setImageAnalysis:)])
+        [controller setImageAnalysis:nil];
+#endif
 }
 
 - (BOOL)isFullscreenVideoExtractionEnabled
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return _page->preferences().textRecognitionInVideosEnabled();
+#else
     return NO;
+#endif
 }
 
 - (void)beginElementFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)bitmapHandle bounds:(WebCore::FloatRect)bounds
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    auto imageBitmap = WebKit::ShareableBitmap::create(bitmapHandle);
+    if (!imageBitmap)
+        return;
+
+    auto image = imageBitmap->makeCGImage();
+    if (!image)
+        return;
+
+    auto request = WebKit::createImageAnalyzerRequest(image.get(), analysisTypesForFullscreenVideo);
+    _fullscreenVideoExtractionRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self), bounds](CocoaImageAnalysis *result, NSError *error) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || !strongSelf->_fullscreenVideoExtractionRequestIdentifier)
+            return;
+
+        strongSelf->_fullscreenVideoExtractionRequestIdentifier = 0;
+        if (error || !result)
+            return;
+
+        strongSelf->_imageAnalysisInteractionBounds = bounds;
+        [strongSelf installImageAnalysisInteraction:result];
+    }];
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
 - (void)cancelElementFullscreenVideoExtraction
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    [self uninstallImageAnalysisInteraction];
+
+    if (auto previousIdentifier = std::exchange(_fullscreenVideoExtractionRequestIdentifier, 0))
+        [self.imageAnalyzer cancelRequestID:previousIdentifier];
+#endif
 }
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+- (void)installImageAnalysisInteraction:(VKCImageAnalysis *)analysis
+{
+    if (!_imageAnalysisInteraction) {
+        _imageAnalysisActionButtons = adoptNS([[NSMutableSet alloc] initWithCapacity:1]);
+        _imageAnalysisInteraction = adoptNS([PAL::allocVKCImageAnalysisInteractionInstance() init]);
+        [_imageAnalysisInteraction setDelegate:self];
+        [_imageAnalysisInteraction setAnalysisButtonRequiresVisibleContentGating:YES];
+        [_imageAnalysisInteraction setQuickActionConfigurationUpdateHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] (UIButton *button) {
+            if (auto strongSelf = weakSelf.get())
+                [strongSelf->_imageAnalysisActionButtons addObject:button];
+        }];
+        WebKit::setUpAdditionalImageAnalysisBehaviors(_imageAnalysisInteraction.get());
+        [self addInteraction:_imageAnalysisInteraction.get()];
+        RELEASE_LOG(ImageAnalysis, "Installing image analysis interaction at {{ %.0f, %.0f }, { %.0f, %.0f }}",
+            _imageAnalysisInteractionBounds.x(), _imageAnalysisInteractionBounds.y(), _imageAnalysisInteractionBounds.width(), _imageAnalysisInteractionBounds.height());
+    }
+    [_imageAnalysisInteraction setAnalysis:analysis];
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:NO];
+    [_imageAnalysisGestureRecognizer setEnabled:NO];
+}
+
+- (void)uninstallImageAnalysisInteraction
+{
+    if (!_imageAnalysisInteraction)
+        return;
+
+    RELEASE_LOG(ImageAnalysis, "Uninstalling image analysis interaction");
+
+    [self removeInteraction:_imageAnalysisInteraction.get()];
+    [_imageAnalysisInteraction setDelegate:nil];
+    [_imageAnalysisInteraction setQuickActionConfigurationUpdateHandler:nil];
+    _imageAnalysisInteraction = nil;
+    _imageAnalysisActionButtons = nil;
+    _imageAnalysisInteractionBounds = { };
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
+    [_imageAnalysisGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 - (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return [_imageAnalysisInteraction hasActiveTextSelection];
+#else
     return NO;
+#endif
 }
 
-#endif
 
 @end
 

@@ -145,7 +145,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    bool supportsCopyCroppedImage() final { return false; }
+    bool supportsCopySubject() final { return false; }
 #endif
 };
 

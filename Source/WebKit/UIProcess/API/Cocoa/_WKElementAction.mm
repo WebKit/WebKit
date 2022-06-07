@@ -63,7 +63,7 @@ static UIActionIdentifier const WKElementActionTypeDownloadIdentifier = @"WKElem
 UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier = @"WKElementActionTypeToggleShowLinkPreviews";
 static UIActionIdentifier const WKElementActionTypeImageExtractionIdentifier = @"WKElementActionTypeImageExtraction";
 static UIActionIdentifier const WKElementActionTypeRevealImageIdentifier = @"WKElementActionTypeRevealImage";
-static UIActionIdentifier const WKElementActionTypeCopyCroppedImageIdentifier = @"WKElementActionTypeCopyCroppedImage";
+static UIActionIdentifier const WKElementActionTypeCopySubjectIdentifier = @"WKElementActionTypeCopySubject";
 
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
@@ -180,7 +180,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeCopyCroppedImage:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        title = WebCore::contextMenuItemTagCopyCroppedImage();
+        title = WebCore::contextMenuItemTagCopySubject();
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -304,7 +304,7 @@ static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementAction
     case _WKElementActionTypeRevealImage:
         return WKElementActionTypeRevealImageIdentifier;
     case _WKElementActionTypeCopyCroppedImage:
-        return WKElementActionTypeCopyCroppedImageIdentifier;
+        return WKElementActionTypeCopySubjectIdentifier;
     }
 }
 
@@ -338,7 +338,7 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeImageExtraction;
     if ([identifier isEqualToString:WKElementActionTypeRevealImageIdentifier])
         return _WKElementActionTypeRevealImage;
-    if ([identifier isEqualToString:WKElementActionTypeCopyCroppedImageIdentifier])
+    if ([identifier isEqualToString:WKElementActionTypeCopySubjectIdentifier])
         return _WKElementActionTypeCopyCroppedImage;
     return _WKElementActionTypeCustom;
 }

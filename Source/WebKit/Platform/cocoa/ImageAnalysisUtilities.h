@@ -50,10 +50,7 @@ struct TextRecognitionResult;
 namespace WebKit {
 
 bool isLiveTextAvailableAndEnabled();
-bool textRecognitionEnhancementsSystemFeatureEnabled();
-bool imageAnalysisQueueSystemFeatureEnabled();
-bool isImageAnalysisMarkupSystemFeatureEnabled();
-bool canStartImageAnalysis(NSString *);
+bool languageIdentifierSupportsLiveText(NSString *);
 
 WebCore::TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *);
 
@@ -61,10 +58,10 @@ RetainPtr<CocoaImageAnalyzer> createImageAnalyzer();
 RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-void requestImageAnalysisWithIdentifiers(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
-void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
+void requestVisualTranslation(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
 
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForCroppedImageResult(CGImageRef, const String& sourceMIMEType);
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, const String& sourceMIMEType);
 
 #if PLATFORM(IOS_FAMILY)
 using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;

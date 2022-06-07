@@ -78,9 +78,9 @@ bool defaultMediaSessionCoordinatorEnabled();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-bool defaultTextRecognitionEnhancementsEnabled();
-bool defaultImageAnalysisQueueEnabled();
-bool defaultImageAnalysisMarkupEnabled();
+bool defaultTextRecognitionInVideosEnabled();
+bool defaultVisualTranslationEnabled();
+bool defaultRemoveBackgroundEnabled();
 #endif
 
 } // namespace WebKit

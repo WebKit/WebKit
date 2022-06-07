@@ -2323,15 +2323,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
-- (void)_startImageAnalysis:(NSString *)source target:(NSString *)target
+- (void)_startImageAnalysis:(NSString *)sourceLanguageIdentifier target:(NSString *)targetLanguageIdentifier
 {
 #if ENABLE(IMAGE_ANALYSIS)
     THROW_IF_SUSPENDED;
 
-    if (!_page || !_page->preferences().imageAnalysisQueueEnabled() || !WebKit::canStartImageAnalysis(source))
+    if (!_page || !_page->preferences().visualTranslationEnabled() || !WebKit::languageIdentifierSupportsLiveText(sourceLanguageIdentifier))
         return;
 
-    _page->startImageAnalysis(source, target);
+    _page->startVisualTranslation(sourceLanguageIdentifier, targetLanguageIdentifier);
 #endif
 }
 

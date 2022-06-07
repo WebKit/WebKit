@@ -154,7 +154,7 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
         NSString *key = feature.key;
-        if ([key isEqualToString:@"TextRecognitionEnhancementsEnabled"] || [key isEqualToString:@"ImageAnalysisQueueEnabled"] || [key isEqualToString:@"ImageAnalysisMarkupEnabled"])
+        if ([key isEqualToString:@"TextRecognitionEnhancementsEnabled"] || [key isEqualToString:@"ImageAnalysisQueueEnabled"] || [key isEqualToString:@"RemoveBackgroundEnabled"])
             [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
     }
     [configuration _setAttachmentElementEnabled:YES];
@@ -345,7 +345,7 @@ TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
     auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"fade-in-image"];
-    [webView _startImageAnalysis:@"foo" target:@"bar"];
+    [webView _startImageAnalysis:@"en_US" target:@"zh_TW"];
     [webView waitForImageAnalysisRequests:1];
 
     CGImagePixelReader reader { [processedRequests().first() image] };
@@ -394,19 +394,19 @@ static BOOL simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint lo
     return result;
 }
 
-static void invokeImageMarkupAction(TestWKWebView *webView)
+static void invokeRemoveBackgroundAction(TestWKWebView *webView)
 {
     simulateCalloutBarAppearance(webView);
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()] _performActionWithSender:nil];
+    [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()] _performActionWithSender:nil];
     [webView waitForNextPresentationUpdate];
 }
 
-TEST(ImageAnalysisTests, MarkupImageUsingContextMenu)
+TEST(ImageAnalysisTests, RemoveBackgroundUsingContextMenu)
 {
-    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView _setEditable:YES];
@@ -417,12 +417,12 @@ TEST(ImageAnalysisTests, MarkupImageUsingContextMenu)
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 }
 
 TEST(ImageAnalysisTests, MenuControllerItems)
 {
-    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     auto inputDelegate = adoptNS([TestInputDelegate new]);
@@ -439,7 +439,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
@@ -447,7 +447,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
+    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 
     [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1);"];
     [webView waitForNextPresentationUpdate];
@@ -455,12 +455,12 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
-    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 }
 
 static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView = { })
 {
-    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     auto inputDelegate = adoptNS([TestInputDelegate new]);
@@ -475,7 +475,7 @@ static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scri
     [webView waitForNextPresentationUpdate];
 
     NSString *previousSelectedText = [webView selectedText];
-    invokeImageMarkupAction(webView.get());
+    invokeRemoveBackgroundAction(webView.get());
 
     if (checkWebView)
         checkWebView(webView.get(), previousSelectedText);
@@ -483,7 +483,7 @@ static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scri
     return webView;
 }
 
-TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
+TEST(ImageAnalysisTests, PerformRemoveBackground)
 {
     runMarkupTest(@"multiple-images", @"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1)", [](TestWKWebView *webView, NSString *previousSelectedText) {
         EXPECT_WK_STREQ(previousSelectedText, webView.selectedText);
@@ -497,7 +497,7 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
     });
 }
 
-TEST(ImageAnalysisTests, PerformImageAnalysisMarkupWithWebPImages)
+TEST(ImageAnalysisTests, PerformRemoveBackgroundWithWebPImages)
 {
     runMarkupTest(@"webp-image", @"getSelection().selectAllChildren(document.body)", [](TestWKWebView *webView, NSString *) {
         Util::waitForConditionWithLogging([&] {
@@ -506,11 +506,11 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkupWithWebPImages)
     });
 }
 
-TEST(ImageAnalysisTests, AllowImageAnalysisMarkupOnce)
+TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
 {
     auto webView = runMarkupTest(@"image", @"getSelection().selectAllChildren(document.body)");
 
-    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; getSelection().setBaseAndExtent(image, 0, image, 1)"];
     [webView waitForNextPresentationUpdate];
@@ -519,16 +519,16 @@ TEST(ImageAnalysisTests, AllowImageAnalysisMarkupOnce)
     auto menuBuilder = adoptNS([TestUIMenuBuilder new]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
 
-    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
+    EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)
 
-TEST(ImageAnalysisTests, MarkupImageItemInServicesMenu)
+TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
 {
-    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+    RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView _setEditable:YES];
@@ -538,12 +538,12 @@ TEST(ImageAnalysisTests, MarkupImageItemInServicesMenu)
         EXPECT_NULL(error);
     }];
 
-    __block bool foundMarkupImageItem = false;
+    __block bool foundRemoveBackgroundItem = false;
     RetainPtr timer = [NSTimer timerWithTimeInterval:0.1 repeats:YES block:^(NSTimer *) {
         NSMenu *menu = [webView _activeMenu];
         for (NSMenuItem *item in menu.itemArray) {
-            if ([item.title isEqualToString:WebCore::contextMenuItemTitleMarkupImage()]) {
-                foundMarkupImageItem = true;
+            if ([item.title isEqualToString:WebCore::contextMenuItemTitleRemoveBackground()]) {
+                foundRemoveBackgroundItem = true;
                 [menu cancelTracking];
                 break;
             }
@@ -551,7 +551,7 @@ TEST(ImageAnalysisTests, MarkupImageItemInServicesMenu)
     }];
 
     [NSRunLoop.mainRunLoop addTimer:timer.get() forMode:NSEventTrackingRunLoopMode];
-    Util::run(&foundMarkupImageItem);
+    Util::run(&foundRemoveBackgroundItem);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)

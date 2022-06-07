@@ -26,6 +26,27 @@
 #import "config.h"
 #import "TextRecognitionResult.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/TextRecognitionResultCocoaAdditions.mm>
+#import "CharacterRange.h"
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+
+#if USE(APPKIT)
+#import <AppKit/NSAttributedString.h>
+#else
+#import <UIKit/NSAttributedString.h>
 #endif
+
+namespace WebCore {
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult& result, const CharacterRange& range)
+{
+    if (auto analysis = result.platformData; [analysis respondsToSelector:@selector(_attributedStringForRange:)])
+        return { [analysis _attributedStringForRange:static_cast<NSRange>(range)] };
+
+    return nil;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+} // namespace WebCore

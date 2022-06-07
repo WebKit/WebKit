@@ -551,7 +551,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (elementInfo.type == _WKActivatedElementTypeImage || elementInfo._isImage) {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopyCroppedImageAction:)] && [_delegate actionSheetAssistantShouldIncludeCopyCroppedImageAction:self]) {
+        if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [_delegate actionSheetAssistantShouldIncludeCopySubjectAction:self]) {
             // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self]];
         }
@@ -587,7 +587,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopyCroppedImageAction:)] && [_delegate actionSheetAssistantShouldIncludeCopyCroppedImageAction:self]) {
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [_delegate actionSheetAssistantShouldIncludeCopySubjectAction:self]) {
         // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self]];
     }
@@ -1051,7 +1051,7 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         break;
     case _WKElementActionTypeCopyCroppedImage:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        [delegate actionSheetAssistant:self copyCroppedImage:element.image sourceMIMEType:element.imageMIMEType];
+        [delegate actionSheetAssistant:self copySubject:element.image sourceMIMEType:element.imageMIMEType];
 #endif
         break;
     default:

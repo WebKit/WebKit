@@ -340,6 +340,9 @@
 /* Copy Audio Address Location context menu item */
 "Copy Audio Address" = "Copy Audio Address";
 
+/* Copy Subject context menu item */
+"Copy Subject" = "Copy Subject";
+
 /* Copy Image context menu item */
 "Copy Image" = "Copy Image";
 
@@ -549,9 +552,6 @@
 
 /* Ignore Spelling context menu item */
 "Ignore Spelling" = "Ignore Spelling";
-
-/* Undo action name */
-"Image analysis markup menu item (Undo action name)" = "Markup Image";
 
 /* Undo action name */
 "Indent (Undo action name)" = "Indent";
@@ -816,6 +816,12 @@
 
 /* WKErrorContentRuleListStoreRemoveFailed description */
 "Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
+
+/* Remove Background menu item */
+"Remove Background" = "Remove Background";
+
+/* Undo action name */
+"Remove Background (Undo action name)" = "Remove Background";
 
 /* Label for the rent with Apple Pay button. */
 "Rent with Apple Pay" = "Rent with Apple Pay";

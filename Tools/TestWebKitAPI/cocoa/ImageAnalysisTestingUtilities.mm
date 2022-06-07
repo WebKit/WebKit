@@ -197,6 +197,43 @@
 
 @end
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+@interface FakeRemoveBackgroundResult : NSObject
+- (instancetype)initWithImage:(CGImageRef)image cropRect:(CGRect)cropRect;
+- (CGImageRef)createCGImage;
+@property (nonatomic, readonly) CGRect cropRect;
+@end
+
+@implementation FakeRemoveBackgroundResult {
+    RetainPtr<CGImageRef> _image;
+    CGRect _cropRect;
+}
+
+- (instancetype)initWithImage:(CGImageRef)image cropRect:(CGRect)cropRect
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _image = image;
+    _cropRect = cropRect;
+    return self;
+}
+
+- (CGImageRef)createCGImage
+{
+    return _image.get();
+}
+
+- (CGRect)cropRect
+{
+    return _cropRect;
+}
+
+@end
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
 namespace TestWebKitAPI {
 
 RetainPtr<VKQuad> createQuad(CGPoint topLeft, CGPoint topRight, CGPoint bottomLeft, CGPoint bottomRight)
@@ -232,10 +269,23 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrienta
     return adoptNS(static_cast<VKImageAnalyzerRequest *>([[TestVKImageAnalyzerRequest alloc] initWithCGImage:image orientation:orientation requestType:types]));
 }
 
-} // namespace TestWebKitAPI
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ImageAnalysisTestingUtilitiesAdditions.mm>
-#endif
+IMP makeRequestHandler(CGImageRef image, CGRect cropRect)
+{
+    return imp_implementationWithBlock([image = RetainPtr { image }, cropRect](VKCRemoveBackgroundRequestHandler *, VKCRemoveBackgroundRequest *, void (^completion)(VKCRemoveBackgroundResult *, NSError *)) {
+        auto result = adoptNS([[FakeRemoveBackgroundResult alloc] initWithImage:image.get() cropRect:cropRect]);
+        completion(static_cast<VKCRemoveBackgroundResult *>(result.get()), nil);
+    });
+}
+
+RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect cropRect)
+    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClass(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect) }
+{
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+} // namespace TestWebKitAPI
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

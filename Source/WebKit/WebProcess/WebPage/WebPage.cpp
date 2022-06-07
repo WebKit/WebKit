@@ -7806,7 +7806,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
 
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
-    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), options.source, options.target), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;
@@ -7877,10 +7877,10 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
     completionHandler(updateResult);
 }
 
-void WebPage::startImageAnalysis(const String& source, const String& target)
+void WebPage::startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
 {
     if (RefPtr document = m_mainFrame->coreFrame()->document())
-        corePage()->imageAnalysisQueue().enqueueAllImages(*document, source, target);
+        corePage()->imageAnalysisQueue().enqueueAllImages(*document, sourceLanguageIdentifier, targetLanguageIdentifier);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
@@ -8107,7 +8107,7 @@ void WebPage::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLa
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::shouldAllowImageMarkup(const ElementContext& context, CompletionHandler<void(bool)>&& completion) const
+void WebPage::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion) const
 {
     auto element = elementForContext(context);
     completion(element && !m_elementsToExcludeFromMarkup.contains(*element));

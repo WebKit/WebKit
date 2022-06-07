@@ -141,43 +141,199 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
     return result;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ImageAnalysisUtilitiesAdditions.mm>
-#else
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-bool canStartImageAnalysis(NSString *)
+static String languageCodeForLocale(NSString *localeIdentifier)
 {
-    return true;
+    return [NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode;
 }
 
-bool textRecognitionEnhancementsSystemFeatureEnabled()
+#endif
+
+bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    return true;
+    auto languageCode = languageCodeForLocale(languageIdentifier);
+    if (languageCode.isEmpty())
+        return true;
+
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> supportedLanguages = [] {
+        MemoryCompactRobinHoodHashSet<String> set;
+        for (NSString *identifier in [PAL::getVKCImageAnalyzerClass() supportedRecognitionLanguages]) {
+            if (auto code = languageCodeForLocale(identifier); !code.isEmpty())
+                set.add(WTFMove(code));
+        }
+        return set;
+    }();
+    return supportedLanguages->contains(languageCode);
 #else
-    return false;
+    UNUSED_PARAM(languageIdentifier);
+    return true;
 #endif
 }
 
-bool imageAnalysisQueueSystemFeatureEnabled()
-{
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    return true;
-#else
-    return false;
-#endif
-}
 
-bool isImageAnalysisMarkupSystemFeatureEnabled()
+static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslation *translation, TransactionID transactionID)
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    return true;
-#else
-    return false;
-#endif
+    TextRecognitionResult result;
+
+    NSArray<VKCTranslatedParagraph *> *paragraphs = translation.paragraphs;
+    result.blocks.reserveInitialCapacity(paragraphs.count);
+
+    for (VKCTranslatedParagraph *paragraph in paragraphs) {
+        if (!paragraph.text.length) {
+            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8().data());
+            continue;
+        }
+
+        if ([paragraph respondsToSelector:@selector(isPassthrough)] && [paragraph isPassthrough])
+            continue;
+
+        auto quad = floatQuad(paragraph.quad);
+        if (quad.p2().x() > quad.p4().x() && quad.p2().y() > quad.p4().y()
+            && quad.p1().x() < quad.p3().x() && quad.p1().y() > quad.p3().y()) {
+            // The entire quad is flipped about the x-axis. Maintain valid positions for each of the quad points
+            // by flipping each quad point, such that the top left and bottom right positions are positioned correctly.
+            quad.setP1({ quad.p1().x(), 1 - quad.p1().y() });
+            quad.setP2({ quad.p2().x(), 1 - quad.p2().y() });
+            quad.setP3({ quad.p3().x(), 1 - quad.p3().y() });
+            quad.setP4({ quad.p4().x(), 1 - quad.p4().y() });
+        }
+        result.blocks.uncheckedAppend({ paragraph.text, WTFMove(quad) });
+    }
+
+    return result;
 }
 
-#endif
+static bool shouldLogFullImageTranslationResults()
+{
+    static std::once_flag onceFlag;
+    static bool shouldLog = false;
+    std::call_once(onceFlag, [&] {
+        shouldLog = [NSUserDefaults.standardUserDefaults boolForKey:@"WebKitLogFullImageTranslationResults"];
+    });
+    return shouldLog;
+}
+
+void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, const String& sourceLocale, const String& targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+{
+    auto startTime = MonotonicTime::now();
+    static TransactionID imageAnalysisRequestID;
+    auto currentRequestID = imageAnalysisRequestID.increment();
+    if (shouldLogFullImageTranslationResults())
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", currentRequestID.loggingString().utf8().data(), imageURL);
+    else
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8().data());
+    auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
+    [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), sourceLocale, targetLocale, currentRequestID, startTime] (CocoaImageAnalysis *analysis, NSError *analysisError) mutable {
+        callOnMainRunLoop([completion = WTFMove(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
+            auto imageAnalysisDelay = MonotonicTime::now() - startTime;
+            if (!analysis) {
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), analysisError.get());
+                return completion({ });
+            }
+
+            if (![analysis hasResultsForAnalysisTypes:VKAnalysisTypeText]) {
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds());
+                return completion({ });
+            }
+
+            auto allLines = [analysis allLines];
+            if (shouldLogFullImageTranslationResults()) {
+                StringBuilder stringToLog;
+                bool firstLine = true;
+                for (VKWKLineInfo *info in allLines) {
+                    if (!firstLine)
+                        stringToLog.append("\\n"_s);
+                    stringToLog.append(String { info.string });
+                    firstLine = false;
+                }
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count, stringToLog.toString().utf8().data());
+            } else
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count);
+
+            auto translationStartTime = MonotonicTime::now();
+            auto completionBlock = makeBlockPtr([completion = WTFMove(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
+                auto translationDelay = MonotonicTime::now() - translationStartTime;
+                if (error) {
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), error);
+                    return completion({ });
+                }
+
+                if (shouldLogFullImageTranslationResults()) {
+                    StringBuilder stringToLog;
+                    bool firstLine = true;
+                    for (VKCTranslatedParagraph *paragraph in translation.paragraphs) {
+                        if (!firstLine)
+                            stringToLog.append("\\n"_s);
+                        stringToLog.append(String { paragraph.text });
+                        firstLine = false;
+                    }
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count, stringToLog.toString().utf8().data());
+                } else
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", currentRequestID.loggingString().utf8().data(), translationDelay.seconds(), translation.paragraphs.count);
+
+                completion(makeTextRecognitionResult(translation, currentRequestID));
+            });
+
+            if ([analysis respondsToSelector:@selector(translateFrom:to:withCompletion:)])
+                [analysis translateFrom:sourceLocale to:targetLocale withCompletion:completionBlock.get()];
+            else
+                [analysis translateTo:targetLocale withCompletion:completionBlock.get()];
+        });
+    }).get()];
+}
+
+void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRef, CGRect normalizedCropRect)>&& completion)
+{
+    if (!PAL::canLoad_VisionKitCore_vk_cgImageRemoveBackground()) {
+        completion(nullptr, CGRectZero);
+        return;
+    }
+
+    // FIXME (rdar://88834023): We should find a way to avoid this extra transcoding.
+    auto tiffData = transcode(image, (__bridge CFStringRef)UTTypeTIFF.identifier);
+    if (![tiffData length]) {
+        completion(nullptr, CGRectZero);
+        return;
+    }
+
+    auto transcodedImageSource = adoptCF(CGImageSourceCreateWithData((__bridge CFDataRef)tiffData.get(), nullptr));
+    auto transcodedImage = adoptCF(CGImageSourceCreateImageAtIndex(transcodedImageSource.get(), 0, nullptr));
+    if (!transcodedImage) {
+        completion(nullptr, CGRectZero);
+        return;
+    }
+
+    auto sourceImageSize = CGSizeMake(CGImageGetWidth(transcodedImage.get()), CGImageGetHeight(transcodedImage.get()));
+    if (!sourceImageSize.width || !sourceImageSize.height) {
+        completion(nullptr, CGRectZero);
+        return;
+    }
+
+    PAL::softLinkVisionKitCorevk_cgImageRemoveBackground(transcodedImage.get(), YES, makeBlockPtr([sourceImageSize, completion = WTFMove(completion)](CGImageRef result, CGRect cropRect, NSError *error) mutable {
+        if (error)
+            RELEASE_LOG(ImageAnalysis, "Remove background failed with error: %@", error);
+
+        callOnMainRunLoop([sourceImageSize, cropRect, protectedResult = RetainPtr { result }, completion = WTFMove(completion)]() mutable {
+            FloatRect normalizedCropRect = cropRect;
+            normalizedCropRect.scale(1 / sourceImageSize.width, 1 / sourceImageSize.height);
+            completion(protectedResult.get(), normalizedCropRect);
+        });
+    }).get());
+}
+
+void setUpAdditionalImageAnalysisBehaviors(PlatformImageAnalysisObject *interactionOrView)
+{
+    interactionOrView.activeInteractionTypes = VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors;
+    interactionOrView.wantsAutomaticContentsRectCalculation = NO;
+    interactionOrView.actionInfoLiveTextButtonDisabled = NO;
+    interactionOrView.actionInfoQuickActionsDisabled = NO;
+    [interactionOrView setActionInfoViewHidden:NO animated:YES];
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 bool isLiveTextAvailableAndEnabled()
 {
@@ -186,7 +342,7 @@ bool isLiveTextAvailableAndEnabled()
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForCroppedImageResult(CGImageRef image, const String& sourceMIMEType)
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef image, const String& sourceMIMEType)
 {
     static NeverDestroyed allowedMIMETypesForTranscoding = [] {
         static constexpr std::array types { "image/png"_s, "image/tiff"_s, "image/gif"_s, "image/bmp"_s };

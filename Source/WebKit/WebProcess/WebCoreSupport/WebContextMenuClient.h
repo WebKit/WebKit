@@ -57,7 +57,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    bool supportsCopyCroppedImage() final { return true; }
+    bool supportsCopySubject() final { return true; }
 #endif
 
 #if PLATFORM(COCOA)

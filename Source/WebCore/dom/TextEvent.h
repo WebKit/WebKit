@@ -62,7 +62,7 @@ namespace WebCore {
         bool isDictation() const { return m_inputType == TextEventInputDictation; }
         bool isAutocompletion() const { return m_inputType == TextEventInputAutocompletion; }
         bool isKeyboard() const { return m_inputType == TextEventInputKeyboard; }
-        bool isMarkup() const { return m_inputType == TextEventInputMarkup; }
+        bool isRemoveBackground() const { return m_inputType == TextEventInputRemoveBackground; }
 
         bool shouldSmartReplace() const { return m_shouldSmartReplace; }
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }

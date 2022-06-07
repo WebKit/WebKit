@@ -59,7 +59,7 @@ public:
     NSWindow *window() const;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    CGImageRef croppedImageResult() const final { return m_croppedImageResult.get(); }
+    CGImageRef copySubjectResult() const final { return m_copySubjectResult.get(); }
 #endif
 
 private:
@@ -86,7 +86,7 @@ private:
     RetainPtr<WKMenuDelegate> m_menuDelegate;
     WeakObjCPtr<NSView> m_webView;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    RetainPtr<CGImageRef> m_croppedImageResult;
+    RetainPtr<CGImageRef> m_copySubjectResult;
 #endif
 };
 
