@@ -140,15 +140,6 @@ protected:
         return nullptr;
     }
 
-    RefPtr<Image> copyImage(BackingStoreCopy copyBehavior = CopyBackingStore, PreserveResolution preserveResolution = PreserveResolution::No) const override
-    {
-        if (auto* backend = ensureBackendCreated()) {
-            const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
-            return backend->copyImage(copyBehavior, preserveResolution);
-        }
-        return nullptr;
-    }
-
     RefPtr<Image> filteredImage(Filter& filter) override
     {
         auto* backend = ensureBackendCreated();
@@ -197,15 +188,6 @@ protected:
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
             return backend->sinkIntoNativeImage();
-        }
-        return nullptr;
-    }
-
-    RefPtr<Image> sinkIntoImage(PreserveResolution preserveResolution = PreserveResolution::No) override
-    {
-        if (auto* backend = ensureBackendCreated()) {
-            flushDrawingContext();
-            return backend->sinkIntoImage(preserveResolution);
         }
         return nullptr;
     }

@@ -195,21 +195,6 @@ protected:
         return WebCore::NativeImage::create(bitmap->createPlatformImage(WebCore::DontCopyBackingStore));
     }
 
-    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy copyBehavior = WebCore::CopyBackingStore, WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) const final
-    {
-        if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return { };
-
-        if (canMapBackingStore())
-            return BaseConcreteImageBuffer::copyImage(copyBehavior, preserveResolution);
-
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, preserveResolution);
-        if (!bitmap)
-            return { };
-        return bitmap->createImage();
-    }
-
     void drawConsuming(WebCore::GraphicsContext& destContext, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions& options) final
     {
         ASSERT(&destContext != &context());
@@ -219,11 +204,6 @@ protected:
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final
     {
         return copyNativeImage();
-    }
-
-    RefPtr<WebCore::Image> sinkIntoImage(WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) final
-    {
-        return copyImage(WebCore::BackingStoreCopy::CopyBackingStore, preserveResolution);
     }
 
     RefPtr<WebCore::Image> filteredImage(WebCore::Filter& filter) final
