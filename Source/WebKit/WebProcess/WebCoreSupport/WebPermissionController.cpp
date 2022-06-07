@@ -88,7 +88,7 @@ void WebPermissionController::updateCache(const WebCore::ClientOrigin& origin, c
 
 void WebPermissionController::tryProcessingRequests()
 {
-    if (m_requests.isEmpty())
+    if (m_requests.isEmpty() || !m_page)
         return;
 
     while (!m_requests.isEmpty()) {
