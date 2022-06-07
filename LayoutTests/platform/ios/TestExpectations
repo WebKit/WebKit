@@ -2135,6 +2135,7 @@ accessibility/aria-sort-changed-notification.html [ Pass ]
 # Enable "aria-table-attributes" test for iOS
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
+accessibility/aria-modal-with-text-crash.html [ Pass ]
 accessibility/display-contents-search-traversal.html [ Pass ]
 accessibility/search-traversal-after-role-change.html [ Pass ]
 accessibility/table-search-traversal.html [ Pass ]
