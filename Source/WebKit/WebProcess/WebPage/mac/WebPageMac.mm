@@ -552,23 +552,14 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
     completionHandler(frame.editor().stringSelectionForPasteboard());
 }
 
-void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
+void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     if (frame.selection().isNone())
         return completionHandler({ });
 
     auto buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
-    if (!buffer)
-        return completionHandler({ });
-    SharedMemory::Handle handle;
-    {
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        if (!sharedMemoryBuffer)
-            return completionHandler({ });
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    }
-    completionHandler(SharedMemory::IPCHandle { WTFMove(handle), buffer->size() });
+    completionHandler(WTFMove(buffer));
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()

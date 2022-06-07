@@ -412,12 +412,12 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) Async
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) Async
-    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (IPC::SharedBufferReference data) Async
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) Async
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
-    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (IPC::SharedBufferReference data) Async
+    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data) Async
 #endif
-    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (IPC::SharedBufferReference data) Async
+    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (RefPtr<WebCore::SharedBuffer> data) Async
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebCore::ResourceError error) Async
@@ -446,7 +446,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
-    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::IPCHandle ipcHandle) Synchronous
+    GetDataSelectionForPasteboard(String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
 
 #if ENABLE(SERVICE_CONTROLS)

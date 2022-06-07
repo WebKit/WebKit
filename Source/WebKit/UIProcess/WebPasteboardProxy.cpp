@@ -111,7 +111,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection&, size_t, const S
     completionHandler({ }, { });
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, std::optional<size_t>, const String&, const String&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, std::optional<size_t>, const String&, const String&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     completionHandler({ });
 }
