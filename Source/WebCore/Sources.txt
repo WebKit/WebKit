@@ -2110,6 +2110,7 @@ platform/graphics/SourceImage.cpp
 platform/graphics/StringTruncator.cpp
 platform/graphics/TextRun.cpp
 platform/graphics/TextTrackRepresentation.cpp
+platform/graphics/TrackBuffer.cpp
 platform/graphics/TrackPrivateBase.cpp
 platform/graphics/VP9Utilities.cpp
 platform/graphics/VelocityData.cpp
