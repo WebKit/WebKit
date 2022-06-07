@@ -65,10 +65,15 @@ class Tracker(GenericTracker):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-
-    def __init__(self, url, users=None, res=None, component_color=DEFAULT_COMPONENT_COLOR, version_color=DEFAULT_VERSION_COLOR):
+    def __init__(
+            self, url, users=None, res=None,
+            component_color=DEFAULT_COMPONENT_COLOR,
+            version_color=DEFAULT_VERSION_COLOR,
+            session=None
+    ):
         super(Tracker, self).__init__(users=users)
 
+        self.session = session or requests.Session()
         self.component_color = component_color
         self.version_color = version_color
 
@@ -98,7 +103,7 @@ class Tracker(GenericTracker):
             if '@' in username:
                 sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
                 return False
-            response = requests.get(
+            response = self.session.get(
                 '{}/user'.format(self.api_url),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 auth=HTTPBasicAuth(username, access_token),
@@ -158,7 +163,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             name=self.name,
             path='{}'.format(path) if path else '',
         )
-        response = requests.request(method, url, params=params, headers=headers, auth=auth, json=json)
+        response = self.session.request(method, url, params=params, headers=headers, auth=auth, json=json)
         if authenticated is None and not auth and response.status_code // 100 == 4:
             return self.request(path=path, params=params, method=method, headers=headers, authenticated=True, paginate=paginate, json=json, error_message=error_message)
         if response.status_code // 100 != 2:
@@ -175,7 +180,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         while paginate and isinstance(response.json(), list) and len(response.json()) == params['per_page']:
             params['page'] += 1
-            response = requests.get(url, params=params, headers=headers, auth=auth)
+            response = self.session.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
                 raise OSError("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
@@ -189,7 +194,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             raise RuntimeError("Failed to find username for '{}'".format(name or email))
 
         url = '{api_url}/users/{username}'.format(api_url=self.api_url, username=username)
-        response = requests.get(
+        response = self.session.get(
             url, auth=HTTPBasicAuth(*self.credentials(required=True)),
             headers=dict(Accept='application/vnd.github.v3+json'),
         )

@@ -111,7 +111,7 @@ class GitHub(Scm):
                 owner=self.repository.owner,
                 name=self.repository.name,
             )
-            response = requests.post(
+            response = self.repository.session.post(
                 url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=dict(
@@ -165,7 +165,7 @@ class GitHub(Scm):
                 name=self.repository.name,
                 number=pull_request.number,
             )
-            response = requests.post(
+            response = self.repository.session.post(
                 url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=updates,
@@ -278,13 +278,16 @@ class GitHub(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, proxies=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
         self.api_url = 'https://api.github.{}'.format(match.group('domain'))
         self.owner = match.group('owner')
         self.name = match.group('repository')
+        self.session = requests.Session()
+        if proxies:
+            self.session.proxies = proxies
         self._hash_link_re = re.compile(r'/{owner}/{name}/[^/]*commit[^/]*/(?P<hash>[0-9a-f]+)'.format(
             owner=self.owner,
             name=self.name,
@@ -303,7 +306,7 @@ class GitHub(Scm):
         for contributor in contributors or []:
             if contributor.github:
                 users.create(contributor.name, contributor.github, contributor.emails)
-        self.tracker = Tracker(url, users=users)
+        self.tracker = Tracker(url, users=users, session=self.session)
 
     def credentials(self, required=True, validate=False, save_in_keyring=None):
         return self.tracker.credentials(required=required, validate=validate, save_in_keyring=save_in_keyring)
@@ -333,7 +336,7 @@ class GitHub(Scm):
             name=self.name,
             path='/{}'.format(path) if path else '',
         )
-        response = requests.get(url, params=params, headers=headers, auth=auth)
+        response = self.session.get(url, params=params, headers=headers, auth=auth)
         if authenticated is None and not auth and response.status_code // 100 == 4:
             return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate)
         if response.status_code != 200:
@@ -348,7 +351,7 @@ class GitHub(Scm):
 
         while paginate and isinstance(response.json(), list) and len(response.json()) == params['per_page']:
             params['page'] += 1
-            response = requests.get(url, params=params, headers=headers, auth=auth)
+            response = self.session.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
                 raise self.Exception("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
@@ -359,7 +362,7 @@ class GitHub(Scm):
 
         # We need the number of parents a commit has to construct identifiers, which is not something GitHub's
         # API lets us find, although the UI does have the information
-        response = requests.get('{}/tree/{}'.format(self.url, ref))
+        response = self.session.get('{}/tree/{}'.format(self.url, ref))
         if response.status_code != 200:
             raise self.Exception("Failed to query {}'s UI to find the number of parents {} has".format(self.url, ref))
 
@@ -390,7 +393,7 @@ class GitHub(Scm):
     def _branches_for(self, hash):
         # We need to find the branch that a commit is on. GitHub's UI provides this information, but the only way to
         # retrieve this information via the API would be to check all branches for the commit, so we scrape the UI.
-        response = requests.get('{}/branch_commits/{}'.format(self.url, hash))
+        response = self.session.get('{}/branch_commits/{}'.format(self.url, hash))
         if response.status_code != 200:
             return []
 
