@@ -32,7 +32,6 @@
 #include "FontCreationContext.h"
 #include "FontFamilySpecificationCoreText.h"
 #include "FontPaletteValues.h"
-#include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -763,6 +762,10 @@ void FontCache::platformInit()
 {
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
+#if PLATFORM(IOS_FAMILY)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, getUIContentSizeCategoryDidChangeNotificationName(), 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+#endif
+
 #if PLATFORM(MAC)
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     const CFStringRef notificationName = kCFLocaleCurrentLocaleDidChangeNotification;
@@ -1288,7 +1291,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     if (family.startsWith("UICTFontTextStyle")) {
         const auto& request = fontDescription.fontSelectionRequest();
         CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::forCurrentThread().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
-        auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), RenderThemeCocoa::singleton().contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
+        auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
         if (traits)
             descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
         return createFontForInstalledFonts(descriptor.get(), size, allowUserInstalledFonts);

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RenderThemeCocoa.h"
 
+#import "FontCacheCoreText.h"
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
 #import "ImageBuffer.h"

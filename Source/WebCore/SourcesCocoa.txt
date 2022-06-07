@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2017-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -375,6 +375,7 @@ platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp
 platform/graphics/cocoa/AudioTrackPrivateWebM.cpp
 platform/graphics/cocoa/ColorCocoa.mm
 platform/graphics/cocoa/FloatRectCocoa.mm
+platform/graphics/cocoa/FontCacheCocoa.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp
 platform/graphics/cocoa/FontCascadeCocoa.cpp
 platform/graphics/cocoa/FontCocoa.cpp

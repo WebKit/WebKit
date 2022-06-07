@@ -54,6 +54,7 @@
 #import "WindowServerConnection.h"
 #import <WebCore/AGXCompilerService.h>
 #import <WebCore/Color.h>
+#import <WebCore/FontCacheCoreText.h>
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
@@ -432,7 +433,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
-    parameters.contentSizeCategory = RenderThemeCocoa::singleton().contentSizeCategory();
+    parameters.contentSizeCategory = contentSizeCategory();
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)

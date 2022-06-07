@@ -36,8 +36,6 @@ class RenderThemeCocoa : public RenderTheme {
 public:
     WEBCORE_EXPORT static RenderThemeCocoa& singleton();
 
-    virtual CFStringRef contentSizeCategory() const = 0;
-
 private:
     void purgeCaches() override;
 

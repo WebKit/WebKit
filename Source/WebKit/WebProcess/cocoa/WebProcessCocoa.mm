@@ -61,6 +61,7 @@
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/FontCache.h>
+#import <WebCore/FontCacheCoreText.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
@@ -275,7 +276,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     setCurrentUserInterfaceIdiomIsSmallScreen(parameters.currentUserInterfaceIdiomIsSmallScreen);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
-    RenderThemeIOS::setContentSizeCategory(parameters.contentSizeCategory);
+    setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
 #endif

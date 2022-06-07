@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #import "File.h"
 #import "FloatRoundedRect.h"
 #import "FontCache.h"
+#import "FontCacheCoreText.h"
 #import "FontCascade.h"
 #import "Frame.h"
 #import "FrameSelection.h"
@@ -279,41 +280,12 @@ static IOSGradientRef gradientWithName(IOSGradientType gradientType)
     return nullptr;
 }
 
-static void contentSizeCategoryDidChange(CFNotificationCenterRef, void*, CFStringRef name, const void*, CFDictionaryRef)
-{
-    ASSERT_UNUSED(name, CFEqual(name, PAL::get_UIKit_UIContentSizeCategoryDidChangeNotification()));
-    WebThreadRun(^{
-        Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-    });
-}
-
-RenderThemeIOS::RenderThemeIOS()
-{
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, contentSizeCategoryDidChange, (__bridge CFStringRef)PAL::get_UIKit_UIContentSizeCategoryDidChangeNotification(), 0, CFNotificationSuspensionBehaviorDeliverImmediately);
-}
+RenderThemeIOS::RenderThemeIOS() = default;
 
 RenderTheme& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeIOS> theme;
     return theme;
-}
-
-static String& _contentSizeCategory()
-{
-    static NeverDestroyed<String> _contentSizeCategory;
-    return _contentSizeCategory.get();
-}
-
-CFStringRef RenderThemeIOS::contentSizeCategory() const
-{
-    if (!_contentSizeCategory().isNull())
-        return (__bridge CFStringRef)static_cast<NSString*>(_contentSizeCategory());
-    return (CFStringRef)[[PAL::getUIApplicationClass() sharedApplication] preferredContentSizeCategory];
-}
-
-void RenderThemeIOS::setContentSizeCategory(const String& contentSizeCategory)
-{
-    _contentSizeCategory() = contentSizeCategory;
 }
 
 FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, GraphicsContext& context, const IntRect& rect)
@@ -1627,7 +1599,7 @@ const CFIndex attachmentWrappingTextMaximumLineCount = 2;
 static RetainPtr<CTFontRef> attachmentActionFont()
 {
     auto style = kCTUIFontTextStyleFootnote;
-    auto size = RenderThemeIOS::singleton().contentSizeCategory();
+    auto size = contentSizeCategory();
     auto attributes = static_cast<CFDictionaryRef>(@{ (id)kCTFontTraitsAttribute: @{ (id)kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
 #if HAVE(CTFONTDESCRIPTOR_CREATE_WITH_TEXT_STYLE_AND_ATTRIBUTES)
     auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyleAndAttributes(style, size, attributes));
@@ -1646,7 +1618,7 @@ static RetainPtr<UIColor> attachmentActionColor(const RenderAttachment& attachme
 
 static RetainPtr<CTFontRef> attachmentTitleFont()
 {
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, RenderThemeIOS::singleton().contentSizeCategory(), 0));
+    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(kCTUIFontTextStyleShortCaption1, contentSizeCategory(), 0));
     return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
 }
 
@@ -1660,7 +1632,7 @@ static CGFloat shortCaptionPointSizeWithContentSizeCategory(CFStringRef contentS
 static CGFloat attachmentDynamicTypeScaleFactor()
 {
     CGFloat fixedPointSize = shortCaptionPointSizeWithContentSizeCategory(kCTFontContentSizeCategoryL);
-    CGFloat dynamicPointSize = shortCaptionPointSizeWithContentSizeCategory(RenderThemeIOS::singleton().contentSizeCategory());
+    CGFloat dynamicPointSize = shortCaptionPointSizeWithContentSizeCategory(contentSizeCategory());
     if (!dynamicPointSize || !fixedPointSize)
         return 1;
     return std::max<CGFloat>(1, dynamicPointSize / fixedPointSize);

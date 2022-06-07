@@ -339,6 +339,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "FontCacheCoreText.h"
 #include "MediaSessionHelperIOS.h"
 #endif
 
@@ -615,7 +616,7 @@ void Internals::resetToConsistentState(Page& page)
     DOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS)
-    RenderThemeIOS::setContentSizeCategory(kCTFontContentSizeCategoryL);
+    WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
 #endif
 }
 
@@ -6387,7 +6388,7 @@ void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
         ctCategory = kCTFontContentSizeCategoryXXXL;
         break;
     }
-    RenderThemeIOS::setContentSizeCategory(ctCategory);
+    WebCore::setContentSizeCategory(ctCategory);
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 #else
     UNUSED_PARAM(category);
