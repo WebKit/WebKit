@@ -1776,7 +1776,6 @@ webkit.org/b/140867 [ Debug ] accessibility/aria-option-role.html [ Skip ]
 [ Debug ] accessibility/aria-required.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-role-on-buttons.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-roles.html [ Skip ]
-webkit.org/b/140867 [ Debug ] accessibility/aria-toggle-button-with-title.html [ Skip ]
 [ Debug ] accessibility/button-press-action.html [ Skip ] # Crash (Debug Assertion)
 webkit.org/b/140867 [ Debug ] accessibility/button-title-uses-inner-img-alt.html [ Skip ]
 [ Debug ] accessibility/canvas-description-and-role.html [ Skip ] # Crash (Debug Assertion)
