@@ -310,7 +310,7 @@ private:
     void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
     void cancelElementFullscreenVideoExtraction() final;
 
-    bool isInMultitaskingMode() const final;
+    bool hasResizableWindows() const final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void didEnterFullscreen() final;

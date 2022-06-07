@@ -2110,8 +2110,8 @@ public:
     void shouldAllowRemoveBackground(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    void setIsInMultitaskingMode(bool);
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    void setIsWindowResizingEnabled(bool);
 #endif
 
 #if PLATFORM(MAC)

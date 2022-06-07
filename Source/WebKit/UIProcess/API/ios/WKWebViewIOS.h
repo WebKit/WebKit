@@ -52,7 +52,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_accessibilitySettingsDidChange:(NSNotification *)notification;
 
 - (void)_frameOrBoundsChanged;
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
 - (void)_invalidateResizeAssertions;
 #endif
 
@@ -172,8 +172,8 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) int32_t _deviceOrientation;
 
-#if HAVE(MULTITASKING_MODE)
-@property (nonatomic, readonly) BOOL _isInMultitaskingMode;
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+@property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
 
 @end

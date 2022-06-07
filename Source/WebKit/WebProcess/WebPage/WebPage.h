@@ -1547,8 +1547,8 @@ public:
     void shouldAllowRemoveBackground(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&) const;
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    void setIsInMultitaskingMode(bool);
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    void setIsWindowResizingEnabled(bool);
 #endif
 
 private:
@@ -1801,7 +1801,7 @@ private:
     void endPrintingImmediately();
 
 #if ENABLE(META_VIEWPORT)
-    bool usesMultitaskingModeViewportBehaviors() const;
+    bool shouldEnableViewportBehaviorsForResizableWindows() const;
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
@@ -2274,8 +2274,8 @@ private:
 #endif
     OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
 
-#if HAVE(MULTITASKING_MODE)
-    bool m_isInMultitaskingMode { false };
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    bool m_isWindowResizingEnabled { false };
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

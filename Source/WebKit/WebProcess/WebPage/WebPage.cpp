@@ -541,8 +541,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if HAVE(TOUCH_BAR)
     , m_requiresUserActionForEditingControlsManager(parameters.requiresUserActionForEditingControlsManager)
 #endif
-#if HAVE(MULTITASKING_MODE)
-    , m_isInMultitaskingMode(parameters.isInMultitaskingMode)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    , m_isWindowResizingEnabled(parameters.hasResizableWindows)
 #endif
 #if ENABLE(META_VIEWPORT)
     , m_forceAlwaysUserScalable(parameters.ignoresViewportScaleLimits)
@@ -6702,7 +6702,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     
     bool viewportChanged = false;
 
-    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(usesMultitaskingModeViewportBehaviors());
+    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " didCommitLoad setting content size to " << coreFrame->view()->contentsSize());
     if (m_viewportConfiguration.setContentsSize(coreFrame->view()->contentsSize()))
@@ -8115,18 +8115,18 @@ void WebPage::shouldAllowRemoveBackground(const ElementContext& context, Complet
 
 #endif
 
-#if HAVE(MULTITASKING_MODE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
 
-void WebPage::setIsInMultitaskingMode(bool value)
+void WebPage::setIsWindowResizingEnabled(bool value)
 {
-    if (m_isInMultitaskingMode == value)
+    if (m_isWindowResizingEnabled == value)
         return;
 
-    m_isInMultitaskingMode = value;
-    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(usesMultitaskingModeViewportBehaviors());
+    m_isWindowResizingEnabled = value;
+    m_viewportConfiguration.setPrefersHorizontalScrollingBelowDesktopViewportWidths(shouldEnableViewportBehaviorsForResizableWindows());
 }
 
-#endif // HAVE(MULTITASKING_MODE)
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 bool WebPage::handlesPageScaleGesture()
 {

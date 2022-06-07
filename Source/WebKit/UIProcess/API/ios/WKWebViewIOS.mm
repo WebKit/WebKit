@@ -123,7 +123,7 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     if (!CGSizeEqualToSize(oldFrame.size, frame.size)) {
         [self _frameOrBoundsChanged];
 
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
         [self _acquireResizeAssertionForReason:@"-[WKWebView setFrame:]"];
 #endif
     }
@@ -138,7 +138,7 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     if (!CGSizeEqualToSize(oldBounds.size, bounds.size)) {
         [self _frameOrBoundsChanged];
 
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
         [self _acquireResizeAssertionForReason:@"-[WKWebView setBounds:]"];
 #endif
     }
@@ -196,8 +196,8 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
 
-#if HAVE(MULTITASKING_MODE)
-    [center addObserver:self selector:@selector(_multitaskingModeDidChange:) name:self.multitaskingModeChangedNotificationName object:nil];
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    [center addObserver:self selector:@selector(_enhancedWindowingToggled:) name:_UIWindowSceneEnhancedWindowingModeChanged object:nil];
 #endif
 }
 
@@ -706,7 +706,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     [self _hidePasswordView];
     [self _cancelAnimatedResize];
 
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
 #endif
 
@@ -1562,14 +1562,24 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
     [self _presentCaptivePortalModeAlertIfNeeded];
-#if HAVE(MULTITASKING_MODE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     if (_page->hasRunningProcess() && self.window)
-        _page->setIsInMultitaskingMode(self._isInMultitaskingMode);
+        _page->setIsWindowResizingEnabled(self._isWindowResizingEnabled);
 #endif
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
 #endif
 }
+
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+- (BOOL)_isWindowResizingEnabled
+{
+    UIWindowScene *scene = self.window.windowScene;
+    return [scene respondsToSelector:@selector(_enhancedWindowingEnabled)] && scene._enhancedWindowingEnabled;
+}
+
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 - (void)_setOpaqueInternal:(BOOL)opaque
 {
@@ -2005,7 +2015,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _scheduleVisibleContentRectUpdate];
 }
 
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 - (void)_acquireResizeAssertionForReason:(NSString *)reason
 {
@@ -2055,7 +2065,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [resizeAssertion _invalidate];
 }
 
-#endif // HAVE(MAC_CATALYST_LIVE_RESIZE)
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 // Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or below the keyboard, wherever there is enough space.
 - (CGRect)_contentRectForUserInteraction
@@ -2759,9 +2769,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif
 
-#if HAVE(MULTITASKING_MODE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
 
-- (void)_multitaskingModeDidChange:(NSNotification *)notification
+- (void)_enhancedWindowingToggled:(NSNotification *)notification
 {
     if (dynamic_objc_cast<UIWindowScene>(notification.object) != self.window.windowScene)
         return;
@@ -2769,10 +2779,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!_page || !_page->hasRunningProcess())
         return;
 
-    _page->setIsInMultitaskingMode(self._isInMultitaskingMode);
+    _page->setIsWindowResizingEnabled(self._isWindowResizingEnabled);
 }
 
-#endif // HAVE(MULTITASKING_MODE)
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 @end
 
@@ -3274,8 +3284,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     // Compute the new scale to keep the current content width in the scrollview.
     CGFloat oldWebViewWidthInContentViewCoordinates = oldUnobscuredContentRect.width();
     _animatedResizeOriginalContentWidth = [&] {
-#if HAVE(MULTITASKING_MODE)
-        if (self._isInMultitaskingMode)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+        if (self._isWindowResizingEnabled)
             return contentSizeInContentViewCoordinates.width;
 #endif
         return std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);

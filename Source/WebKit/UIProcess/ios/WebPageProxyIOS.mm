@@ -1397,7 +1397,7 @@ bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequ
         return false;
 
 #if !PLATFORM(MACCATALYST)
-    if (!pageClient().isInMultitaskingMode() && webViewSizeIsNarrow(viewSize()))
+    if (!pageClient().hasResizableWindows() && webViewSizeIsNarrow(viewSize()))
         return false;
 #endif
 

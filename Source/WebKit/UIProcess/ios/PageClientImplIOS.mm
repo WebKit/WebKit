@@ -1083,10 +1083,10 @@ void PageClientImpl::cancelElementFullscreenVideoExtraction()
     [m_contentView cancelElementFullscreenVideoExtraction];
 }
 
-bool PageClientImpl::isInMultitaskingMode() const
+bool PageClientImpl::hasResizableWindows() const
 {
-#if HAVE(MULTITASKING_MODE)
-    return [m_webView _isInMultitaskingMode];
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    return [m_webView _isWindowResizingEnabled];
 #else
     return false;
 #endif

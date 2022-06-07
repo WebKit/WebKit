@@ -8523,8 +8523,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.requiresUserActionForEditingControlsManager = m_configuration->requiresUserActionForEditingControlsManager();
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    parameters.isInMultitaskingMode = pageClient().isInMultitaskingMode();
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    parameters.hasResizableWindows = pageClient().hasResizableWindows();
 #endif
 
     return parameters;
@@ -11416,11 +11416,11 @@ void WebPageProxy::shouldAllowRemoveBackground(const ElementContext& context, Co
 
 #endif
 
-#if HAVE(MULTITASKING_MODE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
 
-void WebPageProxy::setIsInMultitaskingMode(bool isInMultitaskingMode)
+void WebPageProxy::setIsWindowResizingEnabled(bool hasResizableWindows)
 {
-    send(Messages::WebPage::SetIsInMultitaskingMode(isInMultitaskingMode));
+    send(Messages::WebPage::SetIsWindowResizingEnabled(hasResizableWindows));
 }
 
 #endif
