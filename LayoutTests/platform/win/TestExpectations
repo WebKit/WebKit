@@ -5065,3 +5065,5 @@ webkit.org/b/241281 fast/layers/parent-clipping-overflow-is-overwritten-by-child
 webkit.org/b/241282 webanimations/accelerated-animations-and-motion-path.html [ Pass Failure ]
 
 webkit.org/b/241377 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/241382 html5lib/generated/run-tests19-data.html [ Pass Crash ]
