@@ -1272,7 +1272,7 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
     return startsWithLettersIgnoringASCIICase(type, "audio/"_s) || startsWithLettersIgnoringASCIICase(type, "video/"_s);
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, StringView fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(const FragmentedSharedBuffer& data, const String& directory, String& path, StringView fileExtension)
 {
     String fullPath;
     

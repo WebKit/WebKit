@@ -107,7 +107,7 @@ bool Image::isPostScriptResource(const String& mimeType, const URL& url)
 }
 
 
-EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
+EncodedDataStatus Image::setData(RefPtr<const FragmentedSharedBuffer>&& data, bool allDataReceived)
 {
     m_encodedImageData = WTFMove(data);
 

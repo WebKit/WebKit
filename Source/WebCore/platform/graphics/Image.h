@@ -124,7 +124,7 @@ public:
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
     virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
 
-    WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
+    WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<const FragmentedSharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }
 
     virtual String uti() const { return String(); } // null string if unknown
@@ -133,7 +133,6 @@ public:
 
     virtual void destroyDecodedData(bool destroyAll = true) = 0;
 
-    FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
 
     virtual DestinationColorSpace colorSpace();
@@ -208,7 +207,7 @@ protected:
     virtual Color singlePixelSolidColor() const { return Color(); }
 
 private:
-    RefPtr<FragmentedSharedBuffer> m_encodedImageData;
+    RefPtr<const FragmentedSharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
     std::unique_ptr<Timer> m_animationStartTimer;
 };

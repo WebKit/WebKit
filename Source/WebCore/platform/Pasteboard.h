@@ -90,7 +90,7 @@ struct PasteboardWebContent {
     String dataInHTMLFormat;
     String dataInStringFormat;
     Vector<String> clientTypes;
-    Vector<RefPtr<SharedBuffer>> clientData;
+    Vector<RefPtr<const SharedBuffer>> clientData;
 #endif
 #if PLATFORM(GTK)
     String contentOrigin;
@@ -130,7 +130,7 @@ struct PasteboardImage {
     RefPtr<SharedBuffer> resourceData;
     String resourceMIMEType;
     Vector<String> clientTypes;
-    Vector<RefPtr<SharedBuffer>> clientData;
+    Vector<RefPtr<const SharedBuffer>> clientData;
 #endif
     String suggestedName;
     FloatSize imageSize;

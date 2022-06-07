@@ -183,7 +183,7 @@ public:
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
-    WEBCORE_EXPORT RefPtr<FragmentedSharedBuffer> mainResourceData() const;
+    WEBCORE_EXPORT RefPtr<const FragmentedSharedBuffer> mainResourceData() const;
     
     DocumentWriter& writer() const { return m_writer; }
 
@@ -416,8 +416,8 @@ public:
 #endif
 
     void startIconLoading();
-    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&&);
-    void finishedLoadingIcon(IconLoader&, FragmentedSharedBuffer*);
+    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(const FragmentedSharedBuffer*)>&&);
+    void finishedLoadingIcon(IconLoader&, const FragmentedSharedBuffer*);
 
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
@@ -655,7 +655,7 @@ private:
     bool m_waitingForNavigationPolicy { false };
 
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
+    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(const FragmentedSharedBuffer*)>> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)

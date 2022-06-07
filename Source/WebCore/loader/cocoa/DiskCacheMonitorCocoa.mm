@@ -113,7 +113,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionI
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, dispatch_get_main_queue());
 }
 
-void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
+void DiskCacheMonitor::resourceBecameFileBacked(const SharedBuffer& fileBackedBuffer)
 {
     auto* resource = MemoryCache::singleton().resourceForRequest(m_resourceRequest, m_sessionID);
     if (!resource)

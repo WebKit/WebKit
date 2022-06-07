@@ -217,7 +217,7 @@ public:
     String description() const;
 
     struct CreationData {
-        Ref<SharedBuffer> fontFaceData;
+        Ref<const SharedBuffer> fontFaceData;
         String itemInCollection;
 #if PLATFORM(WIN)
         Ref<FontMemoryResource> m_fontResource;

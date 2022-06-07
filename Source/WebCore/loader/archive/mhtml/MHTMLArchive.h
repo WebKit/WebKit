@@ -43,7 +43,7 @@ class FragmentedSharedBuffer;
 class MHTMLArchive final : public Archive {
 public:
     static Ref<MHTMLArchive> create();
-    static RefPtr<MHTMLArchive> create(const URL&, FragmentedSharedBuffer&);
+    static RefPtr<MHTMLArchive> create(const URL&, const FragmentedSharedBuffer&);
 
     static Ref<FragmentedSharedBuffer> generateMHTMLData(Page*);
 

@@ -577,7 +577,7 @@ public:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     WEBCORE_EXPORT void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const AtomString& fileName, const AtomString& contentType);
-    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& fileData);
+    void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<const FragmentedSharedBuffer>&& fileData);
     void registerAttachments(Vector<SerializedAttachmentData>&&);
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath);
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
@@ -587,7 +587,7 @@ public:
 
     WEBCORE_EXPORT PromisedAttachmentInfo promisedAttachmentInfo(Element&);
 #if PLATFORM(COCOA)
-    void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
+    void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<const SharedBuffer>>& outData);
 #endif
 #endif
 

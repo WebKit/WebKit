@@ -87,7 +87,7 @@ private:
     }
 
     CachedResourceHandle<CachedScript> m_cachedScript;
-    RefPtr<FragmentedSharedBuffer> m_buffer;
+    RefPtr<const FragmentedSharedBuffer> m_buffer;
 };
 
 } // namespace WebCore

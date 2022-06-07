@@ -338,7 +338,7 @@ int64_t PlatformPasteboard::setTypes(const Vector<String>&)
     return 0;
 }
 
-int64_t PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
+int64_t PlatformPasteboard::setBufferForType(const SharedBuffer*, const String&)
 {
     return 0;
 }

@@ -77,7 +77,7 @@ void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkL
         return;
     }
     // Sanitize the image by decoding it into a BitmapImage.
-    RefPtr<FragmentedSharedBuffer> bufferToSanitize = m_cachedImage->image()->data();
+    RefPtr bufferToSanitize = m_cachedImage->image()->data();
     auto bitmapImage = BitmapImage::create();
     bitmapImage->setData(WTFMove(bufferToSanitize), true);
     auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);

@@ -86,7 +86,7 @@ public:
 
     // These methods will return 0 if pasteboard ownership has been taken from us.
     WEBCORE_EXPORT int64_t copy(const String& fromPasteboard);
-    WEBCORE_EXPORT int64_t setBufferForType(SharedBuffer*, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t setBufferForType(const SharedBuffer*, const String& pasteboardType);
     WEBCORE_EXPORT int64_t setURL(const PasteboardURL&);
     WEBCORE_EXPORT int64_t setColor(const Color&);
     WEBCORE_EXPORT int64_t setStringForType(const String&, const String& pasteboardType);

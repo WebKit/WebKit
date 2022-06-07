@@ -91,7 +91,7 @@ bool CachedFont::ensureCustomFontData(const AtomString&)
         return ensureCustomFontData(nullptr);
     if (!m_data->isContiguous())
         m_data = m_data->makeContiguous();
-    return ensureCustomFontData(downcast<SharedBuffer>(m_data.get()));
+    return ensureCustomFontData(downcast<const SharedBuffer>(m_data.get()));
 }
 
 String CachedFont::calculateItemInCollection() const
@@ -99,7 +99,7 @@ String CachedFont::calculateItemInCollection() const
     return url().fragmentIdentifier().toString();
 }
 
-bool CachedFont::ensureCustomFontData(SharedBuffer* data)
+bool CachedFont::ensureCustomFontData(const SharedBuffer* data)
 {
     if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
         bool wrapping;
@@ -112,7 +112,7 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
     return m_fontCustomPlatformData.get();
 }
 
-std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
+std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(const SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
 {
     RefPtr buffer = { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);

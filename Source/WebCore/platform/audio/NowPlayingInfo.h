@@ -36,7 +36,7 @@ namespace WebCore {
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<FragmentedSharedBuffer> imageData;
+    RefPtr<const FragmentedSharedBuffer> imageData;
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {

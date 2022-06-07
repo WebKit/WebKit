@@ -42,7 +42,7 @@ public:
 private:
     DiskCacheMonitor(const ResourceRequest&, PAL::SessionID, CFCachedURLResponseRef);
 
-    void resourceBecameFileBacked(SharedBuffer&);
+    void resourceBecameFileBacked(const SharedBuffer&);
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     PAL::SessionID sessionID() const { return m_sessionID; }

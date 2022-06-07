@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-Ref<ApplicationCacheResource> ApplicationCacheResource::create(const URL& url, const ResourceResponse& response, unsigned type, RefPtr<FragmentedSharedBuffer>&& buffer, const String& path)
+Ref<ApplicationCacheResource> ApplicationCacheResource::create(const URL& url, const ResourceResponse& response, unsigned type, RefPtr<const FragmentedSharedBuffer>&& buffer, const String& path)
 {
     ASSERT(!url.hasFragmentIdentifier());
     if (!buffer)
@@ -40,7 +40,7 @@ Ref<ApplicationCacheResource> ApplicationCacheResource::create(const URL& url, c
     return adoptRef(*new ApplicationCacheResource(URL { url }, WTFMove(resourceResponse), type, buffer.releaseNonNull(), path));
 }
 
-ApplicationCacheResource::ApplicationCacheResource(URL&& url, ResourceResponse&& response, unsigned type, Ref<FragmentedSharedBuffer>&& data, const String& path)
+ApplicationCacheResource::ApplicationCacheResource(URL&& url, ResourceResponse&& response, unsigned type, Ref<const FragmentedSharedBuffer>&& data, const String& path)
     : SubstituteResource(WTFMove(url), WTFMove(response), WTFMove(data))
     , m_type(type)
     , m_storageID(0)

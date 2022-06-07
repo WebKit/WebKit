@@ -45,18 +45,30 @@ public:
     explicit SharedBufferReference(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
         : m_size(buffer ? buffer->size() : 0)
         , m_buffer(WTFMove(buffer)) { }
-    explicit SharedBufferReference(Ref<WebCore::FragmentedSharedBuffer>&& buffer)
-        : m_size(buffer->size())
-        , m_buffer(WTFMove(buffer)) { }
     explicit SharedBufferReference(RefPtr<WebCore::SharedBuffer>&& buffer)
         : m_size(buffer ? buffer->size() : 0)
+        , m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferReference(RefPtr<const WebCore::FragmentedSharedBuffer>&& buffer)
+        : m_size(buffer ? buffer->size() : 0)
+        , m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferReference(RefPtr<const WebCore::SharedBuffer>&& buffer)
+        : m_size(buffer ? buffer->size() : 0)
+        , m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferReference(Ref<WebCore::FragmentedSharedBuffer>&& buffer)
+        : m_size(buffer->size())
         , m_buffer(WTFMove(buffer)) { }
     explicit SharedBufferReference(Ref<WebCore::SharedBuffer>&& buffer)
         : m_size(buffer->size())
         , m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferReference(Ref<const WebCore::FragmentedSharedBuffer>&& buffer)
+        : m_size(buffer->size())
+        , m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferReference(Ref<const WebCore::SharedBuffer>&& buffer)
+        : m_size(buffer->size())
+        , m_buffer(WTFMove(buffer)) { }
     explicit SharedBufferReference(const WebCore::FragmentedSharedBuffer& buffer)
         : m_size(buffer.size())
-        , m_buffer(const_cast<WebCore::FragmentedSharedBuffer*>(&buffer)) { }
+        , m_buffer(&buffer) { }
 
     SharedBufferReference(const SharedBufferReference&) = default;
     SharedBufferReference(SharedBufferReference&&) = default;
@@ -83,7 +95,7 @@ private:
         , m_memory(WTFMove(memory)) { }
 
     size_t m_size { 0 };
-    RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
+    RefPtr<const WebCore::FragmentedSharedBuffer> m_buffer;
     RefPtr<WebKit::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
 };
 

@@ -56,9 +56,9 @@ public:
         return adoptRef(*new ImageSource(WTFMove(nativeImage)));
     }
 
-    void setData(FragmentedSharedBuffer* data, bool allDataReceived);
-    void resetData(FragmentedSharedBuffer* data);
-    EncodedDataStatus dataChanged(FragmentedSharedBuffer* data, bool allDataReceived);
+    void setData(const FragmentedSharedBuffer* data, bool allDataReceived);
+    void resetData(const FragmentedSharedBuffer* data);
+    EncodedDataStatus dataChanged(const FragmentedSharedBuffer* data, bool allDataReceived);
     bool isAllDataReceived();
 
     unsigned decodedSize() const { return m_decodedSize; }
@@ -149,7 +149,7 @@ private:
     template<typename T>
     T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
-    bool ensureDecoderAvailable(FragmentedSharedBuffer* data);
+    bool ensureDecoderAvailable(const FragmentedSharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
     void decodedSizeChanged(long long decodedSize);
     void didDecodeProperties(unsigned decodedPropertiesSize);

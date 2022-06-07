@@ -925,7 +925,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSO
 
 Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId)
 {
-    NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
+    const NetworkResourcesData::ResourceData* resourceData = m_resourcesData->data(requestId);
     if (!resourceData)
         return makeUnexpected("Missing resource for given requestId"_s);
 
@@ -935,16 +935,16 @@ Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorN
     if (resourceData->isContentEvicted())
         return makeUnexpected("Resource content was evicted from inspector cache"_s);
 
-    if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
+    if (auto buffer = resourceData->buffer(); buffer && !resourceData->textEncodingName().isNull()) {
         String body;
-        if (InspectorPageAgent::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), false, &body))
+        if (InspectorPageAgent::sharedBufferContent(buffer.get(), resourceData->textEncodingName(), false, &body))
             return { { body, false } };
     }
 
-    if (resourceData->cachedResource()) {
+    if (auto cachedResource = resourceData->cachedResource()) {
         String body;
         bool base64Encoded;
-        if (InspectorNetworkAgent::cachedResourceContent(*resourceData->cachedResource(), &body, &base64Encoded))
+        if (InspectorNetworkAgent::cachedResourceContent(*cachedResource, &body, &base64Encoded))
             return { { body, base64Encoded } };
     }
 

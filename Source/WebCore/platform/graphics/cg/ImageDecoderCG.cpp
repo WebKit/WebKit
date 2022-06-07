@@ -271,7 +271,7 @@ void sharedBufferRelease(void* info)
 bool ImageDecoderCG::s_enableDecodingHEIC = false;
 bool ImageDecoderCG::s_hardwareAcceleratedDecodingDisabled = false;
 
-ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderCG::ImageDecoderCG(const FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
     RetainPtr<CFStringRef> utiHint;
     if (data.size() >= 32)

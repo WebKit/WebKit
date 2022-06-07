@@ -70,7 +70,7 @@ private:
     std::optional<NowPlayingInfo> m_nowPlayingInfo;
     struct ArtworkCache {
         String src;
-        RefPtr<FragmentedSharedBuffer> imageData;
+        RefPtr<const FragmentedSharedBuffer> imageData;
     };
     std::optional<ArtworkCache> m_nowPlayingInfoArtwork;
     bool m_setAsNowPlayingApplication { false };

@@ -38,7 +38,7 @@ struct PromisedAttachmentInfo {
 #endif
 
     Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
+    Vector<RefPtr<const SharedBuffer>> additionalData;
 
     operator bool() const
     {

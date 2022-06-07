@@ -63,7 +63,7 @@ public:
 
     virtual int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const PasteboardContext*) = 0;
-    virtual int64_t setBufferForType(SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
+    virtual int64_t setBufferForType(const SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setURL(const PasteboardURL&, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setColor(const Color&, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;

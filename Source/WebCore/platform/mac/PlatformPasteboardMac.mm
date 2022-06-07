@@ -341,7 +341,7 @@ int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
     return [m_pasteboard declareTypes:createNSArray(pasteboardTypes).get() owner:nil];
 }
 
-int64_t PlatformPasteboard::setBufferForType(SharedBuffer* buffer, const String& pasteboardType)
+int64_t PlatformPasteboard::setBufferForType(const SharedBuffer* buffer, const String& pasteboardType)
 {
     if (!canWritePasteboardType(pasteboardType))
         return 0;

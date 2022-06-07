@@ -73,7 +73,7 @@ typedef UInt16 GlyphID;
 typedef uint32_t Tag;
 #define OT_MAKE_TAG(ch1, ch2, ch3, ch4) ((((uint32_t)(ch4)) << 24) | (((uint32_t)(ch3)) << 16) | (((uint32_t)(ch2)) << 8) | ((uint32_t)(ch1)))
 
-template <typename T> static const T* validateTable(const RefPtr<SharedBuffer>& buffer, size_t count = 1)
+template <typename T> static const T* validateTable(const RefPtr<const SharedBuffer>& buffer, size_t count = 1)
 {
     if (!buffer || buffer->size() < sizeof(T) * count)
         return 0;

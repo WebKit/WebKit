@@ -88,8 +88,8 @@ public:
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
         void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTFMove(decoder); }
 
-        RefPtr<FragmentedSharedBuffer> buffer() const { return m_buffer.copyRef(); }
-        void setBuffer(RefPtr<FragmentedSharedBuffer>&& buffer) { m_buffer = WTFMove(buffer); }
+        RefPtr<const FragmentedSharedBuffer> buffer() const { return m_buffer.copyRef(); }
+        void setBuffer(RefPtr<const FragmentedSharedBuffer>&& buffer) { m_buffer = WTFMove(buffer); }
 
         const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; }
         void setCertificateInfo(const std::optional<CertificateInfo>& certificateInfo) { m_certificateInfo = certificateInfo; }
@@ -120,7 +120,7 @@ public:
         String m_mimeType;
         RefPtr<TextResourceDecoder> m_decoder;
         SharedBufferBuilder m_dataBuffer;
-        RefPtr<FragmentedSharedBuffer> m_buffer;
+        RefPtr<const FragmentedSharedBuffer> m_buffer;
         std::optional<CertificateInfo> m_certificateInfo;
         CachedResource* m_cachedResource { nullptr };
         InspectorPageAgent::ResourceType m_type { InspectorPageAgent::OtherResource };
@@ -144,7 +144,7 @@ public:
     ResourceData const* maybeAddResourceData(const String& requestId, const SharedBuffer&);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
-    void addResourceSharedBuffer(const String& requestId, RefPtr<FragmentedSharedBuffer>&&, const String& textEncodingName);
+    void addResourceSharedBuffer(const String& requestId, RefPtr<const FragmentedSharedBuffer>&&, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
     ResourceData const* dataForURL(const String& url);
     Vector<String> removeCachedResource(CachedResource*);

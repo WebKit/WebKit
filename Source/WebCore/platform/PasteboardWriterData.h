@@ -58,7 +58,7 @@ public:
         String dataInHTMLFormat;
         String dataInStringFormat;
         Vector<String> clientTypes;
-        Vector<RefPtr<SharedBuffer>> clientData;
+        Vector<RefPtr<const SharedBuffer>> clientData;
 #endif
     };
 

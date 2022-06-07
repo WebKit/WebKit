@@ -133,7 +133,7 @@ private:
     explicit OpenTypeMathData(const FontPlatformData&);
 
 #if ENABLE(OPENTYPE_MATH)
-    RefPtr<SharedBuffer> m_mathBuffer;
+    RefPtr<const SharedBuffer> m_mathBuffer;
 #elif USE(HARFBUZZ)
     HbUniquePtr<hb_font_t> m_mathFont;
 #endif

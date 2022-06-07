@@ -100,13 +100,13 @@ static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& tex
 
 bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
 {
-    RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
+    auto buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
     return InspectorPageAgent::dataContent(buffer->makeContiguous()->data(), buffer->size(), frame->document()->encoding(), withBase64Encode, result);
 }
 
-bool InspectorPageAgent::sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
+bool InspectorPageAgent::sharedBufferContent(const FragmentedSharedBuffer* buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
     return dataContent(buffer ? buffer->makeContiguous()->data() : nullptr, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
 }

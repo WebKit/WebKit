@@ -85,7 +85,7 @@ String Editor::selectionInHTMLFormat()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData)
+void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<const SharedBuffer>>& outData)
 {
     auto elementRange = makeRangeSelectingNode(element);
     client()->getClientPasteboardData(elementRange, outTypes, outData);

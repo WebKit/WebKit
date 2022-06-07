@@ -4239,7 +4239,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
         return { };
 
     Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
+    Vector<RefPtr<const SharedBuffer>> additionalData;
 #if PLATFORM(COCOA)
     getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
 #endif
@@ -4247,7 +4247,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
     return { attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
-void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)
+void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<const FragmentedSharedBuffer>&& data)
 {
     if (auto* client = this->client())
         client->registerAttachmentIdentifier(identifier, contentType, preferredFileName, WTFMove(data));
@@ -4271,7 +4271,7 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const HTMLIm
     if (!client)
         return;
 
-    auto attachmentInfo = [&]() -> std::optional<std::tuple<String, String, Ref<FragmentedSharedBuffer>>> {
+    auto attachmentInfo = [&]() -> std::optional<std::tuple<String, String, Ref<const FragmentedSharedBuffer>>> {
         auto* renderer = dynamicDowncast<RenderImage>(imageElement.renderer());
         if (!renderer)
             return std::nullopt;

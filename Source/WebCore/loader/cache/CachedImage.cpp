@@ -473,7 +473,7 @@ inline void CachedImage::clearImage()
 
 void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
 {
-    m_data = const_cast<FragmentedSharedBuffer*>(&data);
+    m_data = &data;
     setEncodedSize(m_data->size());
     createImage();
 

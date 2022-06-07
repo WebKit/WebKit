@@ -3986,7 +3986,7 @@ void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(
 
 void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
-    RefPtr<FragmentedSharedBuffer> buffer;
+    RefPtr<const FragmentedSharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
 #if ENABLE(PDFKIT_PLUGIN)
         if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame()))
@@ -4002,7 +4002,7 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
     callback(IPC::SharedBufferReference(WTFMove(buffer)));
 }
 
-static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
+static RefPtr<const FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const URL& resourceURL)
 {
     DocumentLoader* loader = frame->loader().documentLoader();
     if (!loader)
@@ -4017,7 +4017,7 @@ static RefPtr<FragmentedSharedBuffer> resourceDataForFrame(Frame* frame, const U
 
 void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
-    RefPtr<FragmentedSharedBuffer> buffer;
+    RefPtr<const FragmentedSharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
         URL resourceURL { resourceURLString };
         buffer = resourceDataForFrame(frame->coreFrame(), resourceURL);
@@ -7203,7 +7203,7 @@ void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier
     if (!documentLoader)
         return completionHandler({ });
 
-    documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), [completionHandler = WTFMove(completionHandler)] (WebCore::FragmentedSharedBuffer* iconData) mutable {
+    documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), [completionHandler = WTFMove(completionHandler)] (const WebCore::FragmentedSharedBuffer* iconData) mutable {
         completionHandler(IPC::SharedBufferReference(RefPtr { iconData }));
     });
 }

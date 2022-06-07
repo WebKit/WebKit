@@ -154,7 +154,7 @@ int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, c
     return PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
+int64_t WebPlatformStrategies::setBufferForType(const SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }

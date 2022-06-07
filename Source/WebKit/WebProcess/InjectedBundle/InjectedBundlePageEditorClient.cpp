@@ -135,7 +135,7 @@ void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const 
         m_client.willWriteToPasteboard(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<const SharedBuffer>>& pasteboardData)
 {
     if (m_client.getPasteboardDataForRange) {
         WKArrayRef types = nullptr;

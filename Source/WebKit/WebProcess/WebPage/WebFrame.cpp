@@ -342,7 +342,7 @@ String WebFrame::source() const
     DocumentLoader* documentLoader = m_coreFrame->loader().activeDocumentLoader();
     if (!documentLoader)
         return String();
-    RefPtr<FragmentedSharedBuffer> mainResourceData = documentLoader->mainResourceData();
+    auto mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
         return String();
     return decoder->encoding().decode(mainResourceData->makeContiguous()->data(), mainResourceData->size());

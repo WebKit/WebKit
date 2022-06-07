@@ -110,7 +110,7 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
 
     // If we got a status code indicating an invalid response, then lets
     // ignore the data and not try to decode the error page as an icon.
-    auto* data = m_resource->resourceBuffer();
+    const auto* data = m_resource->resourceBuffer();
     int status = m_resource->response().httpStatusCode();
     if (status && (status < 200 || status > 299))
         data = nullptr;

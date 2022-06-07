@@ -43,7 +43,7 @@ namespace WebCore {
         {
         }
 
-        SubstituteData(RefPtr<FragmentedSharedBuffer>&& content, const URL& failingURL, const ResourceResponse& response, SessionHistoryVisibility shouldRevealToSessionHistory)
+        SubstituteData(RefPtr<const FragmentedSharedBuffer>&& content, const URL& failingURL, const ResourceResponse& response, SessionHistoryVisibility shouldRevealToSessionHistory)
             : m_content(WTFMove(content))
             , m_failingURL(failingURL)
             , m_response(response)
@@ -64,7 +64,7 @@ namespace WebCore {
         template<class Decoder> static std::optional<SubstituteData> decode(Decoder&);
 
     private:
-        RefPtr<FragmentedSharedBuffer> m_content;
+        RefPtr<const FragmentedSharedBuffer> m_content;
         URL m_failingURL;
         ResourceResponse m_response;
         SessionHistoryVisibility m_shouldRevealToSessionHistory { SessionHistoryVisibility::Hidden };

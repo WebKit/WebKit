@@ -90,6 +90,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
@@ -216,10 +217,10 @@ DocumentLoader::~DocumentLoader()
 #endif
 }
 
-RefPtr<FragmentedSharedBuffer> DocumentLoader::mainResourceData() const
+RefPtr<const FragmentedSharedBuffer> DocumentLoader::mainResourceData() const
 {
     if (m_substituteData.isValid())
-        return m_substituteData.content()->copy();
+        return m_substituteData.content();
     if (m_mainResource)
         return m_mainResource->resourceBuffer();
     return nullptr;
@@ -1637,10 +1638,11 @@ bool DocumentLoader::maybeCreateArchive()
     return false;
 #else
     // Give the archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
-    m_archive = ArchiveFactory::create(m_response.url(), mainResourceData().get(), m_response.mimeType());
+    RefPtr<const WebCore::FragmentedSharedBuffer> resource = mainResourceData();
+    m_archive = ArchiveFactory::create(m_response.url(), resource.get(), m_response.mimeType());
     if (!m_archive)
         return false;
-    
+
     addAllArchiveResources(*m_archive);
     ASSERT(m_archive->mainResource());
     auto& mainResource = *m_archive->mainResource();
@@ -1707,7 +1709,7 @@ ArchiveResource* DocumentLoader::archiveResourceForURL(const URL& url) const
 
 RefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
-    RefPtr<FragmentedSharedBuffer> data = mainResourceData();
+    auto data = mainResourceData();
     if (!data)
         data = SharedBuffer::create();
     auto& response = this->response();
@@ -2359,7 +2361,7 @@ void DocumentLoader::startIconLoading()
     m_frame->loader().client().getLoadDecisionForIcons(WTFMove(iconDecisions));
 }
 
-void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&& completionHandler)
+void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(const FragmentedSharedBuffer*)>&& completionHandler)
 {
     auto icon = m_iconsPendingLoadDecision.take(loadIdentifier);
 
@@ -2380,7 +2382,7 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
     rawIconLoader->startLoading();
 }
 
-void DocumentLoader::finishedLoadingIcon(IconLoader& loader, FragmentedSharedBuffer* buffer)
+void DocumentLoader::finishedLoadingIcon(IconLoader& loader, const FragmentedSharedBuffer* buffer)
 {
     // If the DocumentLoader has detached from its frame, all icon loads should have already been cancelled.
     ASSERT(m_frame);

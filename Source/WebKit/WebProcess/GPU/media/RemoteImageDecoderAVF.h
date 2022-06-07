@@ -45,7 +45,7 @@ class RemoteImageDecoderAVF final
     : public WebCore::ImageDecoder
     , public CanMakeWeakPtr<RemoteImageDecoderAVF> {
 public:
-    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, WebCore::FragmentedSharedBuffer&, const String& mimeType)
+    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, const WebCore::FragmentedSharedBuffer&, const String& mimeType)
     {
         return adoptRef(*new RemoteImageDecoderAVF(manager, identifier, mimeType));
     }

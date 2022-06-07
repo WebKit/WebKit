@@ -42,7 +42,7 @@ class FragmentedSharedBuffer;
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoder> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoder() = default;
 
     enum class MediaType {
@@ -91,7 +91,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     using SupportsMediaTypeFunc = Function<bool(MediaType)>;
     using CanDecodeTypeFunc = Function<bool(const String&)>;
-    using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
+    using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(const FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
 
     struct ImageDecoderFactory {
         SupportsMediaTypeFunc supportsMediaType;

@@ -76,7 +76,7 @@ public:
         OtherResource,
     };
 
-    static bool sharedBufferContent(RefPtr<FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
+    static bool sharedBufferContent(const FragmentedSharedBuffer*, const String& textEncodingName, bool withBase64Encode, String* result);
     static Vector<CachedResource*> cachedResourcesForFrame(Frame*);
     static void resourceContent(Inspector::Protocol::ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
