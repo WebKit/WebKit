@@ -30,10 +30,6 @@ list(APPEND WebKitTestRunner_LIBRARIES
     Oleacc
 )
 
-list(APPEND WebKitTestRunner_FRAMEWORKS
-    WebKit
-)
-
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
     $<TARGET_OBJECTS:WebCoreTestSupport>
 )
