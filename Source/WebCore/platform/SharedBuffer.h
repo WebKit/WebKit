@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -143,7 +143,7 @@ public:
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(const uint8_t*, size_t);
     static Ref<FragmentedSharedBuffer> create(const char* data, size_t size) { return create(reinterpret_cast<const uint8_t*>(data), size); }
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(FileSystem::MappedFileData&&);
-    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Ref<const FragmentedSharedBuffer>&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Vector<uint8_t>&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(DataSegment::Provider&&);
 
@@ -181,7 +181,7 @@ public:
 
     WEBCORE_EXPORT void forEachSegment(const Function<void(const Span<const uint8_t>&)>&) const;
     WEBCORE_EXPORT bool startsWith(const Span<const uint8_t>& prefix) const;
-    WEBCORE_EXPORT void forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>&) const;
+    WEBCORE_EXPORT void forEachSegmentAsSharedBuffer(const Function<void(Ref<const SharedBuffer>&&)>&) const;
 
     using DataSegment = WebCore::DataSegment; // To keep backward compatibility when using FragmentedSharedBuffer::DataSegment
 
@@ -219,7 +219,7 @@ protected:
     explicit FragmentedSharedBuffer(Vector<uint8_t>&& data) { append(WTFMove(data)); }
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(FileSystem::MappedFileData&&);
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(DataSegment::Provider&&);
-    WEBCORE_EXPORT explicit FragmentedSharedBuffer(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(Ref<const FragmentedSharedBuffer>&&);
 #if USE(CF)
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(CFDataRef);
 #endif

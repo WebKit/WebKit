@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -52,7 +52,7 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(FileSystem::MappedFil
     return adoptRef(*new FragmentedSharedBuffer(WTFMove(mappedFileData)));
 }
 
-Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(Ref<SharedBuffer>&& buffer)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(Ref<const FragmentedSharedBuffer>&& buffer)
 {
     return adoptRef(*new FragmentedSharedBuffer(WTFMove(buffer)));
 }
@@ -81,7 +81,7 @@ FragmentedSharedBuffer::FragmentedSharedBuffer(DataSegment::Provider&& provider)
     m_segments.append({ 0, DataSegment::create(WTFMove(provider)) });
 }
 
-FragmentedSharedBuffer::FragmentedSharedBuffer(Ref<SharedBuffer>&& buffer)
+FragmentedSharedBuffer::FragmentedSharedBuffer(Ref<const FragmentedSharedBuffer>&& buffer)
 {
     append(WTFMove(buffer));
 }
@@ -268,7 +268,7 @@ void FragmentedSharedBuffer::forEachSegment(const Function<void(const Span<const
         apply(Span { segment.segment->data(), segment.segment->size() });
 }
 
-void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>& apply) const
+void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Ref<const SharedBuffer>&&)>& apply) const
 {
     auto protectedThis = Ref { *this };
     for (auto& segment : m_segments)
@@ -449,10 +449,10 @@ SharedBuffer::SharedBuffer(Ref<const DataSegment>&& segment)
 
 SharedBuffer::SharedBuffer(Ref<FragmentedSharedBuffer>&& contiguousBuffer)
 {
-    ASSERT(contiguousBuffer->hasOneSegment() || contiguousBuffer->isEmpty());
+    ASSERT((contiguousBuffer->hasOneSegment() || contiguousBuffer->isEmpty()) && contiguousBuffer->hasOneRef());
     m_size = contiguousBuffer->size();
     if (contiguousBuffer->hasOneSegment())
-        m_segments.append({ 0, contiguousBuffer->m_segments[0].segment.copyRef() });
+        m_segments = WTFMove(contiguousBuffer->m_segments);
     m_contiguous = true;
 }
 
