@@ -308,7 +308,6 @@ private:
 
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);
-    void initializeShaderExtensions();
     bool setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
 
     IntRect getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
