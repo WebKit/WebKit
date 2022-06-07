@@ -44,6 +44,10 @@ class WebOpenPanelResultListenerProxy;
 - (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)dismiss;
 
+#if USE(UICONTEXTMENU)
+- (void)repositionContextMenuIfNeeded;
+#endif
+
 - (NSArray<NSString *> *)currentAvailableActionTitles;
 - (NSArray<NSString *> *)acceptedTypeIdentifiers;
 @end

@@ -266,6 +266,7 @@ interface UIScriptController {
     readonly attribute boolean isDismissingMenu;
     readonly attribute boolean isShowingMenu;
     readonly attribute object menuRect;
+    readonly attribute object contextMenuRect;
     object rectForMenuAction(DOMString action);
     undefined chooseMenuAction(DOMString action, object callback);
     undefined dismissMenu();

@@ -2348,6 +2348,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_keyboardDidShow
 {
+    [self _zoomToFocusRectAfterShowingKeyboardIfNeeded];
+
+#if USE(UICONTEXTMENU)
+    [_fileUploadPanel repositionContextMenuIfNeeded];
+#endif
+}
+
+- (void)_zoomToFocusRectAfterShowingKeyboardIfNeeded
+{
     if (!_shouldZoomToFocusRectAfterShowingKeyboard)
         return;
 

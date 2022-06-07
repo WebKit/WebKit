@@ -39,6 +39,7 @@
 #import "WKData.h"
 #import "WKStringCF.h"
 #import "WKURLCF.h"
+#import "WKWebViewInternal.h"
 #import "WebIconUtilities.h"
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebPageProxy.h"
@@ -49,6 +50,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/StringView.h>
 
@@ -357,6 +359,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
     BOOL _isPresentingSubMenu;
     ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
+    BOOL _isRepositioningContextMenu;
     RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;
 #endif
     RetainPtr<UIDocumentPickerViewController> _documentPickerController;
@@ -688,6 +691,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
 {
+    if (_isRepositioningContextMenu)
+        return;
+
     [animator addCompletion:^{
         [self removeContextMenuInteraction];
         if (!self->_isPresentingSubMenu)
@@ -704,16 +710,43 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     }
 }
 
-- (void)ensureContextMenuInteraction
+- (UIContextMenuInteraction *)ensureContextMenuInteraction
 {
     if (!_documentContextMenuInteraction) {
         _documentContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
         [_view addInteraction:_documentContextMenuInteraction.get()];
         self->_isPresentingSubMenu = NO;
     }
+    return _documentContextMenuInteraction.get();
 }
 
-#endif
+- (void)repositionContextMenuIfNeeded
+{
+    if (!_documentContextMenuInteraction)
+        return;
+
+    auto *webView = [_view webView];
+    if (!webView)
+        return;
+
+    auto inputViewBoundsInWindow = webView->_inputViewBoundsInWindow;
+    if (CGRectIsEmpty(inputViewBoundsInWindow))
+        return;
+
+    // The exact bounds of the context menu container itself isn't exposed through any UIKit API or SPI,
+    // and would require traversing the view hierarchy in search of internal UIKit views. For now, just
+    // reposition the context menu if its presentation location is covered by the input view.
+    if (!CGRectContainsPoint(inputViewBoundsInWindow, [_view convertPoint:_interactionPoint toView:webView.window]))
+        return;
+
+    SetForScope repositioningContextMenuScope { _isRepositioningContextMenu, YES };
+    [UIView performWithoutAnimation:^{
+        [_documentContextMenuInteraction dismissMenu];
+        [_view presentContextMenu:_documentContextMenuInteraction.get() atLocation:_interactionPoint];
+    }];
+}
+
+#endif // USE(UICONTEXTMENU)
 
 - (void)showFilePickerMenu
 {
@@ -733,10 +766,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     // FIXME 49961589: Support picking media with UIImagePickerController
 #if HAVE(UICONTEXTMENU_LOCATION)
-    if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video })) {
-        [self ensureContextMenuInteraction];
-        [_view presentContextMenu:_documentContextMenuInteraction.get() atLocation:_interactionPoint];
-    } else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
+    if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video }))
+        [_view presentContextMenu:self.ensureContextMenuInteraction atLocation:_interactionPoint];
+    else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
 #endif
         [self showFilePickerMenu];
 
