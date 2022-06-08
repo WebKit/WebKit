@@ -205,10 +205,14 @@ private:
     template<typename CharacterType, typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&) const;
 
+    WTF_EXPORT_PRIVATE bool underlyingStringIsValidImpl() const;
+    WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringImpl*);
+    WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringView&);
+
 #if CHECK_STRINGVIEW_LIFETIME
-    WTF_EXPORT_PRIVATE bool underlyingStringIsValid() const;
-    WTF_EXPORT_PRIVATE void setUnderlyingString(const StringImpl*);
-    WTF_EXPORT_PRIVATE void setUnderlyingString(const StringView&);
+    bool underlyingStringIsValid() const { return underlyingStringIsValidImpl(); }
+    void setUnderlyingString(const StringImpl* stringImpl) { setUnderlyingStringImpl(stringImpl); }
+    void setUnderlyingString(const StringView& stringView) { setUnderlyingStringImpl(stringView); }
     void adoptUnderlyingString(UnderlyingString*);
 #else
     bool underlyingStringIsValid() const { return true; }

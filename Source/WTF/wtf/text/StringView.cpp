@@ -485,7 +485,7 @@ void StringView::invalidate(const StringImpl& stringToBeDestroyed)
     underlyingString->isValid = false;
 }
 
-bool StringView::underlyingStringIsValid() const
+bool StringView::underlyingStringIsValidImpl() const
 {
     return !m_underlyingString || m_underlyingString->isValid;
 }
@@ -504,7 +504,7 @@ void StringView::adoptUnderlyingString(UnderlyingString* underlyingString)
     m_underlyingString = underlyingString;
 }
 
-void StringView::setUnderlyingString(const StringImpl* string)
+void StringView::setUnderlyingStringImpl(const StringImpl* string)
 {
     UnderlyingString* underlyingString;
     if (!string)
@@ -521,7 +521,7 @@ void StringView::setUnderlyingString(const StringImpl* string)
     adoptUnderlyingString(underlyingString);
 }
 
-void StringView::setUnderlyingString(const StringView& otherString)
+void StringView::setUnderlyingStringImpl(const StringView& otherString)
 {
     UnderlyingString* underlyingString = otherString.m_underlyingString;
     if (underlyingString) {
@@ -535,6 +535,21 @@ void StringView::setUnderlyingString(const StringView& otherString)
     adoptUnderlyingString(underlyingString);
 }
 
-#endif // CHECK_STRINGVIEW_LIFETIME
+#else
+
+bool StringView::underlyingStringIsValidImpl() const
+{
+    return true;
+}
+
+void StringView::setUnderlyingStringImpl(const StringImpl*)
+{
+}
+
+void StringView::setUnderlyingStringImpl(const StringView&)
+{
+}
+
+#endif // not CHECK_STRINGVIEW_LIFETIME
 
 } // namespace WTF
