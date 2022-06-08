@@ -419,9 +419,17 @@ static NSHTTPCookie *parseDOMCookie(String cookieString, NSURL* cookieURL, std::
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     cookieString = cookieString.contains('=') ? cookieString : cookieString + "=";
 
-    NSHTTPCookie *cookie = [NSHTTPCookie _cookieForSetCookieString:cookieString forURL:cookieURL partition:nil];
-    if (!cookie)
+    NSHTTPCookie *initialCookie = [NSHTTPCookie _cookieForSetCookieString:cookieString forURL:cookieURL partition:nil];
+    if (!initialCookie)
         return nil;
+
+#if ENABLE(JS_COOKIE_CHECKING)
+    auto mutableProperties = adoptNS([[initialCookie properties] mutableCopy]);
+    [mutableProperties.get() setValue:@1 forKey:@"SetInJavaScript"];
+    NSHTTPCookie* cookie = [NSHTTPCookie cookieWithProperties:mutableProperties.get()];
+#else
+    NSHTTPCookie* cookie = initialCookie;
+#endif
 
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
     // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
@@ -567,7 +575,7 @@ void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& complet
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr(WTFMove(work)).get());
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -588,6 +596,14 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& host
     for (NSHTTPCookie *cookie in cookies.get()) {
         if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
             continue;
+
+#if ENABLE(JS_COOKIE_CHECKING)
+        bool setInJS = [[cookie properties] valueForKey:@"SetInJavaScript"];
+        if (scriptWrittenCookiesOnly == ScriptWrittenCookiesOnly::Yes && !setInJS)
+            continue;
+#else
+        UNUSED_PARAM(scriptWrittenCookiesOnly);
+#endif
         cookiesByDomain.ensure(cookie.domain, [] {
             return Vector<RetainPtr<NSHTTPCookie>>();
         }).iterator->value.append(cookie);

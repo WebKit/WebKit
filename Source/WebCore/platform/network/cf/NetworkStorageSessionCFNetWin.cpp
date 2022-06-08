@@ -387,7 +387,7 @@ void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& complet
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>&, IncludeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>&, IncludeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }

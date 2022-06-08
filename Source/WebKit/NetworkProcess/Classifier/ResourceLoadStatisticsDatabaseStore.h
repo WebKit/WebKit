@@ -82,7 +82,7 @@ public:
     void setGrandfathered(const RegistrableDomain&, bool value) override;
     bool isGrandfathered(const RegistrableDomain&) const override;
 
-    void setIsScheduledForAllButCookieDataRemoval(const RegistrableDomain&, bool value);
+    void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, bool value);
     void setSubframeUnderTopFrameDomain(const SubFrameDomain&, const TopFrameDomain&) override;
     void setSubresourceUnderTopFrameDomain(const SubResourceDomain&, const TopFrameDomain&) override;
     void setSubresourceUniqueRedirectTo(const SubResourceDomain&, const RedirectDomain&) override;

@@ -65,7 +65,7 @@ static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteD
         builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all data)");
     for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor)
         builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all but HttpOnly cookies)");
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllNonCookieWebsiteDataFor)
+    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllScriptWrittenStorageFor)
         builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all but cookies)");
     return builder.toString();
 }
@@ -354,21 +354,20 @@ void ResourceLoadStatisticsStore::updateCacheMaxAgeCap()
     });
 }
 
-void ResourceLoadStatisticsStore::setAgeCapForClientSideCookies(Seconds seconds)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(seconds >= 0_s);
-    
-    m_parameters.clientSideCookiesAgeCapTime = seconds;
-    updateClientSideCookiesAgeCap();
-}
-
 void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
 {
     ASSERT(!RunLoop::isMain());
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    RunLoop::main().dispatch([store = Ref { m_store }, seconds = m_parameters.clientSideCookiesAgeCapTime] () {
+    
+    Seconds capTime;
+#if ENABLE(JS_COOKIE_CHECKING)
+    capTime = m_parameters.clientSideCookiesForLinkDecorationTargetPageAgeCapTime;
+#else
+    capTime = m_parameters.clientSideCookiesAgeCapTime;
+#endif
+
+    RunLoop::main().dispatch([store = Ref { m_store }, seconds = capTime] () {
         if (auto* networkSession = store->networkSession()) {
             if (auto* storageSession = networkSession->networkStorageSession())
                 storageSession->setAgeCapForClientSideCookies(seconds);

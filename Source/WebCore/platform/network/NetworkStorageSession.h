@@ -88,6 +88,7 @@ enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoun
 enum class SameSiteStrictEnforcementEnabled : bool { Yes, No };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ShouldAskITP : bool { No, Yes };
+enum class ScriptWrittenCookiesOnly : bool { No, Yes };
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
 class CookieChangeObserver {
@@ -164,7 +165,7 @@ public:
     WEBCORE_EXPORT void deleteAllCookies(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&&);
-    WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies, CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&&);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
     WEBCORE_EXPORT void hasCookies(const RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
@@ -281,9 +282,12 @@ private:
     HashMap<PageIdentifier, HashMap<FrameIdentifier, RegistrableDomain>> m_framesGrantedStorageAccess;
     HashMap<PageIdentifier, HashMap<RegistrableDomain, RegistrableDomain>> m_pagesGrantedStorageAccess;
     HashMap<TopFrameDomain, HashSet<SubResourceDomain>> m_pairsGrantedCrossPageStorageAccess;
-    std::optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
-    std::optional<Seconds> m_ageCapForClientSideCookies { };
-    std::optional<Seconds> m_ageCapForClientSideCookiesShort { };
+    std::optional<Seconds> m_cacheMaxAgeCapForPrevalentResources;
+    std::optional<Seconds> m_ageCapForClientSideCookies;
+    std::optional<Seconds> m_ageCapForClientSideCookiesShort;
+#if ENABLE(JS_COOKIE_CHECKING)
+    std::optional<Seconds> m_ageCapForClientSideCookiesForLinkDecorationTargetPage;
+#endif
     HashMap<WebCore::PageIdentifier, RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
     ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::All };

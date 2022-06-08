@@ -211,7 +211,6 @@ public:
     void isGrandfathered(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void(bool)>&&);
-    void setAgeCapForClientSideCookies(PAL::SessionID, std::optional<Seconds>, CompletionHandler<void()>&&);
     void isRegisteredAsRedirectingTo(PAL::SessionID, RedirectedFromDomain&&, RedirectedToDomain&&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(PAL::SessionID, SubFrameDomain&&, TopFrameDomain&&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(PAL::SessionID, SubResourceDomain&&, TopFrameDomain&&, CompletionHandler<void(bool)>&&);

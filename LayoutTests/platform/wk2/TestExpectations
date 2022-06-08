@@ -742,6 +742,11 @@ http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 http/tests/resourceLoadStatistics/prune-statistics.html [ Pass ]
 http/tests/resourceLoadStatistics [ Pass ]
 
+# Tests rely on behavior in iOS 16 and macOS Ventura.
+http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-24-hours.html [ Skip ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Skip ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Skip ]
+
 # App Bound Domains is for iOS only, so we should skip
 # them here and enable them in the iOS platform specific file.
 http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]

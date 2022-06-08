@@ -190,6 +190,9 @@ void NetworkStorageSession::setAgeCapForClientSideCookies(std::optional<Seconds>
 {
     m_ageCapForClientSideCookies = seconds;
     m_ageCapForClientSideCookiesShort = seconds ? Seconds { seconds->seconds() / 7. } : seconds;
+#if ENABLE(JS_COOKIE_CHECKING)
+    m_ageCapForClientSideCookiesForLinkDecorationTargetPage = seconds;
+#endif
 }
 
 void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>& domains)
@@ -369,10 +372,16 @@ void NetworkStorageSession::resetAppBoundDomains()
 
 std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, std::optional<PageIdentifier> pageID) const
 {
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
+#if ENABLE(JS_COOKIE_CHECKING)
+    if (domainIterator != m_navigatedToWithLinkDecorationByPrevalentResource.end() && domainIterator->value == firstParty)
+        return m_ageCapForClientSideCookiesForLinkDecorationTargetPage;
+
+    return std::nullopt;
+#else
     if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
         return m_ageCapForClientSideCookies;
 
-    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
     if (domainIterator == m_navigatedToWithLinkDecorationByPrevalentResource.end())
         return m_ageCapForClientSideCookies;
 
@@ -380,6 +389,7 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
         return m_ageCapForClientSideCookiesShort;
 
     return m_ageCapForClientSideCookies;
+#endif
 }
 
 const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
@@ -434,7 +444,7 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {
-    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, WTFMove(completionHandler));
+    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTFMove(completionHandler));
 }
 
 }

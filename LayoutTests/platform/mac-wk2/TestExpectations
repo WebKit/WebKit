@@ -1583,8 +1583,6 @@ webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-p
 
 webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Timeout ]
 
-webkit.org/b/231765 [ Release ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Timeout ]
-
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
 webkit.org/b/235605 [ arm64 ] fast/scrolling/mac/j-shaped-scroll-rubberband.html [ Failure ]

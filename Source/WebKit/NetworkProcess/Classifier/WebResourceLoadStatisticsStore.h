@@ -83,11 +83,11 @@ struct RegistrableDomainsToBlockCookiesFor {
 struct RegistrableDomainsToDeleteOrRestrictWebsiteDataFor {
     Vector<WebCore::RegistrableDomain> domainsToDeleteAllCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsToDeleteAllButHttpOnlyCookiesFor;
-    Vector<WebCore::RegistrableDomain> domainsToDeleteAllNonCookieWebsiteDataFor;
+    Vector<WebCore::RegistrableDomain> domainsToDeleteAllScriptWrittenStorageFor;
     Vector<WebCore::RegistrableDomain> domainsToEnforceSameSiteStrictFor;
-    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() const & { return { crossThreadCopy(domainsToDeleteAllCookiesFor), crossThreadCopy(domainsToDeleteAllButHttpOnlyCookiesFor), crossThreadCopy(domainsToDeleteAllNonCookieWebsiteDataFor), crossThreadCopy(domainsToEnforceSameSiteStrictFor) }; }
-    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() && { return { crossThreadCopy(WTFMove(domainsToDeleteAllCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllButHttpOnlyCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllNonCookieWebsiteDataFor)), crossThreadCopy(WTFMove(domainsToEnforceSameSiteStrictFor)) }; }
-    bool isEmpty() const { return domainsToDeleteAllCookiesFor.isEmpty() && domainsToDeleteAllButHttpOnlyCookiesFor.isEmpty() && domainsToDeleteAllNonCookieWebsiteDataFor.isEmpty() && domainsToEnforceSameSiteStrictFor.isEmpty(); }
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() const & { return { crossThreadCopy(domainsToDeleteAllCookiesFor), crossThreadCopy(domainsToDeleteAllButHttpOnlyCookiesFor), crossThreadCopy(domainsToDeleteAllScriptWrittenStorageFor), crossThreadCopy(domainsToEnforceSameSiteStrictFor) }; }
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() && { return { crossThreadCopy(WTFMove(domainsToDeleteAllCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllButHttpOnlyCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllScriptWrittenStorageFor)), crossThreadCopy(WTFMove(domainsToEnforceSameSiteStrictFor)) }; }
+    bool isEmpty() const { return domainsToDeleteAllCookiesFor.isEmpty() && domainsToDeleteAllButHttpOnlyCookiesFor.isEmpty() && domainsToDeleteAllScriptWrittenStorageFor.isEmpty() && domainsToEnforceSameSiteStrictFor.isEmpty(); }
 };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {

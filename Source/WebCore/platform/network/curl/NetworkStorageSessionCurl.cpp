@@ -177,7 +177,7 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHa
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
 {
     for (auto hostname : cookieHostNames)
         cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);

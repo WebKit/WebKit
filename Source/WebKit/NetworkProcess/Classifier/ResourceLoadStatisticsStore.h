@@ -232,6 +232,7 @@ protected:
         Seconds grandfatheringTime { 24_h * 7 };
         Seconds cacheMaxAgeCapTime { 24_h * 7 };
         Seconds clientSideCookiesAgeCapTime { 24_h * 7 };
+        Seconds clientSideCookiesForLinkDecorationTargetPageAgeCapTime { 24_h };
         Seconds minDelayAfterMainFrameDocumentLoadToNotBeARedirect { 5_s };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
@@ -263,7 +264,6 @@ private:
     void removeDataRecords(CompletionHandler<void()>&&);
     void setCacheMaxAgeCap(Seconds);
     void updateCacheMaxAgeCap();
-    void setAgeCapForClientSideCookies(Seconds);
     void updateClientSideCookiesAgeCap();
 
     WebResourceLoadStatisticsStore& m_store;
