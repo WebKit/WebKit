@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
     JSC::Uint8ClampedArray& data() const { return m_data.get(); }
-    Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
+    static Ref<JSC::Uint8ClampedArray> data(Ref<ByteArrayPixelBuffer>);
 
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 

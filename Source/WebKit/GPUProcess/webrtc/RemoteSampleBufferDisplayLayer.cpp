@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
+#include "GPUConnectionToWebProcess.h"
 #include "IPCTester.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #include "SampleBufferDisplayLayerMessages.h"
