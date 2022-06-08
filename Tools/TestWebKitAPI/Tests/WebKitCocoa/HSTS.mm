@@ -91,7 +91,12 @@ TEST(HSTS, Basic)
     EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/");
 }
 
+// FIXME: Re-enable after webkit.org/b/241342 is resolved
+#if (PLATFORM(IOS))
+TEST(HSTS, DISABLED_ThirdParty)
+#else
 TEST(HSTS, ThirdParty)
+#endif
 {
     auto httpsServer = hstsServer();
 
