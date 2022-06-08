@@ -412,6 +412,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXLayoutComplete:
         stream << "AXLayoutComplete";
         break;
+    case AXObjectCache::AXNotification::AXLevelChanged:
+        stream << "AXLevelChanged";
+        break;
     case AXObjectCache::AXNotification::AXLoadComplete:
         stream << "AXLoadComplete";
         break;
@@ -432,6 +435,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXSelectedTextChanged:
         stream << "AXSelectedTextChanged";
+        break;
+    case AXObjectCache::AXNotification::AXSetSizeChanged:
+        stream << "AXSetSizeChanged";
         break;
     case AXObjectCache::AXNotification::AXValueChanged:
         stream << "AXValueChanged";

@@ -1,3 +1,37 @@
+This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.
+
+PASS: tree.role === 'AXRole: AXOutline'
+PASS: canSetRows === true
+PASS: tree.childrenCount === 8
+PASS: treeitem1.role === 'AXRole: AXRow'
+PASS: treeitem1.subrole === 'AXSubrole: AXOutlineRow'
+PASS: treeitem1.isExpanded === true
+PASS: treeitem1.hierarchicalLevel === 0
+PASS: canSetDisclosing === true
+PASS: treeitem2.role === 'AXRole: AXRow'
+PASS: treeitem2.subrole === 'AXSubrole: AXOutlineRow'
+PASS: treeitem2.isExpanded === false
+PASS: treeitem2.hierarchicalLevel === 1
+PASS: treeitem2.disclosedByRow().isEqual(treeitem1) === true
+PASS: canSetDisclosing === false
+PASS: treeitem3.stringValue === 'AXValue: Birds'
+PASS: canSetDisclosing === false
+PASS: treeitem3.role === 'AXRole: AXRow'
+PASS: treeitem3.subrole === 'AXSubrole: AXOutlineRow'
+PASS: treeitem3.isExpanded === true
+PASS: treeitem3.isSelected === false
+PASS: treeitem3.isSelected === true
+PASS: selectedRow.isEqual(treeitem3) === true
+PASS: treeitem4.hierarchicalLevel === 0
+PASS: treeitem5.hierarchicalLevel === 1
+PASS: treeitem6.hierarchicalLevel === 1
+
+Updating aria-level of #treeitem2 to 3.
+PASS: treeitem2.hierarchicalLevel === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Animals
 Birds
 Cats
@@ -6,37 +40,3 @@ Tabby
 Vegetables
 Carrots
 Broccoli
-This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS tree.role is 'AXRole: AXOutline'
-PASS canSetRows is true
-PASS tree.childrenCount is 8
-PASS treeitem1.role is 'AXRole: AXRow'
-PASS treeitem1.subrole is 'AXSubrole: AXOutlineRow'
-PASS treeitem1.isExpanded is true
-PASS treeitem1.hierarchicalLevel is 0
-PASS canSetDisclosing is true
-PASS treeitem2.role is 'AXRole: AXRow'
-PASS treeitem2.subrole is 'AXSubrole: AXOutlineRow'
-PASS treeitem2.isExpanded is false
-PASS treeitem2.hierarchicalLevel is 1
-PASS treeitem2.disclosedByRow().isEqual(treeitem1) is true
-PASS canSetDisclosing is false
-PASS treeitem3.stringValue is 'AXValue: Birds'
-PASS canSetDisclosing is false
-PASS treeitem3.role is 'AXRole: AXRow'
-PASS treeitem3.subrole is 'AXSubrole: AXOutlineRow'
-PASS treeitem3.isExpanded is true
-PASS treeitem3.isSelected is false
-PASS treeitem3.isSelected is true
-PASS selectedRow.isEqual(treeitem3) is true
-PASS treeitem4.hierarchicalLevel is 0
-PASS treeitem5.hierarchicalLevel is 1
-PASS treeitem6.hierarchicalLevel is 1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

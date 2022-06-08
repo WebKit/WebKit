@@ -38,6 +38,11 @@
             await waitFor(() => firstListItem.numberAttributeValue('AXARIAPosInSet') === 4);
             testOutput += expect("firstListItem.numberAttributeValue('AXARIAPosInSet')", "4");
 
+            testOutput += "\nUpdating aria-setsize to 101 for element #first-list-item.\n";
+            document.getElementById("first-list-item").ariaSetSize = "101";
+            await waitFor(() => firstListItem.numberAttributeValue("AXARIASetSize") === 101);
+            testOutput += expect("firstListItem.numberAttributeValue('AXARIASetSize')", "101");
+
             document.getElementById("list").style.visibility = 'hidden';
             debug(testOutput);
             finishJSTest();

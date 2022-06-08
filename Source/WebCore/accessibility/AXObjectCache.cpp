@@ -1952,10 +1952,14 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXDescribedByChanged);
     else if (attrName == aria_grabbedAttr)
         postNotification(element, AXGrabbedStateChanged);
+    else if (attrName == aria_levelAttr)
+        postNotification(element, AXLevelChanged);
     else if (attrName == aria_posinsetAttr)
         postNotification(element, AXPositionInSetChanged);
     else if (attrName == aria_selectedAttr)
         selectedStateChanged(element);
+    else if (attrName == aria_setsizeAttr)
+        postNotification(element, AXSetSizeChanged);
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
     else if (attrName == aria_haspopupAttr)
@@ -3524,6 +3528,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;
+        case AXSetSizeChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SetSize);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsSetSize);
+            break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
         case AXDescribedByChanged:
@@ -3531,6 +3539,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXGrabbedStateChanged:
         case AXHasPopupChanged:
         case AXInvalidStatusChanged:
+        case AXLevelChanged:
         case AXMenuListValueChanged:
         case AXPressedStateChanged:
         case AXSelectedChildrenChanged:

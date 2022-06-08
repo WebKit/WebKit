@@ -593,7 +593,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const
 
 double AccessibilityUIElement::intValue() const
 {
-    return 0;
+    return [[m_element accessibilityValue] integerValue];
 }
 
 double AccessibilityUIElement::minValue()

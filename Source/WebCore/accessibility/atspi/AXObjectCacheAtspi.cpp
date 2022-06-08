@@ -203,6 +203,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXHasPopupChanged:
         break;
+    case AXSetSizeChanged:
+        break;
+    case AXLevelChanged:
+        break;
     }
 }
 
