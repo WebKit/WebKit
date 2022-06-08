@@ -4337,30 +4337,37 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
+KeyboardScrollingAnimator* EventHandler::keyboardScrollingAnimatorForFocusedNode()
+{
+    Node* node = m_frame.document()->focusedElement();
+
+    if (!node)
+        node = m_mousePressNode.get();
+
+    auto* scrollableArea = enclosingScrollableArea(node);
+    if (!scrollableArea)
+        return nullptr;
+
+    return scrollableArea->scrollAnimator().keyboardScrollingAnimator();
+}
+
 void EventHandler::stopKeyboardScrolling()
 {
-    Ref protectedFrame = m_frame;
-    auto* view = m_frame.view();
-    if (!view)
-        return;
-
-    auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
+    auto* animator = keyboardScrollingAnimatorForFocusedNode();
     if (animator)
         animator->handleKeyUpEvent();
 }
 
 bool EventHandler::startKeyboardScrolling(KeyboardEvent& event)
 {
+    Ref protectedFrame = m_frame;
+
     if (!m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
         return false;
 
-    Ref protectedFrame = m_frame;
-    auto* view = m_frame.view();
-    if (!view)
-        return false;
-
-    auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
+    auto* animator = keyboardScrollingAnimatorForFocusedNode();
     auto* platformEvent = event.underlyingPlatformEvent();
+
     if (animator && platformEvent)
         return animator->beginKeyboardScrollGesture(*platformEvent);
 
