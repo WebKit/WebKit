@@ -26,6 +26,7 @@
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

@@ -30,7 +30,9 @@
 #include "DisplayCaptureManager.h"
 #include "DisplayCaptureSourceCocoa.h"
 #include <wtf/BlockPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;
