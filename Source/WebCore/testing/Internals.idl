@@ -610,6 +610,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     // Flags for displayListForElement.
     const unsigned short DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS = 1;
+    const unsigned short DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS = 2;
     // Returns the recorded display list.
     DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.

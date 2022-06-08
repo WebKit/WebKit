@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include "DisplayList.h"
+#include "FloatSizeHash.h"
 #include "FontCascade.h"
 #include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "TextRun.h"
+#include "TextRunHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -41,68 +44,94 @@ namespace InlineDisplay {
 struct Box;
 }
 
-template<typename LayoutRun>
+class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeWeakPtr<GlyphDisplayListCacheEntry> {
+    WTF_MAKE_FAST_ALLOCATED;
+    friend struct GlyphDisplayListCacheKeyTranslator;
+    friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
+public:
+    static Ref<GlyphDisplayListCacheEntry> create(std::unique_ptr<DisplayList::InMemoryDisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
+    {
+        return adoptRef(*new GlyphDisplayListCacheEntry(WTFMove(displayList), textRun, font, context));
+    }
+
+    ~GlyphDisplayListCacheEntry();
+
+    bool operator==(const GlyphDisplayListCacheEntry& other) const
+    {
+        return m_textRun == other.m_textRun
+            && m_font == other.m_font
+            && m_scaleFactor == other.m_scaleFactor
+            && m_shouldSubpixelQuantizeFont == other.m_shouldSubpixelQuantizeFont;
+    }
+
+    DisplayList::InMemoryDisplayList& displayList() { return *m_displayList.get(); }
+
+private:
+    GlyphDisplayListCacheEntry(std::unique_ptr<DisplayList::InMemoryDisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
+        : m_displayList(WTFMove(displayList))
+        , m_textRun(textRun.isolatedCopy())
+        , m_font(font)
+        , m_scaleFactor(context.scaleFactor())
+        , m_shouldSubpixelQuantizeFont(context.shouldSubpixelQuantizeFonts())
+    {
+        ASSERT(m_displayList.get());
+    }
+
+    std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
+
+    TextRun m_textRun;
+    FontCascade m_font;
+    FloatSize m_scaleFactor;
+    bool m_shouldSubpixelQuantizeFont;
+};
+
+inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
+{
+    add(hasher, entry.m_textRun, entry.m_font.fonts(), entry.m_scaleFactor.width(), entry.m_scaleFactor.height(), entry.m_shouldSubpixelQuantizeFont);
+}
+
+struct GlyphDisplayListCacheEntryHash {
+    static unsigned hash(GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
+    static bool equal(GlyphDisplayListCacheEntry* a, GlyphDisplayListCacheEntry* b) { return *a == *b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
 class GlyphDisplayListCache {
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class GlyphDisplayListCacheEntry;
 public:
     GlyphDisplayListCache() = default;
 
-    static GlyphDisplayListCache& singleton()
-    {
-        static_assert(std::is_same_v<LayoutRun, LegacyInlineTextBox> || std::is_same_v<LayoutRun, InlineDisplay::Box>);
-        static NeverDestroyed<GlyphDisplayListCache> cache;
-        return cache;
-    }
+    static GlyphDisplayListCache& singleton();
 
-    DisplayList::DisplayList* get(const LayoutRun& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun)
-    {
-        if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-            if (!m_glyphRunMap.isEmpty()) {
-                LOG(MemoryPressure, "GlyphDisplayListCache::%s - Under memory pressure - size: %d - sizeInBytes: %ld", __FUNCTION__, size(), sizeInBytes());
-                clear();
-            }
-            return nullptr;
-        }
+    DisplayList::DisplayList* get(const LegacyInlineTextBox& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun) { return get(&run, font, context, textRun); }
+    DisplayList::DisplayList* get(const InlineDisplay::Box& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun) { return get(&run, font, context, textRun); }
 
-        if (auto displayList = m_glyphRunMap.get(&run))
-            return displayList;
+    DisplayList::DisplayList* getIfExists(const LegacyInlineTextBox& run) { return getIfExists(&run); }
+    DisplayList::DisplayList* getIfExists(const InlineDisplay::Box& run) { return getIfExists(&run); }
 
-        if (auto displayList = font.displayListForTextRun(context, textRun))
-            return m_glyphRunMap.add(&run, WTFMove(displayList)).iterator->value.get();
+    void remove(const LegacyInlineTextBox& run) { remove(&run); }
+    void remove(const InlineDisplay::Box& run) { remove(&run); }
 
-        return nullptr;
-    }
+    void clear();
+    unsigned size() const;
+    size_t sizeInBytes() const;
 
-    DisplayList::DisplayList* getIfExists(const LayoutRun& run)
-    {
-        return m_glyphRunMap.get(&run);
-    }
-
-    void remove(const LayoutRun& run)
-    {
-        m_glyphRunMap.remove(&run);
-    }
-
-    void clear()
-    {
-        m_glyphRunMap.clear();
-    }
-
-    unsigned size() const
-    {
-        return m_glyphRunMap.size();
-    }
-    
-    size_t sizeInBytes() const
-    {
-        size_t sizeInBytes = 0;
-        for (const auto& entry : m_glyphRunMap)
-            sizeInBytes += entry.value->sizeInBytes();
-        return sizeInBytes;
-    }
-    
 private:
-    using GlyphRunMap = HashMap<const LayoutRun*, std::unique_ptr<DisplayList::InMemoryDisplayList>>;
-    GlyphRunMap m_glyphRunMap;
+    static bool canShareDisplayList(const DisplayList::InMemoryDisplayList&);
+
+    DisplayList::DisplayList* get(const void* run, const FontCascade&, GraphicsContext&, const TextRun&);
+    DisplayList::DisplayList* getIfExists(const void* run);
+    void remove(const void* run);
+
+    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
+    HashSet<GlyphDisplayListCacheEntry*> m_entries;
 };
-    
-}
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct DefaultHash<WebCore::GlyphDisplayListCacheEntry*> : WebCore::GlyphDisplayListCacheEntryHash { };
+
+} // namespace WTF

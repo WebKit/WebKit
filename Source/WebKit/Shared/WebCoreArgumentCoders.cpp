@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/DatabaseDetails.h>
+#include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisplayListItems.h>
@@ -1120,6 +1121,33 @@ std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
         return std::nullopt;
 
     return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingResourceIdentifier);
+}
+
+void ArgumentCoder<DecomposedGlyphs>::encode(Encoder& encoder, const DecomposedGlyphs& decomposedGlyphs)
+{
+    encoder << decomposedGlyphs.positionedGlyphs();
+    encoder << decomposedGlyphs.bounds();
+    encoder << decomposedGlyphs.renderingResourceIdentifier();
+}
+
+std::optional<Ref<DecomposedGlyphs>> ArgumentCoder<DecomposedGlyphs>::decode(Decoder& decoder)
+{
+    std::optional<PositionedGlyphs> positionedGlyphs;
+    decoder >> positionedGlyphs;
+    if (!positionedGlyphs)
+        return std::nullopt;
+
+    std::optional<FloatRect> bounds;
+    decoder >> bounds;
+    if (!bounds)
+        return std::nullopt;
+
+    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
+        return std::nullopt;
+
+    return DecomposedGlyphs::create(WTFMove(*positionedGlyphs), *bounds, *renderingResourceIdentifier);
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
