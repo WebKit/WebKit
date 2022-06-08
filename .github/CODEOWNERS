@@ -37,3 +37,10 @@
 
 /Tools/Scripts/libraries @JonWBedard
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
+
+# ================================================================================
+
+/Source/WebCore/Modules/mediastream/gstreamer @calvaris @philn
+/Source/WebCore/platform/audio/gstreamer @calvaris @philn
+/Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
+/Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
