@@ -252,7 +252,8 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
         Span<const std::byte> auditToken;
 
 #if PLATFORM(COCOA)
-        if (auto token = m_networkProcess->sourceApplicationAuditToken())
+        auto token = m_networkProcess->sourceApplicationAuditToken();
+        if (token)
             auditToken = asBytes(Span<unsigned> { token->val });
 #endif
 
