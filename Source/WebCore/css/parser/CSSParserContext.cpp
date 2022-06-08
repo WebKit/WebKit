@@ -85,6 +85,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , containmentEnabled { document.settings().cssContainmentEnabled() }
+    , contentVisibilityEnabled { document.settings().cssContentVisibilityEnabled() }
     , counterStyleAtRulesEnabled { document.settings().cssCounterStyleAtRulesEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , cssColor4 { document.settings().cssColor4() }
@@ -139,6 +140,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.containmentEnabled == b.containmentEnabled
+        && a.contentVisibilityEnabled == b.contentVisibilityEnabled
         && a.counterStyleAtRulesEnabled == b.counterStyleAtRulesEnabled
         && a.counterStyleAtRuleImageSymbolsEnabled == b.counterStyleAtRuleImageSymbolsEnabled
         && a.cssColor4 == b.cssColor4
@@ -221,7 +223,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | (uint64_t)context.motionPathEnabled               << 33
         | (uint64_t)context.cssTextAlignLastEnabled         << 34
         | (uint64_t)context.cssTextJustifyEnabled           << 35
-        | (uint64_t)context.mode                            << 36; // This is multiple bits, so keep it last.
+        | (uint64_t)context.contentVisibilityEnabled        << 36
+        | (uint64_t)context.mode                            << 37; // This is multiple bits, so keep it last.
 
     add(hasher, context.baseURL, context.charset, bits);
 }

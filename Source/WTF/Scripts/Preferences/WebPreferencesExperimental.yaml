@@ -272,6 +272,18 @@ CSSContainmentEnabled:
     WebCore:
       default: true
 
+CSSContentVisibilityEnabled:
+  type: bool
+  humanReadableName: "CSS Content Visibility"
+  humanReadableDescription: "Enable CSS content-visibility"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
   humanReadableName: "CSS @counter-style <image> symbols"

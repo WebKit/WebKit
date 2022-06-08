@@ -4128,6 +4128,13 @@ static RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
     return list;
 }
 
+static RefPtr<CSSValue> consumeContentVisibility(CSSParserTokenRange& range)
+{
+    if (auto singleValue = consumeIdent<CSSValueVisible, CSSValueAuto, CSSValueHidden>(range))
+        return singleValue;
+    return nullptr;
+}
+
 static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 {
     bool foundOverOrUnder = false;
@@ -4764,6 +4771,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.containmentEnabled)
             return nullptr;
         return consumeContain(m_range);
+    case CSSPropertyContentVisibility:
+        if (!m_context.contentVisibilityEnabled)
+            return nullptr;
+        return consumeContentVisibility(m_range);
     case CSSPropertyTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)
