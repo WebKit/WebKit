@@ -418,6 +418,15 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXLoadComplete:
         stream << "AXLoadComplete";
         break;
+    case AXObjectCache::AXNotification::AXMaximumValueChanged:
+        stream << "AXMaximumValueChanged";
+        break;
+    case AXObjectCache::AXNotification::AXMinimumValueChanged:
+        stream << "AXMinimumValueChanged";
+        break;
+    case AXObjectCache::AXNotification::AXMultiSelectableStateChanged:
+        stream << "AXMultiSelectableStateChanged";
+        break;
     case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
         stream << "AXNewDocumentLoadComplete";
         break;

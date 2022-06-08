@@ -365,6 +365,12 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::IsSelected:
         propertyMap.set(AXPropertyName::IsSelected, axObject.isSelected());
         break;
+    case AXPropertyName::MaxValueForRange:
+        propertyMap.set(AXPropertyName::MaxValueForRange, axObject.maxValueForRange());
+        break;
+    case AXPropertyName::MinValueForRange:
+        propertyMap.set(AXPropertyName::MinValueForRange, axObject.minValueForRange());
+        break;
     case AXPropertyName::PosInSet:
         propertyMap.set(AXPropertyName::PosInSet, axObject.posInSet());
         break;
@@ -382,6 +388,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         break;
     case AXPropertyName::SupportsSetSize:
         propertyMap.set(AXPropertyName::SupportsSetSize, axObject.supportsSetSize());
+        break;
+    case AXPropertyName::ValueForRange:
+        propertyMap.set(AXPropertyName::ValueForRange, axObject.valueForRange());
         break;
     default:
         return;

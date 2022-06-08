@@ -1954,6 +1954,12 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXGrabbedStateChanged);
     else if (attrName == aria_levelAttr)
         postNotification(element, AXLevelChanged);
+    else if (attrName == aria_valuemaxAttr)
+        postNotification(element, AXMaximumValueChanged);
+    else if (attrName == aria_valueminAttr)
+        postNotification(element, AXMinimumValueChanged);
+    else if (attrName == aria_multiselectableAttr)
+        postNotification(element, AXMultiSelectableStateChanged);
     else if (attrName == aria_posinsetAttr)
         postNotification(element, AXPositionInSetChanged);
     else if (attrName == aria_selectedAttr)
@@ -3508,6 +3514,14 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXExpandedChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
             break;
+        case AXMaximumValueChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::MaxValueForRange);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            break;
+        case AXMinimumValueChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::MinValueForRange);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            break;
         case AXPositionInSetChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);
             tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsPosInSet);
@@ -3541,6 +3555,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXInvalidStatusChanged:
         case AXLevelChanged:
         case AXMenuListValueChanged:
+        case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
         case AXTextChanged:

@@ -207,6 +207,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXLevelChanged:
         break;
+    case AXMaximumValueChanged:
+        break;
+    case AXMinimumValueChanged:
+        break;
+    case AXMultiSelectableStateChanged:
+        break;
     }
 }
 
