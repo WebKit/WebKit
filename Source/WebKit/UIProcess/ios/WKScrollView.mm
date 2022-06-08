@@ -129,6 +129,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
     BOOL _backgroundColorSetByClient;
     BOOL _indicatorStyleSetByClient;
+    BOOL _decelerationRateSetByClient;
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
@@ -258,6 +259,20 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
         return;
 
     super.indicatorStyle = indicatorStyle;
+}
+
+- (void)setDecelerationRate:(UIScrollViewDecelerationRate)rate
+{
+    _decelerationRateSetByClient = YES;
+    super.decelerationRate = rate;
+}
+
+- (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate
+{
+    if (_decelerationRateSetByClient)
+        return;
+
+    super.decelerationRate = rate;
 }
 
 static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
