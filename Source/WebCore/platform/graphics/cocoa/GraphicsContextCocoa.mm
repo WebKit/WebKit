@@ -31,6 +31,7 @@
 #import "GraphicsContextPlatformPrivateCG.h"
 #import "IntRect.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
