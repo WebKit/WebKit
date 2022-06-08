@@ -129,13 +129,16 @@ Reviewed by NOBODY (OOPS!).
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
                 draft=False,
             )]
-            repo.commits['eng/example'] = [Commit(
-                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
-                identifier='3.1@eng/example',
-                timestamp=int(time.time()) - 60,
-                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
-                message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
-            )]
+            repo.commits['eng/example'] = [
+                repo.commits[repo.default_branch][2],
+                Commit(
+                    hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                    identifier='3.1@eng/example',
+                    timestamp=int(time.time()) - 60,
+                    author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                    message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+                )
+            ]
 
             self.assertEqual(0, program.main(
                 args=('checkout', 'PR-1'),
@@ -180,13 +183,16 @@ Reviewed by NOBODY (OOPS!).
                     ),
                 ],
             )]
-            repo.commits['eng/example'] = [Commit(
-                hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
-                identifier='3.1@eng/example',
-                timestamp=int(time.time()) - 60,
-                author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
-                message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
-            )]
+            repo.commits['eng/example'] = [
+                repo.commits[repo.default_branch][2],
+                Commit(
+                    hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+                    identifier='3.1@eng/example',
+                    timestamp=int(time.time()) - 60,
+                    author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+                    message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
+                )
+            ]
 
             self.assertEqual(0, program.main(
                 args=('checkout', 'PR-1'),

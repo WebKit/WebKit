@@ -67,7 +67,7 @@ Reviewed by NOBODY (OOPS!).
 '''.format(
         title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
         bugs=os.environ.get('COMMIT_MESSAGE_BUG', '') or 'Need the bug URL (OOPS!).',
-        content='\n'.join(commit_message),
+        content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
     )
 
     except subprocess.CalledProcessError:

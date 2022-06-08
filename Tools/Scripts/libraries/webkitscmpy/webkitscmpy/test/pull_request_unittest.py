@@ -574,14 +574,17 @@ No pre-PR checks to run""")
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
         ) as repo, mocks.local.Svn():
 
-            repo.commits['eng/pr-branch'] = [Commit(
-                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
-                branch='eng/pr-branch',
-                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
-                identifier="5.1@eng/pr-branch",
-                timestamp=int(time.time()),
-                message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
-            )]
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+                )
+            ]
             repo.head = repo.commits['eng/pr-branch'][-1]
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
@@ -698,14 +701,17 @@ No pre-PR checks to run""")
         ) as repo, mocks.local.Svn():
 
             Tracker.instance().issue(1).close(why='Looks like we will not get to this')
-            repo.commits['eng/pr-branch'] = [Commit(
-                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
-                branch='eng/pr-branch',
-                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
-                identifier="5.1@eng/pr-branch",
-                timestamp=int(time.time()),
-                message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
-            )]
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+                )
+            ]
             repo.head = repo.commits['eng/pr-branch'][-1]
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
@@ -943,14 +949,17 @@ No pre-PR checks to run""")
             self.path, remote='ssh://git@{}/{}/{}.git'.format(remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3]),
         ) as repo, mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
-            repo.commits['eng/pr-branch'] = [Commit(
-                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
-                branch='eng/pr-branch',
-                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
-                identifier="5.1@eng/pr-branch",
-                timestamp=int(time.time()),
-                message='<rdar://problem/1> [Testing] Existing commit\n'
-            )]
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='<rdar://problem/1> [Testing] Existing commit\n'
+                )
+            ]
             repo.head = repo.commits['eng/pr-branch'][-1]
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),
@@ -992,14 +1001,17 @@ No pre-PR checks to run""")
         ) as repo, mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             Tracker.instance().issue(1).close(why='Looks like we will not get to this')
-            repo.commits['eng/pr-branch'] = [Commit(
-                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
-                branch='eng/pr-branch',
-                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
-                identifier="5.1@eng/pr-branch",
-                timestamp=int(time.time()),
-                message='<rdar://problem/1> [Testing] Existing commit\n'
-            )]
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='<rdar://problem/1> [Testing] Existing commit\n'
+                )
+            ]
             repo.head = repo.commits['eng/pr-branch'][-1]
             self.assertEqual(0, program.main(
                 args=('pull-request', '-v', '--no-history'),

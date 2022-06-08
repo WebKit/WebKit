@@ -118,6 +118,20 @@
     ], 
     "branch-a": [
         {
+            "hash": "fff83bb2d9171b4d9196e977eb0508fd57e7a08d", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601661000, 
+            "branch": "main", 
+            "message": "2nd commit\n", 
+            "identifier": "2@main", 
+            "revision": 2
+        }, 
+        {
             "hash": "a30ce8494bf1ac2807a69844f726be4a9843ca55", 
             "author": {
                 "name": "Jonathan Bedard", 
@@ -144,6 +158,68 @@
             "message": "7th commit\n", 
             "identifier": "2.2@branch-a", 
             "revision": 6
+        }
+    ],
+    "eng/squash-branch": [
+        {
+            "hash": "d8bce26fa65c6fc8f39c17927abb77f69fab82fc", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668000, 
+            "branch": "main", 
+            "message": "Patch Series\n", 
+            "identifier": "5@main", 
+            "revision": 9
+        },
+        {
+            "hash": "d631ca664d338ef8aa153a6e4088ab5f633fd43b", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            }, 
+            "timestamp": 1601672000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 1",
+            "changeFiles": {
+                "a.cpp": "diff --git a/a.cpp b/a.cpp"
+            }
+        }, 
+        {
+            "hash": "651a4775399150c14d420ae29160a7111ff49306", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            },
+            "timestamp": 1601674000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 2",
+            "changeFiles": {
+                "c.cpp": "diff --git a/c.cpp b/c.cpp"
+            }
+        }, 
+        {
+            "hash": "f8a78d2db925929b75b17396ec1d7296078d49b6", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            },
+            "timestamp": 1601677000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 3",
+            "changeFiles": {
+                "a.cpp": "diff --git a/a.cpp b/a.cpp",
+                "b.cpp": "diff --git a/b.cpp b/b.cpp"
+            }
         }
     ]
 }

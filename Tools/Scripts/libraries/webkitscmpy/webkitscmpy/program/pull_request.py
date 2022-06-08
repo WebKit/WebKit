@@ -26,6 +26,7 @@ import sys
 
 from .command import Command
 from .branch import Branch
+from .squash import Squash
 
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, Terminal
@@ -41,6 +42,7 @@ class PullRequest(Command):
     @classmethod
     def parser(cls, parser, loggers=None):
         Branch.parser(parser, loggers=loggers)
+        Squash.parser(parser, loggers=loggers)
         parser.add_argument(
             '--add', '--no-add',
             dest='will_add', default=None,
@@ -52,6 +54,12 @@ class PullRequest(Command):
             dest='rebase', default=None,
             help='Rebase (or do not rebase) the pull-request on the source branch before pushing',
             action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--squash',
+            dest='squash', default=False,
+            action='store_true',
+            help='Combine all commits on the current development branch into a single commit before pushing',
         )
         parser.add_argument(
             '--defaults', '--no-defaults', action=arguments.NoAction, default=None,
@@ -431,8 +439,11 @@ class PullRequest(Command):
         if not branch_point:
             return 1
 
-        result = cls.create_commit(args, repository, **kwargs)
-        if result:
-            return result
+        if args.squash:
+            result = Squash.squash_commit(args, repository, branch_point, **kwargs)
+        else:
+            result = cls.create_commit(args, repository, **kwargs)
+            if result:
+                return result
 
         return cls.create_pull_request(repository, args, branch_point)

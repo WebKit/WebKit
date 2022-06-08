@@ -67,16 +67,26 @@ class Git(mocks.Subprocess):
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = json.load(file)
         for key, commits in self.commits.items():
-            self.commits[key] = [Commit(**kwargs) for kwargs in commits]
+            commit_objs = []
+            for kwargs in commits:
+                changeFiles = None
+                if 'changeFiles' in kwargs:
+                    changeFiles = kwargs['changeFiles']
+                    del kwargs['changeFiles']
+                commit = Commit(**kwargs)
+                if changeFiles:
+                    setattr(commit, '__mock__changeFiles', changeFiles)
+                commit_objs.append(commit)
+            self.commits[key] = commit_objs
             if not git_svn:
                 for commit in self.commits[key]:
                     commit.revision = None
 
         self.head = self.commits[self.default_branch][-1]
-        self.remotes = {'origin/{}'.format(branch): commits[-1] for branch, commits in self.commits.items()}
+        self.remotes = {'origin/{}'.format(branch): commits[:] for branch, commits in self.commits.items()}
         for name in (remotes or {}).keys():
             for branch, commits in self.commits.items():
-                self.remotes['{}/{}'.format(name, branch)] = commits[-1]
+                self.remotes['{}/{}'.format(name, branch)] = commits[:]
 
         self.tags = {}
 
@@ -303,7 +313,7 @@ nothing to commit, working tree clean
                         ),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                self.executable, 'log', '--format=fuller', '--no-decorate', '--date=unix', re.compile(r'.+\.\.\..+'),
+                self.executable, 'log', '--format=fuller', '--no-decorate', '--date=unix', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
@@ -318,15 +328,16 @@ nothing to commit, working tree clean
                             author=commit.author.name,
                             email=commit.author.email,
                             date=commit.timestamp,
-                            log='\n'.join([
-                                ('    ' + line) if line else '' for line in commit.message.splitlines()
-                            ] + ([
-                                '    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                            log='\n'.join(
+                                [
+                                    ('    ' + line) if line else '' for line in commit.message.splitlines()
+                                ] + (['    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
                                     self.remote.split('@')[-1].split(':')[0],
                                     os.path.basename(path),
-                                   commit.revision,
-                            )] if git_svn else []),
-                        )) for commit in list(self.commits_in_range(args[5].split('...')[-1], args[5].split('...')[0]))[:-1]
+                                    commit.revision,
+                                )] if git_svn else []),
+                            )
+                        ) for commit in list(self.rev_list(args[5]))
                     ])
                 )
             ), mocks.Subprocess.Route(
@@ -343,15 +354,16 @@ nothing to commit, working tree clean
                             author=commit.author.name,
                             email=commit.author.email,
                             date=commit.timestamp if '--date=unix' in args else datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
-                            log='\n'.join([
-                                ('    ' + line) if line else '' for line in commit.message.splitlines()
-                            ] + ([
-                                '    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                            log='\n'.join(
+                                [
+                                    ('    ' + line) if line else '' for line in commit.message.splitlines()
+                                ] + (['    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
                                     self.remote.split('@')[-1].split(':')[0],
                                     os.path.basename(path),
-                                   commit.revision,
-                            )] if git_svn else []),
-                        )) for commit in self.commits_in_range(self.commits[self.default_branch][0].hash, args[2])
+                                    commit.revision,
+                                )] if git_svn else [])
+                            )
+                        ) for commit in self.rev_list(args[2])
                     ])
                 )
             ), mocks.Subprocess.Route(
@@ -361,6 +373,13 @@ nothing to commit, working tree clean
                     returncode=0,
                     stdout='{}\n'.format(self.count(args[4]))
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
+            ), mocks.Subprocess.Route(
+                self.executable, 'rev-list', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join(map(lambda commit: commit.hash, self.rev_list(args[2])))
+                ),
             ), mocks.Subprocess.Route(
                 self.executable, 'show', '-s', '--format=%ct', re.compile(r'.+'),
                 cwd=self.path,
@@ -548,17 +567,18 @@ nothing to commit, working tree clean
                     stdout='\n'.join([
                         '--- a/ChangeLog\n+++ b/ChangeLog\n@@ -1,0 +1,0 @@\n{}'.format(
                             '\n'.join(['+ {}'.format(line) for line in commit.message.splitlines()])
-                        ) for commit in list(self.commits_in_range(
-                            args[2].split('..')[0],
-                            args[2].split('..')[-1] if '..' in args[2] else self.commits[self.default_branch][-1].hash,
-                        ))[:-1]
+                        ) for commit in list(self.rev_list(args[2] if '..' in args[2] else '{}..HEAD'.format(args[2])))
                     ])
                 )
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', 'HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
-            ), mocks.Subprocess.Route(
+            ),  mocks.Subprocess.Route(
+                self.executable, 'reset', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.reset_commit(args[2]),
+            ),  mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -617,12 +637,16 @@ nothing to commit, working tree clean
             if len(split) == 2 and Commit.NUMBER_RE.match(split[1]):
                 found = self.find(split[0])
                 difference = int(split[1])
-                if difference < found.identifier:
-                    difference += self.commits[found.branch][0].identifier
-                    return self.commits[found.branch][found.identifier - difference]
-                difference -= found.identifier
-                if found.branch_point and difference < found.branch_point:
-                    return self.commits[self.default_branch][found.branch_point - difference - 1]
+                if split[0] in self.remotes:
+                    all_commits = self.resolve_all_commits(found.branch, remote=split[0].replace('/{}'.format(found.branch), ''))
+                else:
+                    all_commits = self.resolve_all_commits(found.branch)
+                head_index = None
+                for i in range(len(all_commits)):
+                    if found == all_commits[i]:
+                        head_index = i
+                if head_index is not None and head_index - difference >= 0:
+                    return all_commits[head_index - difference]
                 return None
 
         something = str(something).replace('remotes/', '')
@@ -639,7 +663,7 @@ nothing to commit, working tree clean
         if something in self.tags.keys():
             return self.tags[something]
         if something in self.remotes.keys():
-            return self.remotes[something]
+            return self.remotes[something][-1]
 
         for branch, commits in self.commits.items():
             if branch == something:
@@ -652,16 +676,8 @@ nothing to commit, working tree clean
         return None
 
     def count(self, something):
-        if '..' not in something:
-            match = self.find(something)
-            return (match.branch_point or 0) + match.identifier
-
-        a, b = something.split('..')
-        a = self.find(a)
-        b = self.find(b)
-        if a.branch_point == b.branch_point:
-            return abs(b.identifier - a.identifier)
-        return b.identifier
+        rev_list = self.rev_list(something)
+        return len(rev_list)
 
     def branches_on(self, hash):
         result = set()
@@ -670,8 +686,9 @@ nothing to commit, working tree clean
 
             for commit in commits:
                 if commit.hash.startswith(hash):
-                    found_identifier = max(commit.identifier, found_identifier)
-                    result.add(branch)
+                    if commit.identifier is not None:
+                        found_identifier = max(commit.identifier, found_identifier)
+                    result.add(commit.branch)
 
         if self.default_branch in result:
             for branch, commits in self.commits.items():
@@ -691,15 +708,11 @@ nothing to commit, working tree clean
                     self.detached = something not in self.commits.keys()
                     return True
                 return False
-            if self.head.branch == self.default_branch:
-                self.commits[something] = [self.head]
-            else:
-                self.commits[something] = [
-                    commit for commit in self.commits[self.head.branch]
-                    if not commit.branch_point or commit.identifier <= self.head.identifier
-                ]
-            self.commits[something][-1] = Commit.from_json(Commit.Encoder().default(self.head))
+            self.commits[something] = [Commit.from_json(Commit.Encoder().default(self.head))]
+            # Copy one more to create a bridge commit
+            self.commits[something].append(Commit.from_json(Commit.Encoder().default(self.head)))
             self.head = self.commits[something][-1]
+            setattr(self.head, 'bridge_commit', True)
             self.head.branch = something
             if not self.head.branch_point:
                 self.head.branch_point = self.head.identifier
@@ -808,52 +821,6 @@ nothing to commit, working tree clean
             stdout=stdout.getvalue(),
         )
 
-    def commits_in_range(self, begin, end):
-        begin = begin.replace('remotes/', '') if begin else begin
-        end = end.replace('remotes/', '') if end else end
-
-        if begin and self.remotes.get(begin):
-            begin = self.remotes.get(begin).hash
-        if end and self.remotes.get(end):
-            end = self.remotes.get(end).hash
-
-        branches = [self.default_branch]
-        if end in self.commits.keys() and end != self.default_branch:
-            branches.insert(0, end)
-        else:
-            for branch, commits in self.commits.items():
-                if branch == self.default_branch:
-                    continue
-                for commit in commits:
-                    if commit.hash.startswith(end):
-                        branches.insert(0, branch)
-                        break
-                if len(branches) > 1:
-                    break
-
-        in_range = False
-        previous = None
-        for branch in branches:
-            for commit in reversed(self.commits[branch]):
-                if branch == begin:
-                    break
-                if commit.hash.startswith(end) or end == branch:
-                    in_range = True
-                if in_range and (not previous or commit.hash != previous.hash):
-                    yield commit
-                previous = commit
-                if begin and commit.hash.startswith(begin):
-                    in_range = False
-                    break
-
-            in_range = False
-            if not previous or branch == self.default_branch:
-                continue
-
-            for commit in reversed(self.commits[self.default_branch]):
-                if previous.branch_point == commit.identifier:
-                    end = commit.hash
-
     @decorators.hybridmethod
     def config(context, path=None):
         if isinstance(context, type):
@@ -917,6 +884,9 @@ nothing to commit, working tree clean
             return mocks.ProcessCompletion(returncode=1, stdout='no changes added to commit (use "git add" and/or "git commit -a")\n')
 
         if not amend:
+            # Remove the temp bridge commit
+            if hasattr(self.head, 'bridge_commit'):
+                self.commits[self.head.branch].remove(self.head)
             self.head = Commit(
                 branch=self.branch, repository_id=self.head.repository_id,
                 timestamp=int(time.time()),
@@ -926,10 +896,11 @@ nothing to commit, working tree clean
             self.commits[self.branch].append(self.head)
 
         self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
-        self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
+        self.head.message = '{}{}\nReviewed by Jonathan Bedard\n\n * {}\n{}'.format(
             env.get('COMMIT_MESSAGE_TITLE', '') or '[Testing] {} commits'.format('Amending' if amend else 'Creating'),
             ('\n' + env.get('COMMIT_MESSAGE_BUG', '')) if env.get('COMMIT_MESSAGE_BUG', '') else '',
             '\n * '.join(self.staged.keys()),
+            env.get('COMMIT_MESSAGE_CONTENT', '')
         )
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
         self.staged = {}
@@ -1003,16 +974,19 @@ nothing to commit, working tree clean
             return mocks.ProcessCompletion(returncode=128, stdout="fatal: pathspec '{}' did not match any files\n".format(file))
         for key, value in self.modified.items():
             self.staged[key] = value
-        self.modified = {}
+        del self.modified[file]
         return mocks.ProcessCompletion(returncode=0)
 
     def rebase(self, target, base, head):
         if target not in self.commits or base not in self.commits or head not in self.commits:
             return mocks.ProcessCompletion(returncode=1)
-        for commit in self.commits[head]:
-            commit.branch_point = self.commits[target][-1].branch_point or self.commits[target][-1].identifier
-            if self.commits[target][-1].branch_point:
-                commit.identifier += self.commits[target][-1].identifier
+
+        base = self.commits[target][-1]
+        self.commits[head][0] = base
+        for commit in self.commits[head][1:]:
+            commit.branch_point = base.branch_point or base.identifier
+            if base.branch_point:
+                commit.identifier += base.identifier
         return mocks.ProcessCompletion(returncode=0)
 
     def pull(self, autostash=False):
@@ -1052,16 +1026,42 @@ nothing to commit, working tree clean
         )
 
     def push(self, remote, branch):
-        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][-1]
+        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][:]
         return mocks.ProcessCompletion(returncode=0)
 
     def dcommit(self, remote='origin', branch=None):
         branch = branch or self.default_branch
-        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][-1]
+        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][:]
         return mocks.ProcessCompletion(
             returncode=0,
             stdout='Committed r{}\n\tM\tFiles/Changed.txt\n'.format(self.commits[branch][-1].revision),
         )
+
+    def reset_commit(self, something):
+        commit = self.find(something)
+        pre_branch = self.branch
+        rev_list = self.rev_list('HEAD...{}'.format(something))
+        commits = self.commits[self.branch]
+        if commit is not None:
+            self.head = commit
+        for commit in rev_list:
+            if hasattr(commit, '__mock__changeFiles'):
+                files = getattr(commit, '__mock__changeFiles')
+                for file in files:
+                    self.modified[file] = files[file]
+            commits.remove(commit)
+        if pre_branch != self.branch:
+            # Add a fake commit to simulate a same commit in different branch
+            bridge_commit = Commit(
+                hash=self.head.hash, revision=self.head.revision,
+                identifier=self.head.identifier, branch=pre_branch, branch_point=self.head.branch_point,
+                timestamp=self.head.timestamp, author=self.head.author, message=self.head.message,
+                order=self.head.order, repository_id=self.head.repository_id
+            )
+            setattr(bridge_commit, 'bridge_commit', True)
+            commits.append(bridge_commit)
+            self.head = commits[-1]
+        return mocks.ProcessCompletion(returncode=0)
 
     def reset(self, index):
         if index is None:
@@ -1071,6 +1071,100 @@ nothing to commit, working tree clean
 
         self.head = self.commits[self.head.branch][-(index + 1)]
         return mocks.ProcessCompletion(returncode=0)
+
+    def resolve_all_commits(self, branch, remote=None):
+        if not remote:
+            all_commits = self.commits[branch][:]
+        else:
+            all_commits = self.remotes['{}/{}'.format(remote, branch)][:]
+        last_commit = all_commits[0]
+        while last_commit.branch != branch:
+            head_index = None
+            if not remote:
+                commits_part = self.commits[last_commit.branch]
+            else:
+                commits_part = self.remotes['{}/{}'.format(remote, last_commit.branch)]
+            for i in range(len(commits_part)):
+                if commits_part[i].hash == last_commit.hash:
+                    head_index = i
+                    break
+            all_commits = commits_part[:head_index] + all_commits
+            last_commit = all_commits[0]
+            if last_commit.branch == self.default_branch and last_commit.identifier == 1:
+                break
+        if remote:
+            for commit in all_commits:
+                setattr(commit, '__mock__remotes', set([remote]))
+        return all_commits
+
+    def rev_list(self, something):
+        """
+        A..B = A u B - A
+        A...B = A u B - A n B
+        """
+        two_dots = False
+        triple_dots = False
+        a_commit = None
+        a_remote = None
+        b_commit = None
+        b_remote = None
+        if '...' in something:
+            something = something.split('...')
+            triple_dots = True
+            a_commit = self.find(something[0])
+            b_commit = self.find(something[1])
+            if something[0] in self.remotes:
+                a_remote = something[0].replace('/{}'.format(a_commit.branch), '')
+            if something[1] in self.remotes:
+                b_remote = something[1].replace('/{}'.format(b_commit.branch), '')
+        elif '..' in something:
+            something = something.split('..')
+            two_dots = True
+            a_commit = self.find(something[0])
+            b_commit = self.find(something[1])
+            if something[0] in self.remotes:
+                a_remote = something[0].replace('/{}'.format(a_commit.branch), '')
+            if something[1] in self.remotes:
+                b_remote = something[1].replace('/{}'.format(b_commit.branch), '')
+        else:
+            a_commit = self.find(something)
+            if something in self.remotes:
+                a_remote = something.replace('/{}'.format(a_commit.branch), '')
+
+        a_commits = []
+        a_branch_commits = self.resolve_all_commits(a_commit.branch, remote=a_remote) if a_commit else []
+        for commit in a_branch_commits:
+            a_commits.append(commit)
+            if commit.hash == a_commit.hash:
+                break
+
+        b_commits = []
+        b_branch_commits = self.resolve_all_commits(b_commit.branch, remote=b_remote) if b_commit else []
+        for commit in b_branch_commits:
+            b_commits.append(commit)
+            if commit.hash == b_commit.hash:
+                break
+
+        if not two_dots and not triple_dots:
+            return list(reversed(a_commits))
+
+        res = []
+        # To make things easier, we only mock that two branch will share same init commit
+        assert a_commits[0].hash == b_commits[0].hash
+        for i in range(max(len(a_commits), len(b_commits))):
+            if i >= len(a_commits) and i < len(b_commits):
+                res.append(b_commits[i])
+            elif i >= len(b_commits) and i < len(a_commits):
+                if triple_dots:
+                    res.append(a_commits[i])
+            elif i < len(b_commits) and i < len(a_commits) and a_commits[i].hash != b_commits[i].hash:
+                if triple_dots:
+                    res.append(a_commits[i])
+                    res.append(b_commits[i])
+                if two_dots:
+                    res.append(b_commits[i])
+        res.reverse()
+        return res
 
     def _install_git_lfs(self):
         self.has_git_lfs = True

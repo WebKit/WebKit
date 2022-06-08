@@ -34,22 +34,25 @@ from webkitscmpy import Contributor, Commit, local, program, mocks
 def repository(path, has_oops=True, remote=None, git_svn=False, issue_url=None):
     branch = 'eng/example'
     result = mocks.local.Git(path, remote=remote, git_svn=git_svn)
-    result.commits[branch] = [Commit(
-        hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
-        identifier='3.1@{}'.format(branch),
-        revision=10,
-        timestamp=int(time.time()) - 60,
-        author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
-        message='To Be Committed\n{}\nReviewed by {}.\n{}'.format(
-            '{}\n'.format(issue_url) if issue_url else '',
-            'NOBODY (OOPS!)' if has_oops else 'Ricky Reviewer',
-            '\ngit-svn-id: https://svn.{}/repository/{}/trunk@10 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
-                result.remote.split('@')[-1].split(':')[0],
-                os.path.basename(result.path),
-            ) if git_svn else '',
-        ),
-    )]
-    result.head = result.commits[branch][0]
+    result.commits[branch] = [
+        result.commits[result.default_branch][2],
+        Commit(
+            hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
+            identifier='3.1@{}'.format(branch),
+            revision=10,
+            timestamp=int(time.time()) - 60,
+            author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
+            message='To Be Committed\n{}\nReviewed by {}.\n{}'.format(
+                '{}\n'.format(issue_url) if issue_url else '',
+                'NOBODY (OOPS!)' if has_oops else 'Ricky Reviewer',
+                '\ngit-svn-id: https://svn.{}/repository/{}/trunk@10 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
+                    result.remote.split('@')[-1].split(':')[0],
+                    os.path.basename(result.path),
+                ) if git_svn else '',
+            ),
+        )
+    ]
+    result.head = result.commits[branch][-1]
     return result
 
 
