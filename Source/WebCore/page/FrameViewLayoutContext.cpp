@@ -219,7 +219,7 @@ void FrameViewLayoutContext::performLayout()
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
 
-        if (!frame().document()->isResolvingContainerQueries()) {
+        if (!frame().document()->isResolvingContainerQueriesForSelfOrAncestor()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
             if (!isLayoutNested() && m_asynchronousTasksTimer.isActive() && !view().isInChildFrameWithFrameFlattening())
                 runAsynchronousTasks();

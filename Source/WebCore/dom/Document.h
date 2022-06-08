@@ -1348,6 +1348,7 @@ public:
     bool inStyleRecalc() const { return m_inStyleRecalc; }
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
     bool isResolvingContainerQueries() const { return m_isResolvingContainerQueries; }
+    bool isResolvingContainerQueriesForSelfOrAncestor() const;
     bool isResolvingTreeStyle() const { return m_isResolvingTreeStyle; }
     void setIsResolvingTreeStyle(bool);
 

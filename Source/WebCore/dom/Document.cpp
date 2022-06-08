@@ -2207,7 +2207,7 @@ static bool isSafeToUpdateStyleOrLayout(const Document& document)
 
 bool Document::updateStyleIfNeeded()
 {
-    if (isResolvingContainerQueries())
+    if (isResolvingContainerQueriesForSelfOrAncestor())
         return false;
 
     RefPtr<FrameView> frameView = view();
@@ -2475,6 +2475,15 @@ void Document::setIsResolvingTreeStyle(bool value)
 {
     RELEASE_ASSERT(value != m_isResolvingTreeStyle);
     m_isResolvingTreeStyle = value;
+}
+
+bool Document::isResolvingContainerQueriesForSelfOrAncestor() const
+{
+    if (m_isResolvingContainerQueries)
+        return true;
+    if (auto* owner = ownerElement())
+        return owner->document().isResolvingContainerQueriesForSelfOrAncestor();
+    return false;
 }
 
 void Document::createRenderTree()
