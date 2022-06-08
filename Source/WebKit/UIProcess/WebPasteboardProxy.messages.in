@@ -55,7 +55,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
     SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<const WebCore::SharedBuffer> buffer, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
     ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
     URLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
 #endif

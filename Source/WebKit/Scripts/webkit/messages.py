@@ -967,12 +967,9 @@ def headers_for_type(type):
         'WebKit::WebGPU::VertexAttribute': ['"WebGPUVertexAttribute.h"'],
         'WebKit::WebGPU::VertexBufferLayout': ['"WebGPUVertexBufferLayout.h"'],
         'WebKit::WebGPU::VertexState': ['"WebGPUVertexState.h"'],
-        'struct WebCore::Cookie': ['<WebCore/Cookie.h>'],
-        'struct WebCore::ElementContext': ['<WebCore/ElementContext.h>'],
-        'struct WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
-        'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
-        'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
-        'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
+        'WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
+        'WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
+        'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>', '<WebCore/LibWebRTCEnumTraits.h>'],
     }
 
@@ -981,6 +978,8 @@ def headers_for_type(type):
         headers += header_info['headers']
 
     for type in header_infos_and_types['types']:
+        # Remove const or struct qualifier from type.
+        type = re.sub("^(const|struct) +", "", type)
         if type in special_cases:
             headers += special_cases[type]
             continue
