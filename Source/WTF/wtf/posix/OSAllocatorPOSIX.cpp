@@ -183,11 +183,15 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
 #define MAP_NORESERVE 0
 #endif
     UNUSED_PARAM(usage);
-    UNUSED_PARAM(writable);
-    UNUSED_PARAM(executable);
     UNUSED_PARAM(jitCageEnabled);
     UNUSED_PARAM(includesGuardPages);
-    void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
+    int protection = PROT_READ;
+    if (writable)
+        protection |= PROT_WRITE;
+    if (executable)
+        protection |= PROT_EXEC;
+
+    void* result = mmap(0, bytes, protection, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
     if (result == MAP_FAILED)
         return nullptr;
     if (result)
