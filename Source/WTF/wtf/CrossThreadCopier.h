@@ -222,7 +222,7 @@ template<typename... Types> struct CrossThreadCopierBase<false, false, std::vari
     static std::variant<Types...> copy(Type&& source)
     {
         return std::visit([] (auto&& type) -> std::variant<Types...> {
-            return CrossThreadCopier<std::remove_const_t<std::remove_reference_t<decltype(type)>>>::copy(WTFMove(type));
+            return CrossThreadCopier<std::remove_const_t<std::remove_reference_t<decltype(type)>>>::copy(std::forward<decltype(type)>(type));
         }, WTFMove(source));
     }
 };
