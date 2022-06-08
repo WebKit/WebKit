@@ -1468,6 +1468,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ContentTypeUtilities.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
+    platform/graphics/DecomposedGlyphs.h
     platform/graphics/DestinationColorSpace.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
@@ -1593,6 +1594,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformVideoMatrixCoefficients.h
     platform/graphics/PlatformVideoTrackConfiguration.h
     platform/graphics/PlatformVideoTransferCharacteristics.h
+    platform/graphics/PositionedGlyphs.h
     platform/graphics/Region.h
     platform/graphics/RenderingResourceIdentifier.h
     platform/graphics/RenderingMode.h
@@ -1608,6 +1610,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TextRun.h
     platform/graphics/TextTrackRepresentation.h
     platform/graphics/TiledBacking.h
+    platform/graphics/TrackBuffer.h
     platform/graphics/TrackPrivateBase.h
     platform/graphics/TrackPrivateBaseClient.h
     platform/graphics/VP9Utilities.h

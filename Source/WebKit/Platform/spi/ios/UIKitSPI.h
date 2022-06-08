@@ -89,6 +89,7 @@
 #import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
+#import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
 #import <UIKit/_UIBackdropViewSettings.h>
@@ -147,6 +148,11 @@
 
 #if HAVE(UIKIT_HOVER_EVENT_PROTOCOL)
 #import <UIKit/UIHoverEvent_RequiresApproval.h>
+#endif
+
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+#import <UIKit/UIWindowScene_RequiresApproval.h>
+#import <UIKit/_UIInvalidatable.h>
 #endif
 
 // FIXME: STAGING for rdar://75546704 Remove later.
@@ -1380,6 +1386,19 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif
 
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+@protocol _UIInvalidatable <NSObject>
+- (void)_invalidate;
+@end
+
+@interface UIWindowScene ()
+- (id<_UIInvalidatable>)_holdLiveResizeSnapshotForReason:(NSString *)reason;
+@property (nonatomic, readonly) BOOL _enhancedWindowingEnabled;
+@end
+
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UITextInteractionAssistant (IPI)
@@ -1566,22 +1585,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 #endif
-
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
-
-#if __has_include(<UIKit/_UIInvalidatable.h>)
-#include <UIKit/_UIInvalidatable.h>
-#else
-@protocol _UIInvalidatable <NSObject>
-- (void)_invalidate;
-@end
-#endif
-
-@interface UIWindowScene (Staging_86494115)
-- (id<_UIInvalidatable>)_holdLiveResizeSnapshotForReason:(NSString *)reason;
-@end
-
-#endif // HAVE(MAC_CATALYST_LIVE_RESIZE)
 
 WTF_EXTERN_C_BEGIN
 

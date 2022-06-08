@@ -1034,7 +1034,9 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastNonOverflowingWrapOpportunity) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         ASSERT(!m_wrapOpportunityList.isEmpty());
-        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineForTrailingSoftHyphen(layoutRange), true } };
+        if (auto committedCount = rebuildLineForTrailingSoftHyphen(layoutRange))
+            return { InlineContentBreaker::IsEndOfLine::Yes, { committedCount, true } };
+        return { InlineContentBreaker::IsEndOfLine::Yes };
     }
     if (result.action == InlineContentBreaker::Result::Action::Break) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
@@ -1106,7 +1108,11 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
 
 size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)
 {
-    ASSERT(!m_wrapOpportunityList.isEmpty());
+    if (m_wrapOpportunityList.isEmpty()) {
+        // We are supposed to have a wrapping opportunity on the current line at this point.
+        ASSERT_NOT_REACHED();
+        return { };
+    }
     // Revert all the way back to a wrap opportunity when either a soft hyphen fits or no hyphen is required.
     for (auto i = m_wrapOpportunityList.size(); i-- > 1;) {
         auto& softWrapOpportunityItem = *m_wrapOpportunityList[i];

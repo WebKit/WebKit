@@ -30,6 +30,7 @@
 #include "APICustomProtocolManagerClient.h"
 #include "APIDataTask.h"
 #include "APIDataTaskClient.h"
+#include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
@@ -49,7 +50,6 @@
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebCompiledContentRuleList.h"
-#include "WebCookieManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -239,7 +239,6 @@ NetworkProcessProxy::NetworkProcessProxy()
     , m_customProtocolManagerClient(makeUniqueRef<API::CustomProtocolManagerClient>())
 #endif
     , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
-    , m_cookieManager(makeUniqueRef<WebCookieManagerProxy>(*this))
 {
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::NetworkProcessProxy", this);
 
@@ -1389,11 +1388,6 @@ void NetworkProcessProxy::sendProcessDidResume(ResumeReason reason)
         send(Messages::NetworkProcess::ProcessDidResume(reason == ResumeReason::ForegroundActivity), 0);
 }
 
-void NetworkProcessProxy::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::FlushCookies(sessionID), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNetworkProcess sendParametersToNetworkProcess)
 {
     auto addResult = m_websiteDataStores.add(store);
@@ -1827,6 +1821,12 @@ void NetworkProcessProxy::applicationDidEnterBackground()
 void NetworkProcessProxy::applicationWillEnterForeground()
 {
     send(Messages::NetworkProcess::ApplicationWillEnterForeground(), 0);
+}
+
+void NetworkProcessProxy::cookiesDidChange(PAL::SessionID sessionID)
+{
+    if (auto* websiteDataStore = websiteDataStoreFromSessionID(sessionID))
+        websiteDataStore->cookieStore().cookiesDidChange();
 }
 
 } // namespace WebKit

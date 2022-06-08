@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+if (window.internals)
+    internals.setForceUseGlyphDisplayListForTesting(true);
+</script>
+<body onload="run()">
+<div id=container>
+    <p style="color: red;">Some text</p>
+    <p style="color: orange;">Some text</p>
+    <p style="color: yellow;">Some text</p>
+    <p style="color: green;">Some text</p>
+    <p style="color: blue;">Some text</p>
+    <p style="color: indigo;">Some text</p>
+    <p style="color: violet;">Some text</p>
+</div>
+<pre id=log></pre>
+<script>
+function run() {
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            if (window.internals) {
+                let ps = container.querySelectorAll("p");
+                let displayList = internals.cachedGlyphDisplayListsForTextNode(ps[0].firstChild);
+                let displayListWithResourceIDs = internals.cachedGlyphDisplayListsForTextNode(ps[0].firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS);
+                let mismatch = false;
+                for (let i = 1; i < ps.length; ++i) {
+                    if (internals.cachedGlyphDisplayListsForTextNode(ps[i].firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS) != displayListWithResourceIDs) {
+                        log.textContent += `Display list for ps[${i}] does not match.\n`;
+                        mismatch = true;
+                    }
+                }
+                if (!mismatch)
+                    log.textContent += "All display lists match.";
+                internals.setForceUseGlyphDisplayListForTesting(false);
+                container.remove();
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+</script>

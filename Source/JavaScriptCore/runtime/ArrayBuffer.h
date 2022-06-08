@@ -56,34 +56,64 @@ class ArrayBufferView;
 class JSArrayBuffer;
 
 using ArrayBufferDestructorFunction = RefPtr<SharedTask<void(void*)>>;
-using PackedArrayBufferDestructorFunction = PackedRefPtr<SharedTask<void(void*)>>;
 
-class SharedArrayBufferContents : public ThreadSafeRefCounted<SharedArrayBufferContents> {
+class SharedArrayBufferContents final : public ThreadSafeRefCounted<SharedArrayBufferContents> {
 public:
-    SharedArrayBufferContents(void* data, size_t, ArrayBufferDestructorFunction&&);
-    ~SharedArrayBufferContents();
+    SharedArrayBufferContents(void* data, size_t size, ArrayBufferDestructorFunction&& destructor)
+        : m_data(data, size)
+        , m_destructor(WTFMove(destructor))
+        , m_sizeInBytes(size)
+    {
+    }
+
+    ~SharedArrayBufferContents()
+    {
+        if (m_destructor) {
+            // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
+            m_destructor->run(m_data.getUnsafe());
+        }
+    }
     
     void* data() const { return m_data.getMayBeNull(m_sizeInBytes); }
     
 private:
     using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
     DataType m_data;
-    PackedArrayBufferDestructorFunction m_destructor;
+    ArrayBufferDestructorFunction m_destructor;
     size_t m_sizeInBytes;
 };
 
-class   ArrayBufferContents {
+class ArrayBufferContents final {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
 public:
-    JS_EXPORT_PRIVATE ArrayBufferContents();
-    JS_EXPORT_PRIVATE ArrayBufferContents(void* data, size_t sizeInBytes, ArrayBufferDestructorFunction&&);
+    ArrayBufferContents() = default;
+    ArrayBufferContents(void* data, size_t sizeInBytes, ArrayBufferDestructorFunction&& destructor)
+        : m_data(data, sizeInBytes)
+        , m_destructor(WTFMove(destructor))
+        , m_sizeInBytes(sizeInBytes)
+    {
+        RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
+    }
     
-    JS_EXPORT_PRIVATE ArrayBufferContents(ArrayBufferContents&&);
-    JS_EXPORT_PRIVATE ArrayBufferContents& operator=(ArrayBufferContents&&);
+    ArrayBufferContents(ArrayBufferContents&& other)
+    {
+        swap(other);
+    }
 
-    JS_EXPORT_PRIVATE ~ArrayBufferContents();
-    
-    JS_EXPORT_PRIVATE void clear();
+    ArrayBufferContents& operator=(ArrayBufferContents&& other)
+    {
+        ArrayBufferContents moved(WTFMove(other));
+        swap(moved);
+        return *this;
+    }
+
+    ~ArrayBufferContents()
+    {
+        if (m_destructor) {
+            // FIXME: We shouldn't use getUnsafe here: https://bugs.webkit.org/show_bug.cgi?id=197698
+            m_destructor->run(m_data.getUnsafe());
+        }
+    }
     
     explicit operator bool() { return !!m_data; }
     
@@ -93,9 +123,23 @@ public:
     
     bool isShared() const { return m_shared; }
     
+    void swap(ArrayBufferContents& other)
+    {
+        using std::swap;
+        swap(m_data, other.m_data);
+        swap(m_destructor, other.m_destructor);
+        swap(m_shared, other.m_shared);
+        swap(m_sizeInBytes, other.m_sizeInBytes);
+    }
+
 private:
-    void destroy();
-    void reset();
+    void reset()
+    {
+        m_data = nullptr;
+        m_destructor = nullptr;
+        m_shared = nullptr;
+        m_sizeInBytes = 0;
+    }
 
     friend class ArrayBuffer;
 
@@ -107,18 +151,17 @@ private:
     void tryAllocate(size_t numElements, unsigned elementByteSize, InitializationPolicy);
     
     void makeShared();
-    void transferTo(ArrayBufferContents&);
     void copyTo(ArrayBufferContents&);
     void shareWith(ArrayBufferContents&);
 
     using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
-    DataType m_data;
-    PackedArrayBufferDestructorFunction m_destructor;
-    PackedRefPtr<SharedArrayBufferContents> m_shared;
-    size_t m_sizeInBytes;
+    DataType m_data { nullptr };
+    ArrayBufferDestructorFunction m_destructor { nullptr };
+    RefPtr<SharedArrayBufferContents> m_shared { nullptr };
+    size_t m_sizeInBytes { 0 };
 };
 
-class ArrayBuffer : public GCIncomingRefCounted<ArrayBuffer> {
+class ArrayBuffer final : public GCIncomingRefCounted<ArrayBuffer> {
 public:
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBuffer&);
@@ -188,11 +231,11 @@ private:
 public:
     Weak<JSArrayBuffer> m_wrapper;
 private:
-    Checked<unsigned> m_pinCount;
-    bool m_isWasmMemory;
+    Checked<unsigned> m_pinCount { 0 };
+    bool m_isWasmMemory { false };
     // m_locked == true means that some API user fetched m_contents directly from a TypedArray object,
     // the buffer is backed by a WebAssembly.Memory, or is a SharedArrayBuffer.
-    bool m_locked;
+    bool m_locked { false };
 };
 
 void* ArrayBuffer::data()

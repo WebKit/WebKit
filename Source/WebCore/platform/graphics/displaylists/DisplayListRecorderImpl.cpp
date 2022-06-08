@@ -42,8 +42,8 @@
 namespace WebCore {
 namespace DisplayList {
 
-RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DeconstructDrawGlyphs deconstructDrawGlyphs)
-    : Recorder(state, initialClip, initialCTM, deconstructDrawGlyphs)
+RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode)
+    : Recorder(state, initialClip, initialCTM, drawGlyphsMode)
     , m_displayList(displayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
@@ -170,6 +170,11 @@ void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const
 void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
     append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, mode);
+}
+
+void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
+{
+    append<DrawDecomposedGlyphs>(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs.bounds());
 }
 
 void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -402,6 +407,12 @@ bool RecorderImpl::recordResourceUse(const SourceImage& image)
 bool RecorderImpl::recordResourceUse(Font& font)
 {
     m_displayList.cacheFont(font);
+    return true;
+}
+
+bool RecorderImpl::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
+{
+    m_displayList.cacheDecomposedGlyphs(decomposedGlyphs);
     return true;
 }
 

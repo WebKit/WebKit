@@ -1039,14 +1039,14 @@ void PageClientImpl::handleClickForDataDetectionResult(const DataDetectorElement
 
 #endif
 
-void PageClientImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
+void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
 {
-    m_impl->beginElementFullscreenVideoExtraction(bitmapHandle, bounds);
+    m_impl->beginTextRecognitionForVideoInElementFullscreen(bitmapHandle, bounds);
 }
 
-void PageClientImpl::cancelElementFullscreenVideoExtraction()
+void PageClientImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
-    m_impl->cancelElementFullscreenVideoExtraction();
+    m_impl->cancelTextRecognitionForVideoInElementFullscreen();
 }
 
 } // namespace WebKit

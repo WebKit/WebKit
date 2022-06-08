@@ -687,7 +687,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ModelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, WebCore::ResourceError error)
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    SetIsInMultitaskingMode(bool isInMultitaskingMode)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    SetIsWindowResizingEnabled(bool hasResizableWindows)
 #endif
 }

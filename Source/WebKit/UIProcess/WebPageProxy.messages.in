@@ -378,8 +378,8 @@ messages -> WebPageProxy {
     DictationAlternatives(WebCore::DictationContext dictationContext) -> (Vector<String> alternatives) Synchronous
 #endif
 
-    ExtractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
-    CancelVideoExtractionInElementFullScreen()
+    BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
+    CancelTextRecognitionForVideoInElementFullScreen()
 
 #if PLATFORM(IOS_FAMILY)
     CouldNotRestorePageState()

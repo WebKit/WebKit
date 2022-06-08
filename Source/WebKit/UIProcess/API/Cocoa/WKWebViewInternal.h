@@ -223,7 +223,7 @@ class ViewGestureController;
     std::optional<WebKit::TransactionID> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     Vector<RetainPtr<id<_UIInvalidatable>>> _resizeAssertions;
 #endif
 

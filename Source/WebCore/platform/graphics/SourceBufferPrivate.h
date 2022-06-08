@@ -51,6 +51,7 @@
 namespace WebCore {
 
 class SharedBuffer;
+class TrackBuffer;
 class TimeRanges;
 
 enum class SourceBufferAppendMode : uint8_t {
@@ -114,30 +115,6 @@ public:
     MediaTime timestampOffset() const { return m_timestampOffset; }
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
-
-    struct TrackBuffer {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        MediaTime lastDecodeTimestamp;
-        MediaTime greatestFrameDuration;
-        MediaTime lastFrameDuration;
-        MediaTime highestPresentationTimestamp;
-        MediaTime highestEnqueuedPresentationTime;
-        MediaTime minimumEnqueuedPresentationTime;
-        DecodeOrderSampleMap::KeyType lastEnqueuedDecodeKey;
-        MediaTime enqueueDiscontinuityBoundary { MediaTime::zeroTime() };
-        MediaTime roundedTimestampOffset;
-        uint32_t lastFrameTimescale { 0 };
-        bool needRandomAccessFlag { true };
-        bool enabled { false };
-        bool needsReenqueueing { false };
-        bool needsMinimumUpcomingPresentationTimeUpdating { false };
-        SampleMap samples;
-        DecodeOrderSampleMap::MapType decodeQueue;
-        RefPtr<MediaDescription> description;
-        PlatformTimeRanges buffered;
-
-        TrackBuffer();
-    };
 
     // Internals Utility methods
     WEBCORE_EXPORT virtual void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);

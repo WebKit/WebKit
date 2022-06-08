@@ -173,7 +173,6 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Cocoa/PlaybackSessionManagerProxy \
 	UIProcess/Cocoa/UserMediaCaptureManagerProxy \
 	UIProcess/Cocoa/VideoFullscreenManagerProxy \
-	UIProcess/WebCookieManagerProxy \
 	UIProcess/ViewGestureController \
 	UIProcess/WebProcessProxy \
 	UIProcess/Automation/WebAutomationSession \

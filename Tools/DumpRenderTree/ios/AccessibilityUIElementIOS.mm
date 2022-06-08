@@ -834,7 +834,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 
 double AccessibilityUIElement::intValue() const
 {
-    return 0.0f;
+    return [[m_element accessibilityValue] integerValue];
 }
 
 double AccessibilityUIElement::minValue()

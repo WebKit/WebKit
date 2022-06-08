@@ -27,6 +27,7 @@
 #include "ImageBufferShareableAllocator.h"
 
 #include "ImageBufferShareableBitmapBackend.h"
+#include "ShareablePixelBuffer.h"
 #include <WebCore/ConcreteImageBuffer.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -61,8 +62,16 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
 
 RefPtr<PixelBuffer> ImageBufferShareableAllocator::createPixelBuffer(const PixelBufferFormat& format, const IntSize& size) const
 {
-    // FIXME: Create a shareable PixelBuffer and transfer the ownership of its memory to WebProcess.
-    return ImageBufferAllocator::createPixelBuffer(format, size);
+    auto pixelBuffer = ShareablePixelBuffer::tryCreate(format, size);
+    if (!pixelBuffer)
+        return nullptr;
+
+    SharedMemory::Handle handle;
+    if (!pixelBuffer->data().createHandle(handle, SharedMemory::Protection::ReadOnly))
+        return nullptr;
+
+    transferMemoryOwnership(WTFMove(handle), pixelBuffer->sizeInBytes());
+    return pixelBuffer;
 }
 
 void ImageBufferShareableAllocator::transferMemoryOwnership(SharedMemory::Handle&&, size_t) const

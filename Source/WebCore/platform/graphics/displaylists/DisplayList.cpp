@@ -42,7 +42,7 @@ namespace DisplayList {
 CString DisplayList::description() const
 {
     TextStream ts;
-    ts << *this;
+    dump(ts);
     return ts.release().utf8();
 }
 
@@ -248,6 +248,8 @@ void DisplayList::append(ItemHandle item)
         return append<DrawFilteredImageBuffer>(item.get<DrawFilteredImageBuffer>());
     case ItemType::DrawGlyphs:
         return append<DrawGlyphs>(item.get<DrawGlyphs>());
+    case ItemType::DrawDecomposedGlyphs:
+        return append<DrawDecomposedGlyphs>(item.get<DrawDecomposedGlyphs>());
     case ItemType::DrawImageBuffer:
         return append<DrawImageBuffer>(item.get<DrawImageBuffer>());
     case ItemType::DrawNativeImage:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,40 @@
  */
 
 #include "config.h"
-#include "WebCookieManagerProxy.h"
+#include "ShareablePixelBuffer.h"
 
-#include "NetworkProcessProxy.h"
-#include "WebCookieManagerMessages.h"
+#include "SharedMemory.h"
 
 namespace WebKit {
+using namespace WebCore;
 
-void WebCookieManagerProxy::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
+RefPtr<ShareablePixelBuffer> ShareablePixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType), 0);
+    ASSERT(supportedPixelFormat(format.pixelFormat));
+
+    auto bufferSize = computeBufferSize(format, size);
+    if (bufferSize.hasOverflowed())
+        return nullptr;
+    if (bufferSize > std::numeric_limits<int32_t>::max())
+        return nullptr;
+
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(bufferSize);
+    if (!sharedMemory)
+        return nullptr;
+
+    return adoptRef(new ShareablePixelBuffer(format, size, sharedMemory.releaseNonNull()));
+}
+
+ShareablePixelBuffer::ShareablePixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<SharedMemory>&& data)
+    : PixelBuffer(format, size, static_cast<uint8_t*>(data->data()), data->size())
+    , m_data(WTFMove(data))
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= sizeInBytes());
+}
+
+RefPtr<PixelBuffer> ShareablePixelBuffer::createScratchPixelBuffer(const IntSize& size) const
+{
+    return ShareablePixelBuffer::tryCreate(m_format, size);
 }
 
 } // namespace WebKit

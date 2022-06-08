@@ -215,6 +215,8 @@ UIProcess/API/gtk/WebKitWebViewBase.cpp @no-unify
 UIProcess/API/gtk/WebKitWebViewDialog.cpp @no-unify
 UIProcess/API/gtk/WebKitWebViewGtk.cpp @no-unify
 
+UIProcess/API/soup/HTTPCookieStoreSoup.cpp
+
 UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
 UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
@@ -281,7 +283,6 @@ UIProcess/gtk/WebPreferencesGtk.cpp
 UIProcess/gtk/WebTextChecker.cpp
 UIProcess/gtk/WebTextCheckerClient.cpp
 
-UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
 
 WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp

@@ -87,7 +87,6 @@ namespace WebKit {
 
 class DownloadProxy;
 class DownloadProxyMap;
-class WebCookieManagerProxy;
 class WebPageProxy;
 class WebUserContentControllerProxy;
 
@@ -272,8 +271,6 @@ public:
     void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 
-    WebCookieManagerProxy& cookieManager() { return m_cookieManager.get(); }
-
     API::CustomProtocolManagerClient& customProtocolManagerClient() { return m_customProtocolManagerClient.get(); }
 
 #if PLATFORM(COCOA)
@@ -303,6 +300,8 @@ public:
     void openWindowFromServiceWorker(PAL::SessionID, const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&&);
 
     void navigateServiceWorkerClient(WebCore::FrameIdentifier, WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
+
+    void cookiesDidChange(PAL::SessionID);
 
 private:
     explicit NetworkProcessProxy();
@@ -420,7 +419,6 @@ private:
 #endif
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
-    UniqueRef<WebCookieManagerProxy> m_cookieManager;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
 
 #if PLATFORM(IOS_FAMILY)

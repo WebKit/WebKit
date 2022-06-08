@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIAutomationSessionClient.h"
+#include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
 #include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
@@ -36,7 +37,6 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
-#include "WebCookieManagerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -1471,8 +1471,8 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
-    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
-    cookieManager.setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback]() {
+    auto& cookieStore = page->websiteDataStore().cookieStore();
+    cookieStore.setCookies({ cookie }, [callback]() {
         callback->sendSuccess();
     });
 }
@@ -1488,8 +1488,8 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(
 
     String host = activeURL.host().toString();
 
-    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
-    cookieManager.deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
+    auto& cookieStore = page->websiteDataStore().cookieStore();
+    cookieStore.deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
 
     return { };
 }

@@ -108,15 +108,15 @@ private:
     void setElement(WebCore::Element&);
 
 #if ENABLE(VIDEO)
-    void scheduleMainVideoElementExtraction();
-    void endMainVideoElementExtractionIfNeeded();
-    void mainVideoElementExtractionTimerFired();
+    void scheduleTextRecognitionForMainVideo();
+    void endTextRecognitionForMainVideoIfNeeded();
+    void mainVideoElementTextRecognitionTimerFired();
     void updateMainVideoElement();
     void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
 
     WeakPtr<WebCore::HTMLVideoElement> m_mainVideoElement;
-    RunLoop::Timer<WebFullScreenManager> m_mainVideoElementExtractionTimer;
-    bool m_isExtractingMainVideoElement { false };
+    RunLoop::Timer<WebFullScreenManager> m_mainVideoElementTextRecognitionTimer;
+    bool m_isPerformingTextRecognitionInMainVideo { false };
 #endif // ENABLE(VIDEO)
 
     bool m_closing { false };

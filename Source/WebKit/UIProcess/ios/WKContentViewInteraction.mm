@@ -11067,12 +11067,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysisTypeVisualSearch;
 #endif
 
-- (void)beginFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)imageData playerViewController:(AVPlayerViewController *)controller
+- (void)beginTextRecognitionForFullscreenVideo:(const WebKit::ShareableBitmap::Handle&)imageData playerViewController:(AVPlayerViewController *)controller
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     ASSERT(_page->preferences().textRecognitionInVideosEnabled());
 
-    if (_fullscreenVideoExtractionRequestIdentifier)
+    if (_fullscreenVideoImageAnalysisRequestIdentifier)
         return;
 
     auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
@@ -11084,12 +11084,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
         return;
 
     auto request = [self createImageAnalyzerRequest:analysisTypesForFullscreenVideo image:cgImage.get()];
-    _fullscreenVideoExtractionRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self), controller = RetainPtr { controller }] (CocoaImageAnalysis *result, NSError *) mutable {
+    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self), controller = RetainPtr { controller }] (CocoaImageAnalysis *result, NSError *) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
 
-        strongSelf->_fullscreenVideoExtractionRequestIdentifier = 0;
+        strongSelf->_fullscreenVideoImageAnalysisRequestIdentifier = 0;
 
         if ([controller respondsToSelector:@selector(setImageAnalysis:)])
             [controller setImageAnalysis:result];
@@ -11097,10 +11097,10 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
-- (void)cancelFullscreenVideoExtraction:(AVPlayerViewController *)controller
+- (void)cancelTextRecognitionForFullscreenVideo:(AVPlayerViewController *)controller
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (auto identifier = std::exchange(_fullscreenVideoExtractionRequestIdentifier, 0))
+    if (auto identifier = std::exchange(_fullscreenVideoImageAnalysisRequestIdentifier, 0))
         [_imageAnalyzer cancelRequestID:identifier];
 
     if ([controller respondsToSelector:@selector(setImageAnalysis:)])
@@ -11108,7 +11108,7 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif
 }
 
-- (BOOL)isFullscreenVideoExtractionEnabled
+- (BOOL)isTextRecognitionInFullscreenVideoEnabled
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return _page->preferences().textRecognitionInVideosEnabled();
@@ -11117,7 +11117,7 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif
 }
 
-- (void)beginElementFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)bitmapHandle bounds:(WebCore::FloatRect)bounds
+- (void)beginTextRecognitionForVideoInElementFullscreen:(const WebKit::ShareableBitmap::Handle&)bitmapHandle bounds:(WebCore::FloatRect)bounds
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto imageBitmap = WebKit::ShareableBitmap::create(bitmapHandle);
@@ -11129,12 +11129,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
         return;
 
     auto request = WebKit::createImageAnalyzerRequest(image.get(), analysisTypesForFullscreenVideo);
-    _fullscreenVideoExtractionRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self), bounds](CocoaImageAnalysis *result, NSError *error) {
+    _fullscreenVideoImageAnalysisRequestIdentifier = [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self), bounds](CocoaImageAnalysis *result, NSError *error) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || !strongSelf->_fullscreenVideoExtractionRequestIdentifier)
+        if (!strongSelf || !strongSelf->_fullscreenVideoImageAnalysisRequestIdentifier)
             return;
 
-        strongSelf->_fullscreenVideoExtractionRequestIdentifier = 0;
+        strongSelf->_fullscreenVideoImageAnalysisRequestIdentifier = 0;
         if (error || !result)
             return;
 
@@ -11144,12 +11144,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
-- (void)cancelElementFullscreenVideoExtraction
+- (void)cancelTextRecognitionForVideoInElementFullscreen
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     [self uninstallImageAnalysisInteraction];
 
-    if (auto previousIdentifier = std::exchange(_fullscreenVideoExtractionRequestIdentifier, 0))
+    if (auto previousIdentifier = std::exchange(_fullscreenVideoImageAnalysisRequestIdentifier, 0))
         [self.imageAnalyzer cancelRequestID:previousIdentifier];
 #endif
 }

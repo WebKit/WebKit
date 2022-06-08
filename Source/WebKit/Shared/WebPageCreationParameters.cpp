@@ -190,8 +190,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << requiresUserActionForEditingControlsManager;
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    encoder << isInMultitaskingMode;
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    encoder << hasResizableWindows;
 #endif
 
     encoder << contentSecurityPolicyModeForExtension;
@@ -605,8 +605,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 #endif
 
-#if HAVE(MULTITASKING_MODE)
-    if (!decoder.decode(parameters.isInMultitaskingMode))
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    if (!decoder.decode(parameters.hasResizableWindows))
         return std::nullopt;
 #endif
 

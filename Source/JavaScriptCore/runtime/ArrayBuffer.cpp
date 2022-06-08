@@ -42,73 +42,6 @@ Ref<SharedTask<void(void*)>> ArrayBuffer::primitiveGigacageDestructor()
     return destructor.get().copyRef();
 }
 
-SharedArrayBufferContents::SharedArrayBufferContents(void* data, size_t size, ArrayBufferDestructorFunction&& destructor)
-    : m_data(data, size)
-    , m_destructor(WTFMove(destructor))
-    , m_sizeInBytes(size)
-{
-}
-
-SharedArrayBufferContents::~SharedArrayBufferContents()
-{
-    if (m_destructor) {
-        // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
-        m_destructor->run(m_data.getUnsafe());
-    }
-}
-
-ArrayBufferContents::ArrayBufferContents()
-{
-    reset();
-}
-
-ArrayBufferContents::ArrayBufferContents(ArrayBufferContents&& other)
-{
-    reset();
-    other.transferTo(*this);
-}
-
-ArrayBufferContents::ArrayBufferContents(void* data, size_t sizeInBytes, ArrayBufferDestructorFunction&& destructor)
-    : m_data(data, sizeInBytes)
-    , m_sizeInBytes(sizeInBytes)
-{
-    RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
-    m_destructor = WTFMove(destructor);
-}
-
-ArrayBufferContents& ArrayBufferContents::operator=(ArrayBufferContents&& other)
-{
-    other.transferTo(*this);
-    return *this;
-}
-
-ArrayBufferContents::~ArrayBufferContents()
-{
-    destroy();
-}
-
-void ArrayBufferContents::clear()
-{
-    destroy();
-    reset();
-}
-
-void ArrayBufferContents::destroy()
-{
-    if (m_destructor) {
-        // FIXME: We shouldn't use getUnsafe here: https://bugs.webkit.org/show_bug.cgi?id=197698
-        m_destructor->run(m_data.getUnsafe());
-    }
-}
-
-void ArrayBufferContents::reset()
-{
-    m_data = nullptr;
-    m_destructor = nullptr;
-    m_shared = nullptr;
-    m_sizeInBytes = 0;
-}
-
 void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSize, InitializationPolicy policy)
 {
     CheckedSize sizeInBytes = numElements;
@@ -141,17 +74,6 @@ void ArrayBufferContents::makeShared()
 {
     m_shared = adoptRef(new SharedArrayBufferContents(data(), sizeInBytes(), WTFMove(m_destructor)));
     m_destructor = nullptr;
-}
-
-void ArrayBufferContents::transferTo(ArrayBufferContents& other)
-{
-    other.clear();
-    other.m_data = m_data;
-    other.m_sizeInBytes = m_sizeInBytes;
-    RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
-    other.m_destructor = WTFMove(m_destructor);
-    other.m_shared = m_shared;
-    reset();
 }
 
 void ArrayBufferContents::copyTo(ArrayBufferContents& other)
@@ -285,9 +207,6 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementB
 
 ArrayBuffer::ArrayBuffer(ArrayBufferContents&& contents)
     : m_contents(WTFMove(contents))
-    , m_pinCount(0)
-    , m_isWasmMemory(false)
-    , m_locked(false)
 {
 }
 
@@ -384,7 +303,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         return true;
     }
 
-    m_contents.transferTo(result);
+    result = WTFMove(m_contents);
     notifyDetaching(vm);
     return true;
 }
@@ -393,8 +312,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
 void ArrayBuffer::detach(VM& vm)
 {
     ASSERT(isWasmMemory());
-    ArrayBufferContents unused;
-    m_contents.transferTo(unused);
+    ArrayBufferContents unused = WTFMove(m_contents);
     notifyDetaching(vm);
 }
 

@@ -59,7 +59,7 @@ private:
 
     void doUpdateResourceResponse() { }
     String platformSuggestedFilename() const;
-    CertificateInfo platformCertificateInfo() const;
+    CertificateInfo platformCertificateInfo(Span<const std::byte>) const;
 };
 
 } // namespace WebCore

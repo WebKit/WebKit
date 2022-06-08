@@ -3655,7 +3655,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     double visibleHorizontalFraction = 1;
     float relativeHorizontalPositionInNodeAtCenter = 0;
     float relativeVerticalPositionInNodeAtCenter = 0;
-    if (!usesMultitaskingModeViewportBehaviors()) {
+    if (!shouldEnableViewportBehaviorsForResizableWindows()) {
         visibleHorizontalFraction = frameView.unobscuredContentSize().width() / oldContentSize.width();
         IntPoint unobscuredContentRectCenter = frameView.unobscuredContentRect().center();
 
@@ -3695,7 +3695,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     IntSize newContentSize = frameView.contentsSize();
 
-    bool scaleToFitContent = (!usesMultitaskingModeViewportBehaviors() || !wasAtInitialScale) && m_userHasChangedPageScaleFactor;
+    bool scaleToFitContent = (!shouldEnableViewportBehaviorsForResizableWindows() || !wasAtInitialScale) && m_userHasChangedPageScaleFactor;
     double scale = scaleAfterViewportWidthChange(targetScale, scaleToFitContent, m_viewportConfiguration, targetUnobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
     FloatRect newUnobscuredContentRect = targetUnobscuredRect;
     FloatRect newExposedContentRect = targetExposedContentRect;
@@ -3711,7 +3711,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
         double newUnobscuredRectHeight = targetUnobscuredRect.height() * scaleDifference;
         double newUnobscuredRectX;
         double newUnobscuredRectY;
-        if (usesMultitaskingModeViewportBehaviors()) {
+        if (shouldEnableViewportBehaviorsForResizableWindows()) {
             newUnobscuredRectX = oldUnobscuredContentRect.x();
             newUnobscuredRectY = oldUnobscuredContentRect.y();
         } else {
@@ -3992,10 +3992,10 @@ bool WebPage::shouldIgnoreMetaViewport() const
     return m_page->settings().shouldIgnoreMetaViewport();
 }
 
-bool WebPage::usesMultitaskingModeViewportBehaviors() const
+bool WebPage::shouldEnableViewportBehaviorsForResizableWindows() const
 {
-#if HAVE(MULTITASKING_MODE)
-    return shouldIgnoreMetaViewport() && m_isInMultitaskingMode;
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    return shouldIgnoreMetaViewport() && m_isWindowResizingEnabled;
 #else
     return false;
 #endif

@@ -1,8 +1,8 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -41,35 +41,43 @@
 <!-- implicit level for heading role -->
 <div class="ex" role="heading" data-expected="2">X</div>
 
+<div id="dynamic-aria-heading" role="heading" aria-level="1">X</div>
+
 <!-- todo: h1 elements nested in section elements should inherit nested level. -->
 
 <script>
-    description("This tests that headings have a level matching the implicit default value or explicitly defined aria-level value.")
+    var testOutput = "This tests that headings have a level matching the implicit default value or explicitly defined aria-level value.\n\n";
 
-    if (window.testRunner && window.accessibilityController) {
+    if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
+        var axElement, el;
         setTimeout(async () => {
-            var examples = document.querySelectorAll('.ex');
+            const examples = document.querySelectorAll('.ex');
             for (let i = 0; i < examples.length; ++i) {
-                window.el = examples[i];
+                el = examples[i];
                 el.id = `ex${i}`;
 
-                window.axElement = null;
-                await waitFor(() => {
-                    axElement = accessibilityController.accessibleElementById(el.id);
-                    return axElement;
-                });
+                axElement = await waitForElementById(el.id);
 
                 // Test AXLevel.
-                shouldBe("axElement.intValue", "parseInt(el.getAttribute('data-expected'))");
-
+                testOutput += expect("axElement.intValue", "parseInt(el.getAttribute('data-expected'))");
                 el.style.display = 'none'; // Hide each example after verification.
             }
 
+            testOutput += "\nVerifying initial heading level of #dynamic-aria-heading.\n";
+            axElement = await waitForElementById("dynamic-aria-heading");
+            testOutput += expect("axElement.intValue", "1");
+            testOutput += "\nUpdating the aria-level of #dynamic-aria-heading to 2.\n";
+            document.getElementById("dynamic-aria-heading").setAttribute("aria-level", "2");
+            await waitFor(() => axElement.intValue === 2);
+            testOutput += expect("axElement.intValue", "2");
+
+            debug(testOutput);
             finishJSTest();
         }, 0);
     }
 </script>
 </body>
 </html>
+

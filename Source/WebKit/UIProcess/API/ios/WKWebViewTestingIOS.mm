@@ -483,7 +483,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 - (BOOL)_hasResizeAssertion
 {
-#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     if (!_resizeAssertions.isEmpty())
         return YES;
 #endif
