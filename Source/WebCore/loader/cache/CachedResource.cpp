@@ -643,8 +643,10 @@ bool CachedResource::deleteIfPossible()
         return true;
     }
 
+#if USE(CF)
     if (m_data)
         m_data->hintMemoryNotNeededSoon();
+#endif
 
     return false;
 }
