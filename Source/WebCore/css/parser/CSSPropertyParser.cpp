@@ -4475,13 +4475,21 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
             return parsedValue;
         return consumePercent(m_range, ValueRange::All);
     case CSSPropertyOffsetPath:
+        if (!m_context.motionPathEnabled)
+            return nullptr;
         return consumePathOperation(m_range, m_context, ConsumeRay::Include);
     case CSSPropertyOffsetDistance:
+        if (!m_context.motionPathEnabled)
+            return nullptr;
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All, UnitlessQuirk::Forbid);
     case CSSPropertyOffsetPosition:
     case CSSPropertyOffsetAnchor:
+        if (!m_context.motionPathEnabled)
+            return nullptr;
         return consumePositionOrAuto(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
     case CSSPropertyOffsetRotate:
+        if (!m_context.motionPathEnabled)
+            return nullptr;
         return consumeOffsetRotate(m_range, m_context.mode);
     case CSSPropertyWebkitBoxFlex:
         return consumeNumber(m_range, ValueRange::All);
