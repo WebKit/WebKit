@@ -5390,6 +5390,23 @@
                 "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
             }
         },
+        "content-visibility": {
+            "codegen-properties": {
+                "settings-flag": "cssContentVisibilityEnabled"
+            },
+            "values": [
+                "visible",
+                "hidden",
+                "auto"
+            ],
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-content-visibility",
+                "url": "https://www.w3.org/TR/css-contain-2/#content-visibility"
+            }
+        },
         "backface-visibility": {
             "codegen-properties": {
                 "aliases": [
@@ -7878,6 +7895,11 @@
             "shortname": "CSS Generated Content",
             "longname": "CSS Generated Content Module",
             "url": "https://www.w3.org/TR/css-content-3/"
+        },
+        "css-content-visibility": {
+            "shortname": "CSS Content Visibility",
+            "longname": "CSS Content Visibility Module",
+            "url": "https://www.w3.org/TR/css-contain-2/#content-visibility"
         },
         "css-counter-styles": {
             "shortname": "CSS Counter Styles",
