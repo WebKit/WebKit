@@ -285,20 +285,6 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return DebuggableInfoData::empty();
 }
 
-unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
-{
-    RECT rect;
-    ::GetClientRect(m_inspectedViewWindow, &rect);
-    return rect.bottom - rect.top;
-}
-
-unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
-{
-    RECT rect;
-    ::GetClientRect(m_inspectedViewWindow, &rect);
-    return rect.right - rect.left;
-}
-
 void WebInspectorUIProxy::platformAttach()
 {
     static const unsigned defaultAttachedSize = 300;
@@ -312,11 +298,16 @@ void WebInspectorUIProxy::platformAttach()
 
     WebCore::WindowMessageBroadcaster::addListener(m_inspectedViewWindow, this);
 
+    RECT inspectedWindowRect;
+    ::GetClientRect(m_inspectedViewWindow, &inspectedWindowRect);
+
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
+        unsigned inspectedWindowHeight = inspectedWindowRect.bottom - inspectedWindowRect.top;
+        unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned maximumAttachedWidth = platformInspectedWindowWidth() * 3 / 4;
+        unsigned inspectedWindowWidth = inspectedWindowRect.right - inspectedWindowRect.left;
+        unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
         platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
     }
     ::ShowWindow(m_inspectorViewWindow, SW_SHOW);

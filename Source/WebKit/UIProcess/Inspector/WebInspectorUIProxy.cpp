@@ -505,10 +505,12 @@ void WebInspectorUIProxy::open()
     m_isVisible = true;
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
 
-    if (m_isAttached)
+    if (m_isAttached && platformCanAttach(m_canAttach))
         platformAttach();
-    else
+    else {
+        m_isAttached = false;
         platformCreateFrontendWindow();
+    }
 
     platformBringToFront();
 }
@@ -847,18 +849,6 @@ void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(con
 {
     notImplemented();
     completionHandler({ });
-}
-
-unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
-{
-    notImplemented();
-    return 0;
-}
-
-unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
-{
-    notImplemented();
-    return 0;
 }
 
 void WebInspectorUIProxy::platformAttach()

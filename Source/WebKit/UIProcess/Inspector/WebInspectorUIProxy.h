@@ -230,8 +230,6 @@ private:
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
     void platformShowCertificate(const WebCore::CertificateInfo&);
-    unsigned platformInspectedWindowHeight();
-    unsigned platformInspectedWindowWidth();
     void platformAttach();
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);

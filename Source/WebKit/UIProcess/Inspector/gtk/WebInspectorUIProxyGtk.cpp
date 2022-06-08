@@ -406,16 +406,6 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return data;
 }
 
-unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
-{
-    return gtk_widget_get_allocated_height(inspectedPage()->viewWidget());
-}
-
-unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
-{
-    return gtk_widget_get_allocated_width(inspectedPage()->viewWidget());
-}
-
 void WebInspectorUIProxy::platformAttach()
 {
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
@@ -435,10 +425,12 @@ void WebInspectorUIProxy::platformAttach()
     static const unsigned minimumAttachedHeight = 250;
 
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
+        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(inspectedPage()->viewWidget());
+        unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned maximumAttachedWidth = platformInspectedWindowWidth() * 3 / 4;
+        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(inspectedPage()->viewWidget());
+        unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
         platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
     }
 
