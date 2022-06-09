@@ -470,9 +470,12 @@ sub main {
     # Create expectation file and calculate results
     foreach my $test (@results) {
 
+        my $path = $test->{path};
+        $path =~ tr|\\|/| if (isWindows());
+
         my $expectedFailure = 0;
-        if ($expect && $expect->{$test->{path}}) {
-            $expectedFailure = $expect->{$test->{path}}->{$test->{mode}}
+        if ($expect && $expect->{$path}) {
+            $expectedFailure = $expect->{$path}->{$test->{mode}};
         }
 
         if ($test->{result} eq 'FAIL') {
@@ -486,7 +489,6 @@ sub main {
                 $newfailcount++;
 
                 if ($verbose) {
-                    my $path = $test->{path};
                     my $mode = $test->{mode};
                     # Print full output from JSC
                     my $err = $test->{output};
@@ -711,6 +713,8 @@ sub shouldSkip {
     my ($filename, $data) = @_;
 
     if (exists $config->{skip}) {
+        $filename =~ tr|\\|/| if (isWindows());
+
         # Filter by file
         if( $configSkipHash{$filename} ) {
             return 1;
@@ -833,6 +837,8 @@ sub processResult {
 
     # Report a relative path
     my $file = abs2rel( $path, $test262Dir );
+    $file =~ tr|\\|/| if (isWindows());
+
     my %resultdata;
     $resultdata{path} = $file;
     $resultdata{mode} = $scenario;
