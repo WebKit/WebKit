@@ -38,6 +38,7 @@
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"
 
