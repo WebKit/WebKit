@@ -33,7 +33,7 @@ SystemFontDatabase& SystemFontDatabase::singleton()
     return database.get();
 }
 
-auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShorthand) -> SystemFontShorthandInfo
+auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> SystemFontShorthandInfo
 {
     GtkSettings* settings = gtk_settings_get_default();
     if (!settings)
@@ -54,7 +54,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
     if (!pango_font_description_get_size_is_absolute(pangoDescription))
         size = size * (screenDPI() / 72.0);
 
-    SystemFontShorthandInfo result { AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)), size, normalWeightValue() };
+    SystemFontShorthandInfo result { AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)), static_cast<float>(size), normalWeightValue() };
     pango_font_description_free(pangoDescription);
     return result;
 }
