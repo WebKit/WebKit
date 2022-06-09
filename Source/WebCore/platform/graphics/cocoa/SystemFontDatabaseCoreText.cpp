@@ -40,6 +40,11 @@ SystemFontDatabaseCoreText& SystemFontDatabaseCoreText::singleton()
     return database.get();
 }
 
+SystemFontDatabase& SystemFontDatabase::singleton()
+{
+    return SystemFontDatabaseCoreText::singleton();
+}
+
 SystemFontDatabaseCoreText::SystemFontDatabaseCoreText()
 {
 }
@@ -133,6 +138,7 @@ void SystemFontDatabaseCoreText::clear()
     m_cursiveFamilies.clear();
     m_fantasyFamilies.clear();
     m_monospaceFamilies.clear();
+    SystemFontDatabase::clear();
 }
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createFontByApplyingWeightWidthItalicsAndFallbackBehavior(CTFontRef font, CGFloat weight, CGFloat width, bool italic, float size, AllowUserInstalledFonts allowUserInstalledFonts, CFStringRef design)
@@ -331,6 +337,90 @@ String SystemFontDatabaseCoreText::monospaceFamily(const String& locale)
         return "Courier"_str;
 #endif
     return result;
+}
+
+static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescriptorRef fontDescriptor)
+{
+    auto resultRef = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontCSSWeightAttribute)));
+    float result = 0;
+    if (resultRef && CFNumberGetValue(resultRef.get(), kCFNumberFloatType, &result))
+        return FontSelectionValue(result);
+
+    auto traitsRef = adoptCF(static_cast<CFDictionaryRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontTraitsAttribute)));
+    resultRef = static_cast<CFNumberRef>(CFDictionaryGetValue(traitsRef.get(), kCTFontWeightTrait));
+    CFNumberGetValue(resultRef.get(), kCFNumberFloatType, &result);
+    return FontSelectionValue(normalizeCTWeight(result));
+}
+
+auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShorthand) -> SystemFontShorthandInfo
+{
+    auto interrogateFontDescriptorShorthandItem = [] (CTFontDescriptorRef fontDescriptor, const String& family) {
+        auto sizeNumber = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontSizeAttribute)));
+        float size = 0;
+        CFNumberGetValue(sizeNumber.get(), kCFNumberFloatType, &size);
+        auto weight = cssWeightOfSystemFontDescriptor(fontDescriptor);
+        return SystemFontShorthandInfo { AtomString(family), size, FontSelectionValue(weight) };
+    };
+
+    auto interrogateTextStyleShorthandItem = [] (CFStringRef textStyle) {
+        CGFloat weight = 0;
+        float size = CTFontDescriptorGetTextStyleSize(textStyle, contentSizeCategory(), kCTFontTextStylePlatformDefault, &weight, nullptr);
+        auto cssWeight = normalizeCTWeight(weight);
+        return SystemFontShorthandInfo { textStyle, size, FontSelectionValue(cssWeight) };
+    };
+
+    switch (fontShorthand) {
+    case FontShorthand::Caption:
+    case FontShorthand::Icon:
+    case FontShorthand::MessageBox:
+        return interrogateFontDescriptorShorthandItem(adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr)).get(), "system-ui"_s);
+    case FontShorthand::Menu:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::menuFontDescriptor().get(), "-apple-menu"_s);
+    case FontShorthand::SmallCaption:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallCaptionFontDescriptor().get(), "system-ui"_s);
+    case FontShorthand::WebkitMiniControl:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::miniControlFontDescriptor().get(), "system-ui"_s);
+    case FontShorthand::WebkitSmallControl:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallControlFontDescriptor().get(), "system-ui"_s);
+    case FontShorthand::WebkitControl:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::controlFontDescriptor().get(), "system-ui"_s);
+    case FontShorthand::AppleSystemHeadline:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleHeadline);
+    case FontShorthand::AppleSystemBody:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleBody);
+    case FontShorthand::AppleSystemSubheadline:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleSubhead);
+    case FontShorthand::AppleSystemFootnote:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleFootnote);
+    case FontShorthand::AppleSystemCaption1:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleCaption1);
+    case FontShorthand::AppleSystemCaption2:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleCaption2);
+    case FontShorthand::AppleSystemShortHeadline:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleShortHeadline);
+    case FontShorthand::AppleSystemShortBody:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleShortBody);
+    case FontShorthand::AppleSystemShortSubheadline:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleShortSubhead);
+    case FontShorthand::AppleSystemShortFootnote:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleShortFootnote);
+    case FontShorthand::AppleSystemShortCaption1:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleShortCaption1);
+    case FontShorthand::AppleSystemTallBody:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTallBody);
+    case FontShorthand::AppleSystemTitle0:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle0);
+    case FontShorthand::AppleSystemTitle1:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle1);
+    case FontShorthand::AppleSystemTitle2:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle2);
+    case FontShorthand::AppleSystemTitle3:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle3);
+    case FontShorthand::AppleSystemTitle4:
+        return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle4);
+    case FontShorthand::StatusBar:
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::statusBarFontDescriptor().get(), "-apple-status-bar"_s);
+    }
 }
 
 }
