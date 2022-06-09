@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1657,9 +1657,9 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         if (variant.executable() && !variant.executable()->isHostFunction()) {
             ExecutableBase* executable = variant.executable();
             codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
-            // If we cannot handle a callee, either because we don't have a CodeBlock or because arity mismatch,
+            // If we cannot handle a callee, because we don't have a CodeBlock,
             // assume that it's better for this whole thing to be a virtual call.
-            if (!codeBlock || callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
+            if (!codeBlock) {
                 linkVirtualFor(vm, callFrame, callLinkInfo);
                 return;
             }
@@ -1813,8 +1813,16 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
             ASSERT(variant.executable()->hasJITCodeForCall());
             
             codePtr = jsToWasmICCodePtr(callLinkInfo.specializationKind(), variant.function());
-            if (!codePtr)
-                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(ArityCheckNotRequired);
+            if (!codePtr) {
+                ArityCheckMode arityCheck = ArityCheckNotRequired;
+                if (auto* codeBlock = callCase.codeBlock()) {
+                    ASSERT(!variant.executable()->isHostFunction());
+                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(callCase.codeBlock()->numParameters()) || callLinkInfo.isVarargs()))
+                        arityCheck = MustCheckArity;
+
+                }
+                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(arityCheck);
+            }
         } else {
             ASSERT(variant.internalFunction());
             codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
