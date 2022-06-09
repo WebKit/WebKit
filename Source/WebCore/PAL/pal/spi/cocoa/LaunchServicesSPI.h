@@ -120,6 +120,8 @@ WTF_EXTERN_C_END
 - (id <NSObject>)addDatabaseChangeObserver4WebKit:(void (^)(xpc_object_t change))observer;
 - (void)removeDatabaseChangeObserver4WebKit:(id <NSObject>)token;
 - (void)observeDatabaseChange4WebKit:(xpc_object_t)change;
+
+- (void)getSystemContentDatabaseObject4WebKit:(void (^)(xpc_object_t object, NSError *error))completion;
 @end
 #endif
 #endif
