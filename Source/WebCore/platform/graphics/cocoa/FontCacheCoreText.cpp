@@ -367,6 +367,37 @@ static inline float normalizeGXWeight(float value)
     return 523.7 * value - 109.3;
 }
 
+// These values were experimentally gathered from the various named weights of San Francisco.
+static struct {
+    float ctWeight;
+    float cssWeight;
+} keyframes[] = {
+    { -0.8, 30 },
+    { -0.4, 274 },
+    { 0, 400 },
+    { 0.23, 510 },
+    { 0.3, 590 },
+    { 0.4, 700 },
+    { 0.56, 860 },
+    { 0.62, 1000 },
+};
+static_assert(WTF_ARRAY_LENGTH(keyframes) > 0);
+
+float normalizeCTWeight(float value)
+{
+    if (value < keyframes[0].ctWeight)
+        return keyframes[0].cssWeight;
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyframes) - 1; ++i) {
+        auto& before = keyframes[i];
+        auto& after = keyframes[i + 1];
+        if (value >= before.ctWeight && value <= after.ctWeight) {
+            float ratio = (value - before.ctWeight) / (after.ctWeight - before.ctWeight);
+            return ratio * (after.cssWeight - before.cssWeight) + before.cssWeight;
+        }
+    }
+    return keyframes[WTF_ARRAY_LENGTH(keyframes) - 1].cssWeight;
+}
+
 static inline float normalizeSlope(float value)
 {
     return value * 300;
@@ -375,6 +406,21 @@ static inline float normalizeSlope(float value)
 static inline float denormalizeGXWeight(float value)
 {
     return (value + 109.3) / 523.7;
+}
+
+float denormalizeCTWeight(float value)
+{
+    if (value < keyframes[0].cssWeight)
+        return keyframes[0].ctWeight;
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyframes) - 1; ++i) {
+        auto& before = keyframes[i];
+        auto& after = keyframes[i + 1];
+        if (value >= before.cssWeight && value <= after.cssWeight) {
+            float ratio = (value - before.cssWeight) / (after.cssWeight - before.cssWeight);
+            return ratio * (after.ctWeight - before.ctWeight) + before.ctWeight;
+        }
+    }
+    return keyframes[WTF_ARRAY_LENGTH(keyframes) - 1].ctWeight;
 }
 
 static inline float denormalizeSlope(float value)

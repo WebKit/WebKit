@@ -72,8 +72,10 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef, CGFloat si
 RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef, AllowUserInstalledFonts);
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
-CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
+float normalizeCTWeight(float);
+float denormalizeCTWeight(float);
 
+CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
 

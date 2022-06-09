@@ -69,6 +69,8 @@ platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp
 platform/graphics/PlatformDisplay.cpp
 
+platform/graphics/wpe/SystemFontDatabaseWPE.cpp
+
 platform/graphics/egl/GLContextEGL.cpp
 platform/graphics/egl/GLContextEGLLibWPE.cpp
 
